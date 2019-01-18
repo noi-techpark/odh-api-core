@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+   postgres:
+      environment:
+        POSTGRES_PASSWORD: 'testhallo'
+        POSTGRES_DB: 'testdb'
+      build:
+        context: .
+        dockerfile: OdhApiCore/docker/postgres/Dockerfile
+   adminer:
+        image: adminer
+        ports:
+          - 8090:8080
+   odhapicore:
+        image: ${DOCKER_REGISTRY-}odhapicore
+        build:
+          context: .
+          dockerfile: OdhApiCore/Dockerfile
