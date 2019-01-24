@@ -39,7 +39,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("All/{activitytype}/{elements}/{seed}")]
-        public HttpResponseMessage GetAll(string activitytype, int elements, string seed)
+        public IActionResult GetAll(string activitytype, int elements, string seed)
         {
             try
             {
@@ -68,17 +68,13 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent("[" + String.Join(",", myresult) + "]", Encoding.UTF8, "application/json"),
-                    };
+                    return Content("[" + String.Join(",", myresult) + "]", "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
             {
-                return null; //Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
-            }
+                return BadRequest(new { error = ex.Message });
+            }        
         }
 
         /// <summary>
@@ -92,7 +88,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("Paged/{activitytype}/{pagenumber}/{pagesize}/{seed}")]
-        public HttpResponseMessage GetPaged(string activitytype, int pagenumber, int pagesize, string seed, PGGeoSearchResult geosearchresult)
+        public IActionResult GetPaged(string activitytype, int pagenumber, int pagesize, string seed, PGGeoSearchResult geosearchresult)
         {
             try
             {
@@ -136,19 +132,14 @@ namespace OdhApiCore.Controllers
                     if (totalcount % pagesize == 0)
                         totalpages = totalcount / pagesize;
                     else
-                        totalpages = (totalcount / pagesize) + 1;
+                        totalpages = (totalcount / pagesize) + 1;          
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, myseed, String.Join(",", data)), Encoding.UTF8, "application/json"),
-                    };
+                    return Content(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, myseed, String.Join(",", data)), "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
             {
-                return null;
-                    //Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
+                return BadRequest(new { error = ex.Message });
             }
 
         }
@@ -176,7 +167,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("Filtered/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed}")]
-        public HttpResponseMessage GetFiltered(int pagenumber, int pagesize, string activitytype, string subtypefilter, string idfilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, string seed, PGGeoSearchResult geosearchresult)
+        public IActionResult GetFiltered(int pagenumber, int pagesize, string activitytype, string subtypefilter, string idfilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, string seed, PGGeoSearchResult geosearchresult)
         {
             try
             {
@@ -222,17 +213,18 @@ namespace OdhApiCore.Controllers
                     else
                         totalpages = (totalcount / pagesize) + 1;
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, myseed, String.Join(",", data)), Encoding.UTF8, "application/json")
-                    };
+                    //return new HttpResponseMessage()
+                    //{
+                    //    StatusCode = HttpStatusCode.OK,
+                    //    Content = new StringContent(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, myseed, String.Join(",", data)), Encoding.UTF8, "application/json")
+                    //};
+
+                    return Content(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, myseed, String.Join(",", data)), "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
             {
-                return null;
-                    //Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -245,7 +237,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("Single/{id}")]
-        public HttpResponseMessage GetSingle(string id)
+        public IActionResult GetSingle(string id)
         {
             try
             {
@@ -261,20 +253,14 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(String.Join(",", data), Encoding.UTF8, "application/json")
-                    };
+                    return Content(String.Join(",", data), "application/json", Encoding.UTF8);                    
                 }
             }
             catch (Exception ex)
             {
-                return null; // Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
+                return BadRequest(new { error = ex.Message });
             }
         }
-
-
 
         #endregion
 
@@ -291,7 +277,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("api/Activity/All/Localized/{language}/{activitytype}/{elements}/{seed}")]
-        public HttpResponseMessage GetLocalized(string language, string activitytype, int elements, string seed)
+        public IActionResult GetLocalized(string language, string activitytype, int elements, string seed)
         {
             try
             {
@@ -319,22 +305,15 @@ namespace OdhApiCore.Controllers
 
                     var myresult = PostgresSQLHelper.SelectFromTableDataAsLtsPoiLocalizedObject(conn, "activities", select, where, orderby, elements, null, language);
 
-                    conn.Close();
+                    conn.Close();                    
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(JsonConvert.SerializeObject(myresult), Encoding.UTF8, "application/json")
-                    };
+                    return Content(JsonConvert.SerializeObject(myresult), "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
             {
-                return null; // Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
+                return BadRequest(new { error = ex.Message });
             }
-
-
-
         }
 
         /// <summary>
@@ -349,7 +328,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/Paged/Localized/{language}/{activitytype}/{pagenumber}/{pagesize}/{seed}")]
-        public HttpResponseMessage GetPagedLocalized(string language, string activitytype, int pagenumber, int pagesize, string seed, PGGeoSearchResult geosearchresult)
+        public IActionResult GetPagedLocalized(string language, string activitytype, int pagenumber, int pagesize, string seed, PGGeoSearchResult geosearchresult)
         {
             try
             {
@@ -394,18 +373,13 @@ namespace OdhApiCore.Controllers
                     else
                         totalpages = (totalcount / pagesize) + 1;
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, -1, myseed, JsonConvert.SerializeObject(data)), Encoding.UTF8, "application/json")
-                    };
+                    return Content(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, -1, myseed, JsonConvert.SerializeObject(data)), "application/json", Encoding.UTF8);              
                 }
             }
             catch (Exception ex)
             {
-                return null; // Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
+                return BadRequest(new { error = ex.Message });
             }
-
         }
 
         /// <summary>
@@ -431,7 +405,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/Filtered/Localized/{language}/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed}")]
-        public HttpResponseMessage GetFilteredLocalized(string language, int pagenumber, int pagesize, string activitytype, string subtypefilter, string idfilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, string seed, PGGeoSearchResult geosearchresult)
+        public IActionResult GetFilteredLocalized(string language, int pagenumber, int pagesize, string activitytype, string subtypefilter, string idfilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, string seed, PGGeoSearchResult geosearchresult)
         {
             try
             {
@@ -478,16 +452,13 @@ namespace OdhApiCore.Controllers
                     else
                         totalpages = (totalcount / pagesize) + 1;
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, -1, myseed, JsonConvert.SerializeObject(data)), Encoding.UTF8, "application/json")
-                    };
+                    return Content(PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, -1, myseed, JsonConvert.SerializeObject(data)), "application/json", Encoding.UTF8);
+            
                 }
             }
             catch (Exception ex)
             {
-                return null; // Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -500,7 +471,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/Localized/{language}/{id}")]
-        public HttpResponseMessage GetSingleLocalized(string language, string id)
+        public IActionResult GetSingleLocalized(string language, string id)
         {
             try
             {
@@ -517,16 +488,12 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent(JsonConvert.SerializeObject(data.FirstOrDefault()), Encoding.UTF8, "application/json")
-                    };
+                    return Content(JsonConvert.SerializeObject(data.FirstOrDefault()), "application/json", Encoding.UTF8);                   
                 }
             }
             catch (Exception ex)
             {
-                return null; //Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -554,7 +521,7 @@ namespace OdhApiCore.Controllers
         //[CacheOutput(ClientTimeSpan = 3600, ServerTimeSpan = 3600)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/ReducedAsync/{language}/{activitytype}/{subtypefilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}")]
-        public HttpResponseMessage GetReduced(string language, string activitytype, string subtypefilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, PGGeoSearchResult geosearchresult)
+        public IActionResult GetReduced(string language, string activitytype, string subtypefilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, PGGeoSearchResult geosearchresult)
         {
             try
             {
@@ -574,16 +541,12 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return new HttpResponseMessage()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent("[" + String.Join(",", data) + "]", Encoding.UTF8, "application/json")
-                    };
+                    return Content("[" + String.Join(",", data) + "]", "application/json", Encoding.UTF8);                    
                 }
             }
             catch (Exception ex)
             {
-                return null; // Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message, "application/json");
+                return BadRequest(new { error = ex.Message });
             }
 
 
