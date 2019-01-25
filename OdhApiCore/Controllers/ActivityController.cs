@@ -15,7 +15,7 @@ using Npgsql;
 namespace OdhApiCore.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    //[ApiController]
     public class ActivityController : ControllerBase
     {
         private readonly IConfiguration configuration;
