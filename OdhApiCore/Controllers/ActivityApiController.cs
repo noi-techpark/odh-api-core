@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Helper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ using Npgsql;
 namespace OdhApiCore.Controllers
 {
     [Route("api/[controller]")]
-    //[ApiController]
+    [EnableCors("CorsPolicy")]
     public class ActivityController : ControllerBase
     {
         private readonly IConfiguration configuration;
@@ -35,7 +36,7 @@ namespace OdhApiCore.Controllers
         /// <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
         /// <param name="elements">Elements to retrieve (max. 1024)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-        /// <returns>Collection of Activity Objects</returns>
+        /// <returns>Collection of Activity Objects</returns>        
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("All/{activitytype}/{elements}/{seed}")]

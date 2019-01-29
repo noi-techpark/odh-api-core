@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <Folder Include="docker\postgres\" />
-    <Folder Include="Pages\Activity\" />
+    <Folder Include="wwwroot\json\" />
   </ItemGroup>
 
   <ItemGroup>
