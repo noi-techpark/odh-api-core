@@ -12,21 +12,35 @@ using Newtonsoft.Json;
 using Npgsql;
 
 namespace OdhApiCore.Controllers
-{    
+{
     [Route("api/SmgTag")]
     [EnableCors("CorsPolicy")]
-    public class OdhTagController : ControllerBase
+    public class OdhTagController : OdhController
     {
-        private readonly IConfiguration configuration;
-        private string connectionString = "";
+        //private readonly string connectionString;
 
-        public OdhTagController(IConfiguration config)
-        {
-            configuration = config;
-            connectionString = configuration.GetConnectionString("PGConnection");
+        public OdhTagController(ISettings settings) : base(settings)
+        {         
         }
 
         #region GETTER
+
+        //private IActionResult Do(Func<NpgsqlConnection, string> f)
+        //{
+        //    try
+        //    {
+        //        using (var conn = new NpgsqlConnection(this.connectionString))
+        //        {
+        //            conn.Open();
+
+        //            return this.Content(f(conn), "application/json", Encoding.UTF8);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return this.BadRequest(new { error = ex.Message });
+        //    }
+        //}
 
         /// <summary>
         /// GET Complete List of SMGTags
@@ -37,28 +51,39 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Get()
         {
-            try
+            return Do(conn =>
             {
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
+                string select = "*";
+                string orderby = "data ->>'MainEntity', data ->>'Shortname'";
+                string where = "";
 
-                    conn.Open();
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);
 
-                    string select = "*";
-                    string orderby = "data ->>'MainEntity', data ->>'Shortname'";
-                    string where = "";
+                return "[" + String.Join(",", myresult) + "]";
+            });
 
-                    var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);
+            //try
+            //{
+            //    using (var conn = new NpgsqlConnection(connectionString))
+            //    {
 
-                    conn.Close();
+            //        conn.Open();
 
-                    return Content("[" + String.Join(",", myresult) + "]", "application/json", Encoding.UTF8);                    
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            //        string select = "*";
+            //        string orderby = "data ->>'MainEntity', data ->>'Shortname'";
+            //        string where = "";
+
+            //        var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);
+
+            //        conn.Close();
+
+            //        return Content("[" + String.Join(",", myresult) + "]", "application/json", Encoding.UTF8);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest(new { error = ex.Message });
+            //}
         }
 
         /// <summary>
@@ -106,7 +131,7 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return Content("[" + String.Join(",", myresult) + "]", "application/json", Encoding.UTF8);                    
+                    return Content("[" + String.Join(",", myresult) + "]", "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
@@ -178,13 +203,13 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return Content(JsonConvert.SerializeObject(localizedresult), "application/json", Encoding.UTF8);                    
+                    return Content(JsonConvert.SerializeObject(localizedresult), "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
-            }            
+            }
         }
 
         /// <summary>
@@ -235,7 +260,7 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return Content(JsonConvert.SerializeObject(localizedresult), "application/json", Encoding.UTF8);                    
+                    return Content(JsonConvert.SerializeObject(localizedresult), "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
@@ -269,7 +294,7 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return Content(JsonConvert.SerializeObject(localizedresult.FirstOrDefault()), "application/json", Encoding.UTF8);                    
+                    return Content(JsonConvert.SerializeObject(localizedresult.FirstOrDefault()), "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
@@ -306,7 +331,7 @@ namespace OdhApiCore.Controllers
 
                     conn.Close();
 
-                    return Content("[" + String.Join(",", data) + "]", "application/json", Encoding.UTF8);                    
+                    return Content("[" + String.Join(",", data) + "]", "application/json", Encoding.UTF8);
                 }
             }
             catch (Exception ex)
@@ -369,7 +394,7 @@ namespace OdhApiCore.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
-            } 
+            }
         }
 
         #endregion
