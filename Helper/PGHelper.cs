@@ -52,7 +52,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static List<Tuple<int, T>> SelectFromTableIdAndDataAsObject<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset)
+        public static List<Tuple<string, T>> SelectFromTableDataAsIdAndObject<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset)
         {
             try
             {
@@ -63,12 +63,13 @@ namespace Helper
 
                 NpgsqlDataReader dr = command.ExecuteReader();
 
-                List<Tuple<int, T>> lstSelect = new List<Tuple<int, T>>();
+                List<Tuple<string, T>> lstSelect = new List<Tuple<string, T>>();
                 while (dr.Read())
                 {                    
                     var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                    var id = dr[0].ToString();
 
-                    lstSelect.Add(Tuple.Create<int, T>(Convert.ToInt32(dr[0]), data));
+                    lstSelect.Add(Tuple.Create<string, T>(id, data));
                 }
 
                 dr.Close();
@@ -145,7 +146,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static T SelectFromTableDataAsObjectSingle<T>(NpgsqlConnection conn, string tablename, string id)
+        public static T SelectFromTableDataAsObject<T>(NpgsqlConnection conn, string tablename, string id)
         {
             try
             {
@@ -199,7 +200,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static List<T> SelectFromTableDataAsObjectExtended<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize)
+        public static List<T> SelectFromTableDataAsObjectExtended<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd)
         {
             try
             {
@@ -216,7 +217,7 @@ namespace Helper
                 {
                     int i = 0;
                     string stringtodeserialize = "{";
-                    foreach (string s in fieldstodeserialize)
+                    foreach (string s in fieldstoadd)
                     {
                         stringtodeserialize = stringtodeserialize + "\"" + s + "\":" + dr[i].ToString() + ",";
                         i++;
@@ -294,7 +295,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static List<string> SelectFromTableDataAsIdAndString(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd)
+        public static List<string> SelectFromTableDataAsStringExtended(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd)
         {
             try
             {
@@ -528,7 +529,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data as LocHelperclass (id, typ, name)
         /// </summary>
@@ -670,7 +670,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data as LocHelperclass (id, typ, name)
         /// </summary>
@@ -716,7 +715,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data as LocHelperclass (id, typ, name)
         /// </summary>
@@ -761,7 +759,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns List of JSON Data mapped to AccommodationLocalized OBJECT
@@ -959,7 +956,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data mapped to AccommodationLocalized OBJECT
         /// </summary>
@@ -1020,7 +1016,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns List of JSON Data mapped to PoiBaseInfosLocalized OBJECT
@@ -1167,7 +1162,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns List of JSON Data mapped to EventLocalized OBJECT
@@ -1411,7 +1405,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data mapped to GastronomyLocalized OBJECT
         /// </summary>
@@ -1460,7 +1453,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns List of JSON Data mapped to PoiBaseInfosLocalized OBJECT
@@ -1920,7 +1912,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data mapped to RegionLocalized OBJECT
         /// </summary>
@@ -2051,7 +2042,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data mapped to MunicipalityLocalized OBJECT
         /// </summary>
@@ -2121,7 +2111,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data mapped to DistrictLocalized OBJECT
         /// </summary>
@@ -2189,7 +2178,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns List of JSON Data mapped to MetaRegionLocalized OBJECT
@@ -2259,7 +2247,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data mapped to MetaRegionLocalized OBJECT
         /// </summary>
@@ -2328,7 +2315,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data mapped to SkiRegionLocalized OBJECT
         /// </summary>
@@ -2390,7 +2376,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns List of JSON Data mapped to SkiAreaLocalized OBJECT
@@ -2770,7 +2755,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data mapped from SmgPoi to MobileDataExtended OBJECT
         /// </summary>
@@ -2864,7 +2848,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns Single JSON Data mapped to given OBJECT

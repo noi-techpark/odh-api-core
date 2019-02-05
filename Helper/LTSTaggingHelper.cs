@@ -258,7 +258,7 @@ namespace Helper
 
             if (currenttag.Level > 0)
             {
-                var parent = PostgresSQLHelper.SelectFromTableDataAsObjectSingle<LTSTaggingType>(conn, "ltstaggingtypes", currenttag.TypeParent);
+                var parent = PostgresSQLHelper.SelectFromTableDataAsObject<LTSTaggingType>(conn, "ltstaggingtypes", currenttag.TypeParent);
 
 
                 ltstagparentlist.Add(parent);

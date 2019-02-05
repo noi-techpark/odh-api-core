@@ -105,9 +105,8 @@ namespace OdhApiCore.Controllers
             }
             else
             {
-                throw new Exception("not supported");
+                return StatusCode(StatusCodes.Status501NotImplemented, new { error = "not implemented" });
             }
-
         }
 
         #endregion
@@ -312,7 +311,7 @@ namespace OdhApiCore.Controllers
                 string orderby = "";
                 string where = "data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsIdAndString(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
+                var data = PostgresSQLHelper.SelectFromTableDataAsStringExtended(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
 
                 return "[" + String.Join(",", data) + "]";
             });
@@ -358,7 +357,7 @@ namespace OdhApiCore.Controllers
 
                 where = where + "AND data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsIdAndString(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });                
+                var data = PostgresSQLHelper.SelectFromTableDataAsStringExtended(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });                
 
                 return "[" + String.Join(",", data) + "]";
             });

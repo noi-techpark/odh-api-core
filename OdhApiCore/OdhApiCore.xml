@@ -28,6 +28,9 @@
             <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
             <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
             <returns>Collection of Activity Objects</returns>        
+            <response code="200">List created</response>
+            <response code="400">Request Error</response>
+            <response code="500">Internal Server Error</response>
         </member>
         <member name="M:OdhApiCore.Controllers.ActivityController.GetActivitySingle(System.String)">
             <summary>

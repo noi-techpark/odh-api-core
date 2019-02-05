@@ -676,7 +676,7 @@ namespace OdhApiCore.Controllers
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref where, ref orderby, geosearchresult);
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsIdAndString(conn, "activities", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
+                var data = PostgresSQLHelper.SelectFromTableDataAsStringExtended(conn, "activities", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
 
                 conn.Close();
 
