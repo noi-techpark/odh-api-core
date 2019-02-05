@@ -17,30 +17,13 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     public class OdhTagController : OdhController
     {
-        //private readonly string connectionString;
-
         public OdhTagController(ISettings settings) : base(settings)
         {         
         }
 
+
+
         #region GETTER
-
-        //private IActionResult Do(Func<NpgsqlConnection, string> f)
-        //{
-        //    try
-        //    {
-        //        using (var conn = new NpgsqlConnection(this.connectionString))
-        //        {
-        //            conn.Open();
-
-        //            return this.Content(f(conn), "application/json", Encoding.UTF8);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return this.BadRequest(new { error = ex.Message });
-        //    }
-        //}
 
         /// <summary>
         /// GET Complete List of SMGTags
@@ -60,30 +43,7 @@ namespace OdhApiCore.Controllers
                 var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);
 
                 return "[" + String.Join(",", myresult) + "]";
-            });
-
-            //try
-            //{
-            //    using (var conn = new NpgsqlConnection(connectionString))
-            //    {
-
-            //        conn.Open();
-
-            //        string select = "*";
-            //        string orderby = "data ->>'MainEntity', data ->>'Shortname'";
-            //        string where = "";
-
-            //        var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);
-
-            //        conn.Close();
-
-            //        return Content("[" + String.Join(",", myresult) + "]", "application/json", Encoding.UTF8);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(new { error = ex.Message });
-            //}
+            });      
         }
 
         /// <summary>
@@ -98,47 +58,35 @@ namespace OdhApiCore.Controllers
         {
             IList<string> smgtagtypelist = smgtagtype.ConvertToList(',');
 
-            try
+            return Do(conn =>
             {
-                using (var conn = new NpgsqlConnection(connectionString))
+                string select = "*";
+                string orderby = "data ->>'MainEntity', data ->>'Shortname'";
+                string where = "";
+
+                if (smgtagtypelist.Count > 0)
                 {
-                    conn.Open();
-
-                    string select = "*";
-                    string orderby = "data ->>'MainEntity', data ->>'Shortname'";
-                    string where = "";
-
-                    if (smgtagtypelist.Count > 0)
+                    if (smgtagtypelist.Count == 1)
                     {
-                        if (smgtagtypelist.Count == 1)
-                        {
-                            where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
-                        }
-                        else
-                        {
-                            string smgtagtypeliststring = "";
-                            foreach (var smgtagtypeid in smgtagtypelist)
-                            {
-                                smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
-                            }
-                            smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
-
-                            where = where + smgtagtypeliststring;
-                        }
+                        where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
                     }
+                    else
+                    {
+                        string smgtagtypeliststring = "";
+                        foreach (var smgtagtypeid in smgtagtypelist)
+                        {
+                            smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
+                        }
+                        smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
 
-                    var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);
-
-                    conn.Close();
-
-                    return Content("[" + String.Join(",", myresult) + "]", "application/json", Encoding.UTF8);
+                        where = where + smgtagtypeliststring;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
 
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);                
+
+                return "[" + String.Join(",", myresult) + "]";
+            });               
         }
 
         /// <summary>
@@ -151,26 +99,14 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetSingle(string id)
         {
-            try
+            return Do(conn =>
             {
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
-                    conn.Open();
+                string selectexp = "*";
+                string whereexp = "id LIKE '" + id.ToLower() + "'";
+                var data = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", selectexp, whereexp, "", 0, null);                
 
-                    string selectexp = "*";
-                    string whereexp = "id LIKE '" + id.ToLower() + "'";
-
-                    var data = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", selectexp, whereexp, "", 0, null);
-
-                    conn.Close();
-
-                    return Content(String.Join(",", data), "application/json", Encoding.UTF8);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+                return String.Join(",", data);
+            });
         }
 
         #endregion
@@ -187,29 +123,16 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetLocalized(string language)
         {
-            try
+            return Do(conn =>
             {
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
-                    conn.Open();
+                string select = "*";
+                string orderby = "data ->>'MainEntity', data ->>'Shortname'";
+                string where = "";
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", select, where, orderby, 0, null);
+                var localizedresult = myresult.TransformToLocalizedSmgTag(language);                
 
-                    string select = "*";
-                    string orderby = "data ->>'MainEntity', data ->>'Shortname'";
-                    string where = "";
-
-                    var myresult = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", select, where, orderby, 0, null);
-
-                    var localizedresult = myresult.TransformToLocalizedSmgTag(language);
-
-                    conn.Close();
-
-                    return Content(JsonConvert.SerializeObject(localizedresult), "application/json", Encoding.UTF8);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+                return JsonConvert.SerializeObject(localizedresult);
+            });
         }
 
         /// <summary>
@@ -225,48 +148,36 @@ namespace OdhApiCore.Controllers
         {
             IList<string> smgtagtypelist = smgtagtype.ConvertToList(',');
 
-            try
+            return Do(conn =>
             {
-                using (var conn = new NpgsqlConnection(connectionString))
+                string select = "*";
+                string orderby = "data ->>'MainEntity', data ->>'Shortname'";
+                string where = "";
+
+                if (smgtagtypelist.Count > 0)
                 {
-
-                    conn.Open();
-
-                    string select = "*";
-                    string orderby = "data ->>'MainEntity', data ->>'Shortname'";
-                    string where = "";
-
-                    if (smgtagtypelist.Count > 0)
+                    if (smgtagtypelist.Count == 1)
                     {
-                        if (smgtagtypelist.Count == 1)
-                        {
-                            where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
-                        }
-                        else
-                        {
-                            string smgtagtypeliststring = "";
-                            foreach (var smgtagtypeid in smgtagtypelist)
-                            {
-                                smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
-                            }
-                            smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
-
-                            where = where + smgtagtypeliststring;
-                        }
+                        where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
                     }
+                    else
+                    {
+                        string smgtagtypeliststring = "";
+                        foreach (var smgtagtypeid in smgtagtypelist)
+                        {
+                            smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
+                        }
+                        smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
 
-                    var myresult = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", select, where, orderby, 0, null);
-                    var localizedresult = myresult.TransformToLocalizedSmgTag(language);
-
-                    conn.Close();
-
-                    return Content(JsonConvert.SerializeObject(localizedresult), "application/json", Encoding.UTF8);
+                        where = where + smgtagtypeliststring;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", select, where, orderby, 0, null);
+                var localizedresult = myresult.TransformToLocalizedSmgTag(language);                
+
+                return JsonConvert.SerializeObject(localizedresult);
+            });
         }
 
         /// <summary>
@@ -280,27 +191,16 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetSingleLocalized(string id, string language)
         {
-            try
+            return Do(conn =>
             {
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
-                    conn.Open();
+                string selectexp = "*";
+                string whereexp = "id LIKE '" + id.ToLower() + "'";
 
-                    string selectexp = "*";
-                    string whereexp = "id LIKE '" + id.ToLower() + "'";
+                var data = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", selectexp, whereexp, "", 0, null);
+                var localizedresult = data.TransformToLocalizedSmgTag(language);                
 
-                    var data = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", selectexp, whereexp, "", 0, null);
-                    var localizedresult = data.TransformToLocalizedSmgTag(language);
-
-                    conn.Close();
-
-                    return Content(JsonConvert.SerializeObject(localizedresult.FirstOrDefault()), "application/json", Encoding.UTF8);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+                return JsonConvert.SerializeObject(localizedresult.FirstOrDefault());
+            });
         }
 
         #endregion
@@ -317,27 +217,16 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetReducedLocalized(string language)
         {
-            try
+            return Do(conn =>
             {
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
+                string select = "data->'Id' as Id, data->'TagName'->'" + language.ToLower() + "' as Name";
+                string orderby = "";
+                string where = "data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
 
-                    conn.Open();
-                    string select = "data->'Id' as Id, data->'TagName'->'" + language.ToLower() + "' as Name";
-                    string orderby = "";
-                    string where = "data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
+                var data = PostgresSQLHelper.SelectFromTableDataAsIdAndString(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
 
-                    var data = PostgresSQLHelper.SelectFromTableDataAsIdAndString(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
-
-                    conn.Close();
-
-                    return Content("[" + String.Join(",", data) + "]", "application/json", Encoding.UTF8);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+                return "[" + String.Join(",", data) + "]";
+            });
         }
 
         /// <summary>
@@ -350,51 +239,40 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Reduced/{language}/{smgtagtype}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult GetReducedFilteredLocalized(string language, string smgtagtype)
-        {
-            try
-            {
-                IList<string> smgtagtypelist = smgtagtype.ConvertToList(',');
+        {            
+            IList<string> smgtagtypelist = smgtagtype.ConvertToList(',');
 
-                using (var conn = new NpgsqlConnection(connectionString))
+            return Do(conn =>
+            {
+                string select = "data->'Id' as Id, data->'TagName'->'" + language.ToLower() + "' as Name";
+                string orderby = "";
+                string where = "";
+
+                if (smgtagtypelist.Count > 0)
                 {
-
-                    conn.Open();
-                    string select = "data->'Id' as Id, data->'TagName'->'" + language.ToLower() + "' as Name";
-                    string orderby = "";
-                    string where = "";
-
-                    if (smgtagtypelist.Count > 0)
+                    if (smgtagtypelist.Count == 1)
                     {
-                        if (smgtagtypelist.Count == 1)
-                        {
-                            where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
-                        }
-                        else
-                        {
-                            string smgtagtypeliststring = "";
-                            foreach (var smgtagtypeid in smgtagtypelist)
-                            {
-                                smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
-                            }
-                            smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
-
-                            where = where + smgtagtypeliststring;
-                        }
+                        where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
                     }
+                    else
+                    {
+                        string smgtagtypeliststring = "";
+                        foreach (var smgtagtypeid in smgtagtypelist)
+                        {
+                            smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
+                        }
+                        smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
 
-                    where = where + "AND data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
-
-                    var data = PostgresSQLHelper.SelectFromTableDataAsIdAndString(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
-
-                    conn.Close();
-
-                    return Content("[" + String.Join(",", data) + "]", "application/json", Encoding.UTF8);
+                        where = where + smgtagtypeliststring;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+
+                where = where + "AND data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
+
+                var data = PostgresSQLHelper.SelectFromTableDataAsIdAndString(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });                
+
+                return "[" + String.Join(",", data) + "]";
+            });
         }
 
         #endregion
