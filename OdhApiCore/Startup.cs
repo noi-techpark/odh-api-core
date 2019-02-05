@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace OdhApiCore
 {
@@ -51,6 +52,17 @@ namespace OdhApiCore
             services.AddMvc(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton<ISettings, Settings>();
+
+            var filePath = Path.Combine(System.AppContext.BaseDirectory, "OdhApiCore.xml");
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "OdhApi .Net Core", Version = "v1" });
+                c.IncludeXmlComments(filePath);
+            });
+
+            
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,6 +92,16 @@ namespace OdhApiCore
             //app.UseCookiePolicy();
 
             //app.UseAuthentication();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseMvc();
 

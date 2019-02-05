@@ -1,0 +1,327 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OdhApiCore</name>
+    </assembly>
+    <members>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetActivityList(System.Int32,System.Int32,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            GET Activity List
+            </summary>
+            <param name="pagenumber">Pagenumber, (default:1)</param>
+            <param name="pagesize">Elements per Page, (default:10)</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
+            <param name="activitytype">Type of the Activity ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), REFERENCE TO: GET /api/ActivityTypes </param>
+            <param name="subtype">Subtype of the Activity (BITMASK Filter = available SubTypes depends on the selected Activity Type), (default:'null')</param>
+            <param name="idlist">IDFilter (Separator ',' List of Activity IDs), (default:'null')</param>
+            <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
+            <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ','), (default:'null')</param>
+            <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km), (default:'null')</param>
+            <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
+            <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours), (default:'null')</param>
+            <param name="highlight">Hightlight Filter (possible values: 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true), (default:'null')</param>
+            <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>      
+            <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=activity'), (default:'null')</param>        
+            <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+            <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>        
+            <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+            <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+            <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+            <returns>Collection of Activity Objects</returns>        
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetActivitySingle(System.String)">
+            <summary>
+            GET Activity Single 
+            </summary>
+            <param name="id">ID of the Activity</param>
+            <returns>Activity Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetActivityFilteredLocalized(System.String,System.Int32,System.Int32,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            GET Activity List Localized
+            </summary>
+            <param name="language">Localization Language, (default:'en')</param>
+            <param name="pagenumber">Pagenumber, (default:1)</param>
+            <param name="pagesize">Elements per Page, (default:10)</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
+            <param name="activitytype">Type of the Activity ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), REFERENCE TO: GET /api/ActivityTypes </param>
+            <param name="subtype">Subtype of the Activity (BITMASK Filter = available SubTypes depends on the selected Activity Type), (default:'null')</param>
+            <param name="idlist">IDFilter (Separator ',' List of Activity IDs), (default:'null')</param>
+            <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
+            <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ','), (default:'null')</param>
+            <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km), (default:'null')</param>
+            <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
+            <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours), (default:'null')</param>
+            <param name="highlight">Hightlight Filter (possible values: 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true), (default:'null')</param>
+            <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>      
+            <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'api/SmgTag/ByMainEntity/Activity'), (default:'null')</param>        
+            <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+            <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>        
+            <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+            <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+            <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+            <returns>Collection of ActivityLocalized Objects</returns>        
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetActivitySingleLocalized(System.String,System.String)">
+            <summary>
+            GET Activity Single Localized
+            </summary>
+            <param name="language">Localization Language, (default:'en')</param>
+            <param name="id">ID of the Activity</param>        
+            <returns>ActivityLocalized Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetActivityReduced(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            GET Activity List Reduced
+            </summary>
+            <param name="language">Localization Language, (default:'en')</param>
+            <param name="activitytype">Type of the Activity ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), REFERENCE TO: GET /api/ActivityTypes </param>
+            <param name="subtype">Subtype of the Activity (BITMASK Filter = available SubTypes depends on the selected Activity Type), (default:'null')</param>
+            <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
+            <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ','), (default:'null')</param>
+            <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km), (default:'null')</param>
+            <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
+            <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours), (default:'null')</param>
+            <param name="highlight">Hightlight Filter (possible values: 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true), (default:'null')</param>
+            <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>      
+            <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'api/SmgTag/ByMainEntity/Activity'), (default:'null')</param>        
+            <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+            <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>        
+            <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+            <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+            <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+            <returns>Collection of Activity Reduced Objects</returns>        
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetAllActivityTypesList">
+            <summary>
+            GET Activity Types List
+            </summary>
+            <returns>Collection of ActivityTypes Object</returns>                
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetAllActivityChanged(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            GET Activity Changed List by Date
+            </summary>
+            <param name="pagenumber">Pagenumber, (default:1)</param>
+            <param name="pagesize">Elements per Page, (default:10)</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
+            <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
+            <returns>Collection of PoiBaseInfos Objects</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetAll(System.String,System.Int32,System.String)">
+            <summary>
+            GET Full Activities List  (max 1024)
+            </summary>
+            <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
+            <param name="elements">Elements to retrieve (max. 1024)</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
+            <returns>Collection of Activity Objects</returns>        
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetPaged(System.String,System.Int32,System.Int32,System.String,Helper.PGGeoSearchResult)">
+            <summary>
+            GET Paged Activities List
+            </summary>
+            <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
+            <param name="pagenumber">Pagenumber</param>
+            <param name="pagesize">Elements per Page</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
+            <returns>Result Object with Collection of Activity Objects</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetFiltered(System.Int32,System.Int32,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,Helper.PGGeoSearchResult)">
+            <summary>
+            GET Paged Filtered Activities List
+            </summary>
+            <param name="pagenumber">Pagenumber</param>
+            <param name="pagesize">Elements per Page</param>
+            <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' - BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
+            <param name="subtypefilter">Subtype of the Activity ('null' = Filter disabled, BITMASK Filter = available SubTypes depends on the selected Activity Type)</param>
+            <param name="idfilter">IDFilter (Separator ',' List of Activity IDs, 'null' = No Filter)</param>
+            <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter)</param>
+            <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ',', 'null' : Filter disabled)</param>
+            <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km) 'null' : disables Filter</param>
+            <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres) 'null' : disables Filter</param>
+            <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours) 'null' : disables Filter</param>
+            <param name="highlightfilter">Hightlight Filter (possible values: 'null' = Filter disabled, 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true)</param>
+            <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>      
+            <param name="active">Active Filter (possible Values: 'null' Displays all Activities, 'true' only Active Activities, 'false' only Disabled Activities</param>
+            <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Activities, 'true' only SMG Active Activities, 'false' only SMG Disabled Activities</param>
+            <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
+            <returns>Result Object with Collection of Activities Objects</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetSingle(System.String)">
+            <summary>
+            GET Single Activity
+            </summary>
+            <param name="id">ID of the Activity</param>
+            <returns>Activity Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetLocalized(System.String,System.String,System.Int32,System.String)">
+            <summary>
+            GET Full Activity List Localized  (max 1024)
+            </summary>
+            <param name="language">Localization Language</param>
+            <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
+            <param name="elements">Elements to retrieve (max. 1024)</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
+            <returns>Collection of Activity Object Localized</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetPagedLocalized(System.String,System.String,System.Int32,System.Int32,System.String,Helper.PGGeoSearchResult)">
+            <summary>
+            GET Paged Activities List Localized
+            </summary>
+            <param name="language">Localization Language</param>
+            <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
+            <param name="pagenumber">Pagenumber</param>
+            <param name="pagesize">Elements per Page</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
+            <returns>Result Object with Collection of Activity Objects Localized</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetFilteredLocalized(System.String,System.Int32,System.Int32,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,Helper.PGGeoSearchResult)">
+            <summary>
+            GET Paged Filtered Activities List Localized
+            </summary>
+            <param name="language">Localization Language</param>
+            <param name="pagenumber">Pagenumber</param>
+            <param name="pagesize">Elements per Page</param>
+            <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
+            <param name="subtypefilter">Subtype of the Activity ('null' = Filter disabled, BITMASK Filter = available SubTypes depends on the selected Activity Type)</param>
+            <param name="idfilter">IDFilter (Separator ',' List of Activity IDs, 'null' = No Filter)</param>
+            <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter)</param>
+            <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ',', 'null' : Filter disabled)</param>
+            <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km) 'null' : disables Filter</param>
+            <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres) 'null' : disables Filter</param>
+            <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours) 'null' : disables Filter</param>
+            <param name="highlightfilter">Hightlight Filter (possible values: 'null' = Filter disabled, 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true)</param>
+            <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>  
+            <param name="active">Active Filter (possible Values: 'null' Displays all Activities, 'true' only Active Activities, 'false' only Disabled Activities</param>
+            <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Activities, 'true' only SMG Active Activities, 'false' only SMG Disabled Activities</param>
+            <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>   /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
+            <returns>Result Object with Collection of Activity Objects Localized</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetSingleLocalized(System.String,System.String)">
+            <summary>
+            GET Single Activity Localized
+            </summary>
+            <param name="language">Localization Language</param>
+            <param name="id">ID of the Activity</param>
+            <returns>Activity Localized Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetReduced(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,Helper.PGGeoSearchResult)">
+            <summary>
+            GET Reduced Activity List Filtered
+            </summary>
+            <param name="language">Language of the Reduced List</param>
+            <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
+            <param name="subtypefilter">Subtype of the Activity ('null' = Filter disabled, BITMASK Filter = available SubTypes depends on the selected Activity Type)</param> 
+            <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter)</param>
+            <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ',', 'null' : Filter disabled)</param>
+            <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km) 'null' : disables Filter</param>
+            <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres) 'null' : disables Filter</param>
+            <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours) 'null' : disables Filter</param>
+            <param name="highlightfilter">Hightlight Filter (possible values: 'null' = Filter disabled, 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true)</param>
+            <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>  
+            <param name="active">Active Filter (possible Values: 'null' Displays all Activities, 'true' only Active Activities, 'false' only Disabled Activities</param>
+            <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Activities, 'true' only SMG Active Activities, 'false' only SMG Disabled Activities</param>
+            <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>   /// <returns>Collection of Reduced Activity Objects</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetActivityTypesList">
+            <summary>
+            GET Activity Types List (Localized Type Names and Bitmasks)
+            </summary>
+            <returns>Collection of ActivityTypes Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.ActivityController.GetLastChanged(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            GET Paged Activity List based on LastChange Date
+            </summary>        
+            <param name="pagenumber">Pagenumber</param>
+            <param name="pagesize">Elements per Page</param>
+            <param name="updatefrom">Date from (all Activity with LastChange >= datefrom are passed)</param>
+            <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
+            <returns>Result Object with Collection of Activity Objects</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetODHTags(System.String,System.String)">
+            <summary>
+            GET ODHTag List
+            </summary>
+            <param name="validforentity">Filter on Tags valid on Entitys (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>        
+            <param name="localizationlanguage"></param>        
+            <returns>Collection of ODHTag Objects</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetODHTagSingle(System.String,System.String)">
+            <summary>
+            GET ODHTag Single
+            </summary>
+            <param name="id"></param>
+            <param name="localizationlanguage"></param>
+            <returns>ODHTag Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetODHTagsReduced(System.String,System.String)">
+            <summary>
+            GET ODHTag List REDUCED
+            </summary>
+            <param name="validforentity"></param>        
+            <param name="localizationlanguage"></param>        
+            <returns></returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.Get">
+            <summary>
+            GET Complete List of SMGTags
+            </summary>
+            <returns>Collection of SMGTag Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetFiltered(System.String)">
+            <summary>
+            GET Filtered List of SMGTags by smgtagtype
+            </summary>
+            <param name="smgtagtype">Smg Tag Type</param>
+            <returns>Collection of SMGTag Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetSingle(System.String)">
+            <summary>
+            GET Single SMGTag by ID
+            </summary>
+            <param name="id">ID of the SMGTag</param>
+            <returns>SMGTag Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetLocalized(System.String)">
+            <summary>
+            GET Localized List of SMGTags
+            </summary>
+            <param name="language">Language</param>
+            <returns>Collection of Localized SMGTag Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetFilteredLocalized(System.String,System.String)">
+            <summary>
+            GET Filtered List of Localized SMGTags by smgtagtype
+            </summary>
+            <param name="language">Langauge</param>
+            <param name="smgtagtype">Smg Tag Type</param>
+            <returns>Collection of Localized SMGTag Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetSingleLocalized(System.String,System.String)">
+            <summary>
+            GET Single Localized SMGTag Object by ID
+            </summary>
+            <param name="id">SMGTag ID</param>
+            <param name="language">Language</param>
+            <returns>Localized SMGTag Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetReducedLocalized(System.String)">
+            <summary>
+            GET Complete Reduced SMGTag List
+            </summary>
+            <param name="language">Language</param>
+            <returns>Collection Localized Reduced SMGTag Object</returns>
+        </member>
+        <member name="M:OdhApiCore.Controllers.OdhTagController.GetReducedFilteredLocalized(System.String,System.String)">
+            <summary>
+            GET Filtered Reduced SMGTag List by smgtagtype
+            </summary>
+            <param name="language">Language</param>
+            <param name="smgtagtype">SMGTag Type</param>
+            <returns>Collection Localized Reduced SMGTag Object</returns>
+        </member>
+    </members>
+</doc>

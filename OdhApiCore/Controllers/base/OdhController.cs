@@ -33,7 +33,10 @@ namespace OdhApiCore.Controllers
             }
             catch (Exception ex)
             {
-                return this.BadRequest(new { error = ex.Message });
+                if(ex.Message == "Request Error")
+                    return this.BadRequest(new { error = ex.Message });
+                else
+                    return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
         }
 
