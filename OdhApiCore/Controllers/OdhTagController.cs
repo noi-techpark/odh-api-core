@@ -21,7 +21,96 @@ namespace OdhApiCore.Controllers
         {         
         }
 
+        #region SWAGGER Exposed API
 
+        /// <summary>
+        /// GET ODHTag List
+        /// </summary>
+        /// <param name="validforentity">Filter on Tags valid on Entitys (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>        
+        /// <param name="localizationlanguage"></param>        
+        /// <returns>Collection of ODHTag Objects</returns>
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTags Objects", typeof(IEnumerable<SmgTags>))]
+        [HttpGet, Route("api/ODHTag")]
+        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        public IActionResult GetODHTags(string localizationlanguage = "", string validforentity = "")
+        {
+            //Fall 1 Getter auf ALL
+            if (string.IsNullOrEmpty(validforentity) && string.IsNullOrEmpty(localizationlanguage))
+            {
+                return Get();
+            }
+            //Fall 2 Getter auf GetFiltered
+            else if (!string.IsNullOrEmpty(validforentity) && string.IsNullOrEmpty(localizationlanguage))
+            {
+                return GetFiltered(validforentity);
+            }
+            //Fall 4 GET auf GetLocalized
+            else if (string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
+            {
+                return GetLocalized(localizationlanguage);
+            }
+            //Fall 5 GET auf GetFilteredLocalized
+            else if (!string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
+            {
+                return GetFilteredLocalized(localizationlanguage, validforentity);
+            }
+            else
+            {
+                throw new Exception("not supported");
+            }
+        }
+
+        /// <summary>
+        /// GET ODHTag Single
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="localizationlanguage"></param>
+        /// <returns>ODHTag Object</returns>
+        //[SwaggerResponse(HttpStatusCode.OK, "SmgTag Object", typeof(SmgTags))]
+        [HttpGet, Route("api/ODHTag/{id}")]
+        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        public IActionResult GetODHTagSingle(string id, string localizationlanguage = "")
+        {
+            //Fall 1 Getter auf ALL
+            if (string.IsNullOrEmpty(localizationlanguage))
+            {
+                return GetSingle(id);
+            }
+            //Fall 2 Getter auf GetFiltered
+            else
+            {
+                return GetSingleLocalized(id, localizationlanguage);
+            }            
+        }
+
+        /// <summary>
+        /// GET ODHTag List REDUCED
+        /// </summary>
+        /// <param name="validforentity"></param>        
+        /// <param name="localizationlanguage"></param>        
+        /// <returns></returns>
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTagReduced Objects", typeof(IEnumerable<SmgTagReduced>))]
+        [HttpGet, Route("api/ODHTagReduced")]
+        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        public IActionResult GetODHTagsReduced(string localizationlanguage, string validforentity = "")
+        {
+            if (string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
+            {
+                return GetReducedLocalized(localizationlanguage);
+            }
+            //Fall 7 GET auf GetReducedFilteredLocalized
+            else if (!string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
+            {
+                return GetReducedFilteredLocalized(localizationlanguage, validforentity);
+            }
+            else
+            {
+                throw new Exception("not supported");
+            }
+
+        }
+
+        #endregion
 
         #region GETTER
 
