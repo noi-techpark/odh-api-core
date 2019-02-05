@@ -134,7 +134,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns Single JSON Data mapped to given OBJECT
         /// </summary>
@@ -188,8 +187,6 @@ namespace Helper
                 return default(T);
             }
         }
-
-
 
         /// <summary>
         /// Returns List of JSON Data mapped to given OBJECT by passed Fields to deserialize
@@ -248,7 +245,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data as STRING (Only Data)
         /// </summary>
@@ -287,7 +283,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns List of JSON Data as Tuple List (Id, String)
@@ -350,7 +345,6 @@ namespace Helper
             }
         }
 
-
         /// <summary>
         /// Returns List of JSON Data as Tuple List (Id, String)
         /// </summary>
@@ -409,7 +403,6 @@ namespace Helper
                 return null;
             }
         }
-
 
         /// <summary>
         /// Returns List of JSON Data as List (Id)

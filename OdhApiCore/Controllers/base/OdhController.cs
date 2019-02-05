@@ -26,7 +26,7 @@ namespace OdhApiCore.Controllers
             {
                 using (var conn = new NpgsqlConnection(this.connectionString))
                 {
-                    conn.Open();
+                    conn.Open();                    
 
                     return this.Content(f(conn), "application/json", Encoding.UTF8);
                 }
@@ -38,7 +38,7 @@ namespace OdhApiCore.Controllers
                 else
                     return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
-        }
+        }       
 
     }
 }
