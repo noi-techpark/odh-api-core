@@ -13,7 +13,7 @@ using Npgsql;
 
 namespace OdhApiCore.Controllers
 {
-    [Route("api/SmgTag")]
+    //[Route("api/SmgTag")]
     [EnableCors("CorsPolicy")]
     public class OdhTagController : OdhController
     {

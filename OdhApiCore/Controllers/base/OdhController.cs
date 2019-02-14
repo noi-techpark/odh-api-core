@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 
 namespace OdhApiCore.Controllers
-{
-    [Route("api/[controller]")]
+{ 
     [ApiController]
     public abstract class OdhController : ControllerBase
     {

@@ -16,7 +16,7 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace OdhApiCore.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     [EnableCors("CorsPolicy")]
     public class ActivityController : OdhController
     {
