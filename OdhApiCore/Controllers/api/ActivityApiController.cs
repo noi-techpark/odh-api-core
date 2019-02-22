@@ -284,9 +284,7 @@ namespace OdhApiCore.Controllers
         {
             return Do(conn =>
             { 
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
-
-                conn.Open();
+                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);                
 
                 string select = "*";
                 string orderby = "";
