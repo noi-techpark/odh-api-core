@@ -282,26 +282,17 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("All/{activitytype}/{elements}/{seed}")]
         public IActionResult GetAll(string activitytype, int elements, string seed)
         {
-            return Do(conn =>
-            { 
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);                
+            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
 
+            return Do(conn =>
+            {            
                 string select = "*";
                 string orderby = "";
 
-                string where = PostgresSQLHelper.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                string myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
-                if (seed != "null")
-                {
-                    string myseed = Helper.CreateSeed.GetSeed(seed);
-                    orderby = "md5(id || '" + myseed + "')";
-                }
-                else
-                {
-                    orderby = "data ->>'Shortname' ASC";
-                }
-
-                var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "activities", select, where, orderby, elements, null);                
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "activities", select, where.Item1, where.Item2, orderby, elements, null);                
 
                 return "[" + String.Join(",", myresult) + "]";
             });  
@@ -320,42 +311,26 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Paged/{activitytype}/{pagenumber}/{pagesize}/{seed}")]
         public IActionResult GetPaged(string activitytype, int pagenumber, int pagesize, string seed, PGGeoSearchResult geosearchresult)
         {
-            return Do(conn =>
-            {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
+            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
 
-                string myseed = seed;
+            return Do(conn =>
+            {          
                 string select = "*";
                 string orderby = "";
 
-                string where = PostgresSQLHelper.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                string whereexpression = where.Item1;
+                string myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
-                if (seed != "null")
-                {
-                    myseed = Helper.CreateSeed.GetSeed(seed);
-                    //orderby = "md5(data->>'Id' || '" + seed + "')";
-                    orderby = "md5(id || '" + myseed + "')";
-                }
-                else
-                {
-                    orderby = "data ->>'Shortname' ASC";
-                }
-
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref where, ref orderby, geosearchresult);
+                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
                 int pageskip = pagesize * (pagenumber - 1);
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsString(conn, "activities", select, where, orderby, pagesize, pageskip);
-                var count = PostgresSQLHelper.CountDataFromTable(conn, "activities", where);
-
+                var data = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip);
+                var count = PostgresSQLHelper.CountDataFromTableParametrized(conn, "activities", whereexpression, where.Item2);
 
                 int totalcount = Convert.ToInt32(count);
-                int totalpages = 0;
-
-                if (totalcount % pagesize == 0)
-                    totalpages = totalcount / pagesize;
-                else
-                    totalpages = (totalcount / pagesize) + 1;
+                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, myseed, String.Join(",", data));
             });
@@ -386,41 +361,27 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Filtered/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed}")]
         public IActionResult GetFiltered(int pagenumber, int pagesize, string activitytype, string subtypefilter, string idfilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, string seed, PGGeoSearchResult geosearchresult)
         {
-            return Do(conn =>
-            {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
+            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
 
-                string myseed = seed;
+            return Do(conn =>
+            {           
                 string select = "*";
                 string orderby = "";
 
-                string where = PostgresSQLHelper.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                string whereexpression = where.Item1;
+                string myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
-                if (seed != "null")
-                {
-                    myseed = Helper.CreateSeed.GetSeed(seed);
-                    //orderby = "md5(data->>'Id' || '" + seed + "')";
-                    orderby = "md5(id || '" + myseed + "')";
-                }
-                else
-                {
-                    orderby = "data ->>'Shortname' ASC";
-                }
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref where, ref orderby, geosearchresult);
+                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
                 int pageskip = pagesize * (pagenumber - 1);
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsString(conn, "activities", select, where, orderby, pagesize, pageskip);
-                var count = PostgresSQLHelper.CountDataFromTable(conn, "activities", where);                
+                var data = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip);
+                var count = PostgresSQLHelper.CountDataFromTableParametrized(conn, "activities", whereexpression, where.Item2);                
 
                 int totalcount = Convert.ToInt32(count);
-                int totalpages = 0;
-
-                if (totalcount % pagesize == 0)
-                    totalpages = totalcount / pagesize;
-                else
-                    totalpages = (totalcount / pagesize) + 1;                
+                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, myseed, String.Join(",", data));
             });
@@ -439,12 +400,8 @@ namespace OdhApiCore.Controllers
         {
             return Do(conn =>
             {
-                string selectexp = "*";
-                string whereexp = "id LIKE '" + id.ToUpper() + "'";
-
-                var data = PostgresSQLHelper.SelectFromTableDataAsString(conn, "activities", selectexp, whereexp, "", 0, null);
-
-                conn.Close();
+                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
+                var data = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "activities", "*", where.Item1, where.Item2, "", 0, null);
 
                 return String.Join(",", data);
             });
@@ -467,26 +424,18 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api/Activity/All/Localized/{language}/{activitytype}/{elements}/{seed}")]
         public IActionResult GetLocalized(string language, string activitytype, int elements, string seed)
         {
-            return Do(conn =>
-            {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
+            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
 
+            return Do(conn =>
+            {          
                 string select = "*";
                 string orderby = "";
 
-                string where = PostgresSQLHelper.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                
+                string myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
-                if (seed != "null")
-                {
-                    string myseed = Helper.CreateSeed.GetSeed(seed);
-                    orderby = "md5(id || '" + myseed + "')";
-                }
-                else
-                {
-                    orderby = "data ->>'Shortname' ASC";
-                }
-
-                var myresult = PostgresSQLHelper.SelectFromTableDataAsLtsPoiLocalizedObject(conn, "activities", select, where, orderby, elements, null, language);
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrized<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", select, where.Item1, where.Item2, "", 0, null, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized);
 
                 return JsonConvert.SerializeObject(myresult);
             });
@@ -506,41 +455,27 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api/Activity/Paged/Localized/{language}/{activitytype}/{pagenumber}/{pagesize}/{seed}")]
         public IActionResult GetPagedLocalized(string language, string activitytype, int pagenumber, int pagesize, string seed, PGGeoSearchResult geosearchresult)
         {
-            return Do(conn =>
-            {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
+            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
 
+            return Do(conn =>
+            {          
                 string select = "*";
                 string orderby = "";
-                string where = PostgresSQLHelper.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
 
-                string myseed = seed;
+                string myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
-                if (seed != "null")
-                {
-                    myseed = Helper.CreateSeed.GetSeed(seed);
-                    //orderby = "md5(data->>'Id' || '" + seed + "')";
-                    orderby = "md5(id || '" + myseed + "')";
-                }
-                else
-                {
-                    orderby = "data ->>'Shortname' ASC";
-                }
+                string whereexpression = where.Item1;
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref where, ref orderby, geosearchresult);
+                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
                 int pageskip = pagesize * (pagenumber - 1);
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsLtsPoiLocalizedObject(conn, "activities", select, where, orderby, pagesize, pageskip, language);
-                var count = PostgresSQLHelper.CountDataFromTable(conn, "activities", where);                
+                var data = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrized<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized);
+                var count = PostgresSQLHelper.CountDataFromTableParametrized(conn, "activities", whereexpression, where.Item2);
 
                 int totalcount = Convert.ToInt32(count);
-                int totalpages = 0;
-
-                if (totalcount % pagesize == 0)
-                    totalpages = totalcount / pagesize;
-                else
-                    totalpages = (totalcount / pagesize) + 1;
+                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, -1, myseed, JsonConvert.SerializeObject(data));
             });
@@ -571,43 +506,28 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api/Activity/Filtered/Localized/{language}/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed}")]
         public IActionResult GetFilteredLocalized(string language, int pagenumber, int pagesize, string activitytype, string subtypefilter, string idfilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, string seed, PGGeoSearchResult geosearchresult)
         {
+            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
+
             return Do(conn =>
             {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
-
-                string myseed = seed;
-
                 string select = "*";
                 string orderby = "";
 
-                string where = PostgresSQLHelper.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
 
-                if (seed != "null")
-                {
-                    myseed = Helper.CreateSeed.GetSeed(seed);
-                    //orderby = "md5(data->>'Id' || '" + seed + "')";
-                    orderby = "md5(id || '" + myseed + "')";
-                }
-                else
-                {
-                    orderby = "data ->>'Shortname' ASC";
-                    //orderby = "md5(id || '" + myseed + "')";
-                }
+                string myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref where, ref orderby, geosearchresult);
+                string whereexpression = where.Item1;
+
+                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
                 int pageskip = pagesize * (pagenumber - 1);
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsLtsPoiLocalizedObject(conn, "activities", select, where, orderby, pagesize, pageskip, language);
-                var count = PostgresSQLHelper.CountDataFromTable(conn, "activities", where);                
+                var data = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrized<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized);
+                var count = PostgresSQLHelper.CountDataFromTableParametrized(conn, "activities", whereexpression, where.Item2);
 
                 int totalcount = Convert.ToInt32(count);
-                int totalpages = 0;
-
-                if (totalcount % pagesize == 0)
-                    totalpages = totalcount / pagesize;
-                else
-                    totalpages = (totalcount / pagesize) + 1;
+                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, -1, myseed, JsonConvert.SerializeObject(data));
             });
@@ -626,12 +546,8 @@ namespace OdhApiCore.Controllers
         {
             return Do(conn =>
             {
-                string selectexp = "*";
-
-                //string whereexp = "data @> '{\"Id\" : \"" + id + "\" }'";
-                string whereexp = "id LIKE '" + id.ToUpper() + "'";
-
-                var data = PostgresSQLHelper.SelectFromTableDataAsLtsPoiLocalizedObject(conn, "activities", selectexp, whereexp, "", 0, null, language);                
+                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
+                var data = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrized<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", "*", where.Item1, where.Item2, "", 0, null, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized);
 
                 return JsonConvert.SerializeObject(data.FirstOrDefault());
             });
@@ -663,20 +579,19 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api/Activity/ReducedAsync/{language}/{activitytype}/{subtypefilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}")]
         public IActionResult GetReduced(string language, string activitytype, string subtypefilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, PGGeoSearchResult geosearchresult)
         {
-            return Do(conn =>
-            {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, "null", locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
+            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, "null", locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
 
+            return Do(conn =>
+            {                               
                 string select = "data->'Id' as Id, data->'Detail'->'" + language + "'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
 
-                string where = PostgresSQLHelper.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                string whereexpression = where.Item1;
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref where, ref orderby, geosearchresult);
+                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsStringExtended(conn, "activities", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
-
-                conn.Close();
+                var data = PostgresSQLHelper.SelectFromTableDataAsJsonParametrized(conn, "activities", select, whereexpression, where.Item2, orderby, 0, null, new List<string>() { "Id", "Name" });
 
                 return "[" + String.Join(",", data) + "]";
             });
@@ -913,32 +828,22 @@ namespace OdhApiCore.Controllers
 
             return Do(conn =>
             {
-                string myseed = seed;
+                conn.Open();
 
                 string select = "*";
                 string orderby = "";
 
-                if (seed != "null")
-                {
-                    myseed = Helper.CreateSeed.GetSeed(seed);
-                    //orderby = "md5(data->>'Id' || '" + seed + "')";
-                    orderby = "md5(id || '" + myseed + "')";
-                }
+                string myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
                 int pageskip = pagesize * (pagenumber - 1);
 
-                string wherexp = "to_date(data ->> 'LastChange', 'YYYY-MM-DD') > '" + updatefrom + "'";
+                var where = PostgresSQLWhereBuilder.CreateLastChangedWhereExpression(updatefrom);
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsString(conn, "activities", select, wherexp, orderby, pagesize, pageskip);
-                var count = PostgresSQLHelper.CountDataFromTable(conn, "activities", wherexp);
+                var data = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "activities", select, where.Item1, where.Item2, orderby, pagesize, pageskip);
+                var count = PostgresSQLHelper.CountDataFromTableParametrized(conn, "activities", where.Item1, where.Item2);
 
                 int totalcount = Convert.ToInt32(count);
-                int totalpages = 0;
-
-                if (totalcount % pagesize == 0)
-                    totalpages = totalcount / pagesize;
-                else
-                    totalpages = (totalcount / pagesize) + 1;
+                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, -1, myseed, String.Join(",", data));
             });

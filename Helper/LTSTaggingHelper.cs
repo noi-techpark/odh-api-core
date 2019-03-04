@@ -253,13 +253,11 @@ namespace Helper
         }
 
         public static List<LTSTaggingType> GetLTSTagParentsPG(NpgsqlConnection conn, LTSTaggingType currenttag, List<LTSTaggingType> ltstagparentlist)
-        {
-            //List<LTSTaggingType> ltstagparentlist = new List<LTSTaggingType>();
-
+        {            
             if (currenttag.Level > 0)
             {
-                var parent = PostgresSQLHelper.SelectFromTableDataAsObject<LTSTaggingType>(conn, "ltstaggingtypes", currenttag.TypeParent);
-
+                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(currenttag.TypeParent);
+                var parent = PostgresSQLHelper.SelectFromTableDataAsObjectParametrized<LTSTaggingType>(conn, "ltstaggingtypes", "*", where.Item1, where.Item2, "", 1, null).FirstOrDefault();
 
                 ltstagparentlist.Add(parent);
 

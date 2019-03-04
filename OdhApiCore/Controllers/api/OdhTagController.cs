@@ -128,7 +128,7 @@ namespace OdhApiCore.Controllers
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
 
-                var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "smgtags", select, where, null, orderby, 0, null);
 
                 return "[" + String.Join(",", myresult) + "]";
             });      
@@ -151,27 +151,24 @@ namespace OdhApiCore.Controllers
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
+                List<PGParameters> parameters = new List<PGParameters>();
 
                 if (smgtagtypelist.Count > 0)
                 {
-                    if (smgtagtypelist.Count == 1)
+                    int counter = 1;
+                    string smgtagtypeliststring = "";
+                    foreach (var smgtagtypeid in smgtagtypelist)
                     {
-                        where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
+                        smgtagtypeliststring = smgtagtypeliststring + "data @> @smgtag" + counter + " OR ";
+                        parameters.Add(new PGParameters() { Name = "smgtag" + counter, Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}" });
+                        counter++;
                     }
-                    else
-                    {
-                        string smgtagtypeliststring = "";
-                        foreach (var smgtagtypeid in smgtagtypelist)
-                        {
-                            smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
-                        }
-                        smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
+                    smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
 
-                        where = where + smgtagtypeliststring;
-                    }
+                    where = where + smgtagtypeliststring;
                 }
 
-                var myresult = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", select, where, orderby, 0, null);                
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "smgtags", select, where, parameters, orderby, 0, null);
 
                 return "[" + String.Join(",", myresult) + "]";
             });               
@@ -189,9 +186,8 @@ namespace OdhApiCore.Controllers
         {
             return Do(conn =>
             {
-                string selectexp = "*";
-                string whereexp = "id LIKE '" + id.ToLower() + "'";
-                var data = PostgresSQLHelper.SelectFromTableDataAsString(conn, "smgtags", selectexp, whereexp, "", 0, null);                
+                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
+                var data = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "smgtags", "*", where.Item1, where.Item2, "", 0, null);
 
                 return String.Join(",", data);
             });
@@ -216,8 +212,9 @@ namespace OdhApiCore.Controllers
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
-                var myresult = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", select, where, orderby, 0, null);
-                var localizedresult = myresult.TransformToLocalizedSmgTag(language);                
+
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsObjectParametrized<SmgTags>(conn, "smgtags", select, where, null, orderby, 0, null);
+                var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult);
             });
@@ -241,28 +238,25 @@ namespace OdhApiCore.Controllers
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
+                List<PGParameters> parameters = new List<PGParameters>();
 
                 if (smgtagtypelist.Count > 0)
                 {
-                    if (smgtagtypelist.Count == 1)
+                    int counter = 1;
+                    string smgtagtypeliststring = "";
+                    foreach (var smgtagtypeid in smgtagtypelist)
                     {
-                        where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
+                        smgtagtypeliststring = smgtagtypeliststring + "data @> @smgtag" + counter + " OR ";
+                        parameters.Add(new PGParameters() { Name = "smgtag" + counter, Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}" });
+                        counter++;
                     }
-                    else
-                    {
-                        string smgtagtypeliststring = "";
-                        foreach (var smgtagtypeid in smgtagtypelist)
-                        {
-                            smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
-                        }
-                        smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
+                    smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
 
-                        where = where + smgtagtypeliststring;
-                    }
+                    where = where + smgtagtypeliststring;
                 }
 
-                var myresult = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", select, where, orderby, 0, null);
-                var localizedresult = myresult.TransformToLocalizedSmgTag(language);                
+                var myresult = PostgresSQLHelper.SelectFromTableDataAsObjectParametrized<SmgTags>(conn, "smgtags", select, where, parameters, orderby, 0, null);
+                var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult);
             });
@@ -281,11 +275,9 @@ namespace OdhApiCore.Controllers
         {
             return Do(conn =>
             {
-                string selectexp = "*";
-                string whereexp = "id LIKE '" + id.ToLower() + "'";
-
-                var data = PostgresSQLHelper.SelectFromTableDataAsObject<SmgTags>(conn, "smgtags", selectexp, whereexp, "", 0, null);
-                var localizedresult = data.TransformToLocalizedSmgTag(language);                
+                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
+                var data = PostgresSQLHelper.SelectFromTableDataAsObjectParametrized<SmgTags>(conn, "smgtags", "*", where.Item1, where.Item2, "", 0, null);
+                var localizedresult = data.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult.FirstOrDefault());
             });
@@ -311,7 +303,7 @@ namespace OdhApiCore.Controllers
                 string orderby = "";
                 string where = "data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsStringExtended(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });
+                var data = PostgresSQLHelper.SelectFromTableDataAsJsonParametrized(conn, "smgtags", select, where, null, orderby, 0, null, new List<string>() { "Id", "Name" });
 
                 return "[" + String.Join(",", data) + "]";
             });
@@ -335,29 +327,26 @@ namespace OdhApiCore.Controllers
                 string select = "data->'Id' as Id, data->'TagName'->'" + language.ToLower() + "' as Name";
                 string orderby = "";
                 string where = "";
+                List<PGParameters> parameters = new List<PGParameters>();
 
                 if (smgtagtypelist.Count > 0)
                 {
-                    if (smgtagtypelist.Count == 1)
+                    int counter = 1;
+                    string smgtagtypeliststring = "";
+                    foreach (var smgtagtypeid in smgtagtypelist)
                     {
-                        where = where + "data @> '{\"ValidForEntity\": [\"" + smgtagtypelist.FirstOrDefault().ToLower() + "\"] }'";
+                        smgtagtypeliststring = smgtagtypeliststring + "data @> @smgtag" + counter + " OR ";
+                        parameters.Add(new PGParameters() { Name = "smgtag" + counter, Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}" });
+                        counter++;
                     }
-                    else
-                    {
-                        string smgtagtypeliststring = "";
-                        foreach (var smgtagtypeid in smgtagtypelist)
-                        {
-                            smgtagtypeliststring = smgtagtypeliststring + "data @> '{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}' OR ";
-                        }
-                        smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
+                    smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
 
-                        where = where + smgtagtypeliststring;
-                    }
+                    where = where + smgtagtypeliststring;
                 }
 
-                where = where + "AND data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
+                where = where + " AND data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
 
-                var data = PostgresSQLHelper.SelectFromTableDataAsStringExtended(conn, "smgtags", select, where, orderby, 0, null, new List<string>() { "Id", "Name" });                
+                var data = PostgresSQLHelper.SelectFromTableDataAsJsonParametrized(conn, "smgtags", select, where, parameters, orderby, 0, null, new List<string>() { "Id", "Name" });
 
                 return "[" + String.Join(",", data) + "]";
             });

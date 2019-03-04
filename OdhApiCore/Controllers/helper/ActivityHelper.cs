@@ -39,7 +39,6 @@ namespace OdhApiCore.Controllers
             {
                 if (int.TryParse(activitytype, out typeinteger))
                 {
-                    //Sonderfall wenn alles abgefragt wird um keine unnötige Where zu erzeugen
                     if (typeinteger != 1023)
                         activitytypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(activitytype);
                 }
@@ -61,18 +60,12 @@ namespace OdhApiCore.Controllers
                 using (var conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-
                     arealist = LocationListCreator.CreateActivityAreaListPG(areafilter, conn);
-
-                    conn.Close();
                 }
             }
 
-
-
             smgtaglist = CommonListCreator.CreateIdList(smgtags);
             difficultylist = CommonListCreator.CreateDifficultyList(difficultyfilter, activitytype);
-
 
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();
@@ -87,35 +80,16 @@ namespace OdhApiCore.Controllers
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
 
+                var mtapgwhere = PostgresSQLWhereBuilder.CreateMetaRegionWhereExpression(metaregionlist);
+
                 using (var conn = new NpgsqlConnection(connectionString))
-                {
+                { 
                     conn.Open();
 
-                    string where = "";
-
-                    if (metaregionlist.Count == 1)
-                    {
-                        where = "data @> '{\"Id\" : \"" + metaregionlist.FirstOrDefault() + "\" }'";
-                    }
-                    else
-                    {
-                        string idliststring = "";
-                        foreach (var mtaid in metaregionlist)
-                        {
-                            idliststring = idliststring + "'\"" + mtaid + "\"', ";
-                        }
-                        idliststring = idliststring.Remove(idliststring.Length - 2);
-
-                        where = where + "data->'Id' in (" + idliststring + ")";
-                    }
-
-                    var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObject<MetaRegion>(conn, "metaregions", "*", where, "", 0, null);
-
-                    conn.Close();
+                    var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObjectParametrized<MetaRegion>(conn, "metaregions", "*", mtapgwhere.Item1, mtapgwhere.Item2, "", 0, null);
 
                     tourismvereinlist.AddRange(mymetaregion.SelectMany(x => x.TourismvereinIds));
                 }
-
             }
 
             //Distance
@@ -174,7 +148,6 @@ namespace OdhApiCore.Controllers
                 smgactive = true;
             if (smgactivefilter == "false")
                 smgactive = false;
-
         }
     }
 }
