@@ -54,13 +54,13 @@ namespace OdhApiCore
 
             services.AddSingleton<ISettings, Settings>();
 
-            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
+            //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "OdhApi .Net Core", Version = "v1" });
-                c.IncludeXmlComments(filePath);
+                //c.IncludeXmlComments(filePath);
             });                    
         }
 
