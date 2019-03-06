@@ -19,7 +19,8 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("api/test")]
         public string Get()
         {
-            var x = configuration.GetConnectionString("PGConnection");
+
+            var x = configuration.GetConnectionString("PgConnection4");
 
             return x;
         }

@@ -423,11 +423,11 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("api/Activity/All/Localized/{language}/{activitytype}/{elements}/{seed}")]
         public IActionResult GetLocalized(string language, string activitytype, int elements, string seed)
-        {
-            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
-
+        {         
             return Do(conn =>
-            {          
+            {
+                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
+
                 string select = "*";
                 string orderby = "";
 
@@ -454,11 +454,11 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/Paged/Localized/{language}/{activitytype}/{pagenumber}/{pagesize}/{seed}")]
         public IActionResult GetPagedLocalized(string language, string activitytype, int pagenumber, int pagesize, string seed, PGGeoSearchResult geosearchresult)
-        {
-            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
-
+        {          
             return Do(conn =>
-            {          
+            {
+                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", connectionString);
+
                 string select = "*";
                 string orderby = "";
                 var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
@@ -505,11 +505,11 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/Filtered/Localized/{language}/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed}")]
         public IActionResult GetFilteredLocalized(string language, int pagenumber, int pagesize, string activitytype, string subtypefilter, string idfilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, string seed, PGGeoSearchResult geosearchresult)
-        {
-            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
-
+        {          
             return Do(conn =>
             {
+                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
+
                 string select = "*";
                 string orderby = "";
 
@@ -578,11 +578,11 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/ReducedAsync/{language}/{activitytype}/{subtypefilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}")]
         public IActionResult GetReduced(string language, string activitytype, string subtypefilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string active, string smgactive, string smgtags, PGGeoSearchResult geosearchresult)
-        {
-            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, "null", locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
-
+        {          
             return Do(conn =>
-            {                               
+            {
+                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, "null", locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
+
                 string select = "data->'Id' as Id, data->'Detail'->'" + language + "'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
 
@@ -610,7 +610,7 @@ namespace OdhApiCore.Controllers
         //[CacheOutputUntilToday(23, 59)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/GetActivityTypesList")]
-        public async Task<IEnumerable<ActivityTypes>> GetActivityTypesList()
+        public IActionResult GetActivityTypesList()
         {
             List<ActivityTypes> mysuedtiroltypeslist = new List<ActivityTypes>();
 
@@ -621,9 +621,7 @@ namespace OdhApiCore.Controllers
 			{
 				conn.Open();
 
-				ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObject<LTSTaggingType>(conn, "ltstaggingtypes", "*", "", "", 0, null);
-
-				conn.Close();
+				ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObject<LTSTaggingType>(conn, "ltstaggingtypes", "*", "", "", 0, null);				
 			}
 
 			foreach (ActivityTypeFlag myactivitytype in Enum.GetValues(typeof(ActivityTypeFlag)))
@@ -806,7 +804,9 @@ namespace OdhApiCore.Controllers
 				mysuedtiroltypeslist.Add(mysmgpoitype);
             }
 
-            return mysuedtiroltypeslist;
+            return Content(JsonConvert.SerializeObject(mysuedtiroltypeslist), "application/json", Encoding.UTF8);
+
+            //return mysuedtiroltypeslist;            
         }
 
 		
@@ -824,11 +824,11 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api/Activity/GetActivityLastChanged/Paged/{pagenumber}/{pagesize}/{updatefrom}/{seed}")]
         public IActionResult GetLastChanged(int pagenumber, int pagesize, string updatefrom, string seed)
         {
-            DateTime updatefromDT = Convert.ToDateTime(updatefrom);
-
             return Do(conn =>
             {
                 conn.Open();
+
+                DateTime updatefromDT = Convert.ToDateTime(updatefrom);
 
                 string select = "*";
                 string orderby = "";
