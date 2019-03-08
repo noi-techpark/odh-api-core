@@ -8,8 +8,30 @@ using System.Text;
 
 namespace Helper
 {
-    public class PostgresSQLHelper
+    public static class PGExtensions
     {
+        public static void AddPGParameters(this NpgsqlCommand command, List<PGParameters> whereparameters)
+        {
+            if (whereparameters != null)
+            {
+                foreach (var parameter in whereparameters)
+                {
+                    switch(parameter.Type)
+                    {
+                        case NpgsqlTypes.NpgsqlDbType.Date:
+                            command.Parameters.AddWithValue(parameter.Name, parameter.Type, Convert.ToDateTime(parameter.Value));
+                            break;
+                        default:
+                            command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
+                            break;
+                    }                    
+                }
+            }
+        }
+    }
+
+    public class PostgresSQLHelper
+    { 
 
         #region String Select Methods
 
@@ -545,13 +567,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                if (whereparameters != null)
-                {
-                    foreach (var parameter in whereparameters)
-                    {
-                        command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
-                    }
-                }
+                command.AddPGParameters(whereparameters);
 
                 Int64 count = (Int64)command.ExecuteScalar();
 
@@ -579,13 +595,7 @@ namespace Helper
                 string commandText = CreatetDatabaseCommand(selectexp, tablename, where, sortexp, offset, limit);
                 var command = new NpgsqlCommand(commandText, conn);
 
-                if (whereparameters != null)
-                {
-                    foreach (var parameter in whereparameters)
-                    {
-                        command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
-                    }
-                }
+                command.AddPGParameters(whereparameters);
 
                 command.Connection = conn;
 
@@ -623,13 +633,7 @@ namespace Helper
                 string commandText = CreatetDatabaseCommand(selectexp, tablename, where, sortexp, offset, limit);
                 var command = new NpgsqlCommand(commandText, conn);
 
-                if (whereparameters != null)
-                {
-                    foreach (var parameter in whereparameters)
-                    {
-                        command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
-                    }
-                }
+                command.AddPGParameters(whereparameters);
 
                 command.Connection = conn;
 
@@ -669,16 +673,9 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                if (whereparameters != null)
-                {
-                    foreach (var parameter in whereparameters)
-                    {
-                        command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
-                    }
-                }
+                command.AddPGParameters(whereparameters);
 
                 NpgsqlDataReader dr = command.ExecuteReader();
-
 
                 List<string> lstSelect = new List<string>();
                 while (dr.Read())
@@ -738,13 +735,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                if (whereparameters != null)
-                {
-                    foreach (var parameter in whereparameters)
-                    {
-                        command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
-                    }
-                }
+                command.AddPGParameters(whereparameters);
 
                 NpgsqlDataReader dr = command.ExecuteReader();
 
@@ -793,13 +784,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                if (whereparameters != null)
-                {
-                    foreach (var parameter in whereparameters)
-                    {
-                        command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
-                    }
-                }
+                command.AddPGParameters(whereparameters);
 
                 NpgsqlDataReader dr = command.ExecuteReader();
 
@@ -859,13 +844,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                if (whereparameters != null)
-                {
-                    foreach (var parameter in whereparameters)
-                    {
-                        command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
-                    }
-                }
+                command.AddPGParameters(whereparameters);
 
                 NpgsqlDataReader dr = command.ExecuteReader();
 
