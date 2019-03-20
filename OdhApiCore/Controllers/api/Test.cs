@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +20,27 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("api/test")]
         public string Get()
         {
-
-            var x = configuration.GetConnectionString("PgConnection4");
+            var x = configuration.GetConnectionString("PgConnection");
 
             return x;
+        }
+
+        [HttpGet, Route("api/testdatabase")]
+        public string GetTest()
+        {
+            try
+            {
+                using (var conn = new NpgsqlConnection(configuration.GetConnectionString("PgConnection")))
+                {
+                    conn.Open();
+
+                    return "connection exstabilished";
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }            
         }
     }
 }
