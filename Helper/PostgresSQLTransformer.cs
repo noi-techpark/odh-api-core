@@ -101,6 +101,10 @@ namespace Helper
             data.TrustYouID = acco.TrustYouID;
             data.TrustYouResults = acco.TrustYouResults;
             data.TrustYouScore = acco.TrustYouScore;
+
+            data.TrustYouActive = acco.TrustYouActive;
+            data.TrustYouState = acco.TrustYouState;
+
             data.TVMember = acco.TVMember;
             data.Units = acco.Units;
 
