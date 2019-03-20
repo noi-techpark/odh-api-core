@@ -53,6 +53,8 @@ namespace Helper
         public string TrustYouID { get; set; }
         public double TrustYouScore { get; set; }
         public int TrustYouResults { get; set; }
+        public bool TrustYouActive { get; set; }
+        public int TrustYouState { get; set; }
 
         public ICollection<MssResponseShort> MssResponseShort { get; set; }
     }
