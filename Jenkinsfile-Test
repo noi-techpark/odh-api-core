@@ -23,6 +23,8 @@ pipeline {
         stage('Build & Push') {
             steps {
                 sh 'echo $PATH'
+                sh 'ls ~/.local/bin'
+                sh 'pwd ~'
                 sh '$(aws ecr get-login --no-include-email --region eu-west-1)'
                 sh 'docker-compose build api'
                 sh 'docker-compose push api'
