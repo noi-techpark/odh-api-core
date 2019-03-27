@@ -1865,6 +1865,8 @@ namespace Helper
         public bool SmgActive { get; set; }
 
         public ICollection<string> HasLanguage { get; set; }
+
+        public DateTime LastChange { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
