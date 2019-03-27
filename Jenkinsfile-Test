@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        DOCKER_IMAGES = "755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api"
+        DOCKER_IMAGE = "755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api"
         DOCKER_TAG = "$BUILD_NUMBER"
         DOCKER_SERVER_IP = "63.33.73.203"
         DOCKER_SERVER_DIRECTORY = "/var/docker/odh-tourism-api"
@@ -14,17 +14,14 @@ pipeline {
     stages {
         stage('Configure') {
             steps {
-                sh 'cp .env.example .env'
+                sh 'echo "" >> .env'
                 sh 'echo "API_IMAGE=${DOCKER_IMAGE}" > .env'
                 sh 'echo "API_TAG=${DOCKER_TAG}" > .env'
-                sh 'sed -i -e "s%\\(PG_CONNECTION\\s*=\\).*\\$%\\1${PG_CONNECTION}%" .env'
+                sh 'echo "PG_CONNECTION=${PG_CONNECTION}" > .env'
             }
         }
         stage('Build & Push') {
             steps {
-                sh 'echo $PATH'
-                sh 'ls ~/.local/bin'
-                sh 'pwd ~'
                 sh '$(aws ecr get-login --no-include-email --region eu-west-1)'
                 sh 'docker-compose build api'
                 sh 'docker-compose push api'
