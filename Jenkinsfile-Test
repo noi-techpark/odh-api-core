@@ -14,10 +14,10 @@ pipeline {
     stages {
         stage('Configure') {
             steps {
-                sh 'echo "" >> .env'
-                sh 'echo "API_IMAGE=${DOCKER_IMAGE}" > .env'
-                sh 'echo "API_TAG=${DOCKER_TAG}" > .env'
-                sh 'echo "PG_CONNECTION=${PG_CONNECTION}" > .env'
+                sh 'echo "" > .env'
+                sh 'echo "API_IMAGE=${DOCKER_IMAGE}" >> .env'
+                sh 'echo "API_TAG=${DOCKER_TAG}" >> .env'
+                sh 'echo "PG_CONNECTION=${PG_CONNECTION}" >> .env'
             }
         }
         stage('Build & Push') {
