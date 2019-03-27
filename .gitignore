@@ -156,3 +156,6 @@ $RECYCLE.BIN/
 /.paket
 /.vs
 /OdhApiCore/docker/postgres/dumps
+
+# Docker
+/.env
