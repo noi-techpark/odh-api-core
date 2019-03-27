@@ -15,8 +15,8 @@ pipeline {
         stage('Configure') {
             steps {
                 sh 'cp .env.example .env'
-                sh 'cat "API_IMAGE=${DOCKER_IMAGE}" > .env'
-                sh 'cat "API_TAG=${DOCKER_TAG}" > .env'
+                sh 'echo "API_IMAGE=${DOCKER_IMAGE}" > .env'
+                sh 'echo "API_TAG=${DOCKER_TAG}" > .env'
                 sh 'sed -i -e "s%\\(PG_CONNECTION\\s*=\\).*\\$%\\1${PG_CONNECTION}%" .env'
             }
         }
