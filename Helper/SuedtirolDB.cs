@@ -2288,6 +2288,7 @@ namespace Helper
 
         //NEU
         public string CopyRight { get; set; }
+        public string License { get; set; }
     }
 
     public class ImageGalleryLocalized
@@ -2307,6 +2308,7 @@ namespace Helper
         public Nullable<DateTime> ValidTo { get; set; }
 
         public string CopyRight { get; set; }
+        public string License { get; set; }
     }
 
     public class ContactInfos : IContactInfos, ILanguage
