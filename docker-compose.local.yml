@@ -8,7 +8,3 @@ services:
       ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
     ports:
       - "60209:80"
-      # - "44388:443"
-    # volumes:
-    #   - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-    #   - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
