@@ -23,7 +23,7 @@ pipeline {
         }
         stage('Build & Push') {
             steps {
-                sh 'eval "$(aws ecr get-login --no-include-email --region eu-west-1)"'
+                sh "aws ecr get-login --no-include-email | awk '{print $6}' | docker login -u AWS --password-stdin ${DOCKER_REGISTRY}"
                 sh 'docker-compose build api'
                 sh 'docker-compose push api'
             }
