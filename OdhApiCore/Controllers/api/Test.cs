@@ -22,7 +22,7 @@ namespace OdhApiCore.Controllers.api
         {
             var x = configuration.GetConnectionString("PgConnection");
 
-            return x;
+            return "hallo";
         }
 
         [HttpGet, Route("api/testdatabase")]
