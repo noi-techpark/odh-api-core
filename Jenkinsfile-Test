@@ -23,7 +23,7 @@ pipeline {
         }
         stage('Build & Push') {
             steps {
-                sh "echo $(aws ecr get-authorization-token --region eu-west-1 --output text --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2) | docker login -u AWS ${DOCKER_REGISTRY} --password-stdin"
+                sh "echo \$(aws ecr get-authorization-token --region eu-west-1 --output text --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2) | docker login -u AWS ${DOCKER_REGISTRY} --password-stdin"
                 sh 'docker-compose build api'
                 sh 'docker-compose push api'
             }
