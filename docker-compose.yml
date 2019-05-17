@@ -1,9 +1,15 @@
 version: '3'
 
 services:
-   api:
-        image: ${API_IMAGE:-odh-tourism-api}:${API_TAG-latest}
-        build:
-          context: .
-          dockerfile: OdhApiCore/Dockerfile
-        restart: unless-stopped
+  api:
+    image: ${API_IMAGE:-odh-tourism-api}:${API_TAG-latest}
+    build:
+      context: .
+      dockerfile: OdhApiCore/Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
+    ports:
+      - "60209:80"

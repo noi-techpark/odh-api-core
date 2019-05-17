@@ -20,22 +20,21 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("api/test")]
         public string Get()
         {
-            try
-            {
-                using (var conn = new NpgsqlConnection(configuration.GetConnectionString("PgConnection")))
-                {
-                    conn.Open();
+            //try
+            //{
+            //    using (var conn = new NpgsqlConnection(configuration.GetConnectionString("PgConnection")))
+            //    {
+            //        conn.Open();
 
-                    return "connection exstabilished";
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-            //var x = configuration.GetConnectionString("PgConnection");
-
-            //return "hallo";
+            //        return "connection exstabilished";
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return ex.Message;
+            //}
+            
+            return configuration.GetConnectionString("PgConnection");
         }
 
         [HttpGet, Route("api/testdatabase")]
