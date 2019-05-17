@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
+    ports:
+      - "60209:80"
