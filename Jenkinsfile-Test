@@ -4,7 +4,8 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        DOCKER_IMAGE = "755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api"
+        DOCKER_REGISTRY = "755952719952.dkr.ecr.eu-west-1.amazonaws.com"
+        DOCKER_IMAGE = "odh-tourism-api"
         DOCKER_TAG = "$BUILD_NUMBER"
         DOCKER_SERVER_IP = "63.33.73.203"
         DOCKER_SERVER_DIRECTORY = "/var/docker/odh-tourism-api"
@@ -15,14 +16,14 @@ pipeline {
         stage('Configure') {
             steps {
                 sh 'echo "" > .env'
-                sh 'echo "API_IMAGE=${DOCKER_IMAGE}" >> .env'
+                sh 'echo "API_IMAGE=${DOCKER_REGISTRY}/${DOCKER_IMAGE}" >> .env'
                 sh 'echo "API_TAG=${DOCKER_TAG}" >> .env'
                 sh 'echo "PG_CONNECTION=${PG_CONNECTION}" >> .env'
             }
         }
         stage('Build & Push') {
             steps {
-                sh '$(aws ecr get-login --no-include-email --region eu-west-1)'
+                sh "echo $(aws ecr get-authorization-token --region eu-west-1 --output text --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2) | docker login -u AWS ${DOCKER_REGISTRY} --password-stdin"
                 sh 'docker-compose build api'
                 sh 'docker-compose push api'
             }
@@ -30,7 +31,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sshagent(['jenkins-ssh-key']) {
-                    sh """ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" bash -c \'\$(aws ecr get-login --no-include-email --region eu-west-1)\''"""
+                    sh """ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" bash -c "echo \$(aws ecr get-authorization-token --region eu-west-1 --output text --query \'authorizationData[].authorizationToken\' | base64 -d | cut -d: -f2) | docker login -u AWS ${DOCKER_REGISTRY} --password-stdin"'"""
 
                     sh "ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'ls -1t ${DOCKER_SERVER_DIRECTORY}/releases/ | tail -n +10 | grep -v `readlink -f ${DOCKER_SERVER_DIRECTORY}/current | xargs basename --` -- | xargs -r printf \"${DOCKER_SERVER_DIRECTORY}/releases/%s\\n\" | xargs -r rm -rf --'"
                 
