@@ -33,8 +33,10 @@ namespace OdhApiCore.Controllers.api
             //{
             //    return ex.Message;
             //}
-            
-            return configuration.GetConnectionString("PgConnection");
+
+            //return configuration.GetConnectionString("PgConnection");
+
+            return "hallo";
         }
 
         [HttpGet, Route("api/testdatabase")]

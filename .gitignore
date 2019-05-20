@@ -159,3 +159,4 @@ $RECYCLE.BIN/
 
 # Docker
 /.env
+/.vscode
