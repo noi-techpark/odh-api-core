@@ -4,8 +4,9 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        DOCKER_IMAGE = "755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api"
-        DOCKER_TAG = "$BUILD_NUMBER"
+        DOCKER_IMAGE_API = "755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api"
+        DOCKER_TAG_API = "$BUILD_NUMBER"
+        DOCKER_SERVICES = "api"
         DOCKER_SERVER_IP = "63.33.73.203"
         DOCKER_SERVER_DIRECTORY = "/var/docker/odh-tourism-api"
         PG_CONNECTION = credentials('odh-tourism-api-test-pg-connection')
@@ -14,17 +15,17 @@ pipeline {
     stages {
         stage('Configure') {
             steps {
-                sh 'echo "" > .env'
-                sh 'echo "API_IMAGE=${DOCKER_IMAGE}" >> .env'
-                sh 'echo "API_TAG=${DOCKER_TAG}" >> .env'
-                sh 'echo "PG_CONNECTION=${PG_CONNECTION}" >> .env'
+                sh "echo '' > .env"
+                sh "echo 'DOCKER_IMAGE_API=${DOCKER_IMAGE_API}' >> .env"
+                sh "echo 'DOCKER_TAG_API=${DOCKER_TAG_API}' >> .env"
+                sh "echo 'PG_CONNECTION=${PG_CONNECTION}' >> .env"
             }
         }
         stage('Build & Push') {
             steps {
                 sh "aws ecr get-login --region eu-west-1 --no-include-email | bash"
-                sh 'docker-compose build api'
-                sh 'docker-compose push api'
+                sh "docker-compose build ${DOCKER_SERVICES}"
+                sh "docker-compose push ${DOCKER_SERVICES}"
             }
         }
         stage('Deploy') {
