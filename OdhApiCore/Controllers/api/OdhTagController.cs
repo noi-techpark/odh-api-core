@@ -13,7 +13,7 @@ using Npgsql;
 
 namespace OdhApiCore.Controllers
 {
-    //[Route("api/SmgTag")]
+    //[Route("api/ODHTag")]
     [EnableCors("CorsPolicy")]
     public class OdhTagController : OdhController
     {
@@ -118,9 +118,9 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <returns>Collection of SMGTag Object</returns>
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        [HttpGet, Route("")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public IActionResult Get()
+        //[HttpGet, Route("")]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        private IActionResult Get()
         {
             return Do(conn =>
             {
@@ -140,9 +140,9 @@ namespace OdhApiCore.Controllers
         /// <param name="smgtagtype">Smg Tag Type</param>
         /// <returns>Collection of SMGTag Object</returns>
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        [HttpGet, Route("Filtered/{smgtagtype}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public IActionResult GetFiltered(string smgtagtype)
+        //[HttpGet, Route("Filtered/{smgtagtype}")]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        private IActionResult GetFiltered(string smgtagtype)
         {
             IList<string> smgtagtypelist = smgtagtype.ConvertToList(',');
 
@@ -180,9 +180,9 @@ namespace OdhApiCore.Controllers
         /// <param name="id">ID of the SMGTag</param>
         /// <returns>SMGTag Object</returns>
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        [HttpGet, Route("Single/{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public IActionResult GetSingle(string id)
+        //[HttpGet, Route("Single/{id}")]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        private IActionResult GetSingle(string id)
         {
             return Do(conn =>
             {
