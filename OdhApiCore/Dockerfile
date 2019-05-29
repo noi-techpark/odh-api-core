@@ -11,6 +11,10 @@ COPY . .
 WORKDIR /src/OdhApiCore
 RUN dotnet build OdhApiCore.csproj -c Release -o /app
 
+FROM build AS test
+WORKDIR /src
+RUN dotnet test OdhApiCore.sln
+
 FROM build AS publish
 RUN dotnet publish OdhApiCore.csproj -c Release -o /app
 

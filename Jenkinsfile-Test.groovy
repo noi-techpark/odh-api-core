@@ -21,7 +21,7 @@ pipeline {
                 sh "echo 'PG_CONNECTION=${PG_CONNECTION}' >> .env"
             }
         }
-        stage('Build & Push') {
+        stage('Test, Build & Push') {
             steps {
                 sh "aws ecr get-login --region eu-west-1 --no-include-email | bash"
                 sh "docker-compose build ${DOCKER_SERVICES}"
