@@ -52,6 +52,8 @@ namespace OdhApiCore
 
             services.AddMvc(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddResponseCompression();
+
             services.AddSingleton<ISettings, Settings>();
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -91,6 +93,8 @@ namespace OdhApiCore
             //app.UseCookiePolicy();
 
             //app.UseAuthentication();
+
+            app.UseResponseCompression();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
