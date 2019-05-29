@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers.api
 {
-    public class Test : Controller
+    public class TestController : Controller
     {
         private readonly IConfiguration configuration;
 
-        public Test(IConfiguration configuration)
+        public TestController(IConfiguration configuration)
         {
             this.configuration = configuration;
         }
