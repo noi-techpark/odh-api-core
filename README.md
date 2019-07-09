@@ -6,3 +6,5 @@ Port of ODH Tourim Api to .Net Core.
 * Docker Support
 * Swagger Support
 * Identity Server Integration
+
+Test Server on https://api.tourism.testingmachine.eu
