@@ -6,23 +6,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace OdhApiCore
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            await host.RunAsync();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
             //.ConfigureAppConfiguration((hostingContext, config) =>
             //{
             //    config.AddEnvironmentVariables();
             //})
-                .UseStartup<Startup>();
+            .ConfigureWebHostDefaults(webBuilder =>
+                webBuilder.UseStartup<Startup>());
     }
 }

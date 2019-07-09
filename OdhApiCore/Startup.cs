@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace OdhApiCore
@@ -42,6 +43,8 @@ namespace OdhApiCore
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddResponseCompression();
+
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
@@ -49,10 +52,11 @@ namespace OdhApiCore
                        .AllowAnyHeader();
             }));
 
+            //services.AddMvc(configuration => configuration.EnableEndpointRouting = false)
+            //    .AddNewtonsoftJson(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddMvc(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            services.AddResponseCompression();
+            services.AddControllers().AddNewtonsoftJson();
+            services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
 
@@ -61,7 +65,7 @@ namespace OdhApiCore
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "OdhApi .Net Core", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "OdhApi .Net Core", Version = "v1" });
                 //c.IncludeXmlComments(filePath);
             });                    
         }
@@ -81,6 +85,7 @@ namespace OdhApiCore
             }
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles(new StaticFileOptions()
             {
                 OnPrepareResponse = ctx => {
@@ -90,9 +95,14 @@ namespace OdhApiCore
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
                 RequestPath = new PathString("")
             });
+
+            app.UseRouting();
+
             //app.UseCookiePolicy();
 
             //app.UseAuthentication();
+
+            app.UseCors("CorsPolicy");
 
             app.UseResponseCompression();
 
@@ -106,9 +116,12 @@ namespace OdhApiCore
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
-            app.UseMvc();
-
-            app.UseCors("CorsPolicy");
+            //app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
 
             //app.UseMvc(routes =>
             //{
