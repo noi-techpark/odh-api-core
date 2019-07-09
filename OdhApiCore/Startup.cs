@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace OdhApiCore
@@ -42,6 +43,8 @@ namespace OdhApiCore
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddResponseCompression();
+
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
@@ -49,10 +52,12 @@ namespace OdhApiCore
                        .AllowAnyHeader();
             }));
 
+            //services.AddMvc(configuration => configuration.EnableEndpointRouting = false)
+            //    .AddNewtonsoftJson(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddMvc(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            services.AddResponseCompression();
+            services.AddControllers(configuration => configuration.EnableEndpointRouting = false)
+                .AddNewtonsoftJson();
+            services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
 
@@ -61,7 +66,7 @@ namespace OdhApiCore
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "OdhApi .Net Core", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "OdhApi .Net Core", Version = "v1" });
                 //c.IncludeXmlComments(filePath);
             });                    
         }
