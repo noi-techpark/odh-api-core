@@ -1,4 +1,4 @@
-# odhapicore
+# odh-api-core
 
 Port of ODH Tourim Api to .Net Core.
 
