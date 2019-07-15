@@ -4,11 +4,35 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Helper
 {
+    public class PostGresSQLHelperException : Exception
+    {
+        public PostGresSQLHelperException()
+        {
+        }
+
+        public PostGresSQLHelperException(string message) : base(message)
+        {
+        }
+
+        public PostGresSQLHelperException(Exception innerException) : base("Error executing SQL query.", innerException)
+        {
+        }
+
+        public PostGresSQLHelperException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected PostGresSQLHelperException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
     public static class PGExtensions
     {
         public static void AddPGParameters(this NpgsqlCommand command, List<PGParameters> whereparameters)
@@ -72,7 +96,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -109,7 +133,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -171,7 +195,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -231,7 +255,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -272,7 +296,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -325,7 +349,7 @@ namespace Helper
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
 
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -376,7 +400,7 @@ namespace Helper
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
 
-                return default(T);
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -424,7 +448,7 @@ namespace Helper
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
 
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -483,7 +507,7 @@ namespace Helper
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
 
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -520,7 +544,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return 0;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -595,7 +619,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return 0;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -635,7 +659,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -676,7 +700,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -738,7 +762,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -788,7 +812,7 @@ namespace Helper
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
 
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -849,7 +873,7 @@ namespace Helper
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
 
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -897,7 +921,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return null;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -929,7 +953,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -949,7 +973,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -982,7 +1006,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -1002,7 +1026,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
@@ -1032,7 +1056,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                throw new PostGresSQLHelperException(ex);
             }
         }
 
