@@ -60,7 +60,8 @@ namespace OdhApiCore.Controllers
                 using (var conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-                    arealist = LocationListCreator.CreateActivityAreaListPG(areafilter, conn);
+                    // FIXME: make async
+                    arealist = LocationListCreator.CreateActivityAreaListPGAsync(areafilter, conn).Result;
                 }
             }
 
@@ -86,7 +87,8 @@ namespace OdhApiCore.Controllers
                 { 
                     conn.Open();
 
-                    var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObjectParametrized<MetaRegion>(conn, "metaregions", "*", mtapgwhere.Item1, mtapgwhere.Item2, "", 0, null);
+                    // FIXME: make async
+                    var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(conn, "metaregions", "*", mtapgwhere.Item1, mtapgwhere.Item2, "", 0, null).Result;
 
                     tourismvereinlist.AddRange(mymetaregion.SelectMany(x => x.TourismvereinIds));
                 }
