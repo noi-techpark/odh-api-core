@@ -295,7 +295,7 @@ namespace Helper
             return maintypedict;
         }
 
-        public static string LTSActivityTaggingTagTranslator(string key)
+        public static string LTSActivityTaggingTagTranslator(string? key)
         {
             switch (key)
             {
