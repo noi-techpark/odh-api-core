@@ -16,7 +16,7 @@ namespace Helper
         {
             List<string> activityIds = new List<string>();
 
-            if (thestring != "null")
+            if (thestring != null)
             {
                 if (thestring.Substring(thestring.Length - 1, 1) == ",")
                     thestring = thestring.Substring(0, thestring.Length - 1);

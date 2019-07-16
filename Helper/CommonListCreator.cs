@@ -7,11 +7,11 @@ namespace Helper
 {
     public class CommonListCreator
     {
-        public static List<string> CreateIdList(string activityidstring)
+        public static List<string> CreateIdList(string? activityidstring)
         {
             List<string> activityIds = new List<string>();
 
-            if (activityidstring != "null" && activityidstring != "NULL")
+            if (activityidstring != null)
             {
                 if (activityidstring.Substring(activityidstring.Length - 1, 1) == ",")
                     activityidstring = activityidstring.Substring(0, activityidstring.Length - 1);
@@ -27,11 +27,11 @@ namespace Helper
             return activityIds;
         }
 
-        public static List<string> CreateLowerCaseSmgTagList(string activityidstring)
+        public static List<string> CreateLowerCaseSmgTagList(string? activityidstring)
         {
             List<string> activityIds = new List<string>();
 
-            if (activityidstring != "null")
+            if (activityidstring != null)
             {
                 if (activityidstring.Substring(activityidstring.Length - 1, 1) == ",")
                     activityidstring = activityidstring.Substring(0, activityidstring.Length - 1);
@@ -48,11 +48,11 @@ namespace Helper
         }
 
 
-        public static List<string> CreateDistrictIdList(string locfilter, string typ)
+        public static List<string> CreateDistrictIdList(string? locfilter, string typ)
         {
             List<string> locIds = new List<string>();
 
-            if (locfilter != "null")
+            if (locfilter != null)
             {
                 if (locfilter.Substring(locfilter.Length - 1, 1) == ",")
                     locfilter = locfilter.Substring(0, locfilter.Length - 1);
@@ -69,10 +69,10 @@ namespace Helper
             return locIds;
         }
 
-        public static Tuple<int, int>? CreateRangeString(string rangetoSplit)
+        public static Tuple<int, int>? CreateRangeString(string? rangetoSplit)
         {
 
-            if (rangetoSplit != "null")
+            if (rangetoSplit != null)
             {
                 var splittedfilter = rangetoSplit.Split(',');
 
@@ -82,12 +82,12 @@ namespace Helper
                 return null;
         }
 
-        public static Tuple<double, double>? CreateRangeStringDouble(string rangetoSplit)
+        public static Tuple<double, double>? CreateRangeStringDouble(string? rangetoSplit)
         {
             NumberFormatInfo provider = new NumberFormatInfo();
             provider.NumberDecimalSeparator = ".";
 
-            if (rangetoSplit != "null")
+            if (rangetoSplit != null)
             {
                 var splittedfilter = rangetoSplit.Split(',');
 
@@ -97,11 +97,11 @@ namespace Helper
                 return null;
         }
 
-        public static List<string> CreateDifficultyList(string difficultyfilter, string activitypoitype)
+        public static List<string> CreateDifficultyList(string? difficultyfilter, string? activitypoitype)
         {
             List<string> difficultyids = new List<string>();
 
-            if (difficultyfilter != "null")
+            if (difficultyfilter != null)
             {
                 if (difficultyfilter.Substring(difficultyfilter.Length - 1, 1) == ",")
                     difficultyfilter = difficultyfilter.Substring(0, difficultyfilter.Length - 1);
@@ -197,11 +197,11 @@ namespace Helper
             return difficultyids;
         }
 
-        public static List<string> CreateDifficultyListfromFlag(string difficultyfilter, string activitypoitype)
+        public static List<string> CreateDifficultyListfromFlag(string? difficultyfilter, string activitypoitype)
         {
             List<string> difficultyids = new List<string>();
 
-            if (difficultyfilter != "null")
+            if (difficultyfilter != null)
             {
                 if (difficultyfilter.Substring(difficultyfilter.Length - 1, 1) == ",")
                     difficultyfilter = difficultyfilter.Substring(0, difficultyfilter.Length - 1);

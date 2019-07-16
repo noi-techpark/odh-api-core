@@ -5,10 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Npgsql;
 
 namespace OdhApiCore.Controllers
 { 
+    public class NullStringParameterActionFilterAttribute : ActionFilterAttribute
+    {
+        public NullStringParameterActionFilterAttribute()
+        {
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            foreach (var key in context.ActionArguments.Keys.ToArray())
+            {
+                var value = context.ActionArguments[key];
+                if (value as string == "null")
+                {
+                    context.ActionArguments[key] = null;
+                }
+            }
+            base.OnActionExecuting(context);
+        }
+    }
+
     [ApiController]
     public abstract class OdhController : ControllerBase
     {

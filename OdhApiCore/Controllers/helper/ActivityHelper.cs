@@ -30,12 +30,12 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
 
-        public ActivityHelper(string activitytype, string subtypefilter, string idfilter, string locfilter, string areafilter, string distancefilter, string altitudefilter, string durationfilter, string highlightfilter, string difficultyfilter, string activefilter, string smgactivefilter, string smgtags, string connectionString)
+        public ActivityHelper(string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter, string? smgtags, string connectionString)
         {
             activitytypelist = new List<string>();
             int typeinteger = 0;
 
-            if (activitytype != "null")
+            if (activitytype != null)
             {
                 if (int.TryParse(activitytype, out typeinteger))
                 {
@@ -52,10 +52,10 @@ namespace OdhApiCore.Controllers
             else
                 subtypelist = new List<string>();
 
-            idlist = Helper.CommonListCreator.CreateIdList(idfilter.ToUpper());
+            idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             //TODO
             arealist = new List<string>();
-            if (areafilter != "null")
+            if (areafilter != null)
             {
                 using (var conn = new NpgsqlConnection(connectionString))
                 {
@@ -71,13 +71,13 @@ namespace OdhApiCore.Controllers
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();
 
-            if (locfilter.Contains("reg"))
+            if (locfilter != null && locfilter.Contains("reg"))
                 regionlist = CommonListCreator.CreateDistrictIdList(locfilter, "reg");
-            if (locfilter.Contains("tvs"))
+            if (locfilter != null && locfilter.Contains("tvs"))
                 tourismvereinlist = CommonListCreator.CreateDistrictIdList(locfilter, "tvs");
 
             //Sonderfall für MetaRegion hole mir alle DistrictIds dieser MetaRegion
-            if (locfilter.Contains("mta"))
+            if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
 

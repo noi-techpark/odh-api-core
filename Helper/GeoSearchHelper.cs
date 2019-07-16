@@ -44,9 +44,9 @@ namespace Helper
             return geosearch;
         }
 
-        public static PGGeoSearchResult GetPGGeoSearchResult(string latitude, string longitude, string radius)
+        public static PGGeoSearchResult GetPGGeoSearchResult(string? latitude, string? longitude, string? radius)
         {
-            if (latitude == "null" && longitude == "null")
+            if (latitude ==  null && longitude == null)
                 return new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 };
 
             PGGeoSearchResult pggeosearchresult = new PGGeoSearchResult();
@@ -91,7 +91,7 @@ namespace Helper
 
         public static RavenGeoSearchResult GetRavenGeoSearchResult(string latitude, string longitude, string radius)
         {
-            if (latitude == "null" && longitude == "null")
+            if (latitude ==  null && longitude == null)
                 return new RavenGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 };
 
             RavenGeoSearchResult pggeosearchresult = new RavenGeoSearchResult();

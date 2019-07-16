@@ -175,7 +175,8 @@ namespace Helper
                     {
                         strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
 
-                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
+                        // FIXME: "null"?
+                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() ==  "null"|| dr[i].ToString() == "\"\"")
                             isvalueempty = true;
 
                         i++;
@@ -742,7 +743,8 @@ namespace Helper
                     {
                         strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
 
-                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
+                        // FIXME: "null"?
+                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() ==  "null"|| dr[i].ToString() == "\"\"")
                             isvalueempty = true;
 
                         i++;

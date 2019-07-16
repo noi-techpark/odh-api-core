@@ -16,7 +16,7 @@ namespace Helper
         {
             List<string> thearealist = new List<string>();
 
-            if (areafilter != "null")
+            if (areafilter != null)
             {
 
                 if (areafilter.Substring(areafilter.Length - 1, 1) == ",")

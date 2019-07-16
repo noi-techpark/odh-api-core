@@ -32,12 +32,12 @@ namespace Helper
                 return seed;
         }
 
-        public static string GetSeed(string seedstring)
+        public static string? GetSeed(string seedstring)
         {
             int seed;
 
-            if (seedstring == "null")
-                return "null";
+            if (seedstring == null)
+                return null;
 
             else if (int.TryParse(seedstring, out seed))
             {
@@ -63,7 +63,7 @@ namespace Helper
                     return seed.ToString();
             }
             else
-                return "null";
+                return null;
         }
     }
 }

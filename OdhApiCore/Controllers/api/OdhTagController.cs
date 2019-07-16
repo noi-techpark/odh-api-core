@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +15,7 @@ namespace OdhApiCore.Controllers
 {
     //[Route("api/ODHTag")]
     [EnableCors("CorsPolicy")]
+    [NullStringParameterActionFilter]
     public class OdhTagController : OdhController
     {
         public OdhTagController(ISettings settings) : base(settings)
