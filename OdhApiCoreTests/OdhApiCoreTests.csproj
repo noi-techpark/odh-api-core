@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <!-- can be deleted after VS 16.2 is released -->
     <NullableContextOptions>enable</NullableContextOptions>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

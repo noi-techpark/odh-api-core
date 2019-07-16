@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <!-- can be deleted after VS 16.2 is released -->
     <NullableContextOptions>enable</NullableContextOptions>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <UserSecretsId>aspnet-OdhApiCore-8340F15F-CE93-44F5-ABBD-4E830074B59D</UserSecretsId>
     <!--<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>-->
