@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -37,7 +35,7 @@ namespace Helper
 
     public static class PGExtensions
     {
-        public static void AddPGParameters(this NpgsqlCommand command, List<PGParameters> whereparameters)
+        public static void AddPGParameters(this NpgsqlCommand command, List<PGParameters>? whereparameters)
         {
             if (whereparameters != null)
             {
@@ -676,7 +674,7 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string where, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string where, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset)
         {
             try
             {
@@ -717,7 +715,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd)
+        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd)
         {
             try
             {
@@ -781,7 +779,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset)
         {
             try
             {
@@ -1068,7 +1066,7 @@ namespace Helper
 
         #region Generic Helpers
 
-        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, string seed, string data)
+        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, string? seed, string data)
         {
             string resultstr = "";
 
@@ -1080,7 +1078,7 @@ namespace Helper
             return resultstr;
         }
 
-        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, int onlineresults, string seed, string data)
+        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, string data)
         {
             string resultstr = "";
 
@@ -1092,7 +1090,7 @@ namespace Helper
             return resultstr;
         }
 
-        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, int onlineresults, string resultid, string seed, string data)
+        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, int onlineresults, string resultid, string? seed, string data)
         {
             string resultstr = "";
 
@@ -1232,8 +1230,8 @@ namespace Helper
 
     public class PGParameters
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public NpgsqlTypes.NpgsqlDbType Type { get; set; }
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 }

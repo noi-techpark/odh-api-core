@@ -47,7 +47,7 @@ namespace Helper
                 if (acco.LocationInfo.DistrictInfo != null)
                 {
                     distinfolocalized.Id = acco.LocationInfo.DistrictInfo.Id;
-                    distinfolocalized.Name = acco.LocationInfo.DistrictInfo.Name.ContainsKey(language) ? acco.LocationInfo.DistrictInfo.Name[language] : "";
+                    distinfolocalized.Name = acco.LocationInfo?.DistrictInfo?.Name?.ContainsKey(language) ?? false ? acco.LocationInfo?.DistrictInfo?.Name?[language] : "";
                 }
             }
 
@@ -57,7 +57,7 @@ namespace Helper
                 if (acco.LocationInfo.MunicipalityInfo != null)
                 {
                     muninfolocalized.Id = acco.LocationInfo.MunicipalityInfo.Id;
-                    muninfolocalized.Name = acco.LocationInfo.MunicipalityInfo.Name.ContainsKey(language) ? acco.LocationInfo.MunicipalityInfo.Name[language] : "";
+                    muninfolocalized.Name = acco.LocationInfo?.MunicipalityInfo?.Name?.ContainsKey(language) ?? false ? acco.LocationInfo?.MunicipalityInfo?.Name?[language] : "";
                 }
             }
 
@@ -67,7 +67,7 @@ namespace Helper
                 if (acco.LocationInfo.RegionInfo != null)
                 {
                     reginfolocalized.Id = acco.LocationInfo.RegionInfo.Id;
-                    reginfolocalized.Name = acco.LocationInfo.RegionInfo.Name.ContainsKey(language) ? acco.LocationInfo.RegionInfo.Name[language] : "";
+                    reginfolocalized.Name = acco.LocationInfo?.RegionInfo?.Name?.ContainsKey(language) ?? false ? acco.LocationInfo?.RegionInfo?.Name?[language] : "";
                 }
             }
 
@@ -77,7 +77,7 @@ namespace Helper
                 if (acco.LocationInfo.TvInfo != null)
                 {
                     tvinfolocalized.Id = acco.LocationInfo.TvInfo.Id;
-                    tvinfolocalized.Name = acco.LocationInfo.TvInfo.Name.ContainsKey(language) ? acco.LocationInfo.TvInfo.Name[language] : "";
+                    tvinfolocalized.Name = acco.LocationInfo?.TvInfo?.Name?.ContainsKey(language) ?? false ? acco.LocationInfo?.TvInfo?.Name?[language] : "";
                 }
             }
 
@@ -116,17 +116,17 @@ namespace Helper
         {
             AccoListObject data = new AccoListObject();
             data.Id = acco.Id;
-            data.Name = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Name : "";
+            data.Name = acco.AccoDetail?.ContainsKey(language) ?? false ? acco.AccoDetail?[language].Name : "";
             data.Type = acco.AccoTypeId;
             data.Category = acco.AccoCategoryId;
-            data.District = acco.LocationInfo.DistrictInfo != null ? acco.LocationInfo.DistrictInfo.Name[language] : null;
-            data.Municipality = acco.LocationInfo.MunicipalityInfo != null ? acco.LocationInfo.MunicipalityInfo.Name[language] : null;
-            data.Tourismverein = acco.LocationInfo.TvInfo != null ? acco.LocationInfo.TvInfo.Name[language] : null;
-            data.Region = acco.LocationInfo.RegionInfo != null ? acco.LocationInfo.RegionInfo.Name[language] : null;
+            data.District = acco.LocationInfo?.DistrictInfo != null ? acco.LocationInfo?.DistrictInfo?.Name?[language] : null;
+            data.Municipality = acco.LocationInfo?.MunicipalityInfo != null ? acco.LocationInfo?.MunicipalityInfo?.Name?[language] : null;
+            data.Tourismverein = acco.LocationInfo?.TvInfo != null ? acco.LocationInfo?.TvInfo?.Name?[language] : null;
+            data.Region = acco.LocationInfo?.RegionInfo != null ? acco.LocationInfo?.RegionInfo?.Name?[language] : null;
             data.TrustYouID = acco.TrustYouID;
             data.TrustYouResults = acco.TrustYouResults;
             data.TrustYouScore = acco.TrustYouScore;
-            data.SuedtirolinfoLink = "https://www.suedtirol.info/" + language + "/tripmapping/acco/" + acco.Id.ToUpper();
+            data.SuedtirolinfoLink = "https://www.suedtirol.info/" + language + "/tripmapping/acco/" + acco.Id?.ToUpper();
             data.ImageGallery = acco.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? acco.ImageGallery.Where(x => x.ListPosition == 0).ToList() : null;
 
             return data;
@@ -180,7 +180,7 @@ namespace Helper
                 if (poibaseinfo.LocationInfo.DistrictInfo != null)
                 {
                     distinfolocalized.Id = poibaseinfo.LocationInfo.DistrictInfo.Id;
-                    distinfolocalized.Name = poibaseinfo.LocationInfo.DistrictInfo.Name.ContainsKey(language) ? poibaseinfo.LocationInfo.DistrictInfo.Name[language] : "";
+                    distinfolocalized.Name = poibaseinfo.LocationInfo?.DistrictInfo?.Name?.ContainsKey(language) ?? false ? poibaseinfo.LocationInfo?.DistrictInfo?.Name?[language] : "";
                 }
             }
 
@@ -190,7 +190,7 @@ namespace Helper
                 if (poibaseinfo.LocationInfo.MunicipalityInfo != null)
                 {
                     muninfolocalized.Id = poibaseinfo.LocationInfo.MunicipalityInfo.Id;
-                    muninfolocalized.Name = poibaseinfo.LocationInfo.MunicipalityInfo.Name.ContainsKey(language) ? poibaseinfo.LocationInfo.MunicipalityInfo.Name[language] : "";
+                    muninfolocalized.Name = poibaseinfo.LocationInfo?.MunicipalityInfo?.Name?.ContainsKey(language) ?? false ? poibaseinfo.LocationInfo?.MunicipalityInfo?.Name?[language] : "";
                 }
             }
 
@@ -200,7 +200,7 @@ namespace Helper
                 if (poibaseinfo.LocationInfo.RegionInfo != null)
                 {
                     reginfolocalized.Id = poibaseinfo.LocationInfo.RegionInfo.Id;
-                    reginfolocalized.Name = poibaseinfo.LocationInfo.RegionInfo.Name.ContainsKey(language) ? poibaseinfo.LocationInfo.RegionInfo.Name[language] : "";
+                    reginfolocalized.Name = poibaseinfo.LocationInfo?.RegionInfo?.Name?.ContainsKey(language) ?? false ? poibaseinfo.LocationInfo?.RegionInfo?.Name?[language] : "";
                 }
             }
 
@@ -210,7 +210,7 @@ namespace Helper
                 if (poibaseinfo.LocationInfo.TvInfo != null)
                 {
                     tvinfolocalized.Id = poibaseinfo.LocationInfo.TvInfo.Id;
-                    tvinfolocalized.Name = poibaseinfo.LocationInfo.TvInfo.Name.ContainsKey(language) ? poibaseinfo.LocationInfo.TvInfo.Name[language] : "";
+                    tvinfolocalized.Name = poibaseinfo.LocationInfo?.TvInfo?.Name?.ContainsKey(language) ?? false ? poibaseinfo.LocationInfo?.TvInfo?.Name?[language] : "";
                 }
             }
 
@@ -276,7 +276,7 @@ namespace Helper
                 if (pgdata.LocationInfo.DistrictInfo != null)
                 {
                     distinfolocalized.Id = pgdata.LocationInfo.DistrictInfo.Id;
-                    distinfolocalized.Name = pgdata.LocationInfo.DistrictInfo.Name.ContainsKey(language) ? pgdata.LocationInfo.DistrictInfo.Name[language] : "";
+                    distinfolocalized.Name = pgdata.LocationInfo?.DistrictInfo?.Name?.ContainsKey(language) ?? false ? pgdata.LocationInfo?.DistrictInfo?.Name?[language] : "";
                 }
             }
 
@@ -286,7 +286,7 @@ namespace Helper
                 if (pgdata.LocationInfo.MunicipalityInfo != null)
                 {
                     muninfolocalized.Id = pgdata.LocationInfo.MunicipalityInfo.Id;
-                    muninfolocalized.Name = pgdata.LocationInfo.MunicipalityInfo.Name.ContainsKey(language) ? pgdata.LocationInfo.MunicipalityInfo.Name[language] : "";
+                    muninfolocalized.Name = pgdata.LocationInfo.MunicipalityInfo?.Name?.ContainsKey(language) ?? false ? pgdata.LocationInfo?.MunicipalityInfo?.Name?[language] : "";
                 }
             }
 
@@ -296,7 +296,7 @@ namespace Helper
                 if (pgdata.LocationInfo.RegionInfo != null)
                 {
                     reginfolocalized.Id = pgdata.LocationInfo.RegionInfo.Id;
-                    reginfolocalized.Name = pgdata.LocationInfo.RegionInfo.Name.ContainsKey(language) ? pgdata.LocationInfo.RegionInfo.Name[language] : "";
+                    reginfolocalized.Name = pgdata.LocationInfo?.RegionInfo?.Name?.ContainsKey(language) ?? false ? pgdata.LocationInfo?.RegionInfo?.Name?[language] : "";
                 }
             }
 
@@ -306,7 +306,7 @@ namespace Helper
                 if (pgdata.LocationInfo.TvInfo != null)
                 {
                     tvinfolocalized.Id = pgdata.LocationInfo.TvInfo.Id;
-                    tvinfolocalized.Name = pgdata.LocationInfo.TvInfo.Name.ContainsKey(language) ? pgdata.LocationInfo.TvInfo.Name[language] : "";
+                    tvinfolocalized.Name = pgdata.LocationInfo?.TvInfo?.Name?.ContainsKey(language) ?? false ? pgdata.LocationInfo?.TvInfo?.Name?[language] : "";
                 }
             }
 
@@ -361,7 +361,7 @@ namespace Helper
                 if (psdata.LocationInfo.DistrictInfo != null)
                 {
                     distinfolocalized.Id = psdata.LocationInfo.DistrictInfo.Id;
-                    distinfolocalized.Name = psdata.LocationInfo.DistrictInfo.Name.ContainsKey(language) ? psdata.LocationInfo.DistrictInfo.Name[language] : "";
+                    distinfolocalized.Name = psdata.LocationInfo?.DistrictInfo?.Name?.ContainsKey(language) ?? false ? psdata.LocationInfo?.DistrictInfo?.Name?[language] : "";
                 }
             }
 
@@ -371,7 +371,7 @@ namespace Helper
                 if (psdata.LocationInfo.MunicipalityInfo != null)
                 {
                     muninfolocalized.Id = psdata.LocationInfo.MunicipalityInfo.Id;
-                    muninfolocalized.Name = psdata.LocationInfo.MunicipalityInfo.Name.ContainsKey(language) ? psdata.LocationInfo.MunicipalityInfo.Name[language] : "";
+                    muninfolocalized.Name = psdata.LocationInfo?.MunicipalityInfo?.Name?.ContainsKey(language) ?? false ? psdata.LocationInfo?.MunicipalityInfo?.Name?[language] : "";
                 }
             }
 
@@ -381,7 +381,7 @@ namespace Helper
                 if (psdata.LocationInfo.RegionInfo != null)
                 {
                     reginfolocalized.Id = psdata.LocationInfo.RegionInfo.Id;
-                    reginfolocalized.Name = psdata.LocationInfo.RegionInfo.Name.ContainsKey(language) ? psdata.LocationInfo.RegionInfo.Name[language] : "";
+                    reginfolocalized.Name = psdata.LocationInfo.RegionInfo?.Name?.ContainsKey(language) ?? false ? psdata.LocationInfo?.RegionInfo?.Name?[language] : "";
                 }
             }
 
@@ -391,7 +391,7 @@ namespace Helper
                 if (psdata.LocationInfo.TvInfo != null)
                 {
                     tvinfolocalized.Id = psdata.LocationInfo.TvInfo.Id;
-                    tvinfolocalized.Name = psdata.LocationInfo.TvInfo.Name.ContainsKey(language) ? psdata.LocationInfo.TvInfo.Name[language] : "";
+                    tvinfolocalized.Name = psdata.LocationInfo?.TvInfo?.Name?.ContainsKey(language) ?? false ? psdata.LocationInfo?.TvInfo?.Name?[language] : "";
                 }
             }
 
@@ -495,7 +495,7 @@ namespace Helper
                 if (poibaseinfo.LocationInfo.DistrictInfo != null)
                 {
                     distinfolocalized.Id = poibaseinfo.LocationInfo.DistrictInfo.Id;
-                    distinfolocalized.Name = poibaseinfo.LocationInfo.DistrictInfo.Name.ContainsKey(language) ? poibaseinfo.LocationInfo.DistrictInfo.Name[language] : "";
+                    distinfolocalized.Name = poibaseinfo.LocationInfo?.DistrictInfo?.Name?.ContainsKey(language) ?? false ? poibaseinfo.LocationInfo?.DistrictInfo?.Name?[language] : "";
                 }
             }
 
@@ -505,7 +505,7 @@ namespace Helper
                 if (poibaseinfo.LocationInfo.MunicipalityInfo != null)
                 {
                     muninfolocalized.Id = poibaseinfo.LocationInfo.MunicipalityInfo.Id;
-                    muninfolocalized.Name = poibaseinfo.LocationInfo.MunicipalityInfo.Name.ContainsKey(language) ? poibaseinfo.LocationInfo.MunicipalityInfo.Name[language] : "";
+                    muninfolocalized.Name = poibaseinfo.LocationInfo?.MunicipalityInfo?.Name?.ContainsKey(language) ?? false ? poibaseinfo.LocationInfo?.MunicipalityInfo?.Name?[language] : "";
                 }
             }
 
@@ -515,7 +515,7 @@ namespace Helper
                 if (poibaseinfo.LocationInfo.RegionInfo != null)
                 {
                     reginfolocalized.Id = poibaseinfo.LocationInfo.RegionInfo.Id;
-                    reginfolocalized.Name = poibaseinfo.LocationInfo.RegionInfo.Name.ContainsKey(language) ? poibaseinfo.LocationInfo.RegionInfo.Name[language] : "";
+                    reginfolocalized.Name = poibaseinfo.LocationInfo?.RegionInfo?.Name?.ContainsKey(language) ?? false ? poibaseinfo.LocationInfo?.RegionInfo?.Name?[language] : "";
                 }
             }
 
@@ -525,7 +525,7 @@ namespace Helper
                 if (poibaseinfo.LocationInfo.TvInfo != null)
                 {
                     tvinfolocalized.Id = poibaseinfo.LocationInfo.TvInfo.Id;
-                    tvinfolocalized.Name = poibaseinfo.LocationInfo.TvInfo.Name.ContainsKey(language) ? poibaseinfo.LocationInfo.TvInfo.Name[language] : "";
+                    tvinfolocalized.Name = poibaseinfo.LocationInfo?.TvInfo?.Name?.ContainsKey(language) ?? false ? poibaseinfo.LocationInfo?.TvInfo?.Name?[language] : "";
                 }
             }
 
@@ -567,10 +567,10 @@ namespace Helper
             }).ToList() : null;
             data.LocationInfo = new LocationInfoLocalized()
             {
-                DistrictInfo = package.LocationInfo != null ? package.LocationInfo.DistrictInfo != null ? new DistrictInfoLocalized() { Id = package.LocationInfo.DistrictInfo.Id, Name = package.LocationInfo.DistrictInfo.Name[language] } : new DistrictInfoLocalized() : new DistrictInfoLocalized(),
-                MunicipalityInfo = package.LocationInfo != null ? package.LocationInfo.MunicipalityInfo != null ? new MunicipalityInfoLocalized() { Id = package.LocationInfo.MunicipalityInfo.Id, Name = package.LocationInfo.MunicipalityInfo.Name[language] } : new MunicipalityInfoLocalized() : new MunicipalityInfoLocalized(),
-                TvInfo = package.LocationInfo != null ? package.LocationInfo.TvInfo != null ? new TvInfoLocalized() { Id = package.LocationInfo.TvInfo.Id, Name = package.LocationInfo.TvInfo.Name[language] } : new TvInfoLocalized() : new TvInfoLocalized(),
-                RegionInfo = package.LocationInfo != null ? package.LocationInfo.RegionInfo != null ? new RegionInfoLocalized() { Id = package.LocationInfo.RegionInfo.Id, Name = package.LocationInfo.RegionInfo.Name[language] } : new RegionInfoLocalized() : new RegionInfoLocalized()
+                DistrictInfo = package.LocationInfo != null ? package.LocationInfo.DistrictInfo != null ? new DistrictInfoLocalized() { Id = package.LocationInfo.DistrictInfo.Id, Name = package.LocationInfo?.DistrictInfo?.Name?[language] } : new DistrictInfoLocalized() : new DistrictInfoLocalized(),
+                MunicipalityInfo = package.LocationInfo != null ? package.LocationInfo.MunicipalityInfo != null ? new MunicipalityInfoLocalized() { Id = package.LocationInfo.MunicipalityInfo.Id, Name = package.LocationInfo?.MunicipalityInfo?.Name?[language] } : new MunicipalityInfoLocalized() : new MunicipalityInfoLocalized(),
+                TvInfo = package.LocationInfo != null ? package.LocationInfo.TvInfo != null ? new TvInfoLocalized() { Id = package.LocationInfo.TvInfo.Id, Name = package.LocationInfo?.TvInfo?.Name?[language] } : new TvInfoLocalized() : new TvInfoLocalized(),
+                RegionInfo = package.LocationInfo != null ? package.LocationInfo.RegionInfo != null ? new RegionInfoLocalized() { Id = package.LocationInfo.RegionInfo.Id, Name = package.LocationInfo?.RegionInfo?.Name?[language] } : new RegionInfoLocalized() : new RegionInfoLocalized()
             };
             data.OfferId = package.OfferId;
             data.Offertyp = package.Offertyp;
@@ -898,10 +898,10 @@ namespace Helper
             data.RegionIds = baseinfo.RegionIds;
             data.LocationInfo = new LocationInfoLocalized()
             {
-                DistrictInfo = baseinfo.LocationInfo != null ? baseinfo.LocationInfo.DistrictInfo != null ? new DistrictInfoLocalized() { Id = baseinfo.LocationInfo.DistrictInfo.Id, Name = baseinfo.LocationInfo.DistrictInfo.Name[language] } : new DistrictInfoLocalized() : new DistrictInfoLocalized(),
-                MunicipalityInfo = baseinfo.LocationInfo != null ? baseinfo.LocationInfo.MunicipalityInfo != null ? new MunicipalityInfoLocalized() { Id = baseinfo.LocationInfo.MunicipalityInfo.Id, Name = baseinfo.LocationInfo.MunicipalityInfo.Name[language] } : new MunicipalityInfoLocalized() : new MunicipalityInfoLocalized(),
-                TvInfo = baseinfo.LocationInfo != null ? baseinfo.LocationInfo.TvInfo != null ? new TvInfoLocalized() { Id = baseinfo.LocationInfo.TvInfo.Id, Name = baseinfo.LocationInfo.TvInfo.Name[language] } : new TvInfoLocalized() : new TvInfoLocalized(),
-                RegionInfo = baseinfo.LocationInfo != null ? baseinfo.LocationInfo.RegionInfo != null ? new RegionInfoLocalized() { Id = baseinfo.LocationInfo.RegionInfo.Id, Name = baseinfo.LocationInfo.RegionInfo.Name[language] } : new RegionInfoLocalized() : new RegionInfoLocalized()
+                DistrictInfo = baseinfo.LocationInfo != null ? baseinfo.LocationInfo.DistrictInfo != null ? new DistrictInfoLocalized() { Id = baseinfo.LocationInfo.DistrictInfo.Id, Name = baseinfo.LocationInfo?.DistrictInfo?.Name?[language] } : new DistrictInfoLocalized() : new DistrictInfoLocalized(),
+                MunicipalityInfo = baseinfo.LocationInfo != null ? baseinfo.LocationInfo.MunicipalityInfo != null ? new MunicipalityInfoLocalized() { Id = baseinfo.LocationInfo.MunicipalityInfo.Id, Name = baseinfo.LocationInfo?.MunicipalityInfo?.Name?[language] } : new MunicipalityInfoLocalized() : new MunicipalityInfoLocalized(),
+                TvInfo = baseinfo.LocationInfo != null ? baseinfo.LocationInfo.TvInfo != null ? new TvInfoLocalized() { Id = baseinfo.LocationInfo.TvInfo.Id, Name = baseinfo.LocationInfo?.TvInfo?.Name?[language] } : new TvInfoLocalized() : new TvInfoLocalized(),
+                RegionInfo = baseinfo.LocationInfo != null ? baseinfo.LocationInfo.RegionInfo != null ? new RegionInfoLocalized() { Id = baseinfo.LocationInfo.RegionInfo.Id, Name = baseinfo.LocationInfo?.RegionInfo?.Name?[language] } : new RegionInfoLocalized() : new RegionInfoLocalized()
 
             };
 
@@ -916,10 +916,10 @@ namespace Helper
             MobileData data = new MobileData();
 
             data.Id = acommodation.Id;
-            data.Name = acommodation.AccoDetail[language] != null ? acommodation.AccoDetail[language].Name != null ? acommodation.AccoDetail[language].Name : "" : "";
-            data.Image = acommodation.ImageGallery.Count > 0 ? acommodation.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? acommodation.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl : acommodation.ImageGallery.FirstOrDefault().ImageUrl : "noimage";
-            data.Region = acommodation.LocationInfo.RegionInfo.Name[language];
-            data.Tourismverein = acommodation.LocationInfo.TvInfo.Name[language];
+            data.Name = acommodation.AccoDetail?[language] != null ? acommodation.AccoDetail[language].Name != null ? acommodation.AccoDetail[language].Name : "" : "";
+            data.Image = acommodation.ImageGallery?.Count > 0 ? acommodation.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? acommodation.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl : acommodation.ImageGallery.FirstOrDefault().ImageUrl : "noimage";
+            data.Region = acommodation.LocationInfo?.RegionInfo?.Name?[language];
+            data.Tourismverein = acommodation.LocationInfo?.TvInfo?.Name?[language];
             data.Latitude = acommodation.Latitude;
             data.Longitude = acommodation.Longitude;
             data.Type = "acco";
@@ -931,8 +931,8 @@ namespace Helper
                                                      { "poitype", "" },
                                                      //Accommodation
                                                      { "board", String.Join(",", acommodation.BoardIds) },
-                                                     { "type", acommodation.AccoTypeId },
-                                                     { "category", acommodation.AccoCategoryId },
+                                                     { "type", acommodation.AccoTypeId ?? "" },
+                                                     { "category", acommodation.AccoCategoryId ?? "" },
                                                      { "theme", String.Join(",", acommodation.ThemeIds) },
                                                      { "badge", String.Join(",", acommodation.BadgeIds) },
                                                      { "specialfeature", String.Join(",", acommodation.SpecialFeaturesIds) },
@@ -974,18 +974,18 @@ namespace Helper
             data.Name = smgpoi.Detail[language] != null ? smgpoi.Detail[language].Title != null ? smgpoi.Detail[language].Title : "" : "";
             //Wenn Image leer "noimage", wenn ImageListpos == 0 
             //Image = activity.ImageGallery != null ? activity.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? activity.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageSource == "LTS" ? activity.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl + "&W=200" : activity.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl + "&width=200" : activity.ImageGallery.FirstOrDefault().ImageUrl + "&width=200" : "noimage",
-            data.Image = smgpoi.ImageGallery.Count > 0 ? smgpoi.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? smgpoi.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl : smgpoi.ImageGallery.FirstOrDefault().ImageUrl : "noimage";
-            data.Region = smgpoi.LocationInfo.RegionInfo != null ? smgpoi.LocationInfo.RegionInfo.Name[language] : "";
-            data.Tourismverein = smgpoi.LocationInfo.TvInfo != null ? smgpoi.LocationInfo.TvInfo.Name[language] : "";
+            data.Image = smgpoi.ImageGallery?.Count > 0 ? smgpoi.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? smgpoi.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl : smgpoi.ImageGallery.FirstOrDefault().ImageUrl : "noimage";
+            data.Region = smgpoi.LocationInfo?.RegionInfo != null ? smgpoi.LocationInfo?.RegionInfo?.Name?[language] : "";
+            data.Tourismverein = smgpoi.LocationInfo?.TvInfo != null ? smgpoi.LocationInfo?.TvInfo?.Name?[language] : "";
             data.Latitude = smgpoi.GpsInfo != null ? smgpoi.GpsInfo.Count > 0 ? smgpoi.GpsInfo.Where(x => x.Gpstype == "position").Count() > 0 ? smgpoi.GpsInfo.Where(x => x.Gpstype == "position").FirstOrDefault().Latitude : smgpoi.GpsInfo.FirstOrDefault().Latitude : 0 : 0;
             data.Longitude = smgpoi.GpsInfo != null ? smgpoi.GpsInfo.Count > 0 ? smgpoi.GpsInfo.Where(x => x.Gpstype == "position").Count() > 0 ? smgpoi.GpsInfo.Where(x => x.Gpstype == "position").FirstOrDefault().Longitude : smgpoi.GpsInfo.FirstOrDefault().Longitude : 0 : 0;
             data.Type = "smgpoi";
             data.Category = new Dictionary<string, string>()
                                                  {
                                                      //Smgpoi
-                                                     { "maintype", smgpoi.AdditionalPoiInfos[language].MainType },
-                                                     { "subtype", smgpoi.AdditionalPoiInfos[language].SubType },
-                                                     { "poitype", smgpoi.AdditionalPoiInfos[language].PoiType },
+                                                     { "maintype", smgpoi.AdditionalPoiInfos?[language].MainType ?? "" },
+                                                     { "subtype", smgpoi.AdditionalPoiInfos?[language].SubType ?? "" },
+                                                     { "poitype", smgpoi.AdditionalPoiInfos?[language].PoiType ?? "" },
                                                      //Accommodation
                                                      { "board", "" },
                                                      { "type", "" },
@@ -1005,7 +1005,7 @@ namespace Helper
                                                      //SmgPoi
                                                      { "altitudedifference", smgpoi.AltitudeDifference.ToString() },
                                                      { "distanceduration", smgpoi.DistanceDuration.ToString() },
-                                                     { "difficulty", smgpoi.Difficulty != null ? smgpoi.Difficulty : nulldouble.ToString() },
+                                                     { "difficulty", smgpoi.Difficulty ?? nulldouble.ToString() },
                                                      { "distancelength", smgpoi.DistanceLength.ToString() },
                                                      //Accommodation
                                                      { "trustyouid", "" },
@@ -1030,9 +1030,9 @@ namespace Helper
             data.Id = eventinfo.Id;
             data.Name = eventinfo.Detail[language] != null ? eventinfo.Detail[language].Title != null ? eventinfo.Detail[language].Title : "" : "";
             //Image = eventinfo.ImageGallery != null ? eventinfo.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? eventinfo.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageSource == "LTS" ? eventinfo.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl + "&W=200" : eventinfo.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl + "&width=200" : eventinfo.ImageGallery.FirstOrDefault().ImageUrl + "&width=200" : "noimage",
-            data.Image = eventinfo.ImageGallery.Count > 0 ? eventinfo.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? eventinfo.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl : eventinfo.ImageGallery.FirstOrDefault().ImageUrl : "noimage";
-            data.Region = eventinfo.LocationInfo.RegionInfo.Name[language];
-            data.Tourismverein = eventinfo.LocationInfo.TvInfo.Name[language];
+            data.Image = eventinfo.ImageGallery?.Count > 0 ? eventinfo.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? eventinfo.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl : eventinfo.ImageGallery.FirstOrDefault().ImageUrl : "noimage";
+            data.Region = eventinfo.LocationInfo?.RegionInfo?.Name?[language];
+            data.Tourismverein = eventinfo.LocationInfo?.TvInfo?.Name?[language];
             data.Latitude = eventinfo.Latitude;
             data.Longitude = eventinfo.Longitude;
             data.Type = "event";
@@ -1089,18 +1089,18 @@ namespace Helper
             data.Name = activity.Detail[language] != null ? activity.Detail[language].Title != null ? activity.Detail[language].Title : "" : "";
             //Wenn Image leer "noimage", wenn ImageListpos == 0 
             data.ShortDesc = activity.Detail[language] != null ? activity.Detail[language].MetaDesc != null ? activity.Detail[language].MetaDesc : "" : "";
-            data.Image = activity.ImageGallery.Count > 0 ? activity.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? activity.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl : activity.ImageGallery.FirstOrDefault().ImageUrl : "noimage";
-            data.Region = activity.LocationInfo.RegionInfo.Name[language];
-            data.Tourismverein = activity.LocationInfo.TvInfo.Name[language];
+            data.Image = activity.ImageGallery?.Count > 0 ? activity.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? activity.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault().ImageUrl : activity.ImageGallery.FirstOrDefault().ImageUrl : "noimage";
+            data.Region = activity.LocationInfo?.RegionInfo?.Name?[language];
+            data.Tourismverein = activity.LocationInfo?.TvInfo?.Name?[language];
             data.Latitude = activity.GpsInfo != null ? activity.GpsInfo.Count > 0 ? activity.GpsInfo.Where(x => x.Gpstype == "position").Count() > 0 ? activity.GpsInfo.Where(x => x.Gpstype == "position").FirstOrDefault().Latitude : activity.GpsInfo.FirstOrDefault().Latitude : 0 : 0;
             data.Longitude = activity.GpsInfo != null ? activity.GpsInfo.Count > 0 ? activity.GpsInfo.Where(x => x.Gpstype == "position").Count() > 0 ? activity.GpsInfo.Where(x => x.Gpstype == "position").FirstOrDefault().Longitude : activity.GpsInfo.FirstOrDefault().Longitude : 0 : 0;
             data.Type = "smgpoi";
             data.Category = new Dictionary<string, string>()
                                                  {
                                                      //Smgpoi
-                                                     { "maintype", activity.AdditionalPoiInfos[language].MainType },
-                                                     { "subtype", activity.AdditionalPoiInfos[language].SubType },
-                                                     { "poitype", activity.AdditionalPoiInfos[language].PoiType },
+                                                     { "maintype", activity.AdditionalPoiInfos?[language]?.MainType ?? "" },
+                                                     { "subtype", activity.AdditionalPoiInfos?[language]?.SubType ?? "" },
+                                                     { "poitype", activity.AdditionalPoiInfos?[language]?.PoiType ?? "" },
                                                      //Accommodation
                                                      { "board", "" },
                                                      { "type", "" },
@@ -1172,10 +1172,10 @@ namespace Helper
             data.LiftAvailable = false;
             data.LocationInfo = new LocationInfoLocalized()
             {
-                DistrictInfo = new DistrictInfoLocalized() { Id = myevent.LocationInfo.DistrictInfo.Id, Name = myevent.LocationInfo.DistrictInfo.Name[language] },
-                MunicipalityInfo = new MunicipalityInfoLocalized() { Id = myevent.LocationInfo.MunicipalityInfo.Id, Name = myevent.LocationInfo.MunicipalityInfo.Name[language] },
-                TvInfo = new TvInfoLocalized() { Id = myevent.LocationInfo.TvInfo.Id, Name = myevent.LocationInfo.TvInfo.Name[language] },
-                RegionInfo = new RegionInfoLocalized() { Id = myevent.LocationInfo.RegionInfo.Id, Name = myevent.LocationInfo.RegionInfo.Name[language] }
+                DistrictInfo = new DistrictInfoLocalized() { Id = myevent.LocationInfo?.DistrictInfo?.Id, Name = myevent.LocationInfo?.DistrictInfo?.Name?[language] },
+                MunicipalityInfo = new MunicipalityInfoLocalized() { Id = myevent.LocationInfo?.MunicipalityInfo?.Id, Name = myevent.LocationInfo?.MunicipalityInfo?.Name?[language] },
+                TvInfo = new TvInfoLocalized() { Id = myevent.LocationInfo?.TvInfo?.Id, Name = myevent.LocationInfo?.TvInfo?.Name?[language] },
+                RegionInfo = new RegionInfoLocalized() { Id = myevent.LocationInfo?.RegionInfo?.Id, Name = myevent.LocationInfo?.RegionInfo?.Name?[language] }
             };
             data.MainType = "event";
             data.MaxSeatingCapacity = 0;
@@ -1237,10 +1237,10 @@ namespace Helper
             data.LiftAvailable = activity.LiftAvailable;
             data.LocationInfo = new LocationInfoLocalized()
             {
-                DistrictInfo = new DistrictInfoLocalized() { Id = activity.LocationInfo.DistrictInfo.Id, Name = activity.LocationInfo.DistrictInfo.Name[language] },
-                MunicipalityInfo = new MunicipalityInfoLocalized() { Id = activity.LocationInfo.MunicipalityInfo.Id, Name = activity.LocationInfo.MunicipalityInfo.Name[language] },
-                TvInfo = new TvInfoLocalized() { Id = activity.LocationInfo.TvInfo.Id, Name = activity.LocationInfo.TvInfo.Name[language] },
-                RegionInfo = new RegionInfoLocalized() { Id = activity.LocationInfo.RegionInfo.Id, Name = activity.LocationInfo.RegionInfo.Name[language] }
+                DistrictInfo = new DistrictInfoLocalized() { Id = activity.LocationInfo?.DistrictInfo?.Id, Name = activity.LocationInfo?.DistrictInfo?.Name?[language] },
+                MunicipalityInfo = new MunicipalityInfoLocalized() { Id = activity.LocationInfo?.MunicipalityInfo?.Id, Name = activity.LocationInfo?.MunicipalityInfo?.Name?[language] },
+                TvInfo = new TvInfoLocalized() { Id = activity.LocationInfo?.TvInfo?.Id, Name = activity.LocationInfo?.TvInfo?.Name?[language] },
+                RegionInfo = new RegionInfoLocalized() { Id = activity.LocationInfo?.RegionInfo?.Id, Name = activity.LocationInfo?.RegionInfo?.Name?[language] }
             };
             data.MainType = "smgpoi";
             data.MaxSeatingCapacity = 0;
@@ -1250,8 +1250,8 @@ namespace Helper
             data.PayMet = "";
             data.PoiType = activity.AdditionalPoiInfos[language].PoiType;
             //PoiProperty = activity.SyncSourceInterface == "GastronomicData" ? activity.CategoryCodes.Select(x => new PoiProperty() { Name = x.Id, Value = x.Shortname }).ToList() : activity.PoiProperty[language],
-            data.PoiProperty = activity.PoiProperty != null ? activity.PoiProperty.Count > 0 ? activity.PoiProperty[language].ToDictionary(e => e.Name, v => v.Value) : null : null;
-            data.PoiServices = activity.SyncSourceInterface == "GastronomicData" ? activity.Facilities.Select(x => x.Id).ToList() : activity.PoiServices;
+            data.PoiProperty = activity.PoiProperty != null ? activity.PoiProperty.Count > 0 ? activity.PoiProperty[language]?.ToDictionary(e => e.Name, v => v.Value) : null : null;
+            data.PoiServices = activity.SyncSourceInterface == "GastronomicData" ? activity.Facilities?.Select(x => x.Id).ToList() : activity.PoiServices;
             data.Ranc = 0;
             data.Ratings = activity.Ratings;
             data.RunToValley = activity.RunToValley;

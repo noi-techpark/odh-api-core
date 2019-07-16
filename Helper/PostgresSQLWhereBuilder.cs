@@ -52,7 +52,7 @@ namespace Helper
         }
 
         //Return where and Parameters
-        public static Tuple<string, List<PGParameters>> CreateIdListWhereExpression(string id)
+        public static Tuple<string, List<PGParameters>> CreateIdListWhereExpression(string? id)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
