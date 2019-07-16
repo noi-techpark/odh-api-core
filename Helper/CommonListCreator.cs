@@ -69,7 +69,7 @@ namespace Helper
             return locIds;
         }
 
-        public static Tuple<int, int> CreateRangeString(string rangetoSplit)
+        public static Tuple<int, int>? CreateRangeString(string rangetoSplit)
         {
 
             if (rangetoSplit != "null")
@@ -82,7 +82,7 @@ namespace Helper
                 return null;
         }
 
-        public static Tuple<double, double> CreateRangeStringDouble(string rangetoSplit)
+        public static Tuple<double, double>? CreateRangeStringDouble(string rangetoSplit)
         {
             NumberFormatInfo provider = new NumberFormatInfo();
             provider.NumberDecimalSeparator = ".";

@@ -252,16 +252,16 @@ namespace Helper
             return "ERROR";
         }
 
-        public static List<LTSTaggingType> GetLTSTagParentsPG(NpgsqlConnection conn, LTSTaggingType currenttag, List<LTSTaggingType> ltstagparentlist)
+        public static async System.Threading.Tasks.Task<List<LTSTaggingType>> GetLTSTagParentsPGAsync(NpgsqlConnection conn, LTSTaggingType currenttag, List<LTSTaggingType> ltstagparentlist)
         {            
             if (currenttag.Level > 0)
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(currenttag.TypeParent);
-                var parent = PostgresSQLHelper.SelectFromTableDataAsObjectParametrized<LTSTaggingType>(conn, "ltstaggingtypes", "*", where.Item1, where.Item2, "", 1, null).FirstOrDefault();
+                var parent = (await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<LTSTaggingType>(conn, "ltstaggingtypes", "*", where.Item1, where.Item2, "", 1, null)).FirstOrDefault();
 
                 ltstagparentlist.Add(parent);
 
-                GetLTSTagParentsPG(conn, parent, ltstagparentlist);
+                await GetLTSTagParentsPGAsync(conn, parent, ltstagparentlist);
 
                 return ltstagparentlist;
             }
@@ -295,7 +295,7 @@ namespace Helper
             return maintypedict;
         }
 
-        public static string LTSActivityTaggingTagTranslator(string key)
+        public static string LTSActivityTaggingTagTranslator(string? key)
         {
             switch (key)
             {
@@ -315,14 +315,14 @@ namespace Helper
 
     public class LTSAreaHelper
     {
-        public static List<string> GetAreasNotToConsiderPG(NpgsqlConnection conn)
+        public static async System.Threading.Tasks.Task<List<string>> GetAreasNotToConsiderPGAsync(NpgsqlConnection conn)
         {
 
-            conn.Open();
+            await conn.OpenAsync();
             //var areasnottoconsider = PostgresSQLHelper.SelectFromTableDataAsId(conn, "areas", "data->'Id' as Id", "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'", "",0, null);
-            var areasnottoconsider = PostgresSQLHelper.SelectFromTableDataAsObject<string>(conn, "areas", "Id as PgId, data->'Id' as Id", "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'", "", 0, null);
+            var areasnottoconsider = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<string>(conn, "areas", "Id as PgId, data->'Id' as Id", "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'", "", 0, null);
 
-            conn.Close();
+            await conn.CloseAsync();
 
             //session.Query<Area, AreaFilter>().Where(x => x.RegionId == null || x.RegionId == "TOASSIGN").Select(x => x.Id).ToList();
 

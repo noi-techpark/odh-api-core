@@ -76,7 +76,7 @@ namespace Helper
             return (T)Enum.ToObject(typeof(T), lValue);
         }
 
-        public static string GetDescription<T>(this T value) where T : struct
+        public static string? GetDescription<T>(this T value) where T : struct
         {
             CheckIsEnum<T>(false);
             string name = Enum.GetName(typeof(T), value);
@@ -85,7 +85,7 @@ namespace Helper
                 FieldInfo field = typeof(T).GetField(name);
                 if (field != null)
                 {
-                    DescriptionAttribute attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                    DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
                     if (attr != null)
                     {
                         return attr.Description;
@@ -95,7 +95,7 @@ namespace Helper
             return null;
         }
 
-        public static int GetFlagofType<T>(string id)
+        public static int GetFlagofType<T>(string? id)
         {
             foreach (var smgpoitypeflag in Enum.GetValues(typeof(T)))
             {
@@ -107,7 +107,7 @@ namespace Helper
                     FieldInfo field = typeof(T).GetField(name);
                     if (field != null)
                     {
-                        DescriptionAttribute attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                        DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
                         if (attr != null)
                         {
                             description = attr.Description;
@@ -136,7 +136,7 @@ namespace Helper
                     FieldInfo field = typeof(T).GetField(name);
                     if (field != null)
                     {
-                        DescriptionAttribute attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                        DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
                         if (attr != null)
                         {
                             description = attr.Description;
@@ -177,7 +177,7 @@ namespace Helper
                     FieldInfo field = typeof(T).GetField(name);
                     if (field != null)
                     {
-                        DescriptionAttribute attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                        DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
                         if (attr != null)
                         {
                             descriptionList.Add(attr.Description);
