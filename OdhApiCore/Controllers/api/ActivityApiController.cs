@@ -283,10 +283,10 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("All/{activitytype}/{elements}/{seed?}")]
         public Task<IActionResult> GetAll(string activitytype, int elements, string? seed)
         {
-            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, null, null, null, null, null, null, null, null, null, null, null, null, connectionString);
-
             return DoAsync(async conn =>
-            {            
+            {
+                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, null, null, null, null, null, null, null, null, null, null, null, null);
+
                 string select = "*";
                 string orderby = "";
 
@@ -312,10 +312,10 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Paged/{activitytype}/{pagenumber}/{pagesize}/{seed?}")]
         public Task<IActionResult> GetPaged(string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult)
         {
-            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, null, null, null, null, null, null, null, null, null, null, null, null, connectionString);
-
             return DoAsync(async conn =>
-            {          
+            {
+                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, null, null, null, null, null, null, null, null, null, null, null, null);
+
                 string select = "*";
                 string orderby = "";
 
@@ -375,10 +375,10 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Filtered/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed?}")]
         public Task<IActionResult> GetFiltered(int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive, string? smgtags, string? seed, PGGeoSearchResult geosearchresult)
         {
-            ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
-
             return DoAsync(async conn =>
             {           
+                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags);
+
                 string select = "*";
                 string orderby = "";
 
@@ -440,7 +440,7 @@ namespace OdhApiCore.Controllers
         {         
             return DoAsync(async conn =>
             {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, null, null, null, null, null, null, null, null, null, null, null, null, connectionString);
+                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, null, null, null, null, null, null, null, null, null, null, null, null);
 
                 string select = "*";
                 string orderby = "";
@@ -471,7 +471,7 @@ namespace OdhApiCore.Controllers
         {          
             return DoAsync(async conn =>
             {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, null, null, null, null, null, null, null, null, null, null, null, null, connectionString);
+                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, null, null, null, null, null, null, null, null, null, null, null, null);
 
                 string select = "*";
                 string orderby = "";
@@ -522,7 +522,7 @@ namespace OdhApiCore.Controllers
         {          
             return DoAsync(async conn =>
             {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
+                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags);
 
                 string select = "*";
                 string orderby = "";
@@ -595,7 +595,7 @@ namespace OdhApiCore.Controllers
         {          
             return DoAsync(async conn =>
             {
-                ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, null, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
+                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags);
 
                 string select = "data->'Id' as Id, data->'Detail'->'" + language + "'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
