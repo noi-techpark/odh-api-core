@@ -4,35 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Helper
 {
-    public class PostGresSQLHelperException : Exception
-    {
-        public PostGresSQLHelperException()
-        {
-        }
-
-        public PostGresSQLHelperException(string message) : base(message)
-        {
-        }
-
-        public PostGresSQLHelperException(Exception innerException) : base("Error executing SQL query.", innerException)
-        {
-        }
-
-        public PostGresSQLHelperException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected PostGresSQLHelperException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-    }
-
     public static class PGExtensions
     {
         public static void AddPGParameters(this NpgsqlCommand command, List<PGParameters>? whereparameters)
@@ -41,7 +17,7 @@ namespace Helper
             {
                 foreach (var parameter in whereparameters)
                 {
-                    switch(parameter.Type)
+                    switch (parameter.Type)
                     {
                         case NpgsqlTypes.NpgsqlDbType.Date:
                             command.Parameters.AddWithValue(parameter.Name, parameter.Type, Convert.ToDateTime(parameter.Value));
@@ -49,14 +25,14 @@ namespace Helper
                         default:
                             command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
                             break;
-                    }                    
+                    }
                 }
             }
         }
     }
 
     public class PostgresSQLHelper
-    { 
+    {
 
         #region String Select Methods
 
@@ -174,7 +150,7 @@ namespace Helper
                         strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
 
                         // FIXME: "null"?
-                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() ==  "null"|| dr[i].ToString() == "\"\"")
+                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
                             isvalueempty = true;
 
                         i++;
@@ -742,7 +718,7 @@ namespace Helper
                         strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
 
                         // FIXME: "null"?
-                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() ==  "null"|| dr[i].ToString() == "\"\"")
+                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
                             isvalueempty = true;
 
                         i++;
