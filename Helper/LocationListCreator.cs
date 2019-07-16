@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Helper
 {
@@ -12,7 +13,7 @@ namespace Helper
 
         #region PostGres
 
-        public static async Task<List<string>> CreateActivityAreaListPGAsync(string areafilter, NpgsqlConnection conn)
+        public static async Task<List<string>> CreateActivityAreaListPGAsync(string areafilter, NpgsqlConnection conn, CancellationToken cancellationToken)
         {
             List<string> thearealist = new List<string>();
 
@@ -34,28 +35,28 @@ namespace Helper
                         case "reg":
 
                             //Suche alle zugehörigen Areas für die Region
-                            thearealist.AddRange(await GetAreaforRegionPGAsync(theareafilter.Replace("reg", ""), conn));
+                            thearealist.AddRange(await GetAreaforRegionPGAsync(theareafilter.Replace("reg", ""), conn, cancellationToken));
 
                             break;
 
                         case "tvs":
 
                             //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforTourismvereinPGAsync(theareafilter.Replace("tvs", ""), conn));
+                            thearealist.AddRange(await GetAreaforTourismvereinPGAsync(theareafilter.Replace("tvs", ""), conn, cancellationToken));
 
                             break;
 
                         case "skr":
 
                             //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforSkiRegionPGAsync(theareafilter.Replace("skr", ""), conn));
+                            thearealist.AddRange(await GetAreaforSkiRegionPGAsync(theareafilter.Replace("skr", ""), conn, cancellationToken));
 
                             break;
 
                         case "ska":
 
                             //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforSkiAreaPGAsync(theareafilter.Replace("ska", ""), conn));
+                            thearealist.AddRange(await GetAreaforSkiAreaPGAsync(theareafilter.Replace("ska", ""), conn, cancellationToken));
 
                             break;
 
@@ -69,14 +70,14 @@ namespace Helper
             return thearealist;
         }
 
-        public static async Task<List<string>> GetAreaforRegionPGAsync(string regionId, NpgsqlConnection conn)
+        public static async Task<List<string>> GetAreaforRegionPGAsync(string regionId, NpgsqlConnection conn, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
             string select = "Id,data ->> 'Id'";
             string where = "data ->> 'RegionId' = '" + regionId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "areas", select, where, "", 0, null);
+            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "areas", select, where, "", 0, null, cancellationToken);
 
             foreach (var area in result)
             {
@@ -94,14 +95,14 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforTourismvereinPGAsync(string tvId, NpgsqlConnection conn)
+        public static async Task<List<string>> GetAreaforTourismvereinPGAsync(string tvId, NpgsqlConnection conn, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
             string select = "Id,data ->> 'Id'";
             string where = "data ->> 'TourismvereinId' = '" + tvId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "areas", select, where, "", 0, null);
+            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "areas", select, where, "", 0, null, cancellationToken);
 
             foreach (var area in result)
             {
@@ -119,14 +120,14 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforSkiRegionPGAsync(string skiregId, NpgsqlConnection conn)
+        public static async Task<List<string>> GetAreaforSkiRegionPGAsync(string skiregId, NpgsqlConnection conn, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
             string select = "Id,data ->> 'AreaId'";
             string where = "data ->> 'SkiRegionId' = '" + skiregId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "skiareas", select, where, "", 0, null);
+            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "skiareas", select, where, "", 0, null, cancellationToken);
 
             foreach (var skiarea in result)
             {
@@ -144,7 +145,7 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforSkiAreaPGAsync(string skiareaId, NpgsqlConnection conn)
+        public static async Task<List<string>> GetAreaforSkiAreaPGAsync(string skiareaId, NpgsqlConnection conn, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
@@ -152,7 +153,7 @@ namespace Helper
             string select = "Id,data ->> 'AreaId'";
             string where = "Id = '" + skiareaId.ToUpper() + "'";
 
-            var result = (await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "skiareas", select, where, "", 0, null)).FirstOrDefault();
+            var result = (await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "skiareas", select, where, "", 0, null, cancellationToken)).FirstOrDefault();
 
             result = result.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 

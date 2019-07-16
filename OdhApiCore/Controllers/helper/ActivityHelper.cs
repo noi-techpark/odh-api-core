@@ -3,6 +3,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
@@ -30,15 +31,15 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
 
-        public static async Task<ActivityHelper> CreateAsync(NpgsqlConnection conn, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter, string? smgtags)
+        public static async Task<ActivityHelper> CreateAsync(NpgsqlConnection conn, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter, string? smgtags, CancellationToken cancellationToken)
         {
-            var arealist = await RetrieveAreaFilterDataAsync(conn, areafilter);
+            var arealist = await RetrieveAreaFilterDataAsync(conn, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await RetrieveLocFilterDataAsync(conn, metaregionlist);
+                tourismusvereinids = await RetrieveLocFilterDataAsync(conn, metaregionlist, cancellationToken);
             }
 
             return new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, arealist, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, activefilter, smgactivefilter, smgtags, tourismusvereinids);
@@ -151,11 +152,11 @@ namespace OdhApiCore.Controllers
                 smgactive = false;
         }
 
-        private static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(NpgsqlConnection conn, string? areafilter)
+        private static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(NpgsqlConnection conn, string? areafilter, CancellationToken cancellationToken)
         {
             if (areafilter != null)
             {
-                return (await LocationListCreator.CreateActivityAreaListPGAsync(areafilter, conn)).ToList();
+                return (await LocationListCreator.CreateActivityAreaListPGAsync(areafilter, conn, cancellationToken)).ToList();
             }
             else
             {
@@ -163,10 +164,10 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        private static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(NpgsqlConnection conn, List<string> metaregionlist)
+        private static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(NpgsqlConnection conn, List<string> metaregionlist, CancellationToken cancellationToken)
         {
             var mtapgwhere = PostgresSQLWhereBuilder.CreateMetaRegionWhereExpression(metaregionlist);
-            var mymetaregion = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(conn, "metaregions", "*", mtapgwhere.Item1, mtapgwhere.Item2, "", 0, null);
+            var mymetaregion = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(conn, "metaregions", "*", mtapgwhere.Item1, mtapgwhere.Item2, "", 0, null, cancellationToken);
 
             return mymetaregion.SelectMany(x => x.TourismvereinIds).ToList();
         }

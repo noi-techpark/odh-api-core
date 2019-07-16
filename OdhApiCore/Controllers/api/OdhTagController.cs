@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Helper;
 using Microsoft.AspNetCore.Cors;
@@ -33,27 +34,27 @@ namespace OdhApiCore.Controllers
         //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTags Objects", typeof(IEnumerable<SmgTags>))]
         [HttpGet, Route("api/ODHTag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetODHTagsAsync(string localizationlanguage = "", string validforentity = "")
+        public async Task<IActionResult> GetODHTagsAsync(string localizationlanguage = "", string validforentity = "", CancellationToken cancellationToken = default)
         {
             //Fall 1 Getter auf ALL
             if (string.IsNullOrEmpty(validforentity) && string.IsNullOrEmpty(localizationlanguage))
             {
-                return await Get();
+                return await Get(cancellationToken);
             }
             //Fall 2 Getter auf GetFiltered
             else if (!string.IsNullOrEmpty(validforentity) && string.IsNullOrEmpty(localizationlanguage))
             {
-                return await GetFiltered(validforentity);
+                return await GetFiltered(validforentity, cancellationToken);
             }
             //Fall 4 GET auf GetLocalized
             else if (string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
             {
-                return await GetLocalized(localizationlanguage);
+                return await GetLocalized(localizationlanguage, cancellationToken);
             }
             //Fall 5 GET auf GetFilteredLocalized
             else if (!string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
             {
-                return await GetFilteredLocalized(localizationlanguage, validforentity);
+                return await GetFilteredLocalized(localizationlanguage, validforentity, cancellationToken);
             }
             else
             {
@@ -70,17 +71,17 @@ namespace OdhApiCore.Controllers
         //[SwaggerResponse(HttpStatusCode.OK, "SmgTag Object", typeof(SmgTags))]
         [HttpGet, Route("api/ODHTag/{id}")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetODHTagSingle(string id, string localizationlanguage = "")
+        public async Task<IActionResult> GetODHTagSingle(string id, string localizationlanguage = "", CancellationToken cancellationToken = default)
         {
             //Fall 1 Getter auf ALL
             if (string.IsNullOrEmpty(localizationlanguage))
             {
-                return await GetSingle(id);
+                return await GetSingle(id, cancellationToken);
             }
             //Fall 2 Getter auf GetFiltered
             else
             {
-                return await GetSingleLocalized(id, localizationlanguage);
+                return await GetSingleLocalized(id, localizationlanguage, cancellationToken);
             }
         }
 
@@ -93,16 +94,16 @@ namespace OdhApiCore.Controllers
         //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTagReduced Objects", typeof(IEnumerable<SmgTagReduced>))]
         [HttpGet, Route("api/ODHTagReduced")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetODHTagsReduced(string localizationlanguage, string validforentity = "")
+        public async Task<IActionResult> GetODHTagsReduced(string localizationlanguage, string validforentity = "", CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
             {
-                return await GetReducedLocalized(localizationlanguage);
+                return await GetReducedLocalized(localizationlanguage, cancellationToken);
             }
             //Fall 7 GET auf GetReducedFilteredLocalized
             else if (!string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
             {
-                return await GetReducedFilteredLocalized(localizationlanguage, validforentity);
+                return await GetReducedFilteredLocalized(localizationlanguage, validforentity, cancellationToken);
             }
             else
             {
@@ -121,7 +122,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         //[HttpGet, Route("")]
         //[ApiExplorerSettings(IgnoreApi = true)]
-        private Task<IActionResult> Get()
+        private Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             return DoAsync(async conn =>
             {
@@ -129,7 +130,7 @@ namespace OdhApiCore.Controllers
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "smgtags", select, where, null, orderby, 0, null);
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "smgtags", select, where, null, orderby, 0, null, cancellationToken);
 
                 return "[" + String.Join(",", myresult) + "]";
             });
@@ -143,7 +144,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         //[HttpGet, Route("Filtered/{smgtagtype}")]
         //[ApiExplorerSettings(IgnoreApi = true)]
-        private Task<IActionResult> GetFiltered(string smgtagtype)
+        private Task<IActionResult> GetFiltered(string smgtagtype, CancellationToken cancellationToken)
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -169,7 +170,7 @@ namespace OdhApiCore.Controllers
                     where = where + smgtagtypeliststring;
                 }
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "smgtags", select, where, parameters, orderby, 0, null);
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "smgtags", select, where, parameters, orderby, 0, null, cancellationToken);
 
                 return "[" + String.Join(",", myresult) + "]";
             });
@@ -183,12 +184,12 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         //[HttpGet, Route("Single/{id}")]
         //[ApiExplorerSettings(IgnoreApi = true)]
-        private Task<IActionResult> GetSingle(string id)
+        private Task<IActionResult> GetSingle(string id, CancellationToken cancellationToken)
         {
             return DoAsync(async conn =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
-                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "smgtags", "*", where.Item1, where.Item2, "", 0, null);
+                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "smgtags", "*", where.Item1, where.Item2, "", 0, null, cancellationToken);
 
                 return String.Join(",", data);
             });
@@ -206,7 +207,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         [HttpGet, Route("{language}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetLocalized(string language)
+        public Task<IActionResult> GetLocalized(string language, CancellationToken cancellationToken)
         {
             return DoAsync(async conn =>
             {
@@ -214,7 +215,7 @@ namespace OdhApiCore.Controllers
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(conn, "smgtags", select, where, null, orderby, 0, null);
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(conn, "smgtags", select, where, null, orderby, 0, null, cancellationToken);
                 var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult);
@@ -230,7 +231,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         [HttpGet, Route("Filtered/{language}/{smgtagtype}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetFilteredLocalized(string language, string smgtagtype)
+        public Task<IActionResult> GetFilteredLocalized(string language, string smgtagtype, CancellationToken cancellationToken)
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -256,7 +257,7 @@ namespace OdhApiCore.Controllers
                     where = where + smgtagtypeliststring;
                 }
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(conn, "smgtags", select, where, parameters, orderby, 0, null);
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(conn, "smgtags", select, where, parameters, orderby, 0, null, cancellationToken);
                 var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult);
@@ -272,12 +273,12 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         [HttpGet, Route("Single/{language}/{id}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetSingleLocalized(string id, string language)
+        public Task<IActionResult> GetSingleLocalized(string id, string language, CancellationToken cancellationToken)
         {
             return DoAsync(async conn =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
-                var data = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(conn, "smgtags", "*", where.Item1, where.Item2, "", 0, null);
+                var data = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(conn, "smgtags", "*", where.Item1, where.Item2, "", 0, null, cancellationToken);
                 var localizedresult = data.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult.FirstOrDefault());
@@ -296,7 +297,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         [HttpGet, Route("ReducedAsync/{language}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetReducedLocalized(string language)
+        public Task<IActionResult> GetReducedLocalized(string language, CancellationToken cancellationToken)
         {
             return DoAsync(async conn =>
             {
@@ -304,7 +305,7 @@ namespace OdhApiCore.Controllers
                 string orderby = "";
                 string where = "data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(conn, "smgtags", select, where, null, orderby, 0, null, new List<string>() { "Id", "Name" });
+                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(conn, "smgtags", select, where, null, orderby, 0, null, new List<string>() { "Id", "Name" }, cancellationToken);
 
                 return "[" + String.Join(",", data) + "]";
             });
@@ -319,7 +320,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         [HttpGet, Route("Reduced/{language}/{smgtagtype}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetReducedFilteredLocalized(string language, string smgtagtype)
+        public Task<IActionResult> GetReducedFilteredLocalized(string language, string smgtagtype, CancellationToken cancellationToken)
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -347,7 +348,7 @@ namespace OdhApiCore.Controllers
 
                 where = where + " AND data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(conn, "smgtags", select, where, parameters, orderby, 0, null, new List<string>() { "Id", "Name" });
+                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(conn, "smgtags", select, where, parameters, orderby, 0, null, new List<string>() { "Id", "Name" }, cancellationToken);
 
                 return "[" + String.Join(",", data) + "]";
             });

@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Helper
@@ -47,7 +48,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<string>> SelectFromTableDataAsStringAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
@@ -86,7 +87,7 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<string> SelectFromTableDataAsStringSingleAsync(NpgsqlConnection conn, string tablename, string selectexp, string id)
+        public static async Task<string> SelectFromTableDataAsStringSingleAsync(NpgsqlConnection conn, string tablename, string selectexp, string id, CancellationToken cancellationToken)
         {
             try
             {
@@ -124,7 +125,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd)
+        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, CancellationToken cancellationToken)
         {
             try
             {
@@ -134,11 +135,11 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
 
                 List<string> lstSelect = new List<string>();
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     bool isvalueempty = false;
 
@@ -165,7 +166,7 @@ namespace Helper
                     }
                 }
 
-                await dr.CloseAsync();
+                await dr.CloseAsync(cancellationToken);
 
                 await command.DisposeAsync();
 
@@ -247,7 +248,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<string>> SelectFromTableDataAsIdAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
@@ -293,7 +294,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<T>> SelectFromTableDataAsObjectAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
@@ -342,7 +343,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<T> SelectFromTableDataAsObjectSingleAsync<T>(NpgsqlConnection conn, string tablename, string id)
+        public static async Task<T> SelectFromTableDataAsObjectSingleAsync<T>(NpgsqlConnection conn, string tablename, string id, CancellationToken cancellationToken)
         {
             try
             {
@@ -393,7 +394,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<Tuple<string, T>>> SelectFromTableIdAndDataAsObjectAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<Tuple<string, T>>> SelectFromTableIdAndDataAsObjectAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
@@ -441,7 +442,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize)
+        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize, CancellationToken cancellationToken)
         {
             try
             {
@@ -496,7 +497,7 @@ namespace Helper
         /// <param name="tablename">Table name</param>
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
-        public static async Task<long> CountDataFromTableAsync(NpgsqlConnection conn, string tablename, string whereexp)
+        public static async Task<long> CountDataFromTableAsync(NpgsqlConnection conn, string tablename, string whereexp, CancellationToken cancellationToken)
         {
             try
             {
@@ -570,7 +571,7 @@ namespace Helper
         /// <param name="tablename">Table name</param>
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
-        public static async Task<long> CountDataFromTableParametrizedAsync(NpgsqlConnection conn, string tablename, string whereexp, List<PGParameters> whereparameters)
+        public static async Task<long> CountDataFromTableParametrizedAsync(NpgsqlConnection conn, string tablename, string whereexp, List<PGParameters> whereparameters, CancellationToken cancellationToken)
         {
             try
             {
@@ -610,7 +611,7 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataFirstOnlyParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string where, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<string>> SelectFromTableDataFirstOnlyParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string where, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
@@ -651,7 +652,7 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string where, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string where, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
@@ -692,7 +693,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd)
+        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, CancellationToken cancellationToken)
         {
             try
             {
@@ -756,7 +757,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset)
+        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
@@ -806,7 +807,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize)
+        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize, CancellationToken cancellationToken)
         {
             try
             {
@@ -867,7 +868,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, string language, Func<V, string, T> transformer)
+        public static async Task<List<T>> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, string language, Func<V, string, T> transformer, CancellationToken cancellationToken)
         {
             try
             {
@@ -908,7 +909,7 @@ namespace Helper
 
         #region Generic Insert Method
 
-        public static async Task<string> InsertDataIntoTableAsync(NpgsqlConnection conn, string tablename, string data, string id)
+        public static async Task<string> InsertDataIntoTableAsync(NpgsqlConnection conn, string tablename, string data, string id, CancellationToken cancellationToken)
         {
             try
             {
@@ -936,7 +937,7 @@ namespace Helper
             }
         }
 
-        public static async Task<string> InsertDataIntoTableAsync(NpgsqlConnection conn, string tablename, object data, string id)
+        public static async Task<string> InsertDataIntoTableAsync(NpgsqlConnection conn, string tablename, object data, string id, CancellationToken cancellationToken)
         {
             try
             {
@@ -960,7 +961,7 @@ namespace Helper
 
         #region Generic Update Method
 
-        public static async Task<string> UpdateDataFromTable(NpgsqlConnection conn, string tablename, string data, string id)
+        public static async Task<string> UpdateDataFromTable(NpgsqlConnection conn, string tablename, string data, string id, CancellationToken cancellationToken)
         {
             try
             {
@@ -989,7 +990,7 @@ namespace Helper
             }
         }
 
-        public static async Task<string> UpdateDataFromTable(NpgsqlConnection conn, string tablename, object data, string id)
+        public static async Task<string> UpdateDataFromTable(NpgsqlConnection conn, string tablename, object data, string id, CancellationToken cancellationToken)
         {
             try
             {
@@ -1014,7 +1015,7 @@ namespace Helper
 
         #region Generic Delete Method
 
-        public static async Task<string> DeleteDataFromTableAsync(NpgsqlConnection conn, string tablename, string idvalue)
+        public static async Task<string> DeleteDataFromTableAsync(NpgsqlConnection conn, string tablename, string idvalue, CancellationToken cancellationToken)
         {
             try
             {
