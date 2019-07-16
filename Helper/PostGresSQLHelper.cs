@@ -2,6 +2,7 @@
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -70,7 +71,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -107,7 +108,7 @@ namespace Helper
 
                 return result;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -170,7 +171,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -230,7 +231,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -271,7 +272,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -321,7 +322,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
@@ -372,7 +373,7 @@ namespace Helper
 
                 return lstSelect.FirstOrDefault();
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
@@ -420,7 +421,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
@@ -479,7 +480,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
@@ -519,7 +520,7 @@ namespace Helper
 
                 return count;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -594,7 +595,7 @@ namespace Helper
 
                 return count;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -634,7 +635,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -675,7 +676,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -738,7 +739,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -785,7 +786,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
@@ -846,7 +847,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error :" + ex);
@@ -897,7 +898,7 @@ namespace Helper
 
                 return lstSelect;
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -929,7 +930,7 @@ namespace Helper
 
                 return affectedrows.ToString();
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -949,7 +950,7 @@ namespace Helper
 
                 return affectedrows.ToString();
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -982,7 +983,7 @@ namespace Helper
 
                 return affectedrows.ToString();
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -1002,7 +1003,7 @@ namespace Helper
 
                 return affectedrows.ToString();
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
@@ -1032,7 +1033,7 @@ namespace Helper
 
                 return affectedrows.ToString();
             }
-            catch (Exception ex)
+            catch (DbException ex)
             {
                 throw new PostGresSQLHelperException(ex);
             }
