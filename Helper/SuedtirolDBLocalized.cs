@@ -110,84 +110,84 @@ namespace Helper
         public bool SmgActive { get; set; }
     }
 
-public class RegionLocalized : BaseInfosLocalized
-{
-    public DetailThemed? DetailThemed { get; set; }
+    public class RegionLocalized : BaseInfosLocalized
+    {
+        public DetailThemed? DetailThemed { get; set; }
 
-    public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-    public ICollection<WebcamLocalized>? Webcam { get; set; }
-    public bool VisibleInSearch { get; set; }
-    public ICollection<string>? SkiareaIds { get; set; }
-}
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<WebcamLocalized>? Webcam { get; set; }
+        public bool VisibleInSearch { get; set; }
+        public ICollection<string>? SkiareaIds { get; set; }
+    }
 
-public class TourismvereinLocalized : BaseInfosLocalized
-{
-    public string? RegionId { get; set; }
+    public class TourismvereinLocalized : BaseInfosLocalized
+    {
+        public string? RegionId { get; set; }
 
-    public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-    public ICollection<WebcamLocalized>? Webcam { get; set; }
-    public bool VisibleInSearch { get; set; }
-    public ICollection<string>? SkiareaIds { get; set; }
-}
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<WebcamLocalized>? Webcam { get; set; }
+        public bool VisibleInSearch { get; set; }
+        public ICollection<string>? SkiareaIds { get; set; }
+    }
 
-public class MunicipalityLocalized : BaseInfosLocalized
-{
-    public string? Plz { get; set; }
+    public class MunicipalityLocalized : BaseInfosLocalized
+    {
+        public string? Plz { get; set; }
 
-    public string? RegionId { get; set; }
-    public string? TourismvereinId { get; set; }
-    public string? SiagId { get; set; }
+        public string? RegionId { get; set; }
+        public string? TourismvereinId { get; set; }
+        public string? SiagId { get; set; }
 
-    public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-    public ICollection<WebcamLocalized>? Webcam { get; set; }
-    public bool VisibleInSearch { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<WebcamLocalized>? Webcam { get; set; }
+        public bool VisibleInSearch { get; set; }
 
-    public int Inhabitants { get; set; }
-    public string? IstatNumber { get; set; }
-}
+        public int Inhabitants { get; set; }
+        public string? IstatNumber { get; set; }
+    }
 
-public class DistrictLocalized : BaseInfosLocalized
-{
-    public Nullable<bool> IsComune { get; set; }
-    public string? RegionId { get; set; }
-    public string? TourismvereinId { get; set; }
-    public string? MunicipalityId { get; set; }
+    public class DistrictLocalized : BaseInfosLocalized
+    {
+        public Nullable<bool> IsComune { get; set; }
+        public string? RegionId { get; set; }
+        public string? TourismvereinId { get; set; }
+        public string? MunicipalityId { get; set; }
 
-    public string? SiagId { get; set; }
+        public string? SiagId { get; set; }
 
-    public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-    public ICollection<WebcamLocalized>? Webcam { get; set; }
-    public bool VisibleInSearch { get; set; }
-}
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<WebcamLocalized>? Webcam { get; set; }
+        public bool VisibleInSearch { get; set; }
+    }
 
-public class MetaRegionLocalized : BaseInfosLocalized
-{
-    public DetailThemed? DetailThemed { get; set; }
-    public ICollection<string>? DistrictIds { get; set; }
-    public ICollection<string>? TourismvereinIds { get; set; }
-    public ICollection<string>? RegionIds { get; set; }
+    public class MetaRegionLocalized : BaseInfosLocalized
+    {
+        public DetailThemed? DetailThemed { get; set; }
+        public ICollection<string>? DistrictIds { get; set; }
+        public ICollection<string>? TourismvereinIds { get; set; }
+        public ICollection<string>? RegionIds { get; set; }
 
-    public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-    public ICollection<WebcamLocalized>? Webcam { get; set; }
-    public bool VisibleInSearch { get; set; }
-}
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<WebcamLocalized>? Webcam { get; set; }
+        public bool VisibleInSearch { get; set; }
+    }
 
-public class ExperienceAreaLocalized : BaseInfosLocalized
-{
-    public ICollection<string>? DistrictIds { get; set; }
-    public ICollection<string>? TourismvereinIds { get; set; }
+    public class ExperienceAreaLocalized : BaseInfosLocalized
+    {
+        public ICollection<string>? DistrictIds { get; set; }
+        public ICollection<string>? TourismvereinIds { get; set; }
 
-    public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-    //public ICollection<WebcamLocalized> Webcam { get; set; }
-    public bool VisibleInSearch { get; set; }
-}
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        //public ICollection<WebcamLocalized> Webcam { get; set; }
+        public bool VisibleInSearch { get; set; }
+    }
 
-public class SkiRegionLocalized : BaseInfosLocalized
-{
-    public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+    public class SkiRegionLocalized : BaseInfosLocalized
+    {
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
-    public ICollection<WebcamLocalized>? Webcam { get; set; }
-}
+        public ICollection<WebcamLocalized>? Webcam { get; set; }
+    }
 
     public class SkiAreaLocalized : BaseInfosLocalized
     {

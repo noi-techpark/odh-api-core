@@ -83,15 +83,15 @@ namespace OdhApiCore.Controllers
             if (tourismusvereinids != null)
                 tourismvereinlist.AddRange(tourismusvereinids);
 
-//            //Sonderfall für MetaRegion hole mir alle DistrictIds dieser MetaRegion
-//            if (locfilter != null && locfilter.Contains("mta"))
-//            {
-//                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-//
-//                // FIXME: do not call in constructor
-//                //var tourismusvereinids = RetrieveLocFilterDataAsync(metaregionlist, connectionString).Result;
-//                tourismvereinlist.AddRange(tourismusvereinids);
-//            }
+            //            //Sonderfall für MetaRegion hole mir alle DistrictIds dieser MetaRegion
+            //            if (locfilter != null && locfilter.Contains("mta"))
+            //            {
+            //                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
+            //
+            //                // FIXME: do not call in constructor
+            //                //var tourismusvereinids = RetrieveLocFilterDataAsync(metaregionlist, connectionString).Result;
+            //                tourismvereinlist.AddRange(tourismusvereinids);
+            //            }
 
             //Distance
             distance = false;

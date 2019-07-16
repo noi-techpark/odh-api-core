@@ -19,7 +19,7 @@ namespace OdhApiCore.Controllers
     public class OdhTagController : OdhController
     {
         public OdhTagController(ISettings settings) : base(settings)
-        {         
+        {
         }
 
         #region SWAGGER Exposed API
@@ -81,7 +81,7 @@ namespace OdhApiCore.Controllers
             else
             {
                 return await GetSingleLocalized(id, localizationlanguage);
-            }            
+            }
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace OdhApiCore.Controllers
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "smgtags", select, where, null, orderby, 0, null);
 
                 return "[" + String.Join(",", myresult) + "]";
-            });      
+            });
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace OdhApiCore.Controllers
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "smgtags", select, where, parameters, orderby, 0, null);
 
                 return "[" + String.Join(",", myresult) + "]";
-            });               
+            });
         }
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Reduced/{language}/{smgtagtype}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetReducedFilteredLocalized(string language, string smgtagtype)
-        {            
+        {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             return DoAsync(async conn =>

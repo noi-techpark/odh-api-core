@@ -54,7 +54,7 @@ namespace OdhApiCore.Controllers.api
             catch (Exception ex)
             {
                 return ex.Message;
-            }            
+            }
         }
     }
 }

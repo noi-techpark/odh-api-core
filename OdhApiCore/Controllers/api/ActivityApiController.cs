@@ -160,7 +160,7 @@ namespace OdhApiCore.Controllers
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             //FAll 1 keine Filter
-            if (subtype ==  null && idlist == null && locfilter == null && areafilter == null && distancefilter == null && altitudefilter == null && durationfilter == null && highlight == null && odhtagfilter == null && odhactive == null && active == null)
+            if (subtype == null && idlist == null && locfilter == null && areafilter == null && distancefilter == null && altitudefilter == null && durationfilter == null && highlight == null && odhtagfilter == null && odhactive == null && active == null)
                 return await GetPagedLocalized(language, activitytype, pagenumber, pagesize, seed, geosearchresult);
             else
                 return await GetFilteredLocalized(language, pagenumber, pagesize, activitytype, subtype, idlist, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlight, difficultyfilter, active, odhactive, odhtagfilter, seed, geosearchresult);
@@ -293,10 +293,10 @@ namespace OdhApiCore.Controllers
                 var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
                 string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, where.Item1, where.Item2, orderby, elements, null);                
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, where.Item1, where.Item2, orderby, elements, null);
 
                 return "[" + String.Join(",", myresult) + "]";
-            });  
+            });
         }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace OdhApiCore.Controllers
         public Task<IActionResult> GetFiltered(int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive, string? smgtags, string? seed, PGGeoSearchResult geosearchresult)
         {
             return DoAsync(async conn =>
-            {           
+            {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags);
 
                 string select = "*";
@@ -392,7 +392,7 @@ namespace OdhApiCore.Controllers
                 int pageskip = pagesize * (pagenumber - 1);
 
                 var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip);
-                var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(conn, "activities", whereexpression, where.Item2);                
+                var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(conn, "activities", whereexpression, where.Item2);
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
@@ -437,7 +437,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("api/Activity/All/Localized/{language}/{activitytype}/{elements}/{seed?}")]
         public Task<IActionResult> GetLocalized(string language, string activitytype, int elements, string seed)
-        {         
+        {
             return DoAsync(async conn =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -446,7 +446,7 @@ namespace OdhApiCore.Controllers
                 string orderby = "";
 
                 var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist, myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax, myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax, myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax, myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
-                
+
                 string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", select, where.Item1, where.Item2, "", 0, null, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized);
@@ -468,7 +468,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/Paged/Localized/{language}/{activitytype}/{pagenumber}/{pagesize}/{seed?}")]
         public Task<IActionResult> GetPagedLocalized(string language, string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult)
-        {          
+        {
             return DoAsync(async conn =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -519,7 +519,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/Filtered/Localized/{language}/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed?}")]
         public Task<IActionResult> GetFilteredLocalized(string language, int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive, string? smgtags, string? seed, PGGeoSearchResult geosearchresult)
-        {          
+        {
             return DoAsync(async conn =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags);
@@ -592,7 +592,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/ReducedAsync/{language}/{activitytype}/{subtypefilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}")]
         public Task<IActionResult> GetReduced(string? language, string? activitytype, string? subtypefilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive, string? smgtags, PGGeoSearchResult geosearchresult)
-        {          
+        {
             return DoAsync(async conn =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(conn, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags);
@@ -820,29 +820,29 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
 
-                return Content(JsonConvert.SerializeObject(mysuedtiroltypeslist), "application/json", Encoding.UTF8);                
+                return Content(JsonConvert.SerializeObject(mysuedtiroltypeslist), "application/json", Encoding.UTF8);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
             }
         }
-	
-		/// <summary>
-		/// GET Paged Activity List based on LastChange Date
-		/// </summary>        
-		/// <param name="pagenumber">Pagenumber</param>
-		/// <param name="pagesize">Elements per Page</param>
-		/// <param name="updatefrom">Date from (all Activity with LastChange >= datefrom are passed)</param>
-		/// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-		/// <returns>Result Object with Collection of Activity Objects</returns>
-		[ApiExplorerSettings(IgnoreApi = true)]
+
+        /// <summary>
+        /// GET Paged Activity List based on LastChange Date
+        /// </summary>        
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page</param>
+        /// <param name="updatefrom">Date from (all Activity with LastChange >= datefrom are passed)</param>
+        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
+        /// <returns>Result Object with Collection of Activity Objects</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/GetActivityLastChanged/Paged/{pagenumber}/{pagesize}/{updatefrom}/{seed?}")]
         public Task<IActionResult> GetLastChanged(int pagenumber, int pagesize, string updatefrom, string? seed)
         {
             return DoAsync(async conn =>
-            {                
+            {
                 DateTime updatefromDT = Convert.ToDateTime(updatefrom);
 
                 string select = "*";
@@ -862,8 +862,8 @@ namespace OdhApiCore.Controllers
 
                 return PostgresSQLHelper.GetResultJson(pagenumber, totalpages, totalcount, -1, myseed, String.Join(",", data));
             });
-        }		
+        }
 
-		#endregion 
+        #endregion
     }
 }

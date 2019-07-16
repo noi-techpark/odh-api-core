@@ -23,7 +23,7 @@ namespace OdhApiCore
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;            
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -68,7 +68,7 @@ namespace OdhApiCore
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OdhApi .Net Core", Version = "v1" });
                 //c.IncludeXmlComments(filePath);
-            });                    
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,7 +89,8 @@ namespace OdhApiCore
 
             app.UseStaticFiles(new StaticFileOptions()
             {
-                OnPrepareResponse = ctx => {
+                OnPrepareResponse = ctx =>
+                {
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 },

@@ -253,7 +253,7 @@ namespace Helper
         }
 
         public static async System.Threading.Tasks.Task<List<LTSTaggingType>> GetLTSTagParentsPGAsync(NpgsqlConnection conn, LTSTaggingType currenttag, List<LTSTaggingType> ltstagparentlist)
-        {            
+        {
             if (currenttag.Level > 0)
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(currenttag.TypeParent);
@@ -270,7 +270,7 @@ namespace Helper
 
         }
 
-   
+
         public static IDictionary<string, string> GetPoiTypeDesc(string key, List<LTSTaggingType> ltstaggingtypes)
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
@@ -327,6 +327,6 @@ namespace Helper
             //session.Query<Area, AreaFilter>().Where(x => x.RegionId == null || x.RegionId == "TOASSIGN").Select(x => x.Id).ToList();
 
             return areasnottoconsider.ConvertAll(x => x.ToUpper());
-        }        
+        }
     }
 }
