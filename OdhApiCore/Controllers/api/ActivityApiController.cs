@@ -280,8 +280,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Collection of Activity Objects</returns>        
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("All/{activitytype}/{elements}/{seed}")]
-        public Task<IActionResult> GetAll(string activitytype, int elements, string seed)
+        [HttpGet, Route("All/{activitytype}/{elements}/{seed?}")]
+        public Task<IActionResult> GetAll(string activitytype, int elements, string? seed)
         {
             ActivityHelper myactivityhelper = new ActivityHelper(activitytype, null, null, null, null, null, null, null, null, null, null, null, null, connectionString);
 
@@ -309,7 +309,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Result Object with Collection of Activity Objects</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("Paged/{activitytype}/{pagenumber}/{pagesize}/{seed}")]
+        [HttpGet, Route("Paged/{activitytype}/{pagenumber}/{pagesize}/{seed?}")]
         public Task<IActionResult> GetPaged(string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult)
         {
             ActivityHelper myactivityhelper = new ActivityHelper(activitytype, null, null, null, null, null, null, null, null, null, null, null, null, connectionString);
@@ -372,7 +372,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Result Object with Collection of Activities Objects</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("Filtered/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed}")]
+        [HttpGet, Route("Filtered/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed?}")]
         public Task<IActionResult> GetFiltered(int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive, string? smgtags, string? seed, PGGeoSearchResult geosearchresult)
         {
             ActivityHelper myactivityhelper = new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, connectionString);
@@ -435,7 +435,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Collection of Activity Object Localized</returns>
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("api/Activity/All/Localized/{language}/{activitytype}/{elements}/{seed}")]
+        [HttpGet, Route("api/Activity/All/Localized/{language}/{activitytype}/{elements}/{seed?}")]
         public Task<IActionResult> GetLocalized(string language, string activitytype, int elements, string seed)
         {         
             return DoAsync(async conn =>
@@ -466,7 +466,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Result Object with Collection of Activity Objects Localized</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/Paged/Localized/{language}/{activitytype}/{pagenumber}/{pagesize}/{seed}")]
+        [HttpGet, Route("api/Activity/Paged/Localized/{language}/{activitytype}/{pagenumber}/{pagesize}/{seed?}")]
         public Task<IActionResult> GetPagedLocalized(string language, string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult)
         {          
             return DoAsync(async conn =>
@@ -517,7 +517,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Result Object with Collection of Activity Objects Localized</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/Filtered/Localized/{language}/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed}")]
+        [HttpGet, Route("api/Activity/Filtered/Localized/{language}/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed?}")]
         public Task<IActionResult> GetFilteredLocalized(string language, int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive, string? smgtags, string? seed, PGGeoSearchResult geosearchresult)
         {          
             return DoAsync(async conn =>
@@ -838,7 +838,7 @@ namespace OdhApiCore.Controllers
 		/// <returns>Result Object with Collection of Activity Objects</returns>
 		[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/GetActivityLastChanged/Paged/{pagenumber}/{pagesize}/{updatefrom}/{seed}")]
+        [HttpGet, Route("api/Activity/GetActivityLastChanged/Paged/{pagenumber}/{pagesize}/{updatefrom}/{seed?}")]
         public Task<IActionResult> GetLastChanged(int pagenumber, int pagesize, string updatefrom, string? seed)
         {
             return DoAsync(async conn =>
