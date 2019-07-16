@@ -283,7 +283,7 @@ namespace Helper
             return maintypedict;
         }
 
-        public static IDictionary<string, string> GetActivityTypeDesc(string key, List<LTSTaggingType> ltstaggingtypes)
+        public static IDictionary<string, string> GetActivityTypeDesc(string? key, List<LTSTaggingType> ltstaggingtypes)
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
 
@@ -295,7 +295,7 @@ namespace Helper
             return maintypedict;
         }
 
-        public static string LTSActivityTaggingTagTranslator(string? key)
+        public static string? LTSActivityTaggingTagTranslator(string? key)
         {
             switch (key)
             {
