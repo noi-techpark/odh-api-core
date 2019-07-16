@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -644,7 +646,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
 
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivityType"; // +mysuedtiroltype.TypeParent;
@@ -662,7 +664,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
 
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
@@ -680,7 +682,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Radfahren";
@@ -696,7 +698,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Stadtrundgang";
@@ -712,7 +714,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Pferdesport";
@@ -728,7 +730,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Wandern";
@@ -744,7 +746,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Laufen und Fitness";
@@ -760,7 +762,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Loipen";
@@ -776,7 +778,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Rodelbahnen";
@@ -792,7 +794,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Piste";
@@ -808,7 +810,7 @@ namespace OdhApiCore.Controllers
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
-                    string? id = myactivitytype.GetDescription();
+                    string id = myactivitytype.GetDescription();
                     mysmgpoitype.Id = id;
                     mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "Aufstiegsanlagen";
