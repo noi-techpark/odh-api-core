@@ -145,7 +145,7 @@ namespace OdhApiCore.Controllers
         //[ApiExplorerSettings(IgnoreApi = true)]
         private Task<IActionResult> GetFiltered(string smgtagtype)
         {
-            IList<string> smgtagtypelist = smgtagtype.ConvertToList(',');
+            var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             return DoAsync(async conn =>
             {
@@ -154,7 +154,7 @@ namespace OdhApiCore.Controllers
                 string where = "";
                 List<PGParameters> parameters = new List<PGParameters>();
 
-                if (smgtagtypelist.Count > 0)
+                if (smgtagtypelist.Length > 0)
                 {
                     int counter = 1;
                     string smgtagtypeliststring = "";
@@ -232,7 +232,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetFilteredLocalized(string language, string smgtagtype)
         {
-            IList<string> smgtagtypelist = smgtagtype.ConvertToList(',');
+            var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             return DoAsync(async conn =>
             {
@@ -241,7 +241,7 @@ namespace OdhApiCore.Controllers
                 string where = "";
                 List<PGParameters> parameters = new List<PGParameters>();
 
-                if (smgtagtypelist.Count > 0)
+                if (smgtagtypelist.Length > 0)
                 {
                     int counter = 1;
                     string smgtagtypeliststring = "";
@@ -321,7 +321,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetReducedFilteredLocalized(string language, string smgtagtype)
         {            
-            IList<string> smgtagtypelist = smgtagtype.ConvertToList(',');
+            var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             return DoAsync(async conn =>
             {
@@ -330,7 +330,7 @@ namespace OdhApiCore.Controllers
                 string where = "";
                 List<PGParameters> parameters = new List<PGParameters>();
 
-                if (smgtagtypelist.Count > 0)
+                if (smgtagtypelist.Length > 0)
                 {
                     int counter = 1;
                     string smgtagtypeliststring = "";

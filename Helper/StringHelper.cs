@@ -12,6 +12,7 @@ namespace Helper
         /// <param name="thestring"></param>
         /// <param name="separator"></param>
         /// <returns></returns>
+        [Obsolete("Use String.Split(separator, StringSplitOptions.RemoveEmptyEntries)")]
         public static IList<string> ConvertToList(this string thestring, char separator)
         {
             List<string> activityIds = new List<string>();
