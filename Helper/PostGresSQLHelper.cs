@@ -58,7 +58,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 List<string> lstSelect = new List<string>();
                 while (await dr.ReadAsync())
@@ -98,7 +98,7 @@ namespace Helper
 
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 string result = "";
                 while (dr.Read())
@@ -192,7 +192,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAndTypeAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, string type)
+        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAndTypeAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, string type, CancellationToken cancellationToken)
         {
             try
             {
@@ -202,7 +202,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
 
                 List<string> lstSelect = new List<string>();
@@ -262,7 +262,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
 
                 List<string> lstSelect = new List<string>();
@@ -310,7 +310,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 List<T> lstSelect = new List<T>();
                 while (await dr.ReadAsync())
@@ -361,7 +361,7 @@ namespace Helper
 
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 List<T> lstSelect = new List<T>();
                 while (await dr.ReadAsync())
@@ -409,7 +409,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 List<Tuple<string, T>> lstSelect = new List<Tuple<string, T>>();
                 while (await dr.ReadAsync())
@@ -461,7 +461,7 @@ namespace Helper
                 var command = new NpgsqlCommand(commandText);
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 List<T> lstSelect = new List<T>();
                 while (await dr.ReadAsync())
@@ -631,7 +631,7 @@ namespace Helper
 
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 List<string> lstSelect = new List<string>();
                 while (await dr.ReadAsync())
@@ -674,7 +674,7 @@ namespace Helper
 
                 command.Connection = conn;
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 List<string> lstSelect = new List<string>();
                 while (await dr.ReadAsync())
@@ -717,7 +717,7 @@ namespace Helper
 
                 command.AddPGParameters(whereparameters);
 
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 List<string> lstSelect = new List<string>();
                 while (await dr.ReadAsync())
