@@ -725,7 +725,7 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression = whereexpression + "data @> @highlight";
-                parameters.Add(new PGParameters() { Name = "highlight", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"Highlight\" : " + highlight.ToString().ToLower() + "}" });
+                parameters.Add(new PGParameters() { Name = "highlight", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"Highlight\" : " + (highlight ?? false).ToString().ToLower() + "}" });
             }
         }
 
@@ -738,7 +738,7 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression = whereexpression + "data @> @active";
-                parameters.Add(new PGParameters() { Name = "active", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"Active\" : " + activefilter.ToString().ToLower() + "}" });
+                parameters.Add(new PGParameters() { Name = "active", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"Active\" : " + (activefilter ?? false).ToString().ToLower() + "}" });
             }
         }
 
@@ -751,7 +751,7 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression = whereexpression + "data @> @smgactive";
-                parameters.Add(new PGParameters() { Name = "smgactive", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"SmgActive\" : " + smgactivefilter.ToString().ToLower() + "}" });
+                parameters.Add(new PGParameters() { Name = "smgactive", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"SmgActive\" : " + (smgactivefilter ?? false).ToString().ToLower() + "}" });
             }
         }
 
@@ -1671,7 +1671,7 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression = whereexpression + "data @> @isbookable";
-                parameters.Add(new PGParameters() { Name = "isbookable", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"IsBookable\" : " + bookable.ToString().ToLower() + " }" });
+                parameters.Add(new PGParameters() { Name = "isbookable", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"IsBookable\" : " + (bookable ?? false).ToString().ToLower() + " }" });
             }
         }
 

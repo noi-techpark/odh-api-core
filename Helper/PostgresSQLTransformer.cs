@@ -930,12 +930,12 @@ namespace Helper
                                                      { "subtype", "" },
                                                      { "poitype", "" },
                                                      //Accommodation
-                                                     { "board", String.Join(",", acommodation.BoardIds) },
+                                                     { "board", String.Join(",", acommodation.BoardIds ?? Enumerable.Empty<string>()) },
                                                      { "type", acommodation.AccoTypeId ?? "" },
                                                      { "category", acommodation.AccoCategoryId ?? "" },
-                                                     { "theme", String.Join(",", acommodation.ThemeIds) },
-                                                     { "badge", String.Join(",", acommodation.BadgeIds) },
-                                                     { "specialfeature", String.Join(",", acommodation.SpecialFeaturesIds) },
+                                                     { "theme", String.Join(",", acommodation.ThemeIds ?? Enumerable.Empty<string>()) },
+                                                     { "badge", String.Join(",", acommodation.BadgeIds ?? Enumerable.Empty<string>()) },
+                                                     { "specialfeature", String.Join(",", acommodation.SpecialFeaturesIds ?? Enumerable.Empty<string>()) },
                                                      // //Gastronomy
                                                      //{ "categorycodes", "" },                                                     
                                                      //{ "ceremonycodes", "" },
@@ -1250,8 +1250,8 @@ namespace Helper
             data.PayMet = "";
             data.PoiType = activity.AdditionalPoiInfos[language].PoiType;
             //PoiProperty = activity.SyncSourceInterface == "GastronomicData" ? activity.CategoryCodes.Select(x => new PoiProperty() { Name = x.Id, Value = x.Shortname }).ToList() : activity.PoiProperty[language],
-            data.PoiProperty = activity.PoiProperty != null ? activity.PoiProperty.Count > 0 ? activity.PoiProperty[language]?.ToDictionary(e => e.Name, v => v.Value) : null : null;
-            data.PoiServices = activity.SyncSourceInterface == "GastronomicData" ? activity.Facilities?.Select(x => x.Id).ToList() : activity.PoiServices;
+            data.PoiProperty = activity.PoiProperty != null ? activity.PoiProperty.Count > 0 ? activity.PoiProperty[language]?.Where(e => e.Name != null).ToDictionary(e => e.Name ?? "", v => v.Value ?? "") : null : null;
+            data.PoiServices = activity.SyncSourceInterface == "GastronomicData" ? activity.Facilities?.Where(x => x.Id != null).Select(x => x.Id ?? "").ToList() : activity.PoiServices;
             data.Ranc = 0;
             data.Ratings = activity.Ratings;
             data.RunToValley = activity.RunToValley;

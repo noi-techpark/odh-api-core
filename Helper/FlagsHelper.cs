@@ -79,10 +79,10 @@ namespace Helper
         public static string? GetDescription<T>(this T value) where T : struct
         {
             CheckIsEnum<T>(false);
-            string name = Enum.GetName(typeof(T), value);
+            string? name = Enum.GetName(typeof(T), value);
             if (name != null)
             {
-                FieldInfo field = typeof(T).GetField(name);
+                FieldInfo? field = typeof(T).GetField(name);
                 if (field != null)
                 {
                     DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
@@ -97,27 +97,30 @@ namespace Helper
 
         public static int GetFlagofType<T>(string? id)
         {
-            foreach (var smgpoitypeflag in Enum.GetValues(typeof(T)))
+            foreach (object? smgpoitypeflag in Enum.GetValues(typeof(T)))
             {
-                string description = "";
-
-                string name = Enum.GetName(typeof(T), smgpoitypeflag);
-                if (name != null)
+                if (smgpoitypeflag != null)
                 {
-                    FieldInfo field = typeof(T).GetField(name);
-                    if (field != null)
+                    string description = "";
+
+                    string? name = Enum.GetName(typeof(T), smgpoitypeflag);
+                    if (name != null)
                     {
-                        DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                        if (attr != null)
+                        FieldInfo? field = typeof(T).GetField(name);
+                        if (field != null)
                         {
-                            description = attr.Description;
+                            DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                            if (attr != null)
+                            {
+                                description = attr.Description;
+                            }
                         }
                     }
-                }
 
-                if (description == id)
-                {
-                    return ((int)smgpoitypeflag);
+                    if (description == id)
+                    {
+                        return ((int)smgpoitypeflag);
+                    }
                 }
             }
 
@@ -126,27 +129,30 @@ namespace Helper
 
         public static long GetFlagofTypeLong<T>(string id)
         {
-            foreach (var smgpoitypeflag in Enum.GetValues(typeof(T)))
+            foreach (object? smgpoitypeflag in Enum.GetValues(typeof(T)))
             {
-                string description = "";
-
-                string name = Enum.GetName(typeof(T), smgpoitypeflag);
-                if (name != null)
+                if (smgpoitypeflag != null)
                 {
-                    FieldInfo field = typeof(T).GetField(name);
-                    if (field != null)
+                    string description = "";
+
+                    string? name = Enum.GetName(typeof(T), smgpoitypeflag);
+                    if (name != null)
                     {
-                        DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                        if (attr != null)
+                        FieldInfo? field = typeof(T).GetField(name);
+                        if (field != null)
                         {
-                            description = attr.Description;
+                            DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                            if (attr != null)
+                            {
+                                description = attr.Description;
+                            }
                         }
                     }
-                }
 
-                if (description == id)
-                {
-                    return ((long)smgpoitypeflag);
+                    if (description == id)
+                    {
+                        return ((long)smgpoitypeflag);
+                    }
                 }
             }
 
@@ -171,10 +177,10 @@ namespace Helper
             foreach (var value in enumlist)
             {
                 CheckIsEnum<T>(false);
-                string name = Enum.GetName(typeof(T), value);
+                string? name = Enum.GetName(typeof(T), value);
                 if (name != null)
                 {
-                    FieldInfo field = typeof(T).GetField(name);
+                    FieldInfo? field = typeof(T).GetField(name);
                     if (field != null)
                     {
                         DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;

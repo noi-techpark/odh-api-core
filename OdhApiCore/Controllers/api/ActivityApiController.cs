@@ -643,7 +643,7 @@ namespace OdhApiCore.Controllers
                     ltstaggingtypes = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(conn, "ltstaggingtypes", "*", "", "", 0, null, cancellationToken);
                 }
 
-                foreach (ActivityTypeFlag myactivitytype in Enum.GetValues(typeof(ActivityTypeFlag)))
+                foreach (ActivityTypeFlag myactivitytype in EnumHelper.GetValues<ActivityTypeFlag>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -661,7 +661,7 @@ namespace OdhApiCore.Controllers
                 }
 
                 //Berg Types
-                foreach (ActivityTypeBerg myactivitytype in Enum.GetValues(typeof(ActivityTypeBerg)))
+                foreach (ActivityTypeBerg myactivitytype in EnumHelper.GetValues<ActivityTypeBerg>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -679,7 +679,7 @@ namespace OdhApiCore.Controllers
                 }
 
                 //Radfahren Types
-                foreach (ActivityTypeRadfahren myactivitytype in Enum.GetValues(typeof(ActivityTypeRadfahren)))
+                foreach (ActivityTypeRadfahren myactivitytype in EnumHelper.GetValues<ActivityTypeRadfahren>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -695,7 +695,7 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
                 //Stadtrundgang Types
-                foreach (ActivityTypeOrtstouren myactivitytype in Enum.GetValues(typeof(ActivityTypeOrtstouren)))
+                foreach (ActivityTypeOrtstouren myactivitytype in EnumHelper.GetValues<ActivityTypeOrtstouren>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -711,7 +711,7 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
                 //Pferdesport Types
-                foreach (ActivityTypePferde myactivitytype in Enum.GetValues(typeof(ActivityTypePferde)))
+                foreach (ActivityTypePferde myactivitytype in EnumHelper.GetValues<ActivityTypePferde>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -727,7 +727,7 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
                 //Wandern Types
-                foreach (ActivityTypeWandern myactivitytype in Enum.GetValues(typeof(ActivityTypeWandern)))
+                foreach (ActivityTypeWandern myactivitytype in EnumHelper.GetValues<ActivityTypeWandern>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -743,7 +743,7 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
                 //LaufenundFitness Types
-                foreach (ActivityTypeLaufenFitness myactivitytype in Enum.GetValues(typeof(ActivityTypeLaufenFitness)))
+                foreach (ActivityTypeLaufenFitness myactivitytype in EnumHelper.GetValues<ActivityTypeLaufenFitness>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -759,7 +759,7 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
                 //Loipen Types
-                foreach (ActivityTypeLoipen myactivitytype in Enum.GetValues(typeof(ActivityTypeLoipen)))
+                foreach (ActivityTypeLoipen myactivitytype in EnumHelper.GetValues<ActivityTypeLoipen>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -775,7 +775,7 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
                 //Rodelbahnen Types
-                foreach (ActivityTypeRodeln myactivitytype in Enum.GetValues(typeof(ActivityTypeRodeln)))
+                foreach (ActivityTypeRodeln myactivitytype in EnumHelper.GetValues<ActivityTypeRodeln>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -791,7 +791,7 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
                 //Piste Types
-                foreach (ActivityTypePisten myactivitytype in Enum.GetValues(typeof(ActivityTypePisten)))
+                foreach (ActivityTypePisten myactivitytype in EnumHelper.GetValues<ActivityTypePisten>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 
@@ -807,7 +807,7 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
                 //Aufstiegsanlagen Types
-                foreach (ActivityTypeAufstiegsanlagen myactivitytype in Enum.GetValues(typeof(ActivityTypeAufstiegsanlagen)))
+                foreach (ActivityTypeAufstiegsanlagen myactivitytype in EnumHelper.GetValues<ActivityTypeAufstiegsanlagen>())
                 {
                     ActivityTypes mysmgpoitype = new ActivityTypes();
 

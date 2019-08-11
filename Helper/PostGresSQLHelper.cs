@@ -63,7 +63,9 @@ namespace Helper
                 List<string> lstSelect = new List<string>();
                 while (await dr.ReadAsync())
                 {
-                    lstSelect.Add(dr[1].ToString());
+                    var value = dr[1].ToString();
+                    if (value != null)
+                        lstSelect.Add(value);
                 }
 
                 await dr.CloseAsync();
@@ -101,7 +103,9 @@ namespace Helper
                 string result = "";
                 while (dr.Read())
                 {
-                    result = dr[1].ToString();
+                    var value = dr[1].ToString();
+                    if (value != null)
+                        result = value;
                 }
                 await dr.CloseAsync();
 
@@ -166,7 +170,7 @@ namespace Helper
                     }
                 }
 
-                await dr.CloseAsync(cancellationToken);
+                await dr.CloseAsync();
 
                 await command.DisposeAsync();
 
@@ -264,7 +268,9 @@ namespace Helper
                 List<string> lstSelect = new List<string>();
                 while (await dr.ReadAsync())
                 {
-                    lstSelect.Add(dr[0].ToString());
+                    var value = dr[0].ToString();
+                    if (value != null)
+                        lstSelect.Add(value);
                 }
 
                 await dr.CloseAsync();
@@ -408,9 +414,12 @@ namespace Helper
                 List<Tuple<string, T>> lstSelect = new List<Tuple<string, T>>();
                 while (await dr.ReadAsync())
                 {
-                    var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
-
-                    lstSelect.Add(Tuple.Create<string, T>(dr[0].ToString(), data));
+                    var key = dr[0].ToString();
+                    if (key != null)
+                    {
+                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                        lstSelect.Add(Tuple.Create<string, T>(key, data));
+                    }
                 }
 
                 await dr.CloseAsync();
@@ -627,7 +636,9 @@ namespace Helper
                 List<string> lstSelect = new List<string>();
                 while (await dr.ReadAsync())
                 {
-                    lstSelect.Add(dr[0].ToString());
+                    var value = dr[0].ToString();
+                    if (value != null)
+                        lstSelect.Add(value);
                 }
 
                 await dr.CloseAsync();
@@ -668,7 +679,9 @@ namespace Helper
                 List<string> lstSelect = new List<string>();
                 while (await dr.ReadAsync())
                 {
-                    lstSelect.Add(dr[1].ToString());
+                    var value = dr[1].ToString();
+                    if (value != null)
+                        lstSelect.Add(value);
                 }
 
                 await dr.CloseAsync();
