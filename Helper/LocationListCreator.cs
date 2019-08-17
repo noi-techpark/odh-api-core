@@ -13,7 +13,7 @@ namespace Helper
 
         #region PostGres
 
-        public static async Task<List<string>> CreateActivityAreaListPGAsync(string areafilter, NpgsqlConnection conn, CancellationToken cancellationToken)
+        public static async Task<List<string>> CreateActivityAreaListPGAsync(string areafilter, string connectionString, CancellationToken cancellationToken)
         {
             List<string> thearealist = new List<string>();
 
@@ -35,28 +35,28 @@ namespace Helper
                         case "reg":
 
                             //Suche alle zugehörigen Areas für die Region
-                            thearealist.AddRange(await GetAreaforRegionPGAsync(theareafilter.Replace("reg", ""), conn, cancellationToken));
+                            thearealist.AddRange(await GetAreaforRegionPGAsync(theareafilter.Replace("reg", ""), connectionString, cancellationToken));
 
                             break;
 
                         case "tvs":
 
                             //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforTourismvereinPGAsync(theareafilter.Replace("tvs", ""), conn, cancellationToken));
+                            thearealist.AddRange(await GetAreaforTourismvereinPGAsync(theareafilter.Replace("tvs", ""), connectionString, cancellationToken));
 
                             break;
 
                         case "skr":
 
                             //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforSkiRegionPGAsync(theareafilter.Replace("skr", ""), conn, cancellationToken));
+                            thearealist.AddRange(await GetAreaforSkiRegionPGAsync(theareafilter.Replace("skr", ""), connectionString, cancellationToken));
 
                             break;
 
                         case "ska":
 
                             //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforSkiAreaPGAsync(theareafilter.Replace("ska", ""), conn, cancellationToken));
+                            thearealist.AddRange(await GetAreaforSkiAreaPGAsync(theareafilter.Replace("ska", ""), connectionString, cancellationToken));
 
                             break;
 
@@ -70,14 +70,14 @@ namespace Helper
             return thearealist;
         }
 
-        public static async Task<List<string>> GetAreaforRegionPGAsync(string regionId, NpgsqlConnection conn, CancellationToken cancellationToken)
+        public static async Task<List<string>> GetAreaforRegionPGAsync(string regionId, string connectionString, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
             string select = "Id,data ->> 'Id'";
             string where = "data ->> 'RegionId' = '" + regionId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "areas", select, where, "", 0, null, cancellationToken);
+            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "areas", select, where, "", 0, null, cancellationToken);
 
             foreach (var area in result)
             {
@@ -95,14 +95,14 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforTourismvereinPGAsync(string tvId, NpgsqlConnection conn, CancellationToken cancellationToken)
+        public static async Task<List<string>> GetAreaforTourismvereinPGAsync(string tvId, string connectionString, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
             string select = "Id,data ->> 'Id'";
             string where = "data ->> 'TourismvereinId' = '" + tvId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "areas", select, where, "", 0, null, cancellationToken);
+            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "areas", select, where, "", 0, null, cancellationToken);
 
             foreach (var area in result)
             {
@@ -120,14 +120,14 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforSkiRegionPGAsync(string skiregId, NpgsqlConnection conn, CancellationToken cancellationToken)
+        public static async Task<List<string>> GetAreaforSkiRegionPGAsync(string skiregId, string connectionString, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
             string select = "Id,data ->> 'AreaId'";
             string where = "data ->> 'SkiRegionId' = '" + skiregId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "skiareas", select, where, "", 0, null, cancellationToken);
+            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "skiareas", select, where, "", 0, null, cancellationToken);
 
             foreach (var skiarea in result)
             {
@@ -145,7 +145,7 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforSkiAreaPGAsync(string skiareaId, NpgsqlConnection conn, CancellationToken cancellationToken)
+        public static async Task<List<string>> GetAreaforSkiAreaPGAsync(string skiareaId, string connectionString, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
@@ -153,7 +153,7 @@ namespace Helper
             string select = "Id,data ->> 'AreaId'";
             string where = "Id = '" + skiareaId.ToUpper() + "'";
 
-            var result = (await PostgresSQLHelper.SelectFromTableDataAsStringAsync(conn, "skiareas", select, where, "", 0, null, cancellationToken)).FirstOrDefault();
+            var result = (await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "skiareas", select, where, "", 0, null, cancellationToken)).FirstOrDefault();
 
             result = result.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 

@@ -40,20 +40,13 @@ namespace OdhApiCore.Controllers
             connectionString = settings.PostgresConnectionString;
         }
 
-        protected async Task<IActionResult> DoAsync(Func<NpgsqlConnection, Task<string>> f)
+        protected async Task<IActionResult> DoAsync(Func<string, Task<string>> f)
         {
             try
             {
-                using (var conn = new NpgsqlConnection(this.connectionString))
-                {
-                    await conn.OpenAsync();
+                var result = this.Content(await f(this.connectionString), "application/json", Encoding.UTF8);
 
-                    var result = this.Content(await f(conn), "application/json", Encoding.UTF8);
-
-                    await conn.CloseAsync();
-
-                    return result;
-                }
+                return result;
             }
             catch (Exception ex)
             {

@@ -35,6 +35,13 @@ namespace Helper
 
     public class PostgresSQLHelper
     {
+        private static async Task<NpgsqlConnection> CreateConnection(string connectionString)
+        {
+            // TODO: additional initialization logic goes here
+            var conn = new NpgsqlConnection(connectionString);
+            await conn.OpenAsync();
+            return conn;
+        }
 
         #region String Select Methods
 
@@ -48,31 +55,33 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsStringAsync(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
-
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                List<string> lstSelect = new List<string>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var value = dr[1].ToString();
-                    if (value != null)
-                        lstSelect.Add(value);
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    List<string> lstSelect = new List<string>();
+                    while (await dr.ReadAsync())
+                    {
+                        var value = dr[1].ToString();
+                        if (value != null)
+                            lstSelect.Add(value);
+                    }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -89,29 +98,32 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<string> SelectFromTableDataAsStringSingleAsync(NpgsqlConnection conn, string tablename, string selectexp, string id, CancellationToken cancellationToken)
+        public static async Task<string> SelectFromTableDataAsStringSingleAsync(string connectionString, string tablename, string selectexp, string id, CancellationToken cancellationToken)
         {
             try
             {
-                var command = new NpgsqlCommand("SELECT " + selectexp + " FROM " + tablename + " WHERE id LIKE @id", conn);
-                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
-
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                string result = "";
-                while (dr.Read())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var value = dr[1].ToString();
-                    if (value != null)
-                        result = value;
+                    var command = new NpgsqlCommand("SELECT " + selectexp + " FROM " + tablename + " WHERE id LIKE @id", conn);
+                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    string result = "";
+                    while (dr.Read())
+                    {
+                        var value = dr[1].ToString();
+                        if (value != null)
+                            result = value;
+                    }
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return result;
                 }
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return result;
             }
             catch (DbException ex)
             {
@@ -129,112 +141,117 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAsync(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, CancellationToken cancellationToken)
         {
             try
             {
-
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-
-                List<string> lstSelect = new List<string>();
-                while (await dr.ReadAsync(cancellationToken))
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    bool isvalueempty = false;
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
-                    int i = 0;
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
 
-                    string strtoadd = "{";
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
-                    foreach (string s in fieldstoadd)
+
+                    List<string> lstSelect = new List<string>();
+                    while (await dr.ReadAsync(cancellationToken))
                     {
-                        strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
+                        bool isvalueempty = false;
 
-                        // FIXME: "null"?
-                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
-                            isvalueempty = true;
+                        int i = 0;
 
-                        i++;
+                        string strtoadd = "{";
+
+                        foreach (string s in fieldstoadd)
+                        {
+                            strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
+
+                            // FIXME: "null"?
+                            if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
+                                isvalueempty = true;
+
+                            i++;
+                        }
+                        strtoadd = strtoadd.Remove(strtoadd.Length - 1);
+                        strtoadd = strtoadd + "}";
+
+                        if (!isvalueempty)
+                        {
+                            lstSelect.Add(strtoadd);
+                        }
                     }
-                    strtoadd = strtoadd.Remove(strtoadd.Length - 1);
-                    strtoadd = strtoadd + "}";
 
-                    if (!isvalueempty)
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return lstSelect;
+                }
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Returns List of JSON Data as Tuple List (Id, String)
+        /// </summary>
+        /// <param name="conn">PG Connection</param>
+        /// <param name="tablename">Table Name</param>
+        /// <param name="whereexp">Where Expression</param>
+        /// <param name="sortexp">Sort Expression</param>
+        /// <param name="limit">Limit</param>
+        /// <param name="offset">Offset</param>
+        /// <returns>List of JSON Strings</returns>
+        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAndTypeAsync(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, string type, CancellationToken cancellationToken)
+        {
+            try
+            {
+                using (var conn = await CreateConnection(connectionString))
+                {
+
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+
+                    List<string> lstSelect = new List<string>();
+                    while (await dr.ReadAsync())
                     {
+                        string strtoadd = "{";
+                        int i = 0;
+                        foreach (string s in fieldstoadd)
+                        {
+                            if (s != "themeIds")
+                                strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
+                            else
+                            {
+                                var themeids = JsonConvert.DeserializeObject<List<string>>(dr[i].ToString());
+                                strtoadd = strtoadd + "\"" + s + "\":\"" + String.Join(",", themeids) + "\",";
+                            }
+                            i++;
+                        }
+
+
+                        strtoadd = strtoadd + "\"typ\":\"" + type + "\"";
+
+                        strtoadd = strtoadd + "}";
+
                         lstSelect.Add(strtoadd);
                     }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return lstSelect;
-            }
-            catch (DbException ex)
-            {
-                throw new PostGresSQLHelperException(ex);
-            }
-        }
-
-        /// <summary>
-        /// Returns List of JSON Data as Tuple List (Id, String)
-        /// </summary>
-        /// <param name="conn">PG Connection</param>
-        /// <param name="tablename">Table Name</param>
-        /// <param name="whereexp">Where Expression</param>
-        /// <param name="sortexp">Sort Expression</param>
-        /// <param name="limit">Limit</param>
-        /// <param name="offset">Offset</param>
-        /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAndTypeAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, string type, CancellationToken cancellationToken)
-        {
-            try
-            {
-
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-
-                List<string> lstSelect = new List<string>();
-                while (await dr.ReadAsync())
-                {
-                    string strtoadd = "{";
-                    int i = 0;
-                    foreach (string s in fieldstoadd)
-                    {
-                        if (s != "themeIds")
-                            strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
-                        else
-                        {
-                            var themeids = JsonConvert.DeserializeObject<List<string>>(dr[i].ToString());
-                            strtoadd = strtoadd + "\"" + s + "\":\"" + String.Join(",", themeids) + "\",";
-                        }
-                        i++;
-                    }
-
-
-                    strtoadd = strtoadd + "\"typ\":\"" + type + "\"";
-
-                    strtoadd = strtoadd + "}";
-
-                    lstSelect.Add(strtoadd);
-                }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -252,32 +269,34 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsIdAsync(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
-
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-
-                List<string> lstSelect = new List<string>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var value = dr[0].ToString();
-                    if (value != null)
-                        lstSelect.Add(value);
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+
+                    List<string> lstSelect = new List<string>();
+                    while (await dr.ReadAsync())
+                    {
+                        var value = dr[0].ToString();
+                        if (value != null)
+                            lstSelect.Add(value);
+                    }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -300,34 +319,36 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsObjectAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
-
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                List<T> lstSelect = new List<T>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
-                    lstSelect.Add(data);
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    List<T> lstSelect = new List<T>();
+                    while (await dr.ReadAsync())
+                    {
+                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+
+                        lstSelect.Add(data);
+                    }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Data queried " + lstSelect.Count + " Results");
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -349,36 +370,39 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<T> SelectFromTableDataAsObjectSingleAsync<T>(NpgsqlConnection conn, string tablename, string id, CancellationToken cancellationToken)
+        public static async Task<T> SelectFromTableDataAsObjectSingleAsync<T>(string connectionString, string tablename, string id, CancellationToken cancellationToken)
         {
             try
             {
-                //string whereexp = "Id LIKE '" + id + "'";
-                //string commandText = CreatetDatabaseCommand("*", tablename, whereexp, "", null, 0);
-
-                var command = new NpgsqlCommand("SELECT * FROM " + tablename + " WHERE id LIKE @id", conn);
-                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
-
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                List<T> lstSelect = new List<T>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                    //string whereexp = "Id LIKE '" + id + "'";
+                    //string commandText = CreatetDatabaseCommand("*", tablename, whereexp, "", null, 0);
 
-                    lstSelect.Add(data);
+                    var command = new NpgsqlCommand("SELECT * FROM " + tablename + " WHERE id LIKE @id", conn);
+                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    List<T> lstSelect = new List<T>();
+                    while (await dr.ReadAsync())
+                    {
+                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+
+                        lstSelect.Add(data);
+                    }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+
+                    return lstSelect.FirstOrDefault();
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Data queried " + lstSelect.Count + " Results");
-
-                return lstSelect.FirstOrDefault();
             }
             catch (DbException ex)
             {
@@ -400,36 +424,39 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<Tuple<string, T>>> SelectFromTableIdAndDataAsObjectAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<Tuple<string, T>>> SelectFromTableIdAndDataAsObjectAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                List<Tuple<string, T>> lstSelect = new List<Tuple<string, T>>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var key = dr[0].ToString();
-                    if (key != null)
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    List<Tuple<string, T>> lstSelect = new List<Tuple<string, T>>();
+                    while (await dr.ReadAsync())
                     {
-                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
-                        lstSelect.Add(Tuple.Create<string, T>(key, data));
+                        var key = dr[0].ToString();
+                        if (key != null)
+                        {
+                            var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                            lstSelect.Add(Tuple.Create<string, T>(key, data));
+                        }
                     }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Data queried " + lstSelect.Count + " Results");
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -451,44 +478,46 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize, CancellationToken cancellationToken)
         {
             try
             {
-
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                List<T> lstSelect = new List<T>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    int i = 0;
-                    string stringtodeserialize = "{";
-                    foreach (string s in fieldstodeserialize)
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    List<T> lstSelect = new List<T>();
+                    while (await dr.ReadAsync())
                     {
-                        stringtodeserialize = stringtodeserialize + "\"" + s + "\":" + dr[i].ToString() + ",";
-                        i++;
+                        int i = 0;
+                        string stringtodeserialize = "{";
+                        foreach (string s in fieldstodeserialize)
+                        {
+                            stringtodeserialize = stringtodeserialize + "\"" + s + "\":" + dr[i].ToString() + ",";
+                            i++;
+                        }
+                        stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
+                        stringtodeserialize = stringtodeserialize + "}";
+
+                        var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
+
+                        lstSelect.Add(data);
                     }
-                    stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
-                    stringtodeserialize = stringtodeserialize + "}";
 
-                    var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
+                    await dr.CloseAsync();
 
-                    lstSelect.Add(data);
+                    await command.DisposeAsync();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Data queried " + lstSelect.Count + " Results");
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -506,29 +535,31 @@ namespace Helper
         /// <param name="tablename">Table name</param>
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
-        public static async Task<long> CountDataFromTableAsync(NpgsqlConnection conn, string tablename, string whereexp, CancellationToken cancellationToken)
+        public static async Task<long> CountDataFromTableAsync(string connectionString, string tablename, string whereexp, CancellationToken cancellationToken)
         {
             try
             {
-
-                string commandText = "SELECT COUNT(*) FROM " + tablename;
-
-                if (!String.IsNullOrEmpty(whereexp))
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    commandText = commandText + " WHERE " + whereexp;
+                    string commandText = "SELECT COUNT(*) FROM " + tablename;
+
+                    if (!String.IsNullOrEmpty(whereexp))
+                    {
+                        commandText = commandText + " WHERE " + whereexp;
+                    }
+
+
+                    commandText = commandText + ";";
+
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    Int64 count = (Int64)await (command.ExecuteScalarAsync());
+
+                    await command.DisposeAsync();
+
+                    return count;
                 }
-
-
-                commandText = commandText + ";";
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                Int64 count = (Int64)await (command.ExecuteScalarAsync());
-
-                await command.DisposeAsync();
-
-                return count;
             }
             catch (DbException ex)
             {
@@ -580,30 +611,32 @@ namespace Helper
         /// <param name="tablename">Table name</param>
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
-        public static async Task<long> CountDataFromTableParametrizedAsync(NpgsqlConnection conn, string tablename, string whereexp, List<PGParameters> whereparameters, CancellationToken cancellationToken)
+        public static async Task<long> CountDataFromTableParametrizedAsync(string connectionString, string tablename, string whereexp, List<PGParameters> whereparameters, CancellationToken cancellationToken)
         {
             try
             {
-
-                string commandText = "SELECT COUNT(*) FROM " + tablename;
-
-                if (!String.IsNullOrEmpty(whereexp))
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    commandText = commandText + " WHERE " + whereexp;
+                    string commandText = "SELECT COUNT(*) FROM " + tablename;
+
+                    if (!String.IsNullOrEmpty(whereexp))
+                    {
+                        commandText = commandText + " WHERE " + whereexp;
+                    }
+
+                    commandText = commandText + ";";
+
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    command.AddPGParameters(whereparameters);
+
+                    Int64 count = (Int64)await command.ExecuteScalarAsync();
+
+                    await command.DisposeAsync();
+
+                    return count;
                 }
-
-                commandText = commandText + ";";
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                command.AddPGParameters(whereparameters);
-
-                Int64 count = (Int64)await command.ExecuteScalarAsync();
-
-                await command.DisposeAsync();
-
-                return count;
             }
             catch (DbException ex)
             {
@@ -620,32 +653,35 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataFirstOnlyParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string where, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataFirstOnlyParametrizedAsync(string connectionString, string tablename, string selectexp, string where, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, where, sortexp, offset, limit);
-                var command = new NpgsqlCommand(commandText, conn);
-
-                command.AddPGParameters(whereparameters);
-
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                List<string> lstSelect = new List<string>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var value = dr[0].ToString();
-                    if (value != null)
-                        lstSelect.Add(value);
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, where, sortexp, offset, limit);
+                    var command = new NpgsqlCommand(commandText, conn);
+
+                    command.AddPGParameters(whereparameters);
+
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    List<string> lstSelect = new List<string>();
+                    while (await dr.ReadAsync())
+                    {
+                        var value = dr[0].ToString();
+                        if (value != null)
+                            lstSelect.Add(value);
+                    }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -663,32 +699,35 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string where, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(string connectionString, string tablename, string selectexp, string where, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, where, sortexp, offset, limit);
-                var command = new NpgsqlCommand(commandText, conn);
-
-                command.AddPGParameters(whereparameters);
-
-                command.Connection = conn;
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                List<string> lstSelect = new List<string>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var value = dr[1].ToString();
-                    if (value != null)
-                        lstSelect.Add(value);
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, where, sortexp, offset, limit);
+                    var command = new NpgsqlCommand(commandText, conn);
+
+                    command.AddPGParameters(whereparameters);
+
+                    command.Connection = conn;
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    List<string> lstSelect = new List<string>();
+                    while (await dr.ReadAsync())
+                    {
+                        var value = dr[1].ToString();
+                        if (value != null)
+                            lstSelect.Add(value);
+                    }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -706,52 +745,55 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(string connectionString, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, CancellationToken cancellationToken)
         {
             try
             {
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                command.AddPGParameters(whereparameters);
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-                List<string> lstSelect = new List<string>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    bool isvalueempty = false;
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
-                    int i = 0;
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
 
-                    string strtoadd = "{";
+                    command.AddPGParameters(whereparameters);
 
-                    foreach (string s in fieldstoadd)
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                    List<string> lstSelect = new List<string>();
+                    while (await dr.ReadAsync())
                     {
-                        strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
+                        bool isvalueempty = false;
 
-                        // FIXME: "null"?
-                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
-                            isvalueempty = true;
+                        int i = 0;
 
-                        i++;
+                        string strtoadd = "{";
+
+                        foreach (string s in fieldstoadd)
+                        {
+                            strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
+
+                            // FIXME: "null"?
+                            if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
+                                isvalueempty = true;
+
+                            i++;
+                        }
+                        strtoadd = strtoadd.Remove(strtoadd.Length - 1);
+                        strtoadd = strtoadd + "}";
+
+                        if (!isvalueempty)
+                        {
+                            lstSelect.Add(strtoadd);
+                        }
                     }
-                    strtoadd = strtoadd.Remove(strtoadd.Length - 1);
-                    strtoadd = strtoadd + "}";
 
-                    if (!isvalueempty)
-                    {
-                        lstSelect.Add(strtoadd);
-                    }
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -770,35 +812,38 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                command.AddPGParameters(whereparameters);
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
-
-                List<T> lstSelect = new List<T>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
-                    lstSelect.Add(data);
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    command.AddPGParameters(whereparameters);
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+
+                    List<T> lstSelect = new List<T>();
+                    while (await dr.ReadAsync())
+                    {
+                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+
+                        lstSelect.Add(data);
+                    }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Data queried " + lstSelect.Count + " Results");
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -820,46 +865,48 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize, CancellationToken cancellationToken)
         {
             try
             {
-
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                command.AddPGParameters(whereparameters);
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
-
-                List<T> lstSelect = new List<T>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    int i = 0;
-                    string stringtodeserialize = "{";
-                    foreach (string s in fieldstodeserialize)
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    command.AddPGParameters(whereparameters);
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+
+                    List<T> lstSelect = new List<T>();
+                    while (await dr.ReadAsync())
                     {
-                        stringtodeserialize = stringtodeserialize + "\"" + s + "\":" + dr[i].ToString() + ",";
-                        i++;
+                        int i = 0;
+                        string stringtodeserialize = "{";
+                        foreach (string s in fieldstodeserialize)
+                        {
+                            stringtodeserialize = stringtodeserialize + "\"" + s + "\":" + dr[i].ToString() + ",";
+                            i++;
+                        }
+                        stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
+                        stringtodeserialize = stringtodeserialize + "}";
+
+                        var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
+
+                        lstSelect.Add(data);
                     }
-                    stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
-                    stringtodeserialize = stringtodeserialize + "}";
 
-                    var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
+                    await dr.CloseAsync();
 
-                    lstSelect.Add(data);
+                    await command.DisposeAsync();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Data queried " + lstSelect.Count + " Results");
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -881,36 +928,39 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(NpgsqlConnection conn, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, string language, Func<V, string, T> transformer, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(string connectionString, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, string language, Func<V, string, T> transformer, CancellationToken cancellationToken)
         {
             try
             {
-                //CultureInfo myculture = new CultureInfo("en");
-
-                string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-                var command = new NpgsqlCommand(commandText);
-                command.Connection = conn;
-
-                command.AddPGParameters(whereparameters);
-
-                NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
-
-                List<T> lstSelect = new List<T>();
-                while (await dr.ReadAsync())
+                using (var conn = await CreateConnection(connectionString))
                 {
-                    var pgdata = JsonConvert.DeserializeObject<V>(dr[1].ToString());
+                    //CultureInfo myculture = new CultureInfo("en");
 
-                    var transformeddata = transformer(pgdata, language);
+                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
-                    lstSelect.Add(transformeddata);
+                    var command = new NpgsqlCommand(commandText);
+                    command.Connection = conn;
+
+                    command.AddPGParameters(whereparameters);
+
+                    NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+
+                    List<T> lstSelect = new List<T>();
+                    while (await dr.ReadAsync())
+                    {
+                        var pgdata = JsonConvert.DeserializeObject<V>(dr[1].ToString());
+
+                        var transformeddata = transformer(pgdata, language);
+
+                        lstSelect.Add(transformeddata);
+                    }
+
+                    await dr.CloseAsync();
+
+                    await command.DisposeAsync();
+
+                    return lstSelect;
                 }
-
-                await dr.CloseAsync();
-
-                await command.DisposeAsync();
-
-                return lstSelect;
             }
             catch (DbException ex)
             {
@@ -922,27 +972,30 @@ namespace Helper
 
         #region Generic Insert Method
 
-        public static async Task<string> InsertDataIntoTableAsync(NpgsqlConnection conn, string tablename, string data, string id, CancellationToken cancellationToken)
+        public static async Task<string> InsertDataIntoTableAsync(string connectionString, string tablename, string data, string id, CancellationToken cancellationToken)
         {
             try
             {
-                ////Fix the single quotes
-                //data = data.Replace("'", "''");
+                using (var conn = await CreateConnection(connectionString))
+                {
+                    ////Fix the single quotes
+                    //data = data.Replace("'", "''");
 
-                //string commandText = "INSERT INTO " + tablename + "(id, data) VALUES('" + id + "','" + data + "');";
+                    //string commandText = "INSERT INTO " + tablename + "(id, data) VALUES('" + id + "','" + data + "');";
 
-                //var command = new NpgsqlCommand(commandText);
-                //command.Connection = conn;
+                    //var command = new NpgsqlCommand(commandText);
+                    //command.Connection = conn;
 
-                var command = new NpgsqlCommand("INSERT INTO " + tablename + "(id, data) VALUES(@id,@data)", conn);
-                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
-                command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
+                    var command = new NpgsqlCommand("INSERT INTO " + tablename + "(id, data) VALUES(@id,@data)", conn);
+                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+                    command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
 
-                int affectedrows = await command.ExecuteNonQueryAsync();
+                    int affectedrows = await command.ExecuteNonQueryAsync();
 
-                await command.DisposeAsync();
+                    await command.DisposeAsync();
 
-                return affectedrows.ToString();
+                    return affectedrows.ToString();
+                }
             }
             catch (DbException ex)
             {
@@ -950,19 +1003,22 @@ namespace Helper
             }
         }
 
-        public static async Task<string> InsertDataIntoTableAsync(NpgsqlConnection conn, string tablename, object data, string id, CancellationToken cancellationToken)
+        public static async Task<string> InsertDataIntoTableAsync(string connectionString, string tablename, object data, string id, CancellationToken cancellationToken)
         {
             try
             {
-                var command = new NpgsqlCommand("INSERT INTO " + tablename + "(id, data) VALUES(@id,@data)", conn);
-                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
-                command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
+                using (var conn = await CreateConnection(connectionString))
+                {
+                    var command = new NpgsqlCommand("INSERT INTO " + tablename + "(id, data) VALUES(@id,@data)", conn);
+                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+                    command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
 
-                int affectedrows = await command.ExecuteNonQueryAsync();
+                    int affectedrows = await command.ExecuteNonQueryAsync();
 
-                await command.DisposeAsync();
+                    await command.DisposeAsync();
 
-                return affectedrows.ToString();
+                    return affectedrows.ToString();
+                }
             }
             catch (DbException ex)
             {
@@ -974,28 +1030,31 @@ namespace Helper
 
         #region Generic Update Method
 
-        public static async Task<string> UpdateDataFromTable(NpgsqlConnection conn, string tablename, string data, string id, CancellationToken cancellationToken)
+        public static async Task<string> UpdateDataFromTable(string connectionString, string tablename, string data, string id, CancellationToken cancellationToken)
         {
             try
             {
-                ////Fix the single quotes
-                //data = data.Replace("'", "''");                
+                using (var conn = await CreateConnection(connectionString))
+                {
+                    ////Fix the single quotes
+                    //data = data.Replace("'", "''");                
 
-                //string commandText = "UPDATE " + tablename + " SET data = '" + data + "' WHERE id ='" + id + "';";
+                    //string commandText = "UPDATE " + tablename + " SET data = '" + data + "' WHERE id ='" + id + "';";
 
-                //var command = new NpgsqlCommand(commandText);
+                    //var command = new NpgsqlCommand(commandText);
 
-                //command.Connection = conn;
+                    //command.Connection = conn;
 
-                var command = new NpgsqlCommand("UPDATE " + tablename + " SET data = @data WHERE id = @id", conn);
-                command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
-                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+                    var command = new NpgsqlCommand("UPDATE " + tablename + " SET data = @data WHERE id = @id", conn);
+                    command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
+                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
-                int affectedrows = await command.ExecuteNonQueryAsync();
+                    int affectedrows = await command.ExecuteNonQueryAsync();
 
-                await command.DisposeAsync();
+                    await command.DisposeAsync();
 
-                return affectedrows.ToString();
+                    return affectedrows.ToString();
+                }
             }
             catch (DbException ex)
             {
@@ -1003,19 +1062,22 @@ namespace Helper
             }
         }
 
-        public static async Task<string> UpdateDataFromTable(NpgsqlConnection conn, string tablename, object data, string id, CancellationToken cancellationToken)
+        public static async Task<string> UpdateDataFromTable(string connectionString, string tablename, object data, string id, CancellationToken cancellationToken)
         {
             try
             {
-                var command = new NpgsqlCommand("UPDATE " + tablename + " SET data = @data WHERE id = @id", conn);
-                command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
-                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+                using (var conn = await CreateConnection(connectionString))
+                {
+                    var command = new NpgsqlCommand("UPDATE " + tablename + " SET data = @data WHERE id = @id", conn);
+                    command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
+                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
-                int affectedrows = await command.ExecuteNonQueryAsync();
+                    int affectedrows = await command.ExecuteNonQueryAsync();
 
-                await command.DisposeAsync();
+                    await command.DisposeAsync();
 
-                return affectedrows.ToString();
+                    return affectedrows.ToString();
+                }
             }
             catch (DbException ex)
             {
@@ -1028,24 +1090,26 @@ namespace Helper
 
         #region Generic Delete Method
 
-        public static async Task<string> DeleteDataFromTableAsync(NpgsqlConnection conn, string tablename, string idvalue, CancellationToken cancellationToken)
+        public static async Task<string> DeleteDataFromTableAsync(string connectionString, string tablename, string idvalue, CancellationToken cancellationToken)
         {
             try
             {
+                using (var conn = await CreateConnection(connectionString))
+                {
+                    //string commandText = "DELETE FROM " + tablename + " WHERE id = '" + idvalue + "';";
 
-                //string commandText = "DELETE FROM " + tablename + " WHERE id = '" + idvalue + "';";
+                    //var command = new NpgsqlCommand(commandText);
+                    //command.Connection = conn;
 
-                //var command = new NpgsqlCommand(commandText);
-                //command.Connection = conn;
+                    var command = new NpgsqlCommand("DELETE FROM " + tablename + " WHERE id = @id", conn);
+                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, idvalue);
 
-                var command = new NpgsqlCommand("DELETE FROM " + tablename + " WHERE id = @id", conn);
-                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, idvalue);
+                    int affectedrows = await command.ExecuteNonQueryAsync();
 
-                int affectedrows = await command.ExecuteNonQueryAsync();
+                    await command.DisposeAsync();
 
-                await command.DisposeAsync();
-
-                return affectedrows.ToString();
+                    return affectedrows.ToString();
+                }
             }
             catch (DbException ex)
             {

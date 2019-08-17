@@ -640,7 +640,7 @@ namespace OdhApiCore.Controllers
                 {
                     conn.Open();
 
-                    ltstaggingtypes = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(conn, "ltstaggingtypes", "*", "", "", 0, null, cancellationToken);
+                    ltstaggingtypes = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(connectionString, "ltstaggingtypes", "*", "", "", 0, null, cancellationToken);
                 }
 
                 foreach (ActivityTypeFlag myactivitytype in EnumHelper.GetValues<ActivityTypeFlag>())
