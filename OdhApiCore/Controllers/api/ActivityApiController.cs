@@ -333,8 +333,9 @@ namespace OdhApiCore.Controllers
                 int pageskip = pagesize * (pagenumber - 1);
 
                 //Normal
-                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, cancellationToken);
+                var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(conn, "activities", whereexpression, where.Item2, cancellationToken);
+                var data = await dataTask;
 
                 //With Materialized View
                 //Stopwatch stopWatch = new Stopwatch();
@@ -394,8 +395,9 @@ namespace OdhApiCore.Controllers
 
                 int pageskip = pagesize * (pagenumber - 1);
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, cancellationToken);
+                var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(conn, "activities", whereexpression, where.Item2, cancellationToken);
+                var data = await dataTask;
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
@@ -488,8 +490,9 @@ namespace OdhApiCore.Controllers
 
                 int pageskip = pagesize * (pagenumber - 1);
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken);
+                var dataTask = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(conn, "activities", whereexpression, where.Item2, cancellationToken);
+                var data = await dataTask;
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
@@ -540,8 +543,9 @@ namespace OdhApiCore.Controllers
 
                 int pageskip = pagesize * (pagenumber - 1);
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken);
+                var dataTask = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(conn, "activities", select, whereexpression, where.Item2, orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(conn, "activities", whereexpression, where.Item2, cancellationToken);
+                var data = await dataTask;
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
@@ -857,8 +861,9 @@ namespace OdhApiCore.Controllers
 
                 var where = PostgresSQLWhereBuilder.CreateLastChangedWhereExpression(updatefrom);
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, where.Item1, where.Item2, orderby, pagesize, pageskip, cancellationToken);
+                var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(conn, "activities", select, where.Item1, where.Item2, orderby, pagesize, pageskip, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(conn, "activities", where.Item1, where.Item2, cancellationToken);
+                var data = await dataTask;
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
