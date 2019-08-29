@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace OdhApiCoreTests.IntegrationTets
@@ -27,13 +29,44 @@ namespace OdhApiCoreTests.IntegrationTets
             });
         }
 
-        [Fact]
-        public async Task Get_ActivitiesWithoutQueryString()
+        private static T JsonIsType<T>(object obj)
         {
-            var response = await _client.GetAsync("/api/Activity");
+            switch (obj)
+            {
+                case JValue value:
+                    return Assert.IsType<T>(value.Value);
+                default:
+                    return Assert.IsType<T>(obj);
+            }
+        }
+
+        [Theory]
+        [InlineData("/api/Activity")]
+        [InlineData("/api/Activity?pagesize=1")]
+        [InlineData("/api/Activity?activitytype=12")]
+        [InlineData("/api/ActivityLocalized?language=de")]
+        [InlineData("/api/ActivityLocalized?language=en")]
+        public async Task Get_Activities(string url)
+        {
+            var response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8", 
                 response.Content.Headers.ContentType.ToString());
+            string json = await response.Content.ReadAsStringAsync();
+            dynamic? data = JsonConvert.DeserializeObject(json);
+            Assert.NotNull(data);
+            if (data != null) {
+                JsonIsType<long>(data.TotalResults);
+                Assert.NotEqual(0, (long)data.TotalResults);
+                JsonIsType<long>(data.TotalPages);
+                Assert.NotEqual(0, (long)data.TotalPages);
+                JsonIsType<long>(data.CurrentPage);
+                Assert.Equal(1, (long)data.CurrentPage);
+                JsonIsType<string>(data.Seed);
+                Assert.Empty(data.Seed);
+                Assert.IsType<JArray>(data.Items);
+                Assert.NotEmpty(data.Items);
+            }
         }
     }
 }
