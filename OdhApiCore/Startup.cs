@@ -52,11 +52,7 @@ namespace OdhApiCore
                        .AllowAnyHeader();
             }));
 
-            services.AddMvc(configuration => configuration.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                .AddNewtonsoftJson(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            //services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
@@ -97,7 +93,6 @@ namespace OdhApiCore
                 //FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
                 //RequestPath = new PathString("")
             });
-            //app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -119,18 +114,10 @@ namespace OdhApiCore
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
-            //app.UseMvc();
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapRazorPages();
-            //    endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            //});
-
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
