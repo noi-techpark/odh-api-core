@@ -232,7 +232,7 @@ namespace Helper
                                 strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
                             else
                             {
-                                var themeids = JsonConvert.DeserializeObject<List<string>>(dr[i].ToString());
+                                var themeids = JsonConvert.DeserializeObject<List<string>>(dr[i].ToString() ?? "");
                                 strtoadd = strtoadd + "\"" + s + "\":\"" + String.Join(",", themeids) + "\",";
                             }
                             i++;
@@ -335,7 +335,7 @@ namespace Helper
                     List<T> lstSelect = new List<T>();
                     while (await dr.ReadAsync())
                     {
-                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
 
                         lstSelect.Add(data);
                     }
@@ -389,7 +389,7 @@ namespace Helper
                     List<T> lstSelect = new List<T>();
                     while (await dr.ReadAsync())
                     {
-                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
 
                         lstSelect.Add(data);
                     }
@@ -443,7 +443,7 @@ namespace Helper
                         var key = dr[0].ToString();
                         if (key != null)
                         {
-                            var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                            var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
                             lstSelect.Add(Tuple.Create<string, T>(key, data));
                         }
                     }
@@ -830,7 +830,7 @@ namespace Helper
                     List<T> lstSelect = new List<T>();
                     while (await dr.ReadAsync())
                     {
-                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString());
+                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
 
                         lstSelect.Add(data);
                     }
@@ -948,7 +948,7 @@ namespace Helper
                     List<T> lstSelect = new List<T>();
                     while (await dr.ReadAsync())
                     {
-                        var pgdata = JsonConvert.DeserializeObject<V>(dr[1].ToString());
+                        var pgdata = JsonConvert.DeserializeObject<V>(dr[1].ToString() ?? "");
 
                         var transformeddata = transformer(pgdata, language);
 

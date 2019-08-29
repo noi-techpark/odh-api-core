@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -53,10 +52,11 @@ namespace OdhApiCore
                        .AllowAnyHeader();
             }));
 
-            //services.AddMvc(configuration => configuration.EnableEndpointRouting = false)
-            //    .AddNewtonsoftJson(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(configuration => configuration.EnableEndpointRouting = false)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(); // .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddControllers().AddNewtonsoftJson();
+            //services.AddControllers().AddNewtonsoftJson();
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
@@ -94,9 +94,10 @@ namespace OdhApiCore
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 },
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
-                RequestPath = new PathString("")
+                //FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
+                //RequestPath = new PathString("")
             });
+            //app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -119,18 +120,18 @@ namespace OdhApiCore
             });
 
             //app.UseMvc();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            });
-
-            //app.UseMvc(routes =>
+            //app.UseEndpoints(endpoints =>
             //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller=Home}/{action=Index}/{id?}");
+            //    endpoints.MapRazorPages();
+            //    endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             //});
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }
