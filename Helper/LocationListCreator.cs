@@ -10,7 +10,6 @@ namespace Helper
 {
     public class LocationListCreator
     {
-
         #region PostGres
 
         public static async Task<List<string>> CreateActivityAreaListPGAsync(string areafilter, string connectionString, CancellationToken cancellationToken)
@@ -77,9 +76,9 @@ namespace Helper
             string select = "Id,data ->> 'Id'";
             string where = "data ->> 'RegionId' = '" + regionId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "areas", select, where, "", 0, null, cancellationToken);
+            var result = PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "areas", select, where, "", 0, null, cancellationToken);
 
-            foreach (var area in result)
+            await foreach (var area in result)
             {
                 var areacodes = area.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 
@@ -102,9 +101,9 @@ namespace Helper
             string select = "Id,data ->> 'Id'";
             string where = "data ->> 'TourismvereinId' = '" + tvId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "areas", select, where, "", 0, null, cancellationToken);
+            var result = PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "areas", select, where, "", 0, null, cancellationToken);
 
-            foreach (var area in result)
+            await foreach (var area in result)
             {
                 var areacodes = area.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 
@@ -120,16 +119,16 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforSkiRegionPGAsync(string skiregId, string connectionString, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> GetAreaforSkiRegionPGAsync(string skiregId, string connectionString, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
             string select = "Id,data ->> 'AreaId'";
             string where = "data ->> 'SkiRegionId' = '" + skiregId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "skiareas", select, where, "", 0, null, cancellationToken);
+            var result = PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "skiareas", select, where, "", 0, null, cancellationToken);
 
-            foreach (var skiarea in result)
+            await foreach (var skiarea in result)
             {
                 var areacodes = skiarea.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 
@@ -145,7 +144,7 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforSkiAreaPGAsync(string skiareaId, string connectionString, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> GetAreaforSkiAreaPGAsync(string skiareaId, string connectionString, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
@@ -153,7 +152,7 @@ namespace Helper
             string select = "Id,data ->> 'AreaId'";
             string where = "Id = '" + skiareaId.ToUpper() + "'";
 
-            var result = (await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "skiareas", select, where, "", 0, null, cancellationToken)).FirstOrDefault();
+            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionString, "skiareas", select, where, "", 0, null, cancellationToken).SingleAsync();
 
             result = result.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 
@@ -162,10 +161,6 @@ namespace Helper
             return arealist;
         }
 
-
-
         #endregion
-
-
     }
 }

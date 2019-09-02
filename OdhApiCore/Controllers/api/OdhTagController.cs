@@ -132,7 +132,7 @@ namespace OdhApiCore.Controllers
 
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionString, "smgtags", select, (where, null),
-                    orderby, 0, null, cancellationToken);
+                    orderby, 0, null, cancellationToken).ToListAsync();
 
                 return "[" + String.Join(",", myresult) + "]";
             });
@@ -174,7 +174,7 @@ namespace OdhApiCore.Controllers
 
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionString, "smgtags", select, (where, parameters),
-                    orderby, 0, null, cancellationToken);
+                    orderby, 0, null, cancellationToken).ToListAsync();
 
                 return "[" + String.Join(",", myresult) + "]";
             });
@@ -195,7 +195,7 @@ namespace OdhApiCore.Controllers
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionString, "smgtags", "*", where,
-                    "", 0, null, cancellationToken);
+                    "", 0, null, cancellationToken).ToListAsync();
 
                 return String.Join(",", data);
             });
@@ -222,7 +222,7 @@ namespace OdhApiCore.Controllers
                 string where = "";
 
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(
-                    connectionString, "smgtags", select, (where, null), orderby, 0, null, cancellationToken);
+                    connectionString, "smgtags", select, (where, null), orderby, 0, null, cancellationToken).ToListAsync();
                 var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult);
@@ -271,7 +271,7 @@ namespace OdhApiCore.Controllers
 
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(
                     connectionString, "smgtags", select, (where, parameters),
-                    orderby, 0, null, cancellationToken);
+                    orderby, 0, null, cancellationToken).ToListAsync();
                 var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult);
@@ -294,7 +294,7 @@ namespace OdhApiCore.Controllers
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(
                     connectionString, "smgtags", "*", where,
-                    "", 0, null, cancellationToken);
+                    "", 0, null, cancellationToken).ToListAsync();
                 var localizedresult = data.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult.FirstOrDefault());
@@ -323,7 +323,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(
                     connectionString, "smgtags", select, (where, null), orderby, 0,
-                    null, new List<string>() { "Id", "Name" }, cancellationToken);
+                    null, new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
                 return "[" + String.Join(",", data) + "]";
             });
@@ -369,7 +369,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(
                     connectionString, "smgtags", select, (where, parameters), orderby, 0, null,
-                    new List<string>() { "Id", "Name" }, cancellationToken);
+                    new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
                 return $"[{String.Join(",", data)}]";
             });

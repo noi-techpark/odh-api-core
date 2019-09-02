@@ -3,6 +3,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,7 +45,7 @@ namespace OdhApiCore.Controllers
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
                 tourismusvereinids = await RetrieveLocFilterDataAsync(
-                    connectionString, metaregionlist, cancellationToken);
+                    connectionString, metaregionlist, cancellationToken).ToListAsync();
             }
 
             return new ActivityHelper(
@@ -152,15 +153,18 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        private static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(
-            string connectionString, List<string> metaregionlist, CancellationToken cancellationToken)
+        private static async IAsyncEnumerable<string> RetrieveLocFilterDataAsync(
+            string connectionString, List<string> metaregionlist, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var mtapgwhere = PostgresSQLWhereBuilder.CreateMetaRegionWhereExpression(metaregionlist);
-            var mymetaregion = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(
+            var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(
                 connectionString, "metaregions", "*", mtapgwhere,
                 "", 0, null, cancellationToken);
 
-            return mymetaregion.SelectMany(x => x.TourismvereinIds).ToList();
+            await foreach (var region in mymetaregion)
+                if (region.TourismvereinIds != null)
+                    foreach (var tids in region.TourismvereinIds)
+                        yield return tids;
         }
     }
 }
