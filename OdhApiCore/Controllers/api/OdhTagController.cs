@@ -130,7 +130,9 @@ namespace OdhApiCore.Controllers
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(connectionString, "smgtags", select, where, null, orderby, 0, null, cancellationToken);
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                    connectionString, "smgtags", select, (where, null),
+                    orderby, 0, null, cancellationToken);
 
                 return "[" + String.Join(",", myresult) + "]";
             });
@@ -161,7 +163,7 @@ namespace OdhApiCore.Controllers
                     string smgtagtypeliststring = "";
                     foreach (var smgtagtypeid in smgtagtypelist)
                     {
-                        smgtagtypeliststring = smgtagtypeliststring + "data @> @smgtag" + counter + " OR ";
+                        smgtagtypeliststring = $"{smgtagtypeliststring}data @> @smgtag{counter} OR ";
                         parameters.Add(new PGParameters() { Name = "smgtag" + counter, Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}" });
                         counter++;
                     }
@@ -170,7 +172,9 @@ namespace OdhApiCore.Controllers
                     where = where + smgtagtypeliststring;
                 }
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(connectionString, "smgtags", select, where, parameters, orderby, 0, null, cancellationToken);
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                    connectionString, "smgtags", select, (where, parameters),
+                    orderby, 0, null, cancellationToken);
 
                 return "[" + String.Join(",", myresult) + "]";
             });
@@ -189,7 +193,9 @@ namespace OdhApiCore.Controllers
             return DoAsync(async connectionString =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
-                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(connectionString, "smgtags", "*", where.Item1, where.Item2, "", 0, null, cancellationToken);
+                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                    connectionString, "smgtags", "*", where,
+                    "", 0, null, cancellationToken);
 
                 return String.Join(",", data);
             });
@@ -215,7 +221,8 @@ namespace OdhApiCore.Controllers
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(connectionString, "smgtags", select, where, null, orderby, 0, null, cancellationToken);
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(
+                    connectionString, "smgtags", select, (where, null), orderby, 0, null, cancellationToken);
                 var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult);
@@ -231,7 +238,8 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         [HttpGet, Route("Filtered/{language}/{smgtagtype}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetFilteredLocalized(string language, string smgtagtype, CancellationToken cancellationToken)
+        public Task<IActionResult> GetFilteredLocalized(
+            string language, string smgtagtype, CancellationToken cancellationToken)
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -248,8 +256,12 @@ namespace OdhApiCore.Controllers
                     string smgtagtypeliststring = "";
                     foreach (var smgtagtypeid in smgtagtypelist)
                     {
-                        smgtagtypeliststring = smgtagtypeliststring + "data @> @smgtag" + counter + " OR ";
-                        parameters.Add(new PGParameters() { Name = "smgtag" + counter, Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}" });
+                        smgtagtypeliststring = $"{smgtagtypeliststring}data @> @smgtag{counter} OR ";
+                        parameters.Add(new PGParameters() {
+                            Name = "smgtag" + counter,
+                            Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                            Value = $"{{ \"ValidForEntity\": [\"{smgtagtypeid.ToLower()}\"]}}"
+                        });
                         counter++;
                     }
                     smgtagtypeliststring = smgtagtypeliststring.Remove(smgtagtypeliststring.Length - 4);
@@ -257,7 +269,9 @@ namespace OdhApiCore.Controllers
                     where = where + smgtagtypeliststring;
                 }
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(connectionString, "smgtags", select, where, parameters, orderby, 0, null, cancellationToken);
+                var myresult = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(
+                    connectionString, "smgtags", select, (where, parameters),
+                    orderby, 0, null, cancellationToken);
                 var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult);
@@ -278,7 +292,9 @@ namespace OdhApiCore.Controllers
             return DoAsync(async connectionString =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
-                var data = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(connectionString, "smgtags", "*", where.Item1, where.Item2, "", 0, null, cancellationToken);
+                var data = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(
+                    connectionString, "smgtags", "*", where,
+                    "", 0, null, cancellationToken);
                 var localizedresult = data.TransformToLocalizedSmgTag(language);
 
                 return JsonConvert.SerializeObject(localizedresult.FirstOrDefault());
@@ -301,11 +317,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsync(async connectionString =>
             {
-                string select = "data->'Id' as Id, data->'TagName'->'" + language.ToLower() + "' as Name";
+                string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
                 string orderby = "";
-                string where = "data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
+                string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(connectionString, "smgtags", select, where, null, orderby, 0, null, new List<string>() { "Id", "Name" }, cancellationToken);
+                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(
+                    connectionString, "smgtags", select, (where, null), orderby, 0,
+                    null, new List<string>() { "Id", "Name" }, cancellationToken);
 
                 return "[" + String.Join(",", data) + "]";
             });
@@ -320,13 +338,14 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         [HttpGet, Route("Reduced/{language}/{smgtagtype}")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetReducedFilteredLocalized(string language, string smgtagtype, CancellationToken cancellationToken)
+        public Task<IActionResult> GetReducedFilteredLocalized(
+            string language, string smgtagtype, CancellationToken cancellationToken)
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             return DoAsync(async connectionString =>
             {
-                string select = "data->'Id' as Id, data->'TagName'->'" + language.ToLower() + "' as Name";
+                string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
                 string orderby = "";
                 string where = "";
                 List<PGParameters> parameters = new List<PGParameters>();
@@ -337,7 +356,7 @@ namespace OdhApiCore.Controllers
                     string smgtagtypeliststring = "";
                     foreach (var smgtagtypeid in smgtagtypelist)
                     {
-                        smgtagtypeliststring = smgtagtypeliststring + "data @> @smgtag" + counter + " OR ";
+                        smgtagtypeliststring = $"{smgtagtypeliststring}data @> @smgtag{counter} OR ";
                         parameters.Add(new PGParameters() { Name = "smgtag" + counter, Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"ValidForEntity\": [\"" + smgtagtypeid.ToLower() + "\"]}" });
                         counter++;
                     }
@@ -346,11 +365,13 @@ namespace OdhApiCore.Controllers
                     where = where + smgtagtypeliststring;
                 }
 
-                where = where + " AND data->'TagName'->>'" + language.ToLower() + "' NOT LIKE ''";
+                where = $"{where} AND data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(connectionString, "smgtags", select, where, parameters, orderby, 0, null, new List<string>() { "Id", "Name" }, cancellationToken);
+                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(
+                    connectionString, "smgtags", select, (where, parameters), orderby, 0, null,
+                    new List<string>() { "Id", "Name" }, cancellationToken);
 
-                return "[" + String.Join(",", data) + "]";
+                return $"[{String.Join(",", data)}]";
             });
         }
 

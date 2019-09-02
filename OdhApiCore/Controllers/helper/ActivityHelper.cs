@@ -31,7 +31,11 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
 
-        public static async Task<ActivityHelper> CreateAsync(string connectionString, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter, string? smgtags, CancellationToken cancellationToken)
+        public static async Task<ActivityHelper> CreateAsync(
+            string connectionString, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
+            string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter,
+            string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter,
+            string? smgtags, CancellationToken cancellationToken)
         {
             var arealist = await RetrieveAreaFilterDataAsync(connectionString, areafilter, cancellationToken);
 
@@ -39,13 +43,19 @@ namespace OdhApiCore.Controllers
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await RetrieveLocFilterDataAsync(connectionString, metaregionlist, cancellationToken);
+                tourismusvereinids = await RetrieveLocFilterDataAsync(
+                    connectionString, metaregionlist, cancellationToken);
             }
 
-            return new ActivityHelper(activitytype, subtypefilter, idfilter, locfilter, arealist, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, activefilter, smgactivefilter, smgtags, tourismusvereinids);
+            return new ActivityHelper(
+                activitytype, subtypefilter, idfilter, locfilter, arealist, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, activefilter, smgactivefilter, smgtags, tourismusvereinids);
         }
 
-        private ActivityHelper(string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist, string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter, string? smgtags, IEnumerable<string>? tourismusvereinids)
+        private ActivityHelper(
+            string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
+            IEnumerable<string> arealist, string? distancefilter, string? altitudefilter, string? durationfilter,
+            string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter,
+            string? smgtags, IEnumerable<string>? tourismusvereinids)
         {
             activitytypelist = new List<string>();
             int typeinteger = 0;
@@ -63,7 +73,8 @@ namespace OdhApiCore.Controllers
                 }
             }
             if (activitytypelist.Count > 0)
-                subtypelist = Helper.ActivityPoiListCreator.CreateActivitySubTypefromFlag(activitytypelist.FirstOrDefault(), subtypefilter);
+                subtypelist = Helper.ActivityPoiListCreator.CreateActivitySubTypefromFlag(
+                    activitytypelist.FirstOrDefault(), subtypefilter);
             else
                 subtypelist = new List<string>();
 
@@ -95,40 +106,15 @@ namespace OdhApiCore.Controllers
             //            }
 
             //Distance
-            distance = false;
-            distancemin = 0;
-            distancemax = 0;
             var distancefilterresult = CommonListCreator.CreateRangeString(distancefilter);
-            if (distancefilterresult != null)
-            {
-                distance = true;
-                distancemin = distancefilterresult.Item1 * 1000;
-                distancemax = distancefilterresult.Item2 * 1000;
-            }
+            var distancemin = distancefilterresult.min * 1000;
+            var distancemax = distancefilterresult.max * 1000;
 
             //Altitude
-            altitude = false;
-            altitudemin = 0;
-            altitudemax = 0;
-            var altitudefilterresult = CommonListCreator.CreateRangeString(altitudefilter);
-            if (altitudefilterresult != null)
-            {
-                altitude = true;
-                altitudemin = altitudefilterresult.Item1;
-                altitudemax = altitudefilterresult.Item2;
-            }
+            var (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
 
             //Duration
-            duration = false;
-            durationmin = 0;
-            durationmax = 0;
-            var durationfilterresult = CommonListCreator.CreateRangeString(durationfilter);
-            if (durationfilterresult != null)
-            {
-                duration = true;
-                durationmin = durationfilterresult.Item1;
-                durationmax = durationfilterresult.Item2;
-            }
+            var (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
 
             //highlight
             highlight = null;
@@ -152,11 +138,13 @@ namespace OdhApiCore.Controllers
                 smgactive = false;
         }
 
-        private static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(string connectionString, string? areafilter, CancellationToken cancellationToken)
+        private static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(
+            string connectionString, string? areafilter, CancellationToken cancellationToken)
         {
             if (areafilter != null)
             {
-                return (await LocationListCreator.CreateActivityAreaListPGAsync(areafilter, connectionString, cancellationToken)).ToList();
+                return (await LocationListCreator.CreateActivityAreaListPGAsync(
+                    areafilter, connectionString, cancellationToken)).ToList();
             }
             else
             {
@@ -164,10 +152,13 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        private static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(string connectionString, List<string> metaregionlist, CancellationToken cancellationToken)
+        private static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(
+            string connectionString, List<string> metaregionlist, CancellationToken cancellationToken)
         {
             var mtapgwhere = PostgresSQLWhereBuilder.CreateMetaRegionWhereExpression(metaregionlist);
-            var mymetaregion = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(connectionString, "metaregions", "*", mtapgwhere.Item1, mtapgwhere.Item2, "", 0, null, cancellationToken);
+            var mymetaregion = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(
+                connectionString, "metaregions", "*", mtapgwhere,
+                "", 0, null, cancellationToken);
 
             return mymetaregion.SelectMany(x => x.TourismvereinIds).ToList();
         }

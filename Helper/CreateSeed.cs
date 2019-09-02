@@ -9,12 +9,13 @@ namespace Helper
     /// </summary>
     public class CreateSeed
     {
+        private static readonly Random random = new Random();
+
         public static int GetSeed(int seed)
         {
             //Kein Seed es wird ein Seed zwischen 0 und 10 erzeugt
             if (seed == 0)
             {
-                Random random = new Random();
                 int randomNumber = random.Next(10);
 
                 return randomNumber;
@@ -45,7 +46,6 @@ namespace Helper
                 //Kein Seed es wird ein Seed zwischen 0 und 10 erzeugt
                 if (seed == 0)
                 {
-                    Random random = new Random();
                     int randomNumber = random.Next(1, 50);
 
                     return randomNumber.ToString();

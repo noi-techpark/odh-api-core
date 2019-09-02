@@ -73,7 +73,7 @@ namespace Helper
                     pggeosearchresult.radius = 150000;
 
                 //Check ob das ganze sinn macht
-                var actualdistance = DistanceCalculator.distance(pggeosearchresult.latitude, pggeosearchresult.longitude, DistanceCalculator.suedtirolMitteLatitude, DistanceCalculator.suedtirolMitteLongitude, 'K');
+                var actualdistance = DistanceCalculator.Distance(pggeosearchresult.latitude, pggeosearchresult.longitude, DistanceCalculator.suedtirolMitteLatitude, DistanceCalculator.suedtirolMitteLongitude, 'K');
                 if (actualdistance > 200)
                     pggeosearchresult.geosearch = false;
 
@@ -118,7 +118,7 @@ namespace Helper
                     pggeosearchresult.radius = 150;
 
                 //Check ob das ganze sinn macht
-                var actualdistance = DistanceCalculator.distance(pggeosearchresult.latitude, pggeosearchresult.longitude, DistanceCalculator.suedtirolMitteLatitude, DistanceCalculator.suedtirolMitteLongitude, 'K');
+                var actualdistance = DistanceCalculator.Distance(pggeosearchresult.latitude, pggeosearchresult.longitude, DistanceCalculator.suedtirolMitteLatitude, DistanceCalculator.suedtirolMitteLongitude, 'K');
                 if (actualdistance > 150)
                     pggeosearchresult.geosearch = false;
 
@@ -170,12 +170,12 @@ namespace Helper
         //:::                                                                         :::
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-        public static double distance(double lat1, double lon1, double lat2, double lon2, char unit)
+        public static double Distance(double lat1, double lon1, double lat2, double lon2, char unit)
         {
             double theta = lon1 - lon2;
-            double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
+            double dist = Math.Sin(Deg2rad(lat1)) * Math.Sin(Deg2rad(lat2)) + Math.Cos(Deg2rad(lat1)) * Math.Cos(Deg2rad(lat2)) * Math.Cos(Deg2rad(theta));
             dist = Math.Acos(dist);
-            dist = rad2deg(dist);
+            dist = Rad2deg(dist);
             dist = dist * 60 * 1.1515;
             if (unit == 'K')
             {
@@ -191,7 +191,7 @@ namespace Helper
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         //::  This function converts decimal degrees to radians             :::
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        private static double deg2rad(double deg)
+        private static double Deg2rad(double deg)
         {
             return (deg * Math.PI / 180.0);
         }
@@ -199,7 +199,7 @@ namespace Helper
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         //::  This function converts radians to decimal degrees             :::
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        private static double rad2deg(double rad)
+        private static double Rad2deg(double rad)
         {
             return (rad / Math.PI * 180.0);
         }

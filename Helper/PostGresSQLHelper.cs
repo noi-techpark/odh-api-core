@@ -13,7 +13,9 @@ namespace Helper
 {
     public static class PGExtensions
     {
-        public static void AddPGParameters(this NpgsqlCommand command, List<PGParameters>? whereparameters)
+        public static void AddPGParameters(
+            this NpgsqlCommand command,
+            IReadOnlyCollection<PGParameters>? whereparameters)
         {
             if (whereparameters != null)
             {
@@ -22,7 +24,10 @@ namespace Helper
                     switch (parameter.Type)
                     {
                         case NpgsqlTypes.NpgsqlDbType.Date:
-                            command.Parameters.AddWithValue(parameter.Name, parameter.Type, Convert.ToDateTime(parameter.Value));
+                            command.Parameters.AddWithValue(
+                                parameter.Name,
+                                parameter.Type,
+                                Convert.ToDateTime(parameter.Value));
                             break;
                         default:
                             command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
@@ -35,11 +40,12 @@ namespace Helper
 
     public class PostgresSQLHelper
     {
-        private static async Task<NpgsqlConnection> CreateConnection(string connectionString)
+        private static async Task<NpgsqlConnection> CreateConnection(
+            string connectionString, CancellationToken cancellationToken)
         {
             // TODO: additional initialization logic goes here
             var conn = new NpgsqlConnection(connectionString);
-            await conn.OpenAsync();
+            await conn.OpenAsync(cancellationToken);
             return conn;
         }
 
@@ -55,11 +61,13 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringAsync(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsStringAsync(
+            string connectionString, string tablename, string selectexp, string whereexp,
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
@@ -98,13 +106,15 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<string> SelectFromTableDataAsStringSingleAsync(string connectionString, string tablename, string selectexp, string id, CancellationToken cancellationToken)
+        public static async Task<string> SelectFromTableDataAsStringSingleAsync(
+            string connectionString, string tablename, string selectexp, string id,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    var command = new NpgsqlCommand("SELECT " + selectexp + " FROM " + tablename + " WHERE id LIKE @id", conn);
+                    var command = new NpgsqlCommand($"SELECT {selectexp} FROM {tablename} WHERE id LIKE @id", conn);
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
                     command.Connection = conn;
@@ -141,13 +151,17 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAsync(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAsync(
+            string connectionString, string tablename, string selectexp, string whereexp,
+            string sortexp, int limit, int? offset, List<string> fieldstoadd,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreatetDatabaseCommand(
+                        selectexp, tablename, whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
@@ -166,7 +180,7 @@ namespace Helper
 
                         foreach (string s in fieldstoadd)
                         {
-                            strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
+                            strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
 
                             // FIXME: "null"?
                             if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
@@ -206,11 +220,14 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAndTypeAsync(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, string type, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAndTypeAsync(
+            string connectionString, string tablename, string selectexp, string whereexp,
+            string sortexp, int limit, int? offset, List<string> fieldstoadd, string type,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
 
                     string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
@@ -229,17 +246,17 @@ namespace Helper
                         foreach (string s in fieldstoadd)
                         {
                             if (s != "themeIds")
-                                strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
+                                strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
                             else
                             {
                                 var themeids = JsonConvert.DeserializeObject<List<string>>(dr[i].ToString() ?? "");
-                                strtoadd = strtoadd + "\"" + s + "\":\"" + String.Join(",", themeids) + "\",";
+                                strtoadd = $"{strtoadd}\"{s}\":\"{String.Join(",", themeids)}\",";
                             }
                             i++;
                         }
 
 
-                        strtoadd = strtoadd + "\"typ\":\"" + type + "\"";
+                        strtoadd = $"{strtoadd}\"typ\":\"{type}\"";
 
                         strtoadd = strtoadd + "}";
 
@@ -269,11 +286,13 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAsync(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsIdAsync(
+            string connectionString, string tablename, string selectexp, string whereexp,
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
@@ -319,11 +338,13 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsObjectAsync<T>(
+            string connectionString, string tablename, string selectexp, string whereexp,
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
@@ -345,7 +366,7 @@ namespace Helper
                     await command.DisposeAsync();
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+                    Console.WriteLine($"Data queried {lstSelect.Count} Results");
 
                     return lstSelect;
                 }
@@ -370,16 +391,18 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<T> SelectFromTableDataAsObjectSingleAsync<T>(string connectionString, string tablename, string id, CancellationToken cancellationToken)
+        public static async Task<T> SelectFromTableDataAsObjectSingleAsync<T>(
+            string connectionString, string tablename, string id,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     //string whereexp = "Id LIKE '" + id + "'";
                     //string commandText = CreatetDatabaseCommand("*", tablename, whereexp, "", null, 0);
 
-                    var command = new NpgsqlCommand("SELECT * FROM " + tablename + " WHERE id LIKE @id", conn);
+                    var command = new NpgsqlCommand($"SELECT * FROM {tablename} WHERE id LIKE @id", conn);
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
                     command.Connection = conn;
@@ -399,7 +422,7 @@ namespace Helper
                     await command.DisposeAsync();
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+                    Console.WriteLine($"Data queried {lstSelect.Count} Results");
 
                     return lstSelect.FirstOrDefault();
                 }
@@ -424,11 +447,13 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<Tuple<string, T>>> SelectFromTableIdAndDataAsObjectAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<(string, T)>> SelectFromTableIdAndDataAsObjectAsync<T>(
+            string connectionString, string tablename, string selectexp, string whereexp,
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
@@ -437,14 +462,14 @@ namespace Helper
 
                     NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
-                    List<Tuple<string, T>> lstSelect = new List<Tuple<string, T>>();
+                    List<(string, T)> lstSelect = new List<(string, T)>();
                     while (await dr.ReadAsync())
                     {
                         var key = dr[0].ToString();
                         if (key != null)
                         {
                             var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
-                            lstSelect.Add(Tuple.Create<string, T>(key, data));
+                            lstSelect.Add((key, data));
                         }
                     }
 
@@ -453,7 +478,7 @@ namespace Helper
                     await command.DisposeAsync();
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+                    Console.WriteLine($"Data queried {lstSelect.Count} Results");
 
                     return lstSelect;
                 }
@@ -478,11 +503,14 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedAsync<T>(
+            string connectionString, string tablename, string selectexp, string whereexp,
+            string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
@@ -498,7 +526,7 @@ namespace Helper
                         string stringtodeserialize = "{";
                         foreach (string s in fieldstodeserialize)
                         {
-                            stringtodeserialize = stringtodeserialize + "\"" + s + "\":" + dr[i].ToString() + ",";
+                            stringtodeserialize = $"{stringtodeserialize}\"{s}\":{dr[i].ToString()},";
                             i++;
                         }
                         stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
@@ -514,7 +542,7 @@ namespace Helper
                     await command.DisposeAsync();
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+                    Console.WriteLine($"Data queried {lstSelect.Count} Results");
 
                     return lstSelect;
                 }
@@ -535,13 +563,14 @@ namespace Helper
         /// <param name="tablename">Table name</param>
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
-        public static async Task<long> CountDataFromTableAsync(string connectionString, string tablename, string whereexp, CancellationToken cancellationToken)
+        public static async Task<long> CountDataFromTableAsync(
+            string connectionString, string tablename, string whereexp, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = "SELECT COUNT(*) FROM " + tablename;
+                    string commandText = $"SELECT COUNT(*) FROM {tablename}";
 
                     if (!String.IsNullOrEmpty(whereexp))
                     {
@@ -573,7 +602,7 @@ namespace Helper
 
         public static string CreatetDatabaseCommand(string selectexp, string tablename, string whereexp, string sortexp, Nullable<int> offset, int limit)
         {
-            string commandText = "SELECT " + selectexp + " FROM " + tablename;
+            string commandText = $"SELECT {selectexp} FROM {tablename}";
 
             if (!String.IsNullOrEmpty(whereexp))
             {
@@ -611,17 +640,20 @@ namespace Helper
         /// <param name="tablename">Table name</param>
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
-        public static async Task<long> CountDataFromTableParametrizedAsync(string connectionString, string tablename, string whereexp, List<PGParameters> whereparameters, CancellationToken cancellationToken)
+        public static async Task<long> CountDataFromTableParametrizedAsync(
+            string connectionString, string tablename,
+            (string whereexp, IReadOnlyCollection<PGParameters> whereparameters) where,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = "SELECT COUNT(*) FROM " + tablename;
+                    string commandText = $"SELECT COUNT(*) FROM {tablename}";
 
-                    if (!String.IsNullOrEmpty(whereexp))
+                    if (!String.IsNullOrEmpty(where.whereexp))
                     {
-                        commandText = commandText + " WHERE " + whereexp;
+                        commandText = commandText + " WHERE " + where.whereexp;
                     }
 
                     commandText = commandText + ";";
@@ -629,7 +661,7 @@ namespace Helper
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
 
-                    command.AddPGParameters(whereparameters);
+                    command.AddPGParameters(where.whereparameters);
 
                     Int64 count = (Int64)await command.ExecuteScalarAsync();
 
@@ -653,16 +685,21 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataFirstOnlyParametrizedAsync(string connectionString, string tablename, string selectexp, string where, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataFirstOnlyParametrizedAsync(
+            string connectionString, string tablename, string selectexp,
+            (string whereexp, IReadOnlyCollection<PGParameters> whereparameters) where,
+            string sortexp, int limit, Nullable<int> offset,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, where, sortexp, offset, limit);
+                    string commandText = CreatetDatabaseCommand(
+                        selectexp, tablename, where.whereexp, sortexp, offset, limit);
                     var command = new NpgsqlCommand(commandText, conn);
 
-                    command.AddPGParameters(whereparameters);
+                    command.AddPGParameters(where.whereparameters);
 
                     command.Connection = conn;
 
@@ -699,16 +736,20 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(string connectionString, string tablename, string selectexp, string where, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(
+            string connectionString, string tablename, string selectexp,
+            (string whereexpression, IReadOnlyCollection<PGParameters>? whereparameters) where,
+            string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, where, sortexp, offset, limit);
+                    string commandText = CreatetDatabaseCommand(
+                        selectexp, tablename, where.whereexpression, sortexp, offset, limit);
                     var command = new NpgsqlCommand(commandText, conn);
 
-                    command.AddPGParameters(whereparameters);
+                    command.AddPGParameters(where.whereparameters);
 
                     command.Connection = conn;
 
@@ -745,18 +786,23 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(string connectionString, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd, CancellationToken cancellationToken)
+        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(
+            string connectionString, string tablename, string selectexp,
+            (string whereexp, IReadOnlyCollection<PGParameters>? whereparameters) where,
+            string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreatetDatabaseCommand(
+                        selectexp, tablename, where.whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
 
-                    command.AddPGParameters(whereparameters);
+                    command.AddPGParameters(where.whereparameters);
 
                     NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
@@ -771,7 +817,7 @@ namespace Helper
 
                         foreach (string s in fieldstoadd)
                         {
-                            strtoadd = strtoadd + "\"" + s + "\":" + dr[i].ToString() + ",";
+                            strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
 
                             // FIXME: "null"?
                             if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
@@ -812,18 +858,28 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, List<PGParameters>? whereparameters, string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(
+            string connectionString, string tablename, string selectexp,
+            (string whereexp, IReadOnlyCollection<PGParameters>? whereparameters) where,
+            string sortexp, int limit, Nullable<int> offset,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreatetDatabaseCommand(
+                        selectexp,
+                        tablename,
+                        where.whereexp,
+                        sortexp,
+                        offset,
+                        limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
 
-                    command.AddPGParameters(whereparameters);
+                    command.AddPGParameters(where.whereparameters);
 
                     NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
 
@@ -840,7 +896,7 @@ namespace Helper
                     await command.DisposeAsync();
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+                    Console.WriteLine($"Data queried {lstSelect.Count} Results");
 
                     return lstSelect;
                 }
@@ -865,18 +921,28 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(string connectionString, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(
+            string connectionString, string tablename, string selectexp,
+            (string whereexp, IReadOnlyCollection<PGParameters> whereparameters) where,
+            string sortexp, int limit, int? offset,
+            List<string> fieldstodeserialize, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreatetDatabaseCommand(
+                        selectexp,
+                        tablename,
+                        where.whereexp,
+                        sortexp,
+                        offset,
+                        limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
 
-                    command.AddPGParameters(whereparameters);
+                    command.AddPGParameters(where.whereparameters);
 
                     NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
 
@@ -887,7 +953,7 @@ namespace Helper
                         string stringtodeserialize = "{";
                         foreach (string s in fieldstodeserialize)
                         {
-                            stringtodeserialize = stringtodeserialize + "\"" + s + "\":" + dr[i].ToString() + ",";
+                            stringtodeserialize = $"{stringtodeserialize}\"{s}\":{dr[i].ToString()},";
                             i++;
                         }
                         stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
@@ -903,7 +969,7 @@ namespace Helper
                     await command.DisposeAsync();
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Data queried " + lstSelect.Count + " Results");
+                    Console.WriteLine($"Data queried {lstSelect.Count} Results");
 
                     return lstSelect;
                 }
@@ -928,20 +994,30 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(string connectionString, string tablename, string selectexp, string whereexp, List<PGParameters> whereparameters, string sortexp, int limit, Nullable<int> offset, string language, Func<V, string, T> transformer, CancellationToken cancellationToken)
+        public static async Task<List<T>> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(
+            string connectionString, string tablename, string selectexp,
+            (string whereexp, IReadOnlyCollection<PGParameters> whereparameters) where,
+            string sortexp, int limit, Nullable<int> offset, string language,
+            Func<V, string, T> transformer, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     //CultureInfo myculture = new CultureInfo("en");
 
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreatetDatabaseCommand(
+                        selectexp,
+                        tablename,
+                        where.whereexp,
+                        sortexp,
+                        offset,
+                        limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
 
-                    command.AddPGParameters(whereparameters);
+                    command.AddPGParameters(where.whereparameters);
 
                     NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
 
@@ -972,11 +1048,13 @@ namespace Helper
 
         #region Generic Insert Method
 
-        public static async Task<string> InsertDataIntoTableAsync(string connectionString, string tablename, string data, string id, CancellationToken cancellationToken)
+        public static async Task<string> InsertDataIntoTableAsync(
+            string connectionString, string tablename, string data, string id,
+            CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     ////Fix the single quotes
                     //data = data.Replace("'", "''");
@@ -986,7 +1064,7 @@ namespace Helper
                     //var command = new NpgsqlCommand(commandText);
                     //command.Connection = conn;
 
-                    var command = new NpgsqlCommand("INSERT INTO " + tablename + "(id, data) VALUES(@id,@data)", conn);
+                    var command = new NpgsqlCommand($"INSERT INTO {tablename} (id, data) VALUES (@id, @data)", conn);
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
                     command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
 
@@ -1003,13 +1081,15 @@ namespace Helper
             }
         }
 
-        public static async Task<string> InsertDataIntoTableAsync(string connectionString, string tablename, object data, string id, CancellationToken cancellationToken)
+        public static async Task<string> InsertDataIntoTableAsync(
+            string connectionString, string tablename, object data,
+            string id, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    var command = new NpgsqlCommand("INSERT INTO " + tablename + "(id, data) VALUES(@id,@data)", conn);
+                    var command = new NpgsqlCommand($"INSERT INTO {tablename} (id, data) VALUES (@id, @data)", conn);
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
                     command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
 
@@ -1030,11 +1110,12 @@ namespace Helper
 
         #region Generic Update Method
 
-        public static async Task<string> UpdateDataFromTable(string connectionString, string tablename, string data, string id, CancellationToken cancellationToken)
+        public static async Task<string> UpdateDataFromTable(
+            string connectionString, string tablename, string data, string id, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     ////Fix the single quotes
                     //data = data.Replace("'", "''");                
@@ -1045,7 +1126,7 @@ namespace Helper
 
                     //command.Connection = conn;
 
-                    var command = new NpgsqlCommand("UPDATE " + tablename + " SET data = @data WHERE id = @id", conn);
+                    var command = new NpgsqlCommand($"UPDATE {tablename} SET data = @data WHERE id = @id", conn);
                     command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
@@ -1062,13 +1143,14 @@ namespace Helper
             }
         }
 
-        public static async Task<string> UpdateDataFromTable(string connectionString, string tablename, object data, string id, CancellationToken cancellationToken)
+        public static async Task<string> UpdateDataFromTable(
+            string connectionString, string tablename, object data, string id, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    var command = new NpgsqlCommand("UPDATE " + tablename + " SET data = @data WHERE id = @id", conn);
+                    var command = new NpgsqlCommand($"UPDATE {tablename} SET data = @data WHERE id = @id", conn);
                     command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
@@ -1090,18 +1172,19 @@ namespace Helper
 
         #region Generic Delete Method
 
-        public static async Task<string> DeleteDataFromTableAsync(string connectionString, string tablename, string idvalue, CancellationToken cancellationToken)
+        public static async Task<string> DeleteDataFromTableAsync(
+            string connectionString, string tablename, string idvalue, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString))
+                using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
                     //string commandText = "DELETE FROM " + tablename + " WHERE id = '" + idvalue + "';";
 
                     //var command = new NpgsqlCommand(commandText);
                     //command.Connection = conn;
 
-                    var command = new NpgsqlCommand("DELETE FROM " + tablename + " WHERE id = @id", conn);
+                    var command = new NpgsqlCommand($"DELETE FROM {tablename} WHERE id = @id", conn);
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, idvalue);
 
                     int affectedrows = await command.ExecuteNonQueryAsync();
@@ -1126,45 +1209,50 @@ namespace Helper
             string resultstr = "";
 
             if (data.StartsWith("["))
-                resultstr = "{" + "\"TotalResults\":" + totalcount + ",\"TotalPages\":" + totalpages + ",\"CurrentPage\":" + pagenumber + ",\"Seed\":\"" + seed + "\",\"Items\":" + data + "}";
+                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"Seed\":\"{seed}\",\"Items\":{data}}}";
             else
-                resultstr = "{" + "\"TotalResults\":" + totalcount + ",\"TotalPages\":" + totalpages + ",\"CurrentPage\":" + pagenumber + ",\"Seed\":\"" + seed + "\",\"Items\":[" + data + "]}";
+                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"Seed\":\"{seed}\",\"Items\":[{data}]}}";
 
             return resultstr;
         }
 
-        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, string data)
+        public static string GetResultJson(
+            int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, string data)
         {
             string resultstr = "";
 
             if (data.StartsWith("["))
-                resultstr = "{" + "\"TotalResults\":" + totalcount + ",\"TotalPages\":" + totalpages + ",\"CurrentPage\":" + pagenumber + ",\"OnlineResults\":" + onlineresults + ",\"Seed\":\"" + seed + "\",\"Items\":" + data + "}";
+                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"Seed\":\"{seed}\",\"Items\":{data}}}";
             else
-                resultstr = "{" + "\"TotalResults\":" + totalcount + ",\"TotalPages\":" + totalpages + ",\"CurrentPage\":" + pagenumber + ",\"OnlineResults\":" + onlineresults + ",\"Seed\":\"" + seed + "\",\"Items\":[" + data + "]}";
+                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"Seed\":\"{seed}\",\"Items\":[{data}]}}";
 
             return resultstr;
         }
 
-        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, int onlineresults, string resultid, string? seed, string data)
+        public static string GetResultJson(
+            int pagenumber, int totalpages, int totalcount, int onlineresults,
+            string resultid, string? seed, string data)
         {
             string resultstr = "";
 
             if (data.StartsWith("["))
-                resultstr = "{" + "\"TotalResults\":" + totalcount + ",\"TotalPages\":" + totalpages + ",\"CurrentPage\":" + pagenumber + ",\"OnlineResults\":" + onlineresults + ",\"ResultId\":\"" + resultid + "\",\"Seed\":\"" + seed + "\",\"Items\":" + data + "}";
+                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"ResultId\":\"{resultid}\",\"Seed\":\"{seed}\",\"Items\":{data}}}";
             else
-                resultstr = "{" + "\"TotalResults\":" + totalcount + ",\"TotalPages\":" + totalpages + ",\"CurrentPage\":" + pagenumber + ",\"OnlineResults\":" + onlineresults + ",\"ResultId\":\"" + resultid + "\",\"Seed\":\"" + seed + "\",\"Items\":[" + data + "]}";
+                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"ResultId\":\"{resultid}\",\"Seed\":\"{seed}\",\"Items\":[{data}]}}";
 
             return resultstr;
         }
 
-        public static string GetResultJsonLowercase(int pagenumber, int totalpages, int totalcount, int onlineresults, string resultid, string seed, string data)
+        public static string GetResultJsonLowercase(
+            int pagenumber, int totalpages, int totalcount, int onlineresults,
+            string resultid, string seed, string data)
         {
             string resultstr = "";
 
             if (data.StartsWith("["))
-                resultstr = "{" + "\"totalResults\":" + totalcount + ",\"totalPages\":" + totalpages + ",\"currentPage\":" + pagenumber + ",\"onlineResults\":" + onlineresults + ",\"resultId\":\"" + resultid + "\",\"seed\":\"" + seed + "\",\"items\":" + data + "}";
+                resultstr = $"{{\"totalResults\":{totalcount},\"totalPages\":{totalpages},\"currentPage\":{pagenumber},\"onlineResults\":{onlineresults},\"resultId\":\"{resultid}\",\"seed\":\"{seed}\",\"items\":{data}}}";
             else
-                resultstr = "{" + "\"totalResults\":" + totalcount + ",\"totalPages\":" + totalpages + ",\"currentPage\":" + pagenumber + ",\"onlineResults\":" + onlineresults + ",\"resultId\":\"" + resultid + "\",\"seed\":\"" + seed + "\",\"items\":[" + data + "]}";
+                resultstr = $"{{\"totalResults\":{totalcount},\"totalPages\":{totalpages},\"currentPage\":{pagenumber},\"onlineResults\":{onlineresults},\"resultId\":\"{resultid}\",\"seed\":\"{seed}\",\"items\":[{data}]}}";
 
             return resultstr;
         }
@@ -1177,7 +1265,7 @@ namespace Helper
 
         public static string GetGeoWhereSimple(double latitude, double longitude, int radius)
         {
-            return "earth_distance(ll_to_earth(" + latitude.ToString(CultureInfo.InvariantCulture) + ", " + longitude.ToString(CultureInfo.InvariantCulture) + "),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision)) < " + radius.ToString();
+            return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision)) < {radius.ToString()}";
         }
 
         //public static string GetGeoWhereSimple(string latitude, string longitude, string radius)
@@ -1187,7 +1275,7 @@ namespace Helper
 
         public static string GetGeoOrderBySimple(double latitude, double longitude)
         {
-            return "earth_distance(ll_to_earth(" + latitude.ToString(CultureInfo.InvariantCulture) + ", " + longitude.ToString(CultureInfo.InvariantCulture) + "),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision))";
+            return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision))";
         }
 
         //public static string GetGeoOrderBySimple(string latitude, string longitude)
@@ -1197,7 +1285,7 @@ namespace Helper
 
         public static string GetGeoWhereExtended(double latitude, double longitude, int radius)
         {
-            return "earth_distance(ll_to_earth(" + latitude.ToString(CultureInfo.InvariantCulture) + ", " + longitude.ToString(CultureInfo.InvariantCulture) + "),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < " + radius.ToString();
+            return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < {radius.ToString()}";
         }
 
         //public static string GetGeoWhereExtended(string latitude, string longitude, string radius)
@@ -1207,36 +1295,37 @@ namespace Helper
 
         public static string GetGeoOrderByExtended(double latitude, double longitude)
         {
-            return "earth_distance(ll_to_earth(" + latitude.ToString(CultureInfo.InvariantCulture) + ", " + longitude.ToString(CultureInfo.InvariantCulture) + "),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision))";
+            return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision))";
         }
 
         public static string GetGeoOrderByExtended(string latitude, string longitude)
         {
-            return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision))";
+            return $"earth_distance(ll_to_earth({latitude}, {longitude}),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision))";
         }
 
         public static string GetGeoWhereBoundingBoxes(string latitude, string longitude, string radius)
         {
-            return "earth_box(ll_to_earth(" + latitude + ", " + longitude + "), " + radius + ") @> ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision) and earth_distance(ll_to_earth(" + latitude + ", " + longitude + "), ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision)) < " + radius;
+            return $"earth_box(ll_to_earth({latitude}, {longitude}), {radius}) @> ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision) and earth_distance(ll_to_earth({latitude}, {longitude}), ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision)) < {radius}";
         }
 
         public static string GetGeoWhereBoundingBoxes(double latitude, double longitude, int radius)
         {
-            return "earth_box(ll_to_earth(" + latitude.ToString(CultureInfo.InvariantCulture) + ", " + longitude.ToString(CultureInfo.InvariantCulture) + "), " + radius.ToString() + ") @> ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision) and earth_distance(ll_to_earth(" + latitude.ToString(CultureInfo.InvariantCulture) + ", " + longitude.ToString(CultureInfo.InvariantCulture) + "), ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision)) < " + radius.ToString();
+            return $"earth_box(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), {radius.ToString()}) @> ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision) and earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision)) < {radius.ToString()}";
         }
 
         public static string GetGeoWhereBoundingBoxesExtended(string latitude, string longitude, string radius)
         {
-            return "earth_box(ll_to_earth(" + latitude + ", " + longitude + "), " + radius + ") @> ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision) and earth_distance(ll_to_earth(" + latitude + ", " + longitude + "), ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < " + radius;
+            return $"earth_box(ll_to_earth({latitude}, {longitude}), {radius}) @> ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision) and earth_distance(ll_to_earth({latitude}, {longitude}), ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < {radius}";
         }
 
         public static string GetGeoWhereBoundingBoxesExtended(double latitude, double longitude, int radius)
         {
-            return "earth_box(ll_to_earth(" + latitude.ToString(CultureInfo.InvariantCulture) + ", " + longitude.ToString(CultureInfo.InvariantCulture) + "), " + radius.ToString() + ") @> ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision) and earth_distance(ll_to_earth(" + latitude.ToString(CultureInfo.InvariantCulture) + ", " + longitude.ToString(CultureInfo.InvariantCulture) + "), ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < " + radius.ToString();
+            return $"earth_box(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), {radius.ToString()}) @> ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision) and earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < {radius.ToString()}";
         }
 
         //For Accommodations
-        public static void ApplyGeoSearchWhereOrderbySimple(ref string where, ref string orderby, PGGeoSearchResult geosearchresult)
+        public static void ApplyGeoSearchWhereOrderbySimple(
+            ref string where, ref string orderby, PGGeoSearchResult geosearchresult)
         {
             if (geosearchresult != null)
             {
@@ -1245,14 +1334,22 @@ namespace Helper
                     if (!String.IsNullOrEmpty(where))
                         where = where + " AND ";
 
-                    where = where + PostgresSQLHelper.GetGeoWhereSimple(geosearchresult.latitude, geosearchresult.longitude, geosearchresult.radius);
-                    orderby = PostgresSQLHelper.GetGeoOrderBySimple(geosearchresult.latitude, geosearchresult.longitude);
+                    where = where + PostgresSQLHelper.GetGeoWhereSimple(
+                        geosearchresult.latitude,
+                        geosearchresult.longitude,
+                        geosearchresult.radius);
+                    orderby = PostgresSQLHelper.GetGeoOrderBySimple(
+                        geosearchresult.latitude,
+                        geosearchresult.longitude);
                 }
             }
         }
 
         //For Activities Pois and GBActivityPoi
-        public static void ApplyGeoSearchWhereOrderby(ref string where, ref string orderby, PGGeoSearchResult geosearchresult)
+        public static void ApplyGeoSearchWhereOrderby(
+            ref string where,
+            ref string orderby,
+            PGGeoSearchResult geosearchresult)
         {
             if (geosearchresult != null)
             {
@@ -1261,8 +1358,13 @@ namespace Helper
                     if (!String.IsNullOrEmpty(where))
                         where = where + " AND ";
 
-                    where = where + PostgresSQLHelper.GetGeoWhereExtended(geosearchresult.latitude, geosearchresult.longitude, geosearchresult.radius);
-                    orderby = PostgresSQLHelper.GetGeoOrderByExtended(geosearchresult.latitude, geosearchresult.longitude);
+                    where = where + PostgresSQLHelper.GetGeoWhereExtended(
+                        geosearchresult.latitude,
+                        geosearchresult.longitude,
+                        geosearchresult.radius);
+                    orderby = PostgresSQLHelper.GetGeoOrderByExtended(
+                        geosearchresult.latitude,
+                        geosearchresult.longitude);
                 }
             }
         }

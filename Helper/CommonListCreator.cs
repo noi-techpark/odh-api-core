@@ -69,20 +69,19 @@ namespace Helper
             return locIds;
         }
 
-        public static Tuple<int, int>? CreateRangeString(string? rangetoSplit)
+        public static (int min, int max) CreateRangeString(string? rangetoSplit)
         {
-
             if (rangetoSplit != null)
             {
                 var splittedfilter = rangetoSplit.Split(',');
 
-                return Tuple.Create<int, int>(Convert.ToInt32(splittedfilter[0]), Convert.ToInt32(splittedfilter[1]));
+                return (Convert.ToInt32(splittedfilter[0]), Convert.ToInt32(splittedfilter[1]));
             }
             else
-                return null;
+                return (0, 0);
         }
 
-        public static Tuple<double, double>? CreateRangeStringDouble(string? rangetoSplit)
+        public static (double, double) CreateRangeStringDouble(string? rangetoSplit)
         {
             NumberFormatInfo provider = new NumberFormatInfo();
             provider.NumberDecimalSeparator = ".";
@@ -91,10 +90,10 @@ namespace Helper
             {
                 var splittedfilter = rangetoSplit.Split(',');
 
-                return Tuple.Create<double, double>(Convert.ToDouble(splittedfilter[0], provider), Convert.ToDouble(splittedfilter[1], provider));
+                return (Convert.ToDouble(splittedfilter[0], provider), Convert.ToDouble(splittedfilter[1], provider));
             }
             else
-                return null;
+                return (0.0, 0.0);
         }
 
         public static List<string> CreateDifficultyList(string? difficultyfilter, string? activitypoitype)
