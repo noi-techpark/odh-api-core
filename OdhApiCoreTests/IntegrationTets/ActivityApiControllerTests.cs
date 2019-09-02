@@ -22,16 +22,16 @@ namespace OdhApiCoreTests.IntegrationTets
             });
         }
 
-        private static T JsonIsType<T>(object obj)
+        private static T JsonIsType<T>(JToken token)
         {
-            switch (obj)
+            switch (token)
             {
                 case JValue value when (value.Value == null):
                     return default!;
                 case JValue value:
                     return Assert.IsType<T>(value.Value);
                 default:
-                    return Assert.IsType<T>(obj);
+                    return Assert.IsType<T>(token);
             }
         }
 
@@ -87,6 +87,18 @@ namespace OdhApiCoreTests.IntegrationTets
                 JsonIsType<string>(data.Type);
                 JsonIsType<string?>(data.SmgId);
                 JsonIsType<bool>(data.Active);
+                Assert.IsType<JArray>(data.AreaId);
+                Assert.NotEmpty(data.AreaId);
+                Assert.IsType<JObject>(data.Detail);
+                Assert.IsType<JObject>(data.Detail.de);
+                JsonIsType<string>(data.Detail.de.Title);
+                JsonIsType<bool>(data.IsOpen);
+                Assert.IsType<JArray>(data.GpsInfo);
+                JsonIsType<bool>(data.Highlight);
+                Assert.IsType<JArray>(data.HasLanguage);
+                Assert.IsType<JObject>(data.ContactInfos);
+                Assert.IsType<JObject>(data.ContactInfos.de);
+                JsonIsType<string>(data.TourismorganizationId);
             }
         }
     }
