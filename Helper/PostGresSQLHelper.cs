@@ -69,7 +69,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
@@ -160,7 +160,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(
+                    string commandText = CreateDatabaseCommand(
                         selectexp, tablename, whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
@@ -230,7 +230,7 @@ namespace Helper
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
 
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
@@ -294,7 +294,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
@@ -346,7 +346,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
@@ -455,7 +455,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
@@ -512,7 +512,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+                    string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
@@ -600,7 +600,7 @@ namespace Helper
 
         #region Generic Database Query Methods (To use on api exposed Methods)
 
-        public static string CreatetDatabaseCommand(string selectexp, string tablename, string whereexp, string sortexp, Nullable<int> offset, int limit)
+        public static string CreateDatabaseCommand(string selectexp, string tablename, string whereexp, string sortexp, Nullable<int> offset, int limit)
         {
             string commandText = $"SELECT {selectexp} FROM {tablename}";
 
@@ -695,7 +695,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(
+                    string commandText = CreateDatabaseCommand(
                         selectexp, tablename, where.whereexp, sortexp, offset, limit);
                     var command = new NpgsqlCommand(commandText, conn);
 
@@ -745,7 +745,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(
+                    string commandText = CreateDatabaseCommand(
                         selectexp, tablename, where.whereexpression, sortexp, offset, limit);
                     var command = new NpgsqlCommand(commandText, conn);
 
@@ -796,7 +796,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(
+                    string commandText = CreateDatabaseCommand(
                         selectexp, tablename, where.whereexp, sortexp, offset, limit);
 
                     var command = new NpgsqlCommand(commandText);
@@ -868,7 +868,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(
+                    string commandText = CreateDatabaseCommand(
                         selectexp,
                         tablename,
                         where.whereexp,
@@ -931,7 +931,7 @@ namespace Helper
             {
                 using (var conn = await CreateConnection(connectionString, cancellationToken))
                 {
-                    string commandText = CreatetDatabaseCommand(
+                    string commandText = CreateDatabaseCommand(
                         selectexp,
                         tablename,
                         where.whereexp,
@@ -1006,7 +1006,7 @@ namespace Helper
                 {
                     //CultureInfo myculture = new CultureInfo("en");
 
-                    string commandText = CreatetDatabaseCommand(
+                    string commandText = CreateDatabaseCommand(
                         selectexp,
                         tablename,
                         where.whereexp,
