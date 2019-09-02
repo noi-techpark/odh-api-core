@@ -21,7 +21,7 @@ namespace Helper
             if (seed != null)
             {
                 myseed = Helper.CreateSeed.GetSeed(seed);
-                orderby = "md5(id || '" + myseed + "')";
+                orderby = $"md5(id || '{myseed}')";
             }
             else
             {

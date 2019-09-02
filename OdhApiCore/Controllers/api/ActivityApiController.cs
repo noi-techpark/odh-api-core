@@ -782,15 +782,12 @@ namespace OdhApiCore.Controllers
 
                 //Get LTS Tagging Types List
 
-                List<LTSTaggingType> ltstaggingtypes = new List<LTSTaggingType>();
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
-                    conn.Open();
+                using var conn = new NpgsqlConnection(connectionString);
+                conn.Open();
 
-                    ltstaggingtypes = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
+                var ltstaggingtypes = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
                         connectionString, "ltstaggingtypes", "*", "", "", 0,
                         null, cancellationToken);
-                }
 
                 foreach (ActivityTypeFlag myactivitytype in EnumHelper.GetValues<ActivityTypeFlag>())
                 {

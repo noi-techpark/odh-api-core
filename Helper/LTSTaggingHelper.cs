@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace Helper
 {
@@ -253,9 +254,9 @@ namespace Helper
             return "ERROR";
         }
 
-        public static async System.Threading.Tasks.Task<List<LTSTaggingType>> GetLTSTagParentsPGAsync(
-            string connectionString, LTSTaggingType currenttag, List<LTSTaggingType> ltstagparentlist,
-            CancellationToken cancellationToken)
+        public static async IAsyncEnumerable<LTSTaggingType> GetLTSTagParentsPGAsync(
+            string connectionString, LTSTaggingType currenttag, IEnumerable<LTSTaggingType> ltstagparentlist,
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             if (currenttag.Level > 0)
             {
@@ -263,19 +264,18 @@ namespace Helper
                 var parent = (await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<LTSTaggingType>(
                     connectionString, "ltstaggingtypes", "*", where, "", 1, null, cancellationToken)).FirstOrDefault();
 
-                ltstagparentlist.Add(parent);
+                yield return parent;
 
-                await GetLTSTagParentsPGAsync(connectionString, parent, ltstagparentlist, cancellationToken);
-
-                return ltstagparentlist;
+                await foreach (var elem in GetLTSTagParentsPGAsync(connectionString, parent, ltstagparentlist, cancellationToken))
+                    yield return elem;
             }
-            else
-                return ltstagparentlist;
-
+            foreach (var elem in ltstagparentlist)
+                yield return elem;
         }
 
 
-        public static IDictionary<string, string> GetPoiTypeDesc(string key, List<LTSTaggingType> ltstaggingtypes)
+        public static IDictionary<string, string> GetPoiTypeDesc(
+            string key, IEnumerable<LTSTaggingType> ltstaggingtypes)
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
 
@@ -287,7 +287,8 @@ namespace Helper
             return maintypedict;
         }
 
-        public static IDictionary<string, string> GetActivityTypeDesc(string? key, List<LTSTaggingType> ltstaggingtypes)
+        public static IDictionary<string, string> GetActivityTypeDesc(
+            string? key, IEnumerable<LTSTaggingType> ltstaggingtypes)
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
 
@@ -319,7 +320,7 @@ namespace Helper
 
     public class LTSAreaHelper
     {
-        public static async System.Threading.Tasks.Task<List<string>> GetAreasNotToConsiderPGAsync(
+        public static async System.Threading.Tasks.Task<IEnumerable<string>> GetAreasNotToConsiderPGAsync(
             string connectionString, CancellationToken cancellationToken)
         {
 
@@ -331,7 +332,7 @@ namespace Helper
 
             //session.Query<Area, AreaFilter>().Where(x => x.RegionId == null || x.RegionId == "TOASSIGN").Select(x => x.Id).ToList();
 
-            return areasnottoconsider.ConvertAll(x => x.ToUpper());
+            return areasnottoconsider.Select(x => x.ToUpper());
         }
     }
 }

@@ -126,7 +126,7 @@ namespace Helper
             data.TrustYouID = acco.TrustYouID;
             data.TrustYouResults = acco.TrustYouResults;
             data.TrustYouScore = acco.TrustYouScore;
-            data.SuedtirolinfoLink = "https://www.suedtirol.info/" + language + "/tripmapping/acco/" + acco.Id?.ToUpper();
+            data.SuedtirolinfoLink = $"https://www.suedtirol.info/{language}/tripmapping/acco/{acco.Id?.ToUpper()}";
             data.ImageGallery = acco.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ? acco.ImageGallery.Where(x => x.ListPosition == 0).ToList() : null;
 
             return data;

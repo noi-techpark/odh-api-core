@@ -15,7 +15,7 @@ namespace Helper
     {
         public static void AddPGParameters(
             this NpgsqlCommand command,
-            IReadOnlyCollection<PGParameters>? whereparameters)
+            IEnumerable<PGParameters>? whereparameters)
         {
             if (whereparameters != null)
             {
@@ -61,7 +61,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringAsync(
+        public static async Task<IEnumerable<string>> SelectFromTableDataAsStringAsync(
             string connectionString, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
@@ -151,9 +151,9 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAsync(
+        public static async Task<IEnumerable<string>> SelectFromTableDataAsIdAndStringAsync(
             string connectionString, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, List<string> fieldstoadd,
+            string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
             CancellationToken cancellationToken)
         {
             try
@@ -167,7 +167,6 @@ namespace Helper
                     command.Connection = conn;
 
                     NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
 
                     List<string> lstSelect = new List<string>();
                     while (await dr.ReadAsync(cancellationToken))
@@ -220,9 +219,9 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAndStringAndTypeAsync(
+        public static async Task<IEnumerable<string>> SelectFromTableDataAsIdAndStringAndTypeAsync(
             string connectionString, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, List<string> fieldstoadd, string type,
+            string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd, string type,
             CancellationToken cancellationToken)
         {
             try
@@ -286,7 +285,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsIdAsync(
+        public static async Task<IEnumerable<string>> SelectFromTableDataAsIdAsync(
             string connectionString, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
@@ -338,7 +337,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectAsync<T>(
+        public static async Task<IEnumerable<T>> SelectFromTableDataAsObjectAsync<T>(
             string connectionString, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
@@ -447,7 +446,7 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<(string, T)>> SelectFromTableIdAndDataAsObjectAsync<T>(
+        public static async Task<IEnumerable<(string, T)>> SelectFromTableIdAndDataAsObjectAsync<T>(
             string connectionString, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
@@ -503,9 +502,9 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedAsync<T>(
+        public static async Task<IEnumerable<T>> SelectFromTableDataAsObjectExtendedAsync<T>(
             string connectionString, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, Nullable<int> offset, List<string> fieldstodeserialize,
+            string sortexp, int limit, int? offset, IEnumerable<string> fieldstodeserialize,
             CancellationToken cancellationToken)
         {
             try
@@ -600,7 +599,8 @@ namespace Helper
 
         #region Generic Database Query Methods (To use on api exposed Methods)
 
-        public static string CreateDatabaseCommand(string selectexp, string tablename, string whereexp, string sortexp, Nullable<int> offset, int limit)
+        public static string CreateDatabaseCommand(
+            string selectexp, string tablename, string whereexp, string sortexp, int? offset, int limit)
         {
             string commandText = $"SELECT {selectexp} FROM {tablename}";
 
@@ -642,7 +642,7 @@ namespace Helper
         /// <returns>Elements Count as Long</returns>
         public static async Task<long> CountDataFromTableParametrizedAsync(
             string connectionString, string tablename,
-            (string whereexp, IReadOnlyCollection<PGParameters> whereparameters) where,
+            (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             CancellationToken cancellationToken)
         {
             try
@@ -683,12 +683,12 @@ namespace Helper
         /// <param name="tablename">Table Name</param>        
         /// <param name="selectexp">Sort Expression</param>
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
-        /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
+        /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataFirstOnlyParametrizedAsync(
+        public static async Task<IEnumerable<string>> SelectFromTableDataFirstOnlyParametrizedAsync(
             string connectionString, string tablename, string selectexp,
-            (string whereexp, IReadOnlyCollection<PGParameters> whereparameters) where,
-            string sortexp, int limit, Nullable<int> offset,
+            (string whereexp, IEnumerable<PGParameters> whereparameters) where,
+            string sortexp, int limit, int? offset,
             CancellationToken cancellationToken)
         {
             try
@@ -697,7 +697,7 @@ namespace Helper
                 {
                     string commandText = CreateDatabaseCommand(
                         selectexp, tablename, where.whereexp, sortexp, offset, limit);
-                    var command = new NpgsqlCommand(commandText, conn);
+                    using var command = new NpgsqlCommand(commandText, conn);
 
                     command.AddPGParameters(where.whereparameters);
 
@@ -736,10 +736,10 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsStringParametrizedAsync(
+        public static async Task<IEnumerable<string>> SelectFromTableDataAsStringParametrizedAsync(
             string connectionString, string tablename, string selectexp,
-            (string whereexpression, IReadOnlyCollection<PGParameters>? whereparameters) where,
-            string sortexp, int limit, Nullable<int> offset, CancellationToken cancellationToken)
+            (string whereexpression, IEnumerable<PGParameters>? whereparameters) where,
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
             try
             {
@@ -747,7 +747,7 @@ namespace Helper
                 {
                     string commandText = CreateDatabaseCommand(
                         selectexp, tablename, where.whereexpression, sortexp, offset, limit);
-                    var command = new NpgsqlCommand(commandText, conn);
+                    using var command = new NpgsqlCommand(commandText, conn);
 
                     command.AddPGParameters(where.whereparameters);
 
@@ -786,10 +786,10 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async Task<List<string>> SelectFromTableDataAsJsonParametrizedAsync(
+        public static async Task<IEnumerable<string>> SelectFromTableDataAsJsonParametrizedAsync(
             string connectionString, string tablename, string selectexp,
-            (string whereexp, IReadOnlyCollection<PGParameters>? whereparameters) where,
-            string sortexp, int limit, Nullable<int> offset, List<string> fieldstoadd,
+            (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
+            string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
             CancellationToken cancellationToken)
         {
             try
@@ -799,7 +799,7 @@ namespace Helper
                     string commandText = CreateDatabaseCommand(
                         selectexp, tablename, where.whereexp, sortexp, offset, limit);
 
-                    var command = new NpgsqlCommand(commandText);
+                    using var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
 
                     command.AddPGParameters(where.whereparameters);
@@ -858,10 +858,10 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(
+        public static async Task<IEnumerable<T>> SelectFromTableDataAsObjectParametrizedAsync<T>(
             string connectionString, string tablename, string selectexp,
-            (string whereexp, IReadOnlyCollection<PGParameters>? whereparameters) where,
-            string sortexp, int limit, Nullable<int> offset,
+            (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
+            string sortexp, int limit, int? offset,
             CancellationToken cancellationToken)
         {
             try
@@ -876,7 +876,7 @@ namespace Helper
                         offset,
                         limit);
 
-                    var command = new NpgsqlCommand(commandText);
+                    using var command = new NpgsqlCommand(commandText);
                     command.Connection = conn;
 
                     command.AddPGParameters(where.whereparameters);
@@ -921,11 +921,11 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(
+        public static async Task<IEnumerable<T>> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(
             string connectionString, string tablename, string selectexp,
-            (string whereexp, IReadOnlyCollection<PGParameters> whereparameters) where,
+            (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             string sortexp, int limit, int? offset,
-            List<string> fieldstodeserialize, CancellationToken cancellationToken)
+            IEnumerable<string> fieldstodeserialize, CancellationToken cancellationToken)
         {
             try
             {
@@ -994,10 +994,10 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async Task<List<T>> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(
+        public static async Task<IEnumerable<T>> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(
             string connectionString, string tablename, string selectexp,
-            (string whereexp, IReadOnlyCollection<PGParameters> whereparameters) where,
-            string sortexp, int limit, Nullable<int> offset, string language,
+            (string whereexp, IEnumerable<PGParameters> whereparameters) where,
+            string sortexp, int limit, int? offset, string language,
             Func<V, string, T> transformer, CancellationToken cancellationToken)
         {
             try
