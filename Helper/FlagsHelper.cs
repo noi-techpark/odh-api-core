@@ -15,9 +15,9 @@ namespace Helper
         private static void CheckIsEnum<T>(bool withFlags)
         {
             if (!typeof(T).IsEnum)
-                throw new ArgumentException($"Type '{typeof(T).FullName}' is not an enum");
+                throw new ArgumentException($"Type '{typeof(T).FullName}' is not an enum", nameof(withFlags));
             if (withFlags && !Attribute.IsDefined(typeof(T), typeof(FlagsAttribute)))
-                throw new ArgumentException($"Type '{typeof(T).FullName}' doesn't have the 'Flags' attribute");
+                throw new ArgumentException($"Type '{typeof(T).FullName}' doesn't have the 'Flags' attribute", nameof(withFlags));
         }
 
         public static bool IsFlagSet<T>(this T value, T flag) where T : struct

@@ -15,6 +15,7 @@ using Xunit;
 
 namespace OdhApiCoreTests.IntegrationTets
 {
+    [Trait("Category", "Integration")]
     public class ActivityApiControllerTests : IClassFixture<CustomWebApplicationFactory<OdhApiCore.Startup>>
     {
         private readonly HttpClient _client;

@@ -377,11 +377,10 @@ namespace OdhApiCore.Controllers
                 //Normal
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionString, "activities", select, (whereexpression, parameters),
-                    orderby, pagesize, pageskip, cancellationToken).ToListAsync();
+                    orderby, pagesize, pageskip, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
                     connectionString, "activities", (whereexpression, parameters),
                     cancellationToken);
-                var data = await dataTask;
 
                 //With Materialized View
                 //Stopwatch stopWatch = new Stopwatch();
@@ -401,7 +400,7 @@ namespace OdhApiCore.Controllers
                     totalpages,
                     totalcount,
                     myseed,
-                    String.Join(",", data));
+                    String.Join(",", await dataTask.ToListAsync()));
             });
         }
 
@@ -461,10 +460,9 @@ namespace OdhApiCore.Controllers
 
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionString, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
-                    cancellationToken).ToListAsync();
+                    cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
                     connectionString, "activities", (whereexpression, parameters), cancellationToken);
-                var data = await dataTask;
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
@@ -474,7 +472,7 @@ namespace OdhApiCore.Controllers
                     totalpages,
                     totalcount,
                     myseed,
-                    String.Join(",", data));
+                    String.Join(",", await dataTask.ToListAsync()));
             });
         }
 
@@ -592,17 +590,16 @@ namespace OdhApiCore.Controllers
 
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
                     connectionString, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
-                    language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken).ToListAsync();
+                    language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
                     connectionString, "activities", (whereexpression, parameters), cancellationToken);
-                var data = await dataTask;
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber, totalpages, totalcount, -1,
-                    myseed, JsonConvert.SerializeObject(data));
+                    myseed, JsonConvert.SerializeObject(await dataTask.ToListAsync()));
             });
         }
 
@@ -664,18 +661,17 @@ namespace OdhApiCore.Controllers
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
                     connectionString, "activities", select, (whereexpression, parameters),
                     orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized,
-                    cancellationToken).ToListAsync();
+                    cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
                     connectionString, "activities", (whereexpression, parameters),
                     cancellationToken);
-                var data = await dataTask;
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber, totalpages, totalcount, -1,
-                    myseed, JsonConvert.SerializeObject(data));
+                    myseed, JsonConvert.SerializeObject(await dataTask.ToListAsync()));
             });
         }
 
@@ -1030,16 +1026,15 @@ namespace OdhApiCore.Controllers
 
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionString, "activities", select, where, orderby, pagesize, pageskip,
-                    cancellationToken).ToListAsync();
+                    cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
                     connectionString, "activities", where, cancellationToken);
-                var data = await dataTask;
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(
-                    pagenumber, totalpages, totalcount, -1, myseed, String.Join(",", data));
+                    pagenumber, totalpages, totalcount, -1, myseed, String.Join(",", await dataTask.ToListAsync()));
             });
         }
 
