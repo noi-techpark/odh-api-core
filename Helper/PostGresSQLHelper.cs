@@ -1017,6 +1017,7 @@ namespace Helper
 
         #region Generic Helpers
 
+        [Obsolete("Use generic overload instead")]
         public static string GetResultJson(int pagenumber, int totalpages, int totalcount, string? seed, string data)
         {
             string resultstr = "";
@@ -1029,6 +1030,13 @@ namespace Helper
             return resultstr;
         }
 
+        public static string GetResultJson<T>(int pagenumber, int totalpages, int totalcount, string? seed, IEnumerable<T> data)
+        {
+            string jsondata = JsonConvert.SerializeObject(data);
+            return $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"Seed\":\"{seed}\",\"Items\":{jsondata}}}";
+        }
+
+        [Obsolete("Use generic overload instead")]
         public static string GetResultJson(
             int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, string data)
         {
@@ -1042,6 +1050,14 @@ namespace Helper
             return resultstr;
         }
 
+        public static string GetResultJson<T>(
+            int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, IEnumerable<T> data)
+        {
+            var jsondata = JsonConvert.SerializeObject(data);
+            return $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"Seed\":\"{seed}\",\"Items\":{jsondata}}}";
+        }
+
+        [Obsolete("Use generic overload instead")]
         public static string GetResultJson(
             int pagenumber, int totalpages, int totalcount, int onlineresults,
             string resultid, string? seed, string data)
@@ -1056,6 +1072,15 @@ namespace Helper
             return resultstr;
         }
 
+        public static string GetResultJson<T>(
+            int pagenumber, int totalpages, int totalcount, int onlineresults,
+            string resultid, string? seed, IEnumerable<T> data)
+        {
+            string jsondata = JsonConvert.SerializeObject(data);
+            return $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"ResultId\":\"{resultid}\",\"Seed\":\"{seed}\",\"Items\":{jsondata}}}";
+        }
+
+        [Obsolete("Use generic overload instead")]
         public static string GetResultJsonLowercase(
             int pagenumber, int totalpages, int totalcount, int onlineresults,
             string resultid, string seed, string data)
@@ -1068,6 +1093,14 @@ namespace Helper
                 resultstr = $"{{\"totalResults\":{totalcount},\"totalPages\":{totalpages},\"currentPage\":{pagenumber},\"onlineResults\":{onlineresults},\"resultId\":\"{resultid}\",\"seed\":\"{seed}\",\"items\":[{data}]}}";
 
             return resultstr;
+        }
+
+        public static string GetResultJsonLowercase<T>(
+            int pagenumber, int totalpages, int totalcount, int onlineresults,
+            string resultid, string seed, IEnumerable<T> data)
+        {
+            string jsondata = JsonConvert.SerializeObject(data);
+            return $"{{\"totalResults\":{totalcount},\"totalPages\":{totalpages},\"currentPage\":{pagenumber},\"onlineResults\":{onlineresults},\"resultId\":\"{resultid}\",\"seed\":\"{seed}\",\"items\":{jsondata}}}";
         }
 
         #endregion

@@ -400,7 +400,7 @@ namespace OdhApiCore.Controllers
                     totalpages,
                     totalcount,
                     myseed,
-                    String.Join(",", await dataTask.ToListAsync()));
+                    await dataTask.ToListAsync());
             });
         }
 
@@ -472,7 +472,7 @@ namespace OdhApiCore.Controllers
                     totalpages,
                     totalcount,
                     myseed,
-                    String.Join(",", await dataTask.ToListAsync()));
+                    await dataTask.ToListAsync());
             });
         }
 
@@ -599,7 +599,7 @@ namespace OdhApiCore.Controllers
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber, totalpages, totalcount, -1,
-                    myseed, JsonConvert.SerializeObject(await dataTask.ToListAsync()));
+                    myseed, await dataTask.ToListAsync());
             });
         }
 
@@ -671,7 +671,7 @@ namespace OdhApiCore.Controllers
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber, totalpages, totalcount, -1,
-                    myseed, JsonConvert.SerializeObject(await dataTask.ToListAsync()));
+                    myseed, await dataTask.ToListAsync());
             });
         }
 
@@ -1029,7 +1029,7 @@ namespace OdhApiCore.Controllers
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(
-                    pagenumber, totalpages, totalcount, -1, myseed, String.Join(",", await dataTask.ToListAsync()));
+                    pagenumber, totalpages, totalcount, -1, myseed, await dataTask.ToListAsync());
             });
         }
 
