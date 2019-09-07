@@ -192,8 +192,8 @@ namespace Helper
                 SuedtirolinfoLink =
                     $"https://www.suedtirol.info/{language}/tripmapping/acco/{acco.Id?.ToUpper()}",
                 ImageGallery =
-                    acco.ImageGallery.Where(x => x.ListPosition == 0).Count() > 0 ?
-                        acco.ImageGallery.Where(x => x.ListPosition == 0).ToList() :
+                    acco.ImageGallery?.Where(x => x.ListPosition == 0)?.Count() > 0 ?
+                        acco.ImageGallery?.Where(x => x.ListPosition == 0)?.ToList() :
                         null
             };
         }
@@ -1767,8 +1767,10 @@ namespace Helper
             {
                 Id = acommodation.Id,
                 Name =
-                    acommodation.AccoDetail?[language] != null ?
-                        acommodation.AccoDetail[language].Name ?? "" :
+                    acommodation.AccoDetail?.ContainsKey(language) == true ?
+                        acommodation.AccoDetail?[language] != null ?
+                            acommodation.AccoDetail?[language].Name ?? "" :
+                            "" :
                         "",
                 Image =
                     acommodation.ImageGallery?.Count > 0 ?
