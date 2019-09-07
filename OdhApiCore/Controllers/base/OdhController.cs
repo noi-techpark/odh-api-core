@@ -40,11 +40,15 @@ namespace OdhApiCore.Controllers
             this.connectionFactory = connectionFactory;
         }
 
-        protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<string>> f)
+        protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<IActionResult>> f)
         {
             try
             {
-                return this.Content(await f(this.connectionFactory), "application/json", Encoding.UTF8);
+                return await f(this.connectionFactory);
+            }
+            catch (PostGresSQLHelperException ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
             catch (Exception ex)
             {
@@ -53,6 +57,15 @@ namespace OdhApiCore.Controllers
                 else
                     return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
+        }
+
+        protected Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<string>> f)
+        {
+            return DoAsync(async connectionFactory =>
+            {
+                string result = await f(connectionFactory);
+                return this.Content(result, "application/json", Encoding.UTF8);
+            });
         }
 
     }

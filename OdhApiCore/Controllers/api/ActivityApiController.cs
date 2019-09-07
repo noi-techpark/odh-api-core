@@ -692,9 +692,9 @@ namespace OdhApiCore.Controllers
                 var data = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
                     connectionFactory, "activities", "*", where, "", 0, null, language,
                     PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized,
-                    cancellationToken).ToListAsync();
+                    cancellationToken).FirstOrDefaultAsync();
 
-                return JsonConvert.SerializeObject(data.FirstOrDefault());
+                return JsonConvert.SerializeObject(data);
             });
         }
 
@@ -780,9 +780,9 @@ namespace OdhApiCore.Controllers
 
                 using var conn = await connectionFactory.GetConnection(cancellationToken);
 
-                var ltstaggingtypes = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
+                var ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
                         connectionFactory, "ltstaggingtypes", "*", "", "", 0,
-                        null, cancellationToken).ToListAsync();
+                        null, cancellationToken);
 
                 foreach (ActivityTypeFlag myactivitytype in EnumHelper.GetValues<ActivityTypeFlag>())
                 {
@@ -796,7 +796,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeFlag>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -816,7 +816,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeBerg>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -835,7 +835,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeRadfahren>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -853,7 +853,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeOrtstouren>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -871,7 +871,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypePferde>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -889,7 +889,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeWandern>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -907,7 +907,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeLaufenFitness>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -925,7 +925,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeLoipen>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -943,7 +943,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeRodeln>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -961,7 +961,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypePisten>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -979,7 +979,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeAufstiegsanlagen>(id);
 
-                    mysmgpoitype.TypeDesc = Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
