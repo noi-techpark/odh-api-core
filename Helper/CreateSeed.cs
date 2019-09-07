@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Helper
 {
@@ -35,12 +33,11 @@ namespace Helper
 
         public static string? GetSeed(string seedstring)
         {
-            int seed;
 
             if (seedstring == null)
                 return null;
 
-            else if (int.TryParse(seedstring, out seed))
+            else if (int.TryParse(seedstring, out int seed))
             {
 
                 //Kein Seed es wird ein Seed zwischen 0 und 10 erzeugt

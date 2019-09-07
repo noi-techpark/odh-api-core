@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Helper
 {
@@ -29,7 +28,8 @@ namespace Helper
                 {
                     //whereexpression = whereexpression + "data @> '{\"Id\" : \"" + idlist.FirstOrDefault() + "\" }'";
                     whereexpression += "id LIKE @id";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "id",
                         Type = NpgsqlTypes.NpgsqlDbType.Text,
                         Value = idlist.FirstOrDefault()
@@ -42,7 +42,8 @@ namespace Helper
                     foreach (var accoid in idlist)
                     {
                         idliststring += $"@id{counter}, ";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "id" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Text,
                             Value = accoid
@@ -69,7 +70,8 @@ namespace Helper
             if (!String.IsNullOrEmpty(id))
             {
                 whereexpression += "id LIKE @id";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "id",
                     Type = NpgsqlTypes.NpgsqlDbType.Text,
                     Value = id
@@ -89,7 +91,8 @@ namespace Helper
             if (!String.IsNullOrEmpty(id))
             {
                 whereexpression += "id ILIKE @id";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "id",
                     Type = NpgsqlTypes.NpgsqlDbType.Text,
                     Value = id
@@ -113,7 +116,8 @@ namespace Helper
                 if (idlist.Count == 1)
                 {
                     whereexpression += "Id = @id";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "id",
                         Type = NpgsqlTypes.NpgsqlDbType.Text,
                         Value = idlist.FirstOrDefault()
@@ -127,7 +131,8 @@ namespace Helper
                     foreach (var id in idlist)
                     {
                         idliststring += $"@id{counter}, ";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "id" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Text,
                             Value = id
@@ -144,7 +149,8 @@ namespace Helper
                 if (insertdummyonemptyidlist)
                 {
                     whereexpression = "Id = @dummy";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "dummy",
                         Type = NpgsqlTypes.NpgsqlDbType.Text,
                         Value = "00000000"
@@ -167,7 +173,8 @@ namespace Helper
             if (!String.IsNullOrEmpty(updatefrom))
             {
                 whereexpression += "to_date(data ->> 'LastChange', 'YYYY-MM-DD') > @date";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "date",
                     Type = NpgsqlTypes.NpgsqlDbType.Date,
                     Value = updatefrom
@@ -203,7 +210,8 @@ namespace Helper
                     foreach (var mtaid in metaregionlist)
                     {
                         idliststring += $"@mtaid{counter},";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "mtaid" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = "\"" + mtaid.ToUpper() + "\""
@@ -589,7 +597,8 @@ namespace Helper
                 if (idlist.Count == 1)
                 {
                     whereexpression = $"{whereexpression}id LIKE @id";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "id",
                         Type = NpgsqlTypes.NpgsqlDbType.Text,
                         Value = idlist.FirstOrDefault().ToUpper()
@@ -602,7 +611,8 @@ namespace Helper
                     foreach (var activityid in idlist)
                     {
                         idliststring += $"@id{counter}, ";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "id" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Text,
                             Value = activityid.ToUpper()
@@ -625,7 +635,8 @@ namespace Helper
                 if (idlist.Count == 1)
                 {
                     whereexpression += "id LIKE @id";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "id",
                         Type = NpgsqlTypes.NpgsqlDbType.Text,
                         Value = idlist.FirstOrDefault().ToLower()
@@ -638,7 +649,8 @@ namespace Helper
                     foreach (var activityid in idlist)
                     {
                         idliststring += $"@id{counter}, ";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "id" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Text,
                             Value = activityid.ToLower()
@@ -665,7 +677,8 @@ namespace Helper
                 if (districtlist.Count == 1)
                 {
                     whereexpression += "data @> @districtid";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "districtid",
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{\"DistrictId\" : \"" + districtlist.FirstOrDefault().ToUpper() + "\" }"
@@ -678,7 +691,8 @@ namespace Helper
                     foreach (var distid in districtlist)
                     {
                         districtliststring = districtliststring + "@districtid" + counter + ",";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "districtid" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = "\"" + distid.ToUpper() + "\""
@@ -706,7 +720,8 @@ namespace Helper
                 if (districtlist.Count == 1)
                 {
                     whereexpression += "data @> @districtid";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "districtid",
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{\"LocationInfo\" : {{ \"DistrictInfo\": {{ \"Id\": \"{districtlist.FirstOrDefault().ToUpper()}\" }} }} }}"
@@ -719,7 +734,8 @@ namespace Helper
                     foreach (var distid in districtlist)
                     {
                         districtliststring += $"@districtid{counter},";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "districtid" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = "\"" + distid.ToUpper() + "\""
@@ -747,7 +763,8 @@ namespace Helper
                 if (municipalitylist.Count == 1)
                 {
                     whereexpression += "data @> @municipalityid";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "municipalityid",
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{\"LocationInfo\" : { \"MunicipalityInfo\": { \"Id\": \"" + municipalitylist.FirstOrDefault().ToUpper() + "\" } } }"
@@ -760,7 +777,8 @@ namespace Helper
                     foreach (var munid in municipalitylist)
                     {
                         municipalityliststring += $"@municipalityid{counter},";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "municipalityid" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = "\"" + munid.ToUpper() + "\""
@@ -788,7 +806,8 @@ namespace Helper
                 if (tourismvereinlist.Count == 1)
                 {
                     whereexpression = whereexpression + "data @> @tourismvereinid";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "tourismvereinid",
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{\"LocationInfo\" : {{ \"TvInfo\": {{ \"Id\": \"{tourismvereinlist.FirstOrDefault().ToUpper()}\" }} }} }}"
@@ -801,7 +820,8 @@ namespace Helper
                     foreach (var tvid in tourismvereinlist)
                     {
                         tvliststring = tvliststring + "@tourismvereinid" + counter + ",";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "tourismvereinid" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = "\"" + tvid.ToUpper() + "\""
@@ -829,7 +849,8 @@ namespace Helper
                 if (regionlist.Count == 1)
                 {
                     whereexpression = whereexpression + "data @> @regionid";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "regionid",
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{\"LocationInfo\" : {{ \"RegionInfo\": {{ \"Id\": \"{regionlist.FirstOrDefault()}\" }} }} }}"
@@ -843,7 +864,8 @@ namespace Helper
                     foreach (var regid in regionlist)
                     {
                         regionliststring = regionliststring + "@regionid" + counter + ",";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "regionid" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = "\"" + regid.ToUpper() + "\""
@@ -874,7 +896,8 @@ namespace Helper
                 foreach (var area in arealist)
                 {
                     arealiststring = $"{arealiststring}data @> @area{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "area" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"AreaId\": [\"" + area + "\"]}"
@@ -897,7 +920,8 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "data @> @highlight";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "highlight",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = $"{{ \"Highlight\" : {(highlight ?? false).ToString().ToLower()}}}"
@@ -915,7 +939,8 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "data @> @active";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "active",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = $"{{ \"Active\" : {(activefilter ?? false).ToString().ToLower()}}}"
@@ -933,7 +958,8 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "data @> @smgactive";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "smgactive",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = $"{{ \"SmgActive\" : {(smgactivefilter ?? false).ToString().ToLower()}}}"
@@ -952,12 +978,14 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "(data ->> 'DistanceLength')::numeric > @distancemin AND (data ->> 'DistanceLength')::numeric < @distancemax";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "distancemin",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = distancemin.ToString()
                 });
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "distancemax",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = distancemax.ToString()
@@ -976,12 +1004,14 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "(data ->> 'DistanceDuration')::numeric > @durationmin AND (data ->> 'DistanceDuration')::numeric < @durationmax";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "durationmin",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = durationmin.ToString()
                 });
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "durationmax",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = durationmax.ToString()
@@ -1000,12 +1030,14 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "(data ->> 'DistanceDuration')::numeric > @durationmin AND (data ->> 'DistanceDuration')::numeric < @durationmax";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "durationmin",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = durationmin.ToString()
                 });
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "durationmax",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = durationmax.ToString()
@@ -1024,12 +1056,14 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "(data ->> 'AltitudeDifference')::numeric > @altitudemin AND (data ->> 'AltitudeDifference')::numeric < @altitudemax";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "altitudemin",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = altitudemin.ToString()
                 });
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "altitudemax",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = altitudemax.ToString()
@@ -1055,7 +1089,8 @@ namespace Helper
                 foreach (var smgtag in smgtaglist)
                 {
                     smgtagliststring += $"data @> @smgtag{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "smgtag" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"SmgTags\": [\"{smgtag.ToLower()}\"]}}"
@@ -1085,7 +1120,8 @@ namespace Helper
                 foreach (var activitytypeId in activitytypelist)
                 {
                     activitytypestring = $"{activitytypestring}data @> @type{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "type" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"Type\": \"{activitytypeId}\"}}"
@@ -1115,7 +1151,8 @@ namespace Helper
                 foreach (var smgtag in subtypelist)
                 {
                     smgtagliststring = $"{smgtagliststring}data @> @subtype{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "subtype" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"SmgTags\": [\"{smgtag.ToLower()}\"]}}"
@@ -1145,7 +1182,8 @@ namespace Helper
                 foreach (var articletypeId in articletypelist)
                 {
                     articletypestring += $"data @> @type{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "type" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"Type\": \"{articletypeId}\"}}"
@@ -1175,7 +1213,8 @@ namespace Helper
                 foreach (var articlesubtypeId in articlesubtypelist)
                 {
                     articlesubtypestring += $"data @> @subtype{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "subtype" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"SubType\": \"{articlesubtypeId}\"}}"
@@ -1205,7 +1244,8 @@ namespace Helper
                 foreach (var difficultyId in difficultylist)
                 {
                     difficultystring += $"data @> @difficulty{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "difficulty" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"Difficulty\": \"{difficultyId}\"}}"
@@ -1235,7 +1275,8 @@ namespace Helper
                 foreach (var language in haslanguage)
                 {
                     langliststring += $"data @> @haslang{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "haslang" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"HasLanguage\": [\"{language.ToLower()}\"]}}"
@@ -1296,7 +1337,8 @@ namespace Helper
                 foreach (var poitype in subtypelist)
                 {
                     activitytypestring += $"data @> @subtype{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "subtype" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"SmgTags\": [\"{poitype.ToLower()}\"]}}"
@@ -1325,7 +1367,8 @@ namespace Helper
                 foreach (var topic in topicrids)
                 {
                     topicliststring += $"data @> @topic{counter} OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "topic" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = $"{{ \"TopicRIDs\": [\"{topic}\"]}}"
@@ -1355,7 +1398,8 @@ namespace Helper
                 foreach (var orgid in orgidlist)
                 {
                     orgidliststring = orgidliststring + "data @> @orgid" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "orgid" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"OrgRID\": [\"" + orgid + "\"]}"
@@ -1385,7 +1429,8 @@ namespace Helper
                 foreach (var rancid in rancidlist)
                 {
                     rancidliststring = rancidliststring + "data @> @rancid" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "rancid" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"Ranc\": [\"" + rancid + "\"]}"
@@ -1415,7 +1460,8 @@ namespace Helper
                 foreach (var typeid in typeidlist)
                 {
                     typeidliststring = typeidliststring + "data @> @typeid" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
 
                         Name = "typeid" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
@@ -1491,12 +1537,14 @@ namespace Helper
                     for (DateTime loopdate = (DateTime)begin; loopdate <= end; loopdate = loopdate.AddDays(1))
                     {
                         datequerystring = datequerystring + "data @> @datebegin" + counter + " OR data @> @dateend" + counter + " OR ";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "datebegin" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = $"{{ \"DateBegin\": \"{loopdate:yyyy-MM-dd}T00:00:00\"}}"
                         });
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "dateend" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = $"{{ \"DateEnd\": \"{loopdate:yyyy-MM-dd}T00:00:00\"}}"
@@ -1560,7 +1608,8 @@ namespace Helper
                 foreach (var activitytypeId in typelist)
                 {
                     activitytypestring = activitytypestring + "data @> @type" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "type" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"Type\": \"" + activitytypeId + "\"}"
@@ -1590,7 +1639,8 @@ namespace Helper
                 foreach (var activitytypeId in subtypelist)
                 {
                     activitytypestring = activitytypestring + "data @> @subtype" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "subtype" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"SubType\": \"" + activitytypeId + "\"}"
@@ -1620,7 +1670,8 @@ namespace Helper
                 foreach (var activitytypeId in poitypelist)
                 {
                     activitytypestring = activitytypestring + "data @> @poitype" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "poitype" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"PoiType\": \"" + activitytypeId + "\"}"
@@ -1650,7 +1701,8 @@ namespace Helper
                 foreach (var sourceid in sourcelist)
                 {
                     sourcestring = sourcestring + "data @> @source" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "source" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{\"SyncSourceInterface\": \"" + sourceid + "\" }"
@@ -1680,7 +1732,8 @@ namespace Helper
                 foreach (var categorycode in categorycodesids)
                 {
                     categorycodeliststring = categorycodeliststring + "data @> @categorycode" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "categorycode" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{\"CategoryCodes\": [{ \"Id\": \"" + categorycode.ToUpper() + "\" }] }"
@@ -1711,7 +1764,8 @@ namespace Helper
                 foreach (var ceremonycode in ceremonycodesids)
                 {
                     ceremonycodeliststring = ceremonycodeliststring + "data @> @ceremonycode" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "ceremonycode" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{\"CapacityCeremony\": [{ \"Id\": \"" + ceremonycode.ToUpper() + "\" }] }"
@@ -1742,7 +1796,8 @@ namespace Helper
                 foreach (var facilitycode in facilitycodesids)
                 {
                     facilitycodeliststring = facilitycodeliststring + "data @> @facilitycode" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "facilitycode" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{\"Facilities\": [{ \"Id\": \"" + facilitycode.ToUpper() + "\" }] }"
@@ -1772,7 +1827,8 @@ namespace Helper
                 foreach (var dishcode in dishcodesids)
                 {
                     dishcodeliststring = dishcodeliststring + "data @> @dishcode" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "dishcode" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{\"DishRates\": [{ \"Id\": \"" + dishcode.ToUpper() + "\" }] }"
@@ -1802,7 +1858,8 @@ namespace Helper
                 foreach (var boardid in boardlist)
                 {
                     boardliststring = boardliststring + "data @> @boardid" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "boardid" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"BoardIds\": [\"" + boardid + "\"]}"
@@ -1832,7 +1889,8 @@ namespace Helper
                 foreach (var badgeid in badgelist)
                 {
                     badgeliststring = badgeliststring + "data @> @badgeid" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "badgeid" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"BadgeIds\": [\"" + badgeid + "\"]}"
@@ -1873,7 +1931,8 @@ namespace Helper
                     foreach (var categoryid in categorylist)
                     {
                         categoryliststring = categoryliststring + "data @> @categoryid" + counter + " OR ";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "categoryid" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = "{ \"AccoCategoryId\": \"" + categoryid + "\"}"
@@ -1925,7 +1984,8 @@ namespace Helper
                 foreach (var themeid in themelist.Where(x => x.Value == true))
                 {
                     themeliststring += $"data @> @themeid{counter} AND ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "themeid" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"ThemeIds\": [\"" + themeid.Key + "\"]}"
@@ -1955,7 +2015,8 @@ namespace Helper
                 foreach (var featureid in featurelist.Where(x => x.Value == true))
                 {
                     featureliststring += $"data @> @featureid{counter} AND ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "featureid" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"SpecialFeaturesIds\": [\"" + featureid.Key + "\"]}"
@@ -1981,7 +2042,8 @@ namespace Helper
                 if (accotypelist.Count == 1)
                 {
                     whereexpression = whereexpression + "data @> @accotypeid";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "accotypeid",
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{\"AccoTypeId\": \"" + accotypelist.FirstOrDefault() + "\" }"
@@ -1999,7 +2061,8 @@ namespace Helper
                     foreach (var accotypeid in accotypelist)
                     {
                         categoryliststring += $"data @> @accotypeid{counter} OR ";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "accotypeid" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = "{ \"AccoTypeId\": \"" + accotypeid + "\"}"
@@ -2037,7 +2100,8 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression = whereexpression + "data @> @hasapartment";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "hasapartment",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = "{ \"HasApartment\" : " + apartmentfilter.ToString().ToLower() + "}"
@@ -2055,7 +2119,8 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "data @> @isbookable";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "isbookable",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = "{ \"IsBookable\" : " + (bookable ?? false).ToString().ToLower() + " }"
@@ -2073,12 +2138,14 @@ namespace Helper
                 if (!String.IsNullOrEmpty(whereexpression))
                     whereexpression += " AND ";
                 whereexpression += "(data ->>'Altitude')::numeric >= @altitudemin AND (data->> 'Altitude')::numeric <= @altitudemax";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "altitudemin",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = altitudemin.ToString()
                 });
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "altitudemax",
                     Type = NpgsqlTypes.NpgsqlDbType.Numeric,
                     Value = altitudemax.ToString()
@@ -2103,7 +2170,8 @@ namespace Helper
                 foreach (var typeId in typestoexclude)
                 {
                     typestring += $"NOT data @> @typestoexclude{counter} AND ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "typestoexclude" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"Type\": \"" + typeId + "\"}"
@@ -2133,7 +2201,8 @@ namespace Helper
                 foreach (var subtype in subtypestoexclude)
                 {
                     subtypeliststring += $"NOT data @> @subtypestoexclude{counter} AND ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "subtypestoexclude" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"SubType\": \"" + subtype + "\"}"
@@ -2163,7 +2232,8 @@ namespace Helper
                 foreach (var poitype in poitypestoexclude)
                 {
                     poitypeliststring += $"NOT data @> @poitypetoexclude{counter} AND ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "poitypetoexclude" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"PoiType\": \"" + poitype + "\"}"
@@ -2192,7 +2262,8 @@ namespace Helper
                 foreach (var theme in themelist)
                 {
                     smgtagliststring = smgtagliststring + "data @> @theme" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "theme" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"PackageThemeList\": [\"" + theme + "\"]}"
@@ -2221,7 +2292,8 @@ namespace Helper
                 foreach (var boardid in boardlist)
                 {
                     boardliststring = boardliststring + "data @> @board" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "board" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"Services\": [\"" + boardid + "\"]}"
@@ -2250,7 +2322,8 @@ namespace Helper
                 foreach (var accoid in accolist)
                 {
                     accoliststring = accoliststring + "data @> @accoid" + counter + " OR ";
-                    parameters.Add(new PGParameters() {
+                    parameters.Add(new PGParameters()
+                    {
                         Name = "accoid" + counter,
                         Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                         Value = "{ \"HotelId\": [\"" + accoid + "\"]}"
@@ -2273,7 +2346,8 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression = whereexpression + "data @> @shortstay";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "shortstay",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = "{ \"ShortStay\" : " + shortstay.ToString().ToLower() + "}"
@@ -2287,7 +2361,8 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression = whereexpression + "data @> @longstay";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "longstay",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = "{ \"LongStay\" : " + longstay.ToString().ToLower() + "}"
@@ -2326,7 +2401,8 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression += "data @> @activefilter";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "activefilter",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = "{ \"Display1\" :  \"" + activefilter.ToString() + "\" }"
@@ -2344,7 +2420,8 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "data @> @sourcefilter";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "sourcefilter",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = "{ \"Source\" : \"" + source.ToString() + "\" }"
@@ -2362,7 +2439,8 @@ namespace Helper
                     whereexpression += " AND ";
 
                 whereexpression += "data @> @eventlocation";
-                parameters.Add(new PGParameters() {
+                parameters.Add(new PGParameters()
+                {
                     Name = "eventlocation",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = "{ \"EventLocation\" : \"" + eventlocation.ToString() + "\" }"

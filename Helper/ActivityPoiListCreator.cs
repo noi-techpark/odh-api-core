@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Helper
 {
@@ -1206,8 +1203,7 @@ namespace Helper
 
             if (typefilter != null)
             {
-                int typefilterint = 0;
-                if (int.TryParse(typefilter, out typefilterint))
+                if (int.TryParse(typefilter, out int typefilterint))
                 {
                     ActivityTypeFlag mypoitypeflag = (ActivityTypeFlag)typefilterint;
 
@@ -1231,8 +1227,7 @@ namespace Helper
 
             if (subtypefilter != null)
             {
-                long typefilterint = 0;
-                if (long.TryParse(subtypefilter, out typefilterint))
+                if (long.TryParse(subtypefilter, out long typefilterint))
                 {
 
                     switch (typefiltertext)
@@ -1313,8 +1308,7 @@ namespace Helper
 
             if (typefilter != null)
             {
-                int typefilterint = 0;
-                if (int.TryParse(typefilter, out typefilterint))
+                if (int.TryParse(typefilter, out int typefilterint))
                 {
                     PoiTypeFlag mypoitypeflag = (PoiTypeFlag)typefilterint;
 
@@ -1339,8 +1333,7 @@ namespace Helper
 
             if (subtypefilter != null)
             {
-                long typefilterint = 0;
-                if (long.TryParse(subtypefilter, out typefilterint))
+                if (long.TryParse(subtypefilter, out long typefilterint))
                 {
 
                     switch (typefiltertext)
@@ -1420,8 +1413,7 @@ namespace Helper
 
             if (typefilter != null)
             {
-                int typefilterint = 0;
-                if (int.TryParse(typefilter, out typefilterint))
+                if (int.TryParse(typefilter, out int typefilterint))
                 {
                     SmgPoiTypeFlag mypoitypeflag = (SmgPoiTypeFlag)typefilterint;
 
@@ -1446,8 +1438,7 @@ namespace Helper
 
             if (subtypefilter != null)
             {
-                long typefilterint = 0;
-                if (long.TryParse(subtypefilter, out typefilterint))
+                if (long.TryParse(subtypefilter, out long typefilterint))
                 {
 
                     switch (typefiltertext)
@@ -1499,8 +1490,7 @@ namespace Helper
 
             if (poitypefilter != null)
             {
-                long typefilterint = 0;
-                if (long.TryParse(poitypefilter, out typefilterint))
+                if (long.TryParse(poitypefilter, out long typefilterint))
                 {
 
                     switch (subtypefilter)

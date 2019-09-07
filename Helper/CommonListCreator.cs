@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 
 namespace Helper
 {
@@ -83,8 +82,10 @@ namespace Helper
 
         public static (double, double) CreateRangeStringDouble(string? rangetoSplit)
         {
-            NumberFormatInfo provider = new NumberFormatInfo();
-            provider.NumberDecimalSeparator = ".";
+            NumberFormatInfo provider = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = "."
+            };
 
             if (rangetoSplit != null)
             {

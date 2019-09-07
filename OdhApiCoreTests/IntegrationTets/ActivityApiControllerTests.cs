@@ -1,8 +1,8 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace OdhApiCoreTests.IntegrationTets
@@ -53,7 +53,8 @@ namespace OdhApiCoreTests.IntegrationTets
             string json = await response.Content.ReadAsStringAsync();
             dynamic? data = JsonConvert.DeserializeObject(json);
             Assert.NotNull(data);
-            if (data != null) {
+            if (data != null)
+            {
                 Assert.IsType<JObject>(data);
                 JsonIsType<long>(data.TotalResults);
                 Assert.NotEqual(0, (long)data.TotalResults);

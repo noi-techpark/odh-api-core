@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Helper
+﻿namespace Helper
 {
     public class PostgresSQLOrderByBuilder
     {

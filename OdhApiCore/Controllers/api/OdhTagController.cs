@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Helper;
+﻿using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Npgsql;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
 {
@@ -257,7 +254,8 @@ namespace OdhApiCore.Controllers
                     foreach (var smgtagtypeid in smgtagtypelist)
                     {
                         smgtagtypeliststring = $"{smgtagtypeliststring}data @> @smgtag{counter} OR ";
-                        parameters.Add(new PGParameters() {
+                        parameters.Add(new PGParameters()
+                        {
                             Name = "smgtag" + counter,
                             Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                             Value = $"{{ \"ValidForEntity\": [\"{smgtagtypeid.ToLower()}\"]}}"

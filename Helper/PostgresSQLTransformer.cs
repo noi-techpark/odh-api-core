@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Helper
 {
@@ -317,7 +316,8 @@ namespace Helper
                 RegionInfo = reginfolocalized
             };
             data.ImageGallery =
-                poibaseinfo.ImageGallery?.Select(x => new ImageGalleryLocalized() {
+                poibaseinfo.ImageGallery?.Select(x => new ImageGalleryLocalized()
+                {
                     Height = x.Height,
                     ImageDesc =
                         x.ImageDesc.Count > 0 ?
@@ -349,7 +349,8 @@ namespace Helper
             {
                 foreach (var ltstag in poibaseinfo.LTSTags)
                 {
-                    ltstagslocalized.Add(new LTSTagsLocalized() {
+                    ltstagslocalized.Add(new LTSTagsLocalized()
+                    {
                         Id = ltstag.Id,
                         Level = ltstag.Level,
                         TagName =
@@ -396,7 +397,8 @@ namespace Helper
                 FirstImport = pgdata.FirstImport,
                 Gpstype = pgdata.Gpstype,
                 ImageGallery =
-                    pgdata.ImageGallery?.Select(x => new ImageGalleryLocalized() {
+                    pgdata.ImageGallery?.Select(x => new ImageGalleryLocalized()
+                    {
                         Height = x.Height,
                         ImageDesc =
                             x.ImageDesc.Count > 0 ?
@@ -681,7 +683,8 @@ namespace Helper
                 SmgTags = poibaseinfo.SmgTags,
 
                 ImageGallery =
-                    poibaseinfo.ImageGallery?.Select(x => new ImageGalleryLocalized() {
+                    poibaseinfo.ImageGallery?.Select(x => new ImageGalleryLocalized()
+                    {
                         Height = x.Height,
                         ImageDesc =
                             x.ImageDesc.Count > 0 ?
@@ -752,7 +755,8 @@ namespace Helper
                 Type = poibaseinfo.Type,
                 SmgTags = poibaseinfo.SmgTags,
                 ImageGallery =
-                    poibaseinfo.ImageGallery?.Select(x => new ImageGalleryLocalized() {
+                    poibaseinfo.ImageGallery?.Select(x => new ImageGalleryLocalized()
+                    {
                         Height = x.Height,
                         ImageDesc =
                             x.ImageDesc.Count > 0 ?
@@ -1060,11 +1064,13 @@ namespace Helper
 
         public static PackageBookList TransformToPackageBooklist(Package package, string language)
         {
-            PackageBookList data = new PackageBookList();
-            data.Id = package.Id;
-            data.OfferId = package.OfferId;
-            data.HotelId = package.HotelId;
-            data.HotelHgvId = package.HotelHgvId;
+            PackageBookList data = new PackageBookList
+            {
+                Id = package.Id,
+                OfferId = package.OfferId,
+                HotelId = package.HotelId,
+                HotelHgvId = package.HotelHgvId
+            };
 
             return data;
         }
@@ -2168,7 +2174,9 @@ namespace Helper
         }
 
         public static MobileDetail TransformODHActivityPoiToMobileDetail(
-            ODHActivityPoi activity, string language) => new MobileDetail
+            ODHActivityPoi activity, string language)
+        {
+            return new MobileDetail
             {
                 Id = activity.Id,
                 //AdditionalPoiInfos = activity.AdditionalPoiInfos[language],
@@ -2198,21 +2206,21 @@ namespace Helper
                 Highlight = activity.Highlight,
                 //data.ImageGallery = activity.ImageGallery.Select(x => new ImageGalleryLocalized() { Height = x.Height, ImageDesc = x.ImageDesc[language], ImageName = x.ImageName, ImageSource = x.ImageSource, ImageTitle = x.ImageTitle[language], ImageUrl = x.ImageUrl, IsInGallery = x.IsInGallery, ListPosition = x.ListPosition, ValidFrom = x.ValidFrom, ValidTo = x.ValidTo, Width = x.Width, CopyRight = x.CopyRight }).ToList();
                 ImageGallery =
-                    activity.ImageGallery.Select(x => new ImageGalleryLocalized()
-                    {
-                        Height = x.Height,
-                        ImageDesc = x.ImageDesc.Count > 0 ? x.ImageDesc[language] : null,
-                        ImageName = x.ImageName,
-                        ImageSource = x.ImageSource,
-                        ImageTitle = x.ImageTitle.Count > 0 ? x.ImageTitle[language] : null,
-                        ImageUrl = x.ImageUrl,
-                        IsInGallery = x.IsInGallery,
-                        ListPosition = x.ListPosition,
-                        ValidFrom = x.ValidFrom,
-                        ValidTo = x.ValidTo,
-                        Width = x.Width,
-                        CopyRight = x.CopyRight
-                    }).ToList(),
+activity.ImageGallery.Select(x => new ImageGalleryLocalized()
+{
+    Height = x.Height,
+    ImageDesc = x.ImageDesc.Count > 0 ? x.ImageDesc[language] : null,
+    ImageName = x.ImageName,
+    ImageSource = x.ImageSource,
+    ImageTitle = x.ImageTitle.Count > 0 ? x.ImageTitle[language] : null,
+    ImageUrl = x.ImageUrl,
+    IsInGallery = x.IsInGallery,
+    ListPosition = x.ListPosition,
+    ValidFrom = x.ValidFrom,
+    ValidTo = x.ValidTo,
+    Width = x.Width,
+    CopyRight = x.CopyRight
+}).ToList(),
                 IsOpen = activity.IsOpen,
                 IsPrepared = activity.IsPrepared,
                 IsWithLigth = activity.IsWithLigth,
@@ -2249,16 +2257,16 @@ namespace Helper
                 PoiType = activity.AdditionalPoiInfos[language].PoiType,
                 //PoiProperty = activity.SyncSourceInterface == "GastronomicData" ? activity.CategoryCodes.Select(x => new PoiProperty() { Name = x.Id, Value = x.Shortname }).ToList() : activity.PoiProperty[language],
                 PoiProperty =
-                    activity.PoiProperty != null ?
-                        activity.PoiProperty.Count > 0 ?
-                            activity.PoiProperty[language]?.Where(e => e.Name != null)
-                                .ToDictionary(e => e.Name ?? "", v => v.Value ?? "") :
-                            null :
-                        null,
+activity.PoiProperty != null ?
+activity.PoiProperty.Count > 0 ?
+activity.PoiProperty[language]?.Where(e => e.Name != null)
+.ToDictionary(e => e.Name ?? "", v => v.Value ?? "") :
+null :
+null,
                 PoiServices =
-                    activity.SyncSourceInterface == "GastronomicData" ?
-                        activity.Facilities?.Where(x => x.Id != null).Select(x => x.Id ?? "").ToList() :
-                        activity.PoiServices,
+activity.SyncSourceInterface == "GastronomicData" ?
+activity.Facilities?.Where(x => x.Id != null).Select(x => x.Id ?? "").ToList() :
+activity.PoiServices,
                 Ranc = 0,
                 Ratings = activity.Ratings,
                 RunToValley = activity.RunToValley,
@@ -2269,6 +2277,7 @@ namespace Helper
                 //TopicRIDs = null, 
                 Type = activity.AdditionalPoiInfos[language].MainType
             };
+        }
 
         public static MobileHtmlLocalized TransformToHtmlLocalized(MobileHtml data, string language)
         {

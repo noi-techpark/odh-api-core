@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 
 namespace Helper
 {
     public class GeoSearchHelper
     {
-        double _eQuatorialEarthRadius = 6378.1370D;
-        double _d2r = (Math.PI / 180D);
+        readonly double _eQuatorialEarthRadius = 6378.1370D;
+        readonly double _d2r = (Math.PI / 180D);
 
         public double HaversineInKM(double lat1, double long1, double lat2, double long2)
         {
@@ -31,12 +29,9 @@ namespace Helper
             bool geosearch = false;
             //Check of Geosearch durchgeführt werden kann                    
             CultureInfo culture = CultureInfo.InvariantCulture;
-            double latitudecheck;
-            bool isLatDouble = Double.TryParse(latitude, NumberStyles.Any, culture, out latitudecheck);
-            double longitudecheck;
-            bool isLongDouble = Double.TryParse(longitude, NumberStyles.Any, culture, out longitudecheck);
-            int radiuscheck;
-            bool isRadiusInt = Int32.TryParse(radius, out radiuscheck);
+            bool isLatDouble = Double.TryParse(latitude, NumberStyles.Any, culture, out double latitudecheck);
+            bool isLongDouble = Double.TryParse(longitude, NumberStyles.Any, culture, out double longitudecheck);
+            bool isRadiusInt = Int32.TryParse(radius, out int radiuscheck);
 
             if (isLatDouble && isLongDouble && isRadiusInt)
                 geosearch = true;
@@ -49,17 +44,15 @@ namespace Helper
             if (latitude == null && longitude == null)
                 return new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 };
 
-            PGGeoSearchResult pggeosearchresult = new PGGeoSearchResult();
-
-            pggeosearchresult.geosearch = false;
+            PGGeoSearchResult pggeosearchresult = new PGGeoSearchResult
+            {
+                geosearch = false
+            };
             //Check of Geosearch durchgeführt werden kann                    
             CultureInfo culture = CultureInfo.InvariantCulture;
-            double latitudecheck;
-            bool isLatDouble = Double.TryParse(latitude, NumberStyles.Any, culture, out latitudecheck);
-            double longitudecheck;
-            bool isLongDouble = Double.TryParse(longitude, NumberStyles.Any, culture, out longitudecheck);
-            int radiuscheck;
-            bool isRadiusInt = Int32.TryParse(radius, out radiuscheck);
+            bool isLatDouble = Double.TryParse(latitude, NumberStyles.Any, culture, out double latitudecheck);
+            bool isLongDouble = Double.TryParse(longitude, NumberStyles.Any, culture, out double longitudecheck);
+            bool isRadiusInt = Int32.TryParse(radius, out int radiuscheck);
 
             if (isLatDouble && isLongDouble)
             {
@@ -94,17 +87,15 @@ namespace Helper
             if (latitude == null && longitude == null)
                 return new RavenGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 };
 
-            RavenGeoSearchResult pggeosearchresult = new RavenGeoSearchResult();
-
-            pggeosearchresult.geosearch = false;
+            RavenGeoSearchResult pggeosearchresult = new RavenGeoSearchResult
+            {
+                geosearch = false
+            };
             //Check of Geosearch durchgeführt werden kann                    
             CultureInfo culture = CultureInfo.InvariantCulture;
-            double latitudecheck;
-            bool isLatDouble = Double.TryParse(latitude, NumberStyles.Any, culture, out latitudecheck);
-            double longitudecheck;
-            bool isLongDouble = Double.TryParse(longitude, NumberStyles.Any, culture, out longitudecheck);
-            int radiuscheck;
-            bool isRadiusInt = Int32.TryParse(radius, out radiuscheck);
+            bool isLatDouble = Double.TryParse(latitude, NumberStyles.Any, culture, out double latitudecheck);
+            bool isLongDouble = Double.TryParse(longitude, NumberStyles.Any, culture, out double longitudecheck);
+            bool isRadiusInt = Int32.TryParse(radius, out int radiuscheck);
 
             if (isLatDouble && isLongDouble)
             {

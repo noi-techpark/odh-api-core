@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Helper;
+using System.Collections.Generic;
 using System.Linq;
-using Helper;
 using Xunit;
 
 namespace OdhApiCoreTests.Helper

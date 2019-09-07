@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -1032,7 +1030,8 @@ namespace Helper
 
         public static string GetResultJson<T>(int pagenumber, int totalpages, int totalcount, string? seed, IEnumerable<T> data)
         {
-            return JsonConvert.SerializeObject(new {
+            return JsonConvert.SerializeObject(new
+            {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
@@ -1058,7 +1057,8 @@ namespace Helper
         public static string GetResultJson<T>(
             int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, IEnumerable<T> data)
         {
-            return JsonConvert.SerializeObject(new {
+            return JsonConvert.SerializeObject(new
+            {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
@@ -1087,7 +1087,8 @@ namespace Helper
             int pagenumber, int totalpages, int totalcount, int onlineresults,
             string resultid, string? seed, IEnumerable<T> data)
         {
-            return JsonConvert.SerializeObject(new {
+            return JsonConvert.SerializeObject(new
+            {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
@@ -1117,7 +1118,8 @@ namespace Helper
             int pagenumber, int totalpages, int totalcount, int onlineresults,
             string resultid, string seed, IEnumerable<T> data)
         {
-            return JsonConvert.SerializeObject(new {
+            return JsonConvert.SerializeObject(new
+            {
                 totalResults = totalcount,
                 totalPages = totalpages,
                 currentPage = pagenumber,
