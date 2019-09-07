@@ -56,6 +56,7 @@ namespace OdhApiCore
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
+            services.AddSingleton<Helper.IPostGreSQLConnectionFactory, PostGreSQLConnectionFactory>();
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);

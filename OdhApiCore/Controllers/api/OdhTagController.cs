@@ -19,7 +19,7 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class OdhTagController : OdhController
     {
-        public OdhTagController(ISettings settings) : base(settings)
+        public OdhTagController(IPostGreSQLConnectionFactory connectionFactory) : base(connectionFactory)
         {
         }
 

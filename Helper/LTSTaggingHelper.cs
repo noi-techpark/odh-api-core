@@ -256,7 +256,7 @@ namespace Helper
         }
 
         public static async IAsyncEnumerable<LTSTaggingType> GetLTSTagParentsPGAsync(
-            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, LTSTaggingType currenttag, IEnumerable<LTSTaggingType> ltstagparentlist,
+            IPostGreSQLConnectionFactory connectionFactory, LTSTaggingType currenttag, IEnumerable<LTSTaggingType> ltstagparentlist,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             if (currenttag.Level > 0)
@@ -322,7 +322,7 @@ namespace Helper
     public class LTSAreaHelper
     {
         public static async IAsyncEnumerable<string> GetAreasNotToConsiderPGAsync(
-            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, [EnumeratorCancellation] CancellationToken cancellationToken)
+            IPostGreSQLConnectionFactory connectionFactory, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
 
             //var areasnottoconsider = PostgresSQLHelper.SelectFromTableDataAsId(conn, "areas", "data->'Id' as Id", "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'", "",0, null);

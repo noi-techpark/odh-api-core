@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Npgsql;
 
 namespace OdhApiCore.Controllers
 {
@@ -35,29 +33,18 @@ namespace OdhApiCore.Controllers
     [ApiController]
     public abstract class OdhController : ControllerBase
     {
-        protected readonly string connectionString;
+        private readonly IPostGreSQLConnectionFactory connectionFactory;
 
-        public OdhController(ISettings settings)
+        public OdhController(IPostGreSQLConnectionFactory connectionFactory)
         {
-            this.connectionString = settings.PostgresConnectionString;
+            this.connectionFactory = connectionFactory;
         }
 
-        private static async Task<NpgsqlConnection> CreateConnection(
-            string connectionString, CancellationToken cancellationToken)
-        {
-            // TODO: additional initialization logic goes here
-            var conn = new NpgsqlConnection(connectionString);
-            await conn.OpenAsync(cancellationToken);
-            return conn;
-        }
-
-        protected async Task<IActionResult> DoAsync(Func<Func<CancellationToken, Task<NpgsqlConnection>>, Task<string>> f)
+        protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<string>> f)
         {
             try
             {
-                Task<NpgsqlConnection> connectionFactory(CancellationToken cancellationToken) =>
-                    CreateConnection(this.connectionString, cancellationToken);
-                return this.Content(await f(connectionFactory), "application/json", Encoding.UTF8);
+                return this.Content(await f(this.connectionFactory), "application/json", Encoding.UTF8);
             }
             catch (Exception ex)
             {

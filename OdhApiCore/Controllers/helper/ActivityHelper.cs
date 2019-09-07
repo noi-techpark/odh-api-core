@@ -33,7 +33,7 @@ namespace OdhApiCore.Controllers
         public bool? smgactive;
 
         public static async Task<ActivityHelper> CreateAsync(
-            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
+            IPostGreSQLConnectionFactory connectionFactory, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
             string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter,
             string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter,
             string? smgtags, CancellationToken cancellationToken)
@@ -140,7 +140,7 @@ namespace OdhApiCore.Controllers
         }
 
         private static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(
-            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string? areafilter, CancellationToken cancellationToken)
+            IPostGreSQLConnectionFactory connectionFactory, string? areafilter, CancellationToken cancellationToken)
         {
             if (areafilter != null)
             {
@@ -154,7 +154,7 @@ namespace OdhApiCore.Controllers
         }
 
         private static async IAsyncEnumerable<string> RetrieveLocFilterDataAsync(
-            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, List<string> metaregionlist, [EnumeratorCancellation] CancellationToken cancellationToken)
+            IPostGreSQLConnectionFactory connectionFactory, List<string> metaregionlist, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var mtapgwhere = PostgresSQLWhereBuilder.CreateMetaRegionWhereExpression(metaregionlist);
             var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(

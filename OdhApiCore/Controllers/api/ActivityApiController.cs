@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
     {
-        public ActivityController(ISettings settings) : base(settings)
+        public ActivityController(IPostGreSQLConnectionFactory connectionFactory) : base(connectionFactory)
         {
         }
 
@@ -778,7 +778,7 @@ namespace OdhApiCore.Controllers
 
                 //Get LTS Tagging Types List
 
-                using var conn = await connectionFactory(cancellationToken);
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
 
                 var ltstaggingtypes = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
                         connectionFactory, "ltstaggingtypes", "*", "", "", 0,

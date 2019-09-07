@@ -12,7 +12,7 @@ namespace Helper
     {
         #region PostGres
 
-        public static async Task<List<string>> CreateActivityAreaListPGAsync(string areafilter, Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, CancellationToken cancellationToken)
+        public static async Task<List<string>> CreateActivityAreaListPGAsync(string areafilter, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
         {
             List<string> thearealist = new List<string>();
 
@@ -69,7 +69,7 @@ namespace Helper
             return thearealist;
         }
 
-        public static async Task<List<string>> GetAreaforRegionPGAsync(string regionId, Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, CancellationToken cancellationToken)
+        public static async Task<List<string>> GetAreaforRegionPGAsync(string regionId, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
@@ -94,7 +94,7 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<List<string>> GetAreaforTourismvereinPGAsync(string tvId, Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, CancellationToken cancellationToken)
+        public static async Task<List<string>> GetAreaforTourismvereinPGAsync(string tvId, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
@@ -119,7 +119,7 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<IEnumerable<string>> GetAreaforSkiRegionPGAsync(string skiregId, Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> GetAreaforSkiRegionPGAsync(string skiregId, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
@@ -144,7 +144,7 @@ namespace Helper
             return arealist;
         }
 
-        public static async Task<IEnumerable<string>> GetAreaforSkiAreaPGAsync(string skiareaId, Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> GetAreaforSkiAreaPGAsync(string skiareaId, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
         {
             List<string> arealist = new List<string>();
 
