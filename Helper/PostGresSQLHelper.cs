@@ -1032,8 +1032,13 @@ namespace Helper
 
         public static string GetResultJson<T>(int pagenumber, int totalpages, int totalcount, string? seed, IEnumerable<T> data)
         {
-            string jsondata = JsonConvert.SerializeObject(data);
-            return $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"Seed\":\"{seed}\",\"Items\":{jsondata}}}";
+            return JsonConvert.SerializeObject(new {
+                TotalResults = totalcount,
+                TotalPages = totalpages,
+                CurrentPage = pagenumber,
+                Seed = seed,
+                Items = data
+            });
         }
 
         [Obsolete("Use generic overload instead")]
@@ -1053,8 +1058,14 @@ namespace Helper
         public static string GetResultJson<T>(
             int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, IEnumerable<T> data)
         {
-            var jsondata = JsonConvert.SerializeObject(data);
-            return $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"Seed\":\"{seed}\",\"Items\":{jsondata}}}";
+            return JsonConvert.SerializeObject(new {
+                TotalResults = totalcount,
+                TotalPages = totalpages,
+                CurrentPage = pagenumber,
+                OnlineResults = onlineresults,
+                Seed = seed,
+                Items = data
+            });
         }
 
         [Obsolete("Use generic overload instead")]
@@ -1076,8 +1087,15 @@ namespace Helper
             int pagenumber, int totalpages, int totalcount, int onlineresults,
             string resultid, string? seed, IEnumerable<T> data)
         {
-            string jsondata = JsonConvert.SerializeObject(data);
-            return $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"ResultId\":\"{resultid}\",\"Seed\":\"{seed}\",\"Items\":{jsondata}}}";
+            return JsonConvert.SerializeObject(new {
+                TotalResults = totalcount,
+                TotalPages = totalpages,
+                CurrentPage = pagenumber,
+                OnlineResults = onlineresults,
+                ResultId = resultid,
+                Seed = seed,
+                Items = data
+            });
         }
 
         [Obsolete("Use generic overload instead")]
@@ -1099,8 +1117,15 @@ namespace Helper
             int pagenumber, int totalpages, int totalcount, int onlineresults,
             string resultid, string seed, IEnumerable<T> data)
         {
-            string jsondata = JsonConvert.SerializeObject(data);
-            return $"{{\"totalResults\":{totalcount},\"totalPages\":{totalpages},\"currentPage\":{pagenumber},\"onlineResults\":{onlineresults},\"resultId\":\"{resultid}\",\"seed\":\"{seed}\",\"items\":{jsondata}}}";
+            return JsonConvert.SerializeObject(new {
+                totalResults = totalcount,
+                totalPages = totalpages,
+                currentPage = pagenumber,
+                onlineResults = onlineresults,
+                resultId = resultid,
+                seed,
+                items = data
+            });
         }
 
         #endregion
