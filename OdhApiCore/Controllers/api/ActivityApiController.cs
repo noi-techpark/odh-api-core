@@ -310,7 +310,7 @@ namespace OdhApiCore.Controllers
             string? seed,
             CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null, null, cancellationToken);
 
@@ -351,7 +351,7 @@ namespace OdhApiCore.Controllers
             string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, null, null, null, null, null, null,
@@ -433,7 +433,7 @@ namespace OdhApiCore.Controllers
             string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive,
             string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
@@ -487,7 +487,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Single/{id}")]
         public Task<IActionResult> GetSingle(string id, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
@@ -520,7 +520,7 @@ namespace OdhApiCore.Controllers
             string seed,
             CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null,
@@ -565,7 +565,7 @@ namespace OdhApiCore.Controllers
             string language, string? activitytype, int pagenumber, int pagesize, string? seed,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null,
@@ -632,7 +632,7 @@ namespace OdhApiCore.Controllers
             string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive,
             string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
@@ -686,7 +686,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api/Activity/Localized/{language}/{id}")]
         public Task<IActionResult> GetSingleLocalized(string language, string id, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
@@ -728,7 +728,7 @@ namespace OdhApiCore.Controllers
             string? difficultyfilter, string? active, string? smgactive, string? smgtags,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter,
@@ -772,7 +772,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api/Activity/GetActivityTypesList")]
         public Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 List<ActivityTypes> mysuedtiroltypeslist = new List<ActivityTypes>();
 
@@ -1005,7 +1005,7 @@ namespace OdhApiCore.Controllers
             int pagenumber, int pagesize, string updatefrom, string? seed,
             CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 DateTime updatefromDT = Convert.ToDateTime(updatefrom);
 

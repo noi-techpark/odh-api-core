@@ -59,7 +59,7 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        protected Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<string>> f)
+        protected Task<IActionResult> DoAsyncReturnString(Func<IPostGreSQLConnectionFactory, Task<string>> f)
         {
             return DoAsync(async connectionFactory =>
             {

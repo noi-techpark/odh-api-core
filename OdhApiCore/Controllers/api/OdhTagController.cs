@@ -124,7 +124,7 @@ namespace OdhApiCore.Controllers
         //[ApiExplorerSettings(IgnoreApi = true)]
         private Task<IActionResult> Get(CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
@@ -150,7 +150,7 @@ namespace OdhApiCore.Controllers
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
@@ -190,7 +190,7 @@ namespace OdhApiCore.Controllers
         //[ApiExplorerSettings(IgnoreApi = true)]
         private Task<IActionResult> GetSingle(string id, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
@@ -215,7 +215,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetLocalized(string language, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
@@ -243,7 +243,7 @@ namespace OdhApiCore.Controllers
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
@@ -289,7 +289,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetSingleLocalized(string id, string language, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(
@@ -315,7 +315,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetReducedLocalized(string language, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
                 string orderby = "";
@@ -343,7 +343,7 @@ namespace OdhApiCore.Controllers
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsync(async connectionFactory =>
+            return DoAsyncReturnString(async connectionFactory =>
             {
                 string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
                 string orderby = "";
