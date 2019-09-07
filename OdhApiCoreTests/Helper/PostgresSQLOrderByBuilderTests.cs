@@ -5,20 +5,15 @@ namespace OdhApiCoreTests.Helper
 {
     public class PostgresSQLOrderByBuilderTests
     {
-        [Fact]
-        public void BuildSeedOrderBy_WithSeed()
+        [Theory]
+        [InlineData("100", "10")]
+        [InlineData("42", "42")]
+        [InlineData("83", "8")]
+        public void BuildSeedOrderBy_WithSeed(string seed, string resultSeed)
         {
             string orderby = "";
-            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, "100", "");
-            Assert.Equal("md5(id || '10')", orderby);
-
-            orderby = "";
-            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, "42", "");
-            Assert.Equal("md5(id || '42')", orderby);
-
-            orderby = "";
-            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, "83", "");
-            Assert.Equal("md5(id || '8')", orderby);
+            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "");
+            Assert.Equal($"md5(id || '{resultSeed}')", orderby);
         }
 
         [Fact]
