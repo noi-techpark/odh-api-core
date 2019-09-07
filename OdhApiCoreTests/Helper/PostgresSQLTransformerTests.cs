@@ -1,115 +1,127 @@
 ﻿using Xunit;
 using Helper;
+using System.Collections.Generic;
 
 namespace OdhApiCoreTests.Helper
 {
     public class PostgresSQLTransformerTests
     {
-        [Fact]
-        public void TransformAccommodationToMobileDataObject_EmptyAccomodation()
+// workaround for https://github.com/xunit/xunit/issues/1897
+#nullable disable
+        public static IEnumerable<object[]> GetLanguages()
+        {
+            yield return new[] { "de" };
+            yield return new[] { "it" };
+            yield return new[] { "en" };
+            yield return new[] { "ru" };
+        }
+#nullable restore
+
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformAccommodationToMobileDataObject_EmptyAccomodation(string language)
         {
             var accomodation = new Accommodation();
-            string language = "de";
             MobileData result = PostgresSQLTransformer.TransformAccommodationToMobileDataObject(
                 accomodation, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToAccommodationLocalized_EmptyAccomodation()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToAccommodationLocalized_EmptyAccomodation(string language)
         {
             var accomodation = new Accommodation();
-            string language = "de";
             AccommodationLocalized result = PostgresSQLTransformer.TransformToAccommodationLocalized(
                 accomodation, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToAccommodationListObject_EmptyAccomodation()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToAccommodationListObject_EmptyAccomodation(string language)
         {
             var accomodation = new Accommodation();
-            string language = "de";
             AccoListObject result = PostgresSQLTransformer.TransformToAccommodationListObject(
                 accomodation, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToGBLTSActivityPoiLocalized_EmptyPoi()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToGBLTSActivityPoiLocalized_EmptyPoi(string language)
         {
             var poi = new GBLTSPoi();
-            string language = "de";
             GBLTSActivityPoiLocalized result = PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized(
                 poi, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToGastronomyLocalized_EmptyGastronomy()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToGastronomyLocalized_EmptyGastronomy(string language)
         {
             var gastronomy = new Gastronomy();
-            string language = "de";
             GastronomyLocalized result = PostgresSQLTransformer.TransformToGastronomyLocalized(
                 gastronomy, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToEventLocalized_EmptyEvent()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToEventLocalized_EmptyEvent(string language)
         {
             var @event = new Event();
-            string language = "de";
             EventLocalized result = PostgresSQLTransformer.TransformToEventLocalized(
                 @event, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToArticleBaseInfosLocalized_EmptyArticle()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToArticleBaseInfosLocalized_EmptyArticle(string language)
         {
             var article = new Article();
-            string language = "de";
             ArticleBaseInfosLocalized result = PostgresSQLTransformer.TransformToArticleBaseInfosLocalized(
                 article, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToODHActivityPoiLocalized_EmptyODHActivityPoi()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToODHActivityPoiLocalized_EmptyODHActivityPoi(string language)
         {
             var activity = new ODHActivityPoi();
-            string language = "de";
             ODHActivityPoiLocalized result = PostgresSQLTransformer.TransformToODHActivityPoiLocalized(
                 activity, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToPackageLocalized_EmptyPackage()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToPackageLocalized_EmptyPackage(string language)
         {
             var package = new Package();
-            string language = "de";
             PackageLocalized result = PostgresSQLTransformer.TransformToPackageLocalized(
                 package, language);
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void TransformToPackageBooklist_EmptyPackage()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToPackageBooklist_EmptyPackage(string language)
         {
             var package = new Package();
-            string language = "de";
             PackageBookList result = PostgresSQLTransformer.TransformToPackageBooklist(
                 package, language);
             Assert.NotNull(result);
         }
         
-        [Fact]
-        public void TransformToBaseInfosLocalized_EmptyBaseInfos()
+        [Theory]
+        [MemberData(nameof(GetLanguages))]
+        public void TransformToBaseInfosLocalized_EmptyBaseInfos(string language)
         {
             var region = new Region();
-            string language = "de";
             BaseInfosLocalized result = PostgresSQLTransformer.TransformToBaseInfosLocalized(
                 region, language);
             Assert.NotNull(result);
