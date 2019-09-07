@@ -33,19 +33,19 @@ namespace OdhApiCore.Controllers
         public bool? smgactive;
 
         public static async Task<ActivityHelper> CreateAsync(
-            string connectionString, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
             string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter,
             string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter,
             string? smgtags, CancellationToken cancellationToken)
         {
-            var arealist = await RetrieveAreaFilterDataAsync(connectionString, areafilter, cancellationToken);
+            var arealist = await RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
                 tourismusvereinids = await RetrieveLocFilterDataAsync(
-                    connectionString, metaregionlist, cancellationToken).ToListAsync();
+                    connectionFactory, metaregionlist, cancellationToken).ToListAsync();
             }
 
             return new ActivityHelper(
@@ -140,12 +140,12 @@ namespace OdhApiCore.Controllers
         }
 
         private static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(
-            string connectionString, string? areafilter, CancellationToken cancellationToken)
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string? areafilter, CancellationToken cancellationToken)
         {
             if (areafilter != null)
             {
                 return (await LocationListCreator.CreateActivityAreaListPGAsync(
-                    areafilter, connectionString, cancellationToken)).ToList();
+                    areafilter, connectionFactory, cancellationToken)).ToList();
             }
             else
             {
@@ -154,11 +154,11 @@ namespace OdhApiCore.Controllers
         }
 
         private static async IAsyncEnumerable<string> RetrieveLocFilterDataAsync(
-            string connectionString, List<string> metaregionlist, [EnumeratorCancellation] CancellationToken cancellationToken)
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, List<string> metaregionlist, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var mtapgwhere = PostgresSQLWhereBuilder.CreateMetaRegionWhereExpression(metaregionlist);
             var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(
-                connectionString, "metaregions", "*", mtapgwhere,
+                connectionFactory, "metaregions", "*", mtapgwhere,
                 "", 0, null, cancellationToken);
 
             await foreach (var region in mymetaregion)

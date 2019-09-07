@@ -310,9 +310,9 @@ namespace OdhApiCore.Controllers
             string? seed,
             CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
-                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(connectionString, activitytype, null, null, null, null, null, null, null, null, null, null, null, null, cancellationToken);
+                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null, null, cancellationToken);
 
                 string select = "*";
                 string orderby = "";
@@ -329,7 +329,7 @@ namespace OdhApiCore.Controllers
                     ref orderby, seed, "data ->>'Shortname' ASC");
 
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionString, "activities", select, where, orderby, elements, null,
+                    connectionFactory, "activities", select, where, orderby, elements, null,
                     cancellationToken).ToListAsync();
 
                 return "[" + String.Join(",", myresult) + "]";
@@ -351,10 +351,10 @@ namespace OdhApiCore.Controllers
             string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionString, activitytype, null, null, null, null, null, null,
+                    connectionFactory, activitytype, null, null, null, null, null, null,
                     null, null, null, null, null, null, cancellationToken);
 
                 string select = "*";
@@ -376,10 +376,10 @@ namespace OdhApiCore.Controllers
 
                 //Normal
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionString, "activities", select, (whereexpression, parameters),
+                    connectionFactory, "activities", select, (whereexpression, parameters),
                     orderby, pagesize, pageskip, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionString, "activities", (whereexpression, parameters),
+                    connectionFactory, "activities", (whereexpression, parameters),
                     cancellationToken);
 
                 //With Materialized View
@@ -433,10 +433,10 @@ namespace OdhApiCore.Controllers
             string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive,
             string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionString, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
+                    connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags,
                     cancellationToken);
 
@@ -459,10 +459,10 @@ namespace OdhApiCore.Controllers
                 int pageskip = pagesize * (pagenumber - 1);
 
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionString, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
+                    connectionFactory, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
                     cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionString, "activities", (whereexpression, parameters), cancellationToken);
+                    connectionFactory, "activities", (whereexpression, parameters), cancellationToken);
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
@@ -487,11 +487,11 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Single/{id}")]
         public Task<IActionResult> GetSingle(string id, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionString, "activities", "*", where, "", 0,
+                    connectionFactory, "activities", "*", where, "", 0,
                     null, cancellationToken).ToListAsync();
 
                 return String.Join(",", data);
@@ -520,10 +520,10 @@ namespace OdhApiCore.Controllers
             string seed,
             CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionString, activitytype, null, null, null, null, null, null, null, null, null, null, null,
+                    connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null,
                     null, cancellationToken);
 
                 string select = "*";
@@ -542,7 +542,7 @@ namespace OdhApiCore.Controllers
                     ref orderby, seed, "data ->>'Shortname' ASC");
 
                 var myresult = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
-                    connectionString, "activities", select, where, "", 0, null, language,
+                    connectionFactory, "activities", select, where, "", 0, null, language,
                     PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken).ToListAsync();
 
                 return JsonConvert.SerializeObject(myresult);
@@ -565,10 +565,10 @@ namespace OdhApiCore.Controllers
             string language, string? activitytype, int pagenumber, int pagesize, string? seed,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionString, activitytype, null, null, null, null, null, null, null, null, null, null, null,
+                    connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null,
                     null, cancellationToken);
 
                 string select = "*";
@@ -589,10 +589,10 @@ namespace OdhApiCore.Controllers
                 int pageskip = pagesize * (pagenumber - 1);
 
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
-                    connectionString, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
+                    connectionFactory, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
                     language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionString, "activities", (whereexpression, parameters), cancellationToken);
+                    connectionFactory, "activities", (whereexpression, parameters), cancellationToken);
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
@@ -632,10 +632,10 @@ namespace OdhApiCore.Controllers
             string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive,
             string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionString, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
+                    connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags,
                     cancellationToken);
 
@@ -659,11 +659,11 @@ namespace OdhApiCore.Controllers
                 int pageskip = pagesize * (pagenumber - 1);
 
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
-                    connectionString, "activities", select, (whereexpression, parameters),
+                    connectionFactory, "activities", select, (whereexpression, parameters),
                     orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized,
                     cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionString, "activities", (whereexpression, parameters),
+                    connectionFactory, "activities", (whereexpression, parameters),
                     cancellationToken);
 
                 int totalcount = (int)count;
@@ -686,11 +686,11 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api/Activity/Localized/{language}/{id}")]
         public Task<IActionResult> GetSingleLocalized(string language, string id, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
-                    connectionString, "activities", "*", where, "", 0, null, language,
+                    connectionFactory, "activities", "*", where, "", 0, null, language,
                     PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized,
                     cancellationToken).ToListAsync();
 
@@ -728,10 +728,10 @@ namespace OdhApiCore.Controllers
             string? difficultyfilter, string? active, string? smgactive, string? smgtags,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionString, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter,
+                    connectionFactory, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags,
                     cancellationToken);
 
@@ -750,7 +750,7 @@ namespace OdhApiCore.Controllers
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
                 var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(
-                    connectionString, "activities", select, (whereexpression, parameters), orderby, 0, null,
+                    connectionFactory, "activities", select, (whereexpression, parameters), orderby, 0, null,
                     new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
                 return "[" + String.Join(",", data) + "]";
@@ -770,19 +770,18 @@ namespace OdhApiCore.Controllers
         //[CacheOutputUntilToday(23, 59)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity/GetActivityTypesList")]
-        public async Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
+        public Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
         {
-            try
+            return DoAsync(async connectionFactory =>
             {
                 List<ActivityTypes> mysuedtiroltypeslist = new List<ActivityTypes>();
 
                 //Get LTS Tagging Types List
 
-                using var conn = new NpgsqlConnection(connectionString);
-                conn.Open();
+                using var conn = await connectionFactory(cancellationToken);
 
                 var ltstaggingtypes = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
-                        connectionString, "ltstaggingtypes", "*", "", "", 0,
+                        connectionFactory, "ltstaggingtypes", "*", "", "", 0,
                         null, cancellationToken).ToListAsync();
 
                 foreach (ActivityTypeFlag myactivitytype in EnumHelper.GetValues<ActivityTypeFlag>())
@@ -987,12 +986,8 @@ namespace OdhApiCore.Controllers
                     mysuedtiroltypeslist.Add(mysmgpoitype);
                 }
 
-                return Content(JsonConvert.SerializeObject(mysuedtiroltypeslist), "application/json", Encoding.UTF8);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+                return JsonConvert.SerializeObject(mysuedtiroltypeslist);
+            });
         }
 
         /// <summary>
@@ -1010,7 +1005,7 @@ namespace OdhApiCore.Controllers
             int pagenumber, int pagesize, string updatefrom, string? seed,
             CancellationToken cancellationToken)
         {
-            return DoAsync(async connectionString =>
+            return DoAsync(async connectionFactory =>
             {
                 DateTime updatefromDT = Convert.ToDateTime(updatefrom);
 
@@ -1025,10 +1020,10 @@ namespace OdhApiCore.Controllers
                 var where = PostgresSQLWhereBuilder.CreateLastChangedWhereExpression(updatefrom);
 
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionString, "activities", select, where, orderby, pagesize, pageskip,
+                    connectionFactory, "activities", select, where, orderby, pagesize, pageskip,
                     cancellationToken);
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionString, "activities", where, cancellationToken);
+                    connectionFactory, "activities", where, cancellationToken);
 
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);

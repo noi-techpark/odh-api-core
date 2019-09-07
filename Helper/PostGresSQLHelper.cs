@@ -41,15 +41,6 @@ namespace Helper
 
     public class PostgresSQLHelper
     {
-        private static async Task<NpgsqlConnection> CreateConnection(
-            string connectionString, CancellationToken cancellationToken)
-        {
-            // TODO: additional initialization logic goes here
-            var conn = new NpgsqlConnection(connectionString);
-            await conn.OpenAsync(cancellationToken);
-            return conn;
-        }
-
         #region String Select Methods
 
         /// <summary>
@@ -63,12 +54,12 @@ namespace Helper
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
         public static async IAsyncEnumerable<string> SelectFromTableDataAsStringAsync(
-            string connectionString, string tablename, string selectexp, string whereexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
             using var command = new NpgsqlCommand(commandText, conn);
@@ -98,12 +89,12 @@ namespace Helper
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
         public static async Task<string> SelectFromTableDataAsStringSingleAsync(
-            string connectionString, string tablename, string selectexp, string id,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp, string id,
             CancellationToken cancellationToken)
         {
             try
             {
-                using var conn = await CreateConnection(connectionString, cancellationToken);
+                using var conn = await connectionFactory(cancellationToken);
                 using var command = new NpgsqlCommand($"SELECT {selectexp} FROM {tablename} WHERE id LIKE @id", conn);
                 command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
@@ -135,13 +126,13 @@ namespace Helper
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
         public static async IAsyncEnumerable<string> SelectFromTableDataAsIdAndStringAsync(
-            string connectionString, string tablename, string selectexp, string whereexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
             using var command = new NpgsqlCommand(commandText, conn);
@@ -192,13 +183,13 @@ namespace Helper
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
         public static async IAsyncEnumerable<string> SelectFromTableDataAsIdAndStringAndTypeAsync(
-            string connectionString, string tablename, string selectexp, string whereexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd, string type,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
             using var command = new NpgsqlCommand(commandText, conn);
@@ -245,12 +236,12 @@ namespace Helper
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
         public static async IAsyncEnumerable<string> SelectFromTableDataAsIdAsync(
-            string connectionString, string tablename, string selectexp, string whereexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
             using var command = new NpgsqlCommand(commandText, conn);
@@ -286,12 +277,12 @@ namespace Helper
         /// <param name="offset"></param>
         /// <returns></returns>
         public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectAsync<T>(
-            string connectionString, string tablename, string selectexp, string whereexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
             using var command = new NpgsqlCommand(commandText, conn);
@@ -332,12 +323,12 @@ namespace Helper
         /// <param name="offset"></param>
         /// <returns></returns>
         public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectAsync<T>(
-            string connectionString, string tablename, string id,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string id,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             //string whereexp = "Id LIKE '" + id + "'";
             //string commandText = CreatetDatabaseCommand("*", tablename, whereexp, "", null, 0);
 
@@ -378,12 +369,12 @@ namespace Helper
         /// <param name="offset"></param>
         /// <returns></returns>
         public static async IAsyncEnumerable<(string, T)> SelectFromTableIdAndDataAsObjectAsync<T>(
-            string connectionString, string tablename, string selectexp, string whereexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
             using var command = new NpgsqlCommand(commandText, conn);
@@ -426,13 +417,13 @@ namespace Helper
         /// <param name="offset"></param>
         /// <returns></returns>
         public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectExtendedAsync<T>(
-            string connectionString, string tablename, string selectexp, string whereexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstodeserialize,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
             using var command = new NpgsqlCommand(commandText, conn);
@@ -478,11 +469,11 @@ namespace Helper
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
         public static async Task<long> CountDataFromTableAsync(
-            string connectionString, string tablename, string whereexp, CancellationToken cancellationToken)
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string whereexp, CancellationToken cancellationToken)
         {
             try
             {
-                using var conn = await CreateConnection(connectionString, cancellationToken);
+                using var conn = await connectionFactory(cancellationToken);
                 string commandText = $"SELECT COUNT(*) FROM {tablename}";
 
                 if (!String.IsNullOrEmpty(whereexp))
@@ -549,13 +540,13 @@ namespace Helper
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
         public static async Task<long> CountDataFromTableParametrizedAsync(
-            string connectionString, string tablename,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             CancellationToken cancellationToken)
         {
             try
             {
-                using var conn = await CreateConnection(connectionString, cancellationToken);
+                using var conn = await connectionFactory(cancellationToken);
                 string commandText = $"SELECT COUNT(*) FROM {tablename}";
 
                 if (!String.IsNullOrEmpty(where.whereexp))
@@ -588,14 +579,14 @@ namespace Helper
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>
         /// <returns>List of JSON Strings</returns>
         public static async IAsyncEnumerable<string> SelectFromTableDataFirstOnlyParametrizedAsync(
-            string connectionString, string tablename, string selectexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             string sortexp, int limit, int? offset,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
             using var command = new NpgsqlCommand(commandText, conn);
             command.AddPGParameters(where.whereparameters);
@@ -626,13 +617,13 @@ namespace Helper
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
         public static async IAsyncEnumerable<string> SelectFromTableDataAsStringParametrizedAsync(
-            string connectionString, string tablename, string selectexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp,
             (string whereexpression, IEnumerable<PGParameters>? whereparameters) where,
             string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexpression, sortexp, offset, limit);
             using var command = new NpgsqlCommand(commandText, conn);
             command.AddPGParameters(where.whereparameters);
@@ -663,14 +654,14 @@ namespace Helper
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
         public static async IAsyncEnumerable<string> SelectFromTableDataAsJsonParametrizedAsync(
-            string connectionString, string tablename, string selectexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
 
             using var command = new NpgsqlCommand(commandText, conn);
@@ -723,14 +714,14 @@ namespace Helper
         /// <param name="offset"></param>
         /// <returns></returns>
         public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectParametrizedAsync<T>(
-            string connectionString, string tablename, string selectexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
             string sortexp, int limit, int? offset,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(
                 selectexp,
                 tablename,
@@ -776,7 +767,7 @@ namespace Helper
         /// <param name="offset"></param>
         /// <returns></returns>
         public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(
-            string connectionString, string tablename, string selectexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             string sortexp, int limit, int? offset,
             IEnumerable<string> fieldstodeserialize,
@@ -784,7 +775,7 @@ namespace Helper
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             string commandText = CreateDatabaseCommand(
                 selectexp,
                 tablename,
@@ -842,14 +833,14 @@ namespace Helper
         /// <param name="offset"></param>
         /// <returns></returns>
         public static async IAsyncEnumerable<T> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(
-            string connectionString, string tablename, string selectexp,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             string sortexp, int limit, int? offset, string language,
             Func<V, string, T> transformer, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             //try
             //{
-            using var conn = await CreateConnection(connectionString, cancellationToken);
+            using var conn = await connectionFactory(cancellationToken);
             //CultureInfo myculture = new CultureInfo("en");
 
             string commandText = CreateDatabaseCommand(
@@ -885,12 +876,12 @@ namespace Helper
         #region Generic Insert Method
 
         public static async Task<string> InsertDataIntoTableAsync(
-            string connectionString, string tablename, string data, string id,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string data, string id,
             CancellationToken cancellationToken)
         {
             try
             {
-                using var conn = await CreateConnection(connectionString, cancellationToken);
+                using var conn = await connectionFactory(cancellationToken);
                 ////Fix the single quotes
                 //data = data.Replace("'", "''");
 
@@ -914,12 +905,12 @@ namespace Helper
         }
 
         public static async Task<string> InsertDataIntoTableAsync(
-            string connectionString, string tablename, object data,
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, object data,
             string id, CancellationToken cancellationToken)
         {
             try
             {
-                using var conn = await CreateConnection(connectionString, cancellationToken);
+                using var conn = await connectionFactory(cancellationToken);
                 using var command = new NpgsqlCommand($"INSERT INTO {tablename} (id, data) VALUES (@id, @data)", conn);
                 command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
                 command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
@@ -939,11 +930,11 @@ namespace Helper
         #region Generic Update Method
 
         public static async Task<string> UpdateDataFromTable(
-            string connectionString, string tablename, string data, string id, CancellationToken cancellationToken)
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string data, string id, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString, cancellationToken))
+                using (var conn = await connectionFactory(cancellationToken))
                 {
                     ////Fix the single quotes
                     //data = data.Replace("'", "''");                
@@ -970,11 +961,11 @@ namespace Helper
         }
 
         public static async Task<string> UpdateDataFromTable(
-            string connectionString, string tablename, object data, string id, CancellationToken cancellationToken)
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, object data, string id, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString, cancellationToken))
+                using (var conn = await connectionFactory(cancellationToken))
                 {
                     using var command = new NpgsqlCommand($"UPDATE {tablename} SET data = @data WHERE id = @id", conn);
                     command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
@@ -997,11 +988,11 @@ namespace Helper
         #region Generic Delete Method
 
         public static async Task<string> DeleteDataFromTableAsync(
-            string connectionString, string tablename, string idvalue, CancellationToken cancellationToken)
+            Func<CancellationToken, Task<NpgsqlConnection>> connectionFactory, string tablename, string idvalue, CancellationToken cancellationToken)
         {
             try
             {
-                using (var conn = await CreateConnection(connectionString, cancellationToken))
+                using (var conn = await connectionFactory(cancellationToken))
                 {
                     //string commandText = "DELETE FROM " + tablename + " WHERE id = '" + idvalue + "';";
 

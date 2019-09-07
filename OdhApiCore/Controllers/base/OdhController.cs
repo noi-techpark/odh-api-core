@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -37,16 +39,25 @@ namespace OdhApiCore.Controllers
 
         public OdhController(ISettings settings)
         {
-            connectionString = settings.PostgresConnectionString;
+            this.connectionString = settings.PostgresConnectionString;
         }
 
-        protected async Task<IActionResult> DoAsync(Func<string, Task<string>> f)
+        private static async Task<NpgsqlConnection> CreateConnection(
+            string connectionString, CancellationToken cancellationToken)
+        {
+            // TODO: additional initialization logic goes here
+            var conn = new NpgsqlConnection(connectionString);
+            await conn.OpenAsync(cancellationToken);
+            return conn;
+        }
+
+        protected async Task<IActionResult> DoAsync(Func<Func<CancellationToken, Task<NpgsqlConnection>>, Task<string>> f)
         {
             try
             {
-                var result = this.Content(await f(this.connectionString), "application/json", Encoding.UTF8);
-
-                return result;
+                Task<NpgsqlConnection> connectionFactory(CancellationToken cancellationToken) =>
+                    CreateConnection(this.connectionString, cancellationToken);
+                return this.Content(await f(connectionFactory), "application/json", Encoding.UTF8);
             }
             catch (Exception ex)
             {
