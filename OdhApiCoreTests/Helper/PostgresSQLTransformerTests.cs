@@ -6,16 +6,13 @@ namespace OdhApiCoreTests.Helper
 {
     public class PostgresSQLTransformerTests
     {
-// workaround for https://github.com/xunit/xunit/issues/1897
-#nullable disable
-        public static IEnumerable<object[]> GetLanguages()
+        public static TheoryData<string> GetLanguages()
         {
-            yield return new[] { "de" };
-            yield return new[] { "it" };
-            yield return new[] { "en" };
-            yield return new[] { "ru" };
+            return new TheoryData<string>
+            {
+                "de", "it", "en", "ru"
+            };
         }
-#nullable restore
 
         [Theory]
         [MemberData(nameof(GetLanguages))]
