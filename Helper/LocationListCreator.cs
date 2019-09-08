@@ -77,7 +77,7 @@ namespace Helper
 
             await foreach (var area in result)
             {
-                var areacodes = area.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
+                var areacodes = area.Value.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 
                 List<string> areacodeslist = areacodes.Split(',').ToList();
 
@@ -102,7 +102,7 @@ namespace Helper
 
             await foreach (var area in result)
             {
-                var areacodes = area.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
+                var areacodes = area.Value.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 
                 List<string> areacodeslist = areacodes.Split(',').ToList();
 
@@ -127,7 +127,7 @@ namespace Helper
 
             await foreach (var skiarea in result)
             {
-                var areacodes = skiarea.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
+                var areacodes = skiarea.Value.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 
                 List<string> areacodeslist = areacodes.Split(',').ToList();
 
@@ -149,7 +149,9 @@ namespace Helper
             string select = "Id,data ->> 'AreaId'";
             string where = "Id = '" + skiareaId.ToUpper() + "'";
 
-            var result = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionFactory, "skiareas", select, where, "", 0, null, cancellationToken).SingleAsync();
+            var rawResult = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionFactory, "skiareas", select, where, "", 0, null, cancellationToken).SingleAsync();
+
+            var result = rawResult.Value;
 
             result = result.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
 

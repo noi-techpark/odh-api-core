@@ -325,7 +325,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "activities", select, where, orderby, elements, null,
                     cancellationToken).ToListAsync();
 
-                return "[" + String.Join(",", myresult) + "]";
+                return "[" + String.Join(",", myresult.Select(x => x.Value)) + "]";
             });
         }
 

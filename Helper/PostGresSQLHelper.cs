@@ -53,7 +53,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<string> SelectFromTableDataAsStringAsync(
+        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
@@ -70,7 +70,7 @@ namespace Helper
             {
                 var value = dr[1].ToString();
                 if (value != null)
-                    yield return value;
+                    yield return new JsonRaw(value);
             }
             //}
             //catch (DbException ex)
@@ -125,7 +125,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<string> SelectFromTableDataAsIdAndStringAsync(
+        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAndStringAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
             [EnumeratorCancellation] CancellationToken cancellationToken)
@@ -162,7 +162,7 @@ namespace Helper
 
                 if (!isvalueempty)
                 {
-                    yield return strtoadd;
+                    yield return new JsonRaw(strtoadd);
                 }
             }
             //}
@@ -182,7 +182,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<string> SelectFromTableDataAsIdAndStringAndTypeAsync(
+        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAndStringAndTypeAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd, string type,
             [EnumeratorCancellation] CancellationToken cancellationToken)
@@ -216,7 +216,7 @@ namespace Helper
 
                 strtoadd += "}";
 
-                yield return strtoadd;
+                yield return new JsonRaw(strtoadd);
             }
             //}
             //catch (DbException ex)
@@ -235,7 +235,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<string> SelectFromTableDataAsIdAsync(
+        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
@@ -252,7 +252,7 @@ namespace Helper
             {
                 var value = dr[0].ToString();
                 if (value != null)
-                    yield return value;
+                    yield return new JsonRaw(value);
             }
             //}
             //catch (DbException ex)
@@ -578,7 +578,7 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<string> SelectFromTableDataFirstOnlyParametrizedAsync(
+        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataFirstOnlyParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             string sortexp, int limit, int? offset,
@@ -597,7 +597,7 @@ namespace Helper
             {
                 var value = dr[0].ToString();
                 if (value != null)
-                    yield return value;
+                    yield return new JsonRaw(value);
             }
             //}
             //catch (DbException ex)
@@ -616,7 +616,7 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<string> SelectFromTableDataAsStringParametrizedAsync(
+        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexpression, IEnumerable<PGParameters>? whereparameters) where,
             string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
@@ -634,7 +634,7 @@ namespace Helper
             {
                 var value = dr[1].ToString();
                 if (value != null)
-                    yield return value;
+                    yield return new JsonRaw(value);
             }
             //}
             //catch (DbException ex)
@@ -653,7 +653,7 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<string> SelectFromTableDataAsJsonParametrizedAsync(
+        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsJsonParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
@@ -692,7 +692,7 @@ namespace Helper
 
                 if (!isvalueempty)
                 {
-                    yield return strtoadd;
+                    yield return new JsonRaw(strtoadd);
                 }
             }
             //}
@@ -1040,11 +1040,7 @@ namespace Helper
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
                 Seed = seed,
-                Items = data switch
-                {
-                    IEnumerable<string> xs => xs.Select(x => new JRaw(x)),
-                    _ => data.Select(x => JToken.FromObject(x))
-                }
+                Items = data
             });
         }
 
@@ -1074,11 +1070,7 @@ namespace Helper
                 CurrentPage = pagenumber,
                 OnlineResults = onlineresults,
                 Seed = seed,
-                Items = data switch
-                {
-                    IEnumerable<string> xs => xs.Select(x => new JRaw(x)),
-                    _ => data.Select(x => JToken.FromObject(x))
-                }
+                Items = data
             });
         }
 
@@ -1110,11 +1102,7 @@ namespace Helper
                 OnlineResults = onlineresults,
                 ResultId = resultid,
                 Seed = seed,
-                Items = data switch
-                {
-                    IEnumerable<string> xs => xs.Select(x => new JRaw(x)),
-                    _ => data.Select(x => JToken.FromObject(x))
-                }
+                Items = data
             });
         }
 
@@ -1146,11 +1134,7 @@ namespace Helper
                 onlineResults = onlineresults,
                 resultId = resultid,
                 seed,
-                items = data switch
-                {
-                    IEnumerable<string> xs => xs.Select(x => new JRaw(x)),
-                    _ => data.Select(x => JToken.FromObject(x))
-                }
+                items = data
             });
         }
 
