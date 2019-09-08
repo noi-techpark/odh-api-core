@@ -66,7 +66,7 @@ namespace Helper
 
                 using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     var value = dr[1].ToString();
                     if (value != null)
@@ -105,7 +105,7 @@ namespace Helper
                 using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 string result = "";
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     var value = dr[1].ToString();
                     if (value != null)
@@ -779,7 +779,7 @@ namespace Helper
                 using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
 
                 int count = 0;
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
                     yield return data;
@@ -837,7 +837,7 @@ namespace Helper
                 using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
 
                 int count = 0;
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     int i = 0;
                     string stringtodeserialize = "{";
@@ -907,7 +907,7 @@ namespace Helper
 
                 using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
 
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     var pgdata = JsonConvert.DeserializeObject<V>(dr[1].ToString() ?? "");
 
