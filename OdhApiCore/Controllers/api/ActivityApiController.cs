@@ -325,7 +325,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "activities", select, where, orderby, elements, null,
                     cancellationToken).ToListAsync();
 
-                return "[" + String.Join(",", myresult.Select(x => x.Value)) + "]";
+                return JsonConvert.SerializeObject(myresult);
             });
         }
 
@@ -487,7 +487,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "activities", "*", where, "", 0,
                     null, cancellationToken).ToListAsync();
 
-                return String.Join(",", data);
+                return JsonConvert.SerializeObject(data.FirstOrDefault());
             });
         }
 
@@ -746,7 +746,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "activities", select, (whereexpression, parameters), orderby, 0, null,
                     new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
-                return "[" + String.Join(",", data) + "]";
+                return JsonConvert.SerializeObject(data);
             });
         }
 

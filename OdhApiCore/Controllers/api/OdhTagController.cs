@@ -131,7 +131,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, null),
                     orderby, 0, null, cancellationToken).ToListAsync();
 
-                return "[" + String.Join(",", myresult) + "]";
+                return JsonConvert.SerializeObject(myresult);
             });
         }
 
@@ -173,7 +173,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, parameters),
                     orderby, 0, null, cancellationToken).ToListAsync();
 
-                return "[" + String.Join(",", myresult) + "]";
+                return JsonConvert.SerializeObject(myresult);
             });
         }
 
@@ -194,7 +194,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", "*", where,
                     "", 0, null, cancellationToken).ToListAsync();
 
-                return String.Join(",", data);
+                return JsonConvert.SerializeObject(data.FirstOrDefault());
             });
         }
 
@@ -323,7 +323,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, null), orderby, 0,
                     null, new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
-                return "[" + String.Join(",", data) + "]";
+                return JsonConvert.SerializeObject(data);
             });
         }
 
@@ -369,7 +369,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, parameters), orderby, 0, null,
                     new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
-                return $"[{String.Join(",", data)}]";
+                return JsonConvert.SerializeObject(data);
             });
         }
 
