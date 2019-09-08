@@ -53,30 +53,34 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringAsync(
+        public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<JsonRaw> inner()
             {
-                var value = dr[1].ToString();
-                if (value != null)
-                    yield return new JsonRaw(value);
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                using var command = new NpgsqlCommand(commandText, conn);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                while (await dr.ReadAsync())
+                {
+                    var value = dr[1].ToString();
+                    if (value != null)
+                        yield return new JsonRaw(value);
+                }
             }
-            //}
-            //catch (DbException ex)
-            //{
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -125,51 +129,55 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAndStringAsync(
+        public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAndStringAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            while (await dr.ReadAsync(cancellationToken))
+            async IAsyncEnumerable<JsonRaw> inner()
             {
-                bool isvalueempty = false;
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
-                int i = 0;
+                using var command = new NpgsqlCommand(commandText, conn);
 
-                string strtoadd = "{";
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
-                foreach (string s in fieldstoadd)
+                while (await dr.ReadAsync(cancellationToken))
                 {
-                    strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
+                    bool isvalueempty = false;
 
-                    // FIXME: "null"?
-                    if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
-                        isvalueempty = true;
+                    int i = 0;
 
-                    i++;
-                }
-                strtoadd = strtoadd.Remove(strtoadd.Length - 1);
-                strtoadd += "}";
+                    string strtoadd = "{";
 
-                if (!isvalueempty)
-                {
-                    yield return new JsonRaw(strtoadd);
+                    foreach (string s in fieldstoadd)
+                    {
+                        strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
+
+                        // FIXME: "null"?
+                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
+                            isvalueempty = true;
+
+                        i++;
+                    }
+                    strtoadd = strtoadd.Remove(strtoadd.Length - 1);
+                    strtoadd += "}";
+
+                    if (!isvalueempty)
+                    {
+                        yield return new JsonRaw(strtoadd);
+                    }
                 }
             }
-            //}
-            //catch (DbException ex)
-            //{
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -182,47 +190,51 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAndStringAndTypeAsync(
+        public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAndStringAndTypeAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd, string type,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<JsonRaw> inner()
             {
-                string strtoadd = "{";
-                int i = 0;
-                foreach (string s in fieldstoadd)
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                using var command = new NpgsqlCommand(commandText, conn);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                while (await dr.ReadAsync())
                 {
-                    if (s != "themeIds")
-                        strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
-                    else
+                    string strtoadd = "{";
+                    int i = 0;
+                    foreach (string s in fieldstoadd)
                     {
-                        var themeids = JsonConvert.DeserializeObject<List<string>>(dr[i].ToString() ?? "");
-                        strtoadd = $"{strtoadd}\"{s}\":\"{String.Join(",", themeids)}\",";
+                        if (s != "themeIds")
+                            strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
+                        else
+                        {
+                            var themeids = JsonConvert.DeserializeObject<List<string>>(dr[i].ToString() ?? "");
+                            strtoadd = $"{strtoadd}\"{s}\":\"{String.Join(",", themeids)}\",";
+                        }
+                        i++;
                     }
-                    i++;
+
+                    strtoadd = $"{strtoadd}\"typ\":\"{type}\"";
+
+                    strtoadd += "}";
+
+                    yield return new JsonRaw(strtoadd);
                 }
-
-                strtoadd = $"{strtoadd}\"typ\":\"{type}\"";
-
-                strtoadd += "}";
-
-                yield return new JsonRaw(strtoadd);
             }
-            //}
-            //catch (DbException ex)
-            //{
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -235,30 +247,34 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAsync(
+        public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<JsonRaw> inner()
             {
-                var value = dr[0].ToString();
-                if (value != null)
-                    yield return new JsonRaw(value);
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                using var command = new NpgsqlCommand(commandText, conn);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                while (await dr.ReadAsync(cancellationToken))
+                {
+                    var value = dr[0].ToString();
+                    if (value != null)
+                        yield return new JsonRaw(value);
+                }
             }
-            //}
-            //catch (DbException ex)
-            //{
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         #endregion
@@ -276,39 +292,43 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectAsync<T>(
+        public static IAsyncEnumerable<T> SelectFromTableDataAsObjectAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            int count = 0;
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<T> inner()
             {
-                var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
-                yield return data;
+                using var command = new NpgsqlCommand(commandText, conn);
 
-                count++;
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                int count = 0;
+                while (await dr.ReadAsync(cancellationToken))
+                {
+                    var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
+
+                    yield return data;
+
+                    count++;
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Data queried {count} Results");
             }
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error :" + ex);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Data queried {count} Results");
-            //}
-            //catch (DbException ex)
-            //{
-            //    Console.ForegroundColor = ConsoleColor.Red;
-            //    Console.WriteLine("Error :" + ex);
-
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -322,39 +342,43 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectAsync<T>(
+        public static IAsyncEnumerable<T> SelectFromTableDataAsObjectAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string id,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            //string whereexp = "Id LIKE '" + id + "'";
-            //string commandText = CreatetDatabaseCommand("*", tablename, whereexp, "", null, 0);
-
-            using var command = new NpgsqlCommand($"SELECT * FROM {tablename} WHERE id LIKE @id", conn);
-            command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            int count = 0;
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<T> inner()
             {
-                var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
-                yield return data;
-                count++;
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                //string whereexp = "Id LIKE '" + id + "'";
+                //string commandText = CreatetDatabaseCommand("*", tablename, whereexp, "", null, 0);
+
+                using var command = new NpgsqlCommand($"SELECT * FROM {tablename} WHERE id LIKE @id", conn);
+                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                int count = 0;
+                while (await dr.ReadAsync())
+                {
+                    var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
+                    yield return data;
+                    count++;
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Data queried {count} Results");
             }
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error :" + ex);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Data queried {count} Results");
-            //}
-            //catch (DbException ex)
-            //{
-            //    Console.ForegroundColor = ConsoleColor.Red;
-            //    Console.WriteLine("Error :" + ex);
-
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -368,41 +392,45 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async IAsyncEnumerable<(string, T)> SelectFromTableIdAndDataAsObjectAsync<T>(
+        public static IAsyncEnumerable<(string, T)> SelectFromTableIdAndDataAsObjectAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            int count = 0;
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<(string, T)> inner()
             {
-                var key = dr[0].ToString();
-                if (key != null)
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                using var command = new NpgsqlCommand(commandText, conn);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                int count = 0;
+                while (await dr.ReadAsync(cancellationToken))
                 {
-                    var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
-                    yield return (key, data);
-                    count++;
+                    var key = dr[0].ToString();
+                    if (key != null)
+                    {
+                        var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
+                        yield return (key, data);
+                        count++;
+                    }
                 }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Data queried {count} Results");
             }
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error :" + ex);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Data queried {count} Results");
-            //}
-            //catch (DbException ex)
-            //{
-            //    Console.ForegroundColor = ConsoleColor.Red;
-            //    Console.WriteLine("Error :" + ex);
-
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -416,49 +444,53 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectExtendedAsync<T>(
+        public static IAsyncEnumerable<T> SelectFromTableDataAsObjectExtendedAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstodeserialize,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            int count = 0;
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<T> inner()
             {
-                int i = 0;
-                string stringtodeserialize = "{";
-                foreach (string s in fieldstodeserialize)
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
+
+                using var command = new NpgsqlCommand(commandText, conn);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                int count = 0;
+                while (await dr.ReadAsync())
                 {
-                    stringtodeserialize = $"{stringtodeserialize}\"{s}\":{dr[i].ToString()},";
-                    i++;
+                    int i = 0;
+                    string stringtodeserialize = "{";
+                    foreach (string s in fieldstodeserialize)
+                    {
+                        stringtodeserialize = $"{stringtodeserialize}\"{s}\":{dr[i].ToString()},";
+                        i++;
+                    }
+                    stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
+                    stringtodeserialize = stringtodeserialize + "}";
+
+                    var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
+
+                    yield return data;
+                    count++;
                 }
-                stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
-                stringtodeserialize = stringtodeserialize + "}";
 
-                var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
-
-                yield return data;
-                count++;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Data queried {count} Results");
             }
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error :" + ex);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Data queried {count} Results");
-            //}
-            //catch (DbException ex)
-            //{
-            //    Console.ForegroundColor = ConsoleColor.Red;
-            //    Console.WriteLine("Error :" + ex);
-
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -578,32 +610,36 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataFirstOnlyParametrizedAsync(
+        public static IAsyncEnumerable<JsonRaw> SelectFromTableDataFirstOnlyParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             string sortexp, int limit, int? offset,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
-            using var command = new NpgsqlCommand(commandText, conn);
-            command.AddPGParameters(where.whereparameters);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<JsonRaw> inner()
             {
-                var value = dr[0].ToString();
-                if (value != null)
-                    yield return new JsonRaw(value);
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
+                using var command = new NpgsqlCommand(commandText, conn);
+                command.AddPGParameters(where.whereparameters);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                while (await dr.ReadAsync(cancellationToken))
+                {
+                    var value = dr[0].ToString();
+                    if (value != null)
+                        yield return new JsonRaw(value);
+                }
             }
-            //}
-            //catch (DbException ex)
-            //{
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
 
@@ -616,31 +652,35 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>        
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringParametrizedAsync(
+        public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexpression, IEnumerable<PGParameters>? whereparameters) where,
-            string sortexp, int limit, int? offset, [EnumeratorCancellation] CancellationToken cancellationToken)
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexpression, sortexp, offset, limit);
-            using var command = new NpgsqlCommand(commandText, conn);
-            command.AddPGParameters(where.whereparameters);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<JsonRaw> inner()
             {
-                var value = dr[1].ToString();
-                if (value != null)
-                    yield return new JsonRaw(value);
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexpression, sortexp, offset, limit);
+                using var command = new NpgsqlCommand(commandText, conn);
+                command.AddPGParameters(where.whereparameters);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+
+                while (await dr.ReadAsync())
+                {
+                    var value = dr[1].ToString();
+                    if (value != null)
+                        yield return new JsonRaw(value);
+                }
             }
-            //}
-            //catch (DbException ex)
-            //{
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -653,53 +693,57 @@ namespace Helper
         /// <param name="limit">Limit</param>
         /// <param name="offset">Offset</param>
         /// <returns>List of JSON Strings</returns>
-        public static async IAsyncEnumerable<JsonRaw> SelectFromTableDataAsJsonParametrizedAsync(
+        public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsJsonParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
             string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-            command.AddPGParameters(where.whereparameters);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
-
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<JsonRaw> inner()
             {
-                bool isvalueempty = false;
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
 
-                int i = 0;
+                using var command = new NpgsqlCommand(commandText, conn);
+                command.AddPGParameters(where.whereparameters);
 
-                string strtoadd = "{";
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
-                foreach (string s in fieldstoadd)
+                while (await dr.ReadAsync())
                 {
-                    strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
+                    bool isvalueempty = false;
 
-                    // FIXME: "null"?
-                    if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
-                        isvalueempty = true;
+                    int i = 0;
 
-                    i++;
-                }
-                strtoadd = strtoadd.Remove(strtoadd.Length - 1);
-                strtoadd = strtoadd + "}";
+                    string strtoadd = "{";
 
-                if (!isvalueempty)
-                {
-                    yield return new JsonRaw(strtoadd);
+                    foreach (string s in fieldstoadd)
+                    {
+                        strtoadd = $"{strtoadd}\"{s}\":{dr[i].ToString()},";
+
+                        // FIXME: "null"?
+                        if (String.IsNullOrEmpty(dr[i].ToString()) || dr[i].ToString() == "null" || dr[i].ToString() == "\"\"")
+                            isvalueempty = true;
+
+                        i++;
+                    }
+                    strtoadd = strtoadd.Remove(strtoadd.Length - 1);
+                    strtoadd = strtoadd + "}";
+
+                    if (!isvalueempty)
+                    {
+                        yield return new JsonRaw(strtoadd);
+                    }
                 }
             }
-            //}
-            //catch (DbException ex)
-            //{
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -713,46 +757,50 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectParametrizedAsync<T>(
+        public static IAsyncEnumerable<T> SelectFromTableDataAsObjectParametrizedAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
-            string sortexp, int limit, int? offset,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(
-                selectexp,
-                tablename,
-                where.whereexp,
-                sortexp,
-                offset,
-                limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-            command.AddPGParameters(where.whereparameters);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
-
-            int count = 0;
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<T> inner()
             {
-                var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
-                yield return data;
-                count++;
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(
+                    selectexp,
+                    tablename,
+                    where.whereexp,
+                    sortexp,
+                    offset,
+                    limit);
+
+                using var command = new NpgsqlCommand(commandText, conn);
+                command.AddPGParameters(where.whereparameters);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+
+                int count = 0;
+                while (await dr.ReadAsync())
+                {
+                    var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
+                    yield return data;
+                    count++;
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Data queried {count} Results");
             }
+            try
+            {
+                var enumerable = inner();
+                return default;
+            }
+            catch (DbException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error :" + ex);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Data queried {count} Results");
-            //}
-            //catch (DbException ex)
-            //{
-            //    Console.ForegroundColor = ConsoleColor.Red;
-            //    Console.WriteLine("Error :" + ex);
-
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -766,59 +814,62 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async IAsyncEnumerable<T> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(
+        public static IAsyncEnumerable<T> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
-            string sortexp, int limit, int? offset,
-            IEnumerable<string> fieldstodeserialize,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            string sortexp, int limit, int? offset, IEnumerable<string> fieldstodeserialize,
+            CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            string commandText = CreateDatabaseCommand(
-                selectexp,
-                tablename,
-                where.whereexp,
-                sortexp,
-                offset,
-                limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-            command.AddPGParameters(where.whereparameters);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
-
-            int count = 0;
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<T> inner()
             {
-                int i = 0;
-                string stringtodeserialize = "{";
-                foreach (string s in fieldstodeserialize)
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                string commandText = CreateDatabaseCommand(
+                    selectexp,
+                    tablename,
+                    where.whereexp,
+                    sortexp,
+                    offset,
+                    limit);
+
+                using var command = new NpgsqlCommand(commandText, conn);
+                command.AddPGParameters(where.whereparameters);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+
+                int count = 0;
+                while (await dr.ReadAsync())
                 {
-                    stringtodeserialize = $"{stringtodeserialize}\"{s}\":{dr[i].ToString()},";
-                    i++;
+                    int i = 0;
+                    string stringtodeserialize = "{";
+                    foreach (string s in fieldstodeserialize)
+                    {
+                        stringtodeserialize = $"{stringtodeserialize}\"{s}\":{dr[i].ToString()},";
+                        i++;
+                    }
+                    stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
+                    stringtodeserialize = stringtodeserialize + "}";
+
+                    var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
+
+                    yield return data;
+
+                    count++;
                 }
-                stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
-                stringtodeserialize = stringtodeserialize + "}";
 
-                var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
-
-                yield return data;
-
-                count++;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Data queried {count} Results");
             }
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error :" + ex);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Data queried {count} Results");
-            //}
-            //catch (DbException ex)
-            //{
-            //    Console.ForegroundColor = ConsoleColor.Red;
-            //    Console.WriteLine("Error :" + ex);
-
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         /// <summary>
@@ -832,43 +883,47 @@ namespace Helper
         /// <param name="limit"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static async IAsyncEnumerable<T> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(
+        public static IAsyncEnumerable<T> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             string sortexp, int limit, int? offset, string language,
-            Func<V, string, T> transformer, [EnumeratorCancellation] CancellationToken cancellationToken)
+            Func<V, string, T> transformer, CancellationToken cancellationToken)
         {
-            //try
-            //{
-            using var conn = await connectionFactory.GetConnection(cancellationToken);
-            //CultureInfo myculture = new CultureInfo("en");
-
-            string commandText = CreateDatabaseCommand(
-                selectexp,
-                tablename,
-                where.whereexp,
-                sortexp,
-                offset,
-                limit);
-
-            using var command = new NpgsqlCommand(commandText, conn);
-            command.AddPGParameters(where.whereparameters);
-
-            using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
-
-            while (await dr.ReadAsync())
+            async IAsyncEnumerable<T> inner()
             {
-                var pgdata = JsonConvert.DeserializeObject<V>(dr[1].ToString() ?? "");
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                //CultureInfo myculture = new CultureInfo("en");
 
-                var transformeddata = transformer(pgdata, language);
+                string commandText = CreateDatabaseCommand(
+                    selectexp,
+                    tablename,
+                    where.whereexp,
+                    sortexp,
+                    offset,
+                    limit);
 
-                yield return transformeddata;
+                using var command = new NpgsqlCommand(commandText, conn);
+                command.AddPGParameters(where.whereparameters);
+
+                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+
+                while (await dr.ReadAsync())
+                {
+                    var pgdata = JsonConvert.DeserializeObject<V>(dr[1].ToString() ?? "");
+
+                    var transformeddata = transformer(pgdata, language);
+
+                    yield return transformeddata;
+                }
             }
-            //}
-            //catch (DbException ex)
-            //{
-            //    throw new PostGresSQLHelperException(ex);
-            //}
+            try
+            {
+                return inner();
+            }
+            catch (DbException ex)
+            {
+                throw new PostGresSQLHelperException(ex);
+            }
         }
 
         #endregion       
