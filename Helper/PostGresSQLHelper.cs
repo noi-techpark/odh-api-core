@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1028,7 +1030,8 @@ namespace Helper
             return resultstr;
         }
 
-        public static string GetResultJson<T>(int pagenumber, int totalpages, int totalcount, string? seed, IEnumerable<T> data)
+        public static string GetResultJson<T>(
+            int pagenumber, int totalpages, int totalcount, string? seed, IEnumerable<T> data)
         {
             return JsonConvert.SerializeObject(new
             {
@@ -1036,7 +1039,10 @@ namespace Helper
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
                 Seed = seed,
-                Items = data
+                Items =
+                    (typeof(T) == typeof(string)) ?
+                        data.Select(x => new JRaw(x) as JToken) :
+                        data.Select(x => x != null ? JToken.FromObject(x) : JValue.CreateNull() as JToken)
             });
         }
 
@@ -1055,7 +1061,8 @@ namespace Helper
         }
 
         public static string GetResultJson<T>(
-            int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, IEnumerable<T> data)
+            int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed,
+            IEnumerable<T> data)
         {
             return JsonConvert.SerializeObject(new
             {
@@ -1064,7 +1071,10 @@ namespace Helper
                 CurrentPage = pagenumber,
                 OnlineResults = onlineresults,
                 Seed = seed,
-                Items = data
+                Items =
+                    (typeof(T) == typeof(string)) ?
+                        data.Select(x => new JRaw(x) as JToken) :
+                        data.Select(x => x != null ? JToken.FromObject(x) : JValue.CreateNull() as JToken)
             });
         }
 
@@ -1095,7 +1105,10 @@ namespace Helper
                 OnlineResults = onlineresults,
                 ResultId = resultid,
                 Seed = seed,
-                Items = data
+                Items =
+                    (typeof(T) == typeof(string)) ?
+                        data.Select(x => new JRaw(x) as JToken) :
+                        data.Select(x => x != null ? JToken.FromObject(x) : JValue.CreateNull() as JToken)
             });
         }
 
@@ -1126,7 +1139,10 @@ namespace Helper
                 onlineResults = onlineresults,
                 resultId = resultid,
                 seed,
-                items = data
+                items =
+                    (typeof(T) == typeof(string)) ?
+                        data.Select(x => new JRaw(x) as JToken) :
+                        data.Select(x => x != null ? JToken.FromObject(x) : JValue.CreateNull() as JToken)
             });
         }
 
