@@ -64,7 +64,8 @@ namespace Helper
 
                 using var command = new NpgsqlCommand(commandText, conn);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 while (await dr.ReadAsync(cancellationToken))
                 {
@@ -102,7 +103,8 @@ namespace Helper
                 using var command = new NpgsqlCommand($"SELECT {selectexp} FROM {tablename} WHERE id LIKE @id", conn);
                 command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 string result = "";
                 while (await dr.ReadAsync(cancellationToken))
@@ -141,7 +143,8 @@ namespace Helper
 
                 using var command = new NpgsqlCommand(commandText, conn);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 while (await dr.ReadAsync(cancellationToken))
                 {
@@ -202,7 +205,8 @@ namespace Helper
 
                 using var command = new NpgsqlCommand(commandText, conn);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 while (await dr.ReadAsync())
                 {
@@ -258,7 +262,8 @@ namespace Helper
 
                 using var command = new NpgsqlCommand(commandText, conn);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 while (await dr.ReadAsync(cancellationToken))
                 {
@@ -303,7 +308,8 @@ namespace Helper
 
                 using var command = new NpgsqlCommand(commandText, conn);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 int count = 0;
                 while (await dr.ReadAsync(cancellationToken))
@@ -355,7 +361,8 @@ namespace Helper
                 using var command = new NpgsqlCommand($"SELECT * FROM {tablename} WHERE id LIKE @id", conn);
                 command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 int count = 0;
                 while (await dr.ReadAsync())
@@ -403,7 +410,8 @@ namespace Helper
 
                 using var command = new NpgsqlCommand(commandText, conn);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 int count = 0;
                 while (await dr.ReadAsync(cancellationToken))
@@ -456,7 +464,8 @@ namespace Helper
 
                 using var command = new NpgsqlCommand(commandText, conn);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 int count = 0;
                 while (await dr.ReadAsync())
@@ -591,7 +600,7 @@ namespace Helper
 
                 command.AddPGParameters(where.whereparameters);
 
-                long count = (long)await command.ExecuteScalarAsync();
+                long count = (long)await command.ExecuteScalarAsync(cancellationToken);
 
                 return count;
             }
@@ -623,7 +632,8 @@ namespace Helper
                 using var command = new NpgsqlCommand(commandText, conn);
                 command.AddPGParameters(where.whereparameters);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 while (await dr.ReadAsync(cancellationToken))
                 {
@@ -664,7 +674,8 @@ namespace Helper
                 using var command = new NpgsqlCommand(commandText, conn);
                 command.AddPGParameters(where.whereparameters);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 while (await dr.ReadAsync())
                 {
@@ -707,7 +718,8 @@ namespace Helper
                 using var command = new NpgsqlCommand(commandText, conn);
                 command.AddPGParameters(where.whereparameters);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 while (await dr.ReadAsync())
                 {
@@ -776,7 +788,8 @@ namespace Helper
                 using var command = new NpgsqlCommand(commandText, conn);
                 command.AddPGParameters(where.whereparameters);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 int count = 0;
                 while (await dr.ReadAsync(cancellationToken))
@@ -833,7 +846,8 @@ namespace Helper
                 using var command = new NpgsqlCommand(commandText, conn);
                 command.AddPGParameters(where.whereparameters);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 int count = 0;
                 while (await dr.ReadAsync(cancellationToken))
@@ -904,7 +918,8 @@ namespace Helper
                 using var command = new NpgsqlCommand(commandText, conn);
                 command.AddPGParameters(where.whereparameters);
 
-                using NpgsqlDataReader dr = (NpgsqlDataReader)await command.ExecuteReaderAsync();
+                using NpgsqlDataReader dr =
+                    (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 while (await dr.ReadAsync(cancellationToken))
                 {
@@ -948,7 +963,8 @@ namespace Helper
                 command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
                 command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
 
-                int affectedrows = await command.ExecuteNonQueryAsync();
+                int affectedrows =
+                    await command.ExecuteNonQueryAsync(cancellationToken);
 
                 return affectedrows.ToString();
             }
@@ -969,7 +985,7 @@ namespace Helper
                 command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
                 command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
 
-                int affectedrows = await command.ExecuteNonQueryAsync();
+                int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
 
                 return affectedrows.ToString();
             }
@@ -1003,7 +1019,7 @@ namespace Helper
                     command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
-                    int affectedrows = await command.ExecuteNonQueryAsync();
+                    int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
 
                     return affectedrows.ToString();
                 }
@@ -1025,7 +1041,7 @@ namespace Helper
                     command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
-                    int affectedrows = await command.ExecuteNonQueryAsync();
+                    int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
 
                     return affectedrows.ToString();
                 }
@@ -1056,7 +1072,7 @@ namespace Helper
                     using var command = new NpgsqlCommand($"DELETE FROM {tablename} WHERE id = @id", conn);
                     command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, idvalue);
 
-                    int affectedrows = await command.ExecuteNonQueryAsync();
+                    int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
 
                     return affectedrows.ToString();
                 }
