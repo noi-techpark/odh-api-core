@@ -791,8 +791,7 @@ namespace Helper
             }
             try
             {
-                var enumerable = inner();
-                return default;
+                return inner();
             }
             catch (DbException ex)
             {
