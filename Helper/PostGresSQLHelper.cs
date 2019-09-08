@@ -1032,6 +1032,7 @@ namespace Helper
 
         public static string GetResultJson<T>(
             int pagenumber, int totalpages, int totalcount, string? seed, IEnumerable<T> data)
+            where T : notnull
         {
             return JsonConvert.SerializeObject(new
             {
@@ -1039,10 +1040,11 @@ namespace Helper
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
                 Seed = seed,
-                Items =
-                    (typeof(T) == typeof(string)) ?
-                        data.Select(x => new JRaw(x) as JToken) :
-                        data.Select(x => x != null ? JToken.FromObject(x) : JValue.CreateNull() as JToken)
+                Items = data switch
+                {
+                    IEnumerable<string> xs => xs.Select(x => new JRaw(x)),
+                    _ => data.Select(x => JToken.FromObject(x))
+                }
             });
         }
 
@@ -1063,6 +1065,7 @@ namespace Helper
         public static string GetResultJson<T>(
             int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed,
             IEnumerable<T> data)
+            where T : notnull
         {
             return JsonConvert.SerializeObject(new
             {
@@ -1071,10 +1074,11 @@ namespace Helper
                 CurrentPage = pagenumber,
                 OnlineResults = onlineresults,
                 Seed = seed,
-                Items =
-                    (typeof(T) == typeof(string)) ?
-                        data.Select(x => new JRaw(x) as JToken) :
-                        data.Select(x => x != null ? JToken.FromObject(x) : JValue.CreateNull() as JToken)
+                Items = data switch
+                {
+                    IEnumerable<string> xs => xs.Select(x => new JRaw(x)),
+                    _ => data.Select(x => JToken.FromObject(x))
+                }
             });
         }
 
@@ -1096,6 +1100,7 @@ namespace Helper
         public static string GetResultJson<T>(
             int pagenumber, int totalpages, int totalcount, int onlineresults,
             string resultid, string? seed, IEnumerable<T> data)
+            where T : notnull
         {
             return JsonConvert.SerializeObject(new
             {
@@ -1105,10 +1110,11 @@ namespace Helper
                 OnlineResults = onlineresults,
                 ResultId = resultid,
                 Seed = seed,
-                Items =
-                    (typeof(T) == typeof(string)) ?
-                        data.Select(x => new JRaw(x) as JToken) :
-                        data.Select(x => x != null ? JToken.FromObject(x) : JValue.CreateNull() as JToken)
+                Items = data switch
+                {
+                    IEnumerable<string> xs => xs.Select(x => new JRaw(x)),
+                    _ => data.Select(x => JToken.FromObject(x))
+                }
             });
         }
 
@@ -1130,6 +1136,7 @@ namespace Helper
         public static string GetResultJsonLowercase<T>(
             int pagenumber, int totalpages, int totalcount, int onlineresults,
             string resultid, string seed, IEnumerable<T> data)
+            where T : notnull
         {
             return JsonConvert.SerializeObject(new
             {
@@ -1139,10 +1146,11 @@ namespace Helper
                 onlineResults = onlineresults,
                 resultId = resultid,
                 seed,
-                items =
-                    (typeof(T) == typeof(string)) ?
-                        data.Select(x => new JRaw(x) as JToken) :
-                        data.Select(x => x != null ? JToken.FromObject(x) : JValue.CreateNull() as JToken)
+                items = data switch
+                {
+                    IEnumerable<string> xs => xs.Select(x => new JRaw(x)),
+                    _ => data.Select(x => JToken.FromObject(x))
+                }
             });
         }
 
