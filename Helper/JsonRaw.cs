@@ -31,9 +31,7 @@ namespace Helper
 
         public override string? ToString()
         {
-            // Should throw an exception?
-            Trace.TraceWarning("ToString on JsonRaw shouldn't be called, there is somewhere an implicit ToString() happening (maybe from a manual JSON serialization).");
-            return Value;
+            throw new InvalidOperationException("ToString on JsonRaw shouldn't be called, there is somewhere an implicit ToString() happening (maybe from a manual JSON serialization).");
         }
     }
 }
