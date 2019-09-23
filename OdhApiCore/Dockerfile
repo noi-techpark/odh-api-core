@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0.0-preview8-alpine3.9 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0.0-alpine3.9 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview8-alpine3.9 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0.100-alpine3.9 AS build
 WORKDIR /src
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj
