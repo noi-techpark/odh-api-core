@@ -33,9 +33,13 @@ namespace OdhApiCore.Controllers
     public abstract class OdhController : ControllerBase
     {
         private readonly IPostGreSQLConnectionFactory connectionFactory;
+        private readonly ISettings settings;
 
-        public OdhController(IPostGreSQLConnectionFactory connectionFactory)
+        protected bool CheckCC0License => settings.CheckCC0License;
+
+        public OdhController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
         {
+            this.settings = settings;
             this.connectionFactory = connectionFactory;
         }
 

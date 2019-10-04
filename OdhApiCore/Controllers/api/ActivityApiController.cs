@@ -17,9 +17,9 @@ namespace OdhApiCore.Controllers
     public class ActivityController : OdhController
     {
         // Only for test purposes
-        private static readonly bool CheckCC0 = false;
 
-        public ActivityController(IPostGreSQLConnectionFactory connectionFactory) : base(connectionFactory)
+        public ActivityController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
+            : base(settings, connectionFactory)
         {
         }
 
@@ -392,7 +392,7 @@ namespace OdhApiCore.Controllers
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
-                var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0));
+                var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0License));
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber,
@@ -466,7 +466,7 @@ namespace OdhApiCore.Controllers
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
-                var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0));
+                var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0License));
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber,
