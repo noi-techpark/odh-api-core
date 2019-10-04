@@ -25,7 +25,7 @@ namespace Helper
                             obj.Properties()
                                .Where(x =>
                                     // Check if property name is a language identifier
-                                    // and if it is them same as the provided language argument
+                                    // and if it is the same as the provided language argument
                                     !(IsLanguageKey(x.Name) && x.Name != language))
                                .Select(Walk)),
                     JProperty prop =>
