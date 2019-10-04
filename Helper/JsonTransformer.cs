@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Helper
 {
@@ -71,6 +72,20 @@ namespace Helper
                     _ => token
                 };
             return Walk(token);
+        }
+        public static JsonRaw TransformRawData(this JsonRaw raw, string? language, bool checkCC0)
+        {
+            if (language != null || checkCC0)
+            {
+                var token = JToken.Parse(raw.Value);
+                if (language != null) token = FilterByLanguage(token, language);
+                if (checkCC0) token = FilterImagesByCC0License(token);
+                return new JsonRaw(token.ToString(Formatting.Indented));
+            }
+            else
+            {
+                return raw;
+            }
         }
     }
 }

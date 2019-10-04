@@ -16,6 +16,9 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
     {
+        // Only for test purposes
+        private static readonly bool CheckCC0 = false;
+
         public ActivityController(IPostGreSQLConnectionFactory connectionFactory) : base(connectionFactory)
         {
         }
@@ -57,6 +60,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity")]
         public async Task<IActionResult> GetActivityList(
+            string? language = null,
             int pagenumber = 1,
             int pagesize = 10,
             string? activitytype = "1023",
@@ -85,10 +89,10 @@ namespace OdhApiCore.Controllers
                 distancefilter == null && altitudefilter == null && durationfilter == null &&
                 highlight == null && odhtagfilter == null && odhactive == null && active == null)
                 return await GetPaged(
-                    activitytype, pagenumber, pagesize, seed, geosearchresult, cancellationToken);
+                    language, activitytype, pagenumber, pagesize, seed, geosearchresult, cancellationToken);
             else
                 return await GetFiltered(
-                    pagenumber, pagesize, activitytype, subtype, idlist, locfilter, areafilter, distancefilter,
+                    language, pagenumber, pagesize, activitytype, subtype, idlist, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlight, difficultyfilter, active, odhactive, odhtagfilter, seed,
                     geosearchresult, cancellationToken);
         }
@@ -341,7 +345,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("Paged/{activitytype}/{pagenumber}/{pagesize}/{seed?}")]
         public Task<IActionResult> GetPaged(
-            string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult,
+            string? language, string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
@@ -388,12 +392,14 @@ namespace OdhApiCore.Controllers
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
+                var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0));
+
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber,
                     totalpages,
                     totalcount,
                     myseed,
-                    await dataTask.ToListAsync());
+                    await data.ToListAsync());
             });
         }
 
@@ -421,7 +427,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("Filtered/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed?}")]
         public Task<IActionResult> GetFiltered(
-            int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter,
+            string? language, int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter,
             string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive,
             string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
@@ -460,12 +466,14 @@ namespace OdhApiCore.Controllers
                 int totalcount = (int)count;
                 int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
+                var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0));
+
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber,
                     totalpages,
                     totalcount,
                     myseed,
-                    await dataTask.ToListAsync());
+                    await data.ToListAsync());
             });
         }
 
