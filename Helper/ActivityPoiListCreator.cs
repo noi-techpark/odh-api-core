@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Helper
 {
@@ -13,7 +10,7 @@ namespace Helper
         {
             List<string> typeids = new List<string>();
 
-            if (typefilter != "null")
+            if (typefilter != null)
             {
                 if (typefilter.Substring(typefilter.Length - 1, 1) == ",")
                     typefilter = typefilter.Substring(0, typefilter.Length - 1);
@@ -33,7 +30,7 @@ namespace Helper
         {
             List<string> typeids = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null)
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
                     subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
@@ -53,7 +50,7 @@ namespace Helper
         {
             List<string> typeids = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null)
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
                     subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
@@ -285,7 +282,7 @@ namespace Helper
         {
             List<string> typeids = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null)
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
                     subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
@@ -636,7 +633,7 @@ namespace Helper
         {
             List<string> typeids = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null)
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
                     subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
@@ -853,7 +850,7 @@ namespace Helper
         {
             List<string> typeids = new List<string>();
 
-            if (poitypefilter != "null")
+            if (poitypefilter != null)
             {
                 if (poitypefilter.Substring(poitypefilter.Length - 1, 1) == ",")
                     poitypefilter = poitypefilter.Substring(0, poitypefilter.Length - 1);
@@ -1204,10 +1201,9 @@ namespace Helper
         {
             List<string> typelist = new List<string>();
 
-            if (typefilter != "null")
+            if (typefilter != null)
             {
-                int typefilterint = 0;
-                if (int.TryParse(typefilter, out typefilterint))
+                if (int.TryParse(typefilter, out int typefilterint))
                 {
                     ActivityTypeFlag mypoitypeflag = (ActivityTypeFlag)typefilterint;
 
@@ -1225,14 +1221,13 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateActivitySubTypefromFlag(string typefiltertext, string subtypefilter)
+        public static List<string> CreateActivitySubTypefromFlag(string typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null)
             {
-                long typefilterint = 0;
-                if (long.TryParse(subtypefilter, out typefilterint))
+                if (long.TryParse(subtypefilter, out long typefilterint))
                 {
 
                     switch (typefiltertext)
@@ -1311,10 +1306,9 @@ namespace Helper
         {
             List<string> typelist = new List<string>();
 
-            if (typefilter != "null")
+            if (typefilter != null)
             {
-                int typefilterint = 0;
-                if (int.TryParse(typefilter, out typefilterint))
+                if (int.TryParse(typefilter, out int typefilterint))
                 {
                     PoiTypeFlag mypoitypeflag = (PoiTypeFlag)typefilterint;
 
@@ -1333,14 +1327,13 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreatePoiSubTypefromFlag(string typefiltertext, string subtypefilter)
+        public static List<string> CreatePoiSubTypefromFlag(string typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null)
             {
-                long typefilterint = 0;
-                if (long.TryParse(subtypefilter, out typefilterint))
+                if (long.TryParse(subtypefilter, out long typefilterint))
                 {
 
                     switch (typefiltertext)
@@ -1418,10 +1411,9 @@ namespace Helper
         {
             List<string> typelist = new List<string>();
 
-            if (typefilter != "null")
+            if (typefilter != null)
             {
-                int typefilterint = 0;
-                if (int.TryParse(typefilter, out typefilterint))
+                if (int.TryParse(typefilter, out int typefilterint))
                 {
                     SmgPoiTypeFlag mypoitypeflag = (SmgPoiTypeFlag)typefilterint;
 
@@ -1444,10 +1436,9 @@ namespace Helper
         {
             List<string> subtypelist = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null)
             {
-                long typefilterint = 0;
-                if (long.TryParse(subtypefilter, out typefilterint))
+                if (long.TryParse(subtypefilter, out long typefilterint))
                 {
 
                     switch (typefiltertext)
@@ -1497,10 +1488,9 @@ namespace Helper
         {
             List<string> subtypelist = new List<string>();
 
-            if (poitypefilter != "null")
+            if (poitypefilter != null)
             {
-                long typefilterint = 0;
-                if (long.TryParse(poitypefilter, out typefilterint))
+                if (long.TryParse(poitypefilter, out long typefilterint))
                 {
 
                     switch (subtypefilter)

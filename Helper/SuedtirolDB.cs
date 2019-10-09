@@ -1,10 +1,5 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Helper
 {
@@ -18,8 +13,8 @@ namespace Helper
     //Id (LTSRID) und Shortname
     public interface IIdentifiable
     {
-        string Id { get; set; }
-        string Shortname { get; set; }
+        string? Id { get; set; }
+        string? Shortname { get; set; }
     }
 
     public interface IActivateable
@@ -29,44 +24,44 @@ namespace Helper
 
     public interface ILanguage
     {
-        string Language { get; set; }
+        string? Language { get; set; }
     }
 
     public interface IHasLanguage
     {
-        ICollection<string> HasLanguage { get; set; }
+        ICollection<string>? HasLanguage { get; set; }
     }
 
     public interface IDetailInfos
     {
-        string Header { get; set; }
-        string IntroText { get; set; }
-        string BaseText { get; set; }
-        string Title { get; set; }
+        string? Header { get; set; }
+        string? IntroText { get; set; }
+        string? BaseText { get; set; }
+        string? Title { get; set; }
 
-        string MetaTitle { get; set; }
-        string MetaDesc { get; set; }
+        string? MetaTitle { get; set; }
+        string? MetaDesc { get; set; }
 
-        string AdditionalText { get; set; }
-        string GetThereText { get; set; }
+        string? AdditionalText { get; set; }
+        string? GetThereText { get; set; }
     }
 
     public interface IContactInfos
     {
-        string Address { get; set; }
-        string City { get; set; }
-        string ZipCode { get; set; }
-        string CountryCode { get; set; }
-        string CountryName { get; set; }
-        string Surname { get; set; }
-        string Givenname { get; set; }
-        string NamePrefix { get; set; }
-        string Email { get; set; }
-        string Phonenumber { get; set; }
-        string Faxnumber { get; set; }
-        string Url { get; set; }
-        string Vat { get; set; }
-        string Tax { get; set; }
+        string? Address { get; set; }
+        string? City { get; set; }
+        string? ZipCode { get; set; }
+        string? CountryCode { get; set; }
+        string? CountryName { get; set; }
+        string? Surname { get; set; }
+        string? Givenname { get; set; }
+        string? NamePrefix { get; set; }
+        string? Email { get; set; }
+        string? Phonenumber { get; set; }
+        string? Faxnumber { get; set; }
+        string? Url { get; set; }
+        string? Vat { get; set; }
+        string? Tax { get; set; }
     }
 
     public interface IContactInfosAware
@@ -79,11 +74,11 @@ namespace Helper
     {
         //ImageDESC nur als Icollection??? zuerts LTS Schnittstellen anschauen
 
-        string ImageName { get; set; }
-        string ImageUrl { get; set; }
+        string? ImageName { get; set; }
+        string? ImageUrl { get; set; }
         int Width { get; set; }
         int Height { get; set; }
-        string ImageSource { get; set; }
+        string? ImageSource { get; set; }
 
         IDictionary<string, string> ImageTitle { get; set; }
         IDictionary<string, string> ImageDesc { get; set; }
@@ -97,32 +92,32 @@ namespace Helper
     public interface IImageGalleryAware
     {
         //brauchts nix?
-        ICollection<ImageGallery> ImageGallery { get; set; }
+        ICollection<ImageGallery>? ImageGallery { get; set; }
     }
 
     public interface ILocationInfoAware
     {
-        RegionInfo RegionInfo { get; set; }
-        TvInfo TvInfo { get; set; }
-        MunicipalityInfo MunicipalityInfo { get; set; }
-        DistrictInfo DistrictInfo { get; set; }
+        RegionInfo? RegionInfo { get; set; }
+        TvInfo? TvInfo { get; set; }
+        MunicipalityInfo? MunicipalityInfo { get; set; }
+        DistrictInfo? DistrictInfo { get; set; }
     }
 
     public interface IGpsInfo
     {
-        string Gpstype { get; set; }
+        string? Gpstype { get; set; }
         double Latitude { get; set; }
         double Longitude { get; set; }
         Nullable<double> Altitude { get; set; }
-        string AltitudeUnitofMeasure { get; set; }
+        string? AltitudeUnitofMeasure { get; set; }
     }
 
     public interface IGpsTrack
     {
-        string Id { get; set; }
+        string? Id { get; set; }
         IDictionary<string, string> GpxTrackDesc { get; set; }
-        string GpxTrackUrl { get; set; }
-        string Type { get; set; }
+        string? GpxTrackUrl { get; set; }
+        string? Type { get; set; }
     }
 
     public interface IGpsPolygon
@@ -134,7 +129,7 @@ namespace Helper
     public interface IGpsPolygonAware
     {
         //brauchts nix?
-        ICollection<GpsPolygon> GpsPolygon { get; set; }
+        ICollection<GpsPolygon>? GpsPolygon { get; set; }
     }
 
     public interface IGeoDataInfoAware
@@ -144,22 +139,22 @@ namespace Helper
         double DistanceDuration { get; set; }
         double DistanceLength { get; set; }
 
-        ICollection<GpsInfo> GpsInfo { get; set; }
-        ICollection<GpsTrack> GpsTrack { get; set; }
+        ICollection<GpsInfo>? GpsInfo { get; set; }
+        ICollection<GpsTrack>? GpsTrack { get; set; }
     }
 
     public interface IWebcam
     {
-        string WebcamId { get; set; }
+        string? WebcamId { get; set; }
         IDictionary<string, string> Webcamname { get; set; }
-        GpsInfo GpsInfo { get; set; }
+        GpsInfo? GpsInfo { get; set; }
 
-        string Webcamurl { get; set; }
+        string? Webcamurl { get; set; }
     }
 
     public interface IWebcamAware
     {
-        ICollection<Webcam> Webcam { get; set; }
+        ICollection<Webcam>? Webcam { get; set; }
     }
 
     public interface IOperationSchedules
@@ -170,7 +165,7 @@ namespace Helper
         DateTime Stop { get; set; }
         bool? ClosedonPublicHolidays { get; set; }
 
-        ICollection<OperationScheduleTime> OperationScheduleTime { get; set; }
+        ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
     }
 
     public interface IOperationScheduleTime
@@ -190,18 +185,18 @@ namespace Helper
 
     public interface ISmgTags
     {
-        ICollection<string> SmgTags { get; set; }
+        ICollection<string>? SmgTags { get; set; }
         //string Id { get; set; }
         //IDictionary<string, string> TagDescription { get; set; }
     }
 
     public interface IRatings
     {
-        string Stamina { get; set; }
-        string Experience { get; set; }
-        string Landscape { get; set; }
-        string Difficulty { get; set; }
-        string Technique { get; set; }
+        string? Stamina { get; set; }
+        string? Experience { get; set; }
+        string? Landscape { get; set; }
+        string? Difficulty { get; set; }
+        string? Technique { get; set; }
     }
 
     public interface ISmgActive
@@ -211,10 +206,10 @@ namespace Helper
 
     public interface ISuedtirolType
     {
-        string Id { get; set; }
-        string Key { get; set; }
-        string Entity { get; set; }
-        string TypeParent { get; set; }
+        string? Id { get; set; }
+        string? Key { get; set; }
+        string? Entity { get; set; }
+        string? TypeParent { get; set; }
         int Level { get; set; }
         IDictionary<string, string> TypeNames { get; set; }
     }
@@ -232,10 +227,10 @@ namespace Helper
     public interface IAdditionalPoiInfos
     {
         //string Difficulty { get; set; }
-        string Novelty { get; set; }
-        string MainType { get; set; }
-        string SubType { get; set; }
-        string PoiType { get; set; }
+        string? Novelty { get; set; }
+        string? MainType { get; set; }
+        string? SubType { get; set; }
+        string? PoiType { get; set; }
     }
 
     public interface IActivityStatus
@@ -263,18 +258,18 @@ namespace Helper
 
     public interface IEventAdditionalInfos
     {
-        string Mplace { get; set; }
-        string Reg { get; set; }
-        string Location { get; set; }
+        string? Mplace { get; set; }
+        string? Reg { get; set; }
+        string? Location { get; set; }
     }
 
     public interface IEventPrice
     {
         double Price { get; set; }
-        string Type { get; set; }
-        string Pstd { get; set; }
-        string ShortDesc { get; set; }
-        string Description { get; set; }
+        string? Type { get; set; }
+        string? Pstd { get; set; }
+        string? ShortDesc { get; set; }
+        string? Description { get; set; }
     }
 
     public interface IEventDate
@@ -311,10 +306,10 @@ namespace Helper
         public IDictionary<string, DetailThemed> DetailThemed { get; set; }
 
 
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
-        public ICollection<string> SkiareaIds { get; set; }
+        public ICollection<string>? SkiareaIds { get; set; }
     }
 
     public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware
@@ -325,84 +320,84 @@ namespace Helper
         }
 
         public IDictionary<string, DetailThemed> DetailThemed { get; set; }
-        public ICollection<string> DistrictIds { get; set; }
-        public ICollection<string> TourismvereinIds { get; set; }
-        public ICollection<string> RegionIds { get; set; }
+        public ICollection<string>? DistrictIds { get; set; }
+        public ICollection<string>? TourismvereinIds { get; set; }
+        public ICollection<string>? RegionIds { get; set; }
 
 
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
     }
 
     //NEW Erlebnisräume
     public class ExperienceArea : BaseInfos, IImageGalleryAware
     {
-        public ICollection<string> DistrictIds { get; set; }
-        public ICollection<string> TourismvereinIds { get; set; }
+        public ICollection<string>? DistrictIds { get; set; }
+        public ICollection<string>? TourismvereinIds { get; set; }
 
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public bool VisibleInSearch { get; set; }
     }
 
     public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware
     {
-        public string RegionId { get; set; }
+        public string? RegionId { get; set; }
 
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
-        public ICollection<string> SkiareaIds { get; set; }
+        public ICollection<string>? SkiareaIds { get; set; }
     }
 
     public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware
     {
-        public string Plz { get; set; }
+        public string? Plz { get; set; }
 
-        public string RegionId { get; set; }
-        public string TourismvereinId { get; set; }
-        public string SiagId { get; set; }
+        public string? RegionId { get; set; }
+        public string? TourismvereinId { get; set; }
+        public string? SiagId { get; set; }
 
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
         public int Inhabitants { get; set; }
-        public string IstatNumber { get; set; }
+        public string? IstatNumber { get; set; }
     }
 
     public class District : BaseInfos, IImageGalleryAware, IWebcamAware
     {
         public Nullable<bool> IsComune { get; set; }
-        public string RegionId { get; set; }
-        public string TourismvereinId { get; set; }
-        public string MunicipalityId { get; set; }
+        public string? RegionId { get; set; }
+        public string? TourismvereinId { get; set; }
+        public string? MunicipalityId { get; set; }
 
-        public string SiagId { get; set; }
+        public string? SiagId { get; set; }
 
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
     }
 
     public class Area : IIdentifiable, IActivateable
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
 
-        public string Shortname { get; set; }
-        public string CustomId { get; set; }
+        public string? Shortname { get; set; }
+        public string? CustomId { get; set; }
 
-        public string RegionId { get; set; }
-        public string TourismvereinId { get; set; }
-        public string MunicipalityId { get; set; }
+        public string? RegionId { get; set; }
+        public string? TourismvereinId { get; set; }
+        public string? MunicipalityId { get; set; }
 
-        public string SkiAreaID { get; set; }
+        public string? SkiAreaID { get; set; }
 
-        public string GID { get; set; }
-        public string LtsID { get; set; }
-        public string AreaType { get; set; }
+        public string? GID { get; set; }
+        public string? LtsID { get; set; }
+        public string? AreaType { get; set; }
     }
 
     public class GeneralGroup : BaseInfos
@@ -417,16 +412,16 @@ namespace Helper
             SkiRegionName = new Dictionary<string, string>();
         }
 
-        public string SkiRegionId { get; set; }
-        public string SkiAreaMapURL { get; set; }
-        public string TotalSlopeKm { get; set; }
+        public string? SkiRegionId { get; set; }
+        public string? SkiAreaMapURL { get; set; }
+        public string? TotalSlopeKm { get; set; }
 
         //Neu
-        public string SlopeKmBlue { get; set; }
-        public string SlopeKmRed { get; set; }
-        public string SlopeKmBlack { get; set; }
+        public string? SlopeKmBlue { get; set; }
+        public string? SlopeKmRed { get; set; }
+        public string? SlopeKmBlack { get; set; }
 
-        public string LiftCount { get; set; }
+        public string? LiftCount { get; set; }
 
         //Neu Altimeter von bis
         public Nullable<int> AltitudeFrom { get; set; }
@@ -435,43 +430,43 @@ namespace Helper
 
         public IDictionary<string, string> SkiRegionName { get; set; }
 
-        public ICollection<string> AreaId { get; set; }
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<string>? AreaId { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
 
         //Folsch
         //public OperationSchedule OperationSchedule { get; set; }
-        public ICollection<OperationSchedule> OperationSchedule { get; set; }
+        public ICollection<OperationSchedule>? OperationSchedule { get; set; }
 
-        public ICollection<string> TourismvereinIds { get; set; }
-        public ICollection<string> RegionIds { get; set; }
+        public ICollection<string>? TourismvereinIds { get; set; }
+        public ICollection<string>? RegionIds { get; set; }
 
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
     }
 
     public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IWebcamAware
     {
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
     }
 
     public class Naturepark : BaseInfos, IImageGalleryAware, IContactInfosAware, IWebcamAware
     {
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
 
-        public ICollection<Webcam> Webcam { get; set; }
-        public ICollection<GpsPolygon> GpsPolygon { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
     }
 
     public class Christkindlmarkt : BaseInfos, IImageGalleryAware, IContactInfosAware, IWebcamAware
     {
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe        
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
 
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
     }
 
     public class SmgTags : IIdentifiable
@@ -482,13 +477,13 @@ namespace Helper
             ValidForEntity = new List<string>();
         }
 
-        public string Id { get; set; }
-        public string Shortname { get; set; }
+        public string? Id { get; set; }
+        public string? Shortname { get; set; }
 
         public IDictionary<string, string> TagName { get; set; }
         public ICollection<string> ValidForEntity { get; set; }
 
-        public string MainEntity { get; set; }
+        public string? MainEntity { get; set; }
     }
 
     #endregion
@@ -501,9 +496,9 @@ namespace Helper
 
     public class Marketinggroup : IIdentifiable
     {
-        public string Id { get; set; }
-        public string Shortname { get; set; }
-        public string Beschreibung { get; set; }
+        public string? Id { get; set; }
+        public string? Shortname { get; set; }
+        public string? Beschreibung { get; set; }
     }
 
     #endregion
@@ -575,7 +570,7 @@ namespace Helper
     //NEU Hauptcontainer für LTS POIs alle anderen werden obsolet!
     public class LTSPoi : PoiBaseInfos
     {
-        public List<LTSTags> LTSTags { get; set; }
+        public List<LTSTags>? LTSTags { get; set; }
     }
 
     //For PG Activities & Pois
@@ -599,7 +594,7 @@ namespace Helper
 
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
 
-        public List<LTSTags> LTSTags { get; set; }
+        public List<LTSTags>? LTSTags { get; set; }
     }
 
     //End for PG
@@ -652,30 +647,30 @@ namespace Helper
             //LinkedAppSuggestions = new Dictionary<string, string>();
         }
 
-        public string CustomId { get; set; }
+        public string? CustomId { get; set; }
 
 
-        public ICollection<Webcam> Webcam { get; set; }
+        public ICollection<Webcam>? Webcam { get; set; }
 
         public IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }
-        public ICollection<string> PoiServices { get; set; }
+        public ICollection<string>? PoiServices { get; set; }
 
         //Neu        
-        public string Source { get; set; }
-        public string SyncSourceInterface { get; set; }
-        public string SyncUpdateMode { get; set; }
+        public string? Source { get; set; }
+        public string? SyncSourceInterface { get; set; }
+        public string? SyncUpdateMode { get; set; }
 
         public int AgeFrom { get; set; }
         public int AgeTo { get; set; }
 
         //NEW Gastronomy
         public int MaxSeatingCapacity { get; set; }
-        public ICollection<CategoryCodes> CategoryCodes { get; set; }
-        public ICollection<DishRates> DishRates { get; set; }
-        public ICollection<CapacityCeremony> CapacityCeremony { get; set; }
-        public ICollection<Facilities> Facilities { get; set; }
+        public ICollection<CategoryCodes>? CategoryCodes { get; set; }
+        public ICollection<DishRates>? DishRates { get; set; }
+        public ICollection<CapacityCeremony>? CapacityCeremony { get; set; }
+        public ICollection<Facilities>? Facilities { get; set; }
 
-        public ICollection<RelatedContent> RelatedContent { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
 
 
         //NEU LISTE Suggestions
@@ -700,15 +695,15 @@ namespace Helper
 
     public class PoiProperty
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public string? Name { get; set; }
+        public string? Value { get; set; }
     }
 
     public class RelatedContent
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+        public string? Type { get; set; }
     }
 
     public class AppSuggestion
@@ -718,10 +713,10 @@ namespace Helper
             Suggestion = new Dictionary<string, Suggestion>();
         }
 
-        public string Id { get; set; }
-        public string Platform { get; set; }
+        public string? Id { get; set; }
+        public string? Platform { get; set; }
 
-        public List<AppSuggestionValidFor> Validfor { get; set; }
+        public List<AppSuggestionValidFor>? Validfor { get; set; }
 
         public IDictionary<string, Suggestion> Suggestion { get; set; }
 
@@ -729,24 +724,24 @@ namespace Helper
 
     public class AppSuggestionValidFor
     {
-        public string MainEntity { get; set; }
-        public string Type { get; set; }
-        public string Value { get; set; }
+        public string? MainEntity { get; set; }
+        public string? Type { get; set; }
+        public string? Value { get; set; }
     }
 
     public class Suggestion
     {
-        public string Title { get; set; }
-        public string Icon { get; set; }
-        public string Package { get; set; }
-        public string Developer { get; set; }
-        public string Description { get; set; }
+        public string? Title { get; set; }
+        public string? Icon { get; set; }
+        public string? Package { get; set; }
+        public string? Developer { get; set; }
+        public string? Description { get; set; }
     }
 
     public class RatingSources
     {
-        public string Source { get; set; }
-        public string Objectid { get; set; }
+        public string? Source { get; set; }
+        public string? Objectid { get; set; }
     }
 
 
@@ -763,10 +758,10 @@ namespace Helper
             MssResponseShort = new List<MssResponseShort>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public bool Active { get; set; }
-        public string HgvId { get; set; }
-        public string Shortname { get; set; }
+        public string? HgvId { get; set; }
+        public string? Shortname { get; set; }
         public int Units { get; set; }
         public int Beds { get; set; }
         public bool HasApartment { get; set; }
@@ -777,83 +772,83 @@ namespace Helper
         public bool IsAccommodation { get; set; }
         public bool SmgActive { get; set; }
         public bool TVMember { get; set; }
-        public string TourismVereinId { get; set; }
-        public string MainLanguage { get; set; }
+        public string? TourismVereinId { get; set; }
+        public string? MainLanguage { get; set; }
         public DateTime FirstImport { get; set; }
         public DateTime LastChange { get; set; }
-        public string Gpstype { get; set; }
+        public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
-        public string AltitudeUnitofMeasure { get; set; }
+        public string? AltitudeUnitofMeasure { get; set; }
 
-        public string AccoCategoryId { get; set; }
-        public string AccoTypeId { get; set; }
-        public string DistrictId { get; set; }
+        public string? AccoCategoryId { get; set; }
+        public string? AccoTypeId { get; set; }
+        public string? DistrictId { get; set; }
 
-        public ICollection<string> BoardIds { get; set; }
-        public ICollection<string> MarketingGroupIds { get; set; }
-        public ICollection<AccoFeature> Features { get; set; }
+        public ICollection<string>? BoardIds { get; set; }
+        public ICollection<string>? MarketingGroupIds { get; set; }
+        public ICollection<AccoFeature>? Features { get; set; }
 
         //Custom
-        public ICollection<string> BadgeIds { get; set; }
-        public ICollection<string> ThemeIds { get; set; }
-        public ICollection<string> SpecialFeaturesIds { get; set; }
+        public ICollection<string>? BadgeIds { get; set; }
+        public ICollection<string>? ThemeIds { get; set; }
+        public ICollection<string>? SpecialFeaturesIds { get; set; }
 
-        public IDictionary<string, AccoDetail> AccoDetail { get; set; }
-        public ICollection<AccoBookingChannel> AccoBookingChannel { get; set; }
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public IDictionary<string, AccoDetail>? AccoDetail { get; set; }
+        public ICollection<AccoBookingChannel>? AccoBookingChannel { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
 
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
 
         //Gastronomy 
-        public string GastronomyId { get; set; }
-        public ICollection<string> SmgTags { get; set; }
+        public string? GastronomyId { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
 
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
 
         //MSS Result
-        public ICollection<MssResponseShort> MssResponseShort { get; set; }
+        public ICollection<MssResponseShort>? MssResponseShort { get; set; }
     }
 
     public class AccoDetail : ILanguage
     {
-        public string Language { get; set; }
+        public string? Language { get; set; }
 
-        public string Name { get; set; }
-        public string NameAddition { get; set; }
-        public string Street { get; set; }
-        public string Zip { get; set; }
-        public string Phone { get; set; }
-        public string Mobile { get; set; }
-        public string Fax { get; set; }
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
-        public string Email { get; set; }
-        public string Website { get; set; }
-        public string City { get; set; }
-        public string Shortdesc { get; set; }
-        public string Longdesc { get; set; }
+        public string? Name { get; set; }
+        public string? NameAddition { get; set; }
+        public string? Street { get; set; }
+        public string? Zip { get; set; }
+        public string? Phone { get; set; }
+        public string? Mobile { get; set; }
+        public string? Fax { get; set; }
+        public string? Firstname { get; set; }
+        public string? Lastname { get; set; }
+        public string? Email { get; set; }
+        public string? Website { get; set; }
+        public string? City { get; set; }
+        public string? Shortdesc { get; set; }
+        public string? Longdesc { get; set; }
     }
 
     public class AccoFeature
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
     }
 
     public class AccoBookingChannel
     {
-        public string Id { get; set; }
-        public string Pos1ID { get; set; }
-        public string Portalname { get; set; }
-        public string BookingId { get; set; }
+        public string? Id { get; set; }
+        public string? Pos1ID { get; set; }
+        public string? Portalname { get; set; }
+        public string? BookingId { get; set; }
     }
 
     public abstract class TrustYouInfos
     {
-        public string TrustYouID { get; set; }
+        public string? TrustYouID { get; set; }
         public double TrustYouScore { get; set; }
         public int TrustYouResults { get; set; }
         public bool TrustYouActive { get; set; }
@@ -867,24 +862,24 @@ namespace Helper
             AccoRoomDetail = new Dictionary<string, AccoRoomDetail>();
         }
 
-        public string Id { get; set; }
-        public string Shortname { get; set; }
+        public string? Id { get; set; }
+        public string? Shortname { get; set; }
 
-        public string A0RID { get; set; }
+        public string? A0RID { get; set; }
 
-        public string Roomtype { get; set; }
+        public string? Roomtype { get; set; }
 
-        public ICollection<AccoFeature> Features { get; set; }
+        public ICollection<AccoFeature>? Features { get; set; }
         public IDictionary<string, AccoRoomDetail> AccoRoomDetail { get; set; }
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
 
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
 
         //NEU
-        public string LTSId { get; set; }
-        public string HGVId { get; set; }
-        public string Source { get; set; }
-        public string RoomCode { get; set; }
+        public string? LTSId { get; set; }
+        public string? HGVId { get; set; }
+        public string? Source { get; set; }
+        public string? RoomCode { get; set; }
         public Nullable<int> Roommax { get; set; }
         public Nullable<int> Roommin { get; set; }
         public Nullable<int> Roomstd { get; set; }
@@ -894,11 +889,11 @@ namespace Helper
 
     public class AccoRoomDetail : ILanguage
     {
-        public string Language { get; set; }
+        public string? Language { get; set; }
 
-        public string Name { get; set; }
-        public string Longdesc { get; set; }
-        public string Shortdesc { get; set; }
+        public string? Name { get; set; }
+        public string? Longdesc { get; set; }
+        public string? Shortdesc { get; set; }
     }
 
 
@@ -947,8 +942,8 @@ namespace Helper
 
         public int Id { get; set; }
         public DateTime date { get; set; }
-        public string evolutiontitle { get; set; }
-        public string evolution { get; set; }
+        public string? evolutiontitle { get; set; }
+        public string? evolution { get; set; }
 
         public ICollection<Conditions> Conditions { get; set; }
         public ICollection<Forecast> Forecast { get; set; }
@@ -959,11 +954,11 @@ namespace Helper
     public class Conditions
     {
         public DateTime date { get; set; }
-        public string Title { get; set; }
-        public string WeatherCondition { get; set; }
-        public string WeatherImgurl { get; set; }
-        public string Temperatures { get; set; }
-        public string Weatherdesc { get; set; }
+        public string? Title { get; set; }
+        public string? WeatherCondition { get; set; }
+        public string? WeatherImgurl { get; set; }
+        public string? Temperatures { get; set; }
+        public string? Weatherdesc { get; set; }
     }
 
     public class Forecast
@@ -973,42 +968,42 @@ namespace Helper
         public int TempMaxmin { get; set; }
         public int TempMinmax { get; set; }
         public int TempMinmin { get; set; }
-        public string Weatherdesc { get; set; }
-        public string Weathercode { get; set; }
-        public string WeatherImgurl { get; set; }
-        public string Reliability { get; set; }
+        public string? Weatherdesc { get; set; }
+        public string? Weathercode { get; set; }
+        public string? WeatherImgurl { get; set; }
+        public string? Reliability { get; set; }
     }
 
     public class Mountain
     {
         public DateTime date { get; set; }
-        public string Title { get; set; }
-        public string Conditions { get; set; }
-        public string Weatherdesc { get; set; }
-        public string Zerolimit { get; set; }
-        public string MountainImgurl { get; set; }
-        public string Reliability { get; set; }
+        public string? Title { get; set; }
+        public string? Conditions { get; set; }
+        public string? Weatherdesc { get; set; }
+        public string? Zerolimit { get; set; }
+        public string? MountainImgurl { get; set; }
+        public string? Reliability { get; set; }
 
-        public string Sunrise { get; set; }
-        public string Sunset { get; set; }
-        public string Moonrise { get; set; }
-        public string Moonset { get; set; }
+        public string? Sunrise { get; set; }
+        public string? Sunset { get; set; }
+        public string? Moonrise { get; set; }
+        public string? Moonset { get; set; }
 
-        public string Northcode { get; set; }
-        public string Northdesc { get; set; }
-        public string Northimgurl { get; set; }
-        public string Southcode { get; set; }
-        public string Southdesc { get; set; }
-        public string Southimgurl { get; set; }
+        public string? Northcode { get; set; }
+        public string? Northdesc { get; set; }
+        public string? Northimgurl { get; set; }
+        public string? Southcode { get; set; }
+        public string? Southdesc { get; set; }
+        public string? Southimgurl { get; set; }
 
         public int Temp1000 { get; set; }
         public int Temp2000 { get; set; }
         public int Temp3000 { get; set; }
         public int Temp4000 { get; set; }
 
-        public string Windcode { get; set; }
-        public string Winddesc { get; set; }
-        public string WindImgurl { get; set; }
+        public string? Windcode { get; set; }
+        public string? Winddesc { get; set; }
+        public string? WindImgurl { get; set; }
 
     }
 
@@ -1017,11 +1012,11 @@ namespace Helper
         public DateTime date { get; set; }
 
         public int Id { get; set; }
-        public string CityName { get; set; }
+        public string? CityName { get; set; }
 
-        public string WeatherCode { get; set; }
-        public string WeatherDesc { get; set; }
-        public string WeatherImgUrl { get; set; }
+        public string? WeatherCode { get; set; }
+        public string? WeatherDesc { get; set; }
+        public string? WeatherImgUrl { get; set; }
         public int MinTemp { get; set; }
         public int Maxtemp { get; set; }
     }
@@ -1034,10 +1029,10 @@ namespace Helper
         }
 
         public int Id { get; set; }
-        public string DistrictName { get; set; }
+        public string? DistrictName { get; set; }
         public DateTime date { get; set; }
 
-        public List<string> TourismVereinIds { get; set; }
+        public List<string>? TourismVereinIds { get; set; }
 
         public ICollection<BezirksForecast> BezirksForecast { get; set; }
 
@@ -1046,9 +1041,9 @@ namespace Helper
     public class BezirksForecast
     {
         public DateTime date { get; set; }
-        public string WeatherCode { get; set; }
-        public string WeatherDesc { get; set; }
-        public string WeatherImgUrl { get; set; }
+        public string? WeatherCode { get; set; }
+        public string? WeatherDesc { get; set; }
+        public string? WeatherImgUrl { get; set; }
 
         public int MaxTemp { get; set; }
         public int MinTemp { get; set; }
@@ -1070,36 +1065,36 @@ namespace Helper
     {
         public double altitude { get; set; }
         public int categoryId { get; set; }
-        public string code { get; set; }
-        public string id { get; set; }
-        public string dd { get; set; }
-        public string ff { get; set; }
-        public string hs { get; set; }
+        public string? code { get; set; }
+        public string? id { get; set; }
+        public string? dd { get; set; }
+        public string? ff { get; set; }
+        public string? hs { get; set; }
         public DateTime lastUpdated { get; set; }
         public double latitude { get; set; }
         public double longitude { get; set; }
-        public string lwdType { get; set; }
-        public string n { get; set; }
-        public string name { get; set; }
-        public string p { get; set; }
-        public string q { get; set; }
-        public string rh { get; set; }
-        public string t { get; set; }
-        public string vaxcode { get; set; }
-        public string w { get; set; }
-        public string wmax { get; set; }
-        public string sd { get; set; }
-        public string visibility { get; set; }
-        public string zoomLevel { get; set; }
+        public string? lwdType { get; set; }
+        public string? n { get; set; }
+        public string? name { get; set; }
+        public string? p { get; set; }
+        public string? q { get; set; }
+        public string? rh { get; set; }
+        public string? t { get; set; }
+        public string? vaxcode { get; set; }
+        public string? w { get; set; }
+        public string? wmax { get; set; }
+        public string? sd { get; set; }
+        public string? visibility { get; set; }
+        public string? zoomLevel { get; set; }
 
-        public ICollection<RealTimeMeasurements> measurements { get; set; }
+        public ICollection<RealTimeMeasurements>? measurements { get; set; }
     }
 
     public class RealTimeMeasurements
     {
-        public string code { get; set; }
-        public string description { get; set; }
-        public string imageUrl { get; set; }
+        public string? code { get; set; }
+        public string? description { get; set; }
+        public string? imageUrl { get; set; }
     }
 
     #endregion
@@ -1173,7 +1168,7 @@ namespace Helper
         }
 
         //IIdentifiable
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         //Infos zum Import
         public DateTime FirstImport { get; set; }
@@ -1181,17 +1176,17 @@ namespace Helper
 
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
 
-        public ICollection<string> SmgTags { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
 
         public DateTime ValidStart { get; set; }
         public DateTime ValidStop { get; set; }
 
-        public string OfferId { get; set; }
+        public string? OfferId { get; set; }
 
-        public List<string> HotelHgvId { get; set; }
-        public List<string> HotelId { get; set; }
+        public List<string>? HotelHgvId { get; set; }
+        public List<string>? HotelId { get; set; }
 
         public int Offertyp { get; set; }
         public int Specialtyp { get; set; }
@@ -1212,33 +1207,33 @@ namespace Helper
         public bool ShortStay { get; set; }
         public bool LongStay { get; set; }
 
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, PackageDetail> PackageDetail { get; set; }
 
         public IDictionary<string, string> ChannelInfo { get; set; }
 
         public IDictionary<string, Inclusive> Inclusive { get; set; }
-        public ICollection<PackageTheme> PackageThemeDetail { get; set; }
+        public ICollection<PackageTheme>? PackageThemeDetail { get; set; }
 
-        public ICollection<string> PackageThemeList { get; set; }
+        public ICollection<string>? PackageThemeList { get; set; }
 
-        public ICollection<Season> Season { get; set; }
+        public ICollection<Season>? Season { get; set; }
 
-        public List<string> Services { get; set; }
+        public List<string>? Services { get; set; }
 
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
 
         //Location Geschichte
-        public LocationInfo LocationInfo { get; set; }
-        public string DistrictId { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
+        public string? DistrictId { get; set; }
 
         //public string HGVLink
-        public string HgvLink { get; set; }
+        public string? HgvLink { get; set; }
 
         //MSS Result
-        public ICollection<MssResponseShort> MssResponseShort { get; set; }
+        public ICollection<MssResponseShort>? MssResponseShort { get; set; }
 
-        public EvalancheMapping EvalancheMapping { get; set; }
+        public EvalancheMapping? EvalancheMapping { get; set; }
     }
 
     public class Season
@@ -1249,9 +1244,9 @@ namespace Helper
 
     public class PackageDetail : ILanguage
     {
-        public string Language { get; set; }
-        public string Title { get; set; }
-        public string Desc { get; set; }
+        public string? Language { get; set; }
+        public string? Title { get; set; }
+        public string? Desc { get; set; }
     }
 
     public class Inclusive
@@ -1265,7 +1260,7 @@ namespace Helper
         public int PriceTyp { get; set; }
 
         public IDictionary<string, PackageDetail> PackageDetail { get; set; }
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
     }
 
     public class InclusiveLocalized
@@ -1273,8 +1268,8 @@ namespace Helper
         public int PriceId { get; set; }
         public int PriceTyp { get; set; }
 
-        public PackageDetail PackageDetail { get; set; }
-        public ICollection<ImageGalleryLocalized> ImageGallery { get; set; }
+        public PackageDetail? PackageDetail { get; set; }
+        public ICollection<ImageGalleryLocalized>? ImageGallery { get; set; }
     }
 
     public class PackageTheme
@@ -1291,13 +1286,13 @@ namespace Helper
     public class PackageThemeLocalized
     {
         public int ThemeId { get; set; }
-        public ThemeDetail ThemeDetail { get; set; }
+        public ThemeDetail? ThemeDetail { get; set; }
     }
 
     public class ThemeDetail : ILanguage
     {
-        public string Title { get; set; }
-        public string Language { get; set; }
+        public string? Title { get; set; }
+        public string? Language { get; set; }
     }
 
     #endregion
@@ -1307,7 +1302,7 @@ namespace Helper
     public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo
     {
         //IIdentifiable
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         //Infos zum Import
         public DateTime FirstImport { get; set; }
@@ -1315,27 +1310,27 @@ namespace Helper
 
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
 
         //GPS
-        public string Gpstype { get; set; }
+        public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
-        public string AltitudeUnitofMeasure { get; set; }
+        public string? AltitudeUnitofMeasure { get; set; }
 
         //Observation
-        public string SnowHeight { get; set; }
-        public string newSnowHeight { get; set; }
-        public string Temperature { get; set; }
+        public string? SnowHeight { get; set; }
+        public string? newSnowHeight { get; set; }
+        public string? Temperature { get; set; }
         public DateTime LastSnowDate { get; set; }
-        public List<WeatherObservation> WeatherObservation { get; set; }
+        public List<WeatherObservation>? WeatherObservation { get; set; }
 
         //Location Geschichte
-        public LocationInfo LocationInfo { get; set; }
-        public string OwnerId { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
+        public string? OwnerId { get; set; }
 
-        public List<string> AreaIds { get; set; }
+        public List<string>? AreaIds { get; set; }
     }
 
     public class WeatherObservation
@@ -1345,9 +1340,9 @@ namespace Helper
             WeatherStatus = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
-        public string Level { get; set; }
-        public string LevelId { get; set; }
+        public string? Id { get; set; }
+        public string? Level { get; set; }
+        public string? LevelId { get; set; }
         public Dictionary<string, string> WeatherStatus { get; set; }
     }
 
@@ -1360,18 +1355,18 @@ namespace Helper
         }
 
         public int Id { get; set; }
-        public string RID { get; set; }
-        public string Skiregion { get; set; }
-        public string Areaname { get; set; }
+        public string? RID { get; set; }
+        public string? Skiregion { get; set; }
+        public string? Areaname { get; set; }
         public DateTime LastUpdate { get; set; }
-        public string lang { get; set; }
+        public string? lang { get; set; }
 
-        public string SkiAreaSlopeKm { get; set; }
-        public string SkiMapUrl { get; set; }
+        public string? SkiAreaSlopeKm { get; set; }
+        public string? SkiMapUrl { get; set; }
 
         //Snow Data
-        public ICollection<MeasuringpointReduced> Measuringpoints { get; set; }
-        public ICollection<string> WebcamUrl { get; set; }
+        public ICollection<MeasuringpointReduced>? Measuringpoints { get; set; }
+        public ICollection<string>? WebcamUrl { get; set; }
 
         //Webcam
         //public ICollection<Webcam> Webcams { get; set; }
@@ -1385,40 +1380,40 @@ namespace Helper
         //public string observationtemperature { get; set; }
 
         //Slopes Lifts        
-        public string totalskilift { get; set; }
-        public string openskilift { get; set; }
-        public string totalskiliftkm { get; set; }
-        public string openskiliftkm { get; set; }
-        public string totalskislopes { get; set; }
-        public string openskislopes { get; set; }
-        public string totalskislopeskm { get; set; }
-        public string openskislopeskm { get; set; }
-        public string totaltracks { get; set; }
-        public string opentracks { get; set; }
-        public string totaltrackskm { get; set; }
-        public string opentrackskm { get; set; }
-        public string totalslides { get; set; }
-        public string opentslides { get; set; }
-        public string totalslideskm { get; set; }
-        public string opentslideskm { get; set; }
-        public string totaliceskating { get; set; }
-        public string openiceskating { get; set; }
+        public string? totalskilift { get; set; }
+        public string? openskilift { get; set; }
+        public string? totalskiliftkm { get; set; }
+        public string? openskiliftkm { get; set; }
+        public string? totalskislopes { get; set; }
+        public string? openskislopes { get; set; }
+        public string? totalskislopeskm { get; set; }
+        public string? openskislopeskm { get; set; }
+        public string? totaltracks { get; set; }
+        public string? opentracks { get; set; }
+        public string? totaltrackskm { get; set; }
+        public string? opentrackskm { get; set; }
+        public string? totalslides { get; set; }
+        public string? opentslides { get; set; }
+        public string? totalslideskm { get; set; }
+        public string? opentslideskm { get; set; }
+        public string? totaliceskating { get; set; }
+        public string? openiceskating { get; set; }
 
 
 
         //Contact
-        public string contactadress { get; set; }
-        public string contacttel { get; set; }
-        public string contactcap { get; set; }
-        public string contactcity { get; set; }
-        public string contactfax { get; set; }
-        public string contactweburl { get; set; }
-        public string contactmail { get; set; }
-        public string contactlogo { get; set; }
+        public string? contactadress { get; set; }
+        public string? contacttel { get; set; }
+        public string? contactcap { get; set; }
+        public string? contactcity { get; set; }
+        public string? contactfax { get; set; }
+        public string? contactweburl { get; set; }
+        public string? contactmail { get; set; }
+        public string? contactlogo { get; set; }
 
         //Gps
-        public string contactgpsnorth { get; set; }
-        public string contactgpseast { get; set; }
+        public string? contactgpsnorth { get; set; }
+        public string? contactgpseast { get; set; }
 
 
 
@@ -1436,15 +1431,15 @@ namespace Helper
     public class MeasuringpointReduced
     {
         //IIdentifiable
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         public DateTime LastUpdate { get; set; }
-        public string Shortname { get; set; }
-        public string SnowHeight { get; set; }
-        public string newSnowHeight { get; set; }
-        public string Temperature { get; set; }
+        public string? Shortname { get; set; }
+        public string? SnowHeight { get; set; }
+        public string? newSnowHeight { get; set; }
+        public string? Temperature { get; set; }
         public DateTime LastSnowDate { get; set; }
-        public List<WeatherObservation> WeatherObservation { get; set; }
+        public List<WeatherObservation>? WeatherObservation { get; set; }
 
 
         ////GPS
@@ -1476,12 +1471,12 @@ namespace Helper
             TypeDesc = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public int Bitmask { get; set; }
 
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
-        public string Key { get; set; }
+        public string? Key { get; set; }
 
         public Dictionary<string, string> TypeDesc { get; set; }
     }
@@ -1494,12 +1489,12 @@ namespace Helper
             TypeDesc = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public int Bitmask { get; set; }
 
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
-        public string Key { get; set; }
+        public string? Key { get; set; }
 
         public Dictionary<string, string> TypeDesc { get; set; }
     }
@@ -1512,12 +1507,12 @@ namespace Helper
             TypeDesc = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public long Bitmask { get; set; }
-        public string Type { get; set; }
-        public string Parent { get; set; }
+        public string? Type { get; set; }
+        public string? Parent { get; set; }
 
-        public Dictionary<string, string> TypeDesc { get; set; }
+        public Dictionary<string, string>? TypeDesc { get; set; }
     }
 
     public class EventTypes
@@ -1527,9 +1522,9 @@ namespace Helper
             TypeDesc = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public int Bitmask { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
         public Dictionary<string, string> TypeDesc { get; set; }
     }
 
@@ -1563,20 +1558,20 @@ namespace Helper
             TypeDesc = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         //public int Bitmask { get; set; }
-        public string Key { get; set; }
-        public string Type { get; set; }
-        public string IconURL { get; set; }
+        public string? Key { get; set; }
+        public string? Type { get; set; }
+        public string? IconURL { get; set; }
         public int SortOrder { get; set; }
         public bool active { get; set; }
 
-        public Dictionary<string, string> TypeDesc { get; set; }
+        public Dictionary<string, string>? TypeDesc { get; set; }
     }
 
     public class SmgPoisMobileTypesExtended : SmgPoisMobileTypes
     {
-        public ICollection<SmgPoisMobileFilters> SubTypes { get; set; }
+        public ICollection<SmgPoisMobileFilters>? SubTypes { get; set; }
     }
 
     public class SmgPoisMobileFilters
@@ -1586,15 +1581,15 @@ namespace Helper
             FilterText = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
-        public string MainTypeId { get; set; }
+        public string? Id { get; set; }
+        public string? MainTypeId { get; set; }
         public int SortOrder { get; set; }
 
         public int Bitmask { get; set; }
         public IDictionary<string, string> FilterText { get; set; }
-        public string FilterReference { get; set; }
+        public string? FilterReference { get; set; }
 
-        public ICollection<SmgPoisMobileFilterDetail> FilterDetails { get; set; }
+        public ICollection<SmgPoisMobileFilterDetail>? FilterDetails { get; set; }
     }
 
     public class SmgPoisMobileFilterDetail
@@ -1606,24 +1601,24 @@ namespace Helper
             EndDesc = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }                                  //Unique Id
+        public string? Id { get; set; }                                  //Unique Id
         //public string MainTypeId { get; set; }                          //Reference to Maintype
         public int SortOrder { get; set; }                              //Sort Order of the Filter
         public int Bitmask { get; set; }
 
-        public string Filtertype { get; set; }                          //Type of the Filter (checkbox, scroller, rating)
+        public string? Filtertype { get; set; }                          //Type of the Filter (checkbox, scroller, rating)
         public IDictionary<string, string> FilterText { get; set; }    //Values of the Filter, Key is intended to use on the Filter Api, Value is what we want to display.  
 
-        public string FilterReference { get; set; }
-        public string FilterString { get; set; }
+        public string? FilterReference { get; set; }
+        public string? FilterString { get; set; }
 
         public IDictionary<string, string> StartingDesc { get; set; }    //For a scroller Filter, there can be provided a Starting Description (like 1 km)
-        public string StartingValue { get; set; }                       //For a scroller Filter a startingvalue can be defined
+        public string? StartingValue { get; set; }                       //For a scroller Filter a startingvalue can be defined
         public IDictionary<string, string> EndDesc { get; set; }         //For a scroller Filter, there can be provided a Ending Description (like >20 km)
-        public string EndValue { get; set; }                            //For a scroller Filter a endingvalue can be defined
+        public string? EndValue { get; set; }                            //For a scroller Filter a endingvalue can be defined
 
         public int RatingItems { get; set; }                            //For a rating Filter there can be set a Rating Items (this well be 6)
-        public string SelectedValue { get; set; }                       //For a rating Filter the Initially selected Value can be defined
+        public string? SelectedValue { get; set; }                       //For a rating Filter the Initially selected Value can be defined
 
     }
 
@@ -1634,7 +1629,7 @@ namespace Helper
             HtmlText = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public Dictionary<string, string> HtmlText { get; set; }
     }
 
@@ -1647,12 +1642,12 @@ namespace Helper
             description = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public Dictionary<string, string> image_url { get; set; }
         public Dictionary<string, string> title { get; set; }
         public Dictionary<string, string> description { get; set; }
 
-        public string category { get; set; }
+        public string? category { get; set; }
         public int sortorder { get; set; }
 
     }
@@ -1668,8 +1663,8 @@ namespace Helper
         }
 
 
-        public string Id { get; set; }
-        public string Type { get; set; }
+        public string? Id { get; set; }
+        public string? Type { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
 
@@ -1682,7 +1677,7 @@ namespace Helper
 
     public class AppMessageImage
     {
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
         public int SortOrder { get; set; }
     }
 
@@ -1737,22 +1732,22 @@ namespace Helper
             Name = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public int Bitmask { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
         public Dictionary<string, string> Name { get; set; }
-        public string ImageURL { get; set; }
+        public string? ImageURL { get; set; }
         //public int AccoCount { get; set; }
         public int SortOrder { get; set; }
     }
 
     public class AccoThemesFull
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public int Bitmask { get; set; }
-        public string Type { get; set; }
-        public string Name { get; set; }
-        public string ImageURL { get; set; }
+        public string? Type { get; set; }
+        public string? Name { get; set; }
+        public string? ImageURL { get; set; }
         public int AccoCount { get; set; }
         public int SortOrder { get; set; }
     }
@@ -1772,9 +1767,9 @@ namespace Helper
             Detail = new Dictionary<string, Detail>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
 
@@ -1784,13 +1779,13 @@ namespace Helper
         public int Vintage { get; set; }
         public int Awardyear { get; set; }
 
-        public string CustomId { get; set; }
-        public string CompanyId { get; set; }
+        public string? CustomId { get; set; }
+        public string? CompanyId { get; set; }
 
 
 
-        public ICollection<ImageGallery> ImageGallery { get; set; }
-        public ICollection<string> Awards { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
+        public ICollection<string>? Awards { get; set; }
 
         public DateTime LastChange { get; set; }
         public DateTime FirstImport { get; set; }
@@ -1798,7 +1793,7 @@ namespace Helper
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
 
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
     }
 
     public class SuedtirolType : ISuedtirolType
@@ -1808,13 +1803,13 @@ namespace Helper
             TypeNames = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
-        public string Key { get; set; }
+        public string? Id { get; set; }
+        public string? Key { get; set; }
 
         //public int Bitmask { get; set; } ??
 
-        public string Entity { get; set; }
-        public string TypeParent { get; set; }
+        public string? Entity { get; set; }
+        public string? TypeParent { get; set; }
         public int Level { get; set; }
         public IDictionary<string, string> TypeNames { get; set; }
     }
@@ -1827,10 +1822,10 @@ namespace Helper
             TypeDescriptions = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
-        public string Key { get; set; }
-        public string Entity { get; set; }
-        public string TypeParent { get; set; }
+        public string? Id { get; set; }
+        public string? Key { get; set; }
+        public string? Entity { get; set; }
+        public string? TypeParent { get; set; }
         public int Level { get; set; }
         public IDictionary<string, string> TypeNames { get; set; }
         public IDictionary<string, string> TypeDescriptions { get; set; }
@@ -1845,28 +1840,28 @@ namespace Helper
             ContactInfos = new Dictionary<string, ContactInfos>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public bool Active { get; set; }
-        public string CustomId { get; set; }
-        public string Shortname { get; set; }
-        public string Gpstype { get; set; }
+        public string? CustomId { get; set; }
+        public string? Shortname { get; set; }
+        public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
-        public string AltitudeUnitofMeasure { get; set; }
+        public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
 
-        public ICollection<string> SmgTags { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
 
         //public DateTime FirstImport { get; set; }
         //public DateTime LastChange { get; set; }
 
         public bool SmgActive { get; set; }
 
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
 
         public DateTime LastChange { get; set; }
     }
@@ -1881,27 +1876,27 @@ namespace Helper
             AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
-        public string OutdooractiveID { get; set; }
-        public string OutdooractiveElevationID { get; set; }
+        public string? OutdooractiveID { get; set; }
+        public string? OutdooractiveElevationID { get; set; }
 
 
         public bool Active { get; set; }
-        public string Shortname { get; set; }
-        public string SmgId { get; set; }
+        public string? Shortname { get; set; }
+        public string? SmgId { get; set; }
         public bool Highlight { get; set; }
 
         //obsolete ??
-        public string Difficulty { get; set; }
+        public string? Difficulty { get; set; }
 
         ////Des brauchi lei firn Filter auf nome
         //public string Title { get; set; }
 
         //Activity SubType
-        public string Type { get; set; }
-        public string SubType { get; set; }
-        public string PoiType { get; set; }
+        public string? Type { get; set; }
+        public string? SubType { get; set; }
+        public string? PoiType { get; set; }
 
         //NEU SMG Infos
         public DateTime FirstImport { get; set; }
@@ -1909,10 +1904,10 @@ namespace Helper
         public bool SmgActive { get; set; }
 
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
 
-        public string TourismorganizationId { get; set; }
-        public ICollection<string> AreaId { get; set; }
+        public string? TourismorganizationId { get; set; }
+        public ICollection<string>? AreaId { get; set; }
 
         //Distance & Altitude Informationen
         public double AltitudeDifference { get; set; }
@@ -1947,22 +1942,22 @@ namespace Helper
         //public bool? ClosedonPublicHolidays { get; set; }
         //public ICollection<OperationScheduleTime> OperationScheduleTime { get; set; }
         //Für mearere aso
-        public ICollection<OperationSchedule> OperationSchedule { get; set; }
+        public ICollection<OperationSchedule>? OperationSchedule { get; set; }
 
-        public ICollection<GpsInfo> GpsInfo { get; set; }
-        public ICollection<GpsTrack> GpsTrack { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
+        public ICollection<GpsTrack>? GpsTrack { get; set; }
 
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, Detail> Detail { get; set; }
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
         public IDictionary<string, AdditionalPoiInfos> AdditionalPoiInfos { get; set; }
 
-        public ICollection<string> SmgTags { get; set; }
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
 
         //neu LTSUpdate 11.16
-        public Ratings Ratings { get; set; }
-        public ICollection<string> Exposition { get; set; }
+        public Ratings? Ratings { get; set; }
+        public ICollection<string>? Exposition { get; set; }
 
 
     }
@@ -1978,14 +1973,14 @@ namespace Helper
             ArticleLinkInfo = new Dictionary<string, ArticleLinkInfo>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public bool Active { get; set; }
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
         public bool Highlight { get; set; }
 
         //Activity SubType
-        public string Type { get; set; }
-        public string SubType { get; set; }
+        public string? Type { get; set; }
+        public string? SubType { get; set; }
         //für BaseArticle
         //public string SubType2 { get; set; }
 
@@ -2006,12 +2001,12 @@ namespace Helper
         //public bool? ClosedonPublicHolidays { get; set; }
         //public ICollection<OperationScheduleTime> OperationScheduleTime { get; set; }
         //Wenn mearere sein aso:
-        public ICollection<OperationSchedule> OperationSchedule { get; set; }
+        public ICollection<OperationSchedule>? OperationSchedule { get; set; }
 
-        public ICollection<GpsInfo> GpsInfo { get; set; }
-        public ICollection<GpsTrack> GpsTrack { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
+        public ICollection<GpsTrack>? GpsTrack { get; set; }
 
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, Detail> Detail { get; set; }
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
         public IDictionary<string, AdditionalArticleInfos> AdditionalArticleInfos { get; set; }
@@ -2019,9 +2014,9 @@ namespace Helper
         //NEW Link Info
         public IDictionary<string, ArticleLinkInfo> ArticleLinkInfo { get; set; }
 
-        public ICollection<string> SmgTags { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
 
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
@@ -2033,14 +2028,14 @@ namespace Helper
             ContactInfos = new Dictionary<string, ContactInfos>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public bool Active { get; set; }
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
 
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         //Region Fraktion 
-        public string DistrictId { get; set; }
+        public string? DistrictId { get; set; }
         //public string MunicipalityId { get; set; }
         //public string RegionId { get; set; }       
         //public string TourismorganizationId { get; set; }        
@@ -2049,11 +2044,11 @@ namespace Helper
         public DateTime LastChange { get; set; }
 
         //GPS Info
-        public string Gpstype { get; set; }
+        public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
-        public string AltitudeUnitofMeasure { get; set; }
+        public string? AltitudeUnitofMeasure { get; set; }
 
         //OperationSchedule
         //public string OperationscheduleName { get; set; }
@@ -2062,33 +2057,33 @@ namespace Helper
         //public bool? ClosedonPublicHolidays { get; set; }
         //public ICollection<OperationScheduleTime> OperationScheduleTime { get; set; }
         //Wenn mearere sein aso
-        public ICollection<OperationSchedule> OperationSchedule { get; set; }
+        public ICollection<OperationSchedule>? OperationSchedule { get; set; }
 
 
         //CapacityCeremony
         public int MaxSeatingCapacity { get; set; }
 
         //public ICollection<GpsInfo> GpsInfo { get; set; }
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, Detail> Detail { get; set; }
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
 
-        public ICollection<CategoryCodes> CategoryCodes { get; set; }
-        public ICollection<DishRates> DishRates { get; set; }
-        public ICollection<CapacityCeremony> CapacityCeremony { get; set; }
-        public ICollection<Facilities> Facilities { get; set; }
+        public ICollection<CategoryCodes>? CategoryCodes { get; set; }
+        public ICollection<DishRates>? DishRates { get; set; }
+        public ICollection<CapacityCeremony>? CapacityCeremony { get; set; }
+        public ICollection<Facilities>? Facilities { get; set; }
 
-        public ICollection<string> MarketinggroupId { get; set; }
+        public ICollection<string>? MarketinggroupId { get; set; }
 
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
 
-        public string AccommodationId { get; set; }
+        public string? AccommodationId { get; set; }
 
-        public ICollection<string> SmgTags { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
         public bool SmgActive { get; set; }
 
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
@@ -2104,9 +2099,9 @@ namespace Helper
         }
 
         //IIdentifiable
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public bool Active { get; set; }
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
 
         public Nullable<DateTime> DateBegin { get; set; }
         public Nullable<DateTime> DateEnd { get; set; }
@@ -2117,84 +2112,84 @@ namespace Helper
 
 
         //GPS Info
-        public string Gpstype { get; set; }
+        public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
-        public string AltitudeUnitofMeasure { get; set; }
+        public string? AltitudeUnitofMeasure { get; set; }
 
         //Eventspezifische Infos
-        public string OrgRID { get; set; }
+        public string? OrgRID { get; set; }
         public int Ranc { get; set; }
-        public string Ticket { get; set; }
-        public string SignOn { get; set; }
-        public string PayMet { get; set; }
-        public string Type { get; set; }
+        public string? Ticket { get; set; }
+        public string? SignOn { get; set; }
+        public string? PayMet { get; set; }
+        public string? Type { get; set; }
 
-        public string DistrictId { get; set; }
+        public string? DistrictId { get; set; }
         //???????
-        public ICollection<string> DistrictIds { get; set; }
+        public ICollection<string>? DistrictIds { get; set; }
 
         //ImageGallery
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
 
         //Detail
         public IDictionary<string, Detail> Detail { get; set; }
 
-        public ICollection<string> TopicRIDs { get; set; }
-        public ICollection<Topic> Topics { get; set; }
+        public ICollection<string>? TopicRIDs { get; set; }
+        public ICollection<Topic>? Topics { get; set; }
 
 
-        public ICollection<EventPublisher> EventPublisher { get; set; }
+        public ICollection<EventPublisher>? EventPublisher { get; set; }
 
         public IDictionary<string, EventAdditionalInfos> EventAdditionalInfos { get; set; }
         public IDictionary<string, EventPrice> EventPrice { get; set; }
 
-        public ICollection<EventDate> EventDate { get; set; }
+        public ICollection<EventDate>? EventDate { get; set; }
 
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
         public IDictionary<string, ContactInfos> OrganizerInfos { get; set; }
 
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
 
-        public ICollection<string> SmgTags { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
         public bool SmgActive { get; set; }
 
-        public ICollection<string> HasLanguage { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
     }
 
     public class Topic
     {
-        public string TopicRID { get; set; }
-        public string TopicInfo { get; set; }
+        public string? TopicRID { get; set; }
+        public string? TopicInfo { get; set; }
     }
 
     public class Detail : IDetailInfos, ILanguage
     {
-        public string Header { get; set; }
+        public string? Header { get; set; }
         //public string SiteHeader { get; set; }  
-        public string SubHeader { get; set; }
-        public string IntroText { get; set; }
-        public string BaseText { get; set; }
-        public string Title { get; set; }
+        public string? SubHeader { get; set; }
+        public string? IntroText { get; set; }
+        public string? BaseText { get; set; }
+        public string? Title { get; set; }
         //OLT
         //public string Alttext { get; set; }
-        public string AdditionalText { get; set; }
+        public string? AdditionalText { get; set; }
         //NEW
-        public string MetaTitle { get; set; }
-        public string MetaDesc { get; set; }
+        public string? MetaTitle { get; set; }
+        public string? MetaDesc { get; set; }
 
 
 
-        public string GetThereText { get; set; }
-        public string Language { get; set; }
+        public string? GetThereText { get; set; }
+        public string? Language { get; set; }
 
         //Smg spezifischer Text
         //public string SmgCustomText { get; set; }  
 
         //NEU
-        public ICollection<string> Keywords { get; set; }
+        public ICollection<string>? Keywords { get; set; }
     }
 
     //Special Element for Themed Content 
@@ -2206,24 +2201,24 @@ namespace Helper
         }
 
         public IDictionary<string, DetailsThemed> DetailsThemed { get; set; }
-        public string Language { get; set; }
+        public string? Language { get; set; }
     }
 
     public class DetailsThemed
     {
-        public string Title { get; set; }
-        public string Intro { get; set; }
-        public string MetaTitle { get; set; }
-        public string MetaDesc { get; set; }
+        public string? Title { get; set; }
+        public string? Intro { get; set; }
+        public string? MetaTitle { get; set; }
+        public string? MetaDesc { get; set; }
     }
 
     public class GpsInfo : IGpsInfo
     {
-        public string Gpstype { get; set; }
+        public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
-        public string AltitudeUnitofMeasure { get; set; }
+        public string? AltitudeUnitofMeasure { get; set; }
     }
 
     public class GpsTrack : IGpsTrack
@@ -2233,10 +2228,10 @@ namespace Helper
             GpxTrackDesc = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public IDictionary<string, string> GpxTrackDesc { get; set; }
-        public string GpxTrackUrl { get; set; }
-        public string Type { get; set; }
+        public string? GpxTrackUrl { get; set; }
+        public string? Type { get; set; }
     }
 
     public class GpsPolygon : IGpsPolygon
@@ -2252,18 +2247,18 @@ namespace Helper
             Webcamname = new Dictionary<string, string>();
         }
 
-        public string WebcamId { get; set; }
+        public string? WebcamId { get; set; }
         public IDictionary<string, string> Webcamname { get; set; }
-        public string Webcamurl { get; set; }
-        public GpsInfo GpsInfo { get; set; }
+        public string? Webcamurl { get; set; }
+        public GpsInfo? GpsInfo { get; set; }
     }
 
     public class WebcamLocalized
     {
-        public string WebcamId { get; set; }
-        public string Webcamname { get; set; }
-        public string Webcamurl { get; set; }
-        public GpsInfo GpsInfo { get; set; }
+        public string? WebcamId { get; set; }
+        public string? Webcamname { get; set; }
+        public string? Webcamurl { get; set; }
+        public GpsInfo? GpsInfo { get; set; }
     }
 
     public class ImageGallery : IImageGallery
@@ -2274,11 +2269,11 @@ namespace Helper
             ImageDesc = new Dictionary<string, string>();
         }
 
-        public string ImageName { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageName { get; set; }
+        public string? ImageUrl { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public string ImageSource { get; set; }
+        public string? ImageSource { get; set; }
 
         public IDictionary<string, string> ImageTitle { get; set; }
         public IDictionary<string, string> ImageDesc { get; set; }
@@ -2289,68 +2284,68 @@ namespace Helper
         public Nullable<DateTime> ValidTo { get; set; }
 
         //NEU
-        public string CopyRight { get; set; }
-        public string License { get; set; }
+        public string? CopyRight { get; set; }
+        public string? License { get; set; }
     }
 
     public class ImageGalleryLocalized
     {
-        public string ImageName { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageName { get; set; }
+        public string? ImageUrl { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public string ImageSource { get; set; }
+        public string? ImageSource { get; set; }
 
-        public string ImageTitle { get; set; }
-        public string ImageDesc { get; set; }
+        public string? ImageTitle { get; set; }
+        public string? ImageDesc { get; set; }
         //public string Language { get; set; }
         public Nullable<bool> IsInGallery { get; set; }
         public Nullable<int> ListPosition { get; set; }
         public Nullable<DateTime> ValidFrom { get; set; }
         public Nullable<DateTime> ValidTo { get; set; }
 
-        public string CopyRight { get; set; }
-        public string License { get; set; }
+        public string? CopyRight { get; set; }
+        public string? License { get; set; }
     }
 
     public class ContactInfos : IContactInfos, ILanguage
     {
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string ZipCode { get; set; }
-        public string CountryCode { get; set; }
-        public string CountryName { get; set; }
-        public string Surname { get; set; }
-        public string Givenname { get; set; }
-        public string NamePrefix { get; set; }
-        public string Email { get; set; }
-        public string Phonenumber { get; set; }
-        public string Faxnumber { get; set; }
-        public string Url { get; set; }
-        public string Language { get; set; }
-        public string CompanyName { get; set; }
-        public string Vat { get; set; }
-        public string Tax { get; set; }
-        public string LogoUrl { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? ZipCode { get; set; }
+        public string? CountryCode { get; set; }
+        public string? CountryName { get; set; }
+        public string? Surname { get; set; }
+        public string? Givenname { get; set; }
+        public string? NamePrefix { get; set; }
+        public string? Email { get; set; }
+        public string? Phonenumber { get; set; }
+        public string? Faxnumber { get; set; }
+        public string? Url { get; set; }
+        public string? Language { get; set; }
+        public string? CompanyName { get; set; }
+        public string? Vat { get; set; }
+        public string? Tax { get; set; }
+        public string? LogoUrl { get; set; }
     }
 
     public class AdditionalPoiInfos : IAdditionalPoiInfos, ILanguage
     {
         //public string Difficulty { get; set; }
-        public string Novelty { get; set; }
-        public string MainType { get; set; }
-        public string SubType { get; set; }
-        public string PoiType { get; set; }
-        public string Language { get; set; }
+        public string? Novelty { get; set; }
+        public string? MainType { get; set; }
+        public string? SubType { get; set; }
+        public string? PoiType { get; set; }
+        public string? Language { get; set; }
     }
 
     public class Ratings : IRatings
     {
-        public string Stamina { get; set; }
-        public string Experience { get; set; }
-        public string Landscape { get; set; }
-        public string Difficulty { get; set; }
-        public string Technique { get; set; }
+        public string? Stamina { get; set; }
+        public string? Experience { get; set; }
+        public string? Landscape { get; set; }
+        public string? Difficulty { get; set; }
+        public string? Technique { get; set; }
     }
 
     public class LTSTags
@@ -2360,7 +2355,7 @@ namespace Helper
             TagName = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public int Level { get; set; }
         public IDictionary<string, string> TagName { get; set; }
     }
@@ -2372,7 +2367,7 @@ namespace Helper
             Elements = new Dictionary<string, string>();
         }
 
-        public string Language { get; set; }
+        public string? Language { get; set; }
         public IDictionary<string, string> Elements { get; set; }
     }
 
@@ -2383,39 +2378,39 @@ namespace Helper
             Elements = new Dictionary<string, string>();
         }
 
-        public string Language { get; set; }
+        public string? Language { get; set; }
         public IDictionary<string, string> Elements { get; set; }
     }
 
     public class CategoryCodes : IIdentifiable
     {
-        public string Id { get; set; }
-        public string Shortname { get; set; }
+        public string? Id { get; set; }
+        public string? Shortname { get; set; }
         //public string Language { get; set; }
     }
 
     public class Facilities : IIdentifiable
     {
-        public string Id { get; set; }
-        public string Shortname { get; set; }
+        public string? Id { get; set; }
+        public string? Shortname { get; set; }
         //public string Language { get; set; }
     }
 
     public class CapacityCeremony : IIdentifiable
     {
-        public string Id { get; set; }
-        public string Shortname { get; set; }
+        public string? Id { get; set; }
+        public string? Shortname { get; set; }
         public int MaxSeatingCapacity { get; set; }
         //public string Language { get; set; }
     }
 
     public class DishRates : IIdentifiable
     {
-        public string Id { get; set; }
-        public string Shortname { get; set; }
+        public string? Id { get; set; }
+        public string? Shortname { get; set; }
         public double MinAmount { get; set; }
         public double MaxAmount { get; set; }
-        public string CurrencyCode { get; set; }
+        public string? CurrencyCode { get; set; }
         //public string Language { get; set; }
     }
 
@@ -2429,10 +2424,10 @@ namespace Helper
         public IDictionary<string, string> OperationscheduleName { get; set; }
         public DateTime Start { get; set; }
         public DateTime Stop { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
         public bool? ClosedonPublicHolidays { get; set; }
 
-        public ICollection<OperationScheduleTime> OperationScheduleTime { get; set; }
+        public ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
     }
 
     public class OperationScheduleTime : IOperationScheduleTime
@@ -2452,26 +2447,26 @@ namespace Helper
 
     public class EventAdditionalInfos : IEventAdditionalInfos, ILanguage
     {
-        public string Mplace { get; set; }
-        public string Reg { get; set; }
-        public string Location { get; set; }
-        public string Language { get; set; }
+        public string? Mplace { get; set; }
+        public string? Reg { get; set; }
+        public string? Location { get; set; }
+        public string? Language { get; set; }
     }
 
     public class EventPrice : IEventPrice, ILanguage
     {
         public double Price { get; set; }
-        public string Type { get; set; }
-        public string Pstd { get; set; }
-        public string ShortDesc { get; set; }
-        public string Description { get; set; }
+        public string? Type { get; set; }
+        public string? Pstd { get; set; }
+        public string? ShortDesc { get; set; }
+        public string? Description { get; set; }
 
-        public string Language { get; set; }
+        public string? Language { get; set; }
     }
 
     public class EventPublisher
     {
-        public string PublisherRID { get; set; }
+        public string? PublisherRID { get; set; }
         public int Ranc { get; set; }
         public int Publish { get; set; }
     }
@@ -2508,82 +2503,82 @@ namespace Helper
 
     public class LocationInfo : ILocationInfoAware
     {
-        public RegionInfo RegionInfo { get; set; }
-        public TvInfo TvInfo { get; set; }
-        public MunicipalityInfo MunicipalityInfo { get; set; }
-        public DistrictInfo DistrictInfo { get; set; }
-        public AreaInfo AreaInfo { get; set; }
+        public RegionInfo? RegionInfo { get; set; }
+        public TvInfo? TvInfo { get; set; }
+        public MunicipalityInfo? MunicipalityInfo { get; set; }
+        public DistrictInfo? DistrictInfo { get; set; }
+        public AreaInfo? AreaInfo { get; set; }
     }
 
     public class RegionInfo
     {
-        public string Id { get; set; }
-        public IDictionary<string, string> Name { get; set; }
+        public string? Id { get; set; }
+        public IDictionary<string, string>? Name { get; set; }
     }
 
     public class TvInfo
     {
-        public string Id { get; set; }
-        public IDictionary<string, string> Name { get; set; }
+        public string? Id { get; set; }
+        public IDictionary<string, string>? Name { get; set; }
     }
 
     public class MunicipalityInfo
     {
-        public string Id { get; set; }
-        public IDictionary<string, string> Name { get; set; }
+        public string? Id { get; set; }
+        public IDictionary<string, string>? Name { get; set; }
     }
 
     public class DistrictInfo
     {
-        public string Id { get; set; }
-        public IDictionary<string, string> Name { get; set; }
+        public string? Id { get; set; }
+        public IDictionary<string, string>? Name { get; set; }
     }
 
     public class AreaInfo
     {
-        public string Id { get; set; }
-        public IDictionary<string, string> Name { get; set; }
+        public string? Id { get; set; }
+        public IDictionary<string, string>? Name { get; set; }
     }
 
     //Localized LocationInfo
 
     public class LocationInfoLocalized
     {
-        public RegionInfoLocalized RegionInfo { get; set; }
-        public TvInfoLocalized TvInfo { get; set; }
-        public MunicipalityInfoLocalized MunicipalityInfo { get; set; }
-        public DistrictInfoLocalized DistrictInfo { get; set; }
-        public AreaInfoLocalized AreaInfo { get; set; }
+        public RegionInfoLocalized? RegionInfo { get; set; }
+        public TvInfoLocalized? TvInfo { get; set; }
+        public MunicipalityInfoLocalized? MunicipalityInfo { get; set; }
+        public DistrictInfoLocalized? DistrictInfo { get; set; }
+        public AreaInfoLocalized? AreaInfo { get; set; }
     }
 
     public class RegionInfoLocalized
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
     }
 
     public class TvInfoLocalized
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
     }
 
     public class MunicipalityInfoLocalized
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
     }
 
     public class DistrictInfoLocalized
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
     }
 
     public class AreaInfoLocalized
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string? Id { get; set; }
+        public string? Name { get; set; }
     }
 
     //Ende Reduced Location Informations
@@ -2598,9 +2593,9 @@ namespace Helper
         {
             ArticleIDs = new Dictionary<string, string>();
         }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public DateTime CreationDate { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         //Slot and ID of the Article
         public IDictionary<string, string> ArticleIDs { get; set; }
@@ -2618,10 +2613,10 @@ namespace Helper
         public int TotalPages { get; set; }
         public int CurrentPage { get; set; }
         public Nullable<int> OnlineResults { get; set; }
-        public string ResultId { get; set; }
-        public string Seed { get; set; }
+        public string? ResultId { get; set; }
+        public string? Seed { get; set; }
 
-        public ICollection<T> Items { get; set; }
+        public ICollection<T>? Items { get; set; }
     }
 
     public class ResultAsync<T>
@@ -2631,9 +2626,9 @@ namespace Helper
         public int CurrentPage { get; set; }
         public Nullable<int> OnlineResults { get; set; }
 
-        public string Seed { get; set; }
+        public string? Seed { get; set; }
 
-        public IList<T> Items { get; set; }
+        public IList<T>? Items { get; set; }
     }
 
     #endregion
@@ -2642,7 +2637,7 @@ namespace Helper
 
     public class PackageAccos : Package
     {
-        public Accommodation Accommodation { get; set; }
+        public Accommodation? Accommodation { get; set; }
     }
 
     #endregion
@@ -2651,23 +2646,23 @@ namespace Helper
 
     public class EventShort
     {
-        public string Id { get; set; }
-        public string Source { get; set; }
-        public string EventLocation { get; set; }
+        public string? Id { get; set; }
+        public string? Source { get; set; }
+        public string? EventLocation { get; set; }
 
         public int EventId { get; set; }
         //Hauptbeschreibung
-        public string EventDescription { get; set; }
+        public string? EventDescription { get; set; }
         //Beschreibung DE
-        public string EventDescriptionDE { get; set; }
+        public string? EventDescriptionDE { get; set; }
         //Beschreibung IT
-        public string EventDescriptionIT { get; set; }
+        public string? EventDescriptionIT { get; set; }
         //Beschreibung EN
-        public string EventDescriptionEN { get; set; }
+        public string? EventDescriptionEN { get; set; }
         //Hauptsaal/ort
-        public string AnchorVenue { get; set; }
+        public string? AnchorVenue { get; set; }
         //Hauptsaal/ort soll für die Ausgabe verwendet werden
-        public string AnchorVenueShort { get; set; }
+        public string? AnchorVenueShort { get; set; }
         //letzte Änderung
         public DateTime ChangedOn { get; set; }
         //Beginndatum
@@ -2683,51 +2678,51 @@ namespace Helper
         public double EndDateUTC { get; set; }
 
         //URL für externe Webseite (noch nicht ausgefüllt)
-        public string WebAddress { get; set; }
+        public string? WebAddress { get; set; }
         //Spezialfelder
 
         //Eurac Videowall (Y / N) Wenn hier N wird ganzes Event nicht angezeigt
-        public string Display1 { get; set; }
+        public string? Display1 { get; set; }
         //Intranet Eurac (Y / N)
-        public string Display2 { get; set; }
+        public string? Display2 { get; set; }
         //Webseite Eurac ( Y /N)
-        public string Display3 { get; set; }
+        public string? Display3 { get; set; }
         //diese sind nicht belegt, könnten verwendet werden
-        public string Display4 { get; set; }
-        public string Display5 { get; set; }
-        public string Display6 { get; set; }
-        public string Display7 { get; set; }
-        public string Display8 { get; set; }
-        public string Display9 { get; set; }
+        public string? Display4 { get; set; }
+        public string? Display5 { get; set; }
+        public string? Display6 { get; set; }
+        public string? Display7 { get; set; }
+        public string? Display8 { get; set; }
+        public string? Display9 { get; set; }
 
         //CRM Modul Account (Firma) interessiert uns nicht
-        public string CompanyName { get; set; }
-        public string CompanyId { get; set; }
-        public string CompanyAddressLine1 { get; set; }
-        public string CompanyAddressLine2 { get; set; }
-        public string CompanyAddressLine3 { get; set; }
-        public string CompanyPostalCode { get; set; }
-        public string CompanyCity { get; set; }
-        public string CompanyCountry { get; set; }
-        public string CompanyPhone { get; set; }
-        public string CompanyFax { get; set; }
-        public string CompanyMail { get; set; }
-        public string CompanyUrl { get; set; }
+        public string? CompanyName { get; set; }
+        public string? CompanyId { get; set; }
+        public string? CompanyAddressLine1 { get; set; }
+        public string? CompanyAddressLine2 { get; set; }
+        public string? CompanyAddressLine3 { get; set; }
+        public string? CompanyPostalCode { get; set; }
+        public string? CompanyCity { get; set; }
+        public string? CompanyCountry { get; set; }
+        public string? CompanyPhone { get; set; }
+        public string? CompanyFax { get; set; }
+        public string? CompanyMail { get; set; }
+        public string? CompanyUrl { get; set; }
 
         //Person aus Modul CRM (interessiert uns nicht)
-        public string ContactCode { get; set; }
-        public string ContactFirstName { get; set; }
-        public string ContactLastName { get; set; }
-        public string ContactPhone { get; set; }
-        public string ContactCell { get; set; }
-        public string ContactFax { get; set; }
-        public string ContactEmail { get; set; }
-        public string ContactAddressLine1 { get; set; }
-        public string ContactAddressLine2 { get; set; }
-        public string ContactAddressLine3 { get; set; }
-        public string ContactPostalCode { get; set; }
-        public string ContactCity { get; set; }
-        public string ContactCountry { get; set; }
+        public string? ContactCode { get; set; }
+        public string? ContactFirstName { get; set; }
+        public string? ContactLastName { get; set; }
+        public string? ContactPhone { get; set; }
+        public string? ContactCell { get; set; }
+        public string? ContactFax { get; set; }
+        public string? ContactEmail { get; set; }
+        public string? ContactAddressLine1 { get; set; }
+        public string? ContactAddressLine2 { get; set; }
+        public string? ContactAddressLine3 { get; set; }
+        public string? ContactPostalCode { get; set; }
+        public string? ContactCity { get; set; }
+        public string? ContactCountry { get; set; }
 
         //gebuchten Sääle von spezifischen Event
         //Space : Code für Raum von DB
@@ -2737,7 +2732,7 @@ namespace Helper
         //Comnment: entweder x oder leer --> x bedeutet bitte nicht anzeigen!!!!!!!
         //Subtitle: Untertitel vom Saal (anzeigen)
         //Zeiten (diese sind relevant, diese anzeigen)
-        public List<RoomBooked> RoomBooked { get; set; }
+        public List<RoomBooked>? RoomBooked { get; set; }
 
         //all das interessiert nicht
         //public string AbstractsEN { get; set; }
@@ -2749,12 +2744,12 @@ namespace Helper
 
     public class RoomBooked
     {
-        public string Space { get; set; }
-        public string SpaceDesc { get; set; }
-        public string SpaceAbbrev { get; set; }
-        public string SpaceType { get; set; }
-        public string Subtitle { get; set; }
-        public string Comment { get; set; }
+        public string? Space { get; set; }
+        public string? SpaceDesc { get; set; }
+        public string? SpaceAbbrev { get; set; }
+        public string? SpaceType { get; set; }
+        public string? Subtitle { get; set; }
+        public string? Comment { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
@@ -2775,9 +2770,9 @@ namespace Helper
 
         public List<string> SpaceDescList { get; set; }
 
-        public string SpaceDesc { get; set; }
-        public string SpaceType { get; set; }
-        public string Subtitle { get; set; }
+        public string? SpaceDesc { get; set; }
+        public string? SpaceType { get; set; }
+        public string? Subtitle { get; set; }
 
         public DateTime RoomStartDate { get; set; }
         public DateTime RoomEndDate { get; set; }
@@ -2791,24 +2786,24 @@ namespace Helper
 
         public Dictionary<string, string> EventDescription { get; set; }
 
-        public string EventDescriptionDE { get; set; }
-        public string EventDescriptionIT { get; set; }
-        public string EventDescriptionEN { get; set; }
+        public string? EventDescriptionDE { get; set; }
+        public string? EventDescriptionIT { get; set; }
+        public string? EventDescriptionEN { get; set; }
 
-        public string EventAnchorVenue { get; set; }
-        public string EventAnchorVenueShort { get; set; }
+        public string? EventAnchorVenue { get; set; }
+        public string? EventAnchorVenueShort { get; set; }
 
         public DateTime EventStartDate { get; set; }
         public DateTime EventEndDate { get; set; }
         public double EventStartDateUTC { get; set; }
         public double EventEndDateUTC { get; set; }
 
-        public string EventWebAddress { get; set; }
-        public string Id { get; set; }
-        public string EventSource { get; set; }
-        public string EventLocation { get; set; }
+        public string? EventWebAddress { get; set; }
+        public string? Id { get; set; }
+        public string? EventSource { get; set; }
+        public string? EventLocation { get; set; }
 
-        public string CompanyName { get; set; }
+        public string? CompanyName { get; set; }
 
     }
 

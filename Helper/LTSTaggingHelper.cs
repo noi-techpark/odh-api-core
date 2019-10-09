@@ -1,8 +1,8 @@
-﻿using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Helper
 {
@@ -252,30 +252,32 @@ namespace Helper
             return "ERROR";
         }
 
-        public static async System.Threading.Tasks.Task<List<LTSTaggingType>> GetLTSTagParentsPGAsync(NpgsqlConnection conn, LTSTaggingType currenttag, List<LTSTaggingType> ltstagparentlist)
-        {            
+        public static async IAsyncEnumerable<LTSTaggingType> GetLTSTagParentsPGAsync(
+            IPostGreSQLConnectionFactory connectionFactory, LTSTaggingType currenttag, IEnumerable<LTSTaggingType> ltstagparentlist,
+            [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
             if (currenttag.Level > 0)
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(currenttag.TypeParent);
-                var parent = (await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<LTSTaggingType>(conn, "ltstaggingtypes", "*", where.Item1, where.Item2, "", 1, null)).FirstOrDefault();
+                var parent = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<LTSTaggingType>(
+                    connectionFactory, "ltstaggingtypes", "*", where, "", 1, null, cancellationToken).FirstOrDefaultAsync();
 
-                ltstagparentlist.Add(parent);
+                yield return parent;
 
-                await GetLTSTagParentsPGAsync(conn, parent, ltstagparentlist);
-
-                return ltstagparentlist;
+                await foreach (var elem in GetLTSTagParentsPGAsync(connectionFactory, parent, ltstagparentlist, cancellationToken))
+                    yield return elem;
             }
-            else
-                return ltstagparentlist;
-
+            foreach (var elem in ltstagparentlist)
+                yield return elem;
         }
 
-   
-        public static IDictionary<string, string> GetPoiTypeDesc(string key, List<LTSTaggingType> ltstaggingtypes)
+
+        public static async Task<IDictionary<string, string>> GetPoiTypeDescAsync(
+            string? key, IAsyncEnumerable<LTSTaggingType> ltstaggingtypes)
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
 
-            var taggingtype = ltstaggingtypes.Where(x => x.Key == key).FirstOrDefault();
+            var taggingtype = await ltstaggingtypes.Where(x => x.Key == key).FirstOrDefaultAsync();
 
             if (taggingtype != null)
                 maintypedict = taggingtype.TypeNames;
@@ -283,11 +285,12 @@ namespace Helper
             return maintypedict;
         }
 
-        public static IDictionary<string, string> GetActivityTypeDesc(string? key, List<LTSTaggingType> ltstaggingtypes)
+        public static async Task<IDictionary<string, string>> GetActivityTypeDescAsync(
+            string? key, IAsyncEnumerable<LTSTaggingType> ltstaggingtypes)
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
 
-            var taggingtype = ltstaggingtypes.Where(x => x.Key == key).FirstOrDefault();
+            var taggingtype = await ltstaggingtypes.Where(x => x.Key == key).FirstOrDefaultAsync();
 
             if (taggingtype != null)
                 maintypedict = taggingtype.TypeNames;
@@ -315,18 +318,20 @@ namespace Helper
 
     public class LTSAreaHelper
     {
-        public static async System.Threading.Tasks.Task<List<string>> GetAreasNotToConsiderPGAsync(NpgsqlConnection conn)
+        public static async IAsyncEnumerable<string> GetAreasNotToConsiderPGAsync(
+            IPostGreSQLConnectionFactory connectionFactory, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
 
-            await conn.OpenAsync();
             //var areasnottoconsider = PostgresSQLHelper.SelectFromTableDataAsId(conn, "areas", "data->'Id' as Id", "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'", "",0, null);
-            var areasnottoconsider = await PostgresSQLHelper.SelectFromTableDataAsObjectAsync<string>(conn, "areas", "Id as PgId, data->'Id' as Id", "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'", "", 0, null);
-
-            await conn.CloseAsync();
+            var areasnottoconsider = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<string>(
+                connectionFactory, "areas", "Id as PgId, data->'Id' as Id",
+                "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'",
+                "", 0, null, cancellationToken);
 
             //session.Query<Area, AreaFilter>().Where(x => x.RegionId == null || x.RegionId == "TOASSIGN").Select(x => x.Id).ToList();
 
-            return areasnottoconsider.ConvertAll(x => x.ToUpper());
-        }        
+            await foreach (var area in areasnottoconsider)
+                yield return area.ToUpper();
+        }
     }
 }

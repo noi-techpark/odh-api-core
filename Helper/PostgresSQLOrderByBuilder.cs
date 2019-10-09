@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Helper
+﻿namespace Helper
 {
     public class PostgresSQLOrderByBuilder
     {
@@ -14,14 +10,14 @@ namespace Helper
         /// <param name="sortfield"></param>
         /// <param name="direction"></param>
         /// <returns></returns>
-        public static string BuildSeedOrderBy(ref string orderby, string seed, string sortifseednull)
+        public static string? BuildSeedOrderBy(ref string orderby, string? seed, string sortifseednull)
         {
-            string myseed = seed;
+            string? myseed = seed;
 
-            if (seed != "null")
+            if (seed != null)
             {
                 myseed = Helper.CreateSeed.GetSeed(seed);
-                orderby = "md5(id || '" + myseed + "')";
+                orderby = $"md5(id || '{myseed}')";
             }
             else
             {

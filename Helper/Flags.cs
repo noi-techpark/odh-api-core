@@ -1,10 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace Helper
 {
+    public static class EnumHelper
+    {
+        public static IEnumerable<object> GetValues<T>()
+        {
+            foreach (object? value in System.Enum.GetValues(typeof(T)))
+            {
+                if (value != null)
+                    yield return value;
+            }
+        }
+    }
     //Pakete Weekday 
     [Flags]
     public enum WeekdayFlag

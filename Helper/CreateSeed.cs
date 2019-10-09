@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Helper
 {
@@ -9,12 +7,13 @@ namespace Helper
     /// </summary>
     public class CreateSeed
     {
+        private static readonly Random random = new Random();
+
         public static int GetSeed(int seed)
         {
             //Kein Seed es wird ein Seed zwischen 0 und 10 erzeugt
             if (seed == 0)
             {
-                Random random = new Random();
                 int randomNumber = random.Next(10);
 
                 return randomNumber;
@@ -32,20 +31,18 @@ namespace Helper
                 return seed;
         }
 
-        public static string GetSeed(string seedstring)
+        public static string? GetSeed(string seedstring)
         {
-            int seed;
 
-            if (seedstring == "null")
-                return "null";
+            if (seedstring == null)
+                return null;
 
-            else if (int.TryParse(seedstring, out seed))
+            else if (int.TryParse(seedstring, out int seed))
             {
 
                 //Kein Seed es wird ein Seed zwischen 0 und 10 erzeugt
                 if (seed == 0)
                 {
-                    Random random = new Random();
                     int randomNumber = random.Next(1, 50);
 
                     return randomNumber.ToString();
@@ -63,7 +60,7 @@ namespace Helper
                     return seed.ToString();
             }
             else
-                return "null";
+                return null;
         }
     }
 }
