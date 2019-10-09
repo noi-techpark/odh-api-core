@@ -23,7 +23,6 @@ namespace OdhApiCore.Controllers
         {
         }
 
-
         #region SWAGGER Exposed API
 
         //Standard GETTER
@@ -84,14 +83,7 @@ namespace OdhApiCore.Controllers
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            //FAll 1 keine Filter
-            if (subtype == null && idlist == null && locfilter == null && areafilter == null &&
-                distancefilter == null && altitudefilter == null && durationfilter == null &&
-                highlight == null && odhtagfilter == null && odhactive == null && active == null)
-                return await GetPaged(
-                    language, activitytype, pagenumber, pagesize, seed, geosearchresult, cancellationToken);
-            else
-                return await GetFiltered(
+            return await GetFiltered(
                     language, pagenumber, pagesize, activitytype, subtype, idlist, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlight, difficultyfilter, active, odhactive, odhtagfilter, seed,
                     geosearchresult, cancellationToken);
@@ -108,93 +100,6 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetActivitySingle(string id, CancellationToken cancellationToken)
         {
             return await GetSingle(id, cancellationToken);
-        }
-
-
-        //Localized GETTER
-
-        /// <summary>
-        /// GET Activity List Localized
-        /// </summary>
-        /// <param name="language">Localization Language, (default:'en')</param>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
-        /// <param name="pagesize">Elements per Page, (default:10)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="activitytype">Type of the Activity ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), REFERENCE TO: GET /api/ActivityTypes </param>
-        /// <param name="subtype">Subtype of the Activity (BITMASK Filter = available SubTypes depends on the selected Activity Type), (default:'null')</param>
-        /// <param name="idlist">IDFilter (Separator ',' List of Activity IDs), (default:'null')</param>
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
-        /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ','), (default:'null')</param>
-        /// <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km), (default:'null')</param>
-        /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
-        /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours), (default:'null')</param>
-        /// <param name="highlight">Hightlight Filter (possible values: 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true), (default:'null')</param>
-        /// <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>      
-        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'api/SmgTag/ByMainEntity/Activity'), (default:'null')</param>        
-        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
-        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>        
-        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        /// <returns>Collection of ActivityLocalized Objects</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of ActivityLocalized Objects", typeof(IEnumerable<GBLTSActivityPoiLocalized>))]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/ActivityLocalized")]
-        public async Task<IActionResult> GetActivityFilteredLocalized(
-            string language = "en",
-            int pagenumber = 1,
-            int pagesize = 10,
-            string? activitytype = "1023",
-            string? subtype = null,
-            string? idlist = null,
-            string? locfilter = null,
-            string? areafilter = null,
-            string? distancefilter = null,
-            string? altitudefilter = null,
-            string? durationfilter = null,
-            string? highlight = null,
-            string? difficultyfilter = null,
-            string? odhtagfilter = null,
-            string? active = null,
-            string? odhactive = null,
-            string? seed = null,
-            string? latitude = null,
-            string? longitude = null,
-            string? radius = null,
-            CancellationToken cancellationToken = default)
-        {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-            //FAll 1 keine Filter
-            if (subtype == null && idlist == null && locfilter == null && areafilter == null &&
-                distancefilter == null && altitudefilter == null && durationfilter == null &&
-                highlight == null && odhtagfilter == null && odhactive == null && active == null)
-                return await GetPagedLocalized(
-                    language, activitytype, pagenumber, pagesize, seed, geosearchresult,
-                    cancellationToken);
-            else
-                return await GetFilteredLocalized(
-                    language, pagenumber, pagesize, activitytype, subtype, idlist, locfilter, areafilter, distancefilter,
-                    altitudefilter, durationfilter, highlight, difficultyfilter, active, odhactive, odhtagfilter, seed,
-                    geosearchresult, cancellationToken);
-        }
-
-
-        /// <summary>
-        /// GET Activity Single Localized
-        /// </summary>
-        /// <param name="language">Localization Language, (default:'en')</param>
-        /// <param name="id">ID of the Activity</param>        
-        /// <returns>ActivityLocalized Object</returns>
-        //[SwaggerResponse(HttpStatusCode.OK, "ActivityLocalized Object", typeof(GBLTSActivityPoiLocalized))]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/ActivityLocalized/{id}")]
-        public async Task<IActionResult> GetActivitySingleLocalized(
-            string id,
-            string language = "en",
-            CancellationToken cancellationToken = default)
-        {
-            return await GetSingleLocalized(language, id, cancellationToken);
         }
 
         //REDUCED
@@ -292,119 +197,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         /// <summary>
-        /// GET Full Activities List  (max 1024)
-        /// </summary>
-        /// <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
-        /// <param name="elements">Elements to retrieve (max. 1024)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-        /// <returns>Collection of Activity Objects</returns>        
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("All/{activitytype}/{elements}/{seed?}")]
-        public Task<IActionResult> GetAll(
-            string activitytype,
-            int elements,
-            string? seed,
-            CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null, null, cancellationToken);
-
-                string select = "*";
-                string orderby = "";
-
-                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(
-                    ref orderby, seed, "data ->>'Shortname' ASC");
-
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "activities", select, where, orderby, elements, null,
-                    cancellationToken).ToListAsync();
-
-                return JsonConvert.SerializeObject(myresult);
-            });
-        }
-
-        /// <summary>
-        /// GET Paged Activities List
-        /// </summary>
-        /// <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
-        /// <param name="pagenumber">Pagenumber</param>
-        /// <param name="pagesize">Elements per Page</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-        /// <returns>Result Object with Collection of Activity Objects</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("Paged/{activitytype}/{pagenumber}/{pagesize}/{seed?}")]
-        public Task<IActionResult> GetPaged(
-            string? language, string? activitytype, int pagenumber, int pagesize, string? seed, PGGeoSearchResult geosearchresult,
-            CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype, null, null, null, null, null, null,
-                    null, null, null, null, null, null, cancellationToken);
-
-                string select = "*";
-                string orderby = "";
-
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
-
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
-
-                int pageskip = pagesize * (pagenumber - 1);
-
-                //Normal
-                var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "activities", select, (whereexpression, parameters),
-                    orderby, pagesize, pageskip, cancellationToken);
-                var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionFactory, "activities", (whereexpression, parameters),
-                    cancellationToken);
-
-                //With Materialized View
-                //Stopwatch stopWatch = new Stopwatch();
-                //stopWatch.Start();
-
-                //var data = PostgresSQLHelper.SelectFromTableDataAsStringParametrized(conn, "activity_fast_lookup", "id,data", whereexpression, where.Item2, "shortname ASC", pagesize, pageskip);
-                //var count = PostgresSQLHelper.CountDataFromTableParametrized(conn, "activity_fast_lookup", whereexpression, where.Item2);
-
-                //stopWatch.Stop();
-                //Debug.WriteLine(stopWatch.ElapsedMilliseconds);
-
-                int totalcount = (int)count;
-                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0License));
-
-                return PostgresSQLHelper.GetResultJson(
-                    pagenumber,
-                    totalpages,
-                    totalcount,
-                    myseed,
-                    await data.ToListAsync());
-            });
-        }
-
-        /// <summary>
-        /// GET Paged Filtered Activities List
+        /// GET Activities List
         /// </summary>
         /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page</param>
@@ -423,10 +216,7 @@ namespace OdhApiCore.Controllers
         /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Activities Objects</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("Filtered/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed?}")]
-        public Task<IActionResult> GetFiltered(
+         private Task<IActionResult> GetFiltered(
             string? language, int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter,
             string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive,
@@ -477,16 +267,12 @@ namespace OdhApiCore.Controllers
             });
         }
 
-
         /// <summary>
         /// GET Single Activity
         /// </summary>
         /// <param name="id">ID of the Activity</param>
-        /// <returns>Activity Object</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("Single/{id}")]
-        public Task<IActionResult> GetSingle(string id, CancellationToken cancellationToken)
+        /// <returns>Activity Object</returns>                
+        private Task<IActionResult> GetSingle(string id, CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
             {
@@ -500,207 +286,7 @@ namespace OdhApiCore.Controllers
         }
 
         #endregion
-
-        #region LOCALIZED GETTER
-
-        /// <summary>
-        /// GET Full Activity List Localized  (max 1024)
-        /// </summary>
-        /// <param name="language">Localization Language</param>
-        /// <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
-        /// <param name="elements">Elements to retrieve (max. 1024)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-        /// <returns>Collection of Activity Object Localized</returns>
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("api/Activity/All/Localized/{language}/{activitytype}/{elements}/{seed?}")]
-        public Task<IActionResult> GetLocalized(
-            string language,
-            string activitytype,
-            int elements,
-            string seed,
-            CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null,
-                    null, cancellationToken);
-
-                string select = "*";
-                string orderby = "";
-
-                var where = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
-
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(
-                    ref orderby, seed, "data ->>'Shortname' ASC");
-
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
-                    connectionFactory, "activities", select, where, "", 0, null, language,
-                    PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken).ToListAsync();
-
-                return JsonConvert.SerializeObject(myresult);
-            });
-        }
-
-        /// <summary>
-        /// GET Paged Activities List Localized
-        /// </summary>
-        /// <param name="language">Localization Language</param>
-        /// <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
-        /// <param name="pagenumber">Pagenumber</param>
-        /// <param name="pagesize">Elements per Page</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-        /// <returns>Result Object with Collection of Activity Objects Localized</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/Paged/Localized/{language}/{activitytype}/{pagenumber}/{pagesize}/{seed?}")]
-        public Task<IActionResult> GetPagedLocalized(
-            string language, string? activitytype, int pagenumber, int pagesize, string? seed,
-            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype, null, null, null, null, null, null, null, null, null, null, null,
-                    null, cancellationToken);
-
-                string select = "*";
-                string orderby = "";
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
-
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
-
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
-
-                int pageskip = pagesize * (pagenumber - 1);
-
-                var dataTask = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
-                    connectionFactory, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
-                    language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized, cancellationToken);
-                var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionFactory, "activities", (whereexpression, parameters), cancellationToken);
-
-                int totalcount = (int)count;
-                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                return PostgresSQLHelper.GetResultJson(
-                    pagenumber, totalpages, totalcount, -1,
-                    myseed, await dataTask.ToListAsync());
-            });
-        }
-
-        /// <summary>
-        /// GET Paged Filtered Activities List Localized
-        /// </summary>
-        /// <param name="language">Localization Language</param>
-        /// <param name="pagenumber">Pagenumber</param>
-        /// <param name="pagesize">Elements per Page</param>
-        /// <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
-        /// <param name="subtypefilter">Subtype of the Activity ('null' = Filter disabled, BITMASK Filter = available SubTypes depends on the selected Activity Type)</param>
-        /// <param name="idfilter">IDFilter (Separator ',' List of Activity IDs, 'null' = No Filter)</param>
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter)</param>
-        /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ',', 'null' : Filter disabled)</param>
-        /// <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km) 'null' : disables Filter</param>
-        /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres) 'null' : disables Filter</param>
-        /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours) 'null' : disables Filter</param>
-        /// <param name="highlightfilter">Hightlight Filter (possible values: 'null' = Filter disabled, 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true)</param>
-        /// <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>  
-        /// <param name="active">Active Filter (possible Values: 'null' Displays all Activities, 'true' only Active Activities, 'false' only Disabled Activities</param>
-        /// <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Activities, 'true' only SMG Active Activities, 'false' only SMG Disabled Activities</param>
-        /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>   /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-        /// <returns>Result Object with Collection of Activity Objects Localized</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/Filtered/Localized/{language}/{pagenumber}/{pagesize}/{activitytype}/{subtypefilter}/{idfilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}/{seed?}")]
-        public Task<IActionResult> GetFilteredLocalized(
-            string language, int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter,
-            string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
-            string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive,
-            string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
-                    altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags,
-                    cancellationToken);
-
-                string select = "*";
-                string orderby = "";
-
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
-
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(
-                    ref orderby, seed, "data ->>'Shortname' ASC");
-
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
-
-                int pageskip = pagesize * (pagenumber - 1);
-
-                var dataTask = PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
-                    connectionFactory, "activities", select, (whereexpression, parameters),
-                    orderby, pagesize, pageskip, language, PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized,
-                    cancellationToken);
-                var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionFactory, "activities", (whereexpression, parameters),
-                    cancellationToken);
-
-                int totalcount = (int)count;
-                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                return PostgresSQLHelper.GetResultJson(
-                    pagenumber, totalpages, totalcount, -1,
-                    myseed, await dataTask.ToListAsync());
-            });
-        }
-
-        /// <summary>
-        /// GET Single Activity Localized
-        /// </summary>
-        /// <param name="language">Localization Language</param>
-        /// <param name="id">ID of the Activity</param>
-        /// <returns>Activity Localized Object</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/Localized/{language}/{id}")]
-        public Task<IActionResult> GetSingleLocalized(string language, string id, CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
-                var data = await PostgresSQLHelper.SelectFromTableDataAsLocalizedObjectParametrizedAsync<GBLTSPoi, GBLTSActivityPoiLocalized>(
-                    connectionFactory, "activities", "*", where, "", 0, null, language,
-                    PostgresSQLTransformer.TransformToGBLTSActivityPoiLocalized,
-                    cancellationToken).FirstOrDefaultAsync();
-
-                return JsonConvert.SerializeObject(data);
-            });
-        }
-
-        #endregion
-
+        
         #region REDUCED GETTER
 
         /// <summary>
