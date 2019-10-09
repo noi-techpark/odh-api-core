@@ -441,7 +441,7 @@ namespace Helper
         }
 
         //Returns Where and Parameter for EventShort
-        public static (string, IEnumerable<PGParameters>) CreateEventShortWhereExpression(
+        public static (string wherexpression, IEnumerable<PGParameters> parameters) CreateEventShortWhereExpression(
             DateTime start, DateTime end, string source, string eventlocation,
             string activefilter, IReadOnlyCollection<string> eventidlist, bool special)
         {
@@ -463,7 +463,7 @@ namespace Helper
         }
 
         //REturns Where and Parameter for Packages
-        public static (string, IEnumerable<PGParameters>) CreatePackageWhereExpression(
+        public static (string wherexpression, IEnumerable<PGParameters> parameters) CreatePackageWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> accolist,
             IReadOnlyCollection<string> boardlist, IReadOnlyCollection<string> themelist,
             IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
@@ -493,6 +493,23 @@ namespace Helper
             return (whereexpression, parameters);
         }
 
+        //Return Where and Parameters for Alpinebits
+        public static (string wherexpression, IEnumerable<PGParameters> parameters) CreateAlpineBitsWhereExpression(
+            IReadOnlyCollection<string> idlist, string source, 
+            string messagetype, string requestdate, 
+            IReadOnlyCollection<string> accommodationIds)
+        {
+            string whereexpression = "";
+            List<PGParameters> parameters = new List<PGParameters>();
+
+            IdFilterWhere(ref whereexpression, parameters, idlist);
+            AlpineBitsMessageFilterWhere(ref whereexpression, parameters, messagetype);
+            AlpineBitsSourceFilterWhere(ref whereexpression, parameters, source);
+            AlpineBitsAccommodationIdFilterWhere(ref whereexpression, parameters, accommodationIds);
+            //RequestDate
+
+            return (whereexpression, parameters);
+        }
 
         #region Reusable Where Builders
 
@@ -655,6 +672,34 @@ namespace Helper
                             Type = NpgsqlTypes.NpgsqlDbType.Text,
                             Value = activityid.ToLower()
                         });
+                        counter++;
+                    }
+                    idliststring = idliststring.Remove(idliststring.Length - 2);
+
+                    whereexpression = whereexpression + "id in (" + idliststring + ")";
+                }
+            }
+        }
+
+        private static void IdFilterWhere(
+            ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> idlist)
+        {
+            //IDLIST
+            if (idlist.Count > 0)
+            {
+                if (idlist.Count == 1)
+                {
+                    whereexpression += "id LIKE @id";
+                    parameters.Add(new PGParameters() { Name = "id", Type = NpgsqlTypes.NpgsqlDbType.Text, Value = idlist.FirstOrDefault() });
+                }
+                else
+                {
+                    string idliststring = "";
+                    int counter = 1;
+                    foreach (var activityid in idlist)
+                    {
+                        idliststring = idliststring + "@id" + counter + ", ";
+                        parameters.Add(new PGParameters() { Name = "id" + counter, Type = NpgsqlTypes.NpgsqlDbType.Text, Value = activityid });
                         counter++;
                     }
                     idliststring = idliststring.Remove(idliststring.Length - 2);
@@ -1475,6 +1520,50 @@ namespace Helper
             }
         }
 
+        private static void EventDateFilterWhereColumns(ref string whereexpression, IList<PGParameters> parameters, DateTime? begin, DateTime? end)
+        {
+            //Begin & End
+            if (begin != null && end != null)
+            {
+                //Beide nicht null
+                if (begin != DateTime.MinValue && end != DateTime.MaxValue)
+                {
+                    end = end.Value.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                    if (!String.IsNullOrEmpty(whereexpression))
+                        whereexpression = whereexpression + " AND ";
+
+                    whereexpression = whereexpression + "(begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')";
+                }
+                //Begin ist DateTime Min
+                if (begin == DateTime.MinValue && end != DateTime.MaxValue)
+                {
+                    end = end.Value.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                    if (!String.IsNullOrEmpty(whereexpression))
+                        whereexpression = whereexpression + " AND ";
+
+                    whereexpression = whereexpression + "(begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR (enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')";
+                }
+                //End ist DateTime Max
+                if (begin != DateTime.MinValue && end == DateTime.MaxValue)
+                {
+                    if (!String.IsNullOrEmpty(whereexpression))
+                        whereexpression = whereexpression + " AND ";
+
+                    whereexpression = whereexpression + "(begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end) + "')";
+                }
+                //APP USED THIS QUERY
+                //else if (begin != DateTime.MinValue && end == DateTime.MaxValue)
+                //{
+                //    if (!String.IsNullOrEmpty(whereexpression))
+                //        whereexpression = whereexpression + " AND ";
+
+                //    whereexpression = whereexpression + "(((to_date(data ->> 'DateBegin', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "')))";
+                //}
+            }
+        }
+
         private static void EventDateFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, DateTime? begin, DateTime? end)
         {
@@ -1588,6 +1677,20 @@ namespace Helper
                     whereexpression = whereexpression + " AND ";
 
                 whereexpression = whereexpression + "(((to_date(data ->> 'DateBegin', 'YYYY-MM-DD') >= '" + $"{DateTime.Now:yyyy-MM-dd}" + "')))";
+            }
+        }
+
+        private static void EventDateFilterWhereWithNextBegin(ref string whereexpression, IList<PGParameters> parameters, DateTime? begin, DateTime? end)
+        {
+            //Begin & End
+            if (begin != null && end != null)
+            {
+
+                if (!String.IsNullOrEmpty(whereexpression))
+                    whereexpression = whereexpression + " AND ";
+
+                whereexpression = whereexpression + "(((to_date(data ->> 'NextBeginDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "') AND (to_date(data ->> 'NextBeginDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')))";
+
             }
         }
 
@@ -2467,7 +2570,7 @@ namespace Helper
                     if (!String.IsNullOrEmpty(whereexpression))
                         whereexpression = whereexpression + " AND ";
 
-                    whereexpression += $"((to_date(data ->> 'StartDate', 'YYYY-MM-DD') >= '{start:yyyy-MM-dd}'))";
+                    whereexpression += $"((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '{start:yyyy-MM-dd}'))";
                 }
                 else if (start == DateTime.MinValue && end != DateTime.MaxValue)
                 {
@@ -2507,6 +2610,68 @@ namespace Helper
                     whereexpression += $"((to_date(data->> 'EndDate', 'YYYY-MM-DD') <= '{end:yyyy-MM-dd}')))";
                 }
 
+            }
+        }
+
+        private static void AlpineBitsMessageFilterWhere(ref string whereexpression, List<PGParameters> parameters, string messagetype)
+        {
+            //Highlight
+            if (!String.IsNullOrEmpty(messagetype))
+            {
+                if (!String.IsNullOrEmpty(whereexpression))
+                    whereexpression += " AND ";
+
+                whereexpression += "data @> @MessageType";
+                parameters.Add(new PGParameters() { Name = "messagetype", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"MessageType\" : \"" + messagetype.ToString() + "\"}" });
+            }
+        }
+
+        private static void AlpineBitsSourceFilterWhere(ref string whereexpression, IList<PGParameters> parameters, string source)
+        {
+            //Highlight
+            if (!String.IsNullOrEmpty(source))
+            {
+                if (!String.IsNullOrEmpty(whereexpression))
+                    whereexpression += " AND ";
+
+                whereexpression += "data @> @Source";
+                parameters.Add(new PGParameters() { Name = "source", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{\"Source\": \"" + source.ToString() + "\"}" });
+            }
+        }
+
+        private static void AlpineBitsAccommodationIdFilterWhere(ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> accommodationids)
+        {
+            //AccoType Info schaugn ob des geat!!! umgekearter foll
+            if (accommodationids.Count > 0)
+            {
+                if (!String.IsNullOrEmpty(whereexpression))
+                    whereexpression += " AND ";
+
+                //Tuning force to use GIN Index
+                if (accommodationids.Count == 1)
+                {
+                    whereexpression += "data @> @accoid";
+                    parameters.Add(new PGParameters() { Name = "accoid", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{\"AccommodationId\": \"" + accommodationids.FirstOrDefault() + "\"}" });
+                }
+                else
+                {
+                    if (!String.IsNullOrEmpty(whereexpression))
+                        whereexpression += " AND (";
+                    else
+                        whereexpression += "(";
+
+                    int counter = 1;
+                    string categoryliststring = "";
+                    foreach (var accoid in accommodationids)
+                    {
+                        categoryliststring += $"data @> @accoid {counter} OR ";
+                        parameters.Add(new PGParameters() { Name = "accoid" + counter, Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{ \"AccommodationId\": \"" + accoid + "\"}" });
+                        counter++;
+                    }
+                    categoryliststring = categoryliststring.Remove(categoryliststring.Length - 4);
+
+                    whereexpression += categoryliststring + ")";
+                }
             }
         }
 
