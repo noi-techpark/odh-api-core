@@ -126,7 +126,7 @@ namespace Helper
             return -1;
         }
 
-        public static long GetFlagofTypeLong<T>(string id)
+        public static long GetFlagofTypeLong<T>(string? id)
         {
             foreach (object? smgpoitypeflag in Enum.GetValues(typeof(T)))
             {
@@ -140,8 +140,7 @@ namespace Helper
                         FieldInfo? field = typeof(T).GetField(name);
                         if (field != null)
                         {
-                            DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                            if (attr != null)
+                            if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
                             {
                                 description = attr.Description;
                             }

@@ -272,12 +272,12 @@ namespace Helper
         }
 
 
-        public static IDictionary<string, string> GetPoiTypeDesc(
-            string key, IEnumerable<LTSTaggingType> ltstaggingtypes)
+        public static async Task<IDictionary<string, string>> GetPoiTypeDescAsync(
+            string? key, IAsyncEnumerable<LTSTaggingType> ltstaggingtypes)
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
 
-            var taggingtype = ltstaggingtypes.Where(x => x.Key == key).FirstOrDefault();
+            var taggingtype = await ltstaggingtypes.Where(x => x.Key == key).FirstOrDefaultAsync();
 
             if (taggingtype != null)
                 maintypedict = taggingtype.TypeNames;
@@ -285,7 +285,7 @@ namespace Helper
             return maintypedict;
         }
 
-        public static async Task<IDictionary<string, string>> GetActivityTypeDesc(
+        public static async Task<IDictionary<string, string>> GetActivityTypeDescAsync(
             string? key, IAsyncEnumerable<LTSTaggingType> ltstaggingtypes)
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();

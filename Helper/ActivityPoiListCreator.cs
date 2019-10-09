@@ -1327,7 +1327,7 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreatePoiSubTypefromFlag(string typefiltertext, string subtypefilter)
+        public static List<string> CreatePoiSubTypefromFlag(string typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 

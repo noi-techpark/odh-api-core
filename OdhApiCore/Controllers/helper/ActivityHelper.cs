@@ -36,13 +36,13 @@ namespace OdhApiCore.Controllers
             string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter,
             string? smgtags, CancellationToken cancellationToken)
         {
-            var arealist = await RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await RetrieveLocFilterDataAsync(
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
                     connectionFactory, metaregionlist, cancellationToken).ToListAsync();
             }
 
@@ -137,32 +137,6 @@ namespace OdhApiCore.Controllers
                 smgactive = false;
         }
 
-        private static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(
-            IPostGreSQLConnectionFactory connectionFactory, string? areafilter, CancellationToken cancellationToken)
-        {
-            if (areafilter != null)
-            {
-                return (await LocationListCreator.CreateActivityAreaListPGAsync(
-                    areafilter, connectionFactory, cancellationToken)).ToList();
-            }
-            else
-            {
-                return Enumerable.Empty<string>();
-            }
-        }
-
-        private static async IAsyncEnumerable<string> RetrieveLocFilterDataAsync(
-            IPostGreSQLConnectionFactory connectionFactory, List<string> metaregionlist, [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            var mtapgwhere = PostgresSQLWhereBuilder.CreateMetaRegionWhereExpression(metaregionlist);
-            var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<MetaRegion>(
-                connectionFactory, "metaregions", "*", mtapgwhere,
-                "", 0, null, cancellationToken);
-
-            await foreach (var region in mymetaregion)
-                if (region.TourismvereinIds != null)
-                    foreach (var tids in region.TourismvereinIds)
-                        yield return tids;
-        }
+       
     }
 }

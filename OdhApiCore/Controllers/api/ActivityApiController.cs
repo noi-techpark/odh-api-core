@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
 {
-    //[Route("api/[controller]")]
+    /// <summary>
+    /// Activity Api (data provided by LTS ActivityData) SOME DATA Available as OPENDATA 
+    /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
@@ -96,6 +98,9 @@ namespace OdhApiCore.Controllers
         /// <returns>Activity Object</returns>
         //[SwaggerResponse(HttpStatusCode.OK, "Activity Object", typeof(GBLTSActivity))]
         //[Authorize(Roles = "DataReader,ActivityReader")]
+        [ProducesResponseType(typeof(GBLTSActivity), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("api/Activity/{id}")]
         public async Task<IActionResult> GetActivitySingle(string id, CancellationToken cancellationToken)
         {
@@ -124,7 +129,9 @@ namespace OdhApiCore.Controllers
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
         /// <returns>Collection of Activity Reduced Objects</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of Activity Reduced Objects", typeof(IEnumerable<ActivityPoiReduced>))]
+        [ProducesResponseType(typeof(IEnumerable<ActivityPoiReduced>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/ActivityReduced")]
         public async Task<IActionResult> GetActivityReduced(
@@ -160,7 +167,10 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <returns>Collection of ActivityTypes Object</returns>                
         //[CacheOutputUntilToday(23, 59)]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of ActivityType Objects", typeof(IEnumerable<ActivityTypes>))]
+        [ProducesResponseType(typeof(IEnumerable<ActivityTypes>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/ActivityTypes")]
         public async Task<IActionResult> GetAllActivityTypesListAsync(CancellationToken cancellationToken)
@@ -176,7 +186,10 @@ namespace OdhApiCore.Controllers
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
         /// <returns>Collection of PoiBaseInfos Objects</returns>
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of PoiBaseInfos Objects", typeof(IEnumerable<GBLTSActivity>))]
+        [ProducesResponseType(typeof(IEnumerable<GBLTSActivity>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/ActivityChanged")]
         public async Task<IActionResult> GetAllActivityChanged(
@@ -187,7 +200,7 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default
             )
         {
-            updatefrom = updatefrom ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
             return await GetLastChanged(pagenumber, pagesize, updatefrom, seed, cancellationToken);
         }
@@ -240,8 +253,8 @@ namespace OdhApiCore.Controllers
                     myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
                     myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
                     myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
+                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
@@ -304,12 +317,8 @@ namespace OdhApiCore.Controllers
         /// <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>  
         /// <param name="active">Active Filter (possible Values: 'null' Displays all Activities, 'true' only Active Activities, 'false' only Disabled Activities</param>
         /// <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Activities, 'true' only SMG Active Activities, 'false' only SMG Disabled Activities</param>
-        /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>   /// <returns>Collection of Reduced Activity Objects</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[CacheOutput(ClientTimeSpan = 3600, ServerTimeSpan = 3600)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/ReducedAsync/{language}/{activitytype}/{subtypefilter}/{locfilter}/{areafilter}/{distancefilter}/{altitudefilter}/{durationfilter}/{highlightfilter}/{difficultyfilter}/{active}/{smgactive}/{smgtags}")]
-        public Task<IActionResult> GetReduced(
+        /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>   /// <returns>Collection of Reduced Activity Objects</returns>        
+        private Task<IActionResult> GetReduced(
             string? language, string? activitytype, string? subtypefilter, string? locfilter, string? areafilter,
             string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter,
             string? difficultyfilter, string? active, string? smgactive, string? smgtags,
@@ -351,22 +360,14 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Activity Types List (Localized Type Names and Bitmasks)
         /// </summary>
-        /// <returns>Collection of ActivityTypes Object</returns>
-        //[CacheOutput(ClientTimeSpan = 18000, ServerTimeSpan = 18000)]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[CacheOutputUntilToday(23, 59)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/GetActivityTypesList")]
-        public Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
+        /// <returns>Collection of ActivityTypes Object</returns>        
+        private Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
             {
                 List<ActivityTypes> mysuedtiroltypeslist = new List<ActivityTypes>();
 
-                //Get LTS Tagging Types List
-
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
-
+                //Get LTS Tagging Types List                
                 var ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
                         connectionFactory, "ltstaggingtypes", "*", "", "", 0,
                         null, cancellationToken);
@@ -383,7 +384,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeFlag>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -403,7 +404,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeBerg>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -422,7 +423,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeRadfahren>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -440,7 +441,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeOrtstouren>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -458,7 +459,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypePferde>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -476,7 +477,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeWandern>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -494,7 +495,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeLaufenFitness>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -512,7 +513,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeLoipen>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -530,7 +531,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeRodeln>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -548,7 +549,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypePisten>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -566,7 +567,7 @@ namespace OdhApiCore.Controllers
 
                     mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeAufstiegsanlagen>(id);
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDesc(
+                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
@@ -585,10 +586,7 @@ namespace OdhApiCore.Controllers
         /// <param name="updatefrom">Date from (all Activity with LastChange >= datefrom are passed)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Activity Objects</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity/GetActivityLastChanged/Paged/{pagenumber}/{pagesize}/{updatefrom}/{seed?}")]
-        public Task<IActionResult> GetLastChanged(
+        private Task<IActionResult> GetLastChanged(
             int pagenumber, int pagesize, string updatefrom, string? seed,
             CancellationToken cancellationToken)
         {
