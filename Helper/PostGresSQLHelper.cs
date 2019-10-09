@@ -55,7 +55,7 @@ namespace Helper
         /// <returns>List of JSON Strings</returns>
         public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
+            string sortexp, uint limit, uint? offset, CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
@@ -133,7 +133,7 @@ namespace Helper
         /// <returns>List of JSON Strings</returns>
         public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAndStringAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
+            string sortexp, uint limit, uint? offset, IEnumerable<string> fieldstoadd,
             CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<JsonRaw> inner()
@@ -195,7 +195,7 @@ namespace Helper
         /// <returns>List of JSON Strings</returns>
         public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAndStringAndTypeAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd, string type,
+            string sortexp, uint limit, uint? offset, IEnumerable<string> fieldstoadd, string type,
             CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<JsonRaw> inner()
@@ -253,7 +253,7 @@ namespace Helper
         /// <returns>List of JSON Strings</returns>
         public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsIdAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
+            string sortexp, uint limit, uint? offset, CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
@@ -299,7 +299,7 @@ namespace Helper
         /// <returns></returns>
         public static IAsyncEnumerable<T> SelectFromTableDataAsObjectAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
+            string sortexp, uint limit, uint? offset, CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<T> inner()
             {
@@ -401,7 +401,7 @@ namespace Helper
         /// <returns></returns>
         public static IAsyncEnumerable<(string, T)> SelectFromTableIdAndDataAsObjectAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
+            string sortexp, uint limit, uint? offset, CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<(string, T)> inner()
             {
@@ -454,7 +454,7 @@ namespace Helper
         /// <returns></returns>
         public static IAsyncEnumerable<T> SelectFromTableDataAsObjectExtendedAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp, string whereexp,
-            string sortexp, int limit, int? offset, IEnumerable<string> fieldstodeserialize,
+            string sortexp, uint limit, uint? offset, IEnumerable<string> fieldstodeserialize,
             CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<T> inner()
@@ -540,7 +540,7 @@ namespace Helper
         #region Generic Database Query Methods (To use on api exposed Methods)
 
         public static string CreateDatabaseCommand(
-            string selectexp, string tablename, string whereexp, string sortexp, int? offset, int limit)
+            string selectexp, string tablename, string whereexp, string sortexp, uint? offset, uint limit)
         {
             string commandText = $"SELECT {selectexp} FROM {tablename}";
 
@@ -580,7 +580,7 @@ namespace Helper
         /// <param name="tablename">Table name</param>
         /// <param name="whereexp">Where Expression</param>
         /// <returns>Elements Count as Long</returns>
-        public static async Task<long> CountDataFromTableParametrizedAsync(
+        public static async Task<uint> CountDataFromTableParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
             CancellationToken cancellationToken)
@@ -600,7 +600,7 @@ namespace Helper
 
                 command.AddPGParameters(where.whereparameters);
 
-                long count = (long)await command.ExecuteScalarAsync(cancellationToken);
+                uint count = (uint)(long)await command.ExecuteScalarAsync(cancellationToken);
 
                 return count;
             }
@@ -622,7 +622,7 @@ namespace Helper
         public static IAsyncEnumerable<JsonRaw> SelectFromTableDataFirstOnlyParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
-            string sortexp, int limit, int? offset,
+            string sortexp, uint limit, uint? offset,
             CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<JsonRaw> inner()
@@ -665,7 +665,7 @@ namespace Helper
         public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexpression, IEnumerable<PGParameters>? whereparameters) where,
-            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
+            string sortexp, uint limit, uint? offset, CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
@@ -707,7 +707,7 @@ namespace Helper
         public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsJsonParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
-            string sortexp, int limit, int? offset, IEnumerable<string> fieldstoadd,
+            string sortexp, uint limit, uint? offset, IEnumerable<string> fieldstoadd,
             CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<JsonRaw> inner()
@@ -772,7 +772,7 @@ namespace Helper
         public static IAsyncEnumerable<T> SelectFromTableDataAsObjectParametrizedAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters>? whereparameters) where,
-            string sortexp, int limit, int? offset, CancellationToken cancellationToken)
+            string sortexp, uint limit, uint? offset, CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<T> inner()
             {
@@ -829,7 +829,7 @@ namespace Helper
         public static IAsyncEnumerable<T> SelectFromTableDataAsObjectExtendedParametrizedAsync<T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
-            string sortexp, int limit, int? offset, IEnumerable<string> fieldstodeserialize,
+            string sortexp, uint limit, uint? offset, IEnumerable<string> fieldstodeserialize,
             CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<T> inner()
@@ -899,7 +899,7 @@ namespace Helper
         public static IAsyncEnumerable<T> SelectFromTableDataAsLocalizedObjectParametrizedAsync<V, T>(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexp, IEnumerable<PGParameters> whereparameters) where,
-            string sortexp, int limit, int? offset, string language,
+            string sortexp, uint limit, uint? offset, string language,
             Func<V, string, T> transformer, CancellationToken cancellationToken)
         {
             async IAsyncEnumerable<T> inner()
@@ -1087,21 +1087,8 @@ namespace Helper
 
         #region Generic Helpers
 
-        [Obsolete("Use generic overload instead")]
-        public static string GetResultJson(int pagenumber, int totalpages, int totalcount, string? seed, string data)
-        {
-            string resultstr = "";
-
-            if (data.StartsWith("["))
-                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"Seed\":\"{seed}\",\"Items\":{data}}}";
-            else
-                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"Seed\":\"{seed}\",\"Items\":[{data}]}}";
-
-            return resultstr;
-        }
-
         public static string GetResultJson<T>(
-            int pagenumber, int totalpages, int totalcount, string? seed, IEnumerable<T> data)
+            uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data)
             where T : notnull
         {
             return JsonConvert.SerializeObject(new
@@ -1114,22 +1101,8 @@ namespace Helper
             });
         }
 
-        [Obsolete("Use generic overload instead")]
-        public static string GetResultJson(
-            int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed, string data)
-        {
-            string resultstr = "";
-
-            if (data.StartsWith("["))
-                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"Seed\":\"{seed}\",\"Items\":{data}}}";
-            else
-                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"Seed\":\"{seed}\",\"Items\":[{data}]}}";
-
-            return resultstr;
-        }
-
         public static string GetResultJson<T>(
-            int pagenumber, int totalpages, int totalcount, int onlineresults, string? seed,
+            uint pagenumber, uint totalpages, uint totalcount, int onlineresults, string? seed,
             IEnumerable<T> data)
             where T : notnull
         {
@@ -1144,23 +1117,8 @@ namespace Helper
             });
         }
 
-        [Obsolete("Use generic overload instead")]
-        public static string GetResultJson(
-            int pagenumber, int totalpages, int totalcount, int onlineresults,
-            string resultid, string? seed, string data)
-        {
-            string resultstr = "";
-
-            if (data.StartsWith("["))
-                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"ResultId\":\"{resultid}\",\"Seed\":\"{seed}\",\"Items\":{data}}}";
-            else
-                resultstr = $"{{\"TotalResults\":{totalcount},\"TotalPages\":{totalpages},\"CurrentPage\":{pagenumber},\"OnlineResults\":{onlineresults},\"ResultId\":\"{resultid}\",\"Seed\":\"{seed}\",\"Items\":[{data}]}}";
-
-            return resultstr;
-        }
-
         public static string GetResultJson<T>(
-            int pagenumber, int totalpages, int totalcount, int onlineresults,
+            uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
             string resultid, string? seed, IEnumerable<T> data)
             where T : notnull
         {
@@ -1176,23 +1134,8 @@ namespace Helper
             });
         }
 
-        [Obsolete("Use generic overload instead")]
-        public static string GetResultJsonLowercase(
-            int pagenumber, int totalpages, int totalcount, int onlineresults,
-            string resultid, string seed, string data)
-        {
-            string resultstr = "";
-
-            if (data.StartsWith("["))
-                resultstr = $"{{\"totalResults\":{totalcount},\"totalPages\":{totalpages},\"currentPage\":{pagenumber},\"onlineResults\":{onlineresults},\"resultId\":\"{resultid}\",\"seed\":\"{seed}\",\"items\":{data}}}";
-            else
-                resultstr = $"{{\"totalResults\":{totalcount},\"totalPages\":{totalpages},\"currentPage\":{pagenumber},\"onlineResults\":{onlineresults},\"resultId\":\"{resultid}\",\"seed\":\"{seed}\",\"items\":[{data}]}}";
-
-            return resultstr;
-        }
-
         public static string GetResultJsonLowercase<T>(
-            int pagenumber, int totalpages, int totalcount, int onlineresults,
+            uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
             string resultid, string seed, IEnumerable<T> data)
             where T : notnull
         {
@@ -1322,9 +1265,9 @@ namespace Helper
 
         #endregion
 
-        public static int PGPagingHelper(int totalcount, int pagesize)
+        public static uint PGPagingHelper(uint totalcount, uint pagesize)
         {
-            int totalpages = 0;
+            uint totalpages = 0;
 
             if (totalcount % pagesize == 0)
                 totalpages = totalcount / pagesize;

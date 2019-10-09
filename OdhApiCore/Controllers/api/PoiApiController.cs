@@ -59,8 +59,8 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("api/Poi")]
         public async Task<IActionResult> GetPoiList(
             string? language = null,
-            int pagenumber = 1,
-            int pagesize = 10,
+            uint pagenumber = 1,
+            uint pagesize = 10,
             string? poitype = "511",
             string? subtype = null,
             string? idlist = null,
@@ -181,8 +181,8 @@ namespace OdhApiCore.Controllers.api
         //[Authorize(Roles = "DataReader,PoiReader")]
         [HttpGet, Route("api/PoiChanged")]
         public async Task<IActionResult> GetAllPoisChanged(
-            int pagenumber = 1,
-            int pagesize = 10,
+            uint pagenumber = 1,
+            uint pagesize = 10,
             string? seed = null,
             string? updatefrom = null,
             CancellationToken cancellationToken = default
@@ -217,7 +217,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Pois</returns>        
         private Task<IActionResult> GetFiltered(
-            string? language, int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, 
+            string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, 
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? seed, 
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
@@ -242,7 +242,7 @@ namespace OdhApiCore.Controllers.api
                 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
-                int pageskip = pagesize * (pagenumber - 1);
+                uint pageskip = pagesize * (pagenumber - 1);
 
                 var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "pois", select, (whereexpression, parameters), orderby, pagesize, pageskip,
@@ -250,8 +250,8 @@ namespace OdhApiCore.Controllers.api
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
                     connectionFactory, "pois", (whereexpression, parameters), cancellationToken);
 
-                int totalcount = (int)count;
-                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
+                uint totalcount = count;
+                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0License));
 
@@ -525,7 +525,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Poi Objects</returns>
         private Task<IActionResult> GetLastChanged(
-            int pagenumber, int pagesize, string updatefrom, 
+            uint pagenumber, uint pagesize, string updatefrom, 
             string? seed, CancellationToken cancellationToken)
         {        
             return DoAsyncReturnString(async connectionFactory =>
@@ -537,7 +537,7 @@ namespace OdhApiCore.Controllers.api
 
                 string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
-                int pageskip = pagesize * (pagenumber - 1);
+                uint pageskip = pagesize * (pagenumber - 1);
 
                 var where = PostgresSQLWhereBuilder.CreateLastChangedWhereExpression(updatefrom);
 
@@ -547,8 +547,8 @@ namespace OdhApiCore.Controllers.api
                 var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
                     connectionFactory, "pois", where, cancellationToken);
 
-                int totalcount = (int)count;
-                int totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
+                uint totalcount = count;
+                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber, totalpages, totalcount, -1, myseed, await dataTask.ToListAsync());
