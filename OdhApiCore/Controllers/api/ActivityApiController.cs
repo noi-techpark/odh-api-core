@@ -72,11 +72,11 @@ namespace OdhApiCore.Controllers
             string? distancefilter = null,
             string? altitudefilter = null,
             string? durationfilter = null,
-            string? highlight = null,
+            bool? highlight = null,
             string? difficultyfilter = null,
             string? odhtagfilter = null,
-            string? active = null,
-            string? odhactive = null,
+            bool? active = null,
+            bool? odhactive = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -143,11 +143,11 @@ namespace OdhApiCore.Controllers
             string? distancefilter = null,
             string? altitudefilter = null,
             string? durationfilter = null,
-            string? highlight = null,
+            bool? highlight = null,
             string? difficultyfilter = null,
             string? odhtagfilter = null,
-            string? active = null,
-            string? odhactive = null,
+            bool? active = null,
+            bool? odhactive = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -232,7 +232,7 @@ namespace OdhApiCore.Controllers
          private Task<IActionResult> GetFiltered(
             string? language, int pagenumber, int pagesize, string? activitytype, string? subtypefilter, string? idfilter,
             string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
-            string? durationfilter, string? highlightfilter, string? difficultyfilter, string? active, string? smgactive,
+            string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
@@ -320,8 +320,8 @@ namespace OdhApiCore.Controllers
         /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>   /// <returns>Collection of Reduced Activity Objects</returns>        
         private Task<IActionResult> GetReduced(
             string? language, string? activitytype, string? subtypefilter, string? locfilter, string? areafilter,
-            string? distancefilter, string? altitudefilter, string? durationfilter, string? highlightfilter,
-            string? difficultyfilter, string? active, string? smgactive, string? smgtags,
+            string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
+            string? difficultyfilter, bool? active, bool? smgactive, string? smgtags,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>

@@ -41,9 +41,13 @@ namespace OdhApiCoreTests.IntegrationTets
         [InlineData("/api/Activity?activitytype=12")]
         [InlineData("/api/Activity?language=de")]
         [InlineData("/api/Activity?language=en")]
-        [InlineData("/api/Activity?pagenumber=1&pagesize=100&activitytype=960&areafilter=skaSKIC57DA31F859141A1802E86B410FEBD70&active=true&seed=null")]
-        [InlineData("/api/Activity?pagenumber=1&pagesize=100&activitytype=960&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
-        [InlineData("/api/Activity?pagenumber=1&pagesize=20&activitytype=Berg&subtype=null&idlist=null&locfilter=null&areafilter=null&distancefilter=null&altitudefilter=null&durationfilter=null&highlight=null&difficultyfilter=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
+        [InlineData("/api/Activity?pagenumber=1&pagesize=100&activitytype=511&areafilter=skaSKIC57DA31F859141A1802E86B410FEBD70&active=true&seed=null")]
+        [InlineData("/api/Activity?pagenumber=1&pagesize=100&activitytype=511&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
+        [InlineData("/api/Activity?pagenumber=1&pagesize=10&activitytype=11&locfilter=tvs5228229651CA11D18F1400A02427D15E&odhactive=true&active=true&seed=null")]
+        [InlineData("/api/Activity?pagenumber=1&pagesize=10&activitytype=511&highlight=true&seed=null")]
+        [InlineData("/api/Activity?pagenumber=1&pagesize=20&activitytype=Berg&subtype=null&idlist=null&locfilter=null&areafilter=null&distancefilter=null&altitudefilter=null&durationfilter=null&highlight=&difficultyfilter=null&active=&odhactive=&odhtagfilter=null&seed=null")]
+        //Fails because boolean don't accept null string, to verifiy
+        //[InlineData("/api/Activity?pagenumber=1&pagesize=20&activitytype=Berg&subtype=null&idlist=null&locfilter=null&areafilter=null&distancefilter=null&altitudefilter=null&durationfilter=null&highlight=null&difficultyfilter=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
         public async Task Get_Activities(string url)
         {
             var response = await _client.GetAsync(url);

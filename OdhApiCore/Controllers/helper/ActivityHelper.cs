@@ -33,7 +33,7 @@ namespace OdhApiCore.Controllers
         public static async Task<ActivityHelper> CreateAsync(
             IPostGreSQLConnectionFactory connectionFactory, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
             string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter,
-            string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter,
+            bool? highlightfilter, string? difficultyfilter, bool? activefilter, bool? smgactivefilter,
             string? smgtags, CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
@@ -53,7 +53,7 @@ namespace OdhApiCore.Controllers
         private ActivityHelper(
             string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
             IEnumerable<string> arealist, string? distancefilter, string? altitudefilter, string? durationfilter,
-            string? highlightfilter, string? difficultyfilter, string? activefilter, string? smgactivefilter,
+            bool? highlightfilter, string? difficultyfilter, bool? activefilter, bool? smgactivefilter,
             string? smgtags, IEnumerable<string>? tourismusvereinids)
         {
             activitytypelist = new List<string>();
@@ -92,17 +92,7 @@ namespace OdhApiCore.Controllers
                 tourismvereinlist = CommonListCreator.CreateDistrictIdList(locfilter, "tvs");
 
             if (tourismusvereinids != null)
-                tourismvereinlist.AddRange(tourismusvereinids);
-
-            //            //Sonderfall für MetaRegion hole mir alle DistrictIds dieser MetaRegion
-            //            if (locfilter != null && locfilter.Contains("mta"))
-            //            {
-            //                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-            //
-            //                // FIXME: do not call in constructor
-            //                //var tourismusvereinids = RetrieveLocFilterDataAsync(metaregionlist, connectionString).Result;
-            //                tourismvereinlist.AddRange(tourismusvereinids);
-            //            }
+                tourismvereinlist.AddRange(tourismusvereinids);        
 
             //Distance
             var distancefilterresult = CommonListCreator.CreateRangeString(distancefilter);
@@ -116,25 +106,13 @@ namespace OdhApiCore.Controllers
             var (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
 
             //highlight
-            highlight = null;
-            if (highlightfilter == "true")
-                highlight = true;
-            if (highlightfilter == "false")
-                highlight = false;
+            highlight = highlightfilter;
 
             //active
-            active = null;
-            if (activefilter == "true")
-                active = true;
-            if (activefilter == "false")
-                active = false;
+            active = activefilter;
 
             //smgactive
-            smgactive = null;
-            if (smgactivefilter == "true")
-                smgactive = true;
-            if (smgactivefilter == "false")
-                smgactive = false;
+            smgactive = smgactivefilter;
         }
 
        
