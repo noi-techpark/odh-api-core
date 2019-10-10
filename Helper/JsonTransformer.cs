@@ -77,21 +77,29 @@ namespace Helper
 
         public static JToken FilterByFields(this JToken token, string[] fieldsFromQueryString, string language)
         {
-            var fields = new List<(string name, string path)>
+            try
             {
-                ("Id", "Id"),
-                ("Name", $"Detail.{language}.Title")
-            };
-            fields.AddRange(fieldsFromQueryString.Select(field => (field, field)));
-            if (token is JObject obj)
-            {
-                return new JObject(
-                    fields.Distinct().Select(x =>
-                        new JProperty(x.name, token.SelectToken(x.path))
-                    )
-                );
+                var fields = new List<(string name, string path)>
+                {
+                    ("Id", "Id"),
+                    ("Name", $"Detail.{language}.Title")
+                };
+                fields.AddRange(fieldsFromQueryString.Select(field => (field, field)));
+                if (token is JObject obj)
+                {
+                    return new JObject(
+                        fields.Distinct().Select(x =>
+                            new JProperty(x.name, token.SelectToken(x.path))
+                        )
+                    );
+                }
+                return token;
             }
-            return token;
+            catch (JsonException ex)
+            {
+                // Very probably caused by an invalid JSONPath secification.
+                throw new JsonPathException(ex.Message, ex);
+            }
         }
 
         public static JsonRaw TransformRawData(this JsonRaw raw, string? language, string[] fields, bool checkCC0)
