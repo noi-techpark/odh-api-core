@@ -8,9 +8,8 @@ namespace Helper
 {
     public class LTSTaggingHelper
     {
-        public static string GetTaggingTypebyActivityType(string activitytype)
-        {
-            return activitytype switch
+        public static string GetTaggingTypebyActivityType(string activitytype) =>
+            activitytype switch
             {
                 //Status Enumcode bringt: 391 Tagging bringt: 391
                 "ALPINE" => "3A04AE3D220149B2AEA9640C9A13DB1F",
@@ -45,11 +44,9 @@ namespace Helper
                 //Status Enumcode bringt:  Tagging bringt: 3982
                 _ => "E924026962F74DA6B08BAD75FAFA1625",
             };
-        }
 
-        public static string ActivityTypeListTranslator(string type)
-        {
-            return type switch
+        public static string ActivityTypeListTranslator(string type) =>
+            type switch
             {
                 "HIKE" => "Wandern",
                 "ALPINE" => "Berg",
@@ -63,16 +60,14 @@ namespace Helper
                 "LIFT" => "Aufstiegsanlagen",
                 _ => "IRGENDWOS",
             };
-        }
 
         /// <summary>
         /// Methode gibt entsprechende Tag Rids nach alten poitypes zurück, default ist der Tag RID für POIs gesamt
         /// </summary>
         /// <param name="poitype"></param>
         /// <returns></returns>
-        public static string GetTaggingTypebyPoiType(string poitype)
-        {
-            return poitype switch
+        public static string GetTaggingTypebyPoiType(string poitype) =>
+            poitype switch
             {
                 //Status Enumcode bringt: 1011 Tagging bringt: 1010
                 "ACTIVE" => "AC90E2F2AB3C4D4982E578B3C68086F3",
@@ -104,11 +99,9 @@ namespace Helper
                 //Status Enumcode bringt:  Tagging bringt: 5737
                 _ => "D8739556BA8A44DEB374FF62025D7A8D",
             };
-        }
 
-        public static string TypeListTranslator(string type)
-        {
-            return type switch
+        public static string TypeListTranslator(string type) =>
+            type switch
             {
                 "ACTIVE" => "Sport und Freizeit",
                 "NIGHTLIFE" => "Nachtleben und Unterhaltung",
@@ -121,11 +114,9 @@ namespace Helper
                 "ARTISAN" => "Kunsthandwerker",
                 _ => "IRGENDWOS",
             };
-        }
 
-        public static string CheckActivityPoi(string type)
-        {
-            return (type.ToLower()) switch
+        public static string CheckActivityPoi(string type) =>
+            (type.ToLower()) switch
             {
                 "berg" => "ALPINE",
                 "wandern" => "HIKE",
@@ -163,7 +154,6 @@ namespace Helper
                 "citytour" => "CITYTOUR",
                 _ => "ERROR",
             };
-        }
 
         public static async IAsyncEnumerable<LTSTaggingType> GetLTSTagParentsPGAsync(
             IPostGreSQLConnectionFactory connectionFactory, LTSTaggingType currenttag, IEnumerable<LTSTaggingType> ltstagparentlist,
@@ -211,9 +201,8 @@ namespace Helper
             return maintypedict;
         }
 
-        public static string? LTSActivityTaggingTagTranslator(string? key)
-        {
-            return key switch
+        public static string? LTSActivityTaggingTagTranslator(string? key) =>
+            key switch
             {
                 "Berg" => "Berge",
                 "Stadtrundgang" => "Ortstouren",
@@ -221,7 +210,6 @@ namespace Helper
                 "Piste" => "Pisten",
                 _ => key,
             };
-        }
     }
 
     public class LTSAreaHelper
