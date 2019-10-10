@@ -61,7 +61,8 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity")]
         public async Task<IActionResult> GetActivityList(
-            [FromQuery(Name = "fields")] string[] fields,
+            [FromQuery(Name = "fields"), ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[] fields,
             string? language = null,
             uint pagenumber = 1,
             uint pagesize = 10,
