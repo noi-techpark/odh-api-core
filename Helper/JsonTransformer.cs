@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Helper
 {
@@ -67,22 +68,30 @@ namespace Helper
                     JArray arr =>
                         new JArray(
                             arr.Select(x => Walk(x))
-                                // Filter away empty content
+                               // Filter away empty content
                                .Where(x => x != null)),
                     _ => token
                 };
             return Walk(token);
         }
 
-        public static JToken FilterByFields(this JToken token, string[] fields, string language)
+        public static JToken FilterByFields(this JToken token, string[] fieldsFromQueryString, string language)
         {
-            // TODO: Extract language Title and show as Name field
-            var allFields = new HashSet<string>(fields) { "Id" };
-            return new JObject(
-                token.Children()
-                     .Cast<JProperty>()
-                     .Where(x => allFields.Contains(x.Name))
-            );
+            var fields = new List<(string name, string path)>
+            {
+                ("Id", "Id"),
+                ("Name", $"Detail.{language}.Title")
+            };
+            fields.AddRange(fieldsFromQueryString.Select(field => (field, field)));
+            if (token is JObject obj)
+            {
+                return new JObject(
+                    fields.Select(x =>
+                        new JProperty(x.name, token.SelectToken(x.path))
+                    )
+                );
+            }
+            return token;
         }
 
         public static JsonRaw TransformRawData(this JsonRaw raw, string? language, string[] fields, bool checkCC0)
