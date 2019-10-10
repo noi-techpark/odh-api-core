@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
@@ -11,7 +12,7 @@ namespace OdhApiCore.Controllers
             bindingContext.Result = ModelBindingResult.Success(new string[] { });
             var value = valueProviderResult.FirstValue; // get the value as string
 
-            var model = value?.Split(",") ?? new string[] { };
+            var model = value?.Split(",", StringSplitOptions.RemoveEmptyEntries) ?? new string[] { };
             bindingContext.Result = ModelBindingResult.Success(model);
 
             return Task.CompletedTask;
