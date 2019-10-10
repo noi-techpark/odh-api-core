@@ -73,12 +73,25 @@ namespace Helper
                 };
             return Walk(token);
         }
-        public static JsonRaw TransformRawData(this JsonRaw raw, string? language, bool checkCC0)
+
+        public static JToken FilterByFields(this JToken token, string[] fields, string language)
         {
-            if (language != null || checkCC0)
+            // TODO: Extract language Title and show as Name field
+            var allFields = new HashSet<string>(fields) { "Id" };
+            return new JObject(
+                token.Children()
+                     .Cast<JProperty>()
+                     .Where(x => allFields.Contains(x.Name))
+            );
+        }
+
+        public static JsonRaw TransformRawData(this JsonRaw raw, string? language, string[] fields, bool checkCC0)
+        {
+            if (language != null || fields.Length != 0|| checkCC0)
             {
                 var token = JToken.Parse(raw.Value);
                 if (language != null) token = FilterByLanguage(token, language);
+                if (fields.Length > 0) token = FilterByFields(token, fields, language ?? "en");
                 if (checkCC0) token = FilterImagesByCC0License(token);
                 return new JsonRaw(token.ToString(Formatting.Indented));
             }

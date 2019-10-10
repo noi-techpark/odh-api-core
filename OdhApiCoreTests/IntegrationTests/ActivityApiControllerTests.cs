@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Helper;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -105,6 +107,27 @@ namespace OdhApiCoreTests.IntegrationTets
                 Assert.IsType<JObject>(data.ContactInfos.de);
                 JsonIsType<string>(data.TourismorganizationId);
             }
+        }
+
+        [Theory]
+        [InlineData("/api/Activity/878883A95FF002AA246B5B99DA5BB9D7")]
+        [InlineData("/api/Activity/EC73E28E771A21C431A7F8B5B931007V")]
+        public async Task Get_SingleNonExistentActivity(string url)
+        {
+            var response = await _client.GetAsync(url);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Get_ActivityTypes()
+        {
+            var response = await _client.GetAsync("/api/ActivityTypes");
+            response.EnsureSuccessStatusCode();
+            Assert.Equal("application/json; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+            string json = await response.Content.ReadAsStringAsync();
+            dynamic? data = JsonConvert.DeserializeObject<ActivityTypes[]>(json);
+            Assert.NotEmpty(data);
         }
     }
 }
