@@ -62,12 +62,15 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        protected Task<IActionResult> DoAsyncReturnString(Func<IPostGreSQLConnectionFactory, Task<string>> f)
+        protected Task<IActionResult> DoAsyncReturnString(Func<IPostGreSQLConnectionFactory, Task<string?>> f)
         {
             return DoAsync(async connectionFactory =>
             {
-                string result = await f(connectionFactory);
-                return this.Content(result, "application/json", Encoding.UTF8);
+                string? result = await f(connectionFactory);
+                if (result == null)
+                    return this.NotFound();
+                else
+                    return this.Content(result, "application/json", Encoding.UTF8);
             });
         }
 

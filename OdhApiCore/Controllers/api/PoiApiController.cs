@@ -278,9 +278,8 @@ namespace OdhApiCore.Controllers.api
                     connectionFactory, "pois", "*", where, "", 0,
                     null, cancellationToken).ToListAsync();
 
-                return JsonConvert.SerializeObject(
-                    data.FirstOrDefault()?.TransformRawData(language, checkCC0: CheckCC0License)
-                );
+                var result = data.FirstOrDefault()?.TransformRawData(language, checkCC0: CheckCC0License);
+                return result == null ? null : JsonConvert.SerializeObject(result);
             });
         }
 
