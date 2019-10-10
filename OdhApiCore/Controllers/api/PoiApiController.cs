@@ -58,7 +58,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         [HttpGet, Route("api/Poi")]
         public async Task<IActionResult> GetPoiList(
-            [FromQuery(Name = "fields"), ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[] fields,
             string? language = null,
             uint pagenumber = 1,
