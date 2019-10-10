@@ -96,12 +96,12 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]        
         [HttpGet, Route("api/Poi/{id}")]
-        public async Task<IActionResult> GetPoiSingle(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPoiSingle(string id, string? language, CancellationToken cancellationToken)
         {
             //TODO
             //CheckOpenData(User);
 
-            return await GetSingle(id, cancellationToken);
+            return await GetSingle(id, language, cancellationToken);
         }
 
         //Reduced GETTER
@@ -269,7 +269,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">ID of Poi</param>
         /// <returns>Poi Object</returns>
-        private Task<IActionResult> GetSingle(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
             {
@@ -278,7 +278,9 @@ namespace OdhApiCore.Controllers.api
                     connectionFactory, "pois", "*", where, "", 0,
                     null, cancellationToken).ToListAsync();
 
-                return JsonConvert.SerializeObject(data.FirstOrDefault());
+                return JsonConvert.SerializeObject(
+                    data.FirstOrDefault()?.TransformRawData(language, checkCC0: CheckCC0License)
+                );
             });
         }
 
