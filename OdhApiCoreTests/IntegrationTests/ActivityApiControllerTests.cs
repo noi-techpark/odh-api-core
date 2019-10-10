@@ -24,18 +24,13 @@ namespace OdhApiCoreTests.IntegrationTets
             });
         }
 
-        private static T JsonIsType<T>(JToken token)
-        {
-            switch (token)
+        private static T JsonIsType<T>(JToken token) =>
+            token switch
             {
-                case JValue value when (value.Value == null):
-                    return default!;
-                case JValue value:
-                    return Assert.IsType<T>(value.Value);
-                default:
-                    return Assert.IsType<T>(token);
-            }
-        }
+                JValue value when (value.Value == null) => default!,
+                JValue value => Assert.IsType<T>(value.Value),
+                _ => Assert.IsType<T>(token),
+            };
 
         [Theory]
         [InlineData("/api/Activity")]

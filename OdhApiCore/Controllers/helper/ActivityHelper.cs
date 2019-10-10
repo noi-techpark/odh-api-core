@@ -57,11 +57,9 @@ namespace OdhApiCore.Controllers
             string? smgtags, IEnumerable<string>? tourismusvereinids)
         {
             activitytypelist = new List<string>();
-            int typeinteger = 0;
-
             if (activitytype != null)
             {
-                if (int.TryParse(activitytype, out typeinteger))
+                if (int.TryParse(activitytype, out int typeinteger))
                 {
                     if (typeinteger != 1023)
                         activitytypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(activitytype);
@@ -95,9 +93,9 @@ namespace OdhApiCore.Controllers
                 tourismvereinlist.AddRange(tourismusvereinids);        
 
             //Distance
-            var distancefilterresult = CommonListCreator.CreateRangeString(distancefilter);
-            var distancemin = distancefilterresult.min * 1000;
-            var distancemax = distancefilterresult.max * 1000;
+            var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
+            var distancemin = min * 1000;
+            var distancemax = max * 1000;
 
             //Altitude
             var (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);

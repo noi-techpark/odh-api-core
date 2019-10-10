@@ -189,7 +189,6 @@ namespace Helper
             IReadOnlyCollection<string> metaregionlist)
         {
             string whereexpression = "";
-            string jsonexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
 
             //IDLIST
@@ -199,7 +198,7 @@ namespace Helper
                 if (metaregionlist.Count == 1)
                 {
                     whereexpression = "data @> @jsonexpression";
-                    jsonexpression = $"{{\"Id\" : \"{metaregionlist.FirstOrDefault().ToUpper()}\" }}";
+                    string jsonexpression = $"{{\"Id\" : \"{metaregionlist.FirstOrDefault().ToUpper()}\" }}";
 
                     parameters.Add(new PGParameters() { Name = "jsonexpression", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = jsonexpression });
                 }

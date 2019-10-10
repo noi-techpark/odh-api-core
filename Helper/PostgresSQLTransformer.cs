@@ -2041,7 +2041,7 @@ namespace Helper
                     //SmgPoi
                     { "altitudedifference", activity.AltitudeDifference.ToString() },
                     { "distanceduration", activity.DistanceDuration.ToString() },
-                    { "difficulty", activity.Difficulty != null ? activity.Difficulty : nulldouble.ToString() },
+                    { "difficulty", activity.Difficulty ?? nulldouble.ToString() },
                     { "distancelength", activity.DistanceLength.ToString() },
                     //Accommodation
                     { "trustyouid", "" },

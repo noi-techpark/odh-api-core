@@ -84,8 +84,7 @@ namespace Helper
                 FieldInfo? field = typeof(T).GetField(name);
                 if (field != null)
                 {
-                    DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                    if (attr != null)
+                    if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
                     {
                         return attr.Description;
                     }
@@ -108,8 +107,7 @@ namespace Helper
                         FieldInfo? field = typeof(T).GetField(name);
                         if (field != null)
                         {
-                            DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                            if (attr != null)
+                            if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
                             {
                                 description = attr.Description;
                             }
@@ -181,8 +179,7 @@ namespace Helper
                     FieldInfo? field = typeof(T).GetField(name);
                     if (field != null)
                     {
-                        DescriptionAttribute? attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                        if (attr != null)
+                        if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
                         {
                             descriptionList.Add(attr.Description);
                         }
