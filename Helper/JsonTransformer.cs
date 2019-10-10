@@ -77,8 +77,6 @@ namespace Helper
 
         public static JToken FilterByFields(this JToken token, string[] fieldsFromQueryString, string language)
         {
-            try
-            {
                 var fields = new List<(string name, string path)>
                 {
                     ("Id", "Id"),
@@ -89,17 +87,19 @@ namespace Helper
                 {
                     return new JObject(
                         fields.Distinct().Select(x =>
-                            new JProperty(x.name, token.SelectToken(x.path))
-                        )
+                        {
+                            try
+                            {
+                                return new JProperty(x.name, token.SelectToken(x.path));
+                            }
+                            catch (JsonException ex)
+                            {
+                                throw new JsonPathException(ex.Message, x.path, ex);
+                            }
+                        })
                     );
                 }
                 return token;
-            }
-            catch (JsonException ex)
-            {
-                // Very probably caused by an invalid JSONPath secification.
-                throw new JsonPathException(ex.Message, ex);
-            }
         }
 
         public static JsonRaw TransformRawData(this JsonRaw raw, string? language, string[] fields, bool checkCC0)

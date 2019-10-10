@@ -34,7 +34,11 @@ namespace OdhApiCore.Controllers
             }
             catch (JsonPathException ex)
             {
-                return this.BadRequest(new { error = $"Invalid JSONPath selection: {ex.Message}" });
+                return this.BadRequest(new {
+                    error = "Invalid JSONPath selection",
+                    path = ex.Path,
+                    details = ex.Message
+                });
             }
             catch (Exception ex)
             {
