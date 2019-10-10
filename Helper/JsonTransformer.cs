@@ -86,7 +86,7 @@ namespace Helper
             if (token is JObject obj)
             {
                 return new JObject(
-                    fields.Select(x =>
+                    fields.Distinct().Select(x =>
                         new JProperty(x.name, token.SelectToken(x.path))
                     )
                 );
