@@ -61,8 +61,6 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity")]
         public async Task<IActionResult> GetActivityList(
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[] fields,
             string? language = null,
             uint pagenumber = 1,
             uint pagesize = 10,
@@ -83,14 +81,16 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
-                    fields, language, pagenumber, pagesize, activitytype, subtype, idlist, locfilter, areafilter, distancefilter,
-                    altitudefilter, durationfilter, highlight, difficultyfilter, active, odhactive, odhtagfilter, seed,
-                    geosearchresult, cancellationToken);
+                    fields ?? new string[] { }, language, pagenumber, pagesize, activitytype, subtype, idlist,
+                    locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlight,
+                    difficultyfilter, active, odhactive, odhtagfilter, seed, geosearchresult, cancellationToken);
         }
 
         /// <summary>

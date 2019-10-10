@@ -59,7 +59,6 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("api/Poi")]
         public async Task<IActionResult> GetPoiList(
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[] fields,
             string? language = null,
             uint pagenumber = 1,
             uint pagesize = 10,
@@ -76,6 +75,8 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             //TODO
@@ -84,8 +85,9 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
-                fields, language, pagenumber, pagesize, poitype, subtype, idlist, locfilter, areafilter,
-                highlight, active, odhactive, odhtagfilter, seed, geosearchresult, cancellationToken);
+                fields ?? new string[] { }, language, pagenumber, pagesize, poitype, subtype, idlist,
+                locfilter, areafilter, highlight, active, odhactive, odhtagfilter, seed,
+                geosearchresult, cancellationToken);
         }
 
         /// <summary>
