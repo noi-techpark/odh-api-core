@@ -61,6 +61,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/Activity")]
         public async Task<IActionResult> GetActivityList(
+            [FromQuery(Name = "fields")] string[] fields,
             string? language = null,
             uint pagenumber = 1,
             uint pagesize = 10,
@@ -86,7 +87,7 @@ namespace OdhApiCore.Controllers
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
-                    language, pagenumber, pagesize, activitytype, subtype, idlist, locfilter, areafilter, distancefilter,
+                    fields, language, pagenumber, pagesize, activitytype, subtype, idlist, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlight, difficultyfilter, active, odhactive, odhtagfilter, seed,
                     geosearchresult, cancellationToken);
         }
@@ -230,8 +231,8 @@ namespace OdhApiCore.Controllers
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Activities Objects</returns>
          private Task<IActionResult> GetFiltered(
-            string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter, string? idfilter,
-            string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
+            string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
+            string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
@@ -269,7 +270,7 @@ namespace OdhApiCore.Controllers
                 uint totalcount = count;
                 uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
-                var data = dataTask.Select(raw => raw.TransformRawData(language, checkCC0: CheckCC0License));
+                var data = dataTask.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber,
@@ -294,7 +295,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "activities", "*", where, "", 0,
                     null, cancellationToken).ToListAsync();
 
-                var result = data.FirstOrDefault()?.TransformRawData(language, checkCC0: CheckCC0License);
+                var result = data.FirstOrDefault()?.TransformRawData(language, new string[] { }, checkCC0: CheckCC0License);
                 return result == null ? null : JsonConvert.SerializeObject(result);
             });
         }
