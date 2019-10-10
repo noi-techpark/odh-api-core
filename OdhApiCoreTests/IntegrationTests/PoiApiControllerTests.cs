@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -105,6 +106,15 @@ namespace OdhApiCoreTests.IntegrationTets
                 Assert.IsType<JObject>(data.ContactInfos.de);
                 JsonIsType<string>(data.TourismorganizationId);
             }
+        }
+
+        [Theory]
+        [InlineData("/api/Poi/UF22956102A175B15EA27EEBC03EB10D")]
+        [InlineData("/api/Poi/O1AFE8FAB27A00518DEA1576119E03DE")]
+        public async Task Get_SingleNonExistentPoi(string url)
+        {
+            var response = await _client.GetAsync(url);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }
