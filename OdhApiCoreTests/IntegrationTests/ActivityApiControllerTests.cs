@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Helper;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
@@ -115,6 +116,18 @@ namespace OdhApiCoreTests.IntegrationTets
         {
             var response = await _client.GetAsync(url);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Get_ActivityTypes()
+        {
+            var response = await _client.GetAsync("/api/ActivityTypes");
+            response.EnsureSuccessStatusCode();
+            Assert.Equal("application/json; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+            string json = await response.Content.ReadAsStringAsync();
+            dynamic? data = JsonConvert.DeserializeObject<ActivityTypes[]>(json);
+            Assert.NotEmpty(data);
         }
     }
 }
