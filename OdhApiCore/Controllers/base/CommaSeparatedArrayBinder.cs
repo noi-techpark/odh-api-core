@@ -9,7 +9,6 @@ namespace OdhApiCore.Controllers
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
-            bindingContext.Result = ModelBindingResult.Success(new string[] { });
             var value = valueProviderResult.FirstValue; // get the value as string
 
             var model = value?.Split(",", StringSplitOptions.RemoveEmptyEntries) ?? new string[] { };
