@@ -26,9 +26,7 @@ namespace OdhApiCore.Controllers
         }
 
         #region SWAGGER Exposed API
-
-        //Standard GETTER
-
+        
         /// <summary>
         /// GET Activity List
         /// </summary>
@@ -97,9 +95,11 @@ namespace OdhApiCore.Controllers
         /// GET Activity Single 
         /// </summary>
         /// <param name="id">ID of the Activity</param>
-        /// <returns>Activity Object</returns>
-        //[SwaggerResponse(HttpStatusCode.OK, "Activity Object", typeof(GBLTSActivity))]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
+        /// <returns>GBLTSActivity Object</returns>
+        /// <response code="200">Object created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        /// //[Authorize(Roles = "DataReader,ActivityReader")]
         [ProducesResponseType(typeof(GBLTSActivity), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -109,70 +109,17 @@ namespace OdhApiCore.Controllers
             return await GetSingle(id, language, cancellationToken);
         }
 
-        //REDUCED
-
-        /// <summary>
-        /// GET Activity List Reduced
-        /// </summary>
-        /// <param name="language">Localization Language, (default:'en')</param>
-        /// <param name="activitytype">Type of the Activity ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), REFERENCE TO: GET /api/ActivityTypes </param>
-        /// <param name="subtype">Subtype of the Activity (BITMASK Filter = available SubTypes depends on the selected Activity Type), (default:'null')</param>
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
-        /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ','), (default:'null')</param>
-        /// <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km), (default:'null')</param>
-        /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
-        /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours), (default:'null')</param>
-        /// <param name="highlight">Hightlight Filter (possible values: 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true), (default:'null')</param>
-        /// <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>      
-        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'api/SmgTag/ByMainEntity/Activity'), (default:'null')</param>        
-        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
-        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>        
-        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        /// <returns>Collection of Activity Reduced Objects</returns>        
-        [ProducesResponseType(typeof(IEnumerable<ActivityPoiReduced>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/ActivityReduced")]
-        public async Task<IActionResult> GetActivityReduced(
-            string? language = "en",
-            string? activitytype = "1023",
-            string? subtype = null,
-            string? locfilter = null,
-            string? areafilter = null,
-            string? distancefilter = null,
-            string? altitudefilter = null,
-            string? durationfilter = null,
-            bool? highlight = null,
-            string? difficultyfilter = null,
-            string? odhtagfilter = null,
-            bool? active = null,
-            bool? odhactive = null,
-            string? latitude = null,
-            string? longitude = null,
-            string? radius = null,
-            CancellationToken cancellationToken = default)
-        {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-            return await GetReduced(
-                language, activitytype, subtype, locfilter, areafilter, distancefilter, altitudefilter, durationfilter,
-                highlight, difficultyfilter, active, odhactive, odhtagfilter, geosearchresult, cancellationToken);
-        }
-
-        //Special
-
         /// <summary>
         /// GET Activity Types List
         /// </summary>
         /// <returns>Collection of ActivityTypes Object</returns>                
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
         //[CacheOutputUntilToday(23, 59)]
         [ProducesResponseType(typeof(IEnumerable<ActivityTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/ActivityTypes")]
         public async Task<IActionResult> GetAllActivityTypesListAsync(CancellationToken cancellationToken)
@@ -187,11 +134,13 @@ namespace OdhApiCore.Controllers
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
-        /// <returns>Collection of PoiBaseInfos Objects</returns>
+        /// <returns>Collection of GBLTSActivity Objects</returns>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(IEnumerable<GBLTSActivity>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("api/ActivityChanged")]
         public async Task<IActionResult> GetAllActivityChanged(
@@ -302,62 +251,7 @@ namespace OdhApiCore.Controllers
         }
 
         #endregion
-        
-        #region REDUCED GETTER
-
-        /// <summary>
-        /// GET Reduced Activity List Filtered
-        /// </summary>
-        /// <param name="language">Language of the Reduced List</param>
-        /// <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
-        /// <param name="subtypefilter">Subtype of the Activity ('null' = Filter disabled, BITMASK Filter = available SubTypes depends on the selected Activity Type)</param> 
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter)</param>
-        /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ',', 'null' : Filter disabled)</param>
-        /// <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km) 'null' : disables Filter</param>
-        /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres) 'null' : disables Filter</param>
-        /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours) 'null' : disables Filter</param>
-        /// <param name="highlightfilter">Hightlight Filter (possible values: 'null' = Filter disabled, 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true)</param>
-        /// <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>  
-        /// <param name="active">Active Filter (possible Values: 'null' Displays all Activities, 'true' only Active Activities, 'false' only Disabled Activities</param>
-        /// <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Activities, 'true' only SMG Active Activities, 'false' only SMG Disabled Activities</param>
-        /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>   /// <returns>Collection of Reduced Activity Objects</returns>        
-        private Task<IActionResult> GetReduced(
-            string? language, string? activitytype, string? subtypefilter, string? locfilter, string? areafilter,
-            string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
-            string? difficultyfilter, bool? active, bool? smgactive, string? smgtags,
-            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter,
-                    altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags,
-                    cancellationToken);
-
-                string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
-
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
-
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
-
-                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(
-                    connectionFactory, "activities", select, (whereexpression, parameters), orderby, 0, null,
-                    new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
-
-                return JsonConvert.SerializeObject(data);
-            });
-        }
-
-        #endregion
-
+       
         #region CUSTOM METHODS
 
         /// <summary>

@@ -14,6 +14,15 @@ namespace Helper
                     yield return value;
             }
         }
+
+        //public static (object, object) GetValueAndTypes<T>()
+        //{
+        //    foreach (object? value in System.Enum.GetValues(typeof(T)))
+        //    {
+        //        if (value != null)
+        //            yield return value;
+        //    }
+        //}
     }
     //Pakete Weekday 
     [Flags]

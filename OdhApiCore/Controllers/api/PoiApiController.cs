@@ -25,8 +25,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         #region SWAGGER Exposed API
-
-        //Standard GETTER
+        
         /// <summary>
         /// GET Poi List
         /// </summary>
@@ -89,7 +88,10 @@ namespace OdhApiCore.Controllers.api
         /// GET Poi Single 
         /// </summary>
         /// <param name="id">ID of the Poi</param>
-        /// <returns>LTSPoi Object</returns>
+        /// <returns>GBLTSPoi Object</returns>
+        /// <response code="200">Object created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(GBLTSPoi), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -103,58 +105,13 @@ namespace OdhApiCore.Controllers.api
             return await GetSingle(id, language, cancellationToken);
         }
 
-        //Reduced GETTER
-
-        /// <summary>
-        /// GET Poi List Reduced
-        /// </summary>
-        /// <param name="language">Localization Language, (default:'en')</param>
-        /// <param name="poitype">Type of the Poi ('null' = Filter disabled, possible values: BITMASK 'Doctors, Pharmacies = 1','Shops = 2','Culture and sights= 4','Nightlife and entertainment = 8','Public institutions = 16','Sports and leisure = 32','Traffic and transport = 64', 'Service providers' = 128, 'Craft' = 256), (default:'511' == ALL), REFERENCE TO: GET /api/PoiTypes </param>
-        /// <param name="subtype">Subtype of the Activity (BITMASK Filter = available SubTypes depends on the selected poiType), (default:'null')</param>
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), 'null' = No Filter), (default:'null')</param>
-        /// <param name="areafilter">AreaFilter (Alternate Locfilter, can be combined with locfilter) (Separator ',' possible values: reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), skr + SKIREGIONID = (Filter by Skiregion), ska + SKIAREAID = (Filter by Skiarea), are + AREAID = (Filter by LTS Area), 'null' = No Filter), (default:'null')</param>
-        /// <param name="highlight">Hightlight Filter (possible values: 'false' = only Pois with Highlight false, 'true' = only Pois with Highlight true), (default:'null')</param>
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=poi'), (default:'null')</param>        
-        /// <param name="active">Active Pois Filter (possible Values: 'true' only Active Pois, 'false' only Disabled Pois</param>
-        /// <param name="odhactive">ODH Active (Published) Pois Filter (Refers to field SmgActive) Pois Filter (possible Values: 'true' only published Pois, 'false' only not published Pois, (default:'null')</param>        
-        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        /// <returns>Collection of Poi Reduced Objects</returns>        
-        [ProducesResponseType(typeof(IEnumerable<ActivityPoiReduced>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("api/PoiReduced")]
-        public async Task<IActionResult> GetPoiReduced(
-            string? language = "en",
-            string? poitype = "511",
-            string? subtype = null,
-            string? locfilter = null,
-            string? areafilter = null,
-            bool? highlight = null,
-            string? odhtagfilter = null,
-            bool? active = null,
-            bool? odhactive = null,
-            string? latitude = null,
-            string? longitude = null,
-            string? radius = null,
-            CancellationToken cancellationToken = default)
-        {
-            //TODO
-            //CheckOpenData(User);
-
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-            return await GetReduced(language, poitype, subtype, locfilter, areafilter, highlight, active, odhactive, odhtagfilter, geosearchresult, cancellationToken);
-        }
-
-        //Special GETTER
-
         /// <summary>
         /// GET Poi Types List
         /// </summary>
         /// <returns>Collection of PoiType Object</returns>                
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
         //[CacheOutputUntilToday(23, 59)]
         [ProducesResponseType(typeof(IEnumerable<PoiTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -173,7 +130,10 @@ namespace OdhApiCore.Controllers.api
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
-        /// <returns>Collection of LTSPoi Objects</returns>
+        /// <returns>Collection of GBLTSPoi Objects</returns>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -283,55 +243,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         #endregion
-
-        #region REDUCED GETTER
-
-        /// <summary>
-        /// GET Reduced POI List
-        /// </summary>
-        /// <param name="language">Localization Language</param>
-        /// <param name="poitype">Type of the Poi (possible values: STRINGS: 'Ärtze, Apotheken','Geschäfte und Dienstleister','Kultur und Sehenswürdigkeiten','Nachtleben und Unterhaltung','Öffentliche Einrichtungen','Sport und Freizeit','Verkehr und Transport' : BITMASK also possible: 'Ärtze, Apotheken = 1','Geschäfte und Dienstleister = 2','Kultur und Sehenswürdigkeiten = 4','Nachtleben und Unterhaltung = 8','Öffentliche Einrichtungen = 16','Sport und Freizeit = 32','Verkehr und Transport = 64')</param>
-        /// <param name="subtypefilter">Subtype of the Poi ('null' = Filter disabled, available Subtypes depends on the activitytype BITMASK)</param>        
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), 'null' = No Filter)</param>
-        /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ',', 'null' : Filter disabled)</param>
-        /// <param name="highlightfilter">Highlight Filter (Show only Highlights possible values: 'true' : show only Highlight Pois, 'null' Filter disabled)</param>
-        /// <param name="active">Active Filter (possible Values: 'null' Displays all Pois, 'true' only Active Pois, 'false' only Disabled Pois</param>
-        /// <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Pois, 'true' only SMG Active Pois, 'false' only SMG Disabled Pois</param>
-        /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter)</param>
-        /// <returns>Collection of Reduced Poi Objects</returns>
-        private Task<IActionResult> GetReduced(
-            string? language, string? poitype, string? subtypefilter, string? locfilter, 
-            string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, 
-            string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
-                    connectionFactory, poitype, subtypefilter, null, locfilter, areafilter, 
-                    highlightfilter, active, smgactive, smgtags, cancellationToken);
-                
-                string select = $"data->'Id' as Id, data->'Detail'->' {language} '->'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
-
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreatePoiWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.poitypelist, myactivityhelper.subtypelist, 
-                    myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist, 
-                    myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.highlight,
-                    myactivityhelper.active, myactivityhelper.smgactive);
-                
-
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
-
-                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(
-                    connectionFactory, "pois", select, (whereexpression, parameters), orderby, 0, null,
-                    new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
-
-                return JsonConvert.SerializeObject(data);
-            });
-        }
-
-        #endregion
-
+ 
         #region CUSTOM METHODS
 
         /// <summary>
