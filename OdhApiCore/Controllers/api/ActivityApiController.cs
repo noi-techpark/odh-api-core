@@ -254,6 +254,24 @@ namespace OdhApiCore.Controllers
        
         #region CUSTOM METHODS
 
+        private Type GetChildFlagType(object x)
+        {
+            return x switch
+            {
+                "Berg" => typeof(ActivityTypeBerg),
+                "Radfahren" => typeof(ActivityTypeRadfahren),
+                "Stadtrundgang" => typeof(ActivityTypeOrtstouren),
+                "Pferdesport" => typeof(ActivityTypePferde),
+                "Wandern" => typeof(ActivityTypeWandern),
+                "LaufenundFitness" => typeof(ActivityTypeLaufenFitness),
+                "Loipen" => typeof(ActivityTypeLoipen),
+                "Rodelbahnen" => typeof(ActivityTypeRodeln),
+                "Piste" => typeof(ActivityTypePisten),
+                "Aufstiegsanlagen" => typeof(ActivityTypeAufstiegsanlagen),
+                _ => typeof(ActivityTypeBerg),
+            };
+        }
+
         /// <summary>
         /// GET Activity Types List (Localized Type Names and Bitmasks)
         /// </summary>
@@ -279,198 +297,39 @@ namespace OdhApiCore.Controllers
                     mysmgpoitype.Type = "ActivityType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "";
 
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeFlag>(id);
+                    mysmgpoitype.Bitmask = (int)myactivitytype; //FlagsHelper.GetFlagofType<ActivityTypeFlag>(id);
 
                     mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
                         Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
                         ltstaggingtypes) as Dictionary<string, string>;
 
                     mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
 
-                //Berg Types
-                foreach (ActivityTypeBerg myactivitytype in EnumHelper.GetValues<ActivityTypeBerg>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
+                    var subtype = GetChildFlagType(myactivitytype);
 
-                    string? id = myactivitytype.GetDescription();
+                    foreach (var myactivitysubtype in Enum.GetValues(subtype))
+                    {
+                        if (myactivitysubtype != null)
+                        {                            
+                            ActivityTypes mysmgpoisubtype = new ActivityTypes();
+                                                   
+                            string? subid = FlagsHelper.GetDescription(myactivitysubtype);
 
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Berg";
+                            mysmgpoisubtype.Id = subid;
+                            mysmgpoisubtype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
+                            mysmgpoisubtype.Parent = id;
 
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeBerg>(id);
+                            mysmgpoisubtype.Bitmask = (int)myactivitysubtype;
 
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
+                            mysmgpoisubtype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
+                                Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(subid),
+                                ltstaggingtypes) as Dictionary<string, string>;
 
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-
-                //Radfahren Types
-                foreach (ActivityTypeRadfahren myactivitytype in EnumHelper.GetValues<ActivityTypeRadfahren>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Radfahren";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeRadfahren>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Stadtrundgang Types
-                foreach (ActivityTypeOrtstouren myactivitytype in EnumHelper.GetValues<ActivityTypeOrtstouren>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Stadtrundgang";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeOrtstouren>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Pferdesport Types
-                foreach (ActivityTypePferde myactivitytype in EnumHelper.GetValues<ActivityTypePferde>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Pferdesport";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypePferde>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Wandern Types
-                foreach (ActivityTypeWandern myactivitytype in EnumHelper.GetValues<ActivityTypeWandern>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Wandern";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeWandern>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //LaufenundFitness Types
-                foreach (ActivityTypeLaufenFitness myactivitytype in EnumHelper.GetValues<ActivityTypeLaufenFitness>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Laufen und Fitness";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeLaufenFitness>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Loipen Types
-                foreach (ActivityTypeLoipen myactivitytype in EnumHelper.GetValues<ActivityTypeLoipen>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Loipen";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeLoipen>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Rodelbahnen Types
-                foreach (ActivityTypeRodeln myactivitytype in EnumHelper.GetValues<ActivityTypeRodeln>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Rodelbahnen";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeRodeln>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Piste Types
-                foreach (ActivityTypePisten myactivitytype in EnumHelper.GetValues<ActivityTypePisten>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Piste";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypePisten>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Aufstiegsanlagen Types
-                foreach (ActivityTypeAufstiegsanlagen myactivitytype in EnumHelper.GetValues<ActivityTypeAufstiegsanlagen>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Aufstiegsanlagen";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<ActivityTypeAufstiegsanlagen>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-
+                            mysuedtiroltypeslist.Add(mysmgpoisubtype);
+                        }
+                    }
+                }             
+               
                 return JsonConvert.SerializeObject(mysuedtiroltypeslist);
             });
         }

@@ -243,8 +243,25 @@ namespace OdhApiCore.Controllers.api
         }
 
         #endregion
- 
+
         #region CUSTOM METHODS
+
+        private (Type type, bool islong) GetChildFlagType(object x)
+        {
+            return x switch
+            {
+                "AertzeApotheken" => (typeof(PoiTypeAerzteApotheken), false),
+                "GeschaefteDienstleister" => (typeof(PoiTypeGeschaefteDienstleister), true),
+                "KulturSehenswuerdigkeiten" => (typeof(PoiTypeKulturSehenswuerdigkeiten), false),
+                "NachtlebenUnterhaltung" => (typeof(PoiTypeNachtlebenUnterhaltung), false),
+                "OeffentlicheEinrichtungen" => (typeof(PoiTypeOeffentlicheEinrichtungen), false),
+                "SportFreizeit" => (typeof(PoiTypeSportFreizeit), true),
+                "VerkehrTransport" => (typeof(PoiTypeVerkehrTransport), false),
+                "Dienstleister" => (typeof(PoiTypeDienstleister), true),
+                "Handwerk" => (typeof(PoiTypeHandwerk), false),                
+                _ => (typeof(PoiTypeAerzteApotheken), false),
+            };
+        }
 
         /// <summary>
         /// GET Poi Types List (Localized Type Names and Bitmasks)
@@ -270,160 +287,40 @@ namespace OdhApiCore.Controllers.api
                     mysmgpoitype.Type = "PoiType"; // +mysuedtiroltype.TypeParent;
                     mysmgpoitype.Parent = "";
 
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<PoiTypeFlag>(id);
+                    mysmgpoitype.Bitmask = (int)myactivitytype;
 
                     mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
                     
                     mysuedtiroltypeslist.Add(mysmgpoitype);
+
+                    var subtype = GetChildFlagType(myactivitytype);
+
+                    foreach (var myactivitysubtype in Enum.GetValues(subtype.type))
+                    {
+                        if (myactivitysubtype != null)
+                        {
+                            PoiTypes mysmgpoisubtype = new PoiTypes();
+
+                            string? subid = FlagsHelper.GetDescription(myactivitysubtype);
+
+                            mysmgpoisubtype.Id = subid;
+                            mysmgpoisubtype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
+                            mysmgpoisubtype.Parent = id;
+
+                            if(subtype.islong)
+                                mysmgpoisubtype.Bitmask = (long)myactivitysubtype;
+                            else
+                                mysmgpoisubtype.Bitmask = (int)myactivitysubtype;
+
+                            mysmgpoisubtype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
+                                Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(subid),
+                                ltstaggingtypes) as Dictionary<string, string>;
+
+                            mysuedtiroltypeslist.Add(mysmgpoisubtype);
+                        }
+                    }
                 }
-
-                //Ärzte, Apotheken Types
-                foreach (PoiTypeAerzteApotheken myactivitytype in EnumHelper.GetValues<PoiTypeAerzteApotheken>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Ärzte, Apotheken";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<PoiTypeAerzteApotheken>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-
-                //Geschäfte Types
-                foreach (PoiTypeGeschaefte myactivitytype in EnumHelper.GetValues<PoiTypeGeschaefte>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Geschäfte";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofTypeLong<PoiTypeGeschaefte>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Kultur und Sehenswürdigkeiten Types
-                foreach (PoiTypeKulturSehenswuerdigkeiten myactivitytype in EnumHelper.GetValues<PoiTypeKulturSehenswuerdigkeiten>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Kultur und Sehenswürdigkeiten";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<PoiTypeKulturSehenswuerdigkeiten>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Nachtleben und Unterhaltung Types
-                foreach (PoiTypeNachtlebenUnterhaltung myactivitytype in EnumHelper.GetValues<PoiTypeNachtlebenUnterhaltung>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Nachtleben und Unterhaltung";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<PoiTypeNachtlebenUnterhaltung>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Öffentliche Einrichtungen Types
-                foreach (PoiTypeOeffentlicheEinrichtungen myactivitytype in EnumHelper.GetValues<PoiTypeOeffentlicheEinrichtungen>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Öffentliche Einrichtungen";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<PoiTypeOeffentlicheEinrichtungen>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Sport und Freizeit Types
-                foreach (PoiTypeSportFreizeit myactivitytype in EnumHelper.GetValues<PoiTypeSportFreizeit>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Sport und Freizeit";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofTypeLong<PoiTypeSportFreizeit>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Verkehr und Transport Types
-                foreach (PoiTypeVerkehrTransport myactivitytype in EnumHelper.GetValues<PoiTypeVerkehrTransport>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Verkehr und Transport";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<PoiTypeVerkehrTransport>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Dienstleister Types
-                foreach (PoiTypeDienstleister myactivitytype in EnumHelper.GetValues<PoiTypeDienstleister>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Dienstleister";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofTypeLong<PoiTypeDienstleister>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-                //Kunsthandwerker Types
-                foreach (PoiTypeHandwerk myactivitytype in EnumHelper.GetValues<PoiTypeHandwerk>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
-
-                    string? id = myactivitytype.GetDescription();
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiSubType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "Kunsthandwerker";
-
-                    mysmgpoitype.Bitmask = FlagsHelper.GetFlagofType<PoiTypeHandwerk>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-                }
-
+           
                 return JsonConvert.SerializeObject(mysuedtiroltypeslist);
             });
         }
