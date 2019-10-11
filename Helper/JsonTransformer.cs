@@ -75,31 +75,32 @@ namespace Helper
             return Walk(token);
         }
 
-        public static JToken FilterByFields(this JToken token, string[] fieldsFromQueryString, string language)
+        public static JToken FilterByFields(this JToken token, string[] fieldsFromQueryString, string? languageParam)
         {
-                var fields = new List<(string name, string path)>
-                {
-                    ("Id", "Id"),
-                    ("Name", $"Detail.{language}.Title")
-                };
-                fields.AddRange(fieldsFromQueryString.Select(field => (field, field)));
-                if (token is JObject obj)
-                {
-                    return new JObject(
-                        fields.Distinct().Select(x =>
+            var language = languageParam ?? "en";
+            var fields = new List<(string name, string path)>
+            {
+                ("Id", "Id"),
+                ("Name", $"Detail.{language}.Title")
+            };
+            fields.AddRange(fieldsFromQueryString.Select(field => (field, field)));
+            if (token is JObject obj)
+            {
+                return new JObject(
+                    fields.Distinct().Select(x =>
+                    {
+                        try
                         {
-                            try
-                            {
-                                return new JProperty(x.name, token.SelectToken(x.path));
-                            }
-                            catch (JsonException ex)
-                            {
-                                throw new JsonPathException(ex.Message, x.path, ex);
-                            }
-                        })
-                    );
-                }
-                return token;
+                            return new JProperty(x.name, token.SelectToken(x.path));
+                        }
+                        catch (JsonException ex)
+                        {
+                            throw new JsonPathException(ex.Message, x.path, ex);
+                        }
+                    })
+                );
+            }
+            return token;
         }
 
         public static JsonRaw TransformRawData(this JsonRaw raw, string? language, string[] fields, bool checkCC0)
@@ -108,7 +109,7 @@ namespace Helper
             {
                 var token = JToken.Parse(raw.Value);
                 if (language != null && fields.Length == 0) token = FilterByLanguage(token, language);
-                if (fields.Length > 0) token = FilterByFields(token, fields, language ?? "en");
+                if (fields.Length > 0) token = FilterByFields(token, fields, language);
                 if (checkCC0) token = FilterImagesByCC0License(token);
                 return new JsonRaw(token.ToString(Formatting.Indented));
             }
