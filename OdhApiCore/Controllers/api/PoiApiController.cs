@@ -24,13 +24,6 @@ namespace OdhApiCore.Controllers.api
         {
         }
 
-        public static bool CheckOpenData(IPrincipal currentuser)
-        {          
-            List<string> roles = new List<string>() { "DataReader", "PoiReader" };
-
-            return roles.Any(x => currentuser.IsInRole(x));                
-        }
-
         #region SWAGGER Exposed API
 
         //Standard GETTER
@@ -52,13 +45,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        /// <returns>Collection of LTSPoi Objects</returns>        
+        /// <returns>Collection of LTSPoi Objects</returns>  
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         [HttpGet, Route("api/Poi")]
         public async Task<IActionResult> GetPoiList(
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string? language = null,
             uint pagenumber = 1,
             uint pagesize = 10,
@@ -205,7 +200,7 @@ namespace OdhApiCore.Controllers.api
         #region GETTER
        
         /// <summary>
-        /// GET Paged Filtered Pois List
+        /// GET Pois List
         /// </summary>
         /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page</param>
@@ -562,7 +557,7 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
-        //#region POST PUT DELETE
+        #region POST PUT DELETE
 
         ///// <summary>
         ///// POST Insert new Poi
@@ -671,7 +666,7 @@ namespace OdhApiCore.Controllers.api
         //    }
         //}
 
-        //#endregion       
+        #endregion       
     }
 
 }

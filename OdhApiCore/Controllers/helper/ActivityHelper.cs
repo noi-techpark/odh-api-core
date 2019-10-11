@@ -94,14 +94,14 @@ namespace OdhApiCore.Controllers
 
             //Distance
             var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
-            var distancemin = min * 1000;
-            var distancemax = max * 1000;
+            distancemin = min * 1000;
+            distancemax = max * 1000;
 
             //Altitude
-            var (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
+            (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
 
             //Duration
-            var (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
+            (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
 
             //highlight
             highlight = highlightfilter;
