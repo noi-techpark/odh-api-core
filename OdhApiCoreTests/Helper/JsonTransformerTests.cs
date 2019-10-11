@@ -32,5 +32,43 @@ namespace OdhApiCoreTests.Helper
             var transformed = transformedToken.ToString(Formatting.None);
             Assert.Equal(expected, transformed);
         }
+
+        [Fact]
+        public void FilterByFieldsTests()
+        {
+            var actual = @"{
+                ""Id"": 1,
+                ""IsOpen"": true,
+                ""Detail"": {
+                    ""de"": {
+                        ""Title"": ""Hallo"",
+                        ""Body"": ""Welt""
+                    },
+                    ""en"": {
+                        ""Title"": ""Hello"",
+                        ""Body"": ""World""
+                    }
+                }
+            }";
+            var expected = @"{
+                ""Id"": 1,
+                ""Name"": ""Hallo"",
+                ""IsOpen"": true,
+                ""Detail.de.Title"": ""Hallo"",
+                ""Detail['en']['Body']"": ""World"",
+                ""FooBar"": null
+            }";
+            var fields = new string[] {
+                "IsOpen", "Detail.de.Title", "Detail['en']['Body']", "FooBar"
+            };
+            var language = "de";
+            var token = JToken.Parse(actual);
+            var transformedToken = token.FilterByFields(fields, language);
+            var expectedToken = JToken.Parse(expected);
+            Assert.Equal(
+                expectedToken.ToString(Formatting.None),
+                transformedToken.ToString(Formatting.None)
+            );
+        }
     }
 }
