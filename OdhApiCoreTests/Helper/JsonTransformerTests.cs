@@ -14,23 +14,43 @@ namespace OdhApiCoreTests.Helper
         [Fact]
         public void FilterByLanguageTest()
         {
-            var actual = @"{""languages"":{""de"":""hallo"",""it"":""ciao"",""en"":""hello""}}";
-            var expected = @"{""languages"":{""de"":""hallo""}}";
+            var actual = @"{
+                ""languages"": {
+                    ""de"": ""hallo"",
+                    ""it"": ""ciao"",
+                    ""en"": ""hello""
+                }
+            }";
+            var expected = @"{
+                ""languages"": {
+                    ""de"": ""hallo""
+                }
+            }";
             var token = JToken.Parse(actual);
             var transformedToken = token.FilterByLanguage("de");
-            var transformed = transformedToken.ToString(Formatting.None);
-            Assert.Equal(expected, transformed);
+            var expectedToken = JToken.Parse(expected);
+            Assert.Equal(expectedToken, transformedToken);
         }
 
         [Fact]
         public void FilterImagesByCC0LicenseTest()
         {
-            var actual = @"[{""License"":""CC0"",""Name"":""Image1""},{""License"":""LTS"",""Name"":""Image2""}]";
-            var expected = @"[{""License"":""CC0"",""Name"":""Image1""}]";
+            var actual = @"[{
+                ""License"": ""CC0"",
+                ""Name"": ""Image1""
+            },
+            {
+                ""License"": ""LTS"",
+                ""Name"": ""Image2""
+            }]";
+            var expected = @"[{
+                ""License"": ""CC0"",
+                ""Name"": ""Image1""
+            }]";
             var token = JToken.Parse(actual);
             var transformedToken = token.FilterImagesByCC0License();
-            var transformed = transformedToken.ToString(Formatting.None);
-            Assert.Equal(expected, transformed);
+            var expectedToken = JToken.Parse(expected);
+            Assert.Equal(expectedToken, transformedToken);
         }
 
         [Theory]
@@ -75,10 +95,7 @@ namespace OdhApiCoreTests.Helper
             var token = JToken.Parse(actual);
             var transformedToken = token.FilterByFields(fields, language);
             var expectedToken = JToken.Parse(expected);
-            Assert.Equal(
-                expectedToken.ToString(Formatting.None),
-                transformedToken.ToString(Formatting.None)
-            );
+            Assert.Equal(expectedToken, transformedToken);
         }
     }
 }
