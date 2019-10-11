@@ -32,6 +32,14 @@ namespace OdhApiCore.Controllers
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
+            catch (JsonPathException ex)
+            {
+                return this.BadRequest(new {
+                    error = "Invalid JSONPath selection",
+                    path = ex.Path,
+                    details = ex.Message
+                });
+            }
             catch (Exception ex)
             {
                 if (ex.Message == "Request Error")

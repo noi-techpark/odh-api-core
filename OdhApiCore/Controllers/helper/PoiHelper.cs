@@ -44,11 +44,9 @@ namespace OdhApiCore.Controllers.api
             bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, IEnumerable<string>? tourismusvereinids)
         {
             poitypelist = new List<string>();
-            int typeinteger = 0;
-
             if (poitype != null)
             {
-                if (int.TryParse(poitype, out typeinteger))
+                if (int.TryParse(poitype, out int typeinteger))
                 {
                     //Sonderfall wenn alles abgefragt wird um keine unnötige Where zu erzeugen
                     if (typeinteger != 511)

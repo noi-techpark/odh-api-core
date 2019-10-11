@@ -13,7 +13,7 @@ namespace Helper
             if (typefilter != null)
             {
                 if (typefilter.Substring(typefilter.Length - 1, 1) == ",")
-                    typefilter = typefilter.Substring(0, typefilter.Length - 1);
+                    typefilter = typefilter[0..^1];
 
                 var splittedfilter = typefilter.Split(',');
 
@@ -33,7 +33,7 @@ namespace Helper
             if (subtypefilter != null)
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
-                    subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
+                    subtypefilter = subtypefilter[0..^1];
 
                 var splittedfilter = subtypefilter.Split(',');
 
@@ -53,7 +53,7 @@ namespace Helper
             if (subtypefilter != null)
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
-                    subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
+                    subtypefilter = subtypefilter[0..^1];
 
                 var splittedfilter = subtypefilter.Split(',');
 
@@ -285,7 +285,7 @@ namespace Helper
             if (subtypefilter != null)
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
-                    subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
+                    subtypefilter = subtypefilter[0..^1];
 
                 var splittedfilter = subtypefilter.Split(',');
 
@@ -636,7 +636,7 @@ namespace Helper
             if (subtypefilter != null)
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
-                    subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
+                    subtypefilter = subtypefilter[0..^1];
 
                 var splittedfilter = subtypefilter.Split(',');
 
@@ -853,7 +853,7 @@ namespace Helper
             if (poitypefilter != null)
             {
                 if (poitypefilter.Substring(poitypefilter.Length - 1, 1) == ",")
-                    poitypefilter = poitypefilter.Substring(0, poitypefilter.Length - 1);
+                    poitypefilter = poitypefilter[0..^1];
 
                 var splittedfilter = poitypefilter.Split(',');
 

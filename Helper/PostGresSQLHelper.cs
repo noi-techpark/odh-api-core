@@ -478,7 +478,7 @@ namespace Helper
                         i++;
                     }
                     stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
-                    stringtodeserialize = stringtodeserialize + "}";
+                    stringtodeserialize += "}";
 
                     var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
 
@@ -564,7 +564,7 @@ namespace Helper
                 commandText = commandText + " LIMIT " + limit;
             }
 
-            commandText = commandText + ";";
+            commandText += ";";
 
             return commandText;
         }
@@ -740,7 +740,7 @@ namespace Helper
                         i++;
                     }
                     strtoadd = strtoadd.Remove(strtoadd.Length - 1);
-                    strtoadd = strtoadd + "}";
+                    strtoadd += "}";
 
                     if (!isvalueempty)
                     {
@@ -860,7 +860,7 @@ namespace Helper
                         i++;
                     }
                     stringtodeserialize = stringtodeserialize.Remove(stringtodeserialize.Length - 1);
-                    stringtodeserialize = stringtodeserialize + "}";
+                    stringtodeserialize += "}";
 
                     var data = JsonConvert.DeserializeObject<T>(stringtodeserialize);
 
@@ -1004,25 +1004,24 @@ namespace Helper
         {
             try
             {
-                using (var conn = await connectionFactory.GetConnection(cancellationToken))
-                {
-                    ////Fix the single quotes
-                    //data = data.Replace("'", "''");                
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
 
-                    //string commandText = "UPDATE " + tablename + " SET data = '" + data + "' WHERE id ='" + id + "';";
+                ////Fix the single quotes
+                //data = data.Replace("'", "''");                
 
-                    //var command = new NpgsqlCommand(commandText);
+                //string commandText = "UPDATE " + tablename + " SET data = '" + data + "' WHERE id ='" + id + "';";
 
-                    //command.Connection = conn;
+                //var command = new NpgsqlCommand(commandText);
 
-                    using var command = new NpgsqlCommand($"UPDATE {tablename} SET data = @data WHERE id = @id", conn);
-                    command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
-                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+                //command.Connection = conn;
 
-                    int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
+                using var command = new NpgsqlCommand($"UPDATE {tablename} SET data = @data WHERE id = @id", conn);
+                command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, data);
+                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
-                    return affectedrows.ToString();
-                }
+                int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
+
+                return affectedrows.ToString();
             }
             catch (DbException ex)
             {
@@ -1035,16 +1034,15 @@ namespace Helper
         {
             try
             {
-                using (var conn = await connectionFactory.GetConnection(cancellationToken))
-                {
-                    using var command = new NpgsqlCommand($"UPDATE {tablename} SET data = @data WHERE id = @id", conn);
-                    command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
-                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
 
-                    int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
+                using var command = new NpgsqlCommand($"UPDATE {tablename} SET data = @data WHERE id = @id", conn);
+                command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
+                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
-                    return affectedrows.ToString();
-                }
+                int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
+
+                return affectedrows.ToString();
             }
             catch (DbException ex)
             {
@@ -1062,20 +1060,19 @@ namespace Helper
         {
             try
             {
-                using (var conn = await connectionFactory.GetConnection(cancellationToken))
-                {
-                    //string commandText = "DELETE FROM " + tablename + " WHERE id = '" + idvalue + "';";
+                using var conn = await connectionFactory.GetConnection(cancellationToken);
 
-                    //var command = new NpgsqlCommand(commandText);
-                    //command.Connection = conn;
+                //string commandText = "DELETE FROM " + tablename + " WHERE id = '" + idvalue + "';";
 
-                    using var command = new NpgsqlCommand($"DELETE FROM {tablename} WHERE id = @id", conn);
-                    command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, idvalue);
+                //var command = new NpgsqlCommand(commandText);
+                //command.Connection = conn;
 
-                    int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
+                using var command = new NpgsqlCommand($"DELETE FROM {tablename} WHERE id = @id", conn);
+                command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, idvalue);
 
-                    return affectedrows.ToString();
-                }
+                int affectedrows = await command.ExecuteNonQueryAsync(cancellationToken);
+
+                return affectedrows.ToString();
             }
             catch (DbException ex)
             {
@@ -1226,9 +1223,9 @@ namespace Helper
                 if (geosearchresult.geosearch)
                 {
                     if (!String.IsNullOrEmpty(where))
-                        where = where + " AND ";
+                        where += " AND ";
 
-                    where = where + PostgresSQLHelper.GetGeoWhereSimple(
+                    where += PostgresSQLHelper.GetGeoWhereSimple(
                         geosearchresult.latitude,
                         geosearchresult.longitude,
                         geosearchresult.radius);
@@ -1250,9 +1247,9 @@ namespace Helper
                 if (geosearchresult.geosearch)
                 {
                     if (!String.IsNullOrEmpty(where))
-                        where = where + " AND ";
+                        where += " AND ";
 
-                    where = where + PostgresSQLHelper.GetGeoWhereExtended(
+                    where += PostgresSQLHelper.GetGeoWhereExtended(
                         geosearchresult.latitude,
                         geosearchresult.longitude,
                         geosearchresult.radius);
@@ -1267,8 +1264,7 @@ namespace Helper
 
         public static uint PGPagingHelper(uint totalcount, uint pagesize)
         {
-            uint totalpages = 0;
-
+            uint totalpages;
             if (totalcount % pagesize == 0)
                 totalpages = totalcount / pagesize;
             else
