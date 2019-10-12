@@ -548,6 +548,9 @@ namespace Helper
         public static string CreateDatabaseCommand(
             string selectexp, string tablename, string whereexp, string sortexp, uint? offset, uint limit)
         {
+            // Add total count column
+            selectexp += ", count(*) OVER() AS full_count";
+
             string commandText = $"SELECT {selectexp} FROM {tablename}";
 
             if (!String.IsNullOrEmpty(whereexp))
@@ -658,6 +661,19 @@ namespace Helper
             }
         }
 
+        private static async Task<(long, IEnumerable<JsonRaw>)> TransformSQLResult(IAsyncEnumerable<(long, JsonRaw)> sqlResult)
+        {
+            var list = await sqlResult.ToListAsync();
+            return list.Aggregate(
+                (0L, new List<JsonRaw>(capacity: list.Count)),
+                (xs, x) =>
+                {
+                    var (_, jsons) = xs;
+                    var (totalCount, json) = x;
+                    jsons.Add(json);
+                    return (totalCount, jsons);
+                });
+        }
 
         /// <summary>
         /// SELECT Json Data as String with Parameters (TO GET ONLY data Element)
@@ -668,12 +684,12 @@ namespace Helper
         /// <param name="whereexp">Where Expression (if empty set to id LIKE @id)</param>
         /// <param name="parameterdict">String Dictionary with parameters (key, value)</param>
         /// <returns>List of JSON Strings</returns>
-        public static IAsyncEnumerable<JsonRaw> SelectFromTableDataAsStringParametrizedAsync(
+        public static Task<(long, IEnumerable<JsonRaw>)> SelectFromTableDataAsStringParametrizedAsync(
             IPostGreSQLConnectionFactory connectionFactory, string tablename, string selectexp,
             (string whereexpression, IEnumerable<PGParameters>? whereparameters) where,
             string sortexp, uint limit, uint? offset, CancellationToken cancellationToken)
         {
-            async IAsyncEnumerable<JsonRaw> inner()
+            async IAsyncEnumerable<(long, JsonRaw)> inner()
             {
                 using var conn = await connectionFactory.GetConnection(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexpression, sortexp, offset, limit);
@@ -685,14 +701,15 @@ namespace Helper
 
                 while (await dr.ReadAsync())
                 {
-                    var value = dr[1].ToString();
+                    long totalCount = (long)dr["full_count"];
+                    string value = (string)dr["data"];
                     if (value != null)
-                        yield return new JsonRaw(value);
+                        yield return (totalCount, new JsonRaw(value));
                 }
             }
             try
             {
-                return inner();
+                return TransformSQLResult(inner());
             }
             catch (DbException ex)
             {

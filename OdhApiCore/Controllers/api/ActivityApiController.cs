@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers
 {
     /// <summary>
-    /// Activity Api (data provided by LTS ActivityData) SOME DATA Available as OPENDATA 
+    /// Activity Api (data provided by LTS ActivityData) SOME DATA Available as OPENDATA
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
@@ -26,7 +26,7 @@ namespace OdhApiCore.Controllers
         }
 
         #region SWAGGER Exposed API
-        
+
         /// <summary>
         /// GET Activity List
         /// </summary>
@@ -42,14 +42,14 @@ namespace OdhApiCore.Controllers
         /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
         /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours), (default:'null')</param>
         /// <param name="highlight">Hightlight Filter (possible values: 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true), (default:'null')</param>
-        /// <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>      
-        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=activity'), (default:'null')</param>        
+        /// <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=activity'), (default:'null')</param>
         /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
-        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>        
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        /// <returns>Collection of Activity Objects</returns>        
+        /// <returns>Collection of Activity Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -92,7 +92,7 @@ namespace OdhApiCore.Controllers
         }
 
         /// <summary>
-        /// GET Activity Single 
+        /// GET Activity Single
         /// </summary>
         /// <param name="id">ID of the Activity</param>
         /// <returns>GBLTSActivity Object</returns>
@@ -112,7 +112,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Activity Types List
         /// </summary>
-        /// <returns>Collection of ActivityTypes Object</returns>                
+        /// <returns>Collection of ActivityTypes Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -174,7 +174,7 @@ namespace OdhApiCore.Controllers
         /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres) 'null' : disables Filter</param>
         /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours) 'null' : disables Filter</param>
         /// <param name="highlightfilter">Hightlight Filter (possible values: 'null' = Filter disabled, 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true)</param>
-        /// <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>      
+        /// <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>
         /// <param name="active">Active Filter (possible Values: 'null' Displays all Activities, 'true' only Active Activities, 'false' only Disabled Activities</param>
         /// <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Activities, 'true' only SMG Active Activities, 'false' only SMG Disabled Activities</param>
         /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>
@@ -211,23 +211,21 @@ namespace OdhApiCore.Controllers
 
                 uint pageskip = pagesize * (pagenumber - 1);
 
-                var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
                     cancellationToken);
-                var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionFactory, "activities", (whereexpression, parameters), cancellationToken);
 
-                uint totalcount = count;
+                uint totalcount = (uint)totalCount;
                 uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
-                var data = dataTask.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
+                var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
 
                 return PostgresSQLHelper.GetResultJson(
                     pagenumber,
                     totalpages,
                     totalcount,
                     myseed,
-                    await data.ToListAsync());
+                    dataTransformed);
             });
         }
 
@@ -235,15 +233,15 @@ namespace OdhApiCore.Controllers
         /// GET Single Activity
         /// </summary>
         /// <param name="id">ID of the Activity</param>
-        /// <returns>Activity Object</returns>                
+        /// <returns>Activity Object</returns>
         private Task<IActionResult> GetSingle(string id, string? language, CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
-                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "activities", "*", where, "", 0,
-                    null, cancellationToken).ToListAsync();
+                    null, cancellationToken);
 
                 var result = data.FirstOrDefault()?.TransformRawData(language, new string[] { }, checkCC0: CheckCC0License);
                 return result == null ? null : JsonConvert.SerializeObject(result);
@@ -251,7 +249,7 @@ namespace OdhApiCore.Controllers
         }
 
         #endregion
-       
+
         #region CUSTOM METHODS
 
         private Type GetChildFlagType(object x)
@@ -275,14 +273,14 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Activity Types List (Localized Type Names and Bitmasks)
         /// </summary>
-        /// <returns>Collection of ActivityTypes Object</returns>        
+        /// <returns>Collection of ActivityTypes Object</returns>
         private Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
             {
                 List<ActivityTypes> mysuedtiroltypeslist = new List<ActivityTypes>();
 
-                //Get LTS Tagging Types List                
+                //Get LTS Tagging Types List
                 var ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
                         connectionFactory, "ltstaggingtypes", "*", "", "", 0,
                         null, cancellationToken);
@@ -310,9 +308,9 @@ namespace OdhApiCore.Controllers
                     foreach (var myactivitysubtype in Enum.GetValues(subtype))
                     {
                         if (myactivitysubtype != null)
-                        {                            
+                        {
                             ActivityTypes mysmgpoisubtype = new ActivityTypes();
-                                                   
+
                             string? subid = FlagsHelper.GetDescription(myactivitysubtype);
 
                             mysmgpoisubtype.Id = subid;
@@ -328,15 +326,15 @@ namespace OdhApiCore.Controllers
                             mysuedtiroltypeslist.Add(mysmgpoisubtype);
                         }
                     }
-                }             
-               
+                }
+
                 return JsonConvert.SerializeObject(mysuedtiroltypeslist);
             });
         }
 
         /// <summary>
         /// GET Paged Activity List based on LastChange Date
-        /// </summary>        
+        /// </summary>
         /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page</param>
         /// <param name="updatefrom">Date from (all Activity with LastChange >= datefrom are passed)</param>
@@ -360,17 +358,15 @@ namespace OdhApiCore.Controllers
 
                 var where = PostgresSQLWhereBuilder.CreateLastChangedWhereExpression(updatefrom);
 
-                var dataTask = PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "activities", select, where, orderby, pagesize, pageskip,
                     cancellationToken);
-                var count = await PostgresSQLHelper.CountDataFromTableParametrizedAsync(
-                    connectionFactory, "activities", where, cancellationToken);
 
-                uint totalcount = count;
+                uint totalcount = (uint)totalCount;
                 uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
 
                 return PostgresSQLHelper.GetResultJson(
-                    pagenumber, totalpages, totalcount, -1, myseed, await dataTask.ToListAsync());
+                    pagenumber, totalpages, totalcount, -1, myseed, data);
             });
         }
 
