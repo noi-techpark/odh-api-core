@@ -40,6 +40,7 @@ namespace Helper
 
         public static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string cmdText)
         {
+            System.Diagnostics.Trace.TraceInformation($"SQL: {cmdText}");
             return new NpgsqlCommand(cmdText, connection);
         }
     }
