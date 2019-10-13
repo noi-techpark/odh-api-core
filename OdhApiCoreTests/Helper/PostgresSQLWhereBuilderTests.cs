@@ -69,16 +69,16 @@ namespace OdhApiCoreTests.Helper
         [Fact]
         public void CreateActivityWhereExpression_EmptyParameters()
         {
-            IReadOnlyCollection<string> idlist = new string[] { };
-            IReadOnlyCollection<string> activitytypelist = new string[] { };
-            IReadOnlyCollection<string> suttypelist = new string[] { };
-            IReadOnlyCollection<string> difficultylist = new string[] { };
-            IReadOnlyCollection<string> smgtaglist = new string[] { };
-            IReadOnlyCollection<string> distictlist = new string[] { };
-            IReadOnlyCollection<string> municipalitylist = new string[] { };
-            IReadOnlyCollection<string> tourismvereinlist = new string[] { };
-            IReadOnlyCollection<string> regionlist = new string[] { };
-            IReadOnlyCollection<string> arealist = new string[] { };
+            IReadOnlyCollection<string> idlist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> activitytypelist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> suttypelist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> difficultylist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> smgtaglist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> distictlist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> municipalitylist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> tourismvereinlist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> regionlist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> arealist = System.Array.Empty<string>();
             bool distance = false;
             int distancemin = 0;
             int distancemax = 0;
@@ -109,12 +109,12 @@ namespace OdhApiCoreTests.Helper
             IReadOnlyCollection<string> activitytypelist = new string[] {
                 "1024"
             };
-            IReadOnlyCollection<string> suttypelist = new string[] { };
-            IReadOnlyCollection<string> difficultylist = new string[] { };
-            IReadOnlyCollection<string> smgtaglist = new string[] { };
-            IReadOnlyCollection<string> distictlist = new string[] { };
-            IReadOnlyCollection<string> municipalitylist = new string[] { };
-            IReadOnlyCollection<string> tourismvereinlist = new string[] { };
+            IReadOnlyCollection<string> suttypelist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> difficultylist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> smgtaglist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> distictlist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> municipalitylist = System.Array.Empty<string>();
+            IReadOnlyCollection<string> tourismvereinlist = System.Array.Empty<string>();
             IReadOnlyCollection<string> regionlist = new string[] {
                 "region1"
             };

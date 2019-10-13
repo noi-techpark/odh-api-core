@@ -40,7 +40,7 @@ namespace OdhApiCoreTests.Helper
                     { "de", "tagname" },
                     { "it", "tagname" }
                 },
-                ValidForEntity = new string[] { }
+                ValidForEntity = Array.Empty<string>()
             };
             var smgtagslist = new SmgTags[]
             {

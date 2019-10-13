@@ -46,7 +46,7 @@ namespace Helper
         {
             var parametersString =
                (parameters != null) ?
-                    $"\n{string.Join("\n", parameters.Select(x => $"\t> {x.Name}: '{x.Value}' [{x.Type}]"))}" :
+                    $"\n{string.Join("\n", parameters.Select(x => $"\t@{x.Name}: '{x.Value}' [{x.Type}]"))}" :
                     null;
             System.Diagnostics.Trace.TraceInformation($"SQL: {cmdText}{parametersString}");
         }
