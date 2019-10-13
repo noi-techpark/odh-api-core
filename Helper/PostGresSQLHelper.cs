@@ -14,7 +14,7 @@ namespace Helper
 {
     public static class PGExtensions
     {
-        public static void AddPGParameters(
+        private static void AddPGParameters(
             this NpgsqlCommand command,
             IEnumerable<PGParameters>? whereparameters)
         {
@@ -31,21 +31,36 @@ namespace Helper
                                 Convert.ToDateTime(parameter.Value));
                             break;
                         default:
-                            command.Parameters.AddWithValue(parameter.Name, parameter.Type, parameter.Value);
+                            command.Parameters.AddWithValue(
+                                parameter.Name,
+                                parameter.Type,
+                                parameter.Value);
                             break;
                     }
                 }
             }
         }
 
-        public static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string cmdText)
+        [System.Diagnostics.Conditional("TRACE")]
+        private static void TraceQueryInformation(string cmdText, IEnumerable<PGParameters>? parameters)
         {
-            System.Diagnostics.Trace.TraceInformation($"SQL: {cmdText}");
-            return new NpgsqlCommand(cmdText, connection);
+            var parametersString =
+               (parameters != null) ?
+                    $"\n{string.Join("\n", parameters.Select(x => $"\t> {x.Name}: '{x.Value}' [{x.Type}]"))}" :
+                    null;
+            System.Diagnostics.Trace.TraceInformation($"SQL: {cmdText}{parametersString}");
+        }
+
+        public static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string cmdText, IEnumerable<PGParameters>? parameters = null)
+        {
+            TraceQueryInformation(cmdText, parameters);
+            var command = new NpgsqlCommand(cmdText, connection);
+            command.AddPGParameters(parameters);
+            return command;
         }
     }
 
-    public class PostgresSQLHelper
+    public static class PostgresSQLHelper
     {
         #region String Select Methods
 
@@ -371,7 +386,7 @@ namespace Helper
                     (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 int count = 0;
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     var data = JsonConvert.DeserializeObject<T>(dr[1].ToString() ?? "");
                     yield return data;
@@ -474,7 +489,7 @@ namespace Helper
                     (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
                 int count = 0;
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     int i = 0;
                     string stringtodeserialize = "{";
@@ -605,9 +620,7 @@ namespace Helper
                 }
                 commandText += ";";
 
-                using var command = conn.CreateCommand(commandText);
-
-                command.AddPGParameters(where.whereparameters);
+                using var command = conn.CreateCommand(commandText, where.whereparameters);
 
                 uint count = (uint)(long)await command.ExecuteScalarAsync(cancellationToken);
 
@@ -638,8 +651,7 @@ namespace Helper
             {
                 using var conn = await connectionFactory.GetConnection(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
-                using var command = conn.CreateCommand(commandText);
-                command.AddPGParameters(where.whereparameters);
+                using var command = conn.CreateCommand(commandText, where.whereparameters);
 
                 using NpgsqlDataReader dr =
                     (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
@@ -661,9 +673,9 @@ namespace Helper
             }
         }
 
-        private static async Task<(long, IEnumerable<JsonRaw>)> TransformSQLResult(IAsyncEnumerable<(long, JsonRaw)> sqlResult)
+        private static async Task<(long, IEnumerable<JsonRaw>)> TransformSQLResult(IAsyncEnumerable<(long, JsonRaw)> sqlResult, CancellationToken cancellationToken)
         {
-            var list = await sqlResult.ToListAsync();
+            var list = await sqlResult.ToListAsync(cancellationToken);
             return list.Aggregate(
                 (0L, new List<JsonRaw>(capacity: list.Count)),
                 (xs, x) =>
@@ -693,13 +705,12 @@ namespace Helper
             {
                 using var conn = await connectionFactory.GetConnection(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexpression, sortexp, offset, limit);
-                using var command = conn.CreateCommand(commandText);
-                command.AddPGParameters(where.whereparameters);
+                using var command = conn.CreateCommand(commandText, where.whereparameters);
 
                 using NpgsqlDataReader dr =
                     (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     long totalCount = (long)dr["full_count"];
                     string value = (string)dr["data"];
@@ -709,7 +720,7 @@ namespace Helper
             }
             try
             {
-                return TransformSQLResult(inner());
+                return TransformSQLResult(inner(), cancellationToken);
             }
             catch (DbException ex)
             {
@@ -738,13 +749,12 @@ namespace Helper
                 using var conn = await connectionFactory.GetConnection(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
 
-                using var command = conn.CreateCommand(commandText);
-                command.AddPGParameters(where.whereparameters);
+                using var command = conn.CreateCommand(commandText, where.whereparameters);
 
                 using NpgsqlDataReader dr =
                     (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
 
-                while (await dr.ReadAsync())
+                while (await dr.ReadAsync(cancellationToken))
                 {
                     bool isvalueempty = false;
 
@@ -808,8 +818,7 @@ namespace Helper
                     offset,
                     limit);
 
-                using var command = conn.CreateCommand(commandText);
-                command.AddPGParameters(where.whereparameters);
+                using var command = conn.CreateCommand(commandText, where.whereparameters);
 
                 using NpgsqlDataReader dr =
                     (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
@@ -866,8 +875,7 @@ namespace Helper
                     offset,
                     limit);
 
-                using var command = conn.CreateCommand(commandText);
-                command.AddPGParameters(where.whereparameters);
+                using var command = conn.CreateCommand(commandText, where.whereparameters);
 
                 using NpgsqlDataReader dr =
                     (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
@@ -938,8 +946,7 @@ namespace Helper
                     offset,
                     limit);
 
-                using var command = conn.CreateCommand(commandText);
-                command.AddPGParameters(where.whereparameters);
+                using var command = conn.CreateCommand(commandText, where.whereparameters);
 
                 using NpgsqlDataReader dr =
                     (NpgsqlDataReader)await command.ExecuteReaderAsync(cancellationToken);
