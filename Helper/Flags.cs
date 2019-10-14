@@ -13,7 +13,7 @@ namespace Helper
                 if (value != null)
                     yield return value;
             }
-        }
+        }       
     }
     //Pakete Weekday 
     [Flags]

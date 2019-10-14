@@ -93,6 +93,25 @@ namespace Helper
             return null;
         }
 
+        public static string? GetDescription(object value)
+        {
+            var mytype = value.GetType();
+            //CheckIsEnum<T>(false);
+            string? name = Enum.GetName(mytype, value);
+            if (name != null)
+            {
+                FieldInfo? field = mytype.GetField(name);
+                if (field != null)
+                {
+                    if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
+                    {
+                        return attr.Description;
+                    }
+                }
+            }
+            return null;
+        }
+
         public static int GetFlagofType<T>(string? id)
         {
             foreach (object? smgpoitypeflag in Enum.GetValues(typeof(T)))
@@ -154,18 +173,7 @@ namespace Helper
 
             return -1;
         }
-
-
-        //public static IEnumerable<T> GetFlagByDescription<T>(this T value) where T : struct
-        //{
-        //    CheckIsEnum<T>(true);
-        //    foreach (T flag in Enum.GetValues(typeof(T)).Cast<T>())
-        //    {
-        //        if (value.IsFlagSet(flag))
-        //            yield return flag;
-        //    }
-        //}
-
+               
         //Des gibmer die Liste zrugg!
         public static List<string> GetDescriptionList<T>(this IEnumerable<T> enumlist) where T : struct
         {

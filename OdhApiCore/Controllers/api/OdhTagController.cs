@@ -26,8 +26,8 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET ODHTag List
         /// </summary>
-        /// <param name="validforentity">Filter on Tags valid on Entitys (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>        
-        /// <param name="localizationlanguage"></param>        
+        /// <param name="validforentity">Filter on Tags valid on Entitys (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="localizationlanguage"></param>
         /// <returns>Collection of ODHTag Objects</returns>
         //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTags Objects", typeof(IEnumerable<SmgTags>))]
         [HttpGet, Route("api/ODHTag")]
@@ -86,8 +86,8 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET ODHTag List REDUCED
         /// </summary>
-        /// <param name="validforentity"></param>        
-        /// <param name="localizationlanguage"></param>        
+        /// <param name="validforentity"></param>
+        /// <param name="localizationlanguage"></param>
         /// <returns></returns>
         //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTagReduced Objects", typeof(IEnumerable<SmgTagReduced>))]
         [HttpGet, Route("api/ODHTagReduced")]
@@ -128,9 +128,9 @@ namespace OdhApiCore.Controllers
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
                 string where = "";
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                var (totalCount, myresult) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "smgtags", select, (where, null),
-                    orderby, 0, null, cancellationToken).ToListAsync();
+                    orderby, 0, null, cancellationToken);
 
                 return JsonConvert.SerializeObject(myresult);
             });
@@ -170,9 +170,9 @@ namespace OdhApiCore.Controllers
                     where = where + smgtagtypeliststring;
                 }
 
-                var myresult = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                var (totalCount, myresult) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "smgtags", select, (where, parameters),
-                    orderby, 0, null, cancellationToken).ToListAsync();
+                    orderby, 0, null, cancellationToken);
 
                 return JsonConvert.SerializeObject(myresult);
             });
@@ -191,11 +191,11 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturnString(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
-                var data = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
+                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "smgtags", "*", where,
-                    "", 0, null, cancellationToken).ToListAsync();
+                    "", 0, null, cancellationToken);
 
-                return JsonConvert.SerializeObject(data.FirstOrDefault());
+                return JsonConvert.SerializeObject(data);
             });
         }
 
