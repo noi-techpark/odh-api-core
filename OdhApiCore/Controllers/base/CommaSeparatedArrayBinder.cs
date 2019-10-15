@@ -15,7 +15,7 @@ namespace OdhApiCore.Controllers
                 valueProviderResult
                     .Values
                     .SelectMany(value =>
-                        value?.Split(",", StringSplitOptions.RemoveEmptyEntries) ?? new string[] { })
+                        value?.Split(",", StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>())
                     .ToArray();
 
             bindingContext.Result = ModelBindingResult.Success(model);

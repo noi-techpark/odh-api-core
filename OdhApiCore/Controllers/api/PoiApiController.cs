@@ -79,7 +79,7 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
-                fields ?? new string[] { }, language, pagenumber, pagesize, poitype, subtype, idlist,
+                fields ?? Array.Empty<string>(), language, pagenumber, pagesize, poitype, subtype, idlist,
                 locfilter, areafilter, highlight, active, odhactive, odhtagfilter, seed,
                 geosearchresult, cancellationToken);
         }
@@ -235,7 +235,7 @@ namespace OdhApiCore.Controllers.api
                     connectionFactory, "pois", "*", where, "", 0,
                     null, cancellationToken);
 
-                var dataTransformed = data.FirstOrDefault()?.TransformRawData(language, new string[] { }, checkCC0: CheckCC0License);
+                var dataTransformed = data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
                 return dataTransformed == null ? null : JsonConvert.SerializeObject(dataTransformed);
             });
         }

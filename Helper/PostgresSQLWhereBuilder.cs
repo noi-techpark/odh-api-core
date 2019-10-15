@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Helper
 {
-    public class PostgresSQLWhereBuilder
+    public static class PostgresSQLWhereBuilder
     {
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
@@ -494,8 +494,8 @@ namespace Helper
 
         //Return Where and Parameters for Alpinebits
         public static (string wherexpression, IEnumerable<PGParameters> parameters) CreateAlpineBitsWhereExpression(
-            IReadOnlyCollection<string> idlist, string source, 
-            string messagetype, string requestdate, 
+            IReadOnlyCollection<string> idlist, string source,
+            string messagetype, string requestdate,
             IReadOnlyCollection<string> accommodationIds)
         {
             string whereexpression = "";
@@ -1181,7 +1181,7 @@ namespace Helper
         private static void ActivitySubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)
         {
-            //Activity Sub Type            
+            //Activity Sub Type
             if (subtypelist.Count > 0)
             {
                 if (!String.IsNullOrEmpty(whereexpression))
@@ -1727,7 +1727,7 @@ namespace Helper
         private static void SmgPoiSubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)
         {
-            //Activity Sub Type            
+            //Activity Sub Type
             if (subtypelist.Count > 0)
             {
                 if (!String.IsNullOrEmpty(whereexpression))
@@ -1758,7 +1758,7 @@ namespace Helper
         private static void SmgPoiPoiTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> poitypelist)
         {
-            //Activity Sub Type            
+            //Activity Sub Type
             if (poitypelist.Count > 0)
             {
                 if (!String.IsNullOrEmpty(whereexpression))
@@ -2064,7 +2064,7 @@ namespace Helper
                 //    }
                 //    categoryliststring = categoryliststring.Remove(categoryliststring.Length - 2);
 
-                //    whereexpression = whereexpression + "data->'AccoCategoryId' in (" + categoryliststring + "))";                   
+                //    whereexpression = whereexpression + "data->'AccoCategoryId' in (" + categoryliststring + "))";
                 //}
             }
         }
@@ -2289,7 +2289,7 @@ namespace Helper
         private static void SubTypesToExcludeFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypestoexclude)
         {
-            //Activity Sub Type            
+            //Activity Sub Type
             if (subtypestoexclude.Count > 0)
             {
                 if (!String.IsNullOrEmpty(whereexpression))
@@ -2320,7 +2320,7 @@ namespace Helper
         private static void PoiTypesToExcludeFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> poitypestoexclude)
         {
-            //Activity POI Type            
+            //Activity POI Type
             if (poitypestoexclude.Count > 0)
             {
                 if (!String.IsNullOrEmpty(whereexpression))
