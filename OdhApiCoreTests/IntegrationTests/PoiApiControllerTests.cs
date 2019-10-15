@@ -47,9 +47,8 @@ namespace OdhApiCoreTests.IntegrationTets
         [InlineData("/api/Poi?pagenumber=1&pagesize=100&poitype=511&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
         [InlineData("/api/Poi?pagenumber=1&pagesize=10&poitype=11&locfilter=tvs5228229651CA11D18F1400A02427D15E&odhactive=true&active=true&seed=null")]
         [InlineData("/api/Poi?pagenumber=1&pagesize=10&poitype=511&highlight=true&seed=null")]
-        [InlineData("/api/Poi?pagenumber=1&pagesize=20&poitype=Sport%20und%20Freizeit&subtype=null&idlist=null&locfilter=null&areafilter=null&highlight=&active=&odhactive=&odhtagfilter=null&seed=null")]
-        //Fails because boolean don't accept null string, to verifiy
-        //[InlineData("/api/Activity?pagenumber=1&pagesize=20&activitytype=Berg&subtype=null&idlist=null&locfilter=null&areafilter=null&distancefilter=null&altitudefilter=null&durationfilter=null&highlight=null&difficultyfilter=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
+        [InlineData("/api/Poi?pagenumber=1&pagesize=20&poitype=Sport%20und%20Freizeit&subtype=null&idlist=null&locfilter=null&areafilter=null&highlight=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
+        [InlineData("/api/Activity?pagenumber=1&pagesize=20&activitytype=Berg&subtype=null&idlist=null&locfilter=null&areafilter=null&distancefilter=null&altitudefilter=null&durationfilter=null&highlight=null&difficultyfilter=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
         public async Task Get_Pois(string url)
         {
             var response = await _client.GetAsync(url);
