@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -108,6 +109,19 @@ namespace OdhApiCore.Controllers
                 return StatusCode(StatusCodes.Status501NotImplemented, new { error = "not implemented" });
             }
         }
+
+        //TEST METHOD PERFORMANCE
+        [HttpGet, Route("api/TestPerf")]
+        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        public async Task<IActionResult> GetTest(string hallo = "", CancellationToken cancellationToken = default)
+        {
+            string toreturn = "{ \"es\": \"geat\" }";
+            if(!String.IsNullOrEmpty(hallo))
+                toreturn = "{ \"hallo\": \"" + hallo + "\" }";
+
+            return this.Content(toreturn, "application/json", Encoding.UTF8);
+        }
+
 
         #endregion
 
