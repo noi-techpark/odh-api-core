@@ -564,7 +564,7 @@ namespace Helper
             string selectexp, string tablename, string whereexp, string sortexp, uint? offset, uint limit)
         {
             // Add total count column
-            selectexp += "";  //", count(*) OVER() AS full_count";
+            selectexp += ", count(*) OVER() AS full_count";
 
             string commandText = $"SELECT {selectexp} FROM {tablename}";
 
@@ -712,7 +712,7 @@ namespace Helper
 
                 while (await dr.ReadAsync(cancellationToken))
                 {
-                    long totalCount = 500; //(long)dr["full_count"];
+                    long totalCount = (long)dr["full_count"];
                     string value = (string)dr["data"];
                     if (value != null)
                         yield return (totalCount, new JsonRaw(value));
