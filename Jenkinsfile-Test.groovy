@@ -9,7 +9,7 @@ pipeline {
         DOCKER_SERVICES = "api"
         DOCKER_SERVER_IP = "63.33.73.203"
         DOCKER_SERVER_DIRECTORY = "/var/docker/odh-tourism-api"
-        PG_CONNECTION = credentials('odh-tourism-api-test-pg-connection')
+        PG_CONNECTION = credentials('odh-tourism-api-prod-pg-connection')
     }
 
     stages {
