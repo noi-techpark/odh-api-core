@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using static OdhApiCoreTests.IntegrationTets.Helpers;
 
 namespace OdhApiCoreTests.IntegrationTets
 {
@@ -23,14 +24,6 @@ namespace OdhApiCoreTests.IntegrationTets
                 AllowAutoRedirect = false
             });
         }
-
-        private static T JsonIsType<T>(JToken token) =>
-            token switch
-            {
-                JValue value when (value.Value == null) => default!,
-                JValue value => Assert.IsType<T>(value.Value),
-                _ => Assert.IsType<T>(token),
-            };
 
         [Theory]
         [InlineData("/api/Activity")]

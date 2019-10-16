@@ -1,9 +1,22 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
+using Xunit;
 
 namespace OdhApiCoreTests.IntegrationTets
 {
+    public static class Helpers
+    {
+        public static T JsonIsType<T>(JToken token) =>
+            token switch
+            {
+                JValue value when (value.Value == null) => default!,
+                JValue value => Assert.IsType<T>(value.Value),
+                _ => Assert.IsType<T>(token),
+            };
+    }
+
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
