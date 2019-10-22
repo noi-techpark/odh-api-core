@@ -75,6 +75,7 @@ namespace OdhApiCore.Controllers
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? updatefrom = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -88,7 +89,7 @@ namespace OdhApiCore.Controllers
             return await GetFiltered(
                     fields ?? Array.Empty<string>(), language, pagenumber, pagesize, activitytype, subtype, idlist,
                     locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlight,
-                    difficultyfilter, active, odhactive, odhtagfilter, seed, geosearchresult, cancellationToken);
+                    difficultyfilter, active, odhactive, odhtagfilter, seed, updatefrom, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -127,35 +128,6 @@ namespace OdhApiCore.Controllers
             return await GetActivityTypesListAsync(cancellationToken);
         }
 
-        /// <summary>
-        /// GET Activity Changed List by Date
-        /// </summary>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
-        /// <param name="pagesize">Elements per Page, (default:10)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
-        /// <returns>Collection of GBLTSActivity Objects</returns>
-        /// <response code="200">List created</response>
-        /// <response code="400">Request Error</response>
-        /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<GBLTSActivity>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/ActivityChanged")]
-        public async Task<IActionResult> GetAllActivityChanged(
-            uint pagenumber = 1,
-            uint pagesize = 10,
-            string? seed = null,
-            string? updatefrom = null,
-            CancellationToken cancellationToken = default
-            )
-        {
-            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
-
-            return await GetLastChanged(pagenumber, pagesize, updatefrom, seed, cancellationToken);
-        }
-
         #endregion
 
         #region GETTER
@@ -184,13 +156,13 @@ namespace OdhApiCore.Controllers
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
-            string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
-                    altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags,
+                    altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange,
                     cancellationToken);
 
                 string select = "*";
@@ -203,7 +175,7 @@ namespace OdhApiCore.Controllers
                     myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
                     myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
                     myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive, myactivityhelper.lastchange);
 
                 string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
@@ -332,42 +304,38 @@ namespace OdhApiCore.Controllers
             });
         }
 
+        #endregion
+
+        #region Obsolete here for Compatibility reasons
+
         /// <summary>
-        /// GET Paged Activity List based on LastChange Date
+        /// GET Activity Changed List by Date
         /// </summary>
-        /// <param name="pagenumber">Pagenumber</param>
-        /// <param name="pagesize">Elements per Page</param>
-        /// <param name="updatefrom">Date from (all Activity with LastChange >= datefrom are passed)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-        /// <returns>Result Object with Collection of Activity Objects</returns>
-        private Task<IActionResult> GetLastChanged(
-            uint pagenumber, uint pagesize, string updatefrom, string? seed,
-            CancellationToken cancellationToken)
+        /// <param name="pagenumber">Pagenumber, (default:1)</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
+        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
+        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
+        /// <returns>Collection of GBLTSActivity Objects</returns>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<GBLTSActivity>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,ActivityReader")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet, Route("api/ActivityChanged")]
+        public async Task<IActionResult> GetAllActivityChanged(
+            uint pagenumber = 1,
+            uint pagesize = 10,
+            string? seed = null,
+            string? updatefrom = null,
+            CancellationToken cancellationToken = default
+            )
         {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                DateTime updatefromDT = Convert.ToDateTime(updatefrom);
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
-                string select = "*";
-                string orderby = "";
-
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(
-                    ref orderby, seed, "data ->>'Shortname' ASC");
-
-                uint pageskip = pagesize * (pagenumber - 1);
-
-                var where = PostgresSQLWhereBuilder.CreateLastChangedWhereExpression(updatefrom);
-
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "activities", select, where, orderby, pagesize, pageskip,
-                    cancellationToken);
-
-                uint totalcount = (uint)totalCount;
-                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                return PostgresSQLHelper.GetResultJson(
-                    pagenumber, totalpages, totalcount, -1, myseed, data);
-            });
+            return await GetActivityList(null, pagenumber, pagesize, null, null, null, null, null, null, null, null, new LegacyBool(null), null, null, new LegacyBool(null), new LegacyBool(null), updatefrom, seed, null, null, null, null, cancellationToken);
         }
 
         #endregion

@@ -120,7 +120,7 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
-        #region ActivityController
+        #region ActivityController       
 
         /// <summary>
         /// GET Activity List Reduced
@@ -192,14 +192,14 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetActivityReduced(
             string? language, string? activitytype, string? subtypefilter, string? locfilter, string? areafilter,
             string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
-            string? difficultyfilter, bool? active, bool? smgactive, string? smgtags,
+            string? difficultyfilter, bool? active, bool? smgactive, string? smgtags, 
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturnString(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter,
-                    altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags,
+                    altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, null,
                     cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
@@ -212,7 +212,7 @@ namespace OdhApiCore.Controllers.api
                     myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
                     myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
                     myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive);
+                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive, null);
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
