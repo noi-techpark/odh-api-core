@@ -75,7 +75,7 @@ namespace OdhApiCore.Controllers
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
-            string? updatefrom = null,
+            string? lastchange = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -89,7 +89,7 @@ namespace OdhApiCore.Controllers
             return await GetFiltered(
                     fields ?? Array.Empty<string>(), language, pagenumber, pagesize, activitytype, subtype, idlist,
                     locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlight,
-                    difficultyfilter, active, odhactive, odhtagfilter, seed, updatefrom, geosearchresult, cancellationToken);
+                    difficultyfilter, active, odhactive, odhtagfilter, seed, lastchange, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -335,7 +335,8 @@ namespace OdhApiCore.Controllers
         {
             updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
-            return await GetActivityList(null, pagenumber, pagesize, null, null, null, null, null, null, null, null, new LegacyBool(null), null, null, new LegacyBool(null), new LegacyBool(null), updatefrom, seed, null, null, null, null, cancellationToken);
+            return await GetActivityList(null, pagenumber, pagesize, null, null, null, null, null, null, null, null, new LegacyBool(null), null, null, 
+                new LegacyBool(null), new LegacyBool(null), updatefrom, seed, null, null, null, null, cancellationToken);
         }
 
         #endregion

@@ -96,7 +96,7 @@ namespace OdhApiCore.Controllers.api
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
                     connectionFactory, poitype, subtypefilter, null, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, cancellationToken);
+                    highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -105,7 +105,7 @@ namespace OdhApiCore.Controllers.api
                     mypoihelper.idlist, mypoihelper.poitypelist, mypoihelper.subtypelist,
                     mypoihelper.smgtaglist, new List<string>(), new List<string>(), mypoihelper.tourismvereinlist,
                     mypoihelper.regionlist, mypoihelper.arealist, mypoihelper.highlight,
-                    mypoihelper.active, mypoihelper.smgactive);
+                    mypoihelper.active, mypoihelper.smgactive, null);
 
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);

@@ -268,7 +268,7 @@ namespace Helper
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
-            IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter)
+            IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter, string? lastchange)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
@@ -285,6 +285,8 @@ namespace Helper
             HighlightFilterWhere(ref whereexpression, parameters, highlight);
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
+
+            LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
             return (whereexpression, parameters);
         }

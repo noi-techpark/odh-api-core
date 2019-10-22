@@ -65,6 +65,7 @@ namespace OdhApiCore.Controllers.api
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? lastchange = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -80,7 +81,7 @@ namespace OdhApiCore.Controllers.api
 
             return await GetFiltered(
                 fields ?? Array.Empty<string>(), language, pagenumber, pagesize, poitype, subtype, idlist,
-                locfilter, areafilter, highlight, active, odhactive, odhtagfilter, seed,
+                locfilter, areafilter, highlight, active, odhactive, odhtagfilter, seed, lastchange,
                 geosearchresult, cancellationToken);
         }
 
@@ -123,37 +124,7 @@ namespace OdhApiCore.Controllers.api
             return await GetPoiTypesList(cancellationToken);
         }
 
-        /// <summary>
-        /// GET Poi Changed List by Date
-        /// </summary>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
-        /// <param name="pagesize">Elements per Page, (default:10)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
-        /// <returns>Collection of GBLTSPoi Objects</returns>
-        /// <response code="200">List created</response>
-        /// <response code="400">Request Error</response>
-        /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("api/PoiChanged")]
-        public async Task<IActionResult> GetAllPoisChanged(
-            uint pagenumber = 1,
-            uint pagesize = 10,
-            string? seed = null,
-            string? updatefrom = null,
-            CancellationToken cancellationToken = default
-            )
-        {
-            //TODO
-            //CheckOpenData(User);
-
-            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
-
-            return await GetLastChanged(pagenumber, pagesize, updatefrom, seed, cancellationToken);
-        }
+       
 
         #endregion
 
@@ -178,14 +149,14 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active, bool? smgactive,
-            string? smgtags, string? seed, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
 
             return DoAsyncReturnString(async connectionFactory =>
             {
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, cancellationToken);
+                    highlightfilter, active, smgactive, smgtags, lastchange, cancellationToken);
 
                 string select = "*";
                 string orderby = "";
@@ -194,7 +165,7 @@ namespace OdhApiCore.Controllers.api
                     myactivityhelper.idlist, myactivityhelper.poitypelist, myactivityhelper.subtypelist,
                     myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist,
                     myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.highlight, myactivityhelper.active,
-                    myactivityhelper.smgactive);
+                    myactivityhelper.smgactive, myactivityhelper.lastchange);
 
                 //Build Orderby
                 string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
@@ -323,43 +294,6 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
-        /// <summary>
-        /// GET Paged Poi List based on LastChange Date
-        /// </summary>
-        /// <param name="pagenumber">Pagenumber</param>
-        /// <param name="pagesize">Elements per Page</param>
-        /// <param name="updatefrom">Date from (all Activity with LastChange >= datefrom are passed)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
-        /// <returns>Result Object with Collection of Poi Objects</returns>
-        private Task<IActionResult> GetLastChanged(
-            uint pagenumber, uint pagesize, string updatefrom,
-            string? seed, CancellationToken cancellationToken)
-        {
-            return DoAsyncReturnString(async connectionFactory =>
-            {
-                DateTime updatefromDT = Convert.ToDateTime(updatefrom);
-
-                string select = "*";
-                string orderby = "";
-
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
-
-                uint pageskip = pagesize * (pagenumber - 1);
-
-                var where = PostgresSQLWhereBuilder.CreateLastChangedWhereExpression(updatefrom);
-
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "pois", select, where, orderby, pagesize, pageskip,
-                    cancellationToken);
-
-                uint totalcount = (uint)totalCount;
-                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                return PostgresSQLHelper.GetResultJson(
-                    pagenumber, totalpages, totalcount, -1, myseed, data);
-            });
-        }
-
         #endregion
 
         #region POST PUT DELETE
@@ -470,6 +404,44 @@ namespace OdhApiCore.Controllers.api
         //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
         //    }
         //}
+
+        #endregion
+
+        #region Obsolete here for Compatibility reasons
+
+        /// <summary>
+        /// GET Poi Changed List by Date
+        /// </summary>
+        /// <param name="pagenumber">Pagenumber, (default:1)</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
+        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
+        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
+        /// <returns>Collection of GBLTSPoi Objects</returns>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,PoiReader")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet, Route("api/PoiChanged")]
+        public async Task<IActionResult> GetAllPoisChanged(
+            uint pagenumber = 1,
+            uint pagesize = 10,
+            string? seed = null,
+            string? updatefrom = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            //TODO
+            //CheckOpenData(User);
+
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
+
+            return await GetPoiList(null, pagenumber, pagesize, null, null, null, null, new LegacyBool(null), null, null, new LegacyBool(null), new LegacyBool(null),
+                 updatefrom, seed, null, null, null, null, cancellationToken);
+        }
 
         #endregion
     }
