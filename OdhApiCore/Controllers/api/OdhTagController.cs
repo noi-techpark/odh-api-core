@@ -1,4 +1,5 @@
 ﻿using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -112,7 +113,7 @@ namespace OdhApiCore.Controllers
 
         //TEST METHOD PERFORMANCE
         [HttpGet, Route("api/TestPerf")]
-        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        [Authorize(Roles = "TourismReader")]
         public async Task<IActionResult> GetTest(string hallo = "", CancellationToken cancellationToken = default)
         {
             string toreturn = "{ \"es\": \"geat\" }";
