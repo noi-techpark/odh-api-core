@@ -91,11 +91,12 @@ namespace OdhApiCoreTests.Helper
             bool? highlight = null;
             bool? activefilter = null;
             bool? smgactivefilter = null;
+            string? lastchange = null;
             var (where, parameters) =
                 PostgresSQLWhereBuilder.CreateActivityWhereExpression(
                     idlist, activitytypelist, suttypelist, difficultylist, smgtaglist, distictlist, municipalitylist,
                     tourismvereinlist, regionlist, arealist, distance, distancemin, distancemax, duration, durationmin,
-                    durationmax, altitude, altitudemin, altitudemax, highlight, activefilter, smgactivefilter);
+                    durationmax, altitude, altitudemin, altitudemax, highlight, activefilter, smgactivefilter, lastchange);
             Assert.Equal("", where);
             Assert.Empty(parameters);
         }
@@ -133,11 +134,12 @@ namespace OdhApiCoreTests.Helper
             bool? highlight = true;
             bool? activefilter = null;
             bool? smgactivefilter = null;
+            string? lastchange = null;
             var (where, parameters) =
                 PostgresSQLWhereBuilder.CreateActivityWhereExpression(
                     idlist, activitytypelist, suttypelist, difficultylist, smgtaglist, distictlist, municipalitylist,
                     tourismvereinlist, regionlist, arealist, distance, distancemin, distancemax, duration, durationmin,
-                    durationmax, altitude, altitudemin, altitudemax, highlight, activefilter, smgactivefilter);
+                    durationmax, altitude, altitudemin, altitudemax, highlight, activefilter, smgactivefilter, lastchange);
 
             Assert.Equal("id in (@id1, @id2) AND data @> @regionid AND (data @> @area1) AND (data @> @type1) AND data @> @highlight", where);
 
