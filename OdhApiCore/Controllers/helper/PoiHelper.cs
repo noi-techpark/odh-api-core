@@ -19,11 +19,12 @@ namespace OdhApiCore.Controllers.api
         public bool? highlight;
         public bool? active;
         public bool? smgactive;
+        public string? lastchange;
     
         public static async Task<PoiHelper> CreateAsync(
         IPostGreSQLConnectionFactory connectionFactory, string? poitype, string? subtypefilter, string? idfilter, string? locfilter,
         string? areafilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-        string? smgtags, CancellationToken cancellationToken)
+        string? smgtags, string? lastchange, CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
 
@@ -36,12 +37,12 @@ namespace OdhApiCore.Controllers.api
             }
 
             return new PoiHelper(
-                poitype, subtypefilter, idfilter, locfilter, arealist, highlightfilter, activefilter, smgactivefilter, smgtags, tourismusvereinids);
+                poitype, subtypefilter, idfilter, locfilter, arealist, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange, tourismusvereinids);
         }
 
         private PoiHelper(
             string? poitype, string? subtypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist,
-            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, IEnumerable<string>? tourismusvereinids)
+            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
         {
             poitypelist = new List<string>();
             if (poitype != null)
@@ -87,6 +88,8 @@ namespace OdhApiCore.Controllers.api
             active = activefilter;           
             //smgactive
             smgactive = smgactivefilter;
+
+            this.lastchange = lastchange;
         }
     }
 }

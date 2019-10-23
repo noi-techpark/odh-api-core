@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OdhApiCore.Controllers;
 using System.Linq;
+using System.Text;
 
 namespace OdhApiCore
 {
@@ -53,6 +56,37 @@ namespace OdhApiCore
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
 
+            //JWT on .Net 2
+            services.AddAuthentication("Bearer")
+              .AddJwtBearer("Bearer", options =>
+              {
+                  options.Authority = "https://auth.testingmachine.eu";
+                  options.RequireHttpsMetadata = false;
+
+                  options.Audience = "api1";
+              });
+
+            ////Initialize JWT Authentication
+            //services.AddAuthentication(options => {
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}).AddJwtBearer(jwtBearerOptions =>
+            //{
+            //    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateLifetime = true,
+            //        ValidateIssuerSigningKey = true,
+
+            //        ValidIssuer = "https://auth.testingmachine.eu",
+            //        ValidAudience = "https://auth.testingmachine.eu",                    
+            //        IssuerSigningKey =  //new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Secrets")["jwt"]))
+            //    };
+            //}
+            //    );
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OdhApi .Net Core", Version = "v1" });
@@ -95,7 +129,8 @@ namespace OdhApiCore
 
             //app.UseCookiePolicy();
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseCors("CorsPolicy");
 
@@ -108,7 +143,7 @@ namespace OdhApiCore
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");                
             });
 
             app.UseEndpoints(endpoints =>

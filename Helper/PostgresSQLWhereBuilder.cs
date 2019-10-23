@@ -163,6 +163,7 @@ namespace Helper
             return (whereexpression, parameters); ;
         }
 
+        [Obsolete("This method is deprecated, integrate last changed Method in Main Filter.", false)]
         //Return where and Parameters
         public static (string, IEnumerable<PGParameters>) CreateLastChangedWhereExpression(string updatefrom)
         {
@@ -184,7 +185,7 @@ namespace Helper
             return (whereexpression, parameters);
         }
 
-        //Return Where and Parameters for MetaRegion Query
+        //Return Where and Parameters for MetaRegion Query4
         public static (string, IEnumerable<PGParameters>) CreateMetaRegionWhereExpression(
             IReadOnlyCollection<string> metaregionlist)
         {
@@ -234,7 +235,7 @@ namespace Helper
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
             int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
-            int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter)
+            int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? lastchange)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
@@ -256,6 +257,8 @@ namespace Helper
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
             SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
 
+            LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
+
             return (whereexpression, parameters);
         }
 
@@ -265,7 +268,7 @@ namespace Helper
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
-            IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter)
+            IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter, string? lastchange)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
@@ -282,6 +285,8 @@ namespace Helper
             HighlightFilterWhere(ref whereexpression, parameters, highlight);
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
+
+            LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
             return (whereexpression, parameters);
         }
@@ -417,7 +422,7 @@ namespace Helper
             return (whereexpression, parameters);
         }
 
-        //Return Where and Parameters for Activity
+        //Return Where and Parameters for Article
         public static (string, IEnumerable<PGParameters>) CreateArticleWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist,
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
@@ -461,7 +466,7 @@ namespace Helper
             return (whereexpression, parameters);
         }
 
-        //REturns Where and Parameter for Packages
+        //Returns Where and Parameter for Packages
         public static (string wherexpression, IEnumerable<PGParameters> parameters) CreatePackageWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> accolist,
             IReadOnlyCollection<string> boardlist, IReadOnlyCollection<string> themelist,
@@ -707,6 +712,25 @@ namespace Helper
                 }
             }
         }
+
+        private static void LastChangedFilterWhere(
+        ref string whereexpression, IList<PGParameters> parameters, string? updatefrom)
+        {
+            //Active
+            if (!String.IsNullOrEmpty(updatefrom))
+            {
+                if (!String.IsNullOrEmpty(whereexpression))
+                    whereexpression += " AND ";
+
+                whereexpression += "(to_date(data ->> 'LastChange', 'YYYY-MM-DD') > @date)";
+                parameters.Add(new PGParameters()
+                {
+                    Name = "date",
+                    Type = NpgsqlTypes.NpgsqlDbType.Date,
+                    Value = updatefrom
+                });
+            }
+        }     
 
         private static void DistrictWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> districtlist)

@@ -29,12 +29,13 @@ namespace OdhApiCore.Controllers
         public bool? highlight;
         public bool? active;
         public bool? smgactive;
+        public string? lastchange;
 
         public static async Task<ActivityHelper> CreateAsync(
             IPostGreSQLConnectionFactory connectionFactory, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
             string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter,
             bool? highlightfilter, string? difficultyfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, CancellationToken cancellationToken)
+            string? smgtags, string? lastchange, CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
 
@@ -47,14 +48,14 @@ namespace OdhApiCore.Controllers
             }
 
             return new ActivityHelper(
-                activitytype, subtypefilter, idfilter, locfilter, arealist, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, activefilter, smgactivefilter, smgtags, tourismusvereinids);
+                activitytype, subtypefilter, idfilter, locfilter, arealist, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, activefilter, smgactivefilter, smgtags, lastchange, tourismusvereinids);
         }
 
         private ActivityHelper(
             string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
             IEnumerable<string> arealist, string? distancefilter, string? altitudefilter, string? durationfilter,
             bool? highlightfilter, string? difficultyfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, IEnumerable<string>? tourismusvereinids)
+            string? smgtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
         {
             activitytypelist = new List<string>();
             if (activitytype != null)
@@ -111,6 +112,8 @@ namespace OdhApiCore.Controllers
 
             //smgactive
             smgactive = smgactivefilter;
+
+            this.lastchange = lastchange;
         }
 
        
