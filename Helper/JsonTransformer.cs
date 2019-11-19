@@ -75,6 +75,20 @@ namespace Helper
             return Walk(token);
         }
 
+        sealed class DistinctComparer
+            : IEqualityComparer<(string name, string path)>
+        {
+            public bool Equals([AllowNull] (string name, string path) x, [AllowNull] (string name, string path) y)
+            {
+                return x.name == y.name;
+            }
+
+            public int GetHashCode([DisallowNull] (string name, string path) obj)
+            {
+                return obj.name.GetHashCode();
+            }
+        }
+
         public static JToken FilterByFields(this JToken token, string[] fieldsFromQueryString, string? languageParam)
         {
             var language = languageParam ?? "en";
@@ -87,7 +101,7 @@ namespace Helper
             if (token is JObject obj)
             {
                 return new JObject(
-                    fields.Distinct().Select(x =>
+                    fields.Distinct(new DistinctComparer()).Select(x =>
                     {
                         try
                         {
