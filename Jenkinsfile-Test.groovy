@@ -4,11 +4,11 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        DOCKER_PROJECT_NAME = "odh-tourism-api"
         DOCKER_IMAGE_API = "755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api"
         DOCKER_TAG_API = "$BUILD_NUMBER"
         DOCKER_SERVICES = "api"
         DOCKER_SERVER_IP = "63.33.73.203"
-        DOCKER_SERVER_PROJECT = "odh-tourism-api"
         DOCKER_SERVER_DIRECTORY = "/var/docker/odh-tourism-api"
         PG_CONNECTION = credentials('odh-tourism-api-test-pg-connection')
     }
@@ -17,6 +17,7 @@ pipeline {
         stage('Configure') {
             steps {
                 sh "echo '' > .env"
+                sh "echo 'COMPOSE_PROJECT_NAME=${DOCKER_PROJECT_NAME}' >> .env"
                 sh "echo 'DOCKER_IMAGE_API=${DOCKER_IMAGE_API}' >> .env"
                 sh "echo 'DOCKER_TAG_API=${DOCKER_TAG_API}' >> .env"
                 sh "echo 'PG_CONNECTION=${PG_CONNECTION}' >> .env"
@@ -40,11 +41,11 @@ pipeline {
                     sh "pv docker-compose.yml | ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'tee ${DOCKER_SERVER_DIRECTORY}/releases/${BUILD_NUMBER}/docker-compose.yml'"
                     sh "pv docker-compose.prod.yml | ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'tee ${DOCKER_SERVER_DIRECTORY}/releases/${BUILD_NUMBER}/docker-compose.prod.yml'"
                     sh "pv .env | ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'tee ${DOCKER_SERVER_DIRECTORY}/releases/${BUILD_NUMBER}/.env'"
-                    sh "ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'cd ${DOCKER_SERVER_DIRECTORY}/releases/${BUILD_NUMBER} && docker-compose -f docker-compose.yml -f docker-compose.prod.yml --project-name=${DOCKER_SERVER_PROJECT} pull'"
+                    sh "ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'cd ${DOCKER_SERVER_DIRECTORY}/releases/${BUILD_NUMBER} && docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull'"
 
-                    sh "ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} '[ -d \"${DOCKER_SERVER_DIRECTORY}/current\" ] && (cd ${DOCKER_SERVER_DIRECTORY}/current && docker-compose -f docker-compose.yml -f docker-compose.prod.yml --project-name=${DOCKER_SERVER_PROJECT} down) || true'"
+                    sh "ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} '[ -d \"${DOCKER_SERVER_DIRECTORY}/current\" ] && (cd ${DOCKER_SERVER_DIRECTORY}/current && docker-compose -f docker-compose.yml -f docker-compose.prod.yml down) || true'"
                     sh "ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'ln -sfn ${DOCKER_SERVER_DIRECTORY}/releases/${BUILD_NUMBER} ${DOCKER_SERVER_DIRECTORY}/current'"
-                    sh "ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'cd ${DOCKER_SERVER_DIRECTORY}/current && docker-compose -f docker-compose.yml -f docker-compose.prod.yml --project-name=${DOCKER_SERVER_PROJECT} up --detach'"
+                    sh "ssh -o StrictHostKeyChecking=no ${DOCKER_SERVER_IP} 'cd ${DOCKER_SERVER_DIRECTORY}/current && docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --detach'"
                 }
             }
 	    }
