@@ -75,28 +75,40 @@ namespace OdhApiCore
                 .AddJwtBearer(jwtBearerOptions =>
             {
                 jwtBearerOptions.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/";
-                jwtBearerOptions.Audience = "account";
-                jwtBearerOptions.Events = new JwtBearerEvents()
-                {
-                    OnAuthenticationFailed = c =>
-                    {
-                        c.NoResult();
+                jwtBearerOptions.Audience = "account";                
+                //jwtBearerOptions.Events = new JwtBearerEvents()
+                //{
+                //    OnAuthenticationFailed = c =>
+                //    {
+                //        c.NoResult();
 
-                        c.Response.StatusCode = 500;
-                        c.Response.ContentType = "text/plain";
-                        //if (env.IsDevelopment())
-                        //{
-                        //    return c.Response.WriteAsync(c.Exception.ToString());
-                        //}
-                        //return c.Response.WriteAsync("An error occured processing your authentication.");
-                        return c.Response.WriteAsync(c.Exception.ToString());
-                    }
-                };
+                //        c.Response.StatusCode = 500;
+                //        c.Response.ContentType = "text/plain";
+                //        //if (env.IsDevelopment())
+                //        //{
+                //        //    return c.Response.WriteAsync(c.Exception.ToString());
+                //        //}
+                //        //return c.Response.WriteAsync("An error occured processing your authentication.");
+                //        return c.Response.WriteAsync(c.Exception.ToString());
+                //    }
+                //};
             });
+
+            //TO TEST
+            // Here I stored necessary permissions/roles in a constant
+            //services.AddAuthorization(options =>
+            //{
+            //    // Here I stored necessary permissions/roles in a constant
+            //    foreach (var prop in typeof(ClaimPermission).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            //    {
+            //        options.AddPolicy(prop.GetValue(null).ToString(), policy => policy.RequireClaim(ClaimType.Permission, prop.GetValue(null).ToString()));
+            //    }
+            //});
+
 
             //services.AddAuthorization(options =>
             //{
-            //    options.AddPolicy("DataReader", policy => policy.RequireClaim("user_roles", "[Administrator]"));
+            //    options.AddPolicy("DataReader", policy => policy.RequireClaim("resource_access", "[Administrator]"));
             //});
 
             services.AddSwaggerGen(c =>
