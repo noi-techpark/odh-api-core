@@ -57,35 +57,47 @@ namespace OdhApiCore
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
 
             //JWT on .Net 2
-            services.AddAuthentication("Bearer")
-              .AddJwtBearer("Bearer", options =>
-              {
-                  options.Authority = "https://auth.testingmachine.eu";
-                  options.RequireHttpsMetadata = false;
+            //services.AddAuthentication("Bearer")
+            //  .AddJwtBearer("Bearer", options =>
+            //  {
+            //      options.Authority = "https://auth.testingmachine.eu";
+            //      options.RequireHttpsMetadata = false;
 
-                  options.Audience = "api1";
-              });
+            //      options.Audience = "api1";
+            //  });
 
-            ////Initialize JWT Authentication
-            //services.AddAuthentication(options => {
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}).AddJwtBearer(jwtBearerOptions =>
+            //Initialize JWT Authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(jwtBearerOptions =>
+            {
+                jwtBearerOptions.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/";
+                jwtBearerOptions.Audience = "account";
+                jwtBearerOptions.Events = new JwtBearerEvents()
+                {
+                    OnAuthenticationFailed = c =>
+                    {
+                        c.NoResult();
+
+                        c.Response.StatusCode = 500;
+                        c.Response.ContentType = "text/plain";
+                        //if (env.IsDevelopment())
+                        //{
+                        //    return c.Response.WriteAsync(c.Exception.ToString());
+                        //}
+                        //return c.Response.WriteAsync("An error occured processing your authentication.");
+                        return c.Response.WriteAsync(c.Exception.ToString());
+                    }
+                };
+            });
+
+            //services.AddAuthorization(options =>
             //{
-            //    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidateAudience = true,
-            //        ValidateLifetime = true,
-            //        ValidateIssuerSigningKey = true,
-
-            //        ValidIssuer = "https://auth.testingmachine.eu",
-            //        ValidAudience = "https://auth.testingmachine.eu",                    
-            //        IssuerSigningKey =  //new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Secrets")["jwt"]))
-            //    };
-            //}
-            //    );
-
+            //    options.AddPolicy("DataReader", policy => policy.RequireClaim("user_roles", "[Administrator]"));
+            //});
 
             services.AddSwaggerGen(c =>
             {
@@ -100,7 +112,7 @@ namespace OdhApiCore
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        {            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
