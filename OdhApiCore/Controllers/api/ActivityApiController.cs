@@ -59,7 +59,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [Authorize]
+        //[Authorize]
         [HttpGet, Route("api/Activity")]
         public async Task<IActionResult> GetActivityList(
             string? language = null,
@@ -88,11 +88,6 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-            foreach(var claim in User.Claims)
-            {
-
-            }
 
             return await GetFiltered(
                     fields ?? Array.Empty<string>(), language, pagenumber, pagesize, activitytype, subtype, idlist,
