@@ -89,6 +89,11 @@ namespace OdhApiCore.Controllers
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
+            foreach(var claim in User.Claims)
+            {
+
+            }
+
             return await GetFiltered(
                     fields ?? Array.Empty<string>(), language, pagenumber, pagesize, activitytype, subtype, idlist,
                     locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlight,

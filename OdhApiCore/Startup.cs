@@ -66,6 +66,15 @@ namespace OdhApiCore
             //      options.Audience = "api1";
             //  });
 
+            //services.AddAuthentication("Bearer")
+            //  .AddJwtBearer("Bearer", options =>
+            //  {
+            //      options.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi";
+            //      options.RequireHttpsMetadata = false;
+
+            //      options.Audience = "account";
+            //  });
+
             //Initialize JWT Authentication
             services.AddAuthentication(options =>
             {
@@ -75,7 +84,11 @@ namespace OdhApiCore
                 .AddJwtBearer(jwtBearerOptions =>
             {
                 jwtBearerOptions.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/";
-                jwtBearerOptions.Audience = "account";                
+                jwtBearerOptions.Audience = "account";
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name",
+                };
                 //jwtBearerOptions.Events = new JwtBearerEvents()
                 //{
                 //    OnAuthenticationFailed = c =>
@@ -108,7 +121,7 @@ namespace OdhApiCore
 
             //services.AddAuthorization(options =>
             //{
-            //    options.AddPolicy("DataReader", policy => policy.RequireClaim("resource_access", "[Administrator]"));
+            //    options.AddPolicy("DataReader", policy => policy.RequireClaim("roles", "[DataReader]"));
             //});
 
             services.AddSwaggerGen(c =>
