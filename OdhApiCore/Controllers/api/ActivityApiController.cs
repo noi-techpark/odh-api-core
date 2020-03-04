@@ -1,4 +1,5 @@
 ﻿using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
+        //[Authorize]
         [HttpGet, Route("api/Activity")]
         public async Task<IActionResult> GetActivityList(
             string? language = null,
