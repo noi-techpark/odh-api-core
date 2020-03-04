@@ -57,35 +57,72 @@ namespace OdhApiCore
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
 
             //JWT on .Net 2
-            services.AddAuthentication("Bearer")
-              .AddJwtBearer("Bearer", options =>
-              {
-                  options.Authority = "https://auth.testingmachine.eu";
-                  options.RequireHttpsMetadata = false;
+            //services.AddAuthentication("Bearer")
+            //  .AddJwtBearer("Bearer", options =>
+            //  {
+            //      options.Authority = "https://auth.testingmachine.eu";
+            //      options.RequireHttpsMetadata = false;
 
-                  options.Audience = "api1";
-              });
+            //      options.Audience = "api1";
+            //  });
 
-            ////Initialize JWT Authentication
-            //services.AddAuthentication(options => {
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}).AddJwtBearer(jwtBearerOptions =>
+            //services.AddAuthentication("Bearer")
+            //  .AddJwtBearer("Bearer", options =>
+            //  {
+            //      options.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi";
+            //      options.RequireHttpsMetadata = false;
+
+            //      options.Audience = "account";
+            //  });
+
+            //Initialize JWT Authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(jwtBearerOptions =>
+            {
+                jwtBearerOptions.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/";
+                jwtBearerOptions.Audience = "account";
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name",
+                };
+                //jwtBearerOptions.Events = new JwtBearerEvents()
+                //{
+                //    OnAuthenticationFailed = c =>
+                //    {
+                //        c.NoResult();
+
+                //        c.Response.StatusCode = 500;
+                //        c.Response.ContentType = "text/plain";
+                //        //if (env.IsDevelopment())
+                //        //{
+                //        //    return c.Response.WriteAsync(c.Exception.ToString());
+                //        //}
+                //        //return c.Response.WriteAsync("An error occured processing your authentication.");
+                //        return c.Response.WriteAsync(c.Exception.ToString());
+                //    }
+                //};
+            });
+
+            //TO TEST
+            // Here I stored necessary permissions/roles in a constant
+            //services.AddAuthorization(options =>
             //{
-            //    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+            //    // Here I stored necessary permissions/roles in a constant
+            //    foreach (var prop in typeof(ClaimPermission).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
             //    {
-            //        ValidateIssuer = true,
-            //        ValidateAudience = true,
-            //        ValidateLifetime = true,
-            //        ValidateIssuerSigningKey = true,
+            //        options.AddPolicy(prop.GetValue(null).ToString(), policy => policy.RequireClaim(ClaimType.Permission, prop.GetValue(null).ToString()));
+            //    }
+            //});
 
-            //        ValidIssuer = "https://auth.testingmachine.eu",
-            //        ValidAudience = "https://auth.testingmachine.eu",                    
-            //        IssuerSigningKey =  //new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Secrets")["jwt"]))
-            //    };
-            //}
-            //    );
 
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("DataReader", policy => policy.RequireClaim("roles", "[DataReader]"));
+            //});
 
             services.AddSwaggerGen(c =>
             {
@@ -100,7 +137,7 @@ namespace OdhApiCore
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        {            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

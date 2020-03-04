@@ -114,7 +114,7 @@ namespace OdhApiCore.Controllers
         //TEST METHOD PERFORMANCE
         [HttpGet, Route("api/TestPerf")]
         [Authorize(Roles = "TourismReader")]
-        public async Task<IActionResult> GetTest(string hallo = "", CancellationToken cancellationToken = default)
+        public IActionResult GetTest(string hallo = "", CancellationToken cancellationToken = default)
         {
             string toreturn = "{ \"es\": \"geat\" }";
             if(!String.IsNullOrEmpty(hallo))
