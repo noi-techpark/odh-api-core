@@ -163,28 +163,6 @@ namespace Helper
             return (whereexpression, parameters); ;
         }
 
-        [Obsolete("This method is deprecated, integrate last changed Method in Main Filter.", false)]
-        //Return where and Parameters
-        public static (string, IEnumerable<PGParameters>) CreateLastChangedWhereExpression(string updatefrom)
-        {
-            string whereexpression = "";
-            List<PGParameters> parameters = new List<PGParameters>();
-
-            //IDLIST
-            if (!String.IsNullOrEmpty(updatefrom))
-            {
-                whereexpression += "to_date(data ->> 'LastChange', 'YYYY-MM-DD') > @date";
-                parameters.Add(new PGParameters()
-                {
-                    Name = "date",
-                    Type = NpgsqlTypes.NpgsqlDbType.Date,
-                    Value = updatefrom
-                });
-            }
-
-            return (whereexpression, parameters);
-        }
-
         //Return Where and Parameters for MetaRegion Query4
         public static (string, IEnumerable<PGParameters>) CreateMetaRegionWhereExpression(
             IReadOnlyCollection<string> metaregionlist)

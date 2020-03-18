@@ -54,19 +54,6 @@ namespace OdhApiCoreTests.Helper
         }
 
         [Fact]
-        public void CreateLastChangedWhereExpression_Test()
-        {
-            var (where, parameters) =
-                PostgresSQLWhereBuilder.CreateLastChangedWhereExpression("hello");
-            Assert.Equal("to_date(data ->> 'LastChange', 'YYYY-MM-DD') > @date", where);
-            Assert.Single(parameters);
-            var single = parameters.Single();
-            Assert.Equal("date", single.Name);
-            Assert.Equal(NpgsqlTypes.NpgsqlDbType.Date, single.Type);
-            Assert.Equal("hello", single.Value);
-        }
-
-        [Fact]
         public void CreateActivityWhereExpression_EmptyParameters()
         {
             IReadOnlyCollection<string> idlist = System.Array.Empty<string>();
