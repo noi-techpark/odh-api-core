@@ -122,7 +122,7 @@ namespace Helper
             if (language != null || fields.Length != 0|| checkCC0)
             {
                 var token = JToken.Parse(raw.Value);
-                if (language != null && fields.Length == 0) token = FilterByLanguage(token, language);
+                if (language != null) token = FilterByLanguage(token, language);
                 if (fields.Length > 0) token = FilterByFields(token, fields, language);
                 if (checkCC0) token = FilterImagesByCC0License(token);
                 return new JsonRaw(token.ToString(Formatting.Indented));
