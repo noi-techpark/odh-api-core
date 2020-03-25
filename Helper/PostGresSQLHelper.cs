@@ -1113,6 +1113,19 @@ namespace Helper
         #endregion
 
         #region Generic Helpers
+        public static dynamic GetResult<T>(
+            uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data)
+            where T : notnull
+        {
+            return new
+            {
+                TotalResults = totalcount,
+                TotalPages = totalpages,
+                CurrentPage = pagenumber,
+                Seed = seed,
+                Items = data
+            };
+        }
 
         public static string GetResultJson<T>(
             uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data)

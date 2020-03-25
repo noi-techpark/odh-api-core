@@ -107,6 +107,11 @@ namespace OdhApiCore
                 //};
             });
 
+            services.AddMvc(options =>
+            {
+                options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
+            });
+
             //TO TEST
             // Here I stored necessary permissions/roles in a constant
             //services.AddAuthorization(options =>
