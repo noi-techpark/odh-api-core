@@ -30,12 +30,6 @@ namespace OdhApiCore.Formatters
             return base.CanWriteType(type);
         }
 
-        public class Foo
-        {
-            public int Id { get; set; }
-            public string? Name { get; set; }
-        }
-
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             var result = context.Object as JsonResult<JsonRaw>;
