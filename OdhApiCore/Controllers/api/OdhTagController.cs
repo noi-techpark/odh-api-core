@@ -110,20 +110,6 @@ namespace OdhApiCore.Controllers
                 return StatusCode(StatusCodes.Status501NotImplemented, new { error = "not implemented" });
             }
         }
-
-        //TEST METHOD PERFORMANCE
-        [HttpGet, Route("api/TestPerf")]
-        [Authorize(Roles = "TourismReader")]
-        public IActionResult GetTest(string hallo = "", CancellationToken cancellationToken = default)
-        {
-            string toreturn = "{ \"es\": \"geat\" }";
-            if(!String.IsNullOrEmpty(hallo))
-                toreturn = "{ \"hallo\": \"" + hallo + "\" }";
-
-            return this.Content(toreturn, "application/json", Encoding.UTF8);
-        }
-
-
         #endregion
 
         #region GETTER
