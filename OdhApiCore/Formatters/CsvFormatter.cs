@@ -56,9 +56,12 @@ namespace OdhApiCore.Formatters
 
                 var stream = context.HttpContext.Response.Body;
 
-                using var writer = new StreamWriter(stream);
-                using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+                var writer = new StreamWriter(stream);
+                var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
                 await csv.WriteRecordsAsync(data);
+                await writer.FlushAsync();
+                await csv.DisposeAsync();
+                await writer.DisposeAsync();
             }
             else
             {
