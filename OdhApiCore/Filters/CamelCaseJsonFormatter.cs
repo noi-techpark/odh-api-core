@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class PascalCaseJsonFormatter : ActionFilterAttribute
+    public class CamelCaseJsonFormatter : ActionFilterAttribute
     {
-        public PascalCaseJsonFormatter()
+        public CamelCaseJsonFormatter()
         {
         }
 
@@ -24,7 +24,7 @@ namespace OdhApiCore.Filters
                 return;
 
             var settings = JsonSerializerSettingsProvider.CreateSerializerSettings();
-            settings.ContractResolver = new DefaultContractResolver();
+            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
             var formatter = new NewtonsoftJsonOutputFormatter(settings, ArrayPool<char>.Shared, new MvcOptions());
 
