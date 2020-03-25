@@ -17,28 +17,28 @@ namespace OdhApiCore.Controllers.api
     public class TestController : ControllerBase
     {
         [HttpGet, Route("Anonymous")]
-        public async Task<IActionResult> GetAnonymous(CancellationToken cancellationToken)
+        public IActionResult GetAnonymous(CancellationToken cancellationToken)
         {
             return this.Content(User.Identity.Name  + " Anonymous working", "application/json", Encoding.UTF8);
         }
 
         [Authorize]
         [HttpGet, Route("Restricted")]
-        public async Task<IActionResult> GetRestricted(CancellationToken cancellationToken)
+        public IActionResult GetRestricted(CancellationToken cancellationToken)
         {
             return this.Content(User.Identity.Name + " Restricted working", "application/json", Encoding.UTF8);
         }
 
         [Authorize(Roles = "DataReader")]
         [HttpGet, Route("WithRole")]
-        public async Task<IActionResult> GetWithRole(CancellationToken cancellationToken)
+        public IActionResult GetWithRole(CancellationToken cancellationToken)
         {
             return this.Content(User.Identity.Name + " WithRole working", "application/json", Encoding.UTF8);
         }
 
         [Authorize(Roles = "Hallihallo")]
         [HttpGet, Route("WithRole2")]
-        public async Task<IActionResult> GetWithRole2(CancellationToken cancellationToken)
+        public IActionResult GetWithRole2(CancellationToken cancellationToken)
         {
             return this.Content(User.Identity.Name + " WithRole2 working", "application/json", Encoding.UTF8);
         }
