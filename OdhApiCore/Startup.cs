@@ -47,7 +47,10 @@ namespace OdhApiCore
                        .AllowAnyHeader();
             }));
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+            });
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
