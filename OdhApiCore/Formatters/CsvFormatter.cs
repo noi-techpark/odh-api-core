@@ -32,7 +32,7 @@ namespace OdhApiCore.Formatters
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            var result = context.Object as JsonResult<JsonRaw>;
+            var result = context.Object as IResponse<JsonRaw>;
             if (result != null)
             {
                 static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)

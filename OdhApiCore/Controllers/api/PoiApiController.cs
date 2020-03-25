@@ -153,7 +153,7 @@ namespace OdhApiCore.Controllers.api
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
 
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter,
@@ -184,7 +184,7 @@ namespace OdhApiCore.Controllers.api
 
                 var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
 
-                return PostgresSQLHelper.GetResultJson(
+                return PostgresSQLHelper.GetResult(
                     pagenumber,
                     totalpages,
                     totalcount,
@@ -200,15 +200,14 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Poi Object</returns>
         private Task<IActionResult> GetSingle(string id, string? language, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
                 var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "pois", "*", where, "", 0,
                     null, cancellationToken);
 
-                var dataTransformed = data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
-                return dataTransformed == null ? null : JsonConvert.SerializeObject(dataTransformed);
+                return data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
             });
         }
 
@@ -239,7 +238,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Collection of PoiTypes Object</returns>
         private Task<IActionResult> GetPoiTypesList(CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 List<PoiTypes> mysuedtiroltypeslist = new List<PoiTypes>();
 
@@ -291,7 +290,7 @@ namespace OdhApiCore.Controllers.api
                     }
                 }
 
-                return JsonConvert.SerializeObject(mysuedtiroltypeslist);
+                return mysuedtiroltypeslist;
             });
         }
 

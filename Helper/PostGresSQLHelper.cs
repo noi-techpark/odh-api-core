@@ -60,13 +60,44 @@ namespace Helper
         }
     }
 
-    public class JsonResult<T>
+    /// <summary>
+    /// Marker interface
+    /// </summary>
+    public interface IResponse<T>
+    {
+        public IEnumerable<T> Items { get; }
+    }
+
+    public class JsonResult<T> : IResponse<T>
     {
         public uint TotalResults { get; set; }
         public uint TotalPages { get; set; }
         public uint CurrentPage { get; set; }
         public string? Seed { get; set; }
         public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
+    }
+    
+    public class JsonResultWithOnlineResults<T> : JsonResult<T>
+    {
+        public int OnlineResults { get; set; }
+    }
+
+    public class JsonResultWithOnlineResultsAndResultId<T> : JsonResultWithOnlineResults<T>
+    {
+        public string? ResultId { get; set; }
+    }    
+
+    public class JsonResultWithOnlineResultsAndResultIdLowercase<T> : IResponse<T>
+    {
+        public uint totalResults { get; set; }
+        public uint totalPages { get; set; }
+        public uint currentPage { get; set; }
+        public string? seed { get; set; }
+        public int onlineResults { get; set; }
+        public string? resultId { get; set; }
+        public IEnumerable<T> items { get; set; } = Enumerable.Empty<T>();
+        [JsonIgnore]
+        public IEnumerable<T> Items => items;
     }
 
     public static class PostgresSQLHelper
@@ -1122,7 +1153,7 @@ namespace Helper
         #endregion
 
         #region Generic Helpers
-        public static dynamic GetResult<T>(
+        public static JsonResult<T> GetResult<T>(
             uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data)
             where T : notnull
         {
@@ -1136,26 +1167,13 @@ namespace Helper
             };
         }
 
-        public static string GetResultJson<T>(
-            uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data)
-            where T : notnull
-        {
-            return JsonConvert.SerializeObject(new
-            {
-                TotalResults = totalcount,
-                TotalPages = totalpages,
-                CurrentPage = pagenumber,
-                Seed = seed,
-                Items = data
-            });
-        }
-
-        public static string GetResultJson<T>(
+        [Obsolete]
+        public static JsonResultWithOnlineResults<T> GetResult<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults, string? seed,
             IEnumerable<T> data)
             where T : notnull
         {
-            return JsonConvert.SerializeObject(new
+            return new JsonResultWithOnlineResults<T>
             {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
@@ -1163,15 +1181,15 @@ namespace Helper
                 OnlineResults = onlineresults,
                 Seed = seed,
                 Items = data
-            });
+            };
         }
 
-        public static string GetResultJson<T>(
+        public static JsonResultWithOnlineResultsAndResultId<T> GetResultJson<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
             string resultid, string? seed, IEnumerable<T> data)
             where T : notnull
         {
-            return JsonConvert.SerializeObject(new
+            return new JsonResultWithOnlineResultsAndResultId<T>
             {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
@@ -1180,24 +1198,24 @@ namespace Helper
                 ResultId = resultid,
                 Seed = seed,
                 Items = data
-            });
+            };
         }
 
-        public static string GetResultJsonLowercase<T>(
+        public static JsonResultWithOnlineResultsAndResultIdLowercase<T> GetResultJsonLowercase<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
             string resultid, string seed, IEnumerable<T> data)
             where T : notnull
         {
-            return JsonConvert.SerializeObject(new
+            return new JsonResultWithOnlineResultsAndResultIdLowercase<T>
             {
                 totalResults = totalcount,
                 totalPages = totalpages,
                 currentPage = pagenumber,
                 onlineResults = onlineresults,
                 resultId = resultid,
-                seed,
+                seed = seed,
                 items = data
-            });
+            };
         }
 
         #endregion

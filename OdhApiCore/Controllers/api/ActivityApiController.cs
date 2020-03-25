@@ -211,15 +211,14 @@ namespace OdhApiCore.Controllers
         /// <returns>Activity Object</returns>
         private Task<IActionResult> GetSingle(string id, string? language, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
                 var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "activities", "*", where, "", 0,
                     null, cancellationToken);
 
-                var result = data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
-                return result == null ? null : JsonConvert.SerializeObject(result);
+                return data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
             });
         }
 
@@ -251,7 +250,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Collection of ActivityTypes Object</returns>
         private Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 List<ActivityTypes> mysuedtiroltypeslist = new List<ActivityTypes>();
 
@@ -303,7 +302,7 @@ namespace OdhApiCore.Controllers
                     }
                 }
 
-                return JsonConvert.SerializeObject(mysuedtiroltypeslist);
+                return mysuedtiroltypeslist;
             });
         }
 
