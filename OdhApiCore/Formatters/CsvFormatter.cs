@@ -35,7 +35,7 @@ namespace OdhApiCore.Formatters
             var result = context.Object as JsonResult<JsonRaw>;
             if (result != null)
             {
-                static ExpandoObject ConvertToExpandoObject(Dictionary<string, object> dict)
+                static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)
                 {
                     var eo = new ExpandoObject();
                     var eoColl = (ICollection<KeyValuePair<string, object>>)eo;
@@ -46,8 +46,7 @@ namespace OdhApiCore.Formatters
                             continue;
                         eoColl.Add(kvp);
                     }
-                    dynamic eoDynamic = eo;
-                    return eoDynamic;
+                    return eo;
                 }
 
                 var data =
