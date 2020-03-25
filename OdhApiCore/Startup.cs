@@ -47,7 +47,10 @@ namespace OdhApiCore
                        .AllowAnyHeader();
             }));
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+            });
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
@@ -105,6 +108,11 @@ namespace OdhApiCore
                 //        return c.Response.WriteAsync(c.Exception.ToString());
                 //    }
                 //};
+            });
+
+            services.AddMvc(options =>
+            {
+                options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
             });
 
             //TO TEST

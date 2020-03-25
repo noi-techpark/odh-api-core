@@ -161,7 +161,7 @@ namespace OdhApiCore.Controllers
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
@@ -195,7 +195,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
 
-                return PostgresSQLHelper.GetResultJson(
+                return PostgresSQLHelper.GetResult(
                     pagenumber,
                     totalpages,
                     totalcount,

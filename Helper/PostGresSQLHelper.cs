@@ -60,6 +60,15 @@ namespace Helper
         }
     }
 
+    public class JsonResult<T>
+    {
+        public uint TotalResults { get; set; }
+        public uint TotalPages { get; set; }
+        public uint CurrentPage { get; set; }
+        public string? Seed { get; set; }
+        public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
+    }
+
     public static class PostgresSQLHelper
     {
         #region String Select Methods
@@ -1113,6 +1122,19 @@ namespace Helper
         #endregion
 
         #region Generic Helpers
+        public static dynamic GetResult<T>(
+            uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data)
+            where T : notnull
+        {
+            return new JsonResult<T>
+            {
+                TotalResults = totalcount,
+                TotalPages = totalpages,
+                CurrentPage = pagenumber,
+                Seed = seed,
+                Items = data
+            };
+        }
 
         public static string GetResultJson<T>(
             uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data)
