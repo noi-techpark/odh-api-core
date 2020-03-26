@@ -9,6 +9,7 @@ namespace OdhApiCore.Controllers
 {
 
     [ApiController]
+    [FormatFilter]
     public abstract class OdhController : ControllerBase
     {
         private readonly IPostGreSQLConnectionFactory connectionFactory;
