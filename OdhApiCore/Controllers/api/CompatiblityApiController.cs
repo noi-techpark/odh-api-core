@@ -92,7 +92,7 @@ namespace OdhApiCore.Controllers.api
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive,
             string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
                     connectionFactory, poitype, subtypefilter, null, locfilter, areafilter,
@@ -114,7 +114,7 @@ namespace OdhApiCore.Controllers.api
                     connectionFactory, "pois", select, (whereexpression, parameters), orderby, 0, null,
                     new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
-                return JsonConvert.SerializeObject(data);
+                return data;
             });
         }
 
@@ -195,7 +195,7 @@ namespace OdhApiCore.Controllers.api
             string? difficultyfilter, bool? active, bool? smgactive, string? smgtags, 
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter,
@@ -220,7 +220,7 @@ namespace OdhApiCore.Controllers.api
                     connectionFactory, "activities", select, (whereexpression, parameters), orderby, 0, null,
                     new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
-                return JsonConvert.SerializeObject(data);
+                return data;
             });
         }
 

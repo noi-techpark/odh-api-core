@@ -110,20 +110,6 @@ namespace OdhApiCore.Controllers
                 return StatusCode(StatusCodes.Status501NotImplemented, new { error = "not implemented" });
             }
         }
-
-        //TEST METHOD PERFORMANCE
-        [HttpGet, Route("api/TestPerf")]
-        [Authorize(Roles = "TourismReader")]
-        public IActionResult GetTest(string hallo = "", CancellationToken cancellationToken = default)
-        {
-            string toreturn = "{ \"es\": \"geat\" }";
-            if(!String.IsNullOrEmpty(hallo))
-                toreturn = "{ \"hallo\": \"" + hallo + "\" }";
-
-            return this.Content(toreturn, "application/json", Encoding.UTF8);
-        }
-
-
         #endregion
 
         #region GETTER
@@ -137,7 +123,7 @@ namespace OdhApiCore.Controllers
         //[ApiExplorerSettings(IgnoreApi = true)]
         private Task<IActionResult> Get(CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
@@ -147,7 +133,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, null),
                     orderby, 0, null, cancellationToken);
 
-                return JsonConvert.SerializeObject(myresult);
+                return myresult;
             });
         }
 
@@ -163,7 +149,7 @@ namespace OdhApiCore.Controllers
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
@@ -189,7 +175,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, parameters),
                     orderby, 0, null, cancellationToken);
 
-                return JsonConvert.SerializeObject(myresult);
+                return myresult;
             });
         }
 
@@ -203,14 +189,14 @@ namespace OdhApiCore.Controllers
         //[ApiExplorerSettings(IgnoreApi = true)]
         private Task<IActionResult> GetSingle(string id, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
                 var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
                     connectionFactory, "smgtags", "*", where,
                     "", 0, null, cancellationToken);
 
-                return JsonConvert.SerializeObject(data);
+                return data;
             });
         }
 
@@ -228,7 +214,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetLocalized(string language, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
@@ -238,7 +224,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, null), orderby, 0, null, cancellationToken).ToListAsync();
                 var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
-                return JsonConvert.SerializeObject(localizedresult);
+                return localizedresult;
             });
         }
 
@@ -256,7 +242,7 @@ namespace OdhApiCore.Controllers
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 string select = "*";
                 string orderby = "data ->>'MainEntity', data ->>'Shortname'";
@@ -288,7 +274,7 @@ namespace OdhApiCore.Controllers
                     orderby, 0, null, cancellationToken).ToListAsync();
                 var localizedresult = myresult.TransformToLocalizedSmgTag(language);
 
-                return JsonConvert.SerializeObject(localizedresult);
+                return localizedresult;
             });
         }
 
@@ -303,7 +289,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetSingleLocalized(string id, string language, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToLower());
                 var data = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<SmgTags>(
@@ -311,7 +297,7 @@ namespace OdhApiCore.Controllers
                     "", 0, null, cancellationToken).ToListAsync();
                 var localizedresult = data.TransformToLocalizedSmgTag(language);
 
-                return JsonConvert.SerializeObject(localizedresult.FirstOrDefault());
+                return localizedresult.FirstOrDefault();
             });
         }
 
@@ -329,7 +315,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetReducedLocalized(string language, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
                 string orderby = "";
@@ -339,7 +325,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, null), orderby, 0,
                     null, new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
-                return JsonConvert.SerializeObject(data);
+                return data;
             });
         }
 
@@ -357,7 +343,7 @@ namespace OdhApiCore.Controllers
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async connectionFactory =>
             {
                 string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
                 string orderby = "";
@@ -385,7 +371,7 @@ namespace OdhApiCore.Controllers
                     connectionFactory, "smgtags", select, (where, parameters), orderby, 0, null,
                     new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
 
-                return JsonConvert.SerializeObject(data);
+                return data;
             });
         }
 

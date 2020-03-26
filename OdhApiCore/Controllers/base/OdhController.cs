@@ -9,6 +9,7 @@ namespace OdhApiCore.Controllers
 {
 
     [ApiController]
+    [FormatFilter]
     public abstract class OdhController : ControllerBase
     {
         private readonly IPostGreSQLConnectionFactory connectionFactory;
@@ -49,27 +50,15 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        protected Task<IActionResult> DoAsyncReturn(Func<IPostGreSQLConnectionFactory, Task<object>> f)
+        protected Task<IActionResult> DoAsyncReturn(Func<IPostGreSQLConnectionFactory, Task<object?>> f)
         {
             return DoAsync(async connectionFactory =>
             {
-                object result = await f(connectionFactory);
+                object? result = await f(connectionFactory);
                 if (result == null)
                     return this.NotFound();
                 else
                     return this.Ok(result);
-            });
-        }
-
-        protected Task<IActionResult> DoAsyncReturnString(Func<IPostGreSQLConnectionFactory, Task<string?>> f)
-        {
-            return DoAsync(async connectionFactory =>
-            {
-                string? result = await f(connectionFactory);
-                if (result == null)
-                    return this.NotFound();
-                else
-                    return this.Content(result, "application/json", Encoding.UTF8);
             });
         }
     }

@@ -113,6 +113,7 @@ namespace OdhApiCore
             services.AddMvc(options =>
             {
                 options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
+                options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
             });
 
             //TO TEST
