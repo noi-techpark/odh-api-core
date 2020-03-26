@@ -1167,7 +1167,6 @@ namespace Helper
             };
         }
 
-        [Obsolete]
         public static JsonResultWithOnlineResults<T> GetResult<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults, string? seed,
             IEnumerable<T> data)
@@ -1184,7 +1183,7 @@ namespace Helper
             };
         }
 
-        public static JsonResultWithOnlineResultsAndResultId<T> GetResultJson<T>(
+        public static JsonResultWithOnlineResultsAndResultId<T> GetResult<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
             string resultid, string? seed, IEnumerable<T> data)
             where T : notnull
@@ -1201,7 +1200,7 @@ namespace Helper
             };
         }
 
-        public static JsonResultWithOnlineResultsAndResultIdLowercase<T> GetResultJsonLowercase<T>(
+        public static JsonResultWithOnlineResultsAndResultIdLowercase<T> GetResultLowercase<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
             string resultid, string seed, IEnumerable<T> data)
             where T : notnull
