@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,8 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public ActivityController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, connectionFactory)
+        public ActivityController(ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory)
+            : base(settings, logger, connectionFactory)
         {
         }
 

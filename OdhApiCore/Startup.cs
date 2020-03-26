@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OdhApiCore.Controllers;
+using Serilog;
 using System.Linq;
 using System.Text;
 
@@ -38,6 +40,19 @@ namespace OdhApiCore
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddLogging(options =>
+            {
+                options.ClearProviders();
+
+                var log = new LoggerConfiguration()
+                            .MinimumLevel.Information()
+                            .Enrich.FromLogContext()
+                            .WriteTo.Console()
+                            //.WriteTo.Elasticsearch()
+                            .CreateLogger();
+                options.AddSerilog(log, dispose: true);
+            });
+
             services.AddResponseCompression();
 
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
@@ -55,6 +70,7 @@ namespace OdhApiCore
 
             services.AddSingleton<ISettings, Settings>();
             services.AddSingleton<Helper.IPostGreSQLConnectionFactory, PostGreSQLConnectionFactory>();
+            services.AddScoped<Filters.LoggingScopeFilter>();
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);

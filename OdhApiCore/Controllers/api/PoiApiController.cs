@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
     {
-        public PoiController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, connectionFactory)
+        public PoiController(ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory)
+            : base(settings, logger, connectionFactory)
         {
         }
 

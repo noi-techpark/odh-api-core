@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, connectionFactory)
+        public CompatiblityApiController(ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory)
+            : base(settings, logger, connectionFactory)
         {
         }
 
