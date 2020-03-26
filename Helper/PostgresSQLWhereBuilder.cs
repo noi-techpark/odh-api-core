@@ -235,6 +235,7 @@ namespace Helper
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
             SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
+            SearchFilterWhere(ref whereexpression, parameters, searchfilter);
 
             LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
@@ -1147,6 +1148,33 @@ namespace Helper
                 smgtagliststring = smgtagliststring.Remove(smgtagliststring.Length - 4);
 
                 whereexpression += smgtagliststring + ")";
+            }
+        }
+
+        private static void SearchFilterWhere(
+            ref string whereexpression, IList<PGParameters> parameters, string? searchfilter)
+        {
+            if (searchfilter != null)
+            {
+                string searchwhereexpression = "";
+                if (!string.IsNullOrEmpty(whereexpression))
+                    searchwhereexpression += " AND (";
+                else
+                    searchwhereexpression += "(";
+                searchwhereexpression += "data->'Detail'->'de'->>'Title' ILIKE @searchfilter";
+                searchwhereexpression += " OR ";
+                searchwhereexpression += "data->'Detail'->'it'->>'Title' ILIKE @searchfilter";
+                searchwhereexpression += " OR ";
+                searchwhereexpression += "data->'Detail'->'en'->>'Title' ILIKE @searchfilter";
+                parameters.Add(new PGParameters()
+                {
+                    Name = "searchfilter",
+                    Type = NpgsqlTypes.NpgsqlDbType.Text,
+                    Value = $"%{searchfilter}%"
+                });
+                searchwhereexpression += ")";
+
+                whereexpression += searchwhereexpression;
             }
         }
 
