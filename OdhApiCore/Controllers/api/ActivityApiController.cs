@@ -86,14 +86,19 @@ namespace OdhApiCore.Controllers
             string? radius = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            string? searchfilter = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
-                    fields ?? Array.Empty<string>(), language, pagenumber, pagesize, activitytype, subtype, idlist,
-                    locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlight,
-                    difficultyfilter, active, odhactive, odhtagfilter, seed, lastchange, geosearchresult, cancellationToken);
+                    fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
+                    pagesize: pagesize, activitytype: activitytype, subtypefilter: subtype, idfilter: idlist,
+                    searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
+                    distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
+                    highlightfilter: highlight, difficultyfilter: difficultyfilter, active: active,
+                    smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: lastchange,
+                    geosearchresult: geosearchresult, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -158,7 +163,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Result Object with Collection of Activities Objects</returns>
          private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
-            string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
+            string? idfilter, string? searchfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
@@ -173,13 +178,18 @@ namespace OdhApiCore.Controllers
                 string orderby = "";
 
                 var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive, myactivityhelper.lastchange);
+                    idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
+                    subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
+                    smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
+                    municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
+                    regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
+                    distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
+                    distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
+                    durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
+                    altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
+                    altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
+                    activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                    searchfilter: searchfilter, lastchange: myactivityhelper.lastchange);
 
                 string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
 
@@ -216,8 +226,8 @@ namespace OdhApiCore.Controllers
             {
                 var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
                 var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "activities", "*", where, "", 0,
-                    null, cancellationToken);
+                    connectionFactory, tablename: "activities", selectexp: "*", where: where,
+                    sortexp: "", limit: 0, offset: null, cancellationToken: cancellationToken);
 
                 return data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
             });
@@ -338,8 +348,14 @@ namespace OdhApiCore.Controllers
         {
             updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
-            return await GetActivityList(null, pagenumber, pagesize, null, null, null, null, null, null, null, null, new LegacyBool(null), null, null, 
-                new LegacyBool(null), new LegacyBool(null), updatefrom, seed, null, null, null, null, cancellationToken);
+            return await GetActivityList(
+                language: null, pagenumber: pagenumber, pagesize: pagesize, activitytype: null,
+                subtype: null, idlist: null, locfilter: null, areafilter: null, distancefilter: null,
+                altitudefilter: null, durationfilter: null, highlight: new LegacyBool(null),
+                difficultyfilter: null, odhtagfilter: null, active: new LegacyBool(null),
+                odhactive: new LegacyBool(null), lastchange: updatefrom, seed: seed,
+                latitude: null, longitude: null, radius: null, fields: null, searchfilter: null,
+                cancellationToken: cancellationToken);
         }
 
         #endregion

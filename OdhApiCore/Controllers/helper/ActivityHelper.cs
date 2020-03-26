@@ -32,10 +32,11 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
 
         public static async Task<ActivityHelper> CreateAsync(
-            IPostGreSQLConnectionFactory connectionFactory, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
-            string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter,
-            bool? highlightfilter, string? difficultyfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, CancellationToken cancellationToken)
+            IPostGreSQLConnectionFactory connectionFactory, string? activitytype, string? subtypefilter,
+            string? idfilter, string? locfilter, string? areafilter, string? distancefilter,
+            string? altitudefilter, string? durationfilter, bool? highlightfilter, string? difficultyfilter,
+            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
 
@@ -48,14 +49,18 @@ namespace OdhApiCore.Controllers
             }
 
             return new ActivityHelper(
-                activitytype, subtypefilter, idfilter, locfilter, arealist, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, activefilter, smgactivefilter, smgtags, lastchange, tourismusvereinids);
+                activitytype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter, locfilter: locfilter,
+                arealist: arealist, distancefilter: distancefilter, altitudefilter: altitudefilter,
+                durationfilter: durationfilter, highlightfilter: highlightfilter, difficultyfilter: difficultyfilter,
+                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange,
+                tourismusvereinids: tourismusvereinids);
         }
 
         private ActivityHelper(
-            string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
-            IEnumerable<string> arealist, string? distancefilter, string? altitudefilter, string? durationfilter,
-            bool? highlightfilter, string? difficultyfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
+            string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist,
+            string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
+            string? difficultyfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            IEnumerable<string>? tourismusvereinids)
         {
             activitytypelist = new List<string>();
             if (activitytype != null)

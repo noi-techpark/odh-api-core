@@ -213,7 +213,8 @@ namespace Helper
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
             int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
-            int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? lastchange)
+            int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
+            string? lastchange)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
