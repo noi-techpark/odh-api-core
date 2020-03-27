@@ -1237,14 +1237,15 @@ namespace Helper
             if (searchfilter != null && fields.Length > 0)
             {
                 return query.Where(q =>
-                    fields.Aggregate(
-                        q,
-                        (q, field) =>
-                            q.OrWhereRaw(
+                {
+                    foreach (var field in fields)
+                    {
+                        q = q.OrWhereRaw(
                                 $"data#>>'\\{{{JsonPathToPostgresArray(field)}\\}}' ILIKE ?",
-                                $"%{searchfilter}%")
-                    )
-                );
+                                $"%{searchfilter}%");
+                    }
+                    return q;
+                });
             }
             return query;
         }
