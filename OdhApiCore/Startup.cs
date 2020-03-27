@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OdhApiCore.Controllers;
 using Serilog;
+using Serilog.Core;
 using System.Linq;
 using System.Text;
 
@@ -17,12 +18,14 @@ namespace OdhApiCore
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
             Configuration = configuration;
+            CurrentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment CurrentEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -44,8 +47,15 @@ namespace OdhApiCore
             {
                 options.ClearProviders();
 
+                var levelSwitch = new LoggingLevelSwitch
+                {
+                    MinimumLevel =
+                        CurrentEnvironment.IsDevelopment() ?
+                            Serilog.Events.LogEventLevel.Debug :
+                            Serilog.Events.LogEventLevel.Information
+                };
                 var log = new LoggerConfiguration()
-                            .MinimumLevel.Information()
+                            .MinimumLevel.ControlledBy(levelSwitch)
                             .Enrich.FromLogContext()
                             .WriteTo.Console()
                             //.WriteTo.Elasticsearch()
