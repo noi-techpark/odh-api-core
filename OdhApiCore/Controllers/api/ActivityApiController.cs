@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OdhApiCore.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -206,12 +207,13 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
 
-                return PostgresSQLHelper.GetResult(
+                return ResponseHelpers.GetResult(
                     pagenumber,
                     totalpages,
                     totalcount,
                     myseed,
-                    dataTransformed);
+                    dataTransformed,
+                    Url);
             });
         }
 

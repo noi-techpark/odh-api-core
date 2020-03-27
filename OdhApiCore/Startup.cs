@@ -1,3 +1,4 @@
+using Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OdhApiCore.Controllers;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Formatting.Json;
+using Serilog.Sinks.Elasticsearch;
+using Serilog.Sinks.File;
 using System.Linq;
 using System.Text;
 
@@ -17,12 +23,14 @@ namespace OdhApiCore
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
             Configuration = configuration;
+            CurrentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment CurrentEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -44,13 +52,39 @@ namespace OdhApiCore
             {
                 options.ClearProviders();
 
-                var log = new LoggerConfiguration()
-                            .MinimumLevel.Information()
-                            .Enrich.FromLogContext()
-                            .WriteTo.Console()
-                            //.WriteTo.Elasticsearch()
-                            .CreateLogger();
-                options.AddSerilog(log, dispose: true);
+                var levelSwitch = new LoggingLevelSwitch
+                {
+                    MinimumLevel =
+                        CurrentEnvironment.IsDevelopment() ?
+                            LogEventLevel.Debug :
+                            LogEventLevel.Information
+                };
+                var loggerConfiguration = new LoggerConfiguration()
+                    .MinimumLevel.ControlledBy(levelSwitch)
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console()
+                    .WriteTo.Debug()
+                    //.WriteTo.Elasticsearch(
+                    //    new ElasticsearchSinkOptions() {
+                    //        AutoRegisterTemplate = true,
+                    //        IndexFormat = "odh-tourism-{0:yyyy.MM}",
+                    //        //ModifyConnectionSettings = (c) => c.GlobalHeaders(new NameValueCollection { { "Authorization", "Basic " + loggerconfig.elkbasicauthtoken } }),
+                    //        FailureCallback = e => System.Console.Error.WriteLine("Unable to submit event " + e.MessageTemplate),
+                    //        EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
+                    //                           EmitEventFailureHandling.WriteToFailureSink |
+                    //                           EmitEventFailureHandling.RaiseCallback,
+                    //        //FailureSink = new FileSink(loggerconfig.filepathfailures, new JsonFormatter(), null),
+                    //        MinimumLogEventLevel = LogEventLevel.Information
+                    //    }
+                    //)
+                    .CreateLogger();
+                options.AddSerilog(loggerConfiguration, dispose: true);
+
+                // Configure Serilogs own configuration to use
+                // the configured logger configuration.
+                // This allows to Log via Serilog's Log and ILogger.
+                Log.Logger = loggerConfiguration;
             });
 
             services.AddResponseCompression();
@@ -70,7 +104,6 @@ namespace OdhApiCore
 
             services.AddSingleton<ISettings, Settings>();
             services.AddSingleton<Helper.IPostGreSQLConnectionFactory, PostGreSQLConnectionFactory>();
-            services.AddScoped<Filters.LoggingScopeFilter>();
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
