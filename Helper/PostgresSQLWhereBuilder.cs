@@ -1181,7 +1181,7 @@ namespace Helper
                     string.Join(
                         " OR ",
                         fields.Select(field =>
-                            $"data#>>'{{{JsonPathToPostgresArray(field)}}}' ILIKE @searchfilter"
+                            $"quote_ident(data#>>'{{{JsonPathToPostgresArray(field)}}}') ILIKE @searchfilter"
                         )
                     );
                 parameters.Add(new PGParameters()
