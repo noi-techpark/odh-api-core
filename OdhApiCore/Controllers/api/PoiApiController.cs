@@ -74,6 +74,7 @@ namespace OdhApiCore.Controllers.api
             string? radius = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            string? searchfilter = null,
             CancellationToken cancellationToken = default)
         {
             //TODO
@@ -82,9 +83,11 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
-                fields ?? Array.Empty<string>(), language, pagenumber, pagesize, poitype, subtype, idlist,
-                locfilter, areafilter, highlight, active, odhactive, odhtagfilter, seed, lastchange,
-                geosearchresult, cancellationToken);
+                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
+                activitytype: poitype, subtypefilter: subtype, idfilter: idlist, searchfilter: searchfilter,
+                locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight, active: active, smgactive: odhactive,
+                smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult: geosearchresult,
+                cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -150,24 +153,29 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Result Object with Collection of Pois</returns>
         private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
-            string? idfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active, bool? smgactive,
-            string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? idfilter, string? searchfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active,
+            bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            CancellationToken cancellationToken)
         {
 
             return DoAsyncReturn(async connectionFactory =>
             {
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
-                    connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, lastchange, cancellationToken);
+                    connectionFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
+                    locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
+                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 
                 string select = "*";
                 string orderby = "";
 
                 var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreatePoiWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.poitypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist,
-                    myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.highlight, myactivityhelper.active,
-                    myactivityhelper.smgactive, myactivityhelper.lastchange);
+                    idlist: myactivityhelper.idlist, poitypelist: myactivityhelper.poitypelist,
+                    subtypelist: myactivityhelper.subtypelist, smgtaglist: myactivityhelper.smgtaglist,
+                    districtlist: new List<string>(), municipalitylist: new List<string>(),
+                    tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
+                    arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
+                    activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                    searchfilter: searchfilter, lastchange: myactivityhelper.lastchange);
 
                 //Build Orderby
                 string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
@@ -440,8 +448,12 @@ namespace OdhApiCore.Controllers.api
 
             updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
-            return await GetPoiList(null, pagenumber, pagesize, null, null, null, null, new LegacyBool(null), null, null, new LegacyBool(null), new LegacyBool(null),
-                 updatefrom, seed, null, null, null, null, cancellationToken);
+            return await GetPoiList(
+                language: null, pagenumber: pagenumber, pagesize: pagesize, poitype: null, subtype: null,
+                idlist: null, areafilter: null, highlight: new LegacyBool(null), locfilter: null,
+                odhtagfilter: null, active: new LegacyBool(null), odhactive: new LegacyBool(null),
+                lastchange: updatefrom, seed: seed, latitude: null, longitude: null, radius: null,
+                fields: null, searchfilter: null, cancellationToken: cancellationToken);
         }
 
         #endregion

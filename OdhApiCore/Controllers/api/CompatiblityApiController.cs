@@ -103,11 +103,11 @@ namespace OdhApiCore.Controllers.api
                 string orderby = "data ->>'Shortname' ASC";
 
                 var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreatePoiWhereExpression(
-                    mypoihelper.idlist, mypoihelper.poitypelist, mypoihelper.subtypelist,
-                    mypoihelper.smgtaglist, new List<string>(), new List<string>(), mypoihelper.tourismvereinlist,
-                    mypoihelper.regionlist, mypoihelper.arealist, mypoihelper.highlight,
-                    mypoihelper.active, mypoihelper.smgactive, null);
-
+                    idlist: mypoihelper.idlist, poitypelist: mypoihelper.poitypelist, subtypelist: mypoihelper.subtypelist,
+                    smgtaglist: mypoihelper.smgtaglist, districtlist: new List<string>(), municipalitylist: new List<string>(),
+                    tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
+                    arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
+                    smgactivefilter: mypoihelper.smgactive, searchfilter: null, lastchange: null);
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
