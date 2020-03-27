@@ -63,19 +63,19 @@ namespace OdhApiCore
                             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                             .Enrich.FromLogContext()
                             .WriteTo.Console()
-                            .WriteTo.Elasticsearch(
-                                new ElasticsearchSinkOptions() {
-                                    AutoRegisterTemplate = true,
-                                    IndexFormat = "odh-tourism-{0:yyyy.MM}",
-                                    //ModifyConnectionSettings = (c) => c.GlobalHeaders(new NameValueCollection { { "Authorization", "Basic " + loggerconfig.elkbasicauthtoken } }),
-                                    FailureCallback = e => System.Console.Error.WriteLine("Unable to submit event " + e.MessageTemplate),
-                                    EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
-                                                       EmitEventFailureHandling.WriteToFailureSink |
-                                                       EmitEventFailureHandling.RaiseCallback,
-                                    //FailureSink = new FileSink(loggerconfig.filepathfailures, new JsonFormatter(), null),
-                                    MinimumLogEventLevel = LogEventLevel.Information
-                                }
-                            )
+                            //.WriteTo.Elasticsearch(
+                            //    new ElasticsearchSinkOptions() {
+                            //        AutoRegisterTemplate = true,
+                            //        IndexFormat = "odh-tourism-{0:yyyy.MM}",
+                            //        //ModifyConnectionSettings = (c) => c.GlobalHeaders(new NameValueCollection { { "Authorization", "Basic " + loggerconfig.elkbasicauthtoken } }),
+                            //        FailureCallback = e => System.Console.Error.WriteLine("Unable to submit event " + e.MessageTemplate),
+                            //        EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
+                            //                           EmitEventFailureHandling.WriteToFailureSink |
+                            //                           EmitEventFailureHandling.RaiseCallback,
+                            //        //FailureSink = new FileSink(loggerconfig.filepathfailures, new JsonFormatter(), null),
+                            //        MinimumLogEventLevel = LogEventLevel.Information
+                            //    }
+                            //)
                             .CreateLogger();
                 options.AddSerilog(log, dispose: true);
             });
