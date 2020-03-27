@@ -678,7 +678,7 @@ namespace Helper
                 }
                 else
                 {
-                    query = query.WhereIn("id", idlist);
+                    query = query.WhereIn("id", idlist.Select(id => id.ToUpper()));
 
                     //string idliststring = "";
                     //int counter = 1;
