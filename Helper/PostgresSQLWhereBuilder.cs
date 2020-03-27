@@ -235,7 +235,15 @@ namespace Helper
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
             SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
-            SearchFilterWhere(ref whereexpression, parameters, searchfilter);
+            SearchFilterWhere(
+                ref whereexpression,
+                parameters,
+                fields: new[] {
+                    "Detail.de.Title",
+                    "Detail.it.Title",
+                    "Detail.en.Title"
+                },
+                searchfilter);
 
             LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
@@ -1152,20 +1160,30 @@ namespace Helper
         }
 
         private static void SearchFilterWhere(
-            ref string whereexpression, IList<PGParameters> parameters, string? searchfilter)
+            ref string whereexpression, IList<PGParameters> parameters, string[] fields, string? searchfilter)
         {
-            if (searchfilter != null)
+            /// <summary>
+            /// Convert a (simple) JsonPath path to a Postgres array,
+            /// which can be used in the #>> operator.<br />
+            /// E.g. Detail.de.Title => Detail,de,Title
+            /// </summary>
+            static string JsonPathToPostgresArray(string field) =>
+                field.Replace('.', ',');
+
+            if (searchfilter != null && fields.Length > 0)
             {
                 string searchwhereexpression = "";
                 if (!string.IsNullOrEmpty(whereexpression))
                     searchwhereexpression += " AND (";
                 else
                     searchwhereexpression += "(";
-                searchwhereexpression += "data->'Detail'->'de'->>'Title' ILIKE @searchfilter";
-                searchwhereexpression += " OR ";
-                searchwhereexpression += "data->'Detail'->'it'->>'Title' ILIKE @searchfilter";
-                searchwhereexpression += " OR ";
-                searchwhereexpression += "data->'Detail'->'en'->>'Title' ILIKE @searchfilter";
+                searchwhereexpression +=
+                    string.Join(
+                        " OR ",
+                        fields.Select(field =>
+                            $"data#>>'{{{JsonPathToPostgresArray(field)}}}' ILIKE @searchfilter"
+                        )
+                    );
                 parameters.Add(new PGParameters()
                 {
                     Name = "searchfilter",
