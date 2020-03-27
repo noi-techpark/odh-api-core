@@ -6,15 +6,22 @@ namespace Helper
 {
     public static class PostgresSQLWhereBuilder
     {
+        private static string[] _languagesToSearchFor =
+            new[] { "de", "it", "en" };
+
         /// <summary>
-        /// Provider title fields as JsonPath
+        /// Provide title fields as JsonPath
         /// </summary>
-        public static readonly string[] TitleFieldsToSearchFor =
-            new[] {
-                "Detail.de.Title",
-                "Detail.it.Title",
-                "Detail.en.Title"
-            };
+        /// <param name="language">
+        /// If provided only the fields with the
+        /// specified language get returned
+        /// </param>
+        private static string[] TitleFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"Detail.{lang}.Title"
+            ).ToArray();
 
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
@@ -224,7 +231,7 @@ namespace Helper
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
             int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
             int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
-            string? lastchange)
+            string? language, string? lastchange)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
@@ -245,7 +252,7 @@ namespace Helper
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
             SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
-            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor, searchfilter);
+            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor(language), searchfilter);
 
             LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
@@ -259,7 +266,7 @@ namespace Helper
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
             IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
-            bool? smgactivefilter, string? searchfilter, string? lastchange)
+            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
@@ -276,7 +283,7 @@ namespace Helper
             HighlightFilterWhere(ref whereexpression, parameters, highlight);
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
-            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor, searchfilter);
+            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor(language), searchfilter);
 
             LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 

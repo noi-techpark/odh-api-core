@@ -107,7 +107,7 @@ namespace OdhApiCore.Controllers.api
                     smgtaglist: mypoihelper.smgtaglist, districtlist: new List<string>(), municipalitylist: new List<string>(),
                     tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
                     arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
-                    smgactivefilter: mypoihelper.smgactive, searchfilter: null, lastchange: null);
+                    smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null);
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
@@ -220,7 +220,7 @@ namespace OdhApiCore.Controllers.api
                     altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
                     altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
                     activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                    searchfilter: null, lastchange: null);
+                    searchfilter: null, language: language, lastchange: null);
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
