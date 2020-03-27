@@ -44,11 +44,7 @@ namespace Helper
         [System.Diagnostics.Conditional("TRACE")]
         private static void TraceQueryInformation(string cmdText, IEnumerable<PGParameters>? parameters)
         {
-            var parametersString =
-               (parameters != null) ?
-                    $"\n{string.Join("\n", parameters.Select(x => $"\t@{x.Name}: '{x.Value}' [{x.Type}]"))}" :
-                    null;
-            System.Diagnostics.Trace.TraceInformation($"SQL: {cmdText}{parametersString}");
+            Serilog.Log.Debug("SQL: {cmdText} {@parameters}", cmdText, parameters);
         }
 
         public static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string cmdText, IEnumerable<PGParameters>? parameters = null)
