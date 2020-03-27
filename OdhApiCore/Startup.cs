@@ -1,3 +1,4 @@
+using Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -59,26 +60,26 @@ namespace OdhApiCore
                             LogEventLevel.Information
                 };
                 var log = new LoggerConfiguration()
-                            .MinimumLevel.ControlledBy(levelSwitch)
-                            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                            .Enrich.FromLogContext()
-                            .WriteTo.Console()
-                            .WriteTo.Debug()
-                            .WriteTo.File(path: "c:/temp/serilog.txt", formatter: new JsonFormatter())
-                            //.WriteTo.Elasticsearch(
-                            //    new ElasticsearchSinkOptions() {
-                            //        AutoRegisterTemplate = true,
-                            //        IndexFormat = "odh-tourism-{0:yyyy.MM}",
-                            //        //ModifyConnectionSettings = (c) => c.GlobalHeaders(new NameValueCollection { { "Authorization", "Basic " + loggerconfig.elkbasicauthtoken } }),
-                            //        FailureCallback = e => System.Console.Error.WriteLine("Unable to submit event " + e.MessageTemplate),
-                            //        EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
-                            //                           EmitEventFailureHandling.WriteToFailureSink |
-                            //                           EmitEventFailureHandling.RaiseCallback,
-                            //        //FailureSink = new FileSink(loggerconfig.filepathfailures, new JsonFormatter(), null),
-                            //        MinimumLogEventLevel = LogEventLevel.Information
-                            //    }
-                            //)
-                            .CreateLogger();
+                    .MinimumLevel.ControlledBy(levelSwitch)
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console()
+                    .WriteTo.Debug()
+                    .WriteTo.File(path: "c:/temp/serilog.txt", formatter: new JsonFormatter())
+                    //.WriteTo.Elasticsearch(
+                    //    new ElasticsearchSinkOptions() {
+                    //        AutoRegisterTemplate = true,
+                    //        IndexFormat = "odh-tourism-{0:yyyy.MM}",
+                    //        //ModifyConnectionSettings = (c) => c.GlobalHeaders(new NameValueCollection { { "Authorization", "Basic " + loggerconfig.elkbasicauthtoken } }),
+                    //        FailureCallback = e => System.Console.Error.WriteLine("Unable to submit event " + e.MessageTemplate),
+                    //        EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
+                    //                           EmitEventFailureHandling.WriteToFailureSink |
+                    //                           EmitEventFailureHandling.RaiseCallback,
+                    //        //FailureSink = new FileSink(loggerconfig.filepathfailures, new JsonFormatter(), null),
+                    //        MinimumLogEventLevel = LogEventLevel.Information
+                    //    }
+                    //)
+                    .CreateLogger();
                 options.AddSerilog(log, dispose: true);
             });
 
