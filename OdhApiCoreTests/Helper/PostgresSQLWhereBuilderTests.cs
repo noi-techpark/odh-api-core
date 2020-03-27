@@ -56,34 +56,33 @@ namespace OdhApiCoreTests.Helper
         [Fact]
         public void CreateActivityWhereExpression_EmptyParameters()
         {
-            IReadOnlyCollection<string> idlist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> activitytypelist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> suttypelist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> difficultylist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> smgtaglist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> distictlist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> municipalitylist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> tourismvereinlist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> regionlist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> arealist = System.Array.Empty<string>();
-            bool distance = false;
-            int distancemin = 0;
-            int distancemax = 0;
-            bool duration = false;
-            int durationmin = 0;
-            int durationmax = 0;
-            bool altitude = false;
-            int altitudemin = 0;
-            int altitudemax = 0;
-            bool? highlight = null;
-            bool? activefilter = null;
-            bool? smgactivefilter = null;
-            string? searchfilter = null;
-            string? language = null;
-            string? lastchange = null;
             var (where, parameters) =
                 PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    idlist, activitytypelist, suttypelist, difficultylist, smgtaglist, distictlist, municipalitylist, tourismvereinlist, regionlist, arealist, distance, distancemin, distancemax, duration, durationmin, durationmax, altitude, altitudemin, altitudemax, highlight, activefilter, smgactivefilter, searchfilter, language, lastchange);
+                    idlist: System.Array.Empty<string>(),
+                    activitytypelist: System.Array.Empty<string>(),
+                    subtypelist: System.Array.Empty<string>(),
+                    difficultylist: System.Array.Empty<string>(),
+                    smgtaglist: System.Array.Empty<string>(),
+                    districtlist: System.Array.Empty<string>(),
+                    municipalitylist: System.Array.Empty<string>(),
+                    tourismvereinlist: System.Array.Empty<string>(),
+                    regionlist: System.Array.Empty<string>(),
+                    arealist: System.Array.Empty<string>(),
+                    distance: false,
+                    distancemin: 0,
+                    distancemax: 0,
+                    duration: false,
+                    durationmin: 0,
+                    durationmax: 0,
+                    altitude: false,
+                    altitudemin: 0,
+                    altitudemax: 0,
+                    highlight: null,
+                    activefilter: null,
+                    smgactivefilter: null,
+                    searchfilter: null,
+                    language: null,
+                    lastchange: null);
             Assert.Equal("", where);
             Assert.Empty(parameters);
         }
@@ -91,45 +90,33 @@ namespace OdhApiCoreTests.Helper
         [Fact]
         public void CreateActivityWhereExpression_Test()
         {
-            IReadOnlyCollection<string> idlist = new string[] {
-                "id1", "id2"
-            };
-            IReadOnlyCollection<string> activitytypelist = new string[] {
-                "1024"
-            };
-            IReadOnlyCollection<string> suttypelist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> difficultylist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> smgtaglist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> distictlist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> municipalitylist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> tourismvereinlist = System.Array.Empty<string>();
-            IReadOnlyCollection<string> regionlist = new string[] {
-                "region1"
-            };
-            IReadOnlyCollection<string> arealist = new string[] {
-                "area1"
-            };
-            bool distance = false;
-            int distancemin = 0;
-            int distancemax = 0;
-            bool duration = false;
-            int durationmin = 0;
-            int durationmax = 0;
-            bool altitude = false;
-            int altitudemin = 0;
-            int altitudemax = 0;
-            bool? highlight = true;
-            bool? activefilter = null;
-            bool? smgactivefilter = null;
-            string? searchfilter = null;
-            string? language = null;
-            string? lastchange = null;
             var (where, parameters) =
                 PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    idlist, activitytypelist, suttypelist, difficultylist, smgtaglist, distictlist, municipalitylist,
-                    tourismvereinlist, regionlist, arealist, distance, distancemin, distancemax, duration, durationmin,
-                    durationmax, altitude, altitudemin, altitudemax, highlight, activefilter, smgactivefilter,
-                    searchfilter, language, lastchange);
+                    idlist: new string[] { "id1", "id2" },
+                    activitytypelist: new string[] { "1024" },
+                    subtypelist: System.Array.Empty<string>(),
+                    difficultylist: System.Array.Empty<string>(),
+                    smgtaglist: System.Array.Empty<string>(),
+                    districtlist: System.Array.Empty<string>(),
+                    municipalitylist: System.Array.Empty<string>(),
+                    tourismvereinlist: System.Array.Empty<string>(),
+                    regionlist: new string[] { "region1" },
+                    arealist: new string[] { "area1" },
+                    distance: false,
+                    distancemin: 0,
+                    distancemax: 0,
+                    duration: false,
+                    durationmin: 0,
+                    durationmax: 0,
+                    altitude: false,
+                    altitudemin: 0,
+                    altitudemax: 0,
+                    highlight: true,
+                    activefilter: null,
+                    smgactivefilter: null,
+                    searchfilter: null,
+                    language: null,
+                    lastchange: null);
 
             Assert.Equal("id in (@id1, @id2) AND data @> @regionid AND (data @> @area1) AND (data @> @type1) AND data @> @highlight", where);
 
