@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Responses;
+using SqlKata;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -175,37 +178,50 @@ namespace OdhApiCore.Controllers
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange,
                     cancellationToken);
 
-                string select = "*";
-                string orderby = "";
+                string? orderby = null;
 
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
-                    subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
-                    smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
-                    municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
-                    regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
-                    distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
-                    distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
-                    durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
-                    altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
-                    altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
-                    activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                    searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange);
+                var connection = await connectionFactory.GetConnection(cancellationToken);
+                var compiler = new PostgresCompiler();
+                var query =
+                    new XQuery(connection, compiler)
+                    .ActivityWhereExpression(
+                        idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
+                        subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
+                        smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
+                        municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
+                        regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
+                        distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
+                        distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
+                        durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
+                        altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
+                        altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
+                        activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                        searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange)
+                    .SelectRaw("data")
+                    .From("activities")
+                    .OrderByRaw(orderby ?? "id asc");
 
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
+                // Logging
+                var info = compiler.Compile(query);
+                Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: (int)pagesize);
 
-                uint pageskip = pagesize * (pagenumber - 1);
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License)
+                    );
 
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
-                    cancellationToken);
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
 
-                uint totalcount = (uint)totalCount;
-                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
+                //string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
+                string myseed = "42";
 
                 return ResponseHelpers.GetResult(
                     pagenumber,

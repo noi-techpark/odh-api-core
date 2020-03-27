@@ -1,4 +1,8 @@
-﻿using System;
+﻿using SqlKata;
+using SqlKata.Compilers;
+using SqlKata.Execution;
+using SqlKata.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -257,6 +261,55 @@ namespace Helper
             LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
             return (whereexpression, parameters);
+        }
+
+
+
+
+
+
+
+
+
+
+
+        //Return Where and Parameters for Activity
+        public static Query ActivityWhereExpression(
+            this Query query,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> activitytypelist,
+            IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> difficultylist,
+            IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
+            IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
+            int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
+            int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
+            string? language, string? lastchange)
+        {
+            //string whereexpression = "";
+            //List<PGParameters> parameters = new List<PGParameters>();
+
+            //IdUpperFilterWhere(ref whereexpression, parameters, idlist);
+            //DistrictWhere(ref whereexpression, parameters, districtlist);
+            //LocFilterMunicipalityWhere(ref whereexpression, parameters, municipalitylist);
+            //LocFilterTvsWhere(ref whereexpression, parameters, tourismvereinlist);
+            //LocFilterRegionWhere(ref whereexpression, parameters, regionlist);
+            //AreaFilterWhere(ref whereexpression, parameters, arealist);
+            //ActivityTypeFilterWhere(ref whereexpression, parameters, activitytypelist);
+            //ActivitySubTypeFilterWhere(ref whereexpression, parameters, subtypelist);
+            //DifficultyFilterWhere(ref whereexpression, parameters, difficultylist);
+            //DistanceFilterWhere(ref whereexpression, parameters, distance, distancemin, distancemax);
+            //DurationFilterWhere(ref whereexpression, parameters, duration, durationmin, durationmax);
+            //AltitudeFilterWhere(ref whereexpression, parameters, altitude, altitudemin, altitudemax);
+            //HighlightFilterWhere(ref whereexpression, parameters, highlight);
+            //ActiveFilterWhere(ref whereexpression, parameters, activefilter);
+            //SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
+            //SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
+
+            return query.SearchFilterWhere2(TitleFieldsToSearchFor(language), searchfilter);
+
+            //LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
+
+            //return (whereexpression, parameters);
         }
 
         //Returns Where and Parameters for Poi
@@ -1168,6 +1221,32 @@ namespace Helper
 
                 whereexpression += smgtagliststring + ")";
             }
+        }
+
+        private static Query SearchFilterWhere2(
+            this Query query, string[] fields, string? searchfilter)
+        {
+            /// <summary>
+            /// Convert a (simple) JsonPath path to a Postgres array,
+            /// which can be used in the #>> operator.<br />
+            /// E.g. Detail.de.Title => Detail,de,Title
+            /// </summary>
+            static string JsonPathToPostgresArray(string field) =>
+                field.Replace('.', ',');
+
+            if (searchfilter != null && fields.Length > 0)
+            {
+                return query.Where(q =>
+                    fields.Aggregate(
+                        q,
+                        (q, field) =>
+                            q.OrWhereRaw(
+                                $"data#>>'\\{{{JsonPathToPostgresArray(field)}\\}}' ILIKE ?",
+                                $"%{searchfilter}%")
+                    )
+                );
+            }
+            return query;
         }
 
         private static void SearchFilterWhere(

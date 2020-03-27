@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,9 +24,9 @@ namespace Helper
     [JsonConverter(typeof(JsonRawConverter))]
     public class JsonRaw
     {
-        public JsonRaw(string rawString)
+        public JsonRaw(string data)
         {
-            Value = rawString;
+            Value = data;
         }
 
         public string Value { get; }
