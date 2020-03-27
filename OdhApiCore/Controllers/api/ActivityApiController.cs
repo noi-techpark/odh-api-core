@@ -212,7 +212,8 @@ namespace OdhApiCore.Controllers
                     totalpages,
                     totalcount,
                     myseed,
-                    dataTransformed);
+                    dataTransformed,
+                    Url);
             });
         }
 

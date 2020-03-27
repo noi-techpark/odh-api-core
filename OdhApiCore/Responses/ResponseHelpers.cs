@@ -1,6 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -19,6 +26,8 @@ namespace OdhApiCore.Responses
         public uint TotalResults { get; set; }
         public uint TotalPages { get; set; }
         public uint CurrentPage { get; set; }
+        public string? PreviousPage { get; set; }
+        public string? NextPage { get; set; }
         public string? Seed { get; set; }
         public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
     }
@@ -38,6 +47,8 @@ namespace OdhApiCore.Responses
         public uint totalResults { get; set; }
         public uint totalPages { get; set; }
         public uint currentPage { get; set; }
+        public string? previousPage { get; set; }
+        public string? nextPage { get; set; }
         public string? seed { get; set; }
         public int onlineResults { get; set; }
         public string? resultId { get; set; }
@@ -48,15 +59,37 @@ namespace OdhApiCore.Responses
 
     public static class ResponseHelpers
     {
+        private static (string? previouspage, string? nextpage) GetPreviousAndNextPage(uint pagenumber, uint totalpages, IUrlHelper url)
+        {
+            string? previouspage = null;
+            string? nextpage = null;
+            var query = url.ActionContext.HttpContext.Request.Query;
+            if (pagenumber > 1 && pagenumber <= totalpages)
+            {
+                var queryString = query.ToDictionary(x => x.Key, x => x.Value.ToString());
+                queryString["pagenumber"] = (pagenumber - 1).ToString();
+                previouspage = url.Link(null, queryString);
+            }
+            if (pagenumber < totalpages)
+            {
+                var queryString = query.ToDictionary(x => x.Key, x => x.Value.ToString());
+                queryString["pagenumber"] = (pagenumber + 1).ToString();
+                nextpage = url.Link(null, queryString);
+            }
+            return (previouspage, nextpage);
+        }
         public static JsonResult<T> GetResult<T>(
-            uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data)
+            uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data, IUrlHelper url)
             where T : notnull
         {
+            var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url);
             return new JsonResult<T>
             {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
+                PreviousPage = previouspage,
+                NextPage = nextpage,
                 Seed = seed,
                 Items = data
             };
@@ -64,14 +97,17 @@ namespace OdhApiCore.Responses
 
         public static JsonResultWithOnlineResults<T> GetResult<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults, string? seed,
-            IEnumerable<T> data)
+            IEnumerable<T> data, IUrlHelper url)
             where T : notnull
         {
+            var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url);
             return new JsonResultWithOnlineResults<T>
             {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
+                PreviousPage = previouspage,
+                NextPage = nextpage,
                 OnlineResults = onlineresults,
                 Seed = seed,
                 Items = data
@@ -80,14 +116,17 @@ namespace OdhApiCore.Responses
 
         public static JsonResultWithOnlineResultsAndResultId<T> GetResult<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
-            string resultid, string? seed, IEnumerable<T> data)
+            string resultid, string? seed, IEnumerable<T> data, IUrlHelper url)
             where T : notnull
         {
+            var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url);
             return new JsonResultWithOnlineResultsAndResultId<T>
             {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
+                PreviousPage = previouspage,
+                NextPage = nextpage,
                 OnlineResults = onlineresults,
                 ResultId = resultid,
                 Seed = seed,
@@ -97,14 +136,17 @@ namespace OdhApiCore.Responses
 
         public static JsonResultWithOnlineResultsAndResultIdLowercase<T> GetResultLowercase<T>(
             uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
-            string resultid, string seed, IEnumerable<T> data)
+            string resultid, string seed, IEnumerable<T> data, IUrlHelper url)
             where T : notnull
         {
+            var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url);
             return new JsonResultWithOnlineResultsAndResultIdLowercase<T>
             {
                 totalResults = totalcount,
                 totalPages = totalpages,
                 currentPage = pagenumber,
+                previousPage = previouspage,
+                nextPage = nextpage,
                 onlineResults = onlineresults,
                 resultId = resultid,
                 seed = seed,
