@@ -6,6 +6,16 @@ namespace Helper
 {
     public static class PostgresSQLWhereBuilder
     {
+        /// <summary>
+        /// Provider title fields as JsonPath
+        /// </summary>
+        public static readonly string[] TitleFieldsToSearchFor =
+            new[] {
+                "Detail.de.Title",
+                "Detail.it.Title",
+                "Detail.en.Title"
+            };
+
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
             language = language.ToLower();
@@ -235,15 +245,7 @@ namespace Helper
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
             SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
-            SearchFilterWhere(
-                ref whereexpression,
-                parameters,
-                fields: new[] {
-                    "Detail.de.Title",
-                    "Detail.it.Title",
-                    "Detail.en.Title"
-                },
-                searchfilter);
+            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor, searchfilter);
 
             LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
