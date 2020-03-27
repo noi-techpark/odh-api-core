@@ -11,6 +11,10 @@ using Microsoft.OpenApi.Models;
 using OdhApiCore.Controllers;
 using Serilog;
 using Serilog.Core;
+using Serilog.Events;
+using Serilog.Formatting.Json;
+using Serilog.Sinks.Elasticsearch;
+using Serilog.Sinks.File;
 using System.Linq;
 using System.Text;
 
@@ -51,14 +55,27 @@ namespace OdhApiCore
                 {
                     MinimumLevel =
                         CurrentEnvironment.IsDevelopment() ?
-                            Serilog.Events.LogEventLevel.Debug :
-                            Serilog.Events.LogEventLevel.Information
+                            LogEventLevel.Debug :
+                            LogEventLevel.Information
                 };
                 var log = new LoggerConfiguration()
                             .MinimumLevel.ControlledBy(levelSwitch)
+                            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                             .Enrich.FromLogContext()
                             .WriteTo.Console()
-                            //.WriteTo.Elasticsearch()
+                            .WriteTo.Elasticsearch(
+                                new ElasticsearchSinkOptions() {
+                                    AutoRegisterTemplate = true,
+                                    IndexFormat = "odh-tourism-{0:yyyy.MM}",
+                                    //ModifyConnectionSettings = (c) => c.GlobalHeaders(new NameValueCollection { { "Authorization", "Basic " + loggerconfig.elkbasicauthtoken } }),
+                                    FailureCallback = e => System.Console.Error.WriteLine("Unable to submit event " + e.MessageTemplate),
+                                    EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
+                                                       EmitEventFailureHandling.WriteToFailureSink |
+                                                       EmitEventFailureHandling.RaiseCallback,
+                                    //FailureSink = new FileSink(loggerconfig.filepathfailures, new JsonFormatter(), null),
+                                    MinimumLogEventLevel = LogEventLevel.Information
+                                }
+                            )
                             .CreateLogger();
                 options.AddSerilog(log, dispose: true);
             });
