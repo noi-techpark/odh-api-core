@@ -64,16 +64,16 @@ namespace OdhApiCore.Responses
             string? previouspage = null;
             string? nextpage = null;
             var query = url.ActionContext.HttpContext.Request.Query;
-            var queryString = query.ToDictionary(x => x.Key, x => x.Value.ToString());
+            var queryDict = query.ToDictionary(x => x.Key, x => x.Value.ToString());
             if (pagenumber > 1 && pagenumber <= totalpages)
             {
-                queryString["pagenumber"] = (pagenumber - 1).ToString();
-                previouspage = url.Link(null, queryString);
+                queryDict["pagenumber"] = (pagenumber - 1).ToString();
+                previouspage = url.Link(null, queryDict);
             }
             if (pagenumber < totalpages)
             {
-                queryString["pagenumber"] = (pagenumber + 1).ToString();
-                nextpage = url.Link(null, queryString);
+                queryDict["pagenumber"] = (pagenumber + 1).ToString();
+                nextpage = url.Link(null, queryDict);
             }
             return (previouspage, nextpage);
         }
