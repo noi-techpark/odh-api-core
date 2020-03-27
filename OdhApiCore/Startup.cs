@@ -59,7 +59,7 @@ namespace OdhApiCore
                             LogEventLevel.Debug :
                             LogEventLevel.Information
                 };
-                var log = new LoggerConfiguration()
+                var loggerConfiguration = new LoggerConfiguration()
                     .MinimumLevel.ControlledBy(levelSwitch)
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                     .Enrich.FromLogContext()
@@ -80,7 +80,12 @@ namespace OdhApiCore
                     //    }
                     //)
                     .CreateLogger();
-                options.AddSerilog(log, dispose: true);
+                options.AddSerilog(loggerConfiguration, dispose: true);
+
+                // Configure Serilogs own configuration to use
+                // the configured logger configuration.
+                // This allows to Log via Serilog's Log and ILogger.
+                Log.Logger = loggerConfiguration;
             });
 
             services.AddResponseCompression();
