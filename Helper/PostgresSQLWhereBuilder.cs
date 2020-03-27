@@ -285,10 +285,6 @@ namespace Helper
             int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
             string? language, string? lastchange)
         {
-            //string whereexpression = "";
-            //List<PGParameters> parameters = new List<PGParameters>();
-
-            //IdUpperFilterWhere(ref whereexpression, parameters, idlist);
             //DistrictWhere(ref whereexpression, parameters, districtlist);
             //LocFilterMunicipalityWhere(ref whereexpression, parameters, municipalitylist);
             //LocFilterTvsWhere(ref whereexpression, parameters, tourismvereinlist);
@@ -305,7 +301,9 @@ namespace Helper
             //SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
             //SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
 
-            return query.SearchFilterWhere2(TitleFieldsToSearchFor(language), searchfilter);
+            return query
+                .IdUpperFilterWhere2(idlist)
+                .SearchFilterWhere2(TitleFieldsToSearchFor(language), searchfilter);
 
             //LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
@@ -660,6 +658,49 @@ namespace Helper
         }
 
         #endregion
+
+        private static Query IdUpperFilterWhere2(
+            this Query query, IReadOnlyCollection<string> idlist)
+        {
+            //IDLIST
+            if (idlist.Count > 0)
+            {
+                if (idlist.Count == 1)
+                {
+                    query = query.Where("id", "LIKE", idlist.FirstOrDefault().ToUpper());
+                    //whereexpression = $"{whereexpression}id LIKE @id";
+                    //parameters.Add(new PGParameters()
+                    //{
+                    //    Name = "id",
+                    //    Type = NpgsqlTypes.NpgsqlDbType.Text,
+                    //    Value = idlist.FirstOrDefault().ToUpper()
+                    //});
+                }
+                else
+                {
+                    query = query.WhereIn("id", idlist);
+
+                    //string idliststring = "";
+                    //int counter = 1;
+                    //foreach (var activityid in idlist)
+                    //{
+                    //    idliststring += $"@id{counter}, ";
+                    //    parameters.Add(new PGParameters()
+                    //    {
+                    //        Name = "id" + counter,
+                    //        Type = NpgsqlTypes.NpgsqlDbType.Text,
+                    //        Value = activityid.ToUpper()
+                    //    });
+                    //    counter++;
+                    //}
+                    //idliststring = idliststring.Remove(idliststring.Length - 2);
+
+                    //whereexpression = $"{whereexpression}id in ({idliststring})";
+                }
+            }
+
+            return query;
+        }
 
         private static void IdUpperFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> idlist)
