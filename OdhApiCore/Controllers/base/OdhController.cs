@@ -12,7 +12,6 @@ namespace OdhApiCore.Controllers
 
     [ApiController]
     [FormatFilter]
-    [ServiceFilter(typeof(Filters.LoggingScopeFilter))]
     public abstract class OdhController : ControllerBase
     {
         private readonly IPostGreSQLConnectionFactory connectionFactory;

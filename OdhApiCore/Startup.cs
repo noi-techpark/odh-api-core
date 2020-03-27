@@ -63,6 +63,8 @@ namespace OdhApiCore
                             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                             .Enrich.FromLogContext()
                             .WriteTo.Console()
+                            .WriteTo.Debug()
+                            .WriteTo.File(path: "c:/temp/serilog.txt", formatter: new JsonFormatter())
                             //.WriteTo.Elasticsearch(
                             //    new ElasticsearchSinkOptions() {
                             //        AutoRegisterTemplate = true,
@@ -97,7 +99,6 @@ namespace OdhApiCore
 
             services.AddSingleton<ISettings, Settings>();
             services.AddSingleton<Helper.IPostGreSQLConnectionFactory, PostGreSQLConnectionFactory>();
-            services.AddScoped<Filters.LoggingScopeFilter>();
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
