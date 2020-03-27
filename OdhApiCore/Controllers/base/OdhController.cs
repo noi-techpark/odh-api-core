@@ -1,7 +1,9 @@
 ﻿using Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,18 +12,23 @@ namespace OdhApiCore.Controllers
 
     [ApiController]
     [FormatFilter]
+    [ServiceFilter(typeof(Filters.LoggingScopeFilter))]
     public abstract class OdhController : ControllerBase
     {
         private readonly IPostGreSQLConnectionFactory connectionFactory;
+        private readonly ILogger<OdhController> logger;
         private readonly ISettings settings;
 
         protected bool CheckCC0License => settings.CheckCC0License;
 
-        public OdhController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
+        public OdhController(ISettings settings, ILogger<OdhController> logger, IPostGreSQLConnectionFactory connectionFactory)
         {
             this.settings = settings;
+            this.logger = logger;
             this.connectionFactory = connectionFactory;
         }
+
+        protected ILogger<OdhController> Logger => logger;
 
         protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<IActionResult>> f)
         {

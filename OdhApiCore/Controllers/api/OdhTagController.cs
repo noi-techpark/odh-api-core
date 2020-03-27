@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,8 +19,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class OdhTagController : OdhController
     {
-        public OdhTagController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, connectionFactory)
+        public OdhTagController(ISettings settings, ILogger<OdhTagController> logger, IPostGreSQLConnectionFactory connectionFactory)
+            : base(settings, logger, connectionFactory)
         {
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, connectionFactory)
+        public CompatiblityApiController(ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory)
+            : base(settings, logger, connectionFactory)
         {
         }
 
@@ -102,11 +103,11 @@ namespace OdhApiCore.Controllers.api
                 string orderby = "data ->>'Shortname' ASC";
 
                 var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreatePoiWhereExpression(
-                    mypoihelper.idlist, mypoihelper.poitypelist, mypoihelper.subtypelist,
-                    mypoihelper.smgtaglist, new List<string>(), new List<string>(), mypoihelper.tourismvereinlist,
-                    mypoihelper.regionlist, mypoihelper.arealist, mypoihelper.highlight,
-                    mypoihelper.active, mypoihelper.smgactive, null);
-
+                    idlist: mypoihelper.idlist, poitypelist: mypoihelper.poitypelist, subtypelist: mypoihelper.subtypelist,
+                    smgtaglist: mypoihelper.smgtaglist, districtlist: new List<string>(), municipalitylist: new List<string>(),
+                    tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
+                    arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
+                    smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null);
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 
@@ -198,21 +199,28 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype, subtypefilter, null, locfilter, areafilter, distancefilter,
-                    altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, null,
-                    cancellationToken);
+                    connectionFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
+                    locfilter: locfilter, areafilter: areafilter, distancefilter: distancefilter,
+                    altitudefilter: altitudefilter, durationfilter: durationfilter, highlightfilter: highlightfilter,
+                    difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
+                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
 
                 var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive, null);
+                    idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
+                    subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
+                    smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
+                    municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
+                    regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
+                    distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
+                    distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
+                    durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
+                    altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
+                    altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
+                    activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                    searchfilter: null, language: language, lastchange: null);
 
                 PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
 

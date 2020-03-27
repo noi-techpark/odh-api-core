@@ -8,12 +8,13 @@ namespace Helper
 {
     public class JsonRawConverter : JsonConverter<JsonRaw>
     {
-        public override void WriteJson(JsonWriter writer, JsonRaw value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, JsonRaw? value, JsonSerializer serializer)
         {
-            writer.WriteRawValue(value.Value);
+            if (value != null)
+                writer.WriteRawValue(value.Value);
         }
 
-        public override JsonRaw ReadJson(JsonReader reader, Type objectType, JsonRaw existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override JsonRaw ReadJson(JsonReader reader, Type objectType, JsonRaw? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             throw new JsonReaderException("Deserialization of JsonRaw is not supported.");
         }

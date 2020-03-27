@@ -6,6 +6,23 @@ namespace Helper
 {
     public static class PostgresSQLWhereBuilder
     {
+        private static string[] _languagesToSearchFor =
+            new[] { "de", "it", "en" };
+
+        /// <summary>
+        /// Provide title fields as JsonPath
+        /// </summary>
+        /// <param name="language">
+        /// If provided only the fields with the
+        /// specified language get returned
+        /// </param>
+        private static string[] TitleFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"Detail.{lang}.Title"
+            ).ToArray();
+
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
             language = language.ToLower();
@@ -213,7 +230,8 @@ namespace Helper
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
             int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
-            int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? lastchange)
+            int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
+            string? language, string? lastchange)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
@@ -234,6 +252,7 @@ namespace Helper
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
             SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
+            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor(language), searchfilter);
 
             LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
@@ -246,7 +265,8 @@ namespace Helper
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
-            IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter, string? lastchange)
+            IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
+            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
         {
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
@@ -263,6 +283,7 @@ namespace Helper
             HighlightFilterWhere(ref whereexpression, parameters, highlight);
             ActiveFilterWhere(ref whereexpression, parameters, activefilter);
             SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
+            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor(language), searchfilter);
 
             LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
@@ -1146,6 +1167,43 @@ namespace Helper
                 smgtagliststring = smgtagliststring.Remove(smgtagliststring.Length - 4);
 
                 whereexpression += smgtagliststring + ")";
+            }
+        }
+
+        private static void SearchFilterWhere(
+            ref string whereexpression, IList<PGParameters> parameters, string[] fields, string? searchfilter)
+        {
+            /// <summary>
+            /// Convert a (simple) JsonPath path to a Postgres array,
+            /// which can be used in the #>> operator.<br />
+            /// E.g. Detail.de.Title => Detail,de,Title
+            /// </summary>
+            static string JsonPathToPostgresArray(string field) =>
+                field.Replace('.', ',');
+
+            if (searchfilter != null && fields.Length > 0)
+            {
+                string searchwhereexpression = "";
+                if (!string.IsNullOrEmpty(whereexpression))
+                    searchwhereexpression += " AND (";
+                else
+                    searchwhereexpression += "(";
+                searchwhereexpression +=
+                    string.Join(
+                        " OR ",
+                        fields.Select(field =>
+                            $"quote_ident(data#>>'{{{JsonPathToPostgresArray(field)}}}') ILIKE @searchfilter"
+                        )
+                    );
+                parameters.Add(new PGParameters()
+                {
+                    Name = "searchfilter",
+                    Type = NpgsqlTypes.NpgsqlDbType.Text,
+                    Value = $"%{searchfilter}%"
+                });
+                searchwhereexpression += ")";
+
+                whereexpression += searchwhereexpression;
             }
         }
 
