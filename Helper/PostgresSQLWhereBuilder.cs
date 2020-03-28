@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
-using SqlKata;
-using SqlKata.Compilers;
+﻿using SqlKata;
 using SqlKata.Execution;
-using SqlKata.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,14 +24,6 @@ namespace Helper
             ).Select(lang =>
                 $"Detail.{lang}.Title"
             ).ToArray();
-
-        /// <summary>
-        /// Convert a (simple) JsonPath path to a Postgres array,
-        /// which can be used in the #>> operator.<br />
-        /// E.g. Detail.de.Title => Detail,de,Title
-        /// </summary>
-        private static string JsonPathToPostgresArray(string field) =>
-            field.Replace('.', ',');
 
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
@@ -648,25 +637,6 @@ namespace Helper
 
         #endregion
 
-        private static Query IdUpperFilter(
-            this Query query, IReadOnlyCollection<string> idlist)
-        {
-            //IDLIST
-            if (idlist.Count > 0)
-            {
-                //Tuning force to use GIN Index
-                if (idlist.Count == 1)
-                {
-                    query = query.Where("id", "LIKE", idlist.FirstOrDefault().ToUpper());
-                }
-                else
-                {
-                    query = query.WhereIn("id", idlist.Select(id => id.ToUpper()));
-                }
-            }
-            return query;
-        }
-
         private static void IdUpperFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> idlist)
         {
@@ -771,79 +741,6 @@ namespace Helper
             }
         }
 
-        private static Query LastChangedFilter(this Query query, string? updatefrom) =>
-            updatefrom == null ?
-                query :
-                query.WhereRaw(
-                    "to_date(data->>'LastChange', 'YYYY-MM-DD') > date(?)",
-                    updatefrom
-                );
-
-        private static void LastChangedFilterWhere(
-        ref string whereexpression, IList<PGParameters> parameters, string? updatefrom)
-        {
-            //Active
-            if (!String.IsNullOrEmpty(updatefrom))
-            {
-                if (!String.IsNullOrEmpty(whereexpression))
-                    whereexpression += " AND ";
-
-                whereexpression += "(to_date(data ->> 'LastChange', 'YYYY-MM-DD') > @date)";
-                parameters.Add(new PGParameters()
-                {
-                    Name = "date",
-                    Type = NpgsqlTypes.NpgsqlDbType.Date,
-                    Value = updatefrom
-                });
-            }
-        }
-
-        private static Query WhereJsonb<T>(
-            this Query query,
-            T value,
-            Func<T, object> jsonObjectConstructor) =>
-                query.WhereRaw(
-                    "data @> jsonb(?)",
-                    JsonConvert.SerializeObject(
-                        jsonObjectConstructor(value)
-                    )
-                );
-
-        private static Query OrWhereJsonb<T>(
-            this Query query,
-            T value,
-            Func<T, object> jsonObjectConstructor) =>
-                query.OrWhereRaw(
-                    "data @> jsonb(?)",
-                    JsonConvert.SerializeObject(
-                        jsonObjectConstructor(value)
-                    )
-                );
-
-        private static Query WhereInJsonb<T>(
-            this Query query,
-            IReadOnlyCollection<T> list,
-            Func<T, object> jsonObjectConstructor) =>
-                list.Count == 0
-                    ? query
-                    : query.Where(q =>
-                    {
-                        foreach (var item in list)
-                        {
-                            q = q.OrWhereJsonb(
-                                value: item,
-                                jsonObjectConstructor
-                            );
-                        }
-                        return q;
-                    });
-
-        private static Query DistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
-            query.WhereInJsonb(
-                list: districtlist,
-                id => new { DistrictId = id.ToUpper() }
-            );
-
         private static void DistrictWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> districtlist)
         {
@@ -927,13 +824,7 @@ namespace Helper
                     whereexpression += $" data->'LocationInfo'-> 'DistrictInfo' -> 'Id' in ({districtliststring})";
                 }
             }
-
         }
-        private static Query LocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
-            query.WhereInJsonb(
-                list: municipalitylist,
-                id => new { LocationInfo = new { MunicipalityInfo = new { Id = id.ToUpper() } } }
-            );
 
         private static void LocFilterMunicipalityWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> municipalitylist)
@@ -978,12 +869,6 @@ namespace Helper
 
         }
 
-        private static Query LocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
-            query.WhereInJsonb(
-                list: tourismvereinlist,
-                id => new { LocationInfo = new { TvInfo = new { Id = id.ToUpper() } } }
-            );
-
         private static void LocFilterTvsWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> tourismvereinlist)
         {
@@ -1026,12 +911,6 @@ namespace Helper
             }
 
         }
-
-        private static Query LocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
-            query.WhereInJsonb(
-                list: regionlist,
-                id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
-            );
 
         private static void LocFilterRegionWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> regionlist)
@@ -1077,12 +956,6 @@ namespace Helper
 
         }
 
-        private static Query AreaFilter(this Query query, IReadOnlyCollection<string> arealist) =>
-            query.WhereInJsonb(
-                list: arealist,
-                id => new { AreaId = new[] { id } }
-            );
-
         private static void AreaFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> arealist)
         {
@@ -1113,14 +986,6 @@ namespace Helper
             }
         }
 
-        private static Query HighlightFilter(this Query query, bool? highlight) =>
-            highlight == null
-                ? query
-                : query.WhereJsonb(
-                    highlight,
-                    highlight => new { Highlight = highlight }
-                );
-
         private static void HighlightFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? highlight)
         {
@@ -1139,14 +1004,6 @@ namespace Helper
                 });
             }
         }
-
-        private static Query ActiveFilter(this Query query, bool? active) =>
-            active == null
-                ? query
-                : query.WhereJsonb(
-                    active,
-                    active => new { Active = active }
-                );
 
         private static void ActiveFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? activefilter)
@@ -1167,14 +1024,6 @@ namespace Helper
             }
         }
 
-        private static Query SmgActiveFilter(this Query query, bool? smgactive) =>
-            smgactive == null ?
-                query :
-                query.WhereJsonb(
-                    smgactive,
-                    smgactive => new { SmgActive = smgactive }
-                );
-
         private static void SmgActiveFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? smgactivefilter)
         {
@@ -1193,15 +1042,6 @@ namespace Helper
                 });
             }
         }
-
-        private static Query DistanceFilter(this Query query, bool distance, int distancemin, int distancemax) =>
-            !distance
-                ? query
-                : query.WhereRaw(
-                    "(data->>'DistanceLength')::numeric > ? AND (data->>'DistanceLength')::numeric < ?",
-                    distancemin,
-                    distancemax
-                );
 
         private static void DistanceFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool distance,
@@ -1255,18 +1095,6 @@ namespace Helper
             }
         }
 
-        private static Query DurationFilter(this Query query, bool duration, double durationmin, double durationmax)
-        {
-            if (!duration)
-                return query;
-
-            return query.WhereRaw(
-                "(data->>'DistanceDuration')::numeric > ? AND (data->>'DistanceDuration')::numeric < ?",
-                durationmin,
-                durationmax
-            );
-        }
-
         private static void DurationFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters,
             bool duration, double durationmin, double durationmax)
@@ -1291,18 +1119,6 @@ namespace Helper
                     Value = durationmax.ToString()
                 });
             }
-        }
-
-        private static Query AltitudeFilter(this Query query, bool altitude, int altitudemin, int altitudemax)
-        {
-            if (!altitude)
-                return query;
-
-            return query.WhereRaw(
-                "(data->>'AltitudeDifference')::numeric > ? AND (data->>'AltitudeDifference')::numeric < ?",
-                altitudemin,
-                altitudemax
-            );
         }
 
         private static void AltitudeFilter(
@@ -1357,12 +1173,6 @@ namespace Helper
             }
         }
 
-        private static Query SmgTagFilter(this Query query, IReadOnlyCollection<string> smgtaglist) =>
-            query.WhereInJsonb(
-                smgtaglist,
-                tag => new { SmgTags = new[] { tag.ToLower() } }
-            );
-
         private static void SmgTagFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> smgtaglist)
         {
@@ -1392,25 +1202,6 @@ namespace Helper
 
                 whereexpression += smgtagliststring + ")";
             }
-        }
-
-        private static Query SearchFilter(
-            this Query query, string[] fields, string? searchfilter)
-        {
-            if (searchfilter != null && fields.Length > 0)
-            {
-                return query.Where(q =>
-                {
-                    foreach (var field in fields)
-                    {
-                        q = q.OrWhereRaw(
-                                $"data#>>'\\{{{JsonPathToPostgresArray(field)}\\}}' ILIKE ?",
-                                $"%{searchfilter}%");
-                    }
-                    return q;
-                });
-            }
-            return query;
         }
 
         private static void SearchFilterWhere(
@@ -1450,12 +1241,6 @@ namespace Helper
             }
         }
 
-        private static Query ActivityTypeFilter(this Query query, IReadOnlyCollection<string> activitytypelist) =>
-            query.WhereInJsonb(
-                list: activitytypelist,
-                type => new { Type = type }
-            );
-
         private static void ActivityTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> activitytypelist)
         {
@@ -1486,12 +1271,6 @@ namespace Helper
                 whereexpression += activitytypestring + ")";
             }
         }
-
-        private static Query ActivitySubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
-            query.WhereInJsonb(
-                list: subtypelist,
-                tag => new { SmgTags = new[] { tag.ToLower() } }
-            );
 
         private static void ActivitySubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)
@@ -1586,12 +1365,6 @@ namespace Helper
             }
         }
 
-        private static Query DifficultyFilter(this Query query, IReadOnlyCollection<string> difficultylist) =>
-            query.WhereInJsonb(
-                list: difficultylist,
-                id => new { Difficulty = id }
-            );
-
         private static void DifficultyFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> difficultylist)
         {
@@ -1654,12 +1427,6 @@ namespace Helper
             }
         }
 
-        private static Query PoiTypeFilter(this Query query, IReadOnlyCollection<string> poitypelist) =>
-            query.WhereInJsonb(
-                poitypelist,
-                poitype => new { SmgTags = new[] { poitype.ToLower() } }
-            );
-
         private static void PoiTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> poitypelist)
         {
@@ -1690,12 +1457,6 @@ namespace Helper
                 whereexpression = whereexpression + activitytypestring + ")";
             }
         }
-
-        private static Query PoiSubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
-            query.WhereInJsonb(
-                subtypelist,
-                poitype => new { SmgTags = new[] { poitype.ToLower() } }
-            );
 
         private static void PoiSubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)
