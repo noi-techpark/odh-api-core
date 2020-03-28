@@ -309,8 +309,6 @@ namespace Helper
                 language, lastchange
             );
 
-            //ActivityTypeFilterWhere(ref whereexpression, parameters, activitytypelist);
-            //ActivitySubTypeFilterWhere(ref whereexpression, parameters, subtypelist);
             //DifficultyFilterWhere(ref whereexpression, parameters, difficultylist);
             //DistanceFilterWhere(ref whereexpression, parameters, distance, distancemin, distancemax);
             //DurationFilterWhere(ref whereexpression, parameters, duration, durationmin, durationmax);
@@ -327,6 +325,8 @@ namespace Helper
                 .LocFilterTvsWhere2(tourismvereinlist)
                 .LocFilterRegionWhere2(regionlist)
                 .AreaFilterWhere2(arealist)
+                .ActivityTypeFilterWhere2(activitytypelist)
+                .ActivitySubTypeFilterWhere2(subtypelist)
                 .SearchFilterWhere2(TitleFieldsToSearchFor(language), searchfilter);
 
             //LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
@@ -834,7 +834,7 @@ namespace Helper
                     Value = updatefrom
                 });
             }
-        }     
+        }
 
         private static Query JsonbQueryHelper(
             this Query query, IReadOnlyCollection<string> list,
@@ -1386,6 +1386,12 @@ namespace Helper
             }
         }
 
+        private static Query ActivityTypeFilterWhere2(this Query query, IReadOnlyCollection<string> activitytypelist) =>
+            query.JsonbQueryHelper(
+                activitytypelist,
+                type => new { Type = type }
+            );
+
         private static void ActivityTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> activitytypelist)
         {
@@ -1416,6 +1422,12 @@ namespace Helper
                 whereexpression += activitytypestring + ")";
             }
         }
+
+        private static Query ActivitySubTypeFilterWhere2(this Query query, IReadOnlyCollection<string> subtypelist) =>
+            query.JsonbQueryHelper(
+                subtypelist,
+                tag => new { SmgTags = new[] { tag } }
+            );
 
         private static void ActivitySubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)
