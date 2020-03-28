@@ -835,6 +835,35 @@ namespace Helper
                 });
             }
         }     
+
+        private static Query JsonbQueryHelper(
+            this Query query, IReadOnlyCollection<string> list,
+            string jsonPathSelector, Func<string, object> jsonObjectConstructor)
+        {
+            if (list.Count == 0)
+            {
+                return query;
+            }
+            else if (list.Count == 1)
+            {
+                return query.WhereRaw(
+                    "data @> jsonb(?)",
+                    JsonConvert.SerializeObject(
+                        jsonObjectConstructor(list.First().ToUpper())
+                    )
+                );
+            }
+            else
+            {
+                return query.WhereRaw(
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPathSelector)}\\}}' = ANY(?)",
+                    new object[] {
+                        new[] { list.Select(district => district.ToUpper()).ToArray() }
+                    }
+                );
+            }
+        }
+
         private static Query DistrictWhere2(
             this Query query, IReadOnlyCollection<string> districtlist)
         {
@@ -1099,32 +1128,11 @@ namespace Helper
         private static Query LocFilterRegionWhere2(
             this Query query, IReadOnlyCollection<string> regionlist)
         {
-            //REGION TODO
-            if (regionlist.Count > 0)
-            {
-                //Tuning force to use GIN Index
-                if (regionlist.Count == 1)
-                {
-                    query = query.WhereRaw(
-                        "data @> jsonb(?)",
-                        JsonConvert.SerializeObject(new {
-                            LocationInfo = new {
-                                RegionInfo = new {
-                                    Id = regionlist.FirstOrDefault().ToUpper()
-                                }
-                            }
-                        })
-                    );
-                }
-                else
-                {
-                    query = query.WhereRaw(
-                        "data->'LocationInfo'->'RegionInfo'->>'Id' = ANY(?)",
-                        new[] { new[] { regionlist.Select(region => region.ToUpper()).ToArray() } }
-                    );
-                }
-            }
-            return query;
+            return query.JsonbQueryHelper(
+                regionlist,
+                "LocationInfo.RegionInfo.Id",
+                id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
+            );
         }
 
         private static void LocFilterRegionWhere(
