@@ -326,11 +326,8 @@ namespace Helper
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SmgTagFilter(smgtaglist)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter);
-
-            //LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
-
-            //return (whereexpression, parameters);
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange);
         }
 
         //Returns Where and Parameters for Poi
@@ -815,6 +812,14 @@ namespace Helper
                 }
             }
         }
+
+        private static Query LastChangedFilter(this Query query, string? updatefrom) =>
+            updatefrom == null ?
+                query :
+                query.WhereRaw(
+                    "to_date(data->>'LastChange', 'YYYY-MM-DD') > date(?)",
+                    updatefrom
+                );
 
         private static void LastChangedFilterWhere(
         ref string whereexpression, IList<PGParameters> parameters, string? updatefrom)
