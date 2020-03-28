@@ -236,6 +236,7 @@ namespace Helper
         }
 
         //Return Where and Parameters for Activity
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateActivityWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> activitytypelist,
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> difficultylist,
@@ -1072,7 +1073,7 @@ namespace Helper
         private static Query LocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
             query.WhereInJsonb(
                 list: regionlist,
-                id => new { LocationInfo = new { RegionInfo = new { Id = id.ToUpper() } } }
+                id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
             );
 
         private static void LocFilterRegionWhere(
@@ -1122,7 +1123,7 @@ namespace Helper
         private static Query AreaFilter(this Query query, IReadOnlyCollection<string> arealist) =>
             query.WhereInJsonb(
                 list: arealist,
-                id => new { AreaId = new[] { id.ToUpper() } }
+                id => new { AreaId = new[] { id } }
             );
 
         private static void AreaFilterWhere(
