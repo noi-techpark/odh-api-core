@@ -309,15 +309,6 @@ namespace Helper
                 language, lastchange
             );
 
-            //DifficultyFilterWhere(ref whereexpression, parameters, difficultylist);
-            //DistanceFilterWhere(ref whereexpression, parameters, distance, distancemin, distancemax);
-            //DurationFilterWhere(ref whereexpression, parameters, duration, durationmin, durationmax);
-            //AltitudeFilterWhere(ref whereexpression, parameters, altitude, altitudemin, altitudemax);
-            //HighlightFilterWhere(ref whereexpression, parameters, highlight);
-            //ActiveFilterWhere(ref whereexpression, parameters, activefilter);
-            //SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
-            //SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
-
             return query
                 .IdUpperFilter(idlist)
                 .DistrictFitler(districtlist)
@@ -327,6 +318,14 @@ namespace Helper
                 .AreaFilter(arealist)
                 .ActivityTypeFilter(activitytypelist)
                 .ActivitySubTypeFilter(subtypelist)
+                .DifficultyFilter(difficultylist)
+                .DistanceFilter(distance, distancemin, distancemax)
+                .DurationFilter(duration, durationmin, durationmax)
+                .AltitudeFilter(altitude, altitudemin, altitudemax)
+                .HighlightFilter(highlight)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter);
 
             //LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
@@ -836,35 +835,58 @@ namespace Helper
             }
         }
 
-        private static Query JsonbQueryHelper(
-            this Query query, IReadOnlyCollection<string> list,
-            Func<string, object> jsonObjectConstructor)
-        {
-            if (list.Count == 0)
-            {
-                return query;
-            }
-            else
-            {
-                return query.Where(q =>
-                {
-                    foreach (var item in list)
+        private static Query WhereJsonb<T>(
+            this Query query,
+            T value,
+            Func<T, object> jsonObjectConstructor) =>
+                query.WhereRaw(
+                    "data @> jsonb(?)",
+                    JsonConvert.SerializeObject(
+                        jsonObjectConstructor(value)
+                    )
+                );
+
+        private static Query OrWhereJsonb<T>(
+            this Query query,
+            T value,
+            Func<T, object> jsonObjectConstructor) =>
+                query.OrWhereRaw(
+                    "data @> jsonb(?)",
+                    JsonConvert.SerializeObject(
+                        jsonObjectConstructor(value)
+                    )
+                );
+
+        private static Query WhereInJsonb<T>(
+            this Query query,
+            IReadOnlyCollection<T> list,
+            Func<T, object> jsonObjectConstructor) =>
+                list.Count == 0
+                    ? query
+                    : query.Where(q =>
                     {
-                        q = q.OrWhereRaw(
-                            "data @> jsonb(?)",
-                            JsonConvert.SerializeObject(
-                                jsonObjectConstructor(item.ToUpper())
-                            )
-                        );
-                    }
-                    return q;
-                });
-            }
-        }
+                        foreach (var item in list)
+                        {
+                            q = q.OrWhereJsonb(
+                                value: item,
+                                jsonObjectConstructor
+                            );
+                        }
+                        return q;
+                    });
+
+        private static Query WhereInJsonbToUpper(
+            this Query query,
+            IReadOnlyCollection<string> list,
+            Func<string, object> jsonObjectConstructor) =>
+                query.WhereInJsonb(
+                    list,
+                    value => jsonObjectConstructor(value.ToUpper())
+                );
 
         private static Query DistrictFitler(this Query query, IReadOnlyCollection<string> districtlist) =>
-            query.JsonbQueryHelper(
-                districtlist,
+            query.WhereInJsonbToUpper(
+                list: districtlist,
                 id => new { DistrictId = districtlist.FirstOrDefault().ToUpper() }
             );
 
@@ -954,8 +976,8 @@ namespace Helper
 
         }
         private static Query LocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
-            query.JsonbQueryHelper(
-                municipalitylist,
+            query.WhereInJsonbToUpper(
+                list: municipalitylist,
                 id => new { LocationInfo = new { MunicipalityInfo = new { Id = municipalitylist.FirstOrDefault().ToUpper() } } }
             );
 
@@ -1003,8 +1025,8 @@ namespace Helper
         }
 
         private static Query LocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
-            query.JsonbQueryHelper(
-                tourismvereinlist,
+            query.WhereInJsonbToUpper(
+                list: tourismvereinlist,
                 id => new { LocationInfo = new { TvInfo = new { Id = tourismvereinlist.FirstOrDefault().ToUpper() } } }
             );
 
@@ -1052,8 +1074,8 @@ namespace Helper
         }
 
         private static Query LocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
-            query.JsonbQueryHelper(
-                regionlist,
+            query.WhereInJsonbToUpper(
+                list: regionlist,
                 id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
             );
 
@@ -1102,8 +1124,8 @@ namespace Helper
         }
 
         private static Query AreaFilter(this Query query, IReadOnlyCollection<string> arealist) =>
-            query.JsonbQueryHelper(
-                arealist,
+            query.WhereInJsonbToUpper(
+                list: arealist,
                 id => new { AreaId = new[] { id } }
             );
 
@@ -1137,6 +1159,14 @@ namespace Helper
             }
         }
 
+        private static Query HighlightFilter(this Query query, bool? highlight) =>
+            highlight == null
+                ? query
+                : query.WhereJsonb(
+                    highlight,
+                    highlight => new { Highlight = highlight }
+                );
+
         private static void HighlightFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? highlight)
         {
@@ -1155,6 +1185,14 @@ namespace Helper
                 });
             }
         }
+
+        private static Query ActiveFilter(this Query query, bool? active) =>
+            active == null
+                ? query
+                : query.WhereJsonb(
+                    active,
+                    active => new { Active = active }
+                );
 
         private static void ActiveFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? activefilter)
@@ -1175,6 +1213,14 @@ namespace Helper
             }
         }
 
+        private static Query SmgActiveFilter(this Query query, bool? smgactive) =>
+            smgactive == null ?
+                query :
+                query.WhereJsonb(
+                    smgactive,
+                    smgactive => new { SmgActive = smgactive }
+                );
+
         private static void SmgActiveFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? smgactivefilter)
         {
@@ -1193,6 +1239,15 @@ namespace Helper
                 });
             }
         }
+
+        private static Query DistanceFilter(this Query query, bool distance, int distancemin, int distancemax) =>
+            !distance
+                ? query
+                : query.WhereRaw(
+                    "(data->>'DistanceLength')::numeric > ? AND (data->>'DistanceLength')::numeric < ?",
+                    distancemin,
+                    distancemax
+                );
 
         private static void DistanceFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool distance,
@@ -1246,6 +1301,18 @@ namespace Helper
             }
         }
 
+        private static Query DurationFilter(this Query query, bool duration, double durationmin, double durationmax)
+        {
+            if (!duration)
+                return query;
+
+            return query.WhereRaw(
+                "(data->>'DistanceDuration')::numeric > ? AND (data->>'DistanceDuration')::numeric < ?",
+                durationmin,
+                durationmax
+            );
+        }
+
         private static void DurationFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters,
             bool duration, double durationmin, double durationmax)
@@ -1272,7 +1339,19 @@ namespace Helper
             }
         }
 
-        private static void AltitudeFilterWhere(
+        private static Query AltitudeFilter(this Query query, bool altitude, int altitudemin, int altitudemax)
+        {
+            if (!altitude)
+                return query;
+
+            return query.WhereRaw(
+                "(data->>'AltitudeDifference')::numeric > ? AND (data->>'AltitudeDifference')::numeric < ?",
+                altitudemin,
+                altitudemax
+            );
+        }
+
+        private static void AltitudeFilter(
             ref string whereexpression, IList<PGParameters> parameters,
             bool altitude, int altitudemin, int altitudemax)
         {
@@ -1298,6 +1377,37 @@ namespace Helper
             }
 
         }
+
+        private static void AltitudeFilterWhere(
+            ref string whereexpression, IList<PGParameters> parameters,
+            bool altitude, int altitudemin, int altitudemax)
+        {
+            //Altitude
+            if (altitude)
+            {
+                if (!String.IsNullOrEmpty(whereexpression))
+                    whereexpression += " AND ";
+                whereexpression += "(data ->>'Altitude')::numeric >= @altitudemin AND (data->> 'Altitude')::numeric <= @altitudemax";
+                parameters.Add(new PGParameters()
+                {
+                    Name = "altitudemin",
+                    Type = NpgsqlTypes.NpgsqlDbType.Numeric,
+                    Value = altitudemin.ToString()
+                });
+                parameters.Add(new PGParameters()
+                {
+                    Name = "altitudemax",
+                    Type = NpgsqlTypes.NpgsqlDbType.Numeric,
+                    Value = altitudemax.ToString()
+                });
+            }
+        }
+
+        private static Query SmgTagFilter(this Query query, IReadOnlyCollection<string> smgtaglist) =>
+            query.WhereInJsonb(
+                smgtaglist,
+                tag => new { SmgTags = new[] { tag.ToLower() } }
+            );
 
         private static void SmgTagFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> smgtaglist)
@@ -1387,8 +1497,8 @@ namespace Helper
         }
 
         private static Query ActivityTypeFilter(this Query query, IReadOnlyCollection<string> activitytypelist) =>
-            query.JsonbQueryHelper(
-                activitytypelist,
+            query.WhereInJsonbToUpper(
+                list: activitytypelist,
                 type => new { Type = type }
             );
 
@@ -1424,8 +1534,8 @@ namespace Helper
         }
 
         private static Query ActivitySubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
-            query.JsonbQueryHelper(
-                subtypelist,
+            query.WhereInJsonbToUpper(
+                list: subtypelist,
                 tag => new { SmgTags = new[] { tag } }
             );
 
@@ -1521,6 +1631,12 @@ namespace Helper
                 whereexpression += articlesubtypestring + ")";
             }
         }
+
+        private static Query DifficultyFilter(this Query query, IReadOnlyCollection<string> difficultylist) =>
+            query.WhereInJsonbToUpper(
+                list: difficultylist,
+                id => new { Difficulty = id }
+            );
 
         private static void DifficultyFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> difficultylist)
@@ -2477,31 +2593,6 @@ namespace Helper
                     Name = "isbookable",
                     Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
                     Value = "{ \"IsBookable\" : " + (bookable ?? false).ToString().ToLower() + " }"
-                });
-            }
-        }
-
-        private static void AltitudeFilter(
-            ref string whereexpression, IList<PGParameters> parameters,
-            bool altitude, int altitudemin, int altitudemax)
-        {
-            //Altitude
-            if (altitude)
-            {
-                if (!String.IsNullOrEmpty(whereexpression))
-                    whereexpression += " AND ";
-                whereexpression += "(data ->>'Altitude')::numeric >= @altitudemin AND (data->> 'Altitude')::numeric <= @altitudemax";
-                parameters.Add(new PGParameters()
-                {
-                    Name = "altitudemin",
-                    Type = NpgsqlTypes.NpgsqlDbType.Numeric,
-                    Value = altitudemin.ToString()
-                });
-                parameters.Add(new PGParameters()
-                {
-                    Name = "altitudemax",
-                    Type = NpgsqlTypes.NpgsqlDbType.Numeric,
-                    Value = altitudemax.ToString()
                 });
             }
         }
