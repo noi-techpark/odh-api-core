@@ -263,15 +263,15 @@ namespace Helper
             return (whereexpression, parameters);
         }
 
-
-
-
-
-
-
-
-
-
+        [System.Diagnostics.Conditional("TRACE")]
+        private static void LogMethodInfo(System.Reflection.MethodBase m, params object?[] parameters)
+        {
+            var parameterInfo =
+                m.GetParameters()
+                    .Zip(parameters)
+                    .Select((x, _) => (x.First.Name, x.Second));
+            Serilog.Log.Debug("{method}({@parameters})", m.Name, parameterInfo);
+        }
 
         //Return Where and Parameters for Activity
         public static Query ActivityWhereExpression(
@@ -285,10 +285,21 @@ namespace Helper
             int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
             string? language, string? lastchange)
         {
-            //DistrictWhere(ref whereexpression, parameters, districtlist);
-            //LocFilterMunicipalityWhere(ref whereexpression, parameters, municipalitylist);
-            //LocFilterTvsWhere(ref whereexpression, parameters, tourismvereinlist);
-            //LocFilterRegionWhere(ref whereexpression, parameters, regionlist);
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, activitytypelist,
+                subtypelist, difficultylist,
+                smgtaglist, districtlist,
+                municipalitylist, tourismvereinlist,
+                regionlist, arealist, distance, distancemin,
+                distancemax, duration, durationmin,
+                durationmax, altitude, altitudemin,
+                altitudemax, highlight, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+            
             //AreaFilterWhere(ref whereexpression, parameters, arealist);
             //ActivityTypeFilterWhere(ref whereexpression, parameters, activitytypelist);
             //ActivitySubTypeFilterWhere(ref whereexpression, parameters, subtypelist);
@@ -319,6 +330,17 @@ namespace Helper
             IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
             bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
         {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                idlist, poitypelist,
+                subtypelist, smgtaglist,
+                districtlist, municipalitylist,
+                tourismvereinlist, regionlist,
+                arealist, highlight, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
             string whereexpression = "";
             List<PGParameters> parameters = new List<PGParameters>();
 
