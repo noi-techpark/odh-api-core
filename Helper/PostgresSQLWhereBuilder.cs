@@ -692,40 +692,16 @@ namespace Helper
             //IDLIST
             if (idlist.Count > 0)
             {
+                //Tuning force to use GIN Index
                 if (idlist.Count == 1)
                 {
                     query = query.Where("id", "LIKE", idlist.FirstOrDefault().ToUpper());
-                    //whereexpression = $"{whereexpression}id LIKE @id";
-                    //parameters.Add(new PGParameters()
-                    //{
-                    //    Name = "id",
-                    //    Type = NpgsqlTypes.NpgsqlDbType.Text,
-                    //    Value = idlist.FirstOrDefault().ToUpper()
-                    //});
                 }
                 else
                 {
                     query = query.WhereIn("id", idlist.Select(id => id.ToUpper()));
-
-                    //string idliststring = "";
-                    //int counter = 1;
-                    //foreach (var activityid in idlist)
-                    //{
-                    //    idliststring += $"@id{counter}, ";
-                    //    parameters.Add(new PGParameters()
-                    //    {
-                    //        Name = "id" + counter,
-                    //        Type = NpgsqlTypes.NpgsqlDbType.Text,
-                    //        Value = activityid.ToUpper()
-                    //    });
-                    //    counter++;
-                    //}
-                    //idliststring = idliststring.Remove(idliststring.Length - 2);
-
-                    //whereexpression = $"{whereexpression}id in ({idliststring})";
                 }
             }
-
             return query;
         }
 
@@ -857,9 +833,6 @@ namespace Helper
             //DISTRICT
             if (districtlist.Count > 0)
             {
-                //if (!String.IsNullOrEmpty(whereexpression))
-                //    whereexpression += " AND ";
-
                 //Tuning force to use GIN Index
                 if (districtlist.Count == 1)
                 {
@@ -869,14 +842,6 @@ namespace Helper
                             DistrictId = districtlist.FirstOrDefault().ToUpper()
                         })
                     );
-
-                    //whereexpression += "data @> @districtid";
-                    //parameters.Add(new PGParameters()
-                    //{
-                    //    Name = "districtid",
-                    //    Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
-                    //    Value = "{\"DistrictId\" : \"" + districtlist.FirstOrDefault().ToUpper() + "\" }"
-                    //});
                 }
                 else
                 {
@@ -884,26 +849,8 @@ namespace Helper
                         "data->>'DistrictId'",
                         new[] { new[] { districtlist.Select(district => district.ToUpper()).ToArray() } }
                     );
-
-                    //string districtliststring = "";
-                    //int counter = 1;
-                    //foreach (var distid in districtlist)
-                    //{
-                    //    districtliststring = districtliststring + "@districtid" + counter + ",";
-                    //    parameters.Add(new PGParameters()
-                    //    {
-                    //        Name = "districtid" + counter,
-                    //        Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
-                    //        Value = "\"" + distid.ToUpper() + "\""
-                    //    });
-                    //    counter++;
-                    //}
-                    //districtliststring = districtliststring.Remove(districtliststring.Length - 1);
-
-                    //whereexpression = $"{whereexpression}data->'DistrictId' IN ({districtliststring})";
                 }
             }
-
             return query;
         }
 
@@ -998,9 +945,6 @@ namespace Helper
             //MUNICIPALITY
             if (municipalitylist.Count > 0)
             {
-                //if (!String.IsNullOrEmpty(whereexpression))
-                //    whereexpression += " AND ";
-
                 //Tuning force to use GIN Index
                 if (municipalitylist.Count == 1)
                 {
@@ -1014,12 +958,6 @@ namespace Helper
                             }
                         })
                     );
-                //    whereexpression += "data @> @municipalityid";
-                //    parameters.Add(new PGParameters()
-                //    {
-                //        Name = "municipalityid",
-                //        Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
-                //        Value = "{\"LocationInfo\" : { \"MunicipalityInfo\": { \"Id\": \"" + municipalitylist.FirstOrDefault().ToUpper() + "\" } } }"
                 //    });
                 }
                 else
@@ -1028,26 +966,8 @@ namespace Helper
                         "data->'LocationInfo->'MunicipalityInfo'->'Id' = ANY(?)",
                         new[] { new[] { municipalitylist.Select(m => m.ToUpper()).ToArray() } }
                     );
-
-                //    string municipalityliststring = "";
-                //    int counter = 1;
-                //    foreach (var munid in municipalitylist)
-                //    {
-                //        municipalityliststring += $"@municipalityid{counter},";
-                //        parameters.Add(new PGParameters()
-                //        {
-                //            Name = "municipalityid" + counter,
-                //            Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
-                //            Value = "\"" + munid.ToUpper() + "\""
-                //        });
-                //        counter++;
-                //    }
-                //    municipalityliststring = municipalityliststring.Remove(municipalityliststring.Length - 1);
-
-                //    whereexpression += $" data->'LocationInfo'-> 'MunicipalityInfo' -> 'Id' in ({municipalityliststring})";
                 }
             }
-
             return query;
         }
 
@@ -1100,9 +1020,6 @@ namespace Helper
             //TOURISMVEREIN
             if (tourismvereinlist.Count > 0)
             {
-                //if (!String.IsNullOrEmpty(whereexpression))
-                //    whereexpression = whereexpression + " AND ";
-
                 //Tuning force to use GIN Index
                 if (tourismvereinlist.Count == 1)
                 {
@@ -1116,14 +1033,6 @@ namespace Helper
                             }
                         })
                     );
-
-                    //whereexpression = whereexpression + "data @> @tourismvereinid";
-                    //parameters.Add(new PGParameters()
-                    //{
-                    //    Name = "tourismvereinid",
-                    //    Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
-                    //    Value = $"{{\"LocationInfo\" : {{ \"TvInfo\": {{ \"Id\": \"{tourismvereinlist.FirstOrDefault().ToUpper()}\" }} }} }}"
-                    //});
                 }
                 else
                 {
@@ -1131,26 +1040,8 @@ namespace Helper
                         "data->'LocationInfo'->'TvInfo'->>'Id' = ANY(?)",
                         new[] { new[] { tourismvereinlist.Select(region => region.ToUpper()).ToArray() } }
                     );
-
-                    //string tvliststring = "";
-                    //int counter = 1;
-                    //foreach (var tvid in tourismvereinlist)
-                    //{
-                    //    tvliststring = tvliststring + "@tourismvereinid" + counter + ",";
-                    //    parameters.Add(new PGParameters()
-                    //    {
-                    //        Name = "tourismvereinid" + counter,
-                    //        Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
-                    //        Value = "\"" + tvid.ToUpper() + "\""
-                    //    });
-                    //    counter++;
-                    //}
-                    //tvliststring = tvliststring.Remove(tvliststring.Length - 1);
-
-                    //whereexpression += $" data->'LocationInfo'-> 'TvInfo' -> 'Id' in ({tvliststring})";
                 }
             }
-
             return query;
         }
 
@@ -1203,9 +1094,6 @@ namespace Helper
             //REGION TODO
             if (regionlist.Count > 0)
             {
-                //if (!String.IsNullOrEmpty(whereexpression))
-                //    whereexpression = whereexpression + " AND ";
-
                 //Tuning force to use GIN Index
                 if (regionlist.Count == 1)
                 {
@@ -1219,14 +1107,6 @@ namespace Helper
                             }
                         })
                     );
-
-                //    whereexpression = whereexpression + "data @> @regionid";
-                //    parameters.Add(new PGParameters()
-                //    {
-                //        Name = "regionid",
-                //        Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
-                //        Value = $"{{\"LocationInfo\" : {{ \"RegionInfo\": {{ \"Id\": \"{regionlist.FirstOrDefault()}\" }} }} }}"
-                //    });
                 }
                 else
                 {
@@ -1234,26 +1114,8 @@ namespace Helper
                         "data->'LocationInfo'->'RegionInfo'->>'Id' = ANY(?)",
                         new[] { new[] { regionlist.Select(region => region.ToUpper()).ToArray() } }
                     );
-
-                //    string regionliststring = "";
-                //    int counter = 1;
-                //    foreach (var regid in regionlist)
-                //    {
-                //        regionliststring = regionliststring + "@regionid" + counter + ",";
-                //        parameters.Add(new PGParameters()
-                //        {
-                //            Name = "regionid" + counter,
-                //            Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
-                //            Value = "\"" + regid.ToUpper() + "\""
-                //        });
-                //        counter++;
-                //    }
-                //    regionliststring = regionliststring.Remove(regionliststring.Length - 1);
-
-                //    whereexpression += $" data->'LocationInfo'-> 'RegionInfo' -> 'Id' in ({regionliststring})";
                 }
             }
-
             return query;
         }
 
