@@ -883,7 +883,7 @@ namespace Helper
         private static Query DistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.WhereInJsonb(
                 list: districtlist,
-                id => new { DistrictId = id }
+                id => new { DistrictId = id.ToUpper() }
             );
 
         private static void DistrictWhere(
