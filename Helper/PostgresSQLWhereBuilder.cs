@@ -293,7 +293,46 @@ namespace Helper
                 .LastChangedFilter(lastchange);
         }
 
+        public static Query PoiWhereExpression(
+            this Query query,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> poitypelist,
+            IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
+            IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
+            IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
+            IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
+            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                idlist, poitypelist,
+                subtypelist, smgtaglist,
+                districtlist, municipalitylist,
+                tourismvereinlist, regionlist,
+                arealist, highlight, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .DistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .AreaFilter(arealist)
+                .PoiTypeFilter(poitypelist)
+                .PoiSubTypeFilter(subtypelist)
+                .SmgTagFilter(smgtaglist)
+                .HighlightFilter(highlight)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange);
+        }
+
+
         //Returns Where and Parameters for Poi
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreatePoiWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> poitypelist,
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
@@ -1659,6 +1698,12 @@ namespace Helper
             }
         }
 
+        private static Query PoiTypeFilter(this Query query, IReadOnlyCollection<string> poitypelist) =>
+            query.WhereInJsonb(
+                poitypelist,
+                poitype => new { SmgTags = new[] { poitype.ToLower() } }
+            );
+
         private static void PoiTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> poitypelist)
         {
@@ -1689,6 +1734,12 @@ namespace Helper
                 whereexpression = whereexpression + activitytypestring + ")";
             }
         }
+
+        private static Query PoiSubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
+            query.WhereInJsonb(
+                subtypelist,
+                poitype => new { SmgTags = new[] { poitype.ToLower() } }
+            );
 
         private static void PoiSubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)

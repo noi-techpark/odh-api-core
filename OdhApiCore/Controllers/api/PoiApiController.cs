@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Responses;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -167,39 +169,48 @@ namespace OdhApiCore.Controllers.api
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
                     smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 
-                string select = "*";
-                string orderby = "";
+                var connection = await connectionFactory.GetConnection(cancellationToken);
+                var compiler = new PostgresCompiler();
+                var query =
+                    new XQuery(connection, compiler)
+                        .SelectRaw("data")
+                        .From("pois")
+                        .PoiWhereExpression(
+                            idlist: myactivityhelper.idlist, poitypelist: myactivityhelper.poitypelist,
+                            subtypelist: myactivityhelper.subtypelist, smgtaglist: myactivityhelper.smgtaglist,
+                            districtlist: new List<string>(), municipalitylist: new List<string>(),
+                            tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
+                            arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
+                            activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange
+                        )
+                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                        .GeoSearchFilterAndOrderby(geosearchresult);
 
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreatePoiWhereExpression(
-                    idlist: myactivityhelper.idlist, poitypelist: myactivityhelper.poitypelist,
-                    subtypelist: myactivityhelper.subtypelist, smgtaglist: myactivityhelper.smgtaglist,
-                    districtlist: new List<string>(), municipalitylist: new List<string>(),
-                    tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
-                    arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
-                    activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                    searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange);
+                // Logging
+                var info = compiler.Compile(query);
+                Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
 
-                //Build Orderby
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: (int)pagesize);
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License)
+                    );
 
-                uint pageskip = pagesize * (pagenumber - 1);
-
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "pois", select, (whereexpression, parameters), orderby, pagesize, pageskip,
-                    cancellationToken);
-
-                uint totalcount = (uint)totalCount;
-                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
 
                 return ResponseHelpers.GetResult(
                     pagenumber,
                     totalpages,
                     totalcount,
-                    myseed,
+                    seed,
                     dataTransformed,
                     Url);
             });

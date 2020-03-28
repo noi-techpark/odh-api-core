@@ -105,20 +105,28 @@ namespace OdhApiCore.Controllers.api
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
 
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreatePoiWhereExpression(
-                    idlist: mypoihelper.idlist, poitypelist: mypoihelper.poitypelist, subtypelist: mypoihelper.subtypelist,
-                    smgtaglist: mypoihelper.smgtaglist, districtlist: new List<string>(), municipalitylist: new List<string>(),
-                    tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
-                    arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
-                    smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null);
+                var connection = await connectionFactory.GetConnection(cancellationToken);
+                var compiler = new PostgresCompiler();
+                var query =
+                    new XQuery(connection, compiler)
+                        .SelectRaw(select)
+                        .From("activities")
+                        .PoiWhereExpression(
+                            idlist: mypoihelper.idlist, poitypelist: mypoihelper.poitypelist, subtypelist: mypoihelper.subtypelist,
+                            smgtaglist: mypoihelper.smgtaglist, districtlist: new List<string>(), municipalitylist: new List<string>(),
+                            tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
+                            arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
+                            smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null
+                        )
+                        .OrderByRaw(orderby)
+                        .GeoSearchFilterAndOrderby(geosearchresult);
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
+                // Logging
+                var info = compiler.Compile(query);
+                Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
 
-                var data = await PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedAsync(
-                    connectionFactory, "pois", select, (whereexpression, parameters), orderby, 0, null,
-                    new List<string>() { "Id", "Name" }, cancellationToken).ToListAsync();
-
-                return data;
+                // Get paginated data
+                return await query.GetAsync<ResultReduced>();
             });
         }
 
