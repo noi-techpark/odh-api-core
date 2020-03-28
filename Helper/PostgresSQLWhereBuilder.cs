@@ -28,6 +28,14 @@ namespace Helper
                 $"Detail.{lang}.Title"
             ).ToArray();
 
+        /// <summary>
+        /// Convert a (simple) JsonPath path to a Postgres array,
+        /// which can be used in the #>> operator.<br />
+        /// E.g. Detail.de.Title => Detail,de,Title
+        /// </summary>
+        private static string JsonPathToPostgresArray(string field) =>
+            field.Replace('.', ',');
+
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
             language = language.ToLower();
@@ -1389,14 +1397,6 @@ namespace Helper
         private static Query SearchFilterWhere2(
             this Query query, string[] fields, string? searchfilter)
         {
-            /// <summary>
-            /// Convert a (simple) JsonPath path to a Postgres array,
-            /// which can be used in the #>> operator.<br />
-            /// E.g. Detail.de.Title => Detail,de,Title
-            /// </summary>
-            static string JsonPathToPostgresArray(string field) =>
-                field.Replace('.', ',');
-
             if (searchfilter != null && fields.Length > 0)
             {
                 return query.Where(q =>
