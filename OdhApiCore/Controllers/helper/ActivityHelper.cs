@@ -96,18 +96,26 @@ namespace OdhApiCore.Controllers
                 tourismvereinlist = CommonListCreator.CreateDistrictIdList(locfilter, "tvs");
 
             if (tourismusvereinids != null)
-                tourismvereinlist.AddRange(tourismusvereinids);        
+                tourismvereinlist.AddRange(tourismusvereinids);
 
             //Distance
-            var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
-            distancemin = min * 1000;
-            distancemax = max * 1000;
+            distance = distancefilter != null;
+            if (distance)
+            {
+                var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
+                distancemin = min * 1000;
+                distancemax = max * 1000;
+            }
 
             //Altitude
-            (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
+            altitude = altitudefilter != null;
+            if (altitude)
+                (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
 
             //Duration
-            (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
+            duration = durationfilter != null;
+            if (duration)
+                (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
 
             //highlight
             highlight = highlightfilter;
