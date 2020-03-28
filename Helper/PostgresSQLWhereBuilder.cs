@@ -311,7 +311,7 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .DistrictFitler(districtlist)
+                .DistrictFilter(districtlist)
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
@@ -880,7 +880,7 @@ namespace Helper
                         return q;
                     });
 
-        private static Query DistrictFitler(this Query query, IReadOnlyCollection<string> districtlist) =>
+        private static Query DistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.WhereInJsonb(
                 list: districtlist,
                 id => new { DistrictId = id }
