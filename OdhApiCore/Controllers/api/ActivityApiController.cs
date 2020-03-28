@@ -179,8 +179,6 @@ namespace OdhApiCore.Controllers
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange,
                     cancellationToken);
 
-                string? orderby = null;
-
                 var connection = await connectionFactory.GetConnection(cancellationToken);
                 var compiler = new PostgresCompiler();
                 var query =
@@ -200,7 +198,7 @@ namespace OdhApiCore.Controllers
                         searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange)
                     .SelectRaw("data")
                     .From("activities")
-                    .OrderByRaw(orderby ?? "id asc");
+                    .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Logging
                 var info = compiler.Compile(query);

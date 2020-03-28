@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Npgsql;
+using SqlKata;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -1192,6 +1193,26 @@ namespace Helper
                         geosearchresult.longitude);
                 }
             }
+        }
+
+        public static Query GeoSearchFilterAndOrderby(
+            this Query query,
+            PGGeoSearchResult geosearchresult)
+        {
+            if (geosearchresult == null || !geosearchresult.geosearch)
+                return query;
+
+            return
+                query.WhereRaw(
+                        GetGeoWhereExtended(
+                            geosearchresult.latitude,
+                            geosearchresult.longitude,
+                            geosearchresult.radius)
+                    ).OrderByRaw(
+                        GetGeoOrderByExtended(
+                            geosearchresult.latitude,
+                            geosearchresult.longitude)
+                    );
         }
 
         //For Activities Pois and GBActivityPoi
