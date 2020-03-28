@@ -1,5 +1,6 @@
 ﻿using Helper;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,8 +22,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, logger, connectionFactory)
+        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory)
+            : base(env, settings, logger, connectionFactory)
         {
         }
 
