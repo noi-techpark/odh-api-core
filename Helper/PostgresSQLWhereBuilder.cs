@@ -319,15 +319,15 @@ namespace Helper
             //SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
 
             return query
-                .IdUpperFilterWhere2(idlist)
-                .DistrictWhere2(districtlist)
-                .LocFilterMunicipalityWhere2(municipalitylist)
-                .LocFilterTvsWhere2(tourismvereinlist)
-                .LocFilterRegionWhere2(regionlist)
-                .AreaFilterWhere2(arealist)
-                .ActivityTypeFilterWhere2(activitytypelist)
-                .ActivitySubTypeFilterWhere2(subtypelist)
-                .SearchFilterWhere2(TitleFieldsToSearchFor(language), searchfilter);
+                .IdUpperFilter(idlist)
+                .DistrictFitler(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .AreaFilter(arealist)
+                .ActivityTypeFilter(activitytypelist)
+                .ActivitySubTypeFilter(subtypelist)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter);
 
             //LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
 
@@ -694,7 +694,7 @@ namespace Helper
 
         #endregion
 
-        private static Query IdUpperFilterWhere2(
+        private static Query IdUpperFilter(
             this Query query, IReadOnlyCollection<string> idlist)
         {
             //IDLIST
@@ -862,7 +862,7 @@ namespace Helper
             }
         }
 
-        private static Query DistrictWhere2(this Query query, IReadOnlyCollection<string> districtlist) =>
+        private static Query DistrictFitler(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.JsonbQueryHelper(
                 districtlist,
                 id => new { DistrictId = districtlist.FirstOrDefault().ToUpper() }
@@ -953,7 +953,7 @@ namespace Helper
             }
 
         }
-        private static Query LocFilterMunicipalityWhere2(this Query query, IReadOnlyCollection<string> municipalitylist) =>
+        private static Query LocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
             query.JsonbQueryHelper(
                 municipalitylist,
                 id => new { LocationInfo = new { MunicipalityInfo = new { Id = municipalitylist.FirstOrDefault().ToUpper() } } }
@@ -1002,7 +1002,7 @@ namespace Helper
 
         }
 
-        private static Query LocFilterTvsWhere2(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
+        private static Query LocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
             query.JsonbQueryHelper(
                 tourismvereinlist,
                 id => new { LocationInfo = new { TvInfo = new { Id = tourismvereinlist.FirstOrDefault().ToUpper() } } }
@@ -1051,7 +1051,7 @@ namespace Helper
 
         }
 
-        private static Query LocFilterRegionWhere2(this Query query, IReadOnlyCollection<string> regionlist) =>
+        private static Query LocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
             query.JsonbQueryHelper(
                 regionlist,
                 id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
@@ -1101,7 +1101,7 @@ namespace Helper
 
         }
 
-        private static Query AreaFilterWhere2(this Query query, IReadOnlyCollection<string> arealist) =>
+        private static Query AreaFilter(this Query query, IReadOnlyCollection<string> arealist) =>
             query.JsonbQueryHelper(
                 arealist,
                 id => new { AreaId = new[] { id } }
@@ -1330,7 +1330,7 @@ namespace Helper
             }
         }
 
-        private static Query SearchFilterWhere2(
+        private static Query SearchFilter(
             this Query query, string[] fields, string? searchfilter)
         {
             if (searchfilter != null && fields.Length > 0)
@@ -1386,7 +1386,7 @@ namespace Helper
             }
         }
 
-        private static Query ActivityTypeFilterWhere2(this Query query, IReadOnlyCollection<string> activitytypelist) =>
+        private static Query ActivityTypeFilter(this Query query, IReadOnlyCollection<string> activitytypelist) =>
             query.JsonbQueryHelper(
                 activitytypelist,
                 type => new { Type = type }
@@ -1423,7 +1423,7 @@ namespace Helper
             }
         }
 
-        private static Query ActivitySubTypeFilterWhere2(this Query query, IReadOnlyCollection<string> subtypelist) =>
+        private static Query ActivitySubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
             query.JsonbQueryHelper(
                 subtypelist,
                 tag => new { SmgTags = new[] { tag } }
