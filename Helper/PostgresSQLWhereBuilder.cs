@@ -867,28 +867,11 @@ namespace Helper
         private static Query DistrictWhere2(
             this Query query, IReadOnlyCollection<string> districtlist)
         {
-            //DISTRICT
-            if (districtlist.Count > 0)
-            {
-                //Tuning force to use GIN Index
-                if (districtlist.Count == 1)
-                {
-                    query = query.WhereRaw(
-                        "data @> jsonb(?)",
-                        JsonConvert.SerializeObject(new {
-                            DistrictId = districtlist.FirstOrDefault().ToUpper()
-                        })
-                    );
-                }
-                else
-                {
-                    query = query.WhereRaw(
-                        "data->>'DistrictId' = ANY(?)",
-                        new[] { new[] { districtlist.Select(district => district.ToUpper()).ToArray() } }
-                    );
-                }
-            }
-            return query;
+            return query.JsonbQueryHelper(
+                districtlist,
+                "DistrictId",
+                id => new { DistrictId = districtlist.FirstOrDefault().ToUpper() }
+            );
         }
 
         private static void DistrictWhere(
@@ -979,33 +962,11 @@ namespace Helper
         private static Query LocFilterMunicipalityWhere2(
             this Query query, IReadOnlyCollection<string> municipalitylist)
         {
-            //MUNICIPALITY
-            if (municipalitylist.Count > 0)
-            {
-                //Tuning force to use GIN Index
-                if (municipalitylist.Count == 1)
-                {
-                    query = query.WhereRaw(
-                        "data @> jsonb(?)",
-                        JsonConvert.SerializeObject(new {
-                            LocationInfo = new {
-                                MunicipalityInfo = new {
-                                    Id = municipalitylist.FirstOrDefault().ToUpper()
-                                }
-                            }
-                        })
-                    );
-                //    });
-                }
-                else
-                {
-                    query = query.WhereRaw(
-                        "data->'LocationInfo->'MunicipalityInfo'->'Id' = ANY(?)",
-                        new[] { new[] { municipalitylist.Select(m => m.ToUpper()).ToArray() } }
-                    );
-                }
-            }
-            return query;
+            return query.JsonbQueryHelper(
+                municipalitylist,
+                "LocationInfo.MunicipalityInfo.Id",
+                id => new { LocationInfo = new { MunicipalityInfo = new { Id = municipalitylist.FirstOrDefault().ToUpper() } } }
+            );
         }
 
         private static void LocFilterMunicipalityWhere(
@@ -1054,32 +1015,11 @@ namespace Helper
         private static Query LocFilterTvsWhere2(
             this Query query, IReadOnlyCollection<string> tourismvereinlist)
         {
-            //TOURISMVEREIN
-            if (tourismvereinlist.Count > 0)
-            {
-                //Tuning force to use GIN Index
-                if (tourismvereinlist.Count == 1)
-                {
-                    query = query.WhereRaw(
-                        "data @> jsonb(?)",
-                        JsonConvert.SerializeObject(new {
-                            LocationInfo = new {
-                                TvInfo = new {
-                                    Id = tourismvereinlist.FirstOrDefault().ToUpper()
-                                }
-                            }
-                        })
-                    );
-                }
-                else
-                {
-                    query = query.WhereRaw(
-                        "data->'LocationInfo'->'TvInfo'->>'Id' = ANY(?)",
-                        new[] { new[] { tourismvereinlist.Select(region => region.ToUpper()).ToArray() } }
-                    );
-                }
-            }
-            return query;
+            return query.JsonbQueryHelper(
+                tourismvereinlist,
+                "LocationInfo.TvInfo.Id",
+                id => new { LocationInfo = new { TvInfo = new { Id = tourismvereinlist.FirstOrDefault().ToUpper() } } }
+            );
         }
 
         private static void LocFilterTvsWhere(
