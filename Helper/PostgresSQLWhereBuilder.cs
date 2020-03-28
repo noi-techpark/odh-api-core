@@ -846,7 +846,7 @@ namespace Helper
                 else
                 {
                     query = query.WhereRaw(
-                        "data->>'DistrictId'",
+                        "data->>'DistrictId' = ANY(?)",
                         new[] { new[] { districtlist.Select(district => district.ToUpper()).ToArray() } }
                     );
                 }
