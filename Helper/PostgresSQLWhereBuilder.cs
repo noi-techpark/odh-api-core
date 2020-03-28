@@ -1,4 +1,5 @@
-﻿using SqlKata;
+﻿using Newtonsoft.Json;
+using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 using SqlKata.Extensions;
@@ -314,6 +315,10 @@ namespace Helper
 
             return query
                 .IdUpperFilterWhere2(idlist)
+                .DistrictWhere2(districtlist)
+                .LocFilterMunicipalityWhere2(municipalitylist)
+                .LocFilterTvsWhere2(tourismvereinlist)
+                .LocFilterRegionWhere2(regionlist)
                 .SearchFilterWhere2(TitleFieldsToSearchFor(language), searchfilter);
 
             //LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
@@ -846,6 +851,61 @@ namespace Helper
                 });
             }
         }     
+        private static Query DistrictWhere2(
+            this Query query, IReadOnlyCollection<string> districtlist)
+        {
+            //DISTRICT
+            if (districtlist.Count > 0)
+            {
+                //if (!String.IsNullOrEmpty(whereexpression))
+                //    whereexpression += " AND ";
+
+                //Tuning force to use GIN Index
+                if (districtlist.Count == 1)
+                {
+                    query = query.WhereRaw(
+                        "data @> jsonb(?)",
+                        JsonConvert.SerializeObject(new {
+                            DistrictId = districtlist.FirstOrDefault().ToUpper()
+                        })
+                    );
+
+                    //whereexpression += "data @> @districtid";
+                    //parameters.Add(new PGParameters()
+                    //{
+                    //    Name = "districtid",
+                    //    Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                    //    Value = "{\"DistrictId\" : \"" + districtlist.FirstOrDefault().ToUpper() + "\" }"
+                    //});
+                }
+                else
+                {
+                    query = query.WhereRaw(
+                        "data->>'DistrictId'",
+                        new[] { new[] { districtlist.Select(district => district.ToUpper()).ToArray() } }
+                    );
+
+                    //string districtliststring = "";
+                    //int counter = 1;
+                    //foreach (var distid in districtlist)
+                    //{
+                    //    districtliststring = districtliststring + "@districtid" + counter + ",";
+                    //    parameters.Add(new PGParameters()
+                    //    {
+                    //        Name = "districtid" + counter,
+                    //        Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                    //        Value = "\"" + distid.ToUpper() + "\""
+                    //    });
+                    //    counter++;
+                    //}
+                    //districtliststring = districtliststring.Remove(districtliststring.Length - 1);
+
+                    //whereexpression = $"{whereexpression}data->'DistrictId' IN ({districtliststring})";
+                }
+            }
+
+            return query;
+        }
 
         private static void DistrictWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> districtlist)
@@ -932,6 +992,64 @@ namespace Helper
             }
 
         }
+        private static Query LocFilterMunicipalityWhere2(
+            this Query query, IReadOnlyCollection<string> municipalitylist)
+        {
+            //MUNICIPALITY
+            if (municipalitylist.Count > 0)
+            {
+                //if (!String.IsNullOrEmpty(whereexpression))
+                //    whereexpression += " AND ";
+
+                //Tuning force to use GIN Index
+                if (municipalitylist.Count == 1)
+                {
+                    query = query.WhereRaw(
+                        "data @> jsonb(?)",
+                        JsonConvert.SerializeObject(new {
+                            LocationInfo = new {
+                                MunicipalityInfo = new {
+                                    Id = municipalitylist.FirstOrDefault().ToUpper()
+                                }
+                            }
+                        })
+                    );
+                //    whereexpression += "data @> @municipalityid";
+                //    parameters.Add(new PGParameters()
+                //    {
+                //        Name = "municipalityid",
+                //        Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                //        Value = "{\"LocationInfo\" : { \"MunicipalityInfo\": { \"Id\": \"" + municipalitylist.FirstOrDefault().ToUpper() + "\" } } }"
+                //    });
+                }
+                else
+                {
+                    query = query.WhereRaw(
+                        "data->'LocationInfo->'MunicipalityInfo'->'Id' = ANY(?)",
+                        new[] { new[] { municipalitylist.Select(m => m.ToUpper()).ToArray() } }
+                    );
+
+                //    string municipalityliststring = "";
+                //    int counter = 1;
+                //    foreach (var munid in municipalitylist)
+                //    {
+                //        municipalityliststring += $"@municipalityid{counter},";
+                //        parameters.Add(new PGParameters()
+                //        {
+                //            Name = "municipalityid" + counter,
+                //            Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                //            Value = "\"" + munid.ToUpper() + "\""
+                //        });
+                //        counter++;
+                //    }
+                //    municipalityliststring = municipalityliststring.Remove(municipalityliststring.Length - 1);
+
+                //    whereexpression += $" data->'LocationInfo'-> 'MunicipalityInfo' -> 'Id' in ({municipalityliststring})";
+                }
+            }
+
+            return query;
+        }
 
         private static void LocFilterMunicipalityWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> municipalitylist)
@@ -976,6 +1094,66 @@ namespace Helper
 
         }
 
+        private static Query LocFilterTvsWhere2(
+            this Query query, IReadOnlyCollection<string> tourismvereinlist)
+        {
+            //TOURISMVEREIN
+            if (tourismvereinlist.Count > 0)
+            {
+                //if (!String.IsNullOrEmpty(whereexpression))
+                //    whereexpression = whereexpression + " AND ";
+
+                //Tuning force to use GIN Index
+                if (tourismvereinlist.Count == 1)
+                {
+                    query = query.WhereRaw(
+                        "data @> jsonb(?)",
+                        JsonConvert.SerializeObject(new {
+                            LocationInfo = new {
+                                TvInfo = new {
+                                    Id = tourismvereinlist.FirstOrDefault().ToUpper()
+                                }
+                            }
+                        })
+                    );
+
+                    //whereexpression = whereexpression + "data @> @tourismvereinid";
+                    //parameters.Add(new PGParameters()
+                    //{
+                    //    Name = "tourismvereinid",
+                    //    Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                    //    Value = $"{{\"LocationInfo\" : {{ \"TvInfo\": {{ \"Id\": \"{tourismvereinlist.FirstOrDefault().ToUpper()}\" }} }} }}"
+                    //});
+                }
+                else
+                {
+                    query = query.WhereRaw(
+                        "data->'LocationInfo'->'TvInfo'->>'Id' = ANY(?)",
+                        new[] { new[] { tourismvereinlist.Select(region => region.ToUpper()).ToArray() } }
+                    );
+
+                    //string tvliststring = "";
+                    //int counter = 1;
+                    //foreach (var tvid in tourismvereinlist)
+                    //{
+                    //    tvliststring = tvliststring + "@tourismvereinid" + counter + ",";
+                    //    parameters.Add(new PGParameters()
+                    //    {
+                    //        Name = "tourismvereinid" + counter,
+                    //        Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                    //        Value = "\"" + tvid.ToUpper() + "\""
+                    //    });
+                    //    counter++;
+                    //}
+                    //tvliststring = tvliststring.Remove(tvliststring.Length - 1);
+
+                    //whereexpression += $" data->'LocationInfo'-> 'TvInfo' -> 'Id' in ({tvliststring})";
+                }
+            }
+
+            return query;
+        }
+
         private static void LocFilterTvsWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> tourismvereinlist)
         {
@@ -1017,6 +1195,66 @@ namespace Helper
                 }
             }
 
+        }
+
+        private static Query LocFilterRegionWhere2(
+            this Query query, IReadOnlyCollection<string> regionlist)
+        {
+            //REGION TODO
+            if (regionlist.Count > 0)
+            {
+                //if (!String.IsNullOrEmpty(whereexpression))
+                //    whereexpression = whereexpression + " AND ";
+
+                //Tuning force to use GIN Index
+                if (regionlist.Count == 1)
+                {
+                    query = query.WhereRaw(
+                        "data @> jsonb(?)",
+                        JsonConvert.SerializeObject(new {
+                            LocationInfo = new {
+                                RegionInfo = new {
+                                    Id = regionlist.FirstOrDefault().ToUpper()
+                                }
+                            }
+                        })
+                    );
+
+                //    whereexpression = whereexpression + "data @> @regionid";
+                //    parameters.Add(new PGParameters()
+                //    {
+                //        Name = "regionid",
+                //        Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                //        Value = $"{{\"LocationInfo\" : {{ \"RegionInfo\": {{ \"Id\": \"{regionlist.FirstOrDefault()}\" }} }} }}"
+                //    });
+                }
+                else
+                {
+                    query = query.WhereRaw(
+                        "data->'LocationInfo'->'RegionInfo'->>'Id' = ANY(?)",
+                        new[] { new[] { regionlist.Select(region => region.ToUpper()).ToArray() } }
+                    );
+
+                //    string regionliststring = "";
+                //    int counter = 1;
+                //    foreach (var regid in regionlist)
+                //    {
+                //        regionliststring = regionliststring + "@regionid" + counter + ",";
+                //        parameters.Add(new PGParameters()
+                //        {
+                //            Name = "regionid" + counter,
+                //            Type = NpgsqlTypes.NpgsqlDbType.Jsonb,
+                //            Value = "\"" + regid.ToUpper() + "\""
+                //        });
+                //        counter++;
+                //    }
+                //    regionliststring = regionliststring.Remove(regionliststring.Length - 1);
+
+                //    whereexpression += $" data->'LocationInfo'-> 'RegionInfo' -> 'Id' in ({regionliststring})";
+                }
+            }
+
+            return query;
         }
 
         private static void LocFilterRegionWhere(
