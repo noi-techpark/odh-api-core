@@ -864,15 +864,12 @@ namespace Helper
             }
         }
 
-        private static Query DistrictWhere2(
-            this Query query, IReadOnlyCollection<string> districtlist)
-        {
-            return query.JsonbQueryHelper(
+        private static Query DistrictWhere2(this Query query, IReadOnlyCollection<string> districtlist) =>
+            query.JsonbQueryHelper(
                 districtlist,
                 "DistrictId",
                 id => new { DistrictId = districtlist.FirstOrDefault().ToUpper() }
             );
-        }
 
         private static void DistrictWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> districtlist)
@@ -959,15 +956,12 @@ namespace Helper
             }
 
         }
-        private static Query LocFilterMunicipalityWhere2(
-            this Query query, IReadOnlyCollection<string> municipalitylist)
-        {
-            return query.JsonbQueryHelper(
+        private static Query LocFilterMunicipalityWhere2(this Query query, IReadOnlyCollection<string> municipalitylist) =>
+            query.JsonbQueryHelper(
                 municipalitylist,
                 "LocationInfo.MunicipalityInfo.Id",
                 id => new { LocationInfo = new { MunicipalityInfo = new { Id = municipalitylist.FirstOrDefault().ToUpper() } } }
             );
-        }
 
         private static void LocFilterMunicipalityWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> municipalitylist)
@@ -1012,15 +1006,12 @@ namespace Helper
 
         }
 
-        private static Query LocFilterTvsWhere2(
-            this Query query, IReadOnlyCollection<string> tourismvereinlist)
-        {
-            return query.JsonbQueryHelper(
+        private static Query LocFilterTvsWhere2(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
+            query.JsonbQueryHelper(
                 tourismvereinlist,
                 "LocationInfo.TvInfo.Id",
                 id => new { LocationInfo = new { TvInfo = new { Id = tourismvereinlist.FirstOrDefault().ToUpper() } } }
             );
-        }
 
         private static void LocFilterTvsWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> tourismvereinlist)
@@ -1065,15 +1056,12 @@ namespace Helper
 
         }
 
-        private static Query LocFilterRegionWhere2(
-            this Query query, IReadOnlyCollection<string> regionlist)
-        {
-            return query.JsonbQueryHelper(
+        private static Query LocFilterRegionWhere2(this Query query, IReadOnlyCollection<string> regionlist) =>
+            query.JsonbQueryHelper(
                 regionlist,
                 "LocationInfo.RegionInfo.Id",
                 id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
             );
-        }
 
         private static void LocFilterRegionWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> regionlist)
