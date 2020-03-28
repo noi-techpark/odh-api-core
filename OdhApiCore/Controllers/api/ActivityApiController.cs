@@ -198,6 +198,7 @@ namespace OdhApiCore.Controllers
                             altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange)
+                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Logging
@@ -219,14 +220,12 @@ namespace OdhApiCore.Controllers
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
 
-                //string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
-                string myseed = "42";
 
                 return ResponseHelpers.GetResult(
                     pagenumber,
                     totalpages,
                     totalcount,
-                    myseed,
+                    seed,
                     dataTransformed,
                     Url);
             });
