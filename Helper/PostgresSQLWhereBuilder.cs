@@ -880,19 +880,10 @@ namespace Helper
                         return q;
                     });
 
-        private static Query WhereInJsonbToUpper(
-            this Query query,
-            IReadOnlyCollection<string> list,
-            Func<string, object> jsonObjectConstructor) =>
-                query.WhereInJsonb(
-                    list,
-                    value => jsonObjectConstructor(value.ToUpper())
-                );
-
         private static Query DistrictFitler(this Query query, IReadOnlyCollection<string> districtlist) =>
-            query.WhereInJsonbToUpper(
+            query.WhereInJsonb(
                 list: districtlist,
-                id => new { DistrictId = districtlist.FirstOrDefault().ToUpper() }
+                id => new { DistrictId = id }
             );
 
         private static void DistrictWhere(
@@ -981,9 +972,9 @@ namespace Helper
 
         }
         private static Query LocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
-            query.WhereInJsonbToUpper(
+            query.WhereInJsonb(
                 list: municipalitylist,
-                id => new { LocationInfo = new { MunicipalityInfo = new { Id = municipalitylist.FirstOrDefault().ToUpper() } } }
+                id => new { LocationInfo = new { MunicipalityInfo = new { Id = id.ToUpper() } } }
             );
 
         private static void LocFilterMunicipalityWhere(
@@ -1030,9 +1021,9 @@ namespace Helper
         }
 
         private static Query LocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
-            query.WhereInJsonbToUpper(
+            query.WhereInJsonb(
                 list: tourismvereinlist,
-                id => new { LocationInfo = new { TvInfo = new { Id = tourismvereinlist.FirstOrDefault().ToUpper() } } }
+                id => new { LocationInfo = new { TvInfo = new { Id = id.ToUpper() } } }
             );
 
         private static void LocFilterTvsWhere(
@@ -1079,9 +1070,9 @@ namespace Helper
         }
 
         private static Query LocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
-            query.WhereInJsonbToUpper(
+            query.WhereInJsonb(
                 list: regionlist,
-                id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
+                id => new { LocationInfo = new { RegionInfo = new { Id = id.ToUpper() } } }
             );
 
         private static void LocFilterRegionWhere(
@@ -1129,9 +1120,9 @@ namespace Helper
         }
 
         private static Query AreaFilter(this Query query, IReadOnlyCollection<string> arealist) =>
-            query.WhereInJsonbToUpper(
+            query.WhereInJsonb(
                 list: arealist,
-                id => new { AreaId = new[] { id } }
+                id => new { AreaId = new[] { id.ToUpper() } }
             );
 
         private static void AreaFilterWhere(
@@ -1502,7 +1493,7 @@ namespace Helper
         }
 
         private static Query ActivityTypeFilter(this Query query, IReadOnlyCollection<string> activitytypelist) =>
-            query.WhereInJsonbToUpper(
+            query.WhereInJsonb(
                 list: activitytypelist,
                 type => new { Type = type }
             );
@@ -1539,9 +1530,9 @@ namespace Helper
         }
 
         private static Query ActivitySubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
-            query.WhereInJsonbToUpper(
+            query.WhereInJsonb(
                 list: subtypelist,
-                tag => new { SmgTags = new[] { tag } }
+                tag => new { SmgTags = new[] { tag.ToLower() } }
             );
 
         private static void ActivitySubTypeFilterWhere(
@@ -1638,7 +1629,7 @@ namespace Helper
         }
 
         private static Query DifficultyFilter(this Query query, IReadOnlyCollection<string> difficultylist) =>
-            query.WhereInJsonbToUpper(
+            query.WhereInJsonb(
                 list: difficultylist,
                 id => new { Difficulty = id }
             );
