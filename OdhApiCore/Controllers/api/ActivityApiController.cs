@@ -183,22 +183,22 @@ namespace OdhApiCore.Controllers
                 var compiler = new PostgresCompiler();
                 var query =
                     new XQuery(connection, compiler)
-                    .ActivityWhereExpression(
-                        idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
-                        subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
-                        smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
-                        municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
-                        regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
-                        distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
-                        distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
-                        durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
-                        altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
-                        altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
-                        activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                        searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange)
-                    .SelectRaw("data")
-                    .From("activities")
-                    .GeoSearchFilterAndOrderby(geosearchresult);
+                        .SelectRaw("data")
+                        .From("activities")
+                        .ActivityWhereExpression(
+                            idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
+                            subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
+                            smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
+                            municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
+                            regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
+                            distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
+                            distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
+                            durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
+                            altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
+                            altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
+                            activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange)
+                        .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Logging
                 var info = compiler.Compile(query);
