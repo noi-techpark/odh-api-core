@@ -308,8 +308,7 @@ namespace Helper
                 smgactivefilter, searchfilter,
                 language, lastchange
             );
-            
-            //AreaFilterWhere(ref whereexpression, parameters, arealist);
+
             //ActivityTypeFilterWhere(ref whereexpression, parameters, activitytypelist);
             //ActivitySubTypeFilterWhere(ref whereexpression, parameters, subtypelist);
             //DifficultyFilterWhere(ref whereexpression, parameters, difficultylist);
@@ -327,6 +326,7 @@ namespace Helper
                 .LocFilterMunicipalityWhere2(municipalitylist)
                 .LocFilterTvsWhere2(tourismvereinlist)
                 .LocFilterRegionWhere2(regionlist)
+                .AreaFilterWhere2(arealist)
                 .SearchFilterWhere2(TitleFieldsToSearchFor(language), searchfilter);
 
             //LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
@@ -1100,6 +1100,12 @@ namespace Helper
             }
 
         }
+
+        private static Query AreaFilterWhere2(this Query query, IReadOnlyCollection<string> arealist) =>
+            query.JsonbQueryHelper(
+                arealist,
+                id => new { AreaId = new[] { id } }
+            );
 
         private static void AreaFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> arealist)
