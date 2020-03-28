@@ -838,36 +838,33 @@ namespace Helper
 
         private static Query JsonbQueryHelper(
             this Query query, IReadOnlyCollection<string> list,
-            string jsonPathSelector, Func<string, object> jsonObjectConstructor)
+            Func<string, object> jsonObjectConstructor)
         {
             if (list.Count == 0)
             {
                 return query;
             }
-            else if (list.Count == 1)
-            {
-                return query.WhereRaw(
-                    "data @> jsonb(?)",
-                    JsonConvert.SerializeObject(
-                        jsonObjectConstructor(list.First().ToUpper())
-                    )
-                );
-            }
             else
             {
-                return query.WhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPathSelector)}\\}}' = ANY(?)",
-                    new object[] {
-                        new[] { list.Select(district => district.ToUpper()).ToArray() }
+                return query.Where(q =>
+                {
+                    foreach (var item in list)
+                    {
+                        q = q.OrWhereRaw(
+                            "data @> jsonb(?)",
+                            JsonConvert.SerializeObject(
+                                jsonObjectConstructor(item.ToUpper())
+                            )
+                        );
                     }
-                );
+                    return q;
+                });
             }
         }
 
         private static Query DistrictWhere2(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.JsonbQueryHelper(
                 districtlist,
-                "DistrictId",
                 id => new { DistrictId = districtlist.FirstOrDefault().ToUpper() }
             );
 
@@ -959,7 +956,6 @@ namespace Helper
         private static Query LocFilterMunicipalityWhere2(this Query query, IReadOnlyCollection<string> municipalitylist) =>
             query.JsonbQueryHelper(
                 municipalitylist,
-                "LocationInfo.MunicipalityInfo.Id",
                 id => new { LocationInfo = new { MunicipalityInfo = new { Id = municipalitylist.FirstOrDefault().ToUpper() } } }
             );
 
@@ -1009,7 +1005,6 @@ namespace Helper
         private static Query LocFilterTvsWhere2(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
             query.JsonbQueryHelper(
                 tourismvereinlist,
-                "LocationInfo.TvInfo.Id",
                 id => new { LocationInfo = new { TvInfo = new { Id = tourismvereinlist.FirstOrDefault().ToUpper() } } }
             );
 
@@ -1059,7 +1054,6 @@ namespace Helper
         private static Query LocFilterRegionWhere2(this Query query, IReadOnlyCollection<string> regionlist) =>
             query.JsonbQueryHelper(
                 regionlist,
-                "LocationInfo.RegionInfo.Id",
                 id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
             );
 
