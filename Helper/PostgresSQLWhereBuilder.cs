@@ -330,50 +330,6 @@ namespace Helper
                 .LastChangedFilter(lastchange);
         }
 
-
-        //Returns Where and Parameters for Poi
-        [Obsolete]
-        public static (string, IEnumerable<PGParameters>) CreatePoiWhereExpression(
-            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> poitypelist,
-            IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
-            IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
-            IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
-            IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
-            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
-        {
-            LogMethodInfo(
-                System.Reflection.MethodBase.GetCurrentMethod()!,
-                idlist, poitypelist,
-                subtypelist, smgtaglist,
-                districtlist, municipalitylist,
-                tourismvereinlist, regionlist,
-                arealist, highlight, activefilter,
-                smgactivefilter, searchfilter,
-                language, lastchange
-            );
-
-            string whereexpression = "";
-            List<PGParameters> parameters = new List<PGParameters>();
-
-            IdUpperFilterWhere(ref whereexpression, parameters, idlist);
-            DistrictWhere(ref whereexpression, parameters, districtlist);
-            LocFilterMunicipalityWhere(ref whereexpression, parameters, municipalitylist);
-            LocFilterTvsWhere(ref whereexpression, parameters, tourismvereinlist);
-            LocFilterRegionWhere(ref whereexpression, parameters, regionlist);
-            AreaFilterWhere(ref whereexpression, parameters, arealist);
-            PoiTypeFilterWhere(ref whereexpression, parameters, poitypelist);
-            PoiSubTypeFilterWhere(ref whereexpression, parameters, subtypelist);
-            SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
-            HighlightFilterWhere(ref whereexpression, parameters, highlight);
-            ActiveFilterWhere(ref whereexpression, parameters, activefilter);
-            SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
-            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor(language), searchfilter);
-
-            LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
-
-            return (whereexpression, parameters);
-        }
-
         //Return Where and Parameters for Events
         public static (string, IEnumerable<PGParameters>) CreateEventWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> orgidlist,
