@@ -176,10 +176,9 @@ namespace OdhApiCore.Controllers
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange,
                     cancellationToken);
 
-                var connection = await connectionFactory.GetConnection(cancellationToken);
-                var compiler = new PostgresCompiler();
+                using var connection = await connectionFactory.GetConnection(cancellationToken);
                 var query =
-                    new XQuery(connection, compiler)
+                    GetQuery(connection)
                         .SelectRaw("data")
                         .From("activities")
                         .ActivityWhereExpression(
@@ -198,10 +197,6 @@ namespace OdhApiCore.Controllers
                         .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
-                // Logging
-                var info = compiler.Compile(query);
-                Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
-
                 // Get paginated data
                 var data =
                     await query
@@ -216,7 +211,6 @@ namespace OdhApiCore.Controllers
 
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
-
 
                 return ResponseHelpers.GetResult(
                     pagenumber,

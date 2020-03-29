@@ -4,9 +4,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Npgsql;
+using SqlKata;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
@@ -70,6 +75,16 @@ namespace OdhApiCore.Controllers
                 else
                     return this.Ok(result);
             });
+        }
+
+        protected Query GetQuery(NpgsqlConnection connection)
+        {
+            var compiler = new PostgresCompiler();
+            return new XQuery(connection, compiler)
+            {
+                Logger = info =>
+                    Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings)
+            };
         }
     }
 }

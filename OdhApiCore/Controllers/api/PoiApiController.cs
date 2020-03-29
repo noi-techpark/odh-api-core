@@ -169,10 +169,9 @@ namespace OdhApiCore.Controllers.api
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
                     smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 
-                var connection = await connectionFactory.GetConnection(cancellationToken);
-                var compiler = new PostgresCompiler();
+                using var connection = await connectionFactory.GetConnection(cancellationToken);
                 var query =
-                    new XQuery(connection, compiler)
+                    GetQuery(connection)
                         .SelectRaw("data")
                         .From("pois")
                         .PoiWhereExpression(
@@ -186,10 +185,6 @@ namespace OdhApiCore.Controllers.api
                         )
                         .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
-
-                // Logging
-                var info = compiler.Compile(query);
-                Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
 
                 // Get paginated data
                 var data =

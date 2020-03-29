@@ -105,10 +105,9 @@ namespace OdhApiCore.Controllers.api
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
 
-                var connection = await connectionFactory.GetConnection(cancellationToken);
-                var compiler = new PostgresCompiler();
+                using var connection = await connectionFactory.GetConnection(cancellationToken);
                 var query =
-                    new XQuery(connection, compiler)
+                    GetQuery(connection)
                         .SelectRaw(select)
                         .From("activities")
                         .PoiWhereExpression(
@@ -120,10 +119,6 @@ namespace OdhApiCore.Controllers.api
                         )
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);
-
-                // Logging
-                var info = compiler.Compile(query);
-                Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
 
                 // Get paginated data
                 return await query.GetAsync<ResultReduced>();
@@ -225,10 +220,9 @@ namespace OdhApiCore.Controllers.api
                 string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
 
-                var connection = await connectionFactory.GetConnection(cancellationToken);
-                var compiler = new PostgresCompiler();
+                using var connection = await connectionFactory.GetConnection(cancellationToken);
                 var query =
-                    new XQuery(connection, compiler)
+                    GetQuery(connection)
                         .SelectRaw(select)
                         .From("activities")
                         .ActivityWhereExpression(
@@ -247,10 +241,6 @@ namespace OdhApiCore.Controllers.api
                         )
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);
-
-                // Logging
-                var info = compiler.Compile(query);
-                Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
 
                 // Get paginated data
                 return await query.GetAsync<ResultReduced>();
