@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 using SqlKata;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 
 namespace Helper
 {
@@ -55,6 +54,32 @@ namespace Helper
                     return q;
                 });
 
+        public static Query WhereInJsonb<T>(
+            this Query query,
+            IReadOnlyCollection<T> list,
+            Func<T, object> jsonObjectConstructor,
+            string jsonPath)
+        {
+            if (list.Count == 0)
+            {
+                return query;
+            }
+            else if (list.Count == 1)
+            {
+                return query.WhereJsonb(
+                    list.First(),
+                    jsonObjectConstructor
+                );
+            }
+            else
+            {
+                return query.WhereRaw(
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ANY(?)",
+                    new [] { new[] { list } }
+                );
+            }
+        }
+
         public static Query DistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.WhereInJsonb(
                 list: districtlist,
@@ -93,25 +118,29 @@ namespace Helper
         public static Query LocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
             query.WhereInJsonb(
                 list: municipalitylist,
-                id => new { LocationInfo = new { MunicipalityInfo = new { Id = id.ToUpper() } } }
+                jsonObjectConstructor: id => new { LocationInfo = new { MunicipalityInfo = new { Id = id.ToUpper() } } },
+                jsonPath: "LocationInfo.MinicipalityInfo.Id"
             );
 
         public static Query LocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
             query.WhereInJsonb(
                 list: tourismvereinlist,
-                id => new { LocationInfo = new { TvInfo = new { Id = id.ToUpper() } } }
+                jsonObjectConstructor: id => new { LocationInfo = new { TvInfo = new { Id = id.ToUpper() } } },
+                jsonPath: "LocationInfo.TvInfo.Id"
             );
 
         public static Query LocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
             query.WhereInJsonb(
                 list: regionlist,
-                id => new { LocationInfo = new { RegionInfo = new { Id = id } } }
+                jsonObjectConstructor: id => new { LocationInfo = new { RegionInfo = new { Id = id } } },
+                jsonPath: "LocationInfo.RegionInfo.Id"
             );
 
         public static Query AreaFilter(this Query query, IReadOnlyCollection<string> arealist) =>
             query.WhereInJsonb(
                 list: arealist,
-                id => new { AreaId = new[] { id } }
+                jsonObjectConstructor: id => new { AreaId = new[] { id } },
+                jsonPath: "AreaId"
             );
 
         public static Query HighlightFilter(this Query query, bool? highlight) =>
@@ -207,7 +236,8 @@ namespace Helper
         public static Query DifficultyFilter(this Query query, IReadOnlyCollection<string> difficultylist) =>
             query.WhereInJsonb(
                 list: difficultylist,
-                id => new { Difficulty = id }
+                jsonObjectConstructor: id => new { Difficulty = id },
+                jsonPath: "Difficulty"
             );
 
         public static Query PoiTypeFilter(this Query query, IReadOnlyCollection<string> poitypelist) =>
