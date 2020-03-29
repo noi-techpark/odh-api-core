@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using OdhApiCore.Controllers;
+using OdhApiCore.Factories;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;

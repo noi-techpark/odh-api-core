@@ -3,7 +3,7 @@ using Npgsql;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OdhApiCore
+namespace OdhApiCore.Factories
 {
     public class PostgresConnectionFactory : IPostGreSQLConnectionFactory
     {

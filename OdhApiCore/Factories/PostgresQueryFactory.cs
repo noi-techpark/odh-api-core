@@ -4,11 +4,8 @@ using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace OdhApiCore
+namespace OdhApiCore.Factories
 {
     /// <summary>
     /// For the time of writing QueryFactory doesn't implement IDisposable
