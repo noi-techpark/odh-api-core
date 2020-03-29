@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace OdhApiCore
 {
-    public class PostGreSQLConnectionFactory : IPostGreSQLConnectionFactory
+    public class PostgresConnectionFactory : IPostGreSQLConnectionFactory
     {
         private readonly string connectionString;
 
-        public PostGreSQLConnectionFactory(ISettings settings)
+        public PostgresConnectionFactory(ISettings settings)
         {
             this.connectionString = settings.PostgresConnectionString;
         }

@@ -18,7 +18,7 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class OdhTagController : OdhController
     {
-        public OdhTagController(IWebHostEnvironment env, ISettings settings, ILogger<OdhTagController> logger, IPostGreSQLConnectionFactory connectionFactory, PostGreSQLQueryFactory queryFactory)
+        public OdhTagController(IWebHostEnvironment env, ISettings settings, ILogger<OdhTagController> logger, IPostGreSQLConnectionFactory connectionFactory, PostgresQueryFactory queryFactory)
             : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }

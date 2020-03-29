@@ -21,7 +21,7 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
     {
-        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory, PostGreSQLQueryFactory queryFactory)
+        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory, PostgresQueryFactory queryFactory)
             : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }

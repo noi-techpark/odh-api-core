@@ -17,12 +17,12 @@ namespace OdhApiCore
     /// Howewer at the time of writing there exists an issue to fix that:
     /// https://github.com/sqlkata/querybuilder/issues/213
     /// </summary>
-    public class PostGreSQLQueryFactory : IDisposable
+    public class PostgresQueryFactory : IDisposable
     {
         private NpgsqlConnection? connection;
         private readonly QueryFactory queryFactory;
 
-        public PostGreSQLQueryFactory(ISettings settings, ILogger<PostGreSQLConnectionFactory> logger)
+        public PostgresQueryFactory(ISettings settings, ILogger<PostgresConnectionFactory> logger)
         {
             connection = new NpgsqlConnection(settings.PostgresConnectionString);
             connection.Disposed += (sender, args) =>

@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, PostGreSQLQueryFactory queryFactory)
+        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, PostgresQueryFactory queryFactory)
             : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
