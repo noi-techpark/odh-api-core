@@ -3,6 +3,7 @@ using SqlKata;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Helper
 {
@@ -42,9 +43,9 @@ namespace Helper
             this Query query,
             IReadOnlyCollection<T> list,
             Func<T, object> jsonObjectConstructor) =>
-                list.Count == 0
-                    ? query
-                    : query.Clone().Where(q =>
+                query.When(
+                    list.Count > 0,
+                    query => query.Clone().Where(q =>
                     {
                         foreach (var item in list)
                         {
@@ -54,7 +55,8 @@ namespace Helper
                             );
                         }
                         return q;
-                    });
+                    })
+                );
 
         public static Query DistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.WhereInJsonb(
@@ -63,36 +65,40 @@ namespace Helper
             );
 
         public static Query IdUpperFilter(this Query query, IReadOnlyCollection<string> idlist) =>
-            idlist.Count == 0
-                ? query
-                : query.Clone().Where(q =>
-                {
-                    foreach (var id in idlist)
+            query.When(
+                idlist.Count > 0,
+                query =>
+                    query.Clone().Where(q =>
                     {
-                        q = q.OrWhere("id", "=", id.ToUpper());
-                    }
-                    return q;
-                });
+                        foreach (var id in idlist)
+                        {
+                            q = q.OrWhere("id", "=", id.ToUpper());
+                        }
+                        return q;
+                    })
+            );
 
         public static Query IdLowerFilter(this Query query, IReadOnlyCollection<string> idlist) =>
-            idlist.Count == 0
-                ? query
-                : query.Clone().Where(q =>
+            query.When(
+                idlist.Count > 0,
+                query => query.Clone().Where(q =>
                 {
                     foreach (var id in idlist)
                     {
                         q = q.OrWhere("id", "=", id.ToLower());
                     }
                     return q;
-                });
+                })
+            );
 
         public static Query LastChangedFilter(this Query query, string? updatefrom) =>
-            updatefrom == null ?
-                query :
-                query.WhereRaw(
+            query.When(
+                updatefrom != null,
+                query => query.WhereRaw(
                     "to_date(data->>'LastChange', 'YYYY-MM-DD') > date(?)",
                     updatefrom
-                );
+                )
+            );
 
         public static Query LocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
             query.WhereInJsonb(
@@ -119,55 +125,61 @@ namespace Helper
             );
 
         public static Query HighlightFilter(this Query query, bool? highlight) =>
-            highlight == null
-                ? query
-                : query.WhereJsonb(
+            query.When(
+                highlight != null,
+                query => query.WhereJsonb(
                     highlight,
                     highlight => new { Highlight = highlight }
-                );
+                )
+            );
 
         public static Query ActiveFilter(this Query query, bool? active) =>
-            active == null
-                ? query
-                : query.WhereJsonb(
+            query.When(
+                active != null,
+                query => query.WhereJsonb(
                     active,
                     active => new { Active = active }
-                );
+                )
+            );
 
         public static Query SmgActiveFilter(this Query query, bool? smgactive) =>
-            smgactive == null ?
-                query :
-                query.WhereJsonb(
+            query.When(
+                smgactive != null,
+                query => query.WhereJsonb(
                     smgactive,
                     smgactive => new { SmgActive = smgactive }
-                );
+                )
+            );
 
         public static Query DistanceFilter(this Query query, bool distance, int distancemin, int distancemax) =>
-            !distance
-                ? query
-                : query.WhereRaw(
+            query.When(
+                distance,
+                query => query.WhereRaw(
                     "(data->>'DistanceLength')::numeric > ? AND (data->>'DistanceLength')::numeric < ?",
                     distancemin,
                     distancemax
-                );
+                )
+            );
 
         public static Query DurationFilter(this Query query, bool duration, double durationmin, double durationmax) =>
-            !duration
-                ? query
-                : query.WhereRaw(
+            query.When(
+                duration,
+                query => query.WhereRaw(
                     "(data->>'DistanceDuration')::numeric > ? AND (data->>'DistanceDuration')::numeric < ?",
                     durationmin,
                     durationmax
-                );
+                )
+            );
 
         public static Query AltitudeFilter(this Query query, bool altitude, int altitudemin, int altitudemax) =>
-            !altitude
-                ? query
-                : query.WhereRaw(
+            query.When(
+                altitude,
+                query => query.WhereRaw(
                     "(data->>'AltitudeDifference')::numeric > ? AND (data->>'AltitudeDifference')::numeric < ?",
                     altitudemin,
                     altitudemax
-                );
+                )
+            );
 
         public static Query SmgTagFilter(this Query query, IReadOnlyCollection<string> smgtaglist) =>
             query.WhereInJsonb(
@@ -175,12 +187,10 @@ namespace Helper
                 tag => new { SmgTags = new[] { tag.ToLower() } }
             );
 
-        public static Query SearchFilter(
-            this Query query, string[] fields, string? searchfilter)
-        {
-            if (searchfilter != null && fields.Length > 0)
-            {
-                return query.Clone().Where(q =>
+        public static Query SearchFilter(this Query query, string[] fields, string? searchfilter) =>
+            query.When(
+                searchfilter != null && fields.Length > 0,
+                query => query.Clone().Where(q =>
                 {
                     foreach (var field in fields)
                     {
@@ -189,10 +199,8 @@ namespace Helper
                                 $"%{searchfilter}%");
                     }
                     return q;
-                });
-            }
-            return query;
-        }
+                })
+            );
 
         public static Query ActivityTypeFilter(this Query query, IReadOnlyCollection<string> activitytypelist) =>
             query.WhereInJsonb(
