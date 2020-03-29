@@ -216,12 +216,14 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async connectionFactory =>
             {
-                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "pois", "*", where, "", 0,
-                    null, cancellationToken);
+                var query =
+                    QueryFactory.Query("pois")
+                        .Select("data")
+                        .Where("id", id);
 
-                return data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
             });
         }
 
