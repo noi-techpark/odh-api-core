@@ -1,13 +1,10 @@
 ﻿using Helper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using OdhApiCore.Responses;
-using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
