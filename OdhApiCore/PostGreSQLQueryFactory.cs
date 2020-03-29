@@ -19,16 +19,11 @@ namespace OdhApiCore
     /// </summary>
     public class PostGreSQLQueryFactory : IDisposable
     {
-        private readonly ISettings settings;
-        private readonly ILogger<PostGreSQLConnectionFactory> logger;
         private NpgsqlConnection? connection;
         private readonly QueryFactory queryFactory;
 
         public PostGreSQLQueryFactory(ISettings settings, ILogger<PostGreSQLConnectionFactory> logger)
         {
-            this.settings = settings;
-            this.logger = logger;
-
             connection = new NpgsqlConnection(settings.PostgresConnectionString);
             connection.Disposed += (sender, args) =>
                 logger.LogDebug("PostgreSQL: {connectionState}", "Disposed");
