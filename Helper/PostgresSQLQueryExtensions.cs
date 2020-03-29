@@ -44,7 +44,7 @@ namespace Helper
             Func<T, object> jsonObjectConstructor) =>
                 list.Count == 0
                     ? query
-                    : query.Where(q =>
+                    : query.Clone().Where(q =>
                     {
                         foreach (var item in list)
                         {
@@ -65,39 +65,37 @@ namespace Helper
         public static Query IdUpperFilter(
             this Query query, IReadOnlyCollection<string> idlist)
         {
-            //IDLIST
-            if (idlist.Count > 0)
+            if (idlist.Count == 0)
             {
-                //Tuning force to use GIN Index
-                if (idlist.Count == 1)
-                {
-                    query = query.Where("id", "LIKE", idlist.FirstOrDefault().ToUpper());
-                }
-                else
-                {
-                    query = query.WhereIn("id", idlist.Select(id => id.ToUpper()));
-                }
+                return query;
             }
-            return query;
+            //Tuning force to use GIN Index
+            else if (idlist.Count == 1)
+            {
+                return query.Where("id", "LIKE", idlist.FirstOrDefault().ToUpper());
+            }
+            else
+            {
+                return query.WhereIn("id", idlist.Select(id => id.ToUpper()));
+            }
         }
 
         public static Query IdLowerFilter(
             this Query query, IReadOnlyCollection<string> idlist)
         {
-            //IDLIST
-            if (idlist.Count > 0)
+            if (idlist.Count == 0)
             {
-                //Tuning force to use GIN Index
-                if (idlist.Count == 1)
-                {
-                    query = query.Where("id", "LIKE", idlist.FirstOrDefault().ToLower());
-                }
-                else
-                {
-                    query = query.WhereIn("id", idlist.Select(id => id.ToLower()));
-                }
+                return query;
             }
-            return query;
+            //Tuning force to use GIN Index
+            else if (idlist.Count == 1)
+            {
+                return query.Where("id", "LIKE", idlist.FirstOrDefault().ToLower());
+            }
+            else
+            {
+                return query.WhereIn("id", idlist.Select(id => id.ToLower()));
+            }
         }
 
         public static Query LastChangedFilter(this Query query, string? updatefrom) =>
@@ -194,7 +192,7 @@ namespace Helper
         {
             if (searchfilter != null && fields.Length > 0)
             {
-                return query.Where(q =>
+                return query.Clone().Where(q =>
                 {
                     foreach (var field in fields)
                     {
