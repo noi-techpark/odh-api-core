@@ -69,7 +69,7 @@ namespace Helper
                 {
                     foreach (var id in idlist)
                     {
-                        q = q.OrWhere("id", "LIKE", id.ToUpper());
+                        q = q.OrWhere("id", "=", id.ToUpper());
                     }
                     return q;
                 });
@@ -81,7 +81,7 @@ namespace Helper
                 {
                     foreach (var id in idlist)
                     {
-                        q = q.OrWhere("id", "LIKE", id.ToLower());
+                        q = q.OrWhere("id", "=", id.ToLower());
                     }
                     return q;
                 });
