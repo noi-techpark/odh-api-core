@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Helper
 {
-    public static class PosgresSQLQueryExtensions
+    public static class PostgresSQLQueryExtensions
     {
         /// <summary>
         /// Convert a (simple) JsonPath path to a Postgres array,
