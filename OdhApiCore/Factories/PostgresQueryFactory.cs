@@ -22,10 +22,6 @@ namespace OdhApiCore.Factories
         public PostgresQueryFactory(ISettings settings, ILogger<PostgresConnectionFactory> logger)
         {
             connection = new NpgsqlConnection(settings.PostgresConnectionString);
-            connection.Disposed += (sender, args) =>
-                logger.LogDebug("PostgreSQL: {connectionState}", "Disposed");
-            connection.StateChange += (sender, args) =>
-                logger.LogDebug("PostgreSQL: {connectionState}", args.CurrentState);
             var compiler = new PostgresCompiler();
             queryFactory = new QueryFactory(connection, compiler)
             {
