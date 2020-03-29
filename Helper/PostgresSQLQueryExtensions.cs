@@ -43,7 +43,7 @@ namespace Helper
             this Query query,
             IReadOnlyCollection<T> list,
             Func<T, object> jsonObjectConstructor) =>
-                query.Clone().Where(q =>
+                query.Where(q =>
                 {
                     foreach (var item in list)
                     {
@@ -62,7 +62,7 @@ namespace Helper
             );
 
         public static Query IdUpperFilter(this Query query, IReadOnlyCollection<string> idlist) =>
-            query.Clone().Where(q =>
+            query.Where(q =>
             {
                 foreach (var id in idlist)
                 {
@@ -72,7 +72,7 @@ namespace Helper
             });
 
         public static Query IdLowerFilter(this Query query, IReadOnlyCollection<string> idlist) =>
-            query.Clone().Where(q =>
+            query.Where(q =>
             {
                 foreach (var id in idlist)
                 {
@@ -180,7 +180,7 @@ namespace Helper
         public static Query SearchFilter(this Query query, string[] fields, string? searchfilter) =>
             query.When(
                 searchfilter != null && fields.Length > 0,
-                query => query.Clone().Where(q =>
+                query => query.Where(q =>
                 {
                     foreach (var field in fields)
                     {
