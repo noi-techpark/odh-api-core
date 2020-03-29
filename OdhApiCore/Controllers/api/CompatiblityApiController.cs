@@ -4,13 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SqlKata.Compilers;
 using SqlKata.Execution;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,8 +19,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory)
-            : base(env, settings, logger, connectionFactory)
+        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory, PostGreSQLQueryFactory queryFactory)
+            : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
 
@@ -105,9 +100,8 @@ namespace OdhApiCore.Controllers.api
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
 
-                using var connection = await connectionFactory.GetConnection(cancellationToken);
                 var query =
-                    GetQuery(connection)
+                    QueryFactory.Query()
                         .SelectRaw(select)
                         .From("activities")
                         .PoiWhereExpression(
@@ -220,9 +214,8 @@ namespace OdhApiCore.Controllers.api
                 string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
 
-                using var connection = await connectionFactory.GetConnection(cancellationToken);
                 var query =
-                    GetQuery(connection)
+                    QueryFactory.Query()
                         .SelectRaw(select)
                         .From("activities")
                         .ActivityWhereExpression(

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Responses;
-using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -24,8 +23,8 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory)
-            : base(env, settings, logger, connectionFactory)
+        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, PostGreSQLQueryFactory queryFactory)
+            : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
 
@@ -176,9 +175,8 @@ namespace OdhApiCore.Controllers
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange,
                     cancellationToken);
 
-                using var connection = await connectionFactory.GetConnection(cancellationToken);
                 var query =
-                    GetQuery(connection)
+                    QueryFactory.Query()
                         .SelectRaw("data")
                         .From("activities")
                         .ActivityWhereExpression(

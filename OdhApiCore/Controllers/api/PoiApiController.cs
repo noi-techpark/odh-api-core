@@ -4,14 +4,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using OdhApiCore.Responses;
-using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,8 +21,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
     {
-        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory)
-            : base(env, settings, logger, connectionFactory)
+        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory, PostGreSQLQueryFactory queryFactory)
+            : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
 
@@ -169,9 +166,8 @@ namespace OdhApiCore.Controllers.api
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
                     smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 
-                using var connection = await connectionFactory.GetConnection(cancellationToken);
                 var query =
-                    GetQuery(connection)
+                    QueryFactory.Query()
                         .SelectRaw("data")
                         .From("pois")
                         .PoiWhereExpression(

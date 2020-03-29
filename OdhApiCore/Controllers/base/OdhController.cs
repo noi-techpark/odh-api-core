@@ -4,14 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Npgsql;
-using SqlKata;
-using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
@@ -25,18 +19,21 @@ namespace OdhApiCore.Controllers
         private readonly ISettings settings;
         private readonly ILogger<OdhController> logger;
         private readonly IPostGreSQLConnectionFactory connectionFactory;
+        private readonly PostGreSQLQueryFactory queryFactory;
 
         protected bool CheckCC0License => settings.CheckCC0License;
 
-        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, IPostGreSQLConnectionFactory connectionFactory)
+        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, IPostGreSQLConnectionFactory connectionFactory, PostGreSQLQueryFactory queryFactory)
         {
             this.env = env;
             this.settings = settings;
             this.logger = logger;
             this.connectionFactory = connectionFactory;
+            this.queryFactory = queryFactory;
         }
 
         protected ILogger<OdhController> Logger => logger;
+        protected PostGreSQLQueryFactory QueryFactory => queryFactory;
 
         protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<IActionResult>> f)
         {
@@ -75,16 +72,6 @@ namespace OdhApiCore.Controllers
                 else
                     return this.Ok(result);
             });
-        }
-
-        protected Query GetQuery(NpgsqlConnection connection)
-        {
-            var compiler = new PostgresCompiler();
-            return new XQuery(connection, compiler)
-            {
-                Logger = info =>
-                    Serilog.Log.Debug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings)
-            };
         }
     }
 }
