@@ -43,20 +43,17 @@ namespace Helper
             this Query query,
             IReadOnlyCollection<T> list,
             Func<T, object> jsonObjectConstructor) =>
-                query.When(
-                    list.Count > 0,
-                    query => query.Clone().Where(q =>
+                query.Clone().Where(q =>
+                {
+                    foreach (var item in list)
                     {
-                        foreach (var item in list)
-                        {
-                            q = q.OrWhereJsonb(
-                                value: item,
-                                jsonObjectConstructor
-                            );
-                        }
-                        return q;
-                    })
-                );
+                        q = q.OrWhereJsonb(
+                            value: item,
+                            jsonObjectConstructor
+                        );
+                    }
+                    return q;
+                });
 
         public static Query DistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.WhereInJsonb(
@@ -65,31 +62,24 @@ namespace Helper
             );
 
         public static Query IdUpperFilter(this Query query, IReadOnlyCollection<string> idlist) =>
-            query.When(
-                idlist.Count > 0,
-                query =>
-                    query.Clone().Where(q =>
-                    {
-                        foreach (var id in idlist)
-                        {
-                            q = q.OrWhere("id", "=", id.ToUpper());
-                        }
-                        return q;
-                    })
-            );
+            query.Clone().Where(q =>
+            {
+                foreach (var id in idlist)
+                {
+                    q = q.OrWhere("id", "=", id.ToUpper());
+                }
+                return q;
+            });
 
         public static Query IdLowerFilter(this Query query, IReadOnlyCollection<string> idlist) =>
-            query.When(
-                idlist.Count > 0,
-                query => query.Clone().Where(q =>
+            query.Clone().Where(q =>
+            {
+                foreach (var id in idlist)
                 {
-                    foreach (var id in idlist)
-                    {
-                        q = q.OrWhere("id", "=", id.ToLower());
-                    }
-                    return q;
-                })
-            );
+                    q = q.OrWhere("id", "=", id.ToLower());
+                }
+                return q;
+            });
 
         public static Query LastChangedFilter(this Query query, string? updatefrom) =>
             query.When(
