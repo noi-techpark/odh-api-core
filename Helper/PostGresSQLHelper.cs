@@ -77,7 +77,7 @@ namespace Helper
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                 using var command = conn.CreateCommand(commandText);
@@ -117,7 +117,7 @@ namespace Helper
         {
             try
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 using var command = conn.CreateCommand($"SELECT {selectexp} FROM {tablename} WHERE id LIKE @id");
                 command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
 
@@ -156,7 +156,7 @@ namespace Helper
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                 using var command = conn.CreateCommand(commandText);
@@ -218,7 +218,7 @@ namespace Helper
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                 using var command = conn.CreateCommand(commandText);
@@ -275,7 +275,7 @@ namespace Helper
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                 using var command = conn.CreateCommand(commandText);
@@ -321,7 +321,7 @@ namespace Helper
         {
             async IAsyncEnumerable<T> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                 using var command = conn.CreateCommand(commandText);
@@ -372,7 +372,7 @@ namespace Helper
         {
             async IAsyncEnumerable<T> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 //string whereexp = "Id LIKE '" + id + "'";
                 //string commandText = CreatetDatabaseCommand("*", tablename, whereexp, "", null, 0);
 
@@ -423,7 +423,7 @@ namespace Helper
         {
             async IAsyncEnumerable<(string, T)> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                 using var command = conn.CreateCommand(commandText);
@@ -477,7 +477,7 @@ namespace Helper
         {
             async IAsyncEnumerable<T> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, whereexp, sortexp, offset, limit);
 
                 using var command = conn.CreateCommand(commandText);
@@ -532,7 +532,7 @@ namespace Helper
         {
             try
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = $"SELECT COUNT(*) FROM {tablename}";
 
                 if (!String.IsNullOrEmpty(whereexp))
@@ -608,7 +608,7 @@ namespace Helper
         {
             try
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = $"SELECT COUNT(*) FROM {tablename}";
 
                 if (!String.IsNullOrEmpty(where.whereexp))
@@ -646,7 +646,7 @@ namespace Helper
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
                 using var command = conn.CreateCommand(commandText, where.whereparameters);
 
@@ -700,7 +700,7 @@ namespace Helper
         {
             async IAsyncEnumerable<(long, JsonRaw)> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexpression, sortexp, offset, limit);
                 using var command = conn.CreateCommand(commandText, where.whereparameters);
 
@@ -743,7 +743,7 @@ namespace Helper
         {
             async IAsyncEnumerable<JsonRaw> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(selectexp, tablename, where.whereexp, sortexp, offset, limit);
 
                 using var command = conn.CreateCommand(commandText, where.whereparameters);
@@ -806,7 +806,7 @@ namespace Helper
         {
             async IAsyncEnumerable<T> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(
                     selectexp,
                     tablename,
@@ -863,7 +863,7 @@ namespace Helper
         {
             async IAsyncEnumerable<T> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 string commandText = CreateDatabaseCommand(
                     selectexp,
                     tablename,
@@ -932,7 +932,7 @@ namespace Helper
         {
             async IAsyncEnumerable<T> inner()
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 //CultureInfo myculture = new CultureInfo("en");
 
                 string commandText = CreateDatabaseCommand(
@@ -977,7 +977,7 @@ namespace Helper
         {
             try
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 ////Fix the single quotes
                 //data = data.Replace("'", "''");
 
@@ -1007,7 +1007,7 @@ namespace Helper
         {
             try
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
                 using var command = conn.CreateCommand($"INSERT INTO {tablename} (id, data) VALUES (@id, @data)");
                 command.Parameters.AddWithValue("id", NpgsqlTypes.NpgsqlDbType.Text, id);
                 command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
@@ -1031,7 +1031,7 @@ namespace Helper
         {
             try
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
 
                 ////Fix the single quotes
                 //data = data.Replace("'", "''");
@@ -1061,7 +1061,7 @@ namespace Helper
         {
             try
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
 
                 using var command = conn.CreateCommand($"UPDATE {tablename} SET data = @data WHERE id = @id");
                 command.Parameters.AddWithValue("data", NpgsqlTypes.NpgsqlDbType.Jsonb, JsonConvert.SerializeObject(data));
@@ -1087,7 +1087,7 @@ namespace Helper
         {
             try
             {
-                using var conn = await connectionFactory.GetConnection(cancellationToken);
+                using var conn = await connectionFactory.GetConnectionAndOpenAsync(cancellationToken);
 
                 //string commandText = "DELETE FROM " + tablename + " WHERE id = '" + idvalue + "';";
 

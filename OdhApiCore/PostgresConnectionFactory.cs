@@ -14,7 +14,7 @@ namespace OdhApiCore
             this.connectionString = settings.PostgresConnectionString;
         }
 
-        public async Task<NpgsqlConnection> GetConnection(CancellationToken cancellationToken)
+        public async Task<NpgsqlConnection> GetConnectionAndOpenAsync(CancellationToken cancellationToken)
         {
             // TODO: additional initialization logic goes here
             var conn = new NpgsqlConnection(connectionString);
