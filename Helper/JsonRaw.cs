@@ -35,5 +35,7 @@ namespace Helper
         {
             throw new InvalidOperationException("ToString on JsonRaw shouldn't be called, there is somewhere an implicit ToString() happening (maybe from a manual JSON serialization).");
         }
+
+        public static explicit operator JsonRaw(string x) => new JsonRaw(x);
     }
 }
