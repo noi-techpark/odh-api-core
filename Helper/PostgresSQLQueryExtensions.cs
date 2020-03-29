@@ -62,41 +62,29 @@ namespace Helper
                 id => new { DistrictId = id.ToUpper() }
             );
 
-        public static Query IdUpperFilter(
-            this Query query, IReadOnlyCollection<string> idlist)
-        {
-            if (idlist.Count == 0)
-            {
-                return query;
-            }
-            //Tuning force to use GIN Index
-            else if (idlist.Count == 1)
-            {
-                return query.Where("id", "LIKE", idlist.FirstOrDefault().ToUpper());
-            }
-            else
-            {
-                return query.WhereIn("id", idlist.Select(id => id.ToUpper()));
-            }
-        }
+        public static Query IdUpperFilter(this Query query, IReadOnlyCollection<string> idlist) =>
+            idlist.Count == 0
+                ? query
+                : query.Clone().Where(q =>
+                {
+                    foreach (var id in idlist)
+                    {
+                        q = q.OrWhere("id", "LIKE", id.ToUpper());
+                    }
+                    return q;
+                });
 
-        public static Query IdLowerFilter(
-            this Query query, IReadOnlyCollection<string> idlist)
-        {
-            if (idlist.Count == 0)
-            {
-                return query;
-            }
-            //Tuning force to use GIN Index
-            else if (idlist.Count == 1)
-            {
-                return query.Where("id", "LIKE", idlist.FirstOrDefault().ToLower());
-            }
-            else
-            {
-                return query.WhereIn("id", idlist.Select(id => id.ToLower()));
-            }
-        }
+        public static Query IdLowerFilter(this Query query, IReadOnlyCollection<string> idlist) =>
+            idlist.Count == 0
+                ? query
+                : query.Clone().Where(q =>
+                {
+                    foreach (var id in idlist)
+                    {
+                        q = q.OrWhere("id", "LIKE", id.ToLower());
+                    }
+                    return q;
+                });
 
         public static Query LastChangedFilter(this Query query, string? updatefrom) =>
             updatefrom == null ?
