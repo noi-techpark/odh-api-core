@@ -134,7 +134,7 @@ namespace OdhApiCoreTests.Helper
             var result = compiler.Compile(query);
 
             Assert.Equal(
-                "SELECT * FROM \"activities\" WHERE (\"id\" = ? OR \"id\" = ?) AND (data @> jsonb(?)) AND (data @> jsonb(?)) AND (data @> jsonb(?)) AND data @> jsonb(?)",
+                "SELECT * FROM \"activities\" WHERE (\"id\" = ? OR \"id\" = ?) AND data @> jsonb(?) AND data @> jsonb(?) AND (data @> jsonb(?)) AND data @> jsonb(?)",
                 result.RawSql
             );
 
