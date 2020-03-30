@@ -119,7 +119,7 @@ namespace Helper
             query.WhereInJsonb(
                 list: municipalitylist,
                 jsonObjectConstructor: id => new { LocationInfo = new { MunicipalityInfo = new { Id = id.ToUpper() } } },
-                jsonPath: "LocationInfo.MinicipalityInfo.Id"
+                jsonPath: "LocationInfo.MunicipalityInfo.Id"
             );
 
         public static Query LocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
