@@ -251,5 +251,11 @@ namespace Helper
                 subtypelist,
                 poitype => new { SmgTags = new[] { poitype.ToLower() } }
             );
+
+        public static Query MetaRegionFilter(this Query query, IReadOnlyCollection<string> metaregionlist) =>
+            query.WhereInJsonb(
+                metaregionlist,
+                id => new { Id = id.ToUpper() }
+            );
     }
 }

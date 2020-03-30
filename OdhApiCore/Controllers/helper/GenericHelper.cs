@@ -1,4 +1,7 @@
 ﻿using Helper;
+using Newtonsoft.Json;
+using SqlKata;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +13,7 @@ namespace OdhApiCore.Controllers
 {
     public static class GenericHelper
     {
+        [Obsolete]
         public static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(
            IPostGreSQLConnectionFactory connectionFactory, string? areafilter, CancellationToken cancellationToken)
         {
@@ -24,6 +28,21 @@ namespace OdhApiCore.Controllers
             }
         }
 
+        public static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(
+            this Query query, IReadOnlyCollection<string> metaregionlist, CancellationToken cancellationToken)
+        {
+            var data = await query.From("metaregions")
+                    .Select("data")
+                    .MetaRegionFilter(metaregionlist)
+                    .GetAsync<JsonRaw>();
+            var mymetaregion = data.Select(raw => JsonConvert.DeserializeObject<MetaRegion>(raw.Value));
+            return (from region in mymetaregion
+                    where region.TourismvereinIds != null
+                    from tid in region.TourismvereinIds
+                    select tid).Distinct().ToList();
+        }
+
+        [Obsolete]
         public static async IAsyncEnumerable<string> RetrieveLocFilterDataAsync(
             IPostGreSQLConnectionFactory connectionFactory, List<string> metaregionlist, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
