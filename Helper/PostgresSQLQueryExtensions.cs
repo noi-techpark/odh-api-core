@@ -16,6 +16,61 @@ namespace Helper
         public static string JsonPathToPostgresArray(string field) =>
             field.Replace('.', ',');
 
+        public static Query WhereJsonb(
+            this Query query,
+            string path,
+            string value) =>
+                query.WhereRaw(
+                    $"data#>>'\\{{{path}\\}}' = ?",
+                    value
+                );
+
+        public static Query WhereJsonb(
+            this Query query,
+            string path,
+            int value) =>
+                query.WhereRaw(
+                    $"data#>>'\\{{{path}\\}}' = ?",
+                    value.ToString()
+                );
+
+        public static Query WhereJsonb(
+            this Query query,
+            string path,
+            bool value) =>
+                query.WhereRaw(
+                    $"data#>>'\\{{{path}\\}}' = ?",
+                    value ? "true" : "false"
+                );
+
+        public static Query OrWhereJsonb(
+            this Query query,
+            string path,
+            string value) =>
+                query.OrWhereRaw(
+                    $"data#>>'\\{{{path}\\}}' = ?",
+                    value
+                );
+
+        public static Query OrWhereJsonb(
+            this Query query,
+            string path,
+            int value) =>
+                query.OrWhereRaw(
+                    $"data#>>'\\{{{path}\\}}' = ?",
+                    value.ToString()
+                );
+
+        public static Query OrWhereJsonb(
+            this Query query,
+            string path,
+            bool value) =>
+                query.OrWhereRaw(
+                    $"data#>>'\\{{{path}\\}}' = ?",
+                    value ? "true" : "false"
+                );
+
+        [Obsolete]
         public static Query WhereJsonb<T>(
             this Query query,
             T value,
@@ -27,6 +82,7 @@ namespace Helper
                     )
                 );
 
+        [Obsolete]
         public static Query OrWhereJsonb<T>(
             this Query query,
             T value,
@@ -38,6 +94,7 @@ namespace Helper
                     )
                 );
 
+        [Obsolete]
         public static Query WhereInJsonb<T>(
             this Query query,
             IReadOnlyCollection<T> list,
@@ -57,19 +114,28 @@ namespace Helper
         public static Query WhereInJsonb<T>(
             this Query query,
             IReadOnlyCollection<T> list,
-            Func<T, object> jsonObjectConstructor,
+            string path,
+            Func<T, string> jsonObjectConstructor) =>
+                query.Where(q =>
+                {
+                    foreach (var item in list)
+                    {
+                        q = q.OrWhereJsonb(
+                            path,
+                            jsonObjectConstructor(item)
+                        );
+                    }
+                    return q;
+                });
+
+        public static Query WhereInJsonb<T>(
+            this Query query,
+            IReadOnlyCollection<T> list,
             string jsonPath)
         {
             if (list.Count == 0)
             {
                 return query;
-            }
-            else if (list.Count == 1)
-            {
-                return query.WhereJsonb(
-                    list.First(),
-                    jsonObjectConstructor
-                );
             }
             else
             {
@@ -83,7 +149,8 @@ namespace Helper
         public static Query DistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.WhereInJsonb(
                 list: districtlist,
-                id => new { DistrictId = id.ToUpper() }
+                "DistrictId",
+                id => id.ToUpper()
             );
 
         public static Query IdUpperFilter(this Query query, IReadOnlyCollection<string> idlist) =>
@@ -118,28 +185,24 @@ namespace Helper
         public static Query LocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
             query.WhereInJsonb(
                 list: municipalitylist,
-                jsonObjectConstructor: id => new { LocationInfo = new { MunicipalityInfo = new { Id = id.ToUpper() } } },
                 jsonPath: "LocationInfo.MunicipalityInfo.Id"
             );
 
         public static Query LocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
             query.WhereInJsonb(
                 list: tourismvereinlist,
-                jsonObjectConstructor: id => new { LocationInfo = new { TvInfo = new { Id = id.ToUpper() } } },
                 jsonPath: "LocationInfo.TvInfo.Id"
             );
 
         public static Query LocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
             query.WhereInJsonb(
                 list: regionlist,
-                jsonObjectConstructor: id => new { LocationInfo = new { RegionInfo = new { Id = id } } },
                 jsonPath: "LocationInfo.RegionInfo.Id"
             );
 
         public static Query AreaFilter(this Query query, IReadOnlyCollection<string> arealist) =>
             query.WhereInJsonb(
                 list: arealist,
-                jsonObjectConstructor: id => new { AreaId = new[] { id } },
                 jsonPath: "AreaId"
             );
 
@@ -147,8 +210,8 @@ namespace Helper
             query.When(
                 highlight != null,
                 query => query.WhereJsonb(
-                    highlight,
-                    highlight => new { Highlight = highlight }
+                    "Hightlight",
+                    highlight ?? false
                 )
             );
 
@@ -156,8 +219,8 @@ namespace Helper
             query.When(
                 active != null,
                 query => query.WhereJsonb(
-                    active,
-                    active => new { Active = active }
+                    "Active",
+                    active ?? false
                 )
             );
 
@@ -165,8 +228,8 @@ namespace Helper
             query.When(
                 smgactive != null,
                 query => query.WhereJsonb(
-                    smgactive,
-                    smgactive => new { SmgActive = smgactive }
+                    "SmgActive",
+                    smgactive ?? false
                 )
             );
 
@@ -224,7 +287,8 @@ namespace Helper
         public static Query ActivityTypeFilter(this Query query, IReadOnlyCollection<string> activitytypelist) =>
             query.WhereInJsonb(
                 list: activitytypelist,
-                type => new { Type = type }
+                "Type",
+                type => type
             );
 
         public static Query ActivitySubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
@@ -236,7 +300,6 @@ namespace Helper
         public static Query DifficultyFilter(this Query query, IReadOnlyCollection<string> difficultylist) =>
             query.WhereInJsonb(
                 list: difficultylist,
-                jsonObjectConstructor: id => new { Difficulty = id },
                 jsonPath: "Difficulty"
             );
 
@@ -255,7 +318,8 @@ namespace Helper
         public static Query MetaRegionFilter(this Query query, IReadOnlyCollection<string> metaregionlist) =>
             query.WhereInJsonb(
                 metaregionlist,
-                id => new { Id = id.ToUpper() }
+                "Id",
+                id => id.ToUpper()
             );
     }
 }
