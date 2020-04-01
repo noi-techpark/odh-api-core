@@ -202,15 +202,15 @@ namespace Helper
 
         public static Query AreaFilter(this Query query, IReadOnlyCollection<string> arealist) =>
             query.WhereInJsonb(
-                list: arealist,
-                jsonPath: "AreaId"
+                arealist,
+                areaid => new { AreaId = new[] { areaid } }
             );
 
         public static Query HighlightFilter(this Query query, bool? highlight) =>
             query.When(
                 highlight != null,
                 query => query.WhereJsonb(
-                    "Hightlight",
+                    "Highlight",
                     highlight ?? false
                 )
             );
