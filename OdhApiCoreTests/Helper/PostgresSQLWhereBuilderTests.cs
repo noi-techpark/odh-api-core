@@ -134,17 +134,17 @@ namespace OdhApiCoreTests.Helper
             var result = compiler.Compile(query);
 
             Assert.Equal(
-                "SELECT * FROM \"activities\" WHERE (\"id\" = ? OR \"id\" = ?) AND data @> jsonb(?) AND data @> jsonb(?) AND (data @> jsonb(?)) AND data @> jsonb(?)",
+                "SELECT * FROM \"activities\" WHERE (\"id\" = ? OR \"id\" = ?) AND data#>>'{LocationInfo,RegionInfo,Id}' = ANY(?) AND (data @> jsonb(?)) AND (data#>>'{Type}' = ?) AND data#>>'{Highlight}' = ?",
                 result.RawSql
             );
 
             Assert.Equal(6, result.Bindings.Count());
             Assert.Equal("ID1", result.NamedBindings["@p0"]);
             Assert.Equal("ID2", result.NamedBindings["@p1"]);
-            Assert.Equal("{\"LocationInfo\":{\"RegionInfo\":{\"Id\":\"region1\"}}}", result.NamedBindings["@p2"]);
+            Assert.Equal(new[] { "region1" }, result.NamedBindings["@p2"]);
             Assert.Equal("{\"AreaId\":[\"area1\"]}", result.NamedBindings["@p3"]);
-            Assert.Equal("{\"Type\":\"1024\"}", result.NamedBindings["@p4"]);
-            Assert.Equal("{\"Highlight\":true}", result.NamedBindings["@p5"]);
+            Assert.Equal("1024", result.NamedBindings["@p4"]);
+            Assert.Equal("true", result.NamedBindings["@p5"]);
         }
     }
 }
