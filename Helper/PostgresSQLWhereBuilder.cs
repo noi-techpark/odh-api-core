@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SqlKata;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -99,6 +100,7 @@ namespace Helper
         }
 
         //Return where and Parameters
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateIdListWhereExpressionCaseInsensitive(string id)
         {
             string whereexpression = "";
@@ -120,6 +122,7 @@ namespace Helper
         }
 
         //Return where and PArameters
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateIdListWhereExpression(
             IReadOnlyCollection<string> idlist, bool insertdummyonemptyidlist)
         {
@@ -181,6 +184,7 @@ namespace Helper
         }
 
         //Return Where and Parameters for MetaRegion Query4
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateMetaRegionWhereExpression(
             IReadOnlyCollection<string> metaregionlist)
         {
@@ -222,8 +226,19 @@ namespace Helper
             return (whereexpression, parameters);
         }
 
+        [System.Diagnostics.Conditional("TRACE")]
+        private static void LogMethodInfo(System.Reflection.MethodBase m, params object?[] parameters)
+        {
+            var parameterInfo =
+                m.GetParameters()
+                    .Zip(parameters)
+                    .Select((x, _) => (x.First.Name, x.Second));
+            Serilog.Log.Debug("{method}({@parameters})", m.Name, parameterInfo);
+        }
+
         //Return Where and Parameters for Activity
-        public static (string, IEnumerable<PGParameters>) CreateActivityWhereExpression(
+        public static Query ActivityWhereExpression(
+            this Query query,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> activitytypelist,
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> difficultylist,
             IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
@@ -233,34 +248,44 @@ namespace Helper
             int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
             string? language, string? lastchange)
         {
-            string whereexpression = "";
-            List<PGParameters> parameters = new List<PGParameters>();
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, activitytypelist,
+                subtypelist, difficultylist,
+                smgtaglist, districtlist,
+                municipalitylist, tourismvereinlist,
+                regionlist, arealist, distance, distancemin,
+                distancemax, duration, durationmin,
+                durationmax, altitude, altitudemin,
+                altitudemax, highlight, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
 
-            IdUpperFilterWhere(ref whereexpression, parameters, idlist);
-            DistrictWhere(ref whereexpression, parameters, districtlist);
-            LocFilterMunicipalityWhere(ref whereexpression, parameters, municipalitylist);
-            LocFilterTvsWhere(ref whereexpression, parameters, tourismvereinlist);
-            LocFilterRegionWhere(ref whereexpression, parameters, regionlist);
-            AreaFilterWhere(ref whereexpression, parameters, arealist);
-            ActivityTypeFilterWhere(ref whereexpression, parameters, activitytypelist);
-            ActivitySubTypeFilterWhere(ref whereexpression, parameters, subtypelist);
-            DifficultyFilterWhere(ref whereexpression, parameters, difficultylist);
-            DistanceFilterWhere(ref whereexpression, parameters, distance, distancemin, distancemax);
-            DurationFilterWhere(ref whereexpression, parameters, duration, durationmin, durationmax);
-            AltitudeFilterWhere(ref whereexpression, parameters, altitude, altitudemin, altitudemax);
-            HighlightFilterWhere(ref whereexpression, parameters, highlight);
-            ActiveFilterWhere(ref whereexpression, parameters, activefilter);
-            SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
-            SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
-            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor(language), searchfilter);
-
-            LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
-
-            return (whereexpression, parameters);
+            return query
+                .IdUpperFilter(idlist)
+                .DistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .AreaFilter(arealist)
+                .ActivityTypeFilter(activitytypelist)
+                .ActivitySubTypeFilter(subtypelist)
+                .DifficultyFilter(difficultylist)
+                .DistanceFilter(distance, distancemin, distancemax)
+                .DurationFilter(duration, durationmin, durationmax)
+                .AltitudeFilter(altitude, altitudemin, altitudemax)
+                .HighlightFilter(highlight)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SmgTagFilter(smgtaglist)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange);
         }
 
-        //Returns Where and Parameters for Poi
-        public static (string, IEnumerable<PGParameters>) CreatePoiWhereExpression(
+        public static Query PoiWhereExpression(
+            this Query query,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> poitypelist,
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
@@ -268,29 +293,36 @@ namespace Helper
             IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
             bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
         {
-            string whereexpression = "";
-            List<PGParameters> parameters = new List<PGParameters>();
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                idlist, poitypelist,
+                subtypelist, smgtaglist,
+                districtlist, municipalitylist,
+                tourismvereinlist, regionlist,
+                arealist, highlight, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
 
-            IdUpperFilterWhere(ref whereexpression, parameters, idlist);
-            DistrictWhere(ref whereexpression, parameters, districtlist);
-            LocFilterMunicipalityWhere(ref whereexpression, parameters, municipalitylist);
-            LocFilterTvsWhere(ref whereexpression, parameters, tourismvereinlist);
-            LocFilterRegionWhere(ref whereexpression, parameters, regionlist);
-            AreaFilterWhere(ref whereexpression, parameters, arealist);
-            PoiTypeFilterWhere(ref whereexpression, parameters, poitypelist);
-            PoiSubTypeFilterWhere(ref whereexpression, parameters, subtypelist);
-            SmgTagFilterWhere(ref whereexpression, parameters, smgtaglist);
-            HighlightFilterWhere(ref whereexpression, parameters, highlight);
-            ActiveFilterWhere(ref whereexpression, parameters, activefilter);
-            SmgActiveFilterWhere(ref whereexpression, parameters, smgactivefilter);
-            SearchFilterWhere(ref whereexpression, parameters, TitleFieldsToSearchFor(language), searchfilter);
-
-            LastChangedFilterWhere(ref whereexpression, parameters, lastchange);
-
-            return (whereexpression, parameters);
+            return query
+                .IdUpperFilter(idlist)
+                .DistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .AreaFilter(arealist)
+                .PoiTypeFilter(poitypelist)
+                .PoiSubTypeFilter(subtypelist)
+                .SmgTagFilter(smgtaglist)
+                .HighlightFilter(highlight)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange);
         }
 
         //Return Where and Parameters for Events
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateEventWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> orgidlist,
             IReadOnlyCollection<string> rancidlist, IReadOnlyCollection<string> typeidlist,
@@ -324,6 +356,7 @@ namespace Helper
         }
 
         //Return Where and Parameters for SmgPoi
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateSmgPoiWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist,
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> poitypelist,
@@ -356,6 +389,7 @@ namespace Helper
         }
 
         //Return Where and Parameters for Gastronomy
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateGastroWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> dishcodesids,
             IReadOnlyCollection<string> ceremonycodesids, IReadOnlyCollection<string> categorycodesids,
@@ -386,6 +420,7 @@ namespace Helper
         }
 
         //Return Where and Parameters for Accommodation
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateAccoWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> accotypelist, bool apartmentfilter,
             IReadOnlyCollection<string> categorylist, IReadOnlyDictionary<string, bool> featurelist,
@@ -422,6 +457,7 @@ namespace Helper
         }
 
         //Return Where and Parameters for Article
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateArticleWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist,
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> smgtaglist,
@@ -444,6 +480,7 @@ namespace Helper
         }
 
         //Returns Where and Parameter for EventShort
+        [Obsolete]
         public static (string wherexpression, IEnumerable<PGParameters> parameters) CreateEventShortWhereExpression(
             DateTime start, DateTime end, string source, string eventlocation,
             string activefilter, IReadOnlyCollection<string> eventidlist, bool special)
@@ -466,6 +503,7 @@ namespace Helper
         }
 
         //Returns Where and Parameter for Packages
+        [Obsolete]
         public static (string wherexpression, IEnumerable<PGParameters> parameters) CreatePackageWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> accolist,
             IReadOnlyCollection<string> boardlist, IReadOnlyCollection<string> themelist,
@@ -497,6 +535,7 @@ namespace Helper
         }
 
         //Return Where and Parameters for Alpinebits
+        [Obsolete]
         public static (string wherexpression, IEnumerable<PGParameters> parameters) CreateAlpineBitsWhereExpression(
             IReadOnlyCollection<string> idlist, string source,
             string messagetype, string requestdate,
@@ -518,6 +557,7 @@ namespace Helper
 
         #region Reusable Where Builders Mobile
 
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateSmgPoiMobileWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist,
             IReadOnlyCollection<string> subtypelist, IReadOnlyCollection<string> poitypelist,
@@ -555,6 +595,7 @@ namespace Helper
             return (whereexpression, parameters);
         }
 
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateEventMobileWhereExpression(
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> orgidlist,
             IReadOnlyCollection<string> rancidlist, IReadOnlyCollection<string> typeidlist,
@@ -587,6 +628,7 @@ namespace Helper
             return (whereexpression, parameters);
         }
 
+        [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateTipsMobileWhereExpression(
             IReadOnlyCollection<string> typestoexclude, IReadOnlyCollection<string> subtypestoexclude,
             IReadOnlyCollection<string> poitypestoexclude, IReadOnlyCollection<string> languagelist,
@@ -608,6 +650,7 @@ namespace Helper
 
         #endregion
 
+        [Obsolete]
         private static void IdUpperFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> idlist)
         {
@@ -646,6 +689,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void IdLowerFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> idlist)
         {
@@ -684,6 +728,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void IdFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> idlist)
         {
@@ -712,25 +757,7 @@ namespace Helper
             }
         }
 
-        private static void LastChangedFilterWhere(
-        ref string whereexpression, IList<PGParameters> parameters, string? updatefrom)
-        {
-            //Active
-            if (!String.IsNullOrEmpty(updatefrom))
-            {
-                if (!String.IsNullOrEmpty(whereexpression))
-                    whereexpression += " AND ";
-
-                whereexpression += "(to_date(data ->> 'LastChange', 'YYYY-MM-DD') > @date)";
-                parameters.Add(new PGParameters()
-                {
-                    Name = "date",
-                    Type = NpgsqlTypes.NpgsqlDbType.Date,
-                    Value = updatefrom
-                });
-            }
-        }     
-
+        [Obsolete]
         private static void DistrictWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> districtlist)
         {
@@ -774,6 +801,7 @@ namespace Helper
 
         }
 
+        [Obsolete]
         private static void LocFilterDistrictWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> districtlist)
         {
@@ -814,9 +842,9 @@ namespace Helper
                     whereexpression += $" data->'LocationInfo'-> 'DistrictInfo' -> 'Id' in ({districtliststring})";
                 }
             }
-
         }
 
+        [Obsolete]
         private static void LocFilterMunicipalityWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> municipalitylist)
         {
@@ -860,6 +888,7 @@ namespace Helper
 
         }
 
+        [Obsolete]
         private static void LocFilterTvsWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> tourismvereinlist)
         {
@@ -903,6 +932,7 @@ namespace Helper
 
         }
 
+        [Obsolete]
         private static void LocFilterRegionWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> regionlist)
         {
@@ -947,6 +977,7 @@ namespace Helper
 
         }
 
+        [Obsolete]
         private static void AreaFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> arealist)
         {
@@ -977,6 +1008,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void HighlightFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? highlight)
         {
@@ -996,6 +1028,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void ActiveFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? activefilter)
         {
@@ -1015,6 +1048,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void SmgActiveFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool? smgactivefilter)
         {
@@ -1034,6 +1068,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void DistanceFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool distance,
             int distancemin, int distancemax)
@@ -1060,6 +1095,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void DurationFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters,
             bool duration, int durationmin, int durationmax)
@@ -1086,6 +1122,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void DurationFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters,
             bool duration, double durationmin, double durationmax)
@@ -1112,7 +1149,8 @@ namespace Helper
             }
         }
 
-        private static void AltitudeFilterWhere(
+        [Obsolete]
+        private static void AltitudeFilter(
             ref string whereexpression, IList<PGParameters> parameters,
             bool altitude, int altitudemin, int altitudemax)
         {
@@ -1139,6 +1177,33 @@ namespace Helper
 
         }
 
+        [Obsolete]
+        private static void AltitudeFilterWhere(
+            ref string whereexpression, IList<PGParameters> parameters,
+            bool altitude, int altitudemin, int altitudemax)
+        {
+            //Altitude
+            if (altitude)
+            {
+                if (!String.IsNullOrEmpty(whereexpression))
+                    whereexpression += " AND ";
+                whereexpression += "(data ->>'Altitude')::numeric >= @altitudemin AND (data->> 'Altitude')::numeric <= @altitudemax";
+                parameters.Add(new PGParameters()
+                {
+                    Name = "altitudemin",
+                    Type = NpgsqlTypes.NpgsqlDbType.Numeric,
+                    Value = altitudemin.ToString()
+                });
+                parameters.Add(new PGParameters()
+                {
+                    Name = "altitudemax",
+                    Type = NpgsqlTypes.NpgsqlDbType.Numeric,
+                    Value = altitudemax.ToString()
+                });
+            }
+        }
+
+        [Obsolete]
         private static void SmgTagFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> smgtaglist)
         {
@@ -1170,6 +1235,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void SearchFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, string[] fields, string? searchfilter)
         {
@@ -1207,6 +1273,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void ActivityTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> activitytypelist)
         {
@@ -1238,6 +1305,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void ActivitySubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)
         {
@@ -1269,6 +1337,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void ArticleTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> articletypelist)
         {
@@ -1300,6 +1369,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void ArticleSubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> articlesubtypelist)
         {
@@ -1331,6 +1401,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void DifficultyFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> difficultylist)
         {
@@ -1362,6 +1433,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void HasLanguageFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> haslanguage)
         {
@@ -1393,6 +1465,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void PoiTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> poitypelist)
         {
@@ -1424,6 +1497,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void PoiSubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)
         {
@@ -1455,6 +1529,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventTopicFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> topicrids)
         {
@@ -1485,6 +1560,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventOrganizerFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> orgidlist)
         {
@@ -1516,6 +1592,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventRancFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> rancidlist)
         {
@@ -1547,6 +1624,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> typeidlist)
         {
@@ -1579,6 +1657,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventDateFilterWhereColumns(ref string whereexpression, IList<PGParameters> parameters, DateTime? begin, DateTime? end)
         {
             //Begin & End
@@ -1623,6 +1702,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventDateFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, DateTime? begin, DateTime? end)
         {
@@ -1664,6 +1744,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventDateFilterWhereTest(
             ref string whereexpression, IList<PGParameters> parameters, DateTime? begin, DateTime? end)
         {
@@ -1724,6 +1805,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventFromNowFilter(
             ref string whereexpression, IList<PGParameters> parameter, bool fromnow)
         {
@@ -1739,6 +1821,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventDateFilterWhereWithNextBegin(ref string whereexpression, IList<PGParameters> parameters, DateTime? begin, DateTime? end)
         {
             //Begin & End
@@ -1753,6 +1836,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void SmgPoiTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> typelist)
         {
@@ -1784,6 +1868,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void SmgPoiSubTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypelist)
         {
@@ -1815,6 +1900,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void SmgPoiPoiTypeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> poitypelist)
         {
@@ -1846,6 +1932,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void SourceFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> sourcelist)
         {
@@ -1877,6 +1964,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void CategoryCodeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> categorycodesids)
         {
@@ -1909,6 +1997,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void CeremonyCodeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> ceremonycodesids)
         {
@@ -1941,6 +2030,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void CuisineCodeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> facilitycodesids)
         {
@@ -1972,6 +2062,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void DishCodeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> dishcodesids)
         {
@@ -2003,6 +2094,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void BoardFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> boardlist)
         {
@@ -2034,6 +2126,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void BadgeFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> badgelist)
         {
@@ -2065,6 +2158,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void CategoryFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> categorylist)
         {
@@ -2129,6 +2223,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void ThemeFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyDictionary<string, bool> themelist)
         {
@@ -2160,6 +2255,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void FeatureFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyDictionary<string, bool> featurelist)
         {
@@ -2191,6 +2287,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void AccoTypeFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> accotypelist)
         {
@@ -2252,6 +2349,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void ApartmentFilter(
             ref string whereexpression, IList<PGParameters> parameters, bool apartmentfilter)
         {
@@ -2271,6 +2369,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void BookableFilter(
             ref string whereexpression, IList<PGParameters> parameters, bool? bookable)
         {
@@ -2290,31 +2389,7 @@ namespace Helper
             }
         }
 
-        private static void AltitudeFilter(
-            ref string whereexpression, IList<PGParameters> parameters,
-            bool altitude, int altitudemin, int altitudemax)
-        {
-            //Altitude
-            if (altitude)
-            {
-                if (!String.IsNullOrEmpty(whereexpression))
-                    whereexpression += " AND ";
-                whereexpression += "(data ->>'Altitude')::numeric >= @altitudemin AND (data->> 'Altitude')::numeric <= @altitudemax";
-                parameters.Add(new PGParameters()
-                {
-                    Name = "altitudemin",
-                    Type = NpgsqlTypes.NpgsqlDbType.Numeric,
-                    Value = altitudemin.ToString()
-                });
-                parameters.Add(new PGParameters()
-                {
-                    Name = "altitudemax",
-                    Type = NpgsqlTypes.NpgsqlDbType.Numeric,
-                    Value = altitudemax.ToString()
-                });
-            }
-        }
-
+        [Obsolete]
         private static void TypesToExcludeFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> typestoexclude)
         {
@@ -2346,6 +2421,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void SubTypesToExcludeFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> subtypestoexclude)
         {
@@ -2377,6 +2453,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void PoiTypesToExcludeFilter(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> poitypestoexclude)
         {
@@ -2408,6 +2485,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void PackagesThemeFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> themelist)
         {
@@ -2438,6 +2516,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void PackagesBoardFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> boardlist)
         {
@@ -2468,6 +2547,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void PackagesAccoFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> accolist)
         {
@@ -2498,6 +2578,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void PackagesStayFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, bool shortstay, bool longstay)
         {
@@ -2532,6 +2613,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void PackagesValidFromFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, DateTime validfrom, DateTime validto)
         {
@@ -2552,6 +2634,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventShortActiveFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, string activefilter)
         {
@@ -2572,6 +2655,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventShortSourceFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, string source)
         {
@@ -2591,6 +2675,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventShortEventLocationFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, string eventlocation)
         {
@@ -2611,6 +2696,7 @@ namespace Helper
 
         }
 
+        [Obsolete]
         private static void EventShortBeginEndFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, DateTime start, DateTime end)
         {
@@ -2641,6 +2727,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void EventShortBeginEndSpecialFilterWhere(
             ref string whereexpression, IList<PGParameters> parameters, DateTime start, DateTime end)
         {
@@ -2672,6 +2759,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void AlpineBitsMessageFilterWhere(ref string whereexpression, List<PGParameters> parameters, string messagetype)
         {
             //Highlight
@@ -2685,6 +2773,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void AlpineBitsSourceFilterWhere(ref string whereexpression, IList<PGParameters> parameters, string source)
         {
             //Highlight
@@ -2698,6 +2787,7 @@ namespace Helper
             }
         }
 
+        [Obsolete]
         private static void AlpineBitsAccommodationIdFilterWhere(ref string whereexpression, IList<PGParameters> parameters, IReadOnlyCollection<string> accommodationids)
         {
             //AccoType Info schaugn ob des geat!!! umgekearter foll

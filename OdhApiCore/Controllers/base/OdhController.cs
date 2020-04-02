@@ -1,10 +1,11 @@
 ﻿using Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SqlKata.Execution;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
@@ -14,20 +15,25 @@ namespace OdhApiCore.Controllers
     [FormatFilter]
     public abstract class OdhController : ControllerBase
     {
-        private readonly IPostGreSQLConnectionFactory connectionFactory;
-        private readonly ILogger<OdhController> logger;
+        private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
+        private readonly ILogger<OdhController> logger;
+        private readonly IPostGreSQLConnectionFactory connectionFactory;
+        private readonly Factories.PostgresQueryFactory queryFactory;
 
         protected bool CheckCC0License => settings.CheckCC0License;
 
-        public OdhController(ISettings settings, ILogger<OdhController> logger, IPostGreSQLConnectionFactory connectionFactory)
+        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
         {
+            this.env = env;
             this.settings = settings;
             this.logger = logger;
             this.connectionFactory = connectionFactory;
+            this.queryFactory = queryFactory;
         }
 
         protected ILogger<OdhController> Logger => logger;
+        protected Factories.PostgresQueryFactory QueryFactory => queryFactory;
 
         protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<IActionResult>> f)
         {
@@ -44,15 +50,15 @@ namespace OdhApiCore.Controllers
                 return this.BadRequest(new {
                     error = "Invalid JSONPath selection",
                     path = ex.Path,
-                    details = ex.Message
+                    details = env.IsDevelopment() ? ex.ToString() : ex.Message
                 });
             }
             catch (Exception ex)
             {
                 if (ex.Message == "Request Error")
-                    return this.BadRequest(new { error = ex.Message });
+                    return this.BadRequest(new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
                 else
-                    return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+                    return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
             }
         }
 

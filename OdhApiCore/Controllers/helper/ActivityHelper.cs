@@ -1,4 +1,5 @@
 ﻿using Helper;
+using SqlKata;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -36,7 +37,7 @@ namespace OdhApiCore.Controllers
             string? idfilter, string? locfilter, string? areafilter, string? distancefilter,
             string? altitudefilter, string? durationfilter, bool? highlightfilter, string? difficultyfilter,
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken, Factories.PostgresQueryFactory queryFactory)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
 
@@ -44,8 +45,8 @@ namespace OdhApiCore.Controllers
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
-                    connectionFactory, metaregionlist, cancellationToken).ToListAsync();
+                tourismusvereinids = await queryFactory.Query()
+                    .RetrieveLocFilterDataAsync(metaregionlist, cancellationToken);
             }
 
             return new ActivityHelper(
@@ -96,18 +97,26 @@ namespace OdhApiCore.Controllers
                 tourismvereinlist = CommonListCreator.CreateDistrictIdList(locfilter, "tvs");
 
             if (tourismusvereinids != null)
-                tourismvereinlist.AddRange(tourismusvereinids);        
+                tourismvereinlist.AddRange(tourismusvereinids);
 
             //Distance
-            var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
-            distancemin = min * 1000;
-            distancemax = max * 1000;
+            distance = distancefilter != null;
+            if (distance)
+            {
+                var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
+                distancemin = min * 1000;
+                distancemax = max * 1000;
+            }
 
             //Altitude
-            (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
+            altitude = altitudefilter != null;
+            if (altitude)
+                (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
 
             //Duration
-            (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
+            duration = durationfilter != null;
+            if (duration)
+                (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
 
             //highlight
             highlight = highlightfilter;
