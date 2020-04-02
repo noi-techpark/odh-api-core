@@ -1,6 +1,7 @@
 using Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -10,13 +11,17 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using OdhApiCore.Controllers;
+using OdhApiCore.Factories;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.File;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 using System.Linq;
 using System.Text;
 
@@ -104,7 +109,8 @@ namespace OdhApiCore
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
-            services.AddSingleton<Helper.IPostGreSQLConnectionFactory, PostGreSQLConnectionFactory>();
+            services.AddSingleton<IPostGreSQLConnectionFactory, PostgresConnectionFactory>();
+            services.AddScoped<PostgresQueryFactory>();
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);

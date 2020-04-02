@@ -1,14 +1,14 @@
 ﻿using Helper;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using OdhApiCore.Responses;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,8 +21,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
     {
-        public PoiController(ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, logger, connectionFactory)
+        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
+            : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
 
@@ -166,39 +166,42 @@ namespace OdhApiCore.Controllers.api
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
                     smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 
-                string select = "*";
-                string orderby = "";
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From("pois")
+                        .PoiWhereExpression(
+                            idlist: myactivityhelper.idlist, poitypelist: myactivityhelper.poitypelist,
+                            subtypelist: myactivityhelper.subtypelist, smgtaglist: myactivityhelper.smgtaglist,
+                            districtlist: new List<string>(), municipalitylist: new List<string>(),
+                            tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
+                            arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
+                            activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange
+                        )
+                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                        .GeoSearchFilterAndOrderby(geosearchresult);
 
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreatePoiWhereExpression(
-                    idlist: myactivityhelper.idlist, poitypelist: myactivityhelper.poitypelist,
-                    subtypelist: myactivityhelper.subtypelist, smgtaglist: myactivityhelper.smgtaglist,
-                    districtlist: new List<string>(), municipalitylist: new List<string>(),
-                    tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
-                    arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
-                    activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                    searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange);
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: (int)pagesize);
 
-                //Build Orderby
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License)
+                    );
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
-
-                uint pageskip = pagesize * (pagenumber - 1);
-
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "pois", select, (whereexpression, parameters), orderby, pagesize, pageskip,
-                    cancellationToken);
-
-                uint totalcount = (uint)totalCount;
-                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
 
                 return ResponseHelpers.GetResult(
                     pagenumber,
                     totalpages,
                     totalcount,
-                    myseed,
+                    seed,
                     dataTransformed,
                     Url);
             });
@@ -213,12 +216,14 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async connectionFactory =>
             {
-                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "pois", "*", where, "", 0,
-                    null, cancellationToken);
+                var query =
+                    QueryFactory.Query("pois")
+                        .Select("data")
+                        .Where("id", id);
 
-                return data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
             });
         }
 

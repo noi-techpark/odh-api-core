@@ -4,6 +4,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        DOCKER_PROJECT_NAME = "odh-tourism-api"
         DOCKER_IMAGE_API = "755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api"
         DOCKER_TAG_API = "$BUILD_NUMBER"
         DOCKER_SERVICES = "api"
@@ -16,6 +17,7 @@ pipeline {
         stage('Configure') {
             steps {
                 sh "echo '' > .env"
+                sh "echo 'COMPOSE_PROJECT_NAME=${DOCKER_PROJECT_NAME}' >> .env"
                 sh "echo 'DOCKER_IMAGE_API=${DOCKER_IMAGE_API}' >> .env"
                 sh "echo 'DOCKER_TAG_API=${DOCKER_TAG_API}' >> .env"
                 sh "echo 'PG_CONNECTION=${PG_CONNECTION}' >> .env"

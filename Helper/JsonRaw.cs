@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,9 +24,9 @@ namespace Helper
     [JsonConverter(typeof(JsonRawConverter))]
     public class JsonRaw
     {
-        public JsonRaw(string rawString)
+        public JsonRaw(string data)
         {
-            Value = rawString;
+            Value = data;
         }
 
         public string Value { get; }
@@ -34,5 +35,7 @@ namespace Helper
         {
             throw new InvalidOperationException("ToString on JsonRaw shouldn't be called, there is somewhere an implicit ToString() happening (maybe from a manual JSON serialization).");
         }
+
+        public static explicit operator JsonRaw(string x) => new JsonRaw(x);
     }
 }

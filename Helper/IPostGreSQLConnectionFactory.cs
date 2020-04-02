@@ -6,6 +6,6 @@ namespace Helper
 {
     public interface IPostGreSQLConnectionFactory
     {
-        public Task<NpgsqlConnection> GetConnection(CancellationToken cancellationToken);
+        public Task<NpgsqlConnection> GetConnectionAndOpenAsync(CancellationToken cancellationToken);
     }
 }
