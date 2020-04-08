@@ -249,8 +249,9 @@ namespace OdhApiCore.Controllers
             {
                 var query =
                     QueryFactory.Query("gastronomytypes")
-                        .SelectRaw("data")
-                        .Where("Key", "ILIKE", id);
+                        .Select("data")
+                        .WhereJsonb("Key", id.ToUpper());
+                //.Where("data ->>'Key'", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
