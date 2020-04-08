@@ -117,6 +117,34 @@ namespace OdhApiCore.Controllers
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
+        /// <summary>
+        /// GET Gastronomy Types List
+        /// </summary>
+        /// <returns>Collection of GastronomyTypes Object</returns>                
+        [ProducesResponseType(typeof(IEnumerable<GastronomyTypes>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,GastroReader")]        
+        [HttpGet, Route("api/GastronomyTypes")]
+        public async Task<IActionResult> GetAllGastronomyTypesList(CancellationToken cancellationToken = default)
+        {
+            return await GetGastronomyTypesListAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// GET Gastronomy Types Single
+        /// </summary>
+        /// <returns>GastronomyTypes Object</returns>                
+        [ProducesResponseType(typeof(GastronomyTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,GastroReader")]        
+        [HttpGet, Route("api/GastronomyTypes/{id}")]
+        public async Task<IActionResult> GetAllGastronomyTypesList(string id, CancellationToken cancellationToken = default)
+        {
+            return await GetGastronomyTypesSingleAsync(id, cancellationToken);
+        }
+
         #endregion
 
         #region GETTER
@@ -193,6 +221,42 @@ namespace OdhApiCore.Controllers
 
         #region CUSTOM METHODS
 
+        /// <summary>
+        /// GET Gastronomy Types List
+        /// </summary>
+        /// <returns>Collection of GastronomyTypes Object</returns>
+        private Task<IActionResult> GetGastronomyTypesListAsync(CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async connectionFactory =>
+            {
+                var query =
+                    QueryFactory.Query("gastronomytypes")
+                        .SelectRaw("data");
+
+                var data = await query.GetAsync<JsonRaw?>();
+
+                return data;
+            });
+        }
+
+        /// <summary>
+        /// GET Gastronomy Types Single
+        /// </summary>
+        /// <returns>GastronomyTypes Object</returns>
+        private Task<IActionResult> GetGastronomyTypesSingleAsync(string id, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async connectionFactory =>
+            {
+                var query =
+                    QueryFactory.Query("gastronomytypes")
+                        .Select("data")
+                        .Where("Key", "ILIKE", id);
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data;
+            });
+        }
 
         #endregion
 
