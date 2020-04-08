@@ -332,25 +332,25 @@ namespace Helper
         public static Query CuisineCodeFilter(this Query query, IReadOnlyCollection<string> cuisinecodelist) =>
             query.WhereInJsonb(
                 cuisinecodelist,
-                tag => new { CategoryCodes = new[] { new { Id = tag.ToLower() } } }
+                tag => new { Facilities = new[] { new { Id = tag.ToUpper() } } }
             );
 
         public static Query CeremonyCodeFilter(this Query query, IReadOnlyCollection<string> ceremonycodelist) =>
            query.WhereInJsonb(
                ceremonycodelist,
-               tag => new { SmgTags = new[] { tag.ToLower() } }
+               tag => new { CapacityCeremony = new[] { new { Id = tag.ToUpper() } } }
            );
 
         public static Query CategoryCodeFilter(this Query query, IReadOnlyCollection<string> categorycodelist) =>
            query.WhereInJsonb(
                categorycodelist,
-               tag => new { SmgTags = new[] { tag.ToLower() } }
+               tag => new { CategoryCodes = new[] { new { Id = tag.ToUpper() } } }
            );
 
         public static Query DishCodeFilter(this Query query, IReadOnlyCollection<string> dishcodelist) =>
            query.WhereInJsonb(
                dishcodelist,
-               tag => new { SmgTags = new[] { tag.ToLower() } }
+               tag => new { DishRates = new[] { new { Id = tag.ToUpper() } } }
            );
     }
 }
