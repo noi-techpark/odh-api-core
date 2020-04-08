@@ -138,6 +138,24 @@ namespace OdhApiCore.Controllers
             return await GetActivityTypesListAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// GET Activity Types Single
+        /// </summary>
+        /// <returns>ActivityTypes Object</returns>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        //[CacheOutputUntilToday(23, 59)]
+        [ProducesResponseType(typeof(IEnumerable<ActivityTypes>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,ActivityReader")]
+        [HttpGet, Route("api/ActivityTypes/{id}")]
+        public async Task<IActionResult> GetAllActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
+        {
+            return await GetActivityTypesSingleAsync(id, cancellationToken);
+        }
+
         #endregion
 
         #region GETTER
@@ -162,7 +180,7 @@ namespace OdhApiCore.Controllers
         /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Activities Objects</returns>
-         private Task<IActionResult> GetFiltered(
+        private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
@@ -244,83 +262,40 @@ namespace OdhApiCore.Controllers
 
         #region CUSTOM METHODS
 
-        private Type GetChildFlagType(object x)
-        {
-            return x switch
-            {
-                "Berg" => typeof(ActivityTypeBerg),
-                "Radfahren" => typeof(ActivityTypeRadfahren),
-                "Stadtrundgang" => typeof(ActivityTypeOrtstouren),
-                "Pferdesport" => typeof(ActivityTypePferde),
-                "Wandern" => typeof(ActivityTypeWandern),
-                "LaufenundFitness" => typeof(ActivityTypeLaufenFitness),
-                "Loipen" => typeof(ActivityTypeLoipen),
-                "Rodelbahnen" => typeof(ActivityTypeRodeln),
-                "Piste" => typeof(ActivityTypePisten),
-                "Aufstiegsanlagen" => typeof(ActivityTypeAufstiegsanlagen),
-                _ => typeof(ActivityTypeBerg),
-            };
-        }
-
         /// <summary>
-        /// GET Activity Types List (Localized Type Names and Bitmasks)
+        /// GET Activity Types List
         /// </summary>
         /// <returns>Collection of ActivityTypes Object</returns>
         private Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async connectionFactory =>
             {
-                List<ActivityTypes> mysuedtiroltypeslist = new List<ActivityTypes>();
+                var query =
+                    QueryFactory.Query("activitytypes")
+                        .SelectRaw("data");
 
-                //Get LTS Tagging Types List
-                var ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
-                        connectionFactory, "ltstaggingtypes", "*", "", "", 0,
-                        null, cancellationToken);
+                var data = await query.GetAsync<JsonRaw?>();
 
-                foreach (ActivityTypeFlag myactivitytype in EnumHelper.GetValues<ActivityTypeFlag>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
+                return data;
+            });
+        }
 
-                    string? id = myactivitytype.GetDescription();
+        /// <summary>
+        /// GET Activity Types Single
+        /// </summary>
+        /// <returns>ActivityTypes Object</returns>
+        private Task<IActionResult> GetActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async connectionFactory =>
+            {
+                var query =
+                    QueryFactory.Query("activitytypes")
+                        .Select("data")
+                        .Where("id", id); 
 
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivityType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "";
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                    mysmgpoitype.Bitmask = (int)myactivitytype; //FlagsHelper.GetFlagofType<ActivityTypeFlag>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-
-                    var subtype = GetChildFlagType(myactivitytype);
-
-                    foreach (var myactivitysubtype in Enum.GetValues(subtype))
-                    {
-                        if (myactivitysubtype != null)
-                        {
-                            ActivityTypes mysmgpoisubtype = new ActivityTypes();
-
-                            string? subid = FlagsHelper.GetDescription(myactivitysubtype);
-
-                            mysmgpoisubtype.Id = subid;
-                            mysmgpoisubtype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                            mysmgpoisubtype.Parent = id;
-
-                            mysmgpoisubtype.Bitmask = (int)myactivitysubtype;
-
-                            mysmgpoisubtype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                                Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(subid),
-                                ltstaggingtypes) as Dictionary<string, string>;
-
-                            mysuedtiroltypeslist.Add(mysmgpoisubtype);
-                        }
-                    }
-                }
-
-                return mysuedtiroltypeslist;
+                return data;
             });
         }
 
