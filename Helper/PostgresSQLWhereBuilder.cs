@@ -363,6 +363,33 @@ namespace Helper
         }
 
 
+        //Return Where and Parameters for WebCamInfo
+        public static Query WebCamInfoWhereExpression(
+            this Query query,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
+            bool? activefilter, bool? smgactivefilter, string? searchfilter,
+            string? language, string? lastchange)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, sourcelist,
+                activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .SourceFilter(sourcelist)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
+                .LastChangedFilter(lastchange);
+        }
+
+
+
         //Return Where and Parameters for Events
         [Obsolete]
         public static (string, IEnumerable<PGParameters>) CreateEventWhereExpression(

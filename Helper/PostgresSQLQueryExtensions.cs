@@ -352,5 +352,12 @@ namespace Helper
                dishcodelist,
                tag => new { DishRates = new[] { new { Id = tag.ToUpper() } } }
            );
+
+        public static Query SourceFilter(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.WhereInJsonb(
+                list: sourcelist,
+                "Source",
+                id => id.ToUpper()
+            );
     }
 }

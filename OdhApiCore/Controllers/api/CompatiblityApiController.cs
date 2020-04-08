@@ -24,7 +24,7 @@ namespace OdhApiCore.Controllers.api
         {
         }
 
-        #region Poi Controller API
+        #region PoiController
 
         //Reduced GETTER
 
@@ -173,29 +173,7 @@ namespace OdhApiCore.Controllers.api
                 language, activitytype, subtype, locfilter, areafilter, distancefilter, altitudefilter, durationfilter,
                 highlight, difficultyfilter, active, odhactive, odhtagfilter, geosearchresult, cancellationToken);
         }
-
-        class ResultReduced
-        {
-            public string? Id { get; set; }
-            public string? Name { get; set; }
-        }
-
-        /// <summary>
-        /// GET Reduced Activity List Filtered
-        /// </summary>
-        /// <param name="language">Language of the Reduced List</param>
-        /// <param name="activitytype">Type of the Activity (possible values: STRINGS: 'Berg','Radfahren','Stadtrundgang','Pferdesport','Wandern','Laufen und Fitness','Loipen','Rodelbahnen','Piste','Aufstiegsanlagen' : BITMASK also possible: 'Berg = 1','Radfahren = 2','Stadtrundgang = 4','Pferdesport = 8','Wandern = 16','Laufen und Fitness = 32','Loipen = 64','Rodelbahnen = 128,'Piste = 256,'Aufstiegsanlagen = 512) </param>
-        /// <param name="subtypefilter">Subtype of the Activity ('null' = Filter disabled, BITMASK Filter = available SubTypes depends on the selected Activity Type)</param> 
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter)</param>
-        /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ',', 'null' : Filter disabled)</param>
-        /// <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km) 'null' : disables Filter</param>
-        /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres) 'null' : disables Filter</param>
-        /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours) 'null' : disables Filter</param>
-        /// <param name="highlightfilter">Hightlight Filter (possible values: 'null' = Filter disabled, 'false' = only Activities with Highlight false, 'true' = only Activities with Highlight true)</param>
-        /// <param name="difficultyfilter">Difficulty Filter (possible values: 'null' = Filter disabled, '1' = easy, '2' = medium, '3' = difficult)</param>  
-        /// <param name="active">Active Filter (possible Values: 'null' Displays all Activities, 'true' only Active Activities, 'false' only Disabled Activities</param>
-        /// <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Activities, 'true' only SMG Active Activities, 'false' only SMG Disabled Activities</param>
-        /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>   /// <returns>Collection of Reduced Activity Objects</returns>        
+        
         private Task<IActionResult> GetActivityReduced(
             string? language, string? activitytype, string? subtypefilter, string? locfilter, string? areafilter,
             string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
@@ -242,6 +220,95 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
+        #region GastronomyController
+
+        /// <summary>
+        /// GET Gastronomy Reduced List
+        /// </summary>
+        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
+        /// <param name="dishcodefilter">Dish Code Filter (BITMASK values: 1 = (Speisen), 2 = (Vorspeise), 4 = (Hauptspeise), 8 = (Nachspeise), 16 = (Tagesgericht), 32 = (Menü), 64 = (Degustationsmenü), 128 = (Kindermenüs), 256 = (Mittagsmenüs)</param>
+        /// <param name="ceremonycodefilter">Ceremony Code Filter (BITMASK  values: 1 = (Familienfeiern), 2 = (Hochzeiten), 4 = (Geburtstagsfeiern), 8 = (Firmenessen), 16 = (Weihnachtsessen), 32 = (Sylvestermenü), 64 = (Seminare / Tagungen), 128 = (Versammlungen)</param>
+        /// <param name="categorycodefilter">Category Code Filter (BITMASK  values: 1 = (Restaurant), 2 = (Bar / Café / Bistro), 4 = (Pub / Disco), 8 = (Apres Ski), 16 = (Jausenstation), 32 = (Pizzeria), 64 = (Bäuerlicher Schankbetrieb), 128 = (Buschenschank), 256 = (Hofschank), 512 = (Törggele Lokale), 1024 = (Schnellimbiss), 2048 = (Mensa), 4096 = (Vinothek /Weinhaus / Taverne), 8192 = (Eisdiele), 16348 = (Gasthaus), 32768 = (Gasthof), 65536 = (Braugarten), 131072 = (Schutzhütte), 262144 = (Alm), 524288 = (Skihütte)</param>
+        /// <param name="facilitycodefilter">Facility Code Filter (BITMASK  values: 1 = (American Express), 2 = (Diners Club), 4 = (Eurocard / Mastercard), 8 = (Visa), 16 = (Hunde erlaubt), 32 = (Geeignet für Busse), 64 = (Garten), 128 = (Garagen), 256 = (Bierbar), 512 = (Kinderspielplatz), 1024 = (Spielzimmer), 2048 = (Spielplatz), 4096 = (Parkplätze), 8192 = (Raucherräume), 16348 = (Terrasse), 32768 = (Behindertengerecht), 65536 = (Biergarten), 131072 = (Aussichtsterrasse), 262144 = (Wintergarten), 524288 = (Gault Millau Südtirol), 1048576 = (Guida Espresso), 2097152 = (Gambero Rosso), 4194304 = (Feinschmecker), 8388608 = (Aral Schlemmer Atlas), 16777216 = (Varta Führer), 33554432 = (Bertelsmann), 67108864 = (Preis für Südtiroler Weinkultur), 134217728 = (Michelin), 268435456 = (Roter Hahn), 536870912 = (Tafelspitz))</param>       
+        /// <param name="cuisinecodefilter">Cuisine Code Filter (BITMASK  values: 1 = (Vegetarische Küche), 2 = (Glutenfreie Küche), 4 = (Laktosefreie Kost), 8 = (Warme Küche), 16 = (Südtiroler Spezialitäten), 32 = (Gourmet Küche), 64 = (Italienische Küche), 128 = (Internationale Küche), 256 = (Pizza), 512 = (Fischspezialitäten), 1024 = (Asiatische Küche), 2048 = (Wildspezialitäten), 4096 = (Produkte eigener Erzeugung), 8192 = (Diätküche), 16348 = (Grillspezialitäten), 32768 = (Ladinische Küche), 65536 = (Kleine Karte), 131072 = (Fischwochen), 262144 = (Spargelwochen), 524288 = (Lammwochen), 1048576 = (Wildwochen), 2097152 = (Vorspeisewochen), 4194304 = (Nudelwochen), 8388608 = (Kräuterwochen), 16777216 = (Kindermenüs), 33554432 = (Mittagsmenüs))</param>       
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=gastronomy'), (default:'null')</param>        
+        /// <param name="active">Active Gastronomies Filter (possible Values: 'true' only Active Gastronomies, 'false' only Disabled Gastronomies</param>
+        /// <param name="odhactive">ODH Active (Published) Gastronomies Filter (Refers to field SmgActive) Gastronomies Filter (possible Values: 'true' only published Gastronomies, 'false' only not published Gastronomies, (default:'null')</param>        
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <returns>Collection of GastronomyReduced Objects</returns>        
+        [ProducesResponseType(typeof(IEnumerable<GastronomyReduced>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("api/GastronomyReduced")]
+        public async Task<IActionResult> GetGastronomyListReduced(
+            string? language = "en",
+            string? locfilter = null,
+            string? dishcodefilter = null,
+            string? ceremonycodefilter = null,
+            string? categorycodefilter = null,
+            string? facilitycodefilter = null,
+            string? cuisinecodefilter = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            CancellationToken cancellationToken = default)
+        {           
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+            return await GetGastronomyReduced(language, locfilter, dishcodefilter, ceremonycodefilter, categorycodefilter, facilitycodefilter, cuisinecodefilter, active?.Value, odhactive?.Value, odhtagfilter, geosearchresult, cancellationToken);
+        }
+
+        private Task<IActionResult> GetGastronomyReduced(
+            string? language, string? locfilter, string? dishcodefilter, 
+            string? ceremonycodefilter, string? categorycodefilter, string? facilitycodefilter, 
+            string? cuisinecodefilter, bool? active, bool? smgactive, string? smgtagfilter, 
+            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async connectionFactory =>
+            {
+                GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
+                    connectionFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
+                    dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, 
+                    cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter, lastchange: null,
+                    cancellationToken, QueryFactory);
+
+                string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
+                string orderby = "data ->>'Shortname' ASC";
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From("gastronomies")
+                        .GastronomyWhereExpression(
+                           idlist: mygastronomyhelper.idlist, dishcodeslist: mygastronomyhelper.dishcodesids, ceremonycodeslist: mygastronomyhelper.ceremonycodesids,
+                            categorycodeslist: mygastronomyhelper.categorycodesids, facilitycodeslist: mygastronomyhelper.facilitycodesids,
+                            smgtaglist: mygastronomyhelper.smgtaglist, districtlist: mygastronomyhelper.districtlist,
+                            municipalitylist: mygastronomyhelper.municipalitylist, tourismvereinlist: mygastronomyhelper.tourismvereinlist,
+                            regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
+                            smgactivefilter: mygastronomyhelper.smgactive,
+                            searchfilter: null, language: language, lastchange: null
+                        )
+                        .OrderByRaw(orderby)
+                        .GeoSearchFilterAndOrderby(geosearchresult);
+
+                // Get paginated data
+                return await query.GetAsync<ResultReduced>();
+            });
+        }
+
+        #endregion
+
     }
 
+    class ResultReduced
+    {
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+    }
 }
