@@ -249,7 +249,7 @@ namespace OdhApiCore.Controllers
             {
                 var query =
                     QueryFactory.Query("gastronomytypes")
-                        .Select("data")
+                        .SelectRaw("data")
                         .Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
