@@ -146,7 +146,7 @@ namespace OdhApiCore.Controllers
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         //[CacheOutputUntilToday(23, 59)]
-        [ProducesResponseType(typeof(IEnumerable<ActivityTypes>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ActivityTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
@@ -291,7 +291,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("activitytypes")
                         .Select("data")
-                        .Where("id", id); 
+                        .Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
