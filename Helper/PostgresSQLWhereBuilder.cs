@@ -284,6 +284,7 @@ namespace Helper
                 .LastChangedFilter(lastchange);
         }
 
+        //Return Where and Parameters for Poi
         public static Query PoiWhereExpression(
             this Query query,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> poitypelist,
@@ -295,6 +296,7 @@ namespace Helper
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", 
                 idlist, poitypelist,
                 subtypelist, smgtaglist,
                 districtlist, municipalitylist,
@@ -320,6 +322,46 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange);
         }
+
+        //Return Where and Parameters for Gastronomy
+        public static Query GastronomyWhereExpression(
+            this Query query,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> dishcodeslist,
+            IReadOnlyCollection<string> ceremonycodeslist, IReadOnlyCollection<string> categorycodeslist,
+            IReadOnlyCollection<string> facilitycodeslist, IReadOnlyCollection<string> smgtaglist,
+            IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
+            IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist, bool? activefilter,
+            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                idlist, dishcodeslist,
+                ceremonycodeslist, categorycodeslist,
+                facilitycodeslist, smgtaglist,
+                districtlist, municipalitylist,
+                tourismvereinlist, regionlist,
+                activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .DistrictFilter(districtlist)                
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .CeremonyCodeFilter(ceremonycodeslist)
+                .CategoryCodeFilter(categorycodeslist)
+                .CuisineCodeFilter(facilitycodeslist)
+                .DishCodeFilter(dishcodeslist)
+                .SmgTagFilter(smgtaglist)                
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange);
+        }
+
 
         //Return Where and Parameters for Events
         [Obsolete]

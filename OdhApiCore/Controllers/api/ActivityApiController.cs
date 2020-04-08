@@ -115,9 +115,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("api/Activity/{id}")]
-        public async Task<IActionResult> GetActivitySingle(string id, string? language, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetActivitySingle(
+            string id, 
+            string? language, 
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null, 
+            CancellationToken cancellationToken = default)
         {
-            return await GetSingle(id, language, cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         /// <summary>
@@ -243,7 +248,7 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">ID of the Activity</param>
         /// <returns>Activity Object</returns>
-        private Task<IActionResult> GetSingle(string id, string? language, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async connectionFactory =>
             {
@@ -254,7 +259,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
+                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License);
             });
         }
 
