@@ -182,6 +182,12 @@ namespace Helper
                 )
             );
 
+        public static Query LocFilterDistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
+            query.WhereInJsonb(
+                list: districtlist,
+                jsonPath: "LocationInfo.DistrictInfo.Id"
+            );
+
         public static Query LocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
             query.WhereInJsonb(
                 list: municipalitylist,
@@ -321,5 +327,30 @@ namespace Helper
                 "Id",
                 id => id.ToUpper()
             );
+
+        // TODO Add correct filters
+        public static Query CuisineCodeFilter(this Query query, IReadOnlyCollection<string> cuisinecodelist) =>
+            query.WhereInJsonb(
+                cuisinecodelist,
+                tag => new { Facilities = new[] { new { Id = tag.ToUpper() } } }
+            );
+
+        public static Query CeremonyCodeFilter(this Query query, IReadOnlyCollection<string> ceremonycodelist) =>
+           query.WhereInJsonb(
+               ceremonycodelist,
+               tag => new { CapacityCeremony = new[] { new { Id = tag.ToUpper() } } }
+           );
+
+        public static Query CategoryCodeFilter(this Query query, IReadOnlyCollection<string> categorycodelist) =>
+           query.WhereInJsonb(
+               categorycodelist,
+               tag => new { CategoryCodes = new[] { new { Id = tag.ToUpper() } } }
+           );
+
+        public static Query DishCodeFilter(this Query query, IReadOnlyCollection<string> dishcodelist) =>
+           query.WhereInJsonb(
+               dishcodelist,
+               tag => new { DishRates = new[] { new { Id = tag.ToUpper() } } }
+           );
     }
 }

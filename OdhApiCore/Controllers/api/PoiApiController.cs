@@ -130,7 +130,23 @@ namespace OdhApiCore.Controllers.api
             return await GetPoiTypesList(cancellationToken);
         }
 
-       
+        /// <summary>
+        /// GET Poi Types Single
+        /// </summary>
+        /// <returns>PoiType Object</returns>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        //[CacheOutputUntilToday(23, 59)]
+        [ProducesResponseType(typeof(PoiTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,PoiReader")]
+        [HttpGet, Route("api/PoiTypes/{id}")]
+        public async Task<IActionResult> GetAllPoiTypesSingle(string id, CancellationToken cancellationToken)
+        {
+            return await GetPoiTypesSingleAsync(id, cancellationToken);
+        }
 
         #endregion
 
@@ -231,82 +247,40 @@ namespace OdhApiCore.Controllers.api
 
         #region CUSTOM METHODS
 
-        private (Type type, bool islong) GetChildFlagType(object x)
-        {
-            return x switch
-            {
-                "AertzeApotheken" => (typeof(PoiTypeAerzteApotheken), false),
-                "GeschaefteDienstleister" => (typeof(PoiTypeGeschaefteDienstleister), true),
-                "KulturSehenswuerdigkeiten" => (typeof(PoiTypeKulturSehenswuerdigkeiten), false),
-                "NachtlebenUnterhaltung" => (typeof(PoiTypeNachtlebenUnterhaltung), false),
-                "OeffentlicheEinrichtungen" => (typeof(PoiTypeOeffentlicheEinrichtungen), false),
-                "SportFreizeit" => (typeof(PoiTypeSportFreizeit), true),
-                "VerkehrTransport" => (typeof(PoiTypeVerkehrTransport), false),
-                "Dienstleister" => (typeof(PoiTypeDienstleister), true),
-                "Handwerk" => (typeof(PoiTypeHandwerk), false),
-                _ => (typeof(PoiTypeAerzteApotheken), false),
-            };
-        }
-
         /// <summary>
-        /// GET Poi Types List (Localized Type Names and Bitmasks)
+        /// GET Poi Types List
         /// </summary>
         /// <returns>Collection of PoiTypes Object</returns>
         private Task<IActionResult> GetPoiTypesList(CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async connectionFactory =>
             {
-                List<PoiTypes> mysuedtiroltypeslist = new List<PoiTypes>();
+                var query =
+                     QueryFactory.Query("poitypes")
+                         .SelectRaw("data");
 
-                //Get LTS Tagging Types List
-                var ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
-                    connectionFactory, "ltstaggingtypes", "*", "", "", 0, null, cancellationToken);
+                var data = await query.GetAsync<JsonRaw?>();
 
-                foreach (PoiTypeFlag myactivitytype in EnumHelper.GetValues<PoiTypeFlag>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
+                return data;
+            });
+        }
 
-                    string? id = myactivitytype.GetDescription();
+        /// <summary>
+        /// GET Poi Types Single
+        /// </summary>
+        /// <returns>PoiTypes Object</returns>
+        private Task<IActionResult> GetPoiTypesSingleAsync(string id, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async connectionFactory =>
+            {
+                var query =
+                    QueryFactory.Query("poitypes")
+                        .Select("data")
+                        .Where("Key", "ILIKE", id);
 
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "";
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                    mysmgpoitype.Bitmask = (int)myactivitytype;
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-
-                    var subtype = GetChildFlagType(myactivitytype);
-
-                    foreach (var myactivitysubtype in Enum.GetValues(subtype.type))
-                    {
-                        if (myactivitysubtype != null)
-                        {
-                            PoiTypes mysmgpoisubtype = new PoiTypes();
-
-                            string? subid = FlagsHelper.GetDescription(myactivitysubtype);
-
-                            mysmgpoisubtype.Id = subid;
-                            mysmgpoisubtype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                            mysmgpoisubtype.Parent = id;
-
-                            if(subtype.islong)
-                                mysmgpoisubtype.Bitmask = (long)myactivitysubtype;
-                            else
-                                mysmgpoisubtype.Bitmask = (int)myactivitysubtype;
-
-                            mysmgpoisubtype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                                Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(subid),
-                                ltstaggingtypes) as Dictionary<string, string>;
-
-                            mysuedtiroltypeslist.Add(mysmgpoisubtype);
-                        }
-                    }
-                }
-
-                return mysuedtiroltypeslist;
+                return data;
             });
         }
 
