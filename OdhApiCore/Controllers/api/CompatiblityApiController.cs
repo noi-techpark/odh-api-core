@@ -8,6 +8,7 @@ using SqlKata.Execution;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -301,6 +302,94 @@ namespace OdhApiCore.Controllers.api
                 return await query.GetAsync<ResultReduced>();
             });
         }
+
+        #endregion
+
+        #region ODHTagController
+
+        /// <summary>
+        /// GET ODHTag List REDUCED
+        /// </summary>
+        /// <param name="validforentity"></param>
+        /// <param name="localizationlanguage"></param>
+        /// <returns></returns>
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTagReduced Objects", typeof(IEnumerable<SmgTagReduced>))]
+        [HttpGet, Route("api/ODHTagReduced")]
+        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        public async Task<IActionResult> GetODHTagsReduced(string localizationlanguage, string validforentity = "", CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
+            {
+                return await GetReducedLocalized(localizationlanguage, cancellationToken);
+            }
+            //Fall 7 GET auf GetReducedFilteredLocalized
+            else if (!string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
+            {
+                return await GetReducedFilteredLocalized(localizationlanguage, validforentity, cancellationToken);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status501NotImplemented, new { error = "not implemented" });
+            }
+        }
+
+        /// <summary>
+        /// GET Complete Reduced SMGTag List
+        /// </summary>
+        /// <param name="language">Language</param>
+        /// <returns>Collection Localized Reduced SMGTag Object</returns>
+        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        [HttpGet, Route("ReducedAsync/{language}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public Task<IActionResult> GetReducedLocalized(string language, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async connectionFactory =>
+            {
+                string select = $"data->>'Id' as Id, data->'TagName'->>'{language.ToLower()}' as Name";
+                string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
+
+                var data =
+                    QueryFactory.Query("smgtags")
+                        .SelectRaw(select)
+                        .WhereRaw(where);
+
+                return await data.GetAsync<ResultReduced>();
+            });
+        }
+
+        /// <summary>
+        /// GET Filtered Reduced SMGTag List by smgtagtype
+        /// </summary>
+        /// <param name="language">Language</param>
+        /// <param name="smgtagtype">SMGTag Type</param>
+        /// <returns>Collection Localized Reduced SMGTag Object</returns>
+        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        [HttpGet, Route("Reduced/{language}/{smgtagtype}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public Task<IActionResult> GetReducedFilteredLocalized(
+            string language, string smgtagtype, CancellationToken cancellationToken)
+        {
+            var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            return DoAsyncReturn(async connectionFactory =>
+            {
+                string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
+                string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
+
+                var data =
+                    QueryFactory.Query("smgtags")
+                        .SelectRaw(select)
+                        .WhereRaw(where)
+                        .WhereInJsonb(
+                            smgtagtypelist,
+                            smgtag => new { ValidForEntity = new[] { smgtag.ToLower() } }
+                        );
+
+                return await data.GetAsync<ResultReduced>();
+            });
+        }
+
+
 
         #endregion
 

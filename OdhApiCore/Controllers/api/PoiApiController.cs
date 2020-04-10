@@ -104,12 +104,17 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
         [HttpGet, Route("api/Poi/{id}")]
-        public async Task<IActionResult> GetPoiSingle(string id, string? language, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPoiSingle(
+            string id, 
+            string? language = null, 
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+         CancellationToken cancellationToken = default)
         {
             //TODO
             //CheckOpenData(User);
 
-            return await GetSingle(id, language, cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         /// <summary>
@@ -143,7 +148,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
         [HttpGet, Route("api/PoiTypes/{id}")]
-        public async Task<IActionResult> GetAllPoiTypesSingle(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllPoiTypesSingle(string id, string language,  CancellationToken cancellationToken)
         {
             return await GetPoiTypesSingleAsync(id, cancellationToken);
         }
@@ -228,7 +233,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">ID of Poi</param>
         /// <returns>Poi Object</returns>
-        private Task<IActionResult> GetSingle(string id, string? language, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async connectionFactory =>
             {
@@ -239,7 +244,7 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
+                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License);
             });
         }
 
