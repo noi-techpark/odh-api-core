@@ -95,7 +95,7 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> Get(string language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> Get(string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async connectionFactory =>
             {
@@ -109,7 +109,7 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private Task<IActionResult> GetFiltered(string smgtagtype, string language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetFiltered(string? smgtagtype, string? language, string[] fields, CancellationToken cancellationToken)
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
