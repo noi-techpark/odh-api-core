@@ -160,3 +160,6 @@ $RECYCLE.BIN/
 # Docker
 /.env
 /.vscode
+
+.fake
+.ionide
