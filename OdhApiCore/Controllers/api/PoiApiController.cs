@@ -185,7 +185,7 @@ namespace OdhApiCore.Controllers.api
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
                     connectionFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
-                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
+                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken, QueryFactory);
 
                 var query =
                     QueryFactory.Query()

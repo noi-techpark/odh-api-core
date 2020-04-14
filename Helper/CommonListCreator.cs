@@ -26,6 +26,29 @@ namespace Helper
             return activityIds;
         }
 
+        public static List<string> CreateSmgPoiSourceList(string? sourcestring)
+        {
+            List<string> activityIds = new List<string>();
+
+            if (!String.IsNullOrEmpty(sourcestring))
+            {
+                if (sourcestring.ToLower() != "null")
+                {
+                    if (sourcestring.Substring(sourcestring.Length - 1, 1) == ",")
+                        sourcestring = sourcestring.Substring(0, sourcestring.Length - 1);
+
+                    var splittedfilter = sourcestring.Split(',');
+
+                    foreach (var filter in splittedfilter)
+                    {
+                        activityIds.Add(filter.ToLower());
+                    }
+                }
+            }
+
+            return activityIds;
+        }
+
         public static List<string> CreateLowerCaseSmgTagList(string? activityidstring)
         {
             List<string> activityIds = new List<string>();
@@ -45,7 +68,6 @@ namespace Helper
 
             return activityIds;
         }
-
 
         public static List<string> CreateDistrictIdList(string? locfilter, string typ)
         {

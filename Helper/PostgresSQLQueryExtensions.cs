@@ -359,5 +359,35 @@ namespace Helper
                 "Source",
                 id => id.ToUpper()
             );
+
+        public static Query HasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
+          query.WhereInJsonb(
+              list: languagelist,
+              "HasLanguage",
+              id => id.ToUpper()
+          );
+
+
+        public static Query ODHActivityPoiTypeFilter(this Query query, IReadOnlyCollection<string> typelist) =>
+         query.WhereInJsonb(
+             list: typelist,
+             "Type",
+             type => type
+         );
+
+        public static Query ODHActivityPoiSubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
+            query.WhereInJsonb(
+                list: subtypelist,
+                "SubType",
+                type => type
+            );
+
+        public static Query ODHActivityPoiPoiTypeFilter(this Query query, IReadOnlyCollection<string> poitypelist) =>
+             query.WhereInJsonb(
+                list: poitypelist,
+                "PoiType",
+                type => type
+            );
+
     }
 }

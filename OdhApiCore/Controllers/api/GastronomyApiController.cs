@@ -260,10 +260,5 @@ namespace OdhApiCore.Controllers
         }
 
         #endregion
-
-        #region Obsolete here for Compatibility reasons
-
-
-        #endregion
     }
 }
