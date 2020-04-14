@@ -397,48 +397,96 @@ namespace OdhApiCore.Controllers.api
 
         ////Reduced GETTER
 
-        ///// <summary>
-        ///// GET ODHActivityPoi List Reduced
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="type">Type of the ODHActivityPoi ('null' = Filter disabled, possible values: BITMASK: 1 = Wellness, 2 = Winter, 4 = Summer, 8 = Culture, 16 = Other, 32 = Gastronomy), (default: 63 == ALL), REFERENCE TO: GET /api/ODHActivityPoiTypes </param>
-        ///// <param name="subtype">Subtype of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype reference to ODHActivityPoiTypes)</param>
-        ///// <param name="poitype">Additional Type of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype, SubType reference to ODHActivityPoiTypes)</param>
-        ///// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter), (default:'null')</param>
-        ///// <param name="areafilter">AreaFilter (Alternate Locfilter, can be combined with locfilter) (Separator ',' possible values: reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), skr + SKIREGIONID = (Filter by Skiregion), ska + SKIAREAID = (Filter by Skiarea), are + AREAID = (Filter by LTS Area), 'null' = No Filter), (default:'null')</param>
-        ///// <param name="highlight">Hightlight Filter (possible values: 'false' = only ODHActivityPoi with Highlight false, 'true' = only ODHActivityPoi with Highlight true), (default:'null')</param>
-        ///// <param name="source">Source Filter (possible Values: 'null' Displays all ODHActivityPoi, 'None', 'ActivityData', 'PoiData', 'GastronomicData', 'MuseumData', 'Magnolia', 'Content', 'SuedtirolWein', 'Archapp' (default:'null')</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=smgpoi'), (default:'null')</param>        
-        ///// <param name="active">Active ODHActivityPoi Filter (possible Values: 'true' only active ODHActivityPoi, 'false' only not active ODHActivityPoi, (default:'null')</param>        
-        ///// <param name="odhactive">ODH Active (Published) ODHActivityPoi Filter (Refers to field SmgActive) (possible Values: 'true' only published ODHActivityPoi, 'false' only not published ODHActivityPoi, (default:'null')</param>        
-        ///// <returns>Collection of Activity Objects</returns>        
-        ////[Authorize(Roles = "DataReader,ODHPoiReader")]
-        ////[AllowAnonymous]        
-        //[HttpGet, Route("api/ODHActivityPoiReduced")]
-        //public async Task<IActionResult> GetODHActivityPoiListReduced(
-        //    string? language = "en",
-        //    string? type = "63",
-        //    string? subtype = null,
-        //    string? poitype = null,
-        //    string? locfilter = null,
-        //    //string langfilter = null,
-        //    string? areafilter = null,
-        //    LegacyBool highlight = null,
-        //    string? source = null,
-        //    string odhtagfilter = null,
-        //    LegacyBool odhactive = null,
-        //    LegacyBool active = null,
-        //    string? latitude = null,
-        //    string? longitude = null,
-        //    string? radius = null)
-        //{
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+        /// <summary>
+        /// GET ODHActivityPoi List Reduced
+        /// </summary>
+        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="type">Type of the ODHActivityPoi ('null' = Filter disabled, possible values: BITMASK: 1 = Wellness, 2 = Winter, 4 = Summer, 8 = Culture, 16 = Other, 32 = Gastronomy), (default: 63 == ALL), REFERENCE TO: GET /api/ODHActivityPoiTypes </param>
+        /// <param name="subtype">Subtype of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype reference to ODHActivityPoiTypes)</param>
+        /// <param name="poitype">Additional Type of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype, SubType reference to ODHActivityPoiTypes)</param>
+        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter), (default:'null')</param>
+        /// <param name="areafilter">AreaFilter (Alternate Locfilter, can be combined with locfilter) (Separator ',' possible values: reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), skr + SKIREGIONID = (Filter by Skiregion), ska + SKIAREAID = (Filter by Skiarea), are + AREAID = (Filter by LTS Area), 'null' = No Filter), (default:'null')</param>
+        /// <param name="highlight">Hightlight Filter (possible values: 'false' = only ODHActivityPoi with Highlight false, 'true' = only ODHActivityPoi with Highlight true), (default:'null')</param>
+        /// <param name="source">Source Filter (possible Values: 'null' Displays all ODHActivityPoi, 'None', 'ActivityData', 'PoiData', 'GastronomicData', 'MuseumData', 'Magnolia', 'Content', 'SuedtirolWein', 'Archapp' (default:'null')</param>
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=smgpoi'), (default:'null')</param>        
+        /// <param name="active">Active ODHActivityPoi Filter (possible Values: 'true' only active ODHActivityPoi, 'false' only not active ODHActivityPoi, (default:'null')</param>        
+        /// <param name="odhactive">ODH Active (Published) ODHActivityPoi Filter (Refers to field SmgActive) (possible Values: 'true' only published ODHActivityPoi, 'false' only not published ODHActivityPoi, (default:'null')</param>        
+        /// <returns>Collection of Activity Objects</returns>        
+        //[Authorize(Roles = "DataReader,ODHPoiReader")]
+        //[AllowAnonymous]        
+        [HttpGet, Route("api/ODHActivityPoiReduced")]
+        public async Task<IActionResult> GetODHActivityPoiListReduced(
+            string? language = "en",
+            string? type = "63",
+            string? subtype = null,
+            string? poitype = null,
+            string? locfilter = null,
+            //string langfilter = null,
+            string? areafilter = null,
+            LegacyBool highlight = null,
+            string? source = null,
+            string odhtagfilter = null,
+            LegacyBool odhactive = null,
+            LegacyBool active = null,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            CancellationToken cancellationToken = default)
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-        //    return await GetReduced(language, type, subtype, poitype, locfilter, areafilter, highlight?.Value, odhactive?.Value, source, odhtagfilter, geosearchresult, false, table, active?.Value);
-        //}
+            return await GetODHActivityPoiReduced(language, type, subtype, poitype, locfilter, areafilter, highlight?.Value, active?.Value, odhactive?.Value, source, odhtagfilter, geosearchresult, cancellationToken);
+        }
+
+        /// <summary>
+        /// GET Reduced ODHActivity Poi List
+        /// </summary>
+        /// <param name="language">Localization Language</param>
+        /// <param name="poitype">Type of the Poi (possible values: STRINGS: 'Ärtze, Apotheken','Geschäfte und Dienstleister','Kultur und Sehenswürdigkeiten','Nachtleben und Unterhaltung','Öffentliche Einrichtungen','Sport und Freizeit','Verkehr und Transport' : BITMASK also possible: 'Ärtze, Apotheken = 1','Geschäfte und Dienstleister = 2','Kultur und Sehenswürdigkeiten = 4','Nachtleben und Unterhaltung = 8','Öffentliche Einrichtungen = 16','Sport und Freizeit = 32','Verkehr und Transport = 64')</param>
+        /// <param name="subtypefilter">Subtype of the Poi ('null' = Filter disabled, available Subtypes depends on the activitytype BITMASK)</param>        
+        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), 'null' = No Filter)</param>
+        /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ',', 'null' : Filter disabled)</param>
+        /// <param name="highlightfilter">Highlight Filter (Show only Highlights possible values: 'true' : show only Highlight Pois, 'null' Filter disabled)</param>
+        /// <param name="active">Active Filter (possible Values: 'null' Displays all Pois, 'true' only Active Pois, 'false' only Disabled Pois</param>
+        /// <param name="smgactive">SMGActive Filter (possible Values: 'null' Displays all Pois, 'true' only SMG Active Pois, 'false' only SMG Disabled Pois</param>
+        /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter)</param>
+        /// <returns>Collection of Reduced Poi Objects</returns>
+        private Task<IActionResult> GetODHActivityPoiReduced(
+            string? language, string? type, string? subtype, string? poitype, string? locfilter,
+            string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? source,
+            string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async connectionFactory =>
+            {
+                ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
+                    connectionFactory, type, subtype, poitype, null, locfilter, areafilter,
+                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory);
+
+                string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
+                string orderby = "data ->>'Shortname' ASC";
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From("smgpois")
+                        .ODHActivityPoiWhereExpression(
+                            idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, poitypelist: helper.poitypelist, 
+                            smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
+                            tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
+                            arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
+                            smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist, searchfilter: null, language: language, lastchange: null
+                        )
+                        .OrderByRaw(orderby)
+                        .GeoSearchFilterAndOrderby(geosearchresult);
+
+                // Get paginated data
+                return await query.GetAsync<ResultReduced>();
+            });
+        }
+
 
         #endregion
     }
