@@ -389,5 +389,13 @@ namespace Helper
                 type => type
             );
 
+        public static Query WhereNotClosedData(this Query query) =>
+            query.Where(q =>
+                q.WhereRaw(
+                    "data#>>'\\{_Meta,ClosedData\\}' IS NULL"
+                ).OrWhereRaw(
+                    "data#>>'\\{_Meta,ClosedData\\}' = 'false'"
+                )
+            );
     }
 }
