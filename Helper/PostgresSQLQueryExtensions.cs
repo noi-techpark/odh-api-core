@@ -18,55 +18,55 @@ namespace Helper
 
         public static Query WhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             string value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value
                 );
 
         public static Query WhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             int value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value.ToString()
                 );
 
         public static Query WhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             bool value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value ? "true" : "false"
                 );
 
         public static Query OrWhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             string value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value
                 );
 
         public static Query OrWhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             int value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value.ToString()
                 );
 
         public static Query OrWhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             bool value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value ? "true" : "false"
                 );
 
@@ -114,14 +114,14 @@ namespace Helper
         public static Query WhereInJsonb<T>(
             this Query query,
             IReadOnlyCollection<T> list,
-            string path,
+            string jsonPath,
             Func<T, string> jsonObjectConstructor) =>
                 query.Where(q =>
                 {
                     foreach (var item in list)
                     {
                         q = q.OrWhereJsonb(
-                            path,
+                            jsonPath,
                             jsonObjectConstructor(item)
                         );
                     }
