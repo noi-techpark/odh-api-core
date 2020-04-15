@@ -362,6 +362,47 @@ namespace Helper
                 .LastChangedFilter(lastchange);
         }
 
+        //Return Where and Parameters for Activity
+        public static Query ODHActivityPoiWhereExpression(
+            this Query query,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
+            IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> sourcelist, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
+            IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter, 
+            string? searchfilter, string? language, string? lastchange)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, typelist,
+                subtypelist, poitypelist, languagelist, sourcelist,
+                smgtaglist, districtlist,
+                municipalitylist, tourismvereinlist,
+                regionlist, arealist, highlight, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdLowerFilter(idlist)
+                .DistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .AreaFilter(arealist)
+                .ODHActivityPoiTypeFilter(typelist)
+                .ODHActivityPoiSubTypeFilter(subtypelist)
+                .ODHActivityPoiPoiTypeFilter(subtypelist)
+                .SourceFilter(sourcelist)
+                .HasLanguageFilter(languagelist)
+                .HighlightFilter(highlight)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SmgTagFilter(smgtaglist)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange);
+        }
 
         //Return Where and Parameters for WebCamInfo
         public static Query WebCamInfoWhereExpression(
