@@ -169,7 +169,7 @@ namespace OdhApiCore.Controllers.api
             {
                 ODHActivityPoiHelper myodhactivitypoihelper = await ODHActivityPoiHelper.CreateAsync(
                     connectionFactory, type, subtypefilter, poitypefilter, idfilter, locfilter, areafilter, languagefilter, sourcefilter, highlightfilter, active, smgactive, smgtags, lastchange,
-                    cancellationToken, QueryFactory);
+                    cancellationToken, QueryFactory.QueryFactory);
 
                 var query =
                     QueryFactory.Query()

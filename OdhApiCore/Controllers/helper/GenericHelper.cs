@@ -43,9 +43,10 @@ namespace OdhApiCore.Controllers
         }
 
         public static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(
-            this Query query, IReadOnlyCollection<string> metaregionlist, CancellationToken cancellationToken)
+            QueryFactory queryFactory, IReadOnlyCollection<string> metaregionlist, CancellationToken cancellationToken)
         {
-            var data = await query.From("metaregions")
+            var data = await queryFactory.Query()
+                    .From("metaregions")
                     .Select("data")
                     .MetaRegionFilter(metaregionlist)
                     .GetAsync<JsonRaw>();

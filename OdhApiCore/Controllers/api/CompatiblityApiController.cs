@@ -96,7 +96,7 @@ namespace OdhApiCore.Controllers.api
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
                     connectionFactory, poitype, subtypefilter, null, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory);
+                    highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory.QueryFactory);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -188,7 +188,7 @@ namespace OdhApiCore.Controllers.api
                     locfilter: locfilter, areafilter: areafilter, distancefilter: distancefilter,
                     altitudefilter: altitudefilter, durationfilter: durationfilter, highlightfilter: highlightfilter,
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
-                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken, QueryFactory);
+                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken, QueryFactory.QueryFactory);
 
                 string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -277,7 +277,7 @@ namespace OdhApiCore.Controllers.api
                     connectionFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
                     dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, 
                     cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter, lastchange: null,
-                    cancellationToken, QueryFactory);
+                    cancellationToken, QueryFactory.QueryFactory);
 
                 string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -463,7 +463,7 @@ namespace OdhApiCore.Controllers.api
             {
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
                     connectionFactory, type, subtype, poitype, null, locfilter, areafilter,
-                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory);
+                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory.QueryFactory);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";

@@ -1,4 +1,5 @@
 ﻿using Helper;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,16 +30,15 @@ namespace OdhApiCore.Controllers.api
         public static async Task<ODHActivityPoiHelper> CreateAsync(
         IPostGreSQLConnectionFactory connectionFactory, string? typefilter, string? subtypefilter, string? poitypefilter, string? idfilter, string? locfilter,
         string? areafilter, string? languagefilter, string? sourcefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-        string? smgtags, string? lastchange, CancellationToken cancellationToken, Factories.PostgresQueryFactory queryFactory)
+        string? smgtags, string? lastchange, CancellationToken cancellationToken, QueryFactory queryFactory)
         {
-            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory.QueryFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await queryFactory.Query()
-                    .RetrieveLocFilterDataAsync(metaregionlist, cancellationToken);
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
             }
 
             return new ODHActivityPoiHelper(typefilter, subtypefilter, poitypefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange, tourismusvereinids);

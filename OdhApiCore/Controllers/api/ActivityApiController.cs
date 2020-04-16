@@ -196,7 +196,7 @@ namespace OdhApiCore.Controllers
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange,
-                    cancellationToken, QueryFactory);
+                    cancellationToken, QueryFactory.QueryFactory);
 
                 var query =
                     QueryFactory.Query()

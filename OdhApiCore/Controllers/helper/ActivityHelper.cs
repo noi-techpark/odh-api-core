@@ -1,5 +1,6 @@
 ﻿using Helper;
 using SqlKata;
+using SqlKata.Execution;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -37,16 +38,15 @@ namespace OdhApiCore.Controllers
             string? idfilter, string? locfilter, string? areafilter, string? distancefilter,
             string? altitudefilter, string? durationfilter, bool? highlightfilter, string? difficultyfilter,
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
-            CancellationToken cancellationToken, Factories.PostgresQueryFactory queryFactory)
+            CancellationToken cancellationToken, QueryFactory queryFactory)
         {
-            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory.QueryFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await queryFactory.Query()
-                    .RetrieveLocFilterDataAsync(metaregionlist, cancellationToken);
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
             }
 
             return new ActivityHelper(

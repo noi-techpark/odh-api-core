@@ -160,7 +160,7 @@ namespace OdhApiCore.Controllers
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
                     connectionFactory, idfilter, locfilter, categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
                     active, smgactive, smgtags, lastchange,
-                    cancellationToken, QueryFactory);
+                    cancellationToken, QueryFactory.QueryFactory);
 
                 var query =
                     QueryFactory.Query()
