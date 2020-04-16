@@ -18,28 +18,26 @@ namespace OdhApiCore.Controllers
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
         private readonly ILogger<OdhController> logger;
-        private readonly IPostGreSQLConnectionFactory connectionFactory;
         private readonly QueryFactory queryFactory;
 
         protected bool CheckCC0License => settings.CheckCC0License;
 
-        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
+        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory)
         {
             this.env = env;
             this.settings = settings;
             this.logger = logger;
-            this.connectionFactory = connectionFactory;
             this.queryFactory = queryFactory;
         }
 
         protected ILogger<OdhController> Logger => logger;
         protected QueryFactory QueryFactory => queryFactory;
 
-        protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<IActionResult>> f)
+        protected async Task<IActionResult> DoAsync(Func<Task<IActionResult>> f)
         {
             try
             {
-                return await f(this.connectionFactory);
+                return await f();
             }
             catch (PostGresSQLHelperException ex)
             {
@@ -62,11 +60,11 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        protected Task<IActionResult> DoAsyncReturn(Func<IPostGreSQLConnectionFactory, Task<object?>> f)
+        protected Task<IActionResult> DoAsyncReturn(Func<Task<object?>> f)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsync(async () =>
             {
-                object? result = await f(connectionFactory);
+                object? result = await f();
                 if (result == null)
                     return this.NotFound();
                 else

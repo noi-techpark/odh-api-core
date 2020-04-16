@@ -23,8 +23,8 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
-            : base(env, settings, logger, connectionFactory, queryFactory)
+        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -191,7 +191,7 @@ namespace OdhApiCore.Controllers
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     QueryFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
@@ -250,7 +250,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Activity Object</returns>
         private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("activities")
@@ -273,7 +273,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Collection of ActivityTypes Object</returns>
         private Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("activitytypes")
@@ -291,7 +291,7 @@ namespace OdhApiCore.Controllers
         /// <returns>ActivityTypes Object</returns>
         private Task<IActionResult> GetActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("activitytypes")

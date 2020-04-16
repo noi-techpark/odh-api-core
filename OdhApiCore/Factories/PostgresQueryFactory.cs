@@ -16,7 +16,7 @@ namespace OdhApiCore.Factories
     /// </summary>
     public class PostgresQueryFactory : QueryFactory, IDisposable
     {
-        public PostgresQueryFactory(ISettings settings, ILogger<PostgresConnectionFactory> logger)
+        public PostgresQueryFactory(ISettings settings, ILogger<QueryFactory> logger)
         {
             Connection = new NpgsqlConnection(settings.PostgresConnectionString);
             Compiler = new PostgresCompiler();

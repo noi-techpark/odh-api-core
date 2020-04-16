@@ -23,8 +23,8 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
-            : base(env, settings, logger, connectionFactory, queryFactory)
+        public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -155,7 +155,7 @@ namespace OdhApiCore.Controllers
             string? idfilter, string? searchfilter, string? locfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, categorycodefilter,
@@ -204,7 +204,7 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("gastronomies")
@@ -227,7 +227,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Collection of GastronomyTypes Object</returns>
         private Task<IActionResult> GetGastronomyTypesListAsync(CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("gastronomytypes")
@@ -245,7 +245,7 @@ namespace OdhApiCore.Controllers
         /// <returns>GastronomyTypes Object</returns>
         private Task<IActionResult> GetGastronomyTypesSingleAsync(string id, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("gastronomytypes")

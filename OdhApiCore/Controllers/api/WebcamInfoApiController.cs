@@ -23,8 +23,8 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public WebcamInfoApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
-            : base(env, settings, logger, connectionFactory, queryFactory)
+        public WebcamInfoApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -107,7 +107,7 @@ namespace OdhApiCore.Controllers
             string? idfilter, string? searchfilter, bool? active, bool? smgactive,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 WebcamInfoHelper mywebcaminfohelper = WebcamInfoHelper.Create(
                     source, idfilter, active, smgactive, lastchange);
@@ -150,7 +150,7 @@ namespace OdhApiCore.Controllers
         
         private Task<IActionResult> GetSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("webcams")

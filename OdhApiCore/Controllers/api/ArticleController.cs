@@ -21,8 +21,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class ArticleController : OdhController
     {
-        public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
-           : base(env, settings, logger, connectionFactory, queryFactory)
+        public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+           : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -149,7 +149,7 @@ namespace OdhApiCore.Controllers.api
             string? type, string? subtypefilter, string? searchfilter, string? idfilter, string? languagefilter, bool? highlightfilter, 
             bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, bool? sortbyarticledate, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 ArticleHelper myrticlehelper = ArticleHelper.Create(
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
@@ -196,7 +196,7 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("articles")
@@ -215,7 +215,7 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetArticleTypesList()
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("articletypes")
@@ -229,7 +229,7 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetArticleTypeSingle(string id)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("articletypes")

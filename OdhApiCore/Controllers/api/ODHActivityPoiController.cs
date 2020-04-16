@@ -21,8 +21,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class ODHActivityPoiController : OdhController
     {
-        public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
-           : base(env, settings, logger, connectionFactory, queryFactory)
+        public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+           : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -165,7 +165,7 @@ namespace OdhApiCore.Controllers.api
             string? type, string? subtypefilter, string? poitypefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter, 
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 ODHActivityPoiHelper myodhactivitypoihelper = await ODHActivityPoiHelper.CreateAsync(
                     QueryFactory, type, subtypefilter, poitypefilter, idfilter, locfilter,
@@ -216,7 +216,7 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("smgpois")
@@ -235,7 +235,7 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetSmgPoiTypesList()
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("smgpoitypes")
@@ -249,7 +249,7 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetSmgPoiTypesSingle(string id)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("smgpoitypes")

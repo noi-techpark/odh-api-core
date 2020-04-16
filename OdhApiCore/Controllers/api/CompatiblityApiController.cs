@@ -20,8 +20,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
-            : base(env, settings, logger, connectionFactory, queryFactory)
+        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -92,7 +92,7 @@ namespace OdhApiCore.Controllers.api
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive,
             string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
                     QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
@@ -181,7 +181,7 @@ namespace OdhApiCore.Controllers.api
             string? difficultyfilter, bool? active, bool? smgactive, string? smgtags, 
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     QueryFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
@@ -271,7 +271,7 @@ namespace OdhApiCore.Controllers.api
             string? cuisinecodefilter, bool? active, bool? smgactive, string? smgtagfilter, 
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
                     QueryFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
@@ -343,7 +343,7 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetReducedLocalized(string language, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 string select = $"data->>'Id' as Id, data->'TagName'->>'{language.ToLower()}' as Name";
                 string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
@@ -371,7 +371,7 @@ namespace OdhApiCore.Controllers.api
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
                 string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
@@ -459,7 +459,7 @@ namespace OdhApiCore.Controllers.api
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? source,
             string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
                     QueryFactory, type, subtype, poitype, null, locfilter, areafilter,

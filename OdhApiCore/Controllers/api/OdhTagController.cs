@@ -19,8 +19,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class OdhTagController : OdhController
     {
-        public OdhTagController(IWebHostEnvironment env, ISettings settings, ILogger<OdhTagController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
-            : base(env, settings, logger, connectionFactory, queryFactory)
+        public OdhTagController(IWebHostEnvironment env, ISettings settings, ILogger<OdhTagController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -97,7 +97,7 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> Get(string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query = QueryFactory.Query("smgtags")
                     .Select("data")
@@ -113,7 +113,7 @@ namespace OdhApiCore.Controllers
         {
             var smgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("smgtags")
@@ -140,7 +140,7 @@ namespace OdhApiCore.Controllers
         //[ApiExplorerSettings(IgnoreApi = true)]
         private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var data = await QueryFactory.Query("smgtags")
                     .Select("data")
