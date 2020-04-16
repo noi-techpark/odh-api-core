@@ -42,7 +42,8 @@ namespace OdhApiCoreTests.Helper
                         smgactivefilter: null,
                         searchfilter: null,
                         language: null,
-                        lastchange: null
+                        lastchange: null,
+                        filterClosedData: false
                     );
 
             var result = compiler.Compile(query);
@@ -82,7 +83,8 @@ namespace OdhApiCoreTests.Helper
                         smgactivefilter: null,
                         searchfilter: null,
                         language: null,
-                        lastchange: null
+                        lastchange: null,
+                        filterClosedData: false
                     );
 
             var result = compiler.Compile(query);

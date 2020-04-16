@@ -198,7 +198,8 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
                             arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange,
+                            filterClosedData: FilterClosedData
                         )
                         .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
@@ -240,7 +241,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("pois")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
@@ -281,7 +283,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("poitypes")
                         .Select("data")
-                        .WhereJsonb("Key", id.ToLower());
+                        .WhereJsonb("Key", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
                         //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

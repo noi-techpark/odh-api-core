@@ -119,7 +119,8 @@ namespace OdhApiCore.Controllers
                         .WebCamInfoWhereExpression(
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,                         
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange)
+                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
+                            filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
@@ -155,7 +156,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("webcams")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

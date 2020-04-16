@@ -101,6 +101,7 @@ namespace OdhApiCore.Controllers
             {
                 var query = QueryFactory.Query("smgtags")
                     .Select("data")
+                    .When(FilterClosedData, q => q.FilterClosedData())
                     .OrderByRaw("data->>'MainEntity', data ->>'Shortname'");
 
                 var data = await query.GetAsync<JsonRaw>();
@@ -122,6 +123,7 @@ namespace OdhApiCore.Controllers
                             smgtagtypelist,
                             id => new { ValidForEntity = new[] { id.ToLower() } }
                         )
+                        .When(FilterClosedData, q => q.FilterClosedData())
                         .OrderByRaw("data->>'MainEntity', data->>'Shortname'");
 
                 var data = await query.GetAsync<JsonRaw>();
@@ -145,6 +147,7 @@ namespace OdhApiCore.Controllers
                 var data = await QueryFactory.Query("smgtags")
                     .Select("data")
                     .Where("id", id.ToLower())
+                    .When(FilterClosedData, q => q.FilterClosedData())
                     .FirstOrDefaultAsync<JsonRaw>();
 
                 return data?.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData);

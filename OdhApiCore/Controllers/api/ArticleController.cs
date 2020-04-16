@@ -166,7 +166,8 @@ namespace OdhApiCore.Controllers.api
                             subtypelist: myrticlehelper.subtypelist, smgtaglist: myrticlehelper.smgtaglist, languagelist: myrticlehelper.languagelist,
                             highlight: myrticlehelper.highlight,
                             activefilter: myrticlehelper.active, smgactivefilter: myrticlehelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myrticlehelper.lastchange)
+                            searchfilter: searchfilter, language: language, lastchange: myrticlehelper.lastchange,
+                            filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data ->>'Shortname' ASC");                        
 
                 // Get paginated data
@@ -201,7 +202,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("articles")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
@@ -219,7 +221,8 @@ namespace OdhApiCore.Controllers.api
             {
                 var query =
                     QueryFactory.Query("articletypes")
-                        .SelectRaw("data");
+                        .SelectRaw("data")
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.GetAsync<JsonRaw?>();
 
@@ -234,7 +237,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("articletypes")
                         .Select("data")
-                        .WhereJsonb("Key", id.ToLower());
+                        .WhereJsonb("Key", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
                 //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

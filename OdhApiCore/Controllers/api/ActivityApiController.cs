@@ -214,7 +214,8 @@ namespace OdhApiCore.Controllers
                             altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
                             altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange)
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange,
+                            filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
@@ -255,7 +256,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("activities")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
@@ -277,7 +279,8 @@ namespace OdhApiCore.Controllers
             {
                 var query =
                     QueryFactory.Query("activitytypes")
-                        .SelectRaw("data");
+                        .SelectRaw("data")
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.GetAsync<JsonRaw?>();
 
@@ -296,7 +299,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("activitytypes")
                         .Select("data")
-                        .WhereJsonb("Key", id.ToLower());
+                        .WhereJsonb("Key", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
                 //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

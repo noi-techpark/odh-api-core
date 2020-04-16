@@ -389,7 +389,7 @@ namespace Helper
                 type => type
             );
 
-        public static Query WhereNotClosedData(this Query query) =>
+        public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(
                     "data#>>'\\{_Meta,ClosedData\\}' IS NULL"
