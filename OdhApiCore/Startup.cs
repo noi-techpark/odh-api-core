@@ -110,7 +110,7 @@ namespace OdhApiCore
 
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
-
+          
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
 
@@ -252,7 +252,7 @@ namespace OdhApiCore
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");                
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
             app.UseEndpoints(endpoints =>
