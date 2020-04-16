@@ -20,7 +20,7 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
+        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
             : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
@@ -95,7 +95,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
-                    QueryFactory.QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
+                    QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
                     highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
@@ -184,7 +184,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    QueryFactory.QueryFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
+                    QueryFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
                     locfilter: locfilter, areafilter: areafilter, distancefilter: distancefilter,
                     altitudefilter: altitudefilter, durationfilter: durationfilter, highlightfilter: highlightfilter,
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
@@ -274,7 +274,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
-                    QueryFactory.QueryFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
+                    QueryFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
                     dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, 
                     cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
                     lastchange: null, cancellationToken);
@@ -462,7 +462,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
-                    QueryFactory.QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
+                    QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";

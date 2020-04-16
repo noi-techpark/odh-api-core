@@ -19,11 +19,11 @@ namespace OdhApiCore.Controllers
         private readonly ISettings settings;
         private readonly ILogger<OdhController> logger;
         private readonly IPostGreSQLConnectionFactory connectionFactory;
-        private readonly Factories.PostgresQueryFactory queryFactory;
+        private readonly QueryFactory queryFactory;
 
         protected bool CheckCC0License => settings.CheckCC0License;
 
-        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
+        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
         {
             this.env = env;
             this.settings = settings;
@@ -33,7 +33,7 @@ namespace OdhApiCore.Controllers
         }
 
         protected ILogger<OdhController> Logger => logger;
-        protected Factories.PostgresQueryFactory QueryFactory => queryFactory;
+        protected QueryFactory QueryFactory => queryFactory;
 
         protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<IActionResult>> f)
         {

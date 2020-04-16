@@ -21,7 +21,7 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
     {
-        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
+        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
             : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
@@ -183,7 +183,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
-                    QueryFactory.QueryFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
+                    QueryFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
                     smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 

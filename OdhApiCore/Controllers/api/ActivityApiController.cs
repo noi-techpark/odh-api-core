@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
+        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
             : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
@@ -194,7 +194,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    QueryFactory.QueryFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
+                    QueryFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange,
                     cancellationToken);
 

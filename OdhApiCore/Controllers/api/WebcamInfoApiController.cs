@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public WebcamInfoApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
+        public WebcamInfoApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
             : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }

@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
+        public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, IPostGreSQLConnectionFactory connectionFactory, QueryFactory queryFactory)
             : base(env, settings, logger, connectionFactory, queryFactory)
         {
         }
@@ -158,7 +158,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async connectionFactory =>
             {
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
-                    QueryFactory.QueryFactory, idfilter, locfilter, categorycodefilter,
+                    QueryFactory, idfilter, locfilter, categorycodefilter,
                     dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
                     active, smgactive, smgtags, lastchange, cancellationToken);
 
