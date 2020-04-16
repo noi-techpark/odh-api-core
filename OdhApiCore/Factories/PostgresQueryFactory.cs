@@ -14,34 +14,21 @@ namespace OdhApiCore.Factories
     /// Howewer at the time of writing there exists an issue to fix that:
     /// https://github.com/sqlkata/querybuilder/issues/213
     /// </summary>
-    public class PostgresQueryFactory : IDisposable
+    public class PostgresQueryFactory : QueryFactory, IDisposable
     {
-        private NpgsqlConnection? connection;
-        private readonly QueryFactory queryFactory;
-
-        public PostgresQueryFactory(ISettings settings, ILogger<PostgresConnectionFactory> logger)
+        public PostgresQueryFactory(ISettings settings, ILogger<QueryFactory> logger)
         {
-            connection = new NpgsqlConnection(settings.PostgresConnectionString);
-            var compiler = new PostgresCompiler();
-            queryFactory = new QueryFactory(connection, compiler)
-            {
-                Logger = info =>
-                    logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings)
-            };
+            Connection = new NpgsqlConnection(settings.PostgresConnectionString);
+            Compiler = new PostgresCompiler();
+            Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
-
-        public Query Query() =>
-            queryFactory.Query();
-
-        public Query Query(string table) =>
-            queryFactory.Query(table);
 
         public void Dispose()
         {
-            if (connection != null)
+            if (Connection != null)
             {
-                connection.Dispose();
-                connection = null;
+                Connection.Dispose();
+                Connection = null;
             }
         }
     }

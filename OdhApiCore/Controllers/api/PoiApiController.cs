@@ -21,8 +21,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
     {
-        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
-            : base(env, settings, logger, connectionFactory, queryFactory)
+        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -180,12 +180,12 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken)
         {
 
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
-                    connectionFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
+                    QueryFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
-                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken, QueryFactory);
+                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 
                 var query =
                     QueryFactory.Query()
@@ -235,7 +235,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Poi Object</returns>
         private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("pois")
@@ -258,7 +258,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Collection of PoiTypes Object</returns>
         private Task<IActionResult> GetPoiTypesList(CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                      QueryFactory.Query("poitypes")
@@ -276,12 +276,12 @@ namespace OdhApiCore.Controllers.api
         /// <returns>PoiTypes Object</returns>
         private Task<IActionResult> GetPoiTypesSingleAsync(string id, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("poitypes")
                         .Select("data")
-                        .WhereJsonb("Key", id);
+                        .WhereJsonb("Key", id.ToLower());
                         //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

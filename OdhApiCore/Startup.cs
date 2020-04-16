@@ -109,8 +109,7 @@ namespace OdhApiCore
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
-            services.AddSingleton<IPostGreSQLConnectionFactory, PostgresConnectionFactory>();
-            services.AddScoped<PostgresQueryFactory>();
+            services.AddScoped<QueryFactory, PostgresQueryFactory>();
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);

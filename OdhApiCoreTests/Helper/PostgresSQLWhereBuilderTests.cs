@@ -12,52 +12,6 @@ namespace OdhApiCoreTests.Helper
         private readonly static PostgresCompiler compiler = new PostgresCompiler();
 
         [Fact]
-        public void CreateIdListWhereExpression_SingleId()
-        {
-            var (where, parameters) = PostgresSQLWhereBuilder.CreateIdListWhereExpression("hello");
-            Assert.Equal("id LIKE @id", where);
-            Assert.Single(parameters);
-            var single = parameters.Single();
-            Assert.Equal("id", single.Name);
-            Assert.Equal(NpgsqlTypes.NpgsqlDbType.Text, single.Type);
-            Assert.Equal("hello", single.Value);
-        }
-
-        [Fact]
-        public void CreateIdListWhereExpression_IdList()
-        {
-            var idlist = new string[] {
-                "foo", "bar", "baz"
-            };
-            var (where, parameters) =
-                PostgresSQLWhereBuilder.CreateIdListWhereExpression(idlist);
-            Assert.Equal("Id in (@id1, @id2, @id3)", where);
-            Assert.Equal(3, parameters.Count());
-            for (var i = 0; i < parameters.Count(); i++)
-            {
-                var param = parameters.ElementAt(i);
-                Assert.Equal($"id{i + 1}", param.Name);
-                Assert.Equal(idlist[i], param.Value);
-            }
-        }
-
-        [Fact]
-        public void CreateIdListWhereExpression_EmptyIdListWithDummy()
-        {
-            var idlist = new List<string>();
-
-            var (where, parameters) =
-                PostgresSQLWhereBuilder.CreateIdListWhereExpression(idlist, true);
-            Assert.Equal("Id = @dummy", where);
-            Assert.Single(parameters);
-
-            var (where2, parameters2) =
-                PostgresSQLWhereBuilder.CreateIdListWhereExpression(idlist, false);
-            Assert.Equal("", where2);
-            Assert.Empty(parameters2);
-        }
-
-        [Fact]
         public void CreateActivityWhereExpression_EmptyParameters()
         {
             var query =

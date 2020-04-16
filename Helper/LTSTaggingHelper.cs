@@ -155,26 +155,6 @@ namespace Helper
                 _ => "ERROR",
             };
 
-        public static async IAsyncEnumerable<LTSTaggingType> GetLTSTagParentsPGAsync(
-            IPostGreSQLConnectionFactory connectionFactory, LTSTaggingType currenttag, IEnumerable<LTSTaggingType> ltstagparentlist,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            if (currenttag.Level > 0)
-            {
-                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(currenttag.TypeParent);
-                var parent = await PostgresSQLHelper.SelectFromTableDataAsObjectParametrizedAsync<LTSTaggingType>(
-                    connectionFactory, "ltstaggingtypes", "*", where, "", 1, null, cancellationToken).FirstOrDefaultAsync();
-
-                yield return parent;
-
-                await foreach (var elem in GetLTSTagParentsPGAsync(connectionFactory, parent, ltstagparentlist, cancellationToken))
-                    yield return elem;
-            }
-            foreach (var elem in ltstagparentlist)
-                yield return elem;
-        }
-
-
         public static async Task<IDictionary<string, string>> GetPoiTypeDescAsync(
             string? key, IAsyncEnumerable<LTSTaggingType> ltstaggingtypes)
         {
@@ -210,24 +190,5 @@ namespace Helper
                 "Piste" => "Pisten",
                 _ => key,
             };
-    }
-
-    public class LTSAreaHelper
-    {
-        public static async IAsyncEnumerable<string> GetAreasNotToConsiderPGAsync(
-            IPostGreSQLConnectionFactory connectionFactory, [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-
-            //var areasnottoconsider = PostgresSQLHelper.SelectFromTableDataAsId(conn, "areas", "data->'Id' as Id", "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'", "",0, null);
-            var areasnottoconsider = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<string>(
-                connectionFactory, "areas", "Id as PgId, data->'Id' as Id",
-                "data @>'{\"RegionId\":null}' OR data @>'{\"RegionId\":\"\"}' OR data @>'{\"RegionId\":\"TOASSIGN\"}'",
-                "", 0, null, cancellationToken);
-
-            //session.Query<Area, AreaFilter>().Where(x => x.RegionId == null || x.RegionId == "TOASSIGN").Select(x => x.Id).ToList();
-
-            await foreach (var area in areasnottoconsider)
-                yield return area.ToUpper();
-        }
     }
 }

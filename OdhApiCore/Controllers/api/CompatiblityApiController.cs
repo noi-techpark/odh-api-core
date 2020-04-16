@@ -20,8 +20,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, IPostGreSQLConnectionFactory connectionFactory, Factories.PostgresQueryFactory queryFactory)
-            : base(env, settings, logger, connectionFactory, queryFactory)
+        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -92,11 +92,11 @@ namespace OdhApiCore.Controllers.api
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive,
             string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
-                    connectionFactory, poitype, subtypefilter, null, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory);
+                    QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
+                    highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -181,14 +181,14 @@ namespace OdhApiCore.Controllers.api
             string? difficultyfilter, bool? active, bool? smgactive, string? smgtags, 
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
+                    QueryFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
                     locfilter: locfilter, areafilter: areafilter, distancefilter: distancefilter,
                     altitudefilter: altitudefilter, durationfilter: durationfilter, highlightfilter: highlightfilter,
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
-                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken, QueryFactory);
+                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
 
                 string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -271,13 +271,13 @@ namespace OdhApiCore.Controllers.api
             string? cuisinecodefilter, bool? active, bool? smgactive, string? smgtagfilter, 
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
-                    connectionFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
+                    QueryFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
                     dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, 
-                    cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter, lastchange: null,
-                    cancellationToken, QueryFactory);
+                    cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
+                    lastchange: null, cancellationToken);
 
                 string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -343,7 +343,7 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         public Task<IActionResult> GetReducedLocalized(string language, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 string select = $"data->>'Id' as Id, data->'TagName'->>'{language.ToLower()}' as Name";
                 string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
@@ -371,7 +371,7 @@ namespace OdhApiCore.Controllers.api
         {
             var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
                 string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
@@ -426,11 +426,11 @@ namespace OdhApiCore.Controllers.api
             string? locfilter = null,
             //string langfilter = null,
             string? areafilter = null,
-            LegacyBool highlight = null,
+            LegacyBool highlight = null!,
             string? source = null,
-            string odhtagfilter = null,
-            LegacyBool odhactive = null,
-            LegacyBool active = null,
+            string odhtagfilter = null!,
+            LegacyBool odhactive = null!,
+            LegacyBool active = null!,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -459,11 +459,11 @@ namespace OdhApiCore.Controllers.api
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? source,
             string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
-                    connectionFactory, type, subtype, poitype, null, locfilter, areafilter,
-                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory);
+                    QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
+                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";

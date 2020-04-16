@@ -18,55 +18,55 @@ namespace Helper
 
         public static Query WhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             string value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value
                 );
 
         public static Query WhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             int value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value.ToString()
                 );
 
         public static Query WhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             bool value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value ? "true" : "false"
                 );
 
         public static Query OrWhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             string value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value
                 );
 
         public static Query OrWhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             int value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value.ToString()
                 );
 
         public static Query OrWhereJsonb(
             this Query query,
-            string path,
+            string jsonPath,
             bool value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{path}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
                     value ? "true" : "false"
                 );
 
@@ -114,14 +114,14 @@ namespace Helper
         public static Query WhereInJsonb<T>(
             this Query query,
             IReadOnlyCollection<T> list,
-            string path,
+            string jsonPath,
             Func<T, string> jsonObjectConstructor) =>
                 query.Where(q =>
                 {
                     foreach (var item in list)
                     {
                         q = q.OrWhereJsonb(
-                            path,
+                            jsonPath,
                             jsonObjectConstructor(item)
                         );
                     }
@@ -336,22 +336,22 @@ namespace Helper
             );
 
         public static Query CeremonyCodeFilter(this Query query, IReadOnlyCollection<string> ceremonycodelist) =>
-           query.WhereInJsonb(
-               ceremonycodelist,
-               tag => new { CapacityCeremony = new[] { new { Id = tag.ToUpper() } } }
-           );
+            query.WhereInJsonb(
+                ceremonycodelist,
+                tag => new { CapacityCeremony = new[] { new { Id = tag.ToUpper() } } }
+            );
 
         public static Query CategoryCodeFilter(this Query query, IReadOnlyCollection<string> categorycodelist) =>
-           query.WhereInJsonb(
-               categorycodelist,
-               tag => new { CategoryCodes = new[] { new { Id = tag.ToUpper() } } }
-           );
+            query.WhereInJsonb(
+                categorycodelist,
+                tag => new { CategoryCodes = new[] { new { Id = tag.ToUpper() } } }
+            );
 
         public static Query DishCodeFilter(this Query query, IReadOnlyCollection<string> dishcodelist) =>
-           query.WhereInJsonb(
-               dishcodelist,
-               tag => new { DishRates = new[] { new { Id = tag.ToUpper() } } }
-           );
+            query.WhereInJsonb(
+                dishcodelist,
+                tag => new { DishRates = new[] { new { Id = tag.ToUpper() } } }
+            );
 
         public static Query SourceFilter(this Query query, IReadOnlyCollection<string> sourcelist) =>
             query.WhereInJsonb(
@@ -361,19 +361,19 @@ namespace Helper
             );
 
         public static Query HasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
-          query.WhereInJsonb(
-              list: languagelist,
-              "HasLanguage",
-              id => id.ToUpper()
-          );
+            query.WhereInJsonb(
+                list: languagelist,
+                "HasLanguage",
+                id => id.ToUpper()
+            );
 
 
         public static Query ODHActivityPoiTypeFilter(this Query query, IReadOnlyCollection<string> typelist) =>
-         query.WhereInJsonb(
-             list: typelist,
-             "Type",
-             type => type
-         );
+            query.WhereInJsonb(
+                list: typelist,
+                "Type",
+                type => type
+            );
 
         public static Query ODHActivityPoiSubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
             query.WhereInJsonb(
@@ -389,5 +389,13 @@ namespace Helper
                 type => type
             );
 
+        public static Query WhereNotClosedData(this Query query) =>
+            query.Where(q =>
+                q.WhereRaw(
+                    "data#>>'\\{_Meta,ClosedData\\}' IS NULL"
+                ).OrWhereRaw(
+                    "data#>>'\\{_Meta,ClosedData\\}' = 'false'"
+                )
+            );
     }
 }
