@@ -95,7 +95,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(Article), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHActivityPoi/{id}")]
+        [HttpGet, Route("api/Article/{id}")]
         public async Task<IActionResult> GetArticleSingle(
             string id, 
             string? language,
