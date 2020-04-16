@@ -105,7 +105,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.GetAsync<JsonRaw>();
 
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
+                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData));
             });
         }
 
@@ -126,7 +126,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.GetAsync<JsonRaw>();
 
-               return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
+               return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData));
             });
         }
 
@@ -147,7 +147,7 @@ namespace OdhApiCore.Controllers
                     .Where("id", id.ToLower())
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License);
+                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData);
             });
         }
 
