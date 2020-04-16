@@ -296,7 +296,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("activitytypes")
                         .Select("data")
-                        .WhereJsonb("Key", id);
+                        .WhereJsonb("Key", id.ToLower());
                 //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

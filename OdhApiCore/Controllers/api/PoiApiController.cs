@@ -281,7 +281,7 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("poitypes")
                         .Select("data")
-                        .WhereJsonb("Key", id);
+                        .WhereJsonb("Key", id.ToLower());
                         //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

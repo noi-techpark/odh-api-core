@@ -404,6 +404,39 @@ namespace Helper
                 .LastChangedFilter(lastchange);
         }
 
+        //Return Where and Parameters for Article
+        public static Query ArticleWhereExpression(
+            this Query query,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
+            IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> smgtaglist, bool? highlight, bool? activefilter, bool? smgactivefilter,
+            string? searchfilter, string? language, string? lastchange)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, typelist,
+                subtypelist, languagelist, smgtaglist, 
+                highlight, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdLowerFilter(idlist)
+                .ODHActivityPoiTypeFilter(typelist)
+                .ODHActivityPoiSubTypeFilter(subtypelist)
+                .ODHActivityPoiPoiTypeFilter(subtypelist)
+                .HasLanguageFilter(languagelist)
+                .HighlightFilter(highlight)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SmgTagFilter(smgtaglist)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange);
+        }
+
+
         //Return Where and Parameters for WebCamInfo
         public static Query WebCamInfoWhereExpression(
             this Query query,
