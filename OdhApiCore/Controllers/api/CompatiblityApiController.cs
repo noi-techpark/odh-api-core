@@ -95,8 +95,8 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
-                    connectionFactory, poitype, subtypefilter, null, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory.QueryFactory);
+                    QueryFactory.QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
+                    highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -184,11 +184,11 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
+                    QueryFactory.QueryFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
                     locfilter: locfilter, areafilter: areafilter, distancefilter: distancefilter,
                     altitudefilter: altitudefilter, durationfilter: durationfilter, highlightfilter: highlightfilter,
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
-                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken, QueryFactory.QueryFactory);
+                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
 
                 string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -274,10 +274,10 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
-                    connectionFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
+                    QueryFactory.QueryFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
                     dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, 
-                    cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter, lastchange: null,
-                    cancellationToken, QueryFactory.QueryFactory);
+                    cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
+                    lastchange: null, cancellationToken);
 
                 string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";
@@ -462,8 +462,8 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
-                    connectionFactory, type, subtype, poitype, null, locfilter, areafilter,
-                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken, QueryFactory.QueryFactory);
+                    QueryFactory.QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
+                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
                 string orderby = "data ->>'Shortname' ASC";

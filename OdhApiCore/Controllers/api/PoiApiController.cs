@@ -183,9 +183,9 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
-                    connectionFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
+                    QueryFactory.QueryFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
-                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken, QueryFactory.QueryFactory);
+                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 
                 var query =
                     QueryFactory.Query()

@@ -151,9 +151,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async connectionFactory =>
             {
-                ArticleHelper myrticlehelper = await ArticleHelper.CreateAsync(
-                    connectionFactory, type, subtypefilter, idfilter, languagefilter, highlightfilter, active, smgactive, smgtags, lastchange,
-                    cancellationToken, QueryFactory);
+                ArticleHelper myrticlehelper = ArticleHelper.Create(
+                    type, subtypefilter, idfilter, languagefilter, highlightfilter,
+                    active, smgactive, smgtags, lastchange);
 
                 //TODO orderby = "to_date(data ->> 'ArticleDate', 'YYYY-MM-DD') DESC";
 

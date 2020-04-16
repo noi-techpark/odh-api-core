@@ -168,8 +168,9 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async connectionFactory =>
             {
                 ODHActivityPoiHelper myodhactivitypoihelper = await ODHActivityPoiHelper.CreateAsync(
-                    connectionFactory, type, subtypefilter, poitypefilter, idfilter, locfilter, areafilter, languagefilter, sourcefilter, highlightfilter, active, smgactive, smgtags, lastchange,
-                    cancellationToken, QueryFactory.QueryFactory);
+                    QueryFactory.QueryFactory, type, subtypefilter, poitypefilter, idfilter, locfilter,
+                    areafilter, languagefilter, sourcefilter, highlightfilter, active, smgactive, smgtags,
+                    lastchange, cancellationToken);
 
                 var query =
                     QueryFactory.Query()

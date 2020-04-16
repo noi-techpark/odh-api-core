@@ -109,9 +109,8 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async connectionFactory =>
             {
-                WebcamInfoHelper mywebcaminfohelper = await WebcamInfoHelper.CreateAsync(
-                    connectionFactory, source, idfilter, active, smgactive, lastchange,
-                    cancellationToken, QueryFactory);
+                WebcamInfoHelper mywebcaminfohelper = WebcamInfoHelper.Create(
+                    source, idfilter, active, smgactive, lastchange);
 
                 var query =
                     QueryFactory.Query()

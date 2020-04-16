@@ -19,12 +19,12 @@ namespace OdhApiCore.Controllers.api
         public bool? smgactive;
         public string? lastchange;
     
-        public static Task<ArticleHelper> CreateAsync(
-            IPostGreSQLConnectionFactory connectionFactory, string? typefilter, string? subtypefilter, string? idfilter, 
+        public static ArticleHelper Create(
+            string? typefilter, string? subtypefilter, string? idfilter, 
             string? languagefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, CancellationToken cancellationToken, Factories.PostgresQueryFactory queryFactory)
+            string? smgtags, string? lastchange)
         {           
-            return Task.FromResult(new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange));
+            return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange);
         }
 
         private ArticleHelper(

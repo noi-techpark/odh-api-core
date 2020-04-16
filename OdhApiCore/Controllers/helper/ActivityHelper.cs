@@ -34,11 +34,11 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
 
         public static async Task<ActivityHelper> CreateAsync(
-            IPostGreSQLConnectionFactory connectionFactory, string? activitytype, string? subtypefilter,
+            QueryFactory queryFactory, string? activitytype, string? subtypefilter,
             string? idfilter, string? locfilter, string? areafilter, string? distancefilter,
             string? altitudefilter, string? durationfilter, bool? highlightfilter, string? difficultyfilter,
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
-            CancellationToken cancellationToken, QueryFactory queryFactory)
+            CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 

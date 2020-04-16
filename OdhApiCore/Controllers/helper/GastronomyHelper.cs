@@ -27,10 +27,10 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
 
         public static async Task<GastronomyHelper> CreateAsync(
-            IPostGreSQLConnectionFactory connectionFactory, string? idfilter, string? locfilter, string? categorycodefilter, string? dishcodefilter, 
+            QueryFactory queryFactory, string? idfilter, string? locfilter, string? categorycodefilter, string? dishcodefilter, 
             string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter, 
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
-            CancellationToken cancellationToken, QueryFactory queryFactory)
+            CancellationToken cancellationToken)
         {           
             IEnumerable<string>? tourismusvereinids = null;
            if (locfilter != null && locfilter.Contains("mta"))

@@ -28,9 +28,9 @@ namespace OdhApiCore.Controllers.api
         public string? lastchange;
     
         public static async Task<ODHActivityPoiHelper> CreateAsync(
-        IPostGreSQLConnectionFactory connectionFactory, string? typefilter, string? subtypefilter, string? poitypefilter, string? idfilter, string? locfilter,
-        string? areafilter, string? languagefilter, string? sourcefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-        string? smgtags, string? lastchange, CancellationToken cancellationToken, QueryFactory queryFactory)
+            QueryFactory queryFactory, string? typefilter, string? subtypefilter, string? poitypefilter, string? idfilter, string? locfilter,
+            string? areafilter, string? languagefilter, string? sourcefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
+            string? smgtags, string? lastchange, CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 

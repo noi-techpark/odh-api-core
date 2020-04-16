@@ -158,9 +158,9 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async connectionFactory =>
             {
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
-                    connectionFactory, idfilter, locfilter, categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
-                    active, smgactive, smgtags, lastchange,
-                    cancellationToken, QueryFactory.QueryFactory);
+                    QueryFactory.QueryFactory, idfilter, locfilter, categorycodefilter,
+                    dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
+                    active, smgactive, smgtags, lastchange, cancellationToken);
 
                 var query =
                     QueryFactory.Query()
