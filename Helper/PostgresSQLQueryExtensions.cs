@@ -336,22 +336,22 @@ namespace Helper
             );
 
         public static Query CeremonyCodeFilter(this Query query, IReadOnlyCollection<string> ceremonycodelist) =>
-           query.WhereInJsonb(
-               ceremonycodelist,
-               tag => new { CapacityCeremony = new[] { new { Id = tag.ToUpper() } } }
-           );
+            query.WhereInJsonb(
+                ceremonycodelist,
+                tag => new { CapacityCeremony = new[] { new { Id = tag.ToUpper() } } }
+            );
 
         public static Query CategoryCodeFilter(this Query query, IReadOnlyCollection<string> categorycodelist) =>
-           query.WhereInJsonb(
-               categorycodelist,
-               tag => new { CategoryCodes = new[] { new { Id = tag.ToUpper() } } }
-           );
+            query.WhereInJsonb(
+                categorycodelist,
+                tag => new { CategoryCodes = new[] { new { Id = tag.ToUpper() } } }
+            );
 
         public static Query DishCodeFilter(this Query query, IReadOnlyCollection<string> dishcodelist) =>
-           query.WhereInJsonb(
-               dishcodelist,
-               tag => new { DishRates = new[] { new { Id = tag.ToUpper() } } }
-           );
+            query.WhereInJsonb(
+                dishcodelist,
+                tag => new { DishRates = new[] { new { Id = tag.ToUpper() } } }
+            );
 
         public static Query SourceFilter(this Query query, IReadOnlyCollection<string> sourcelist) =>
             query.WhereInJsonb(
@@ -361,19 +361,19 @@ namespace Helper
             );
 
         public static Query HasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
-          query.WhereInJsonb(
-              list: languagelist,
-              "HasLanguage",
-              id => id.ToUpper()
-          );
+            query.WhereInJsonb(
+                list: languagelist,
+                "HasLanguage",
+                id => id.ToUpper()
+            );
 
 
         public static Query ODHActivityPoiTypeFilter(this Query query, IReadOnlyCollection<string> typelist) =>
-         query.WhereInJsonb(
-             list: typelist,
-             "Type",
-             type => type
-         );
+            query.WhereInJsonb(
+                list: typelist,
+                "Type",
+                type => type
+            );
 
         public static Query ODHActivityPoiSubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
             query.WhereInJsonb(
