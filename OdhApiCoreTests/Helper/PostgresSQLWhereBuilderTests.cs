@@ -42,22 +42,6 @@ namespace OdhApiCoreTests.Helper
         }
 
         [Fact]
-        public void CreateIdListWhereExpression_EmptyIdListWithDummy()
-        {
-            var idlist = new List<string>();
-
-            var (where, parameters) =
-                PostgresSQLWhereBuilder.CreateIdListWhereExpression(idlist, true);
-            Assert.Equal("Id = @dummy", where);
-            Assert.Single(parameters);
-
-            var (where2, parameters2) =
-                PostgresSQLWhereBuilder.CreateIdListWhereExpression(idlist, false);
-            Assert.Equal("", where2);
-            Assert.Empty(parameters2);
-        }
-
-        [Fact]
         public void CreateActivityWhereExpression_EmptyParameters()
         {
             var query =
