@@ -98,8 +98,8 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
                     highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -191,8 +191,8 @@ namespace OdhApiCore.Controllers.api
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
                     smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
 
-                string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -280,8 +280,8 @@ namespace OdhApiCore.Controllers.api
                     cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
                     lastchange: null, cancellationToken);
 
-                string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -347,8 +347,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                string select = $"data->>'Id' as Id, data->'TagName'->>'{language.ToLower()}' as Name";
-                string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'{{TagName,{language.ToLower()}}}' as Name";
+                string where = $"data#>>'\\{{TagName,{language.ToLower()}\\}}' NOT LIKE ''";
 
                 var data =
                     QueryFactory.Query("smgtags")
@@ -376,8 +376,8 @@ namespace OdhApiCore.Controllers.api
 
             return DoAsyncReturn(async () =>
             {
-                string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
-                string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{TagName,{language.ToLower()}\\}}' as Name";
+                string where = $"data#>>'\\{{TagName,{language.ToLower()}\\}}' NOT LIKE ''";
 
                 var data =
                     QueryFactory.Query("smgtags")
@@ -469,8 +469,8 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
+                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()

@@ -155,7 +155,7 @@ namespace OdhApiCore.Controllers.api
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
                     active, smgactive, smgtags, lastchange);
 
-                //TODO orderby = "to_date(data ->> 'ArticleDate', 'YYYY-MM-DD') DESC";
+                //TODO orderby = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') DESC";
 
                 var query =
                     QueryFactory.Query()
@@ -168,7 +168,7 @@ namespace OdhApiCore.Controllers.api
                             activefilter: myrticlehelper.active, smgactivefilter: myrticlehelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myrticlehelper.lastchange,
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC");                        
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC");                        
 
                 // Get paginated data
                 var data =

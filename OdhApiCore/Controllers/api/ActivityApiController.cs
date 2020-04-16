@@ -216,7 +216,7 @@ namespace OdhApiCore.Controllers
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange,
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Get paginated data

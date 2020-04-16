@@ -121,7 +121,7 @@ namespace OdhApiCore.Controllers
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Get paginated data

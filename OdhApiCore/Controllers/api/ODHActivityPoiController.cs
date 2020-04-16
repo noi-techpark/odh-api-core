@@ -187,7 +187,7 @@ namespace OdhApiCore.Controllers.api
                             activefilter: myodhactivitypoihelper.active, smgactivefilter: myodhactivitypoihelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             filterCloseData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Get paginated data

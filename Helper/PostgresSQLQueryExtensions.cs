@@ -177,7 +177,7 @@ namespace Helper
             query.When(
                 updatefrom != null,
                 query => query.WhereRaw(
-                    "to_date(data->>'LastChange', 'YYYY-MM-DD') > date(?)",
+                    "to_date(data#>>'\\{LastChange\\}', 'YYYY-MM-DD') > date(?)",
                     updatefrom
                 )
             );
@@ -243,7 +243,7 @@ namespace Helper
             query.When(
                 distance,
                 query => query.WhereRaw(
-                    "(data->>'DistanceLength')::numeric > ? AND (data->>'DistanceLength')::numeric < ?",
+                    "(data#>>'\\{DistanceLength\\}')::numeric > ? AND (data#>>'\\{DistanceLength\\}')::numeric < ?",
                     distancemin,
                     distancemax
                 )
@@ -253,7 +253,7 @@ namespace Helper
             query.When(
                 duration,
                 query => query.WhereRaw(
-                    "(data->>'DistanceDuration')::numeric > ? AND (data->>'DistanceDuration')::numeric < ?",
+                    "(data#>>'\\{DistanceDuration\\}')::numeric > ? AND (data#>>'\\{DistanceDuration\\}')::numeric < ?",
                     durationmin,
                     durationmax
                 )
@@ -263,7 +263,7 @@ namespace Helper
             query.When(
                 altitude,
                 query => query.WhereRaw(
-                    "(data->>'AltitudeDifference')::numeric > ? AND (data->>'AltitudeDifference')::numeric < ?",
+                    "(data#>>'\\{AltitudeDifference\\}')::numeric > ? AND (data#>>'\\{AltitudeDifference\\}')::numeric < ?",
                     altitudemin,
                     altitudemax
                 )

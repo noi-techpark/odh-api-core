@@ -175,7 +175,7 @@ namespace OdhApiCore.Controllers
                             smgactivefilter: mygastronomyhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange,
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Get paginated data
@@ -252,7 +252,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("gastronomytypes")
                         .Select("data")
                         .WhereJsonb("Key", id.ToUpper());
-                //.Where("data ->>'Key'", "ILIKE", id);
+                //.Where("data#>>'\\{Key\\}'", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
