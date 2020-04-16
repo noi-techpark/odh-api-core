@@ -111,7 +111,7 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> GetFiltered(string? smgtagtype, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var smgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             return DoAsyncReturn(async connectionFactory =>
             {
@@ -138,7 +138,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         //[HttpGet, Route("Single/{id}")]
         //[ApiExplorerSettings(IgnoreApi = true)]
-        private Task<IActionResult> GetSingle(string id, string language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async connectionFactory =>
             {

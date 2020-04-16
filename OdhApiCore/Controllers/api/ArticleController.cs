@@ -64,10 +64,10 @@ namespace OdhApiCore.Controllers.api
             string? articlesubtype = null,
             string? idlist = null,            
             string? langfilter = null,
-            LegacyBool sortbyarticledate = null,
+            LegacyBool sortbyarticledate = null!,
             string? odhtagfilter = null,
-            LegacyBool odhactive = null,
-            LegacyBool active = null,
+            LegacyBool odhactive = null!,
+            LegacyBool active = null!,
             string? lastchange = null,
             string? seed = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]

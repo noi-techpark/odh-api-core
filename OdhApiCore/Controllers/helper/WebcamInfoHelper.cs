@@ -16,16 +16,16 @@ namespace OdhApiCore.Controllers
         public bool? smgactive;
         public string? lastchange;
 
-        public static async Task<WebcamInfoHelper> CreateAsync(
+        public static Task<WebcamInfoHelper> CreateAsync(
             IPostGreSQLConnectionFactory connectionFactory, string? sourcefilter, 
             string? idfilter, bool? activefilter, bool? smgactivefilter, string? lastchange,
             CancellationToken cancellationToken, Factories.PostgresQueryFactory queryFactory)
         {          
 
-            return new WebcamInfoHelper(
+            return Task.FromResult(new WebcamInfoHelper(
                 idfilter: idfilter, sourcefilter: sourcefilter,                
                 activefilter: activefilter, smgactivefilter: smgactivefilter, 
-                lastchange: lastchange);
+                lastchange: lastchange));
         }
 
         private WebcamInfoHelper(
