@@ -28,6 +28,20 @@ namespace OdhApiCore.Controllers
             }
         }
 
+        public static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(
+           QueryFactory queryFactory, string? areafilter, CancellationToken cancellationToken)
+        {
+            if (areafilter != null)
+            {
+                return (await LocationListCreator.CreateActivityAreaListPGAsync(
+                    queryFactory, areafilter, cancellationToken)).ToList();
+            }
+            else
+            {
+                return Enumerable.Empty<string>();
+            }
+        }
+
         public static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(
             this Query query, IReadOnlyCollection<string> metaregionlist, CancellationToken cancellationToken)
         {

@@ -30,6 +30,8 @@ namespace OdhApiCore.Factories
             };
         }
 
+        public QueryFactory QueryFactory => queryFactory;
+
         public Query Query() =>
             queryFactory.Query();
 

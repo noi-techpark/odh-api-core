@@ -26,7 +26,7 @@ namespace OdhApiCore.Controllers.api
         string? areafilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
         string? smgtags, string? lastchange, CancellationToken cancellationToken, Factories.PostgresQueryFactory queryFactory)
         {
-            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory.QueryFactory, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
