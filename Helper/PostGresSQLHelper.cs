@@ -13,50 +13,6 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
-    public static class PGExtensions
-    {
-        private static void AddPGParameters(
-            this NpgsqlCommand command,
-            IEnumerable<PGParameters>? whereparameters)
-        {
-            if (whereparameters != null)
-            {
-                foreach (var parameter in whereparameters)
-                {
-                    switch (parameter.Type)
-                    {
-                        case NpgsqlTypes.NpgsqlDbType.Date:
-                            command.Parameters.AddWithValue(
-                                parameter.Name,
-                                parameter.Type,
-                                Convert.ToDateTime(parameter.Value));
-                            break;
-                        default:
-                            command.Parameters.AddWithValue(
-                                parameter.Name,
-                                parameter.Type,
-                                parameter.Value);
-                            break;
-                    }
-                }
-            }
-        }
-
-        [System.Diagnostics.Conditional("TRACE")]
-        private static void TraceQueryInformation(string cmdText, IEnumerable<PGParameters>? parameters)
-        {
-            Serilog.Log.Debug("SQL: {cmdText} {@parameters}", cmdText, parameters);
-        }
-
-        public static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string cmdText, IEnumerable<PGParameters>? parameters = null)
-        {
-            TraceQueryInformation(cmdText, parameters);
-            var command = new NpgsqlCommand(cmdText, connection);
-            command.AddPGParameters(parameters);
-            return command;
-        }
-    }
-
     public static class PostgresSQLHelper
     {
         #region Geo Helpers
