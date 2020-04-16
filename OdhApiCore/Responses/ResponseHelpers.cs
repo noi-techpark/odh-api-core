@@ -80,7 +80,6 @@ namespace OdhApiCore.Responses
 
         public static JsonResult<T> GetResult<T>(
             uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data, IUrlHelper url)
-            where T : notnull
         {
             var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url);
             return new JsonResult<T>
