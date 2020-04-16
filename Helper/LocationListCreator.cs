@@ -10,11 +10,8 @@ namespace Helper
     public static class LocationListCreator
     {
         #region PostGres
-        public static async Task<IEnumerable<string>> CreateActivityAreaListPGAsync(QueryFactory queryFactory, string? areafilter, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> CreateActivityAreaListPGAsync(QueryFactory queryFactory, string areafilter, CancellationToken cancellationToken)
         {
-            if (areafilter == null)
-                return Enumerable.Empty<string>();
-
             //Klaub asanond
             var splittedlocfilter =
                 areafilter
