@@ -55,8 +55,8 @@ namespace Helper
         {
             return await
                 query.From("areas")
-                     .SelectRaw("data->>'Id'")
-                     .WhereRaw("data->>'RegionId' = ?", regionId.ToUpper())
+                     .SelectRaw("data#>>'\\{Id\\}'")
+                     .WhereRaw("data#>>'\\{RegionId\\}' = ?", regionId.ToUpper())
                      .GetAsync<string>();
         }
 
@@ -64,8 +64,8 @@ namespace Helper
         {
             return await
                 query.From("areas")
-                     .SelectRaw("data->>'Id'")
-                     .WhereRaw("data->>'TourismvereinId' = ?", tvId.ToUpper())
+                     .SelectRaw("data#>>'\\{Id\\}'")
+                     .WhereRaw("data#>>'\\{TourismvereinId\\}' = ?", tvId.ToUpper())
                      .GetAsync<string>();
         }
 
@@ -76,8 +76,8 @@ namespace Helper
         {
             var areaIdsJson = await
                 query.From("skiareas")
-                     .SelectRaw("data->>'AreaId'")
-                     .WhereRaw("data->>'SkiRegionId' = ?", skiregId.ToUpper())
+                     .SelectRaw("data#>>'\\{AreaId\\}'")
+                     .WhereRaw("data#>>'\\{SkiRegionId\\}' = ?", skiregId.ToUpper())
                      .GetAsync<string>();
             return areaIdsJson.SelectMany(FromJsonArray)
                               .Distinct();
@@ -87,8 +87,8 @@ namespace Helper
         {
             var areaIdsJson = await
                 query.From("skiareas")
-                     .SelectRaw("data->>'AreaId'")
-                     .WhereRaw("data->>'Id' = ?", skiareaId.ToUpper())
+                     .SelectRaw("data#>>'\\{AreaId\\}'")
+                     .WhereRaw("data#>>'\\{Id\\}' = ?", skiareaId.ToUpper())
                      .GetAsync<string>();
             return areaIdsJson.SelectMany(FromJsonArray)
                               .Distinct();

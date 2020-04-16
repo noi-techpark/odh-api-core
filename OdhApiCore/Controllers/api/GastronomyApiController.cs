@@ -173,8 +173,9 @@ namespace OdhApiCore.Controllers
                             municipalitylist: mygastronomyhelper.municipalitylist, tourismvereinlist: mygastronomyhelper.tourismvereinlist,
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active, 
                             smgactivefilter: mygastronomyhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange)
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                            searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange,
+                            filterClosedData: FilterClosedData)
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Get paginated data
@@ -186,7 +187,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License)
+                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -213,7 +214,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License);
+                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData);
             });
         }
 
@@ -251,7 +252,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("gastronomytypes")
                         .Select("data")
                         .WhereJsonb("Key", id.ToUpper());
-                //.Where("data ->>'Key'", "ILIKE", id);
+                //.Where("data#>>'\\{Key\\}'", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

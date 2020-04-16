@@ -21,6 +21,7 @@ namespace OdhApiCore.Controllers
         private readonly QueryFactory queryFactory;
 
         protected bool CheckCC0License => settings.CheckCC0License;
+        protected bool FilterClosedData => settings.FilterClosedData;
 
         public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory)
         {

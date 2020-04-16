@@ -119,8 +119,9 @@ namespace OdhApiCore.Controllers
                         .WebCamInfoWhereExpression(
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,                         
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange)
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
+                            filterClosedData: FilterClosedData)
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Get paginated data
@@ -132,7 +133,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License)
+                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -155,11 +156,12 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("webcams")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License);
+                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData);
             });
         }
 

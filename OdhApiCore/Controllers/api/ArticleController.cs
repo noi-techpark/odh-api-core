@@ -55,7 +55,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<Article>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHActivityPoi")]
+        [HttpGet, Route("api/Article")]
         public async Task<IActionResult> GetArticleList(
             string? language = null,
             uint pagenumber = 1,
@@ -95,7 +95,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(Article), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHActivityPoi/{id}")]
+        [HttpGet, Route("api/Article/{id}")]
         public async Task<IActionResult> GetArticleSingle(
             string id, 
             string? language,
@@ -155,7 +155,7 @@ namespace OdhApiCore.Controllers.api
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
                     active, smgactive, smgtags, lastchange);
 
-                //TODO orderby = "to_date(data ->> 'ArticleDate', 'YYYY-MM-DD') DESC";
+                //TODO orderby = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') DESC";
 
                 var query =
                     QueryFactory.Query()
@@ -166,8 +166,9 @@ namespace OdhApiCore.Controllers.api
                             subtypelist: myrticlehelper.subtypelist, smgtaglist: myrticlehelper.smgtaglist, languagelist: myrticlehelper.languagelist,
                             highlight: myrticlehelper.highlight,
                             activefilter: myrticlehelper.active, smgactivefilter: myrticlehelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myrticlehelper.lastchange)
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC");                        
+                            searchfilter: searchfilter, language: language, lastchange: myrticlehelper.lastchange,
+                            filterClosedData: FilterClosedData)
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC");                        
 
                 // Get paginated data
                 var data =
@@ -178,7 +179,7 @@ namespace OdhApiCore.Controllers.api
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License)
+                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -201,11 +202,12 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("articles")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License);
+                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData);
             });
         }
 
@@ -219,7 +221,8 @@ namespace OdhApiCore.Controllers.api
             {
                 var query =
                     QueryFactory.Query("articletypes")
-                        .SelectRaw("data");
+                        .SelectRaw("data")
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.GetAsync<JsonRaw?>();
 
@@ -234,7 +237,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("articletypes")
                         .Select("data")
-                        .WhereJsonb("Key", id.ToLower());
+                        .WhereJsonb("Key", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
                 //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

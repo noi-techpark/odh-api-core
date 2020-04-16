@@ -98,8 +98,8 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
                     highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -110,7 +110,8 @@ namespace OdhApiCore.Controllers.api
                             smgtaglist: mypoihelper.smgtaglist, districtlist: new List<string>(), municipalitylist: new List<string>(),
                             tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
                             arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
-                            smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null
+                            smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null,
+                            filterClosedData: FilterClosedData
                         )
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);
@@ -190,8 +191,8 @@ namespace OdhApiCore.Controllers.api
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
                     smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
 
-                string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -209,8 +210,8 @@ namespace OdhApiCore.Controllers.api
                             altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
                             altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: null, language: language, lastchange: null
-                        )
+                            searchfilter: null, language: language, lastchange: null,
+                            filterClosedData: FilterClosedData)
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
@@ -279,8 +280,8 @@ namespace OdhApiCore.Controllers.api
                     cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
                     lastchange: null, cancellationToken);
 
-                string select = $"data->>'Id' as Id, data->'Detail'->'{language}'->>'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -293,7 +294,8 @@ namespace OdhApiCore.Controllers.api
                             municipalitylist: mygastronomyhelper.municipalitylist, tourismvereinlist: mygastronomyhelper.tourismvereinlist,
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
-                            searchfilter: null, language: language, lastchange: null
+                            searchfilter: null, language: language, lastchange: null,
+                            filterClosedData: FilterClosedData
                         )
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);
@@ -345,13 +347,14 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                string select = $"data->>'Id' as Id, data->'TagName'->>'{language.ToLower()}' as Name";
-                string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'{{TagName,{language.ToLower()}}}' as Name";
+                string where = $"data#>>'\\{{TagName,{language.ToLower()}\\}}' NOT LIKE ''";
 
                 var data =
                     QueryFactory.Query("smgtags")
                         .SelectRaw(select)
-                        .WhereRaw(where);
+                        .WhereRaw(where)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 return await data.GetAsync<ResultReduced>();
             });
@@ -373,8 +376,8 @@ namespace OdhApiCore.Controllers.api
 
             return DoAsyncReturn(async () =>
             {
-                string select = $"data->'Id' as Id, data->'TagName'->'{language.ToLower()}' as Name";
-                string where = $"data->'TagName'->>'{language.ToLower()}' NOT LIKE ''";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{TagName,{language.ToLower()}\\}}' as Name";
+                string where = $"data#>>'\\{{TagName,{language.ToLower()}\\}}' NOT LIKE ''";
 
                 var data =
                     QueryFactory.Query("smgtags")
@@ -383,7 +386,8 @@ namespace OdhApiCore.Controllers.api
                         .WhereInJsonb(
                             smgtagtypelist,
                             smgtag => new { ValidForEntity = new[] { smgtag.ToLower() } }
-                        );
+                        )
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 return await data.GetAsync<ResultReduced>();
             });
@@ -465,8 +469,8 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string select = $"data->'Id' as Id, data->'Detail'->'{language}'->'Title' as Name";
-                string orderby = "data ->>'Shortname' ASC";
+                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -477,7 +481,8 @@ namespace OdhApiCore.Controllers.api
                             smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
-                            smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist, searchfilter: null, language: language, lastchange: null
+                            smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,
+                            searchfilter: null, language: language, lastchange: null, filterCloseData: FilterClosedData
                         )
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);

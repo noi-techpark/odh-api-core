@@ -198,9 +198,10 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
                             arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange,
+                            filterClosedData: FilterClosedData
                         )
-                        .OrderBySeed(ref seed, "data ->>'Shortname' ASC")
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Get paginated data
@@ -212,7 +213,7 @@ namespace OdhApiCore.Controllers.api
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License)
+                        raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -240,11 +241,12 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("pois")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License);
+                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData);
             });
         }
 
@@ -281,7 +283,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("poitypes")
                         .Select("data")
-                        .WhereJsonb("Key", id.ToLower());
+                        .WhereJsonb("Key", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
                         //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

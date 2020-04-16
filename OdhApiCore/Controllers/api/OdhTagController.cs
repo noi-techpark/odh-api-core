@@ -101,11 +101,12 @@ namespace OdhApiCore.Controllers
             {
                 var query = QueryFactory.Query("smgtags")
                     .Select("data")
-                    .OrderByRaw("data->>'MainEntity', data ->>'Shortname'");
+                    .When(FilterClosedData, q => q.FilterClosedData())
+                    .OrderByRaw("data#>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
 
                 var data = await query.GetAsync<JsonRaw>();
 
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
+                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData));
             });
         }
 
@@ -122,11 +123,12 @@ namespace OdhApiCore.Controllers
                             smgtagtypelist,
                             id => new { ValidForEntity = new[] { id.ToLower() } }
                         )
-                        .OrderByRaw("data->>'MainEntity', data->>'Shortname'");
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .OrderByRaw("data#>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
 
                 var data = await query.GetAsync<JsonRaw>();
 
-               return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
+               return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData));
             });
         }
 
@@ -145,9 +147,10 @@ namespace OdhApiCore.Controllers
                 var data = await QueryFactory.Query("smgtags")
                     .Select("data")
                     .Where("id", id.ToLower())
+                    .When(FilterClosedData, q => q.FilterClosedData())
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License);
+                return data?.TransformRawData(language, fields, checkCC0: CheckCC0License, filterClosedData: FilterClosedData);
             });
         }
 

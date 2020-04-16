@@ -53,7 +53,7 @@ namespace Helper
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
             int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
             int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
-            string? language, string? lastchange)
+            string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -88,7 +88,8 @@ namespace Helper
                 .SmgActiveFilter(smgactivefilter)
                 .SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange);
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
         }
 
         //Return Where and Parameters for Poi
@@ -99,7 +100,8 @@ namespace Helper
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
             IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
-            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
+            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange,
+            bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -127,7 +129,8 @@ namespace Helper
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange);
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
         }
 
         //Return Where and Parameters for Gastronomy
@@ -138,7 +141,8 @@ namespace Helper
             IReadOnlyCollection<string> facilitycodeslist, IReadOnlyCollection<string> smgtaglist,
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist, bool? activefilter,
-            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange)
+            bool? smgactivefilter, string? searchfilter, string? language, string? lastchange,
+            bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -166,7 +170,8 @@ namespace Helper
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange);
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
         }
 
         //Return Where and Parameters for Activity
@@ -177,7 +182,7 @@ namespace Helper
             IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter, 
-            string? searchfilter, string? language, string? lastchange)
+            string? searchfilter, string? language, string? lastchange, bool filterCloseData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -208,7 +213,8 @@ namespace Helper
                 .SmgActiveFilter(smgactivefilter)
                 .SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange);
+                .LastChangedFilter(lastchange)
+                .When(filterCloseData, q => q.FilterClosedData());
         }
 
         //Return Where and Parameters for Article
@@ -217,7 +223,7 @@ namespace Helper
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
             IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> smgtaglist, bool? highlight, bool? activefilter, bool? smgactivefilter,
-            string? searchfilter, string? language, string? lastchange)
+            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -240,7 +246,8 @@ namespace Helper
                 .SmgActiveFilter(smgactivefilter)
                 .SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange);
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
         }
 
 
@@ -249,7 +256,7 @@ namespace Helper
             this Query query,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
             bool? activefilter, bool? smgactivefilter, string? searchfilter,
-            string? language, string? lastchange)
+            string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -266,7 +273,8 @@ namespace Helper
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
-                .LastChangedFilter(lastchange);
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
         }
     }
 }
