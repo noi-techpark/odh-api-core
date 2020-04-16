@@ -10,68 +10,47 @@ namespace Helper
     public static class LocationListCreator
     {
         #region PostGres
-        public static async Task<IEnumerable<string>> CreateActivityAreaListPGAsync(QueryFactory queryFactory, string areafilter, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> CreateActivityAreaListPGAsync(QueryFactory queryFactory, string? areafilter, CancellationToken cancellationToken)
         {
             if (areafilter == null)
                 return Enumerable.Empty<string>();
 
-            if (areafilter.Substring(areafilter.Length - 1, 1) == ",")
-                areafilter = areafilter.Substring(0, areafilter.Length - 1);
+            //Klaub asanond
+            var splittedlocfilter =
+                areafilter
+                    .Split(',', System.StringSplitOptions.RemoveEmptyEntries)
+                    .Select(areafilter => (type: areafilter.Substring(0, 3), id: areafilter.Substring(3)));
 
             var thearealist = new List<string>();
-            //Klaub asanond
-            var splittedlocfilter = areafilter.Split(',');
-
-            foreach (string theareafilter in splittedlocfilter)
+            foreach ((string type, string id) in splittedlocfilter)
             {
-                string areatype = theareafilter.Substring(0, 3);
-
-                switch (areatype)
+                switch (type)
                 {
                     case "reg":
                         //Suche alle zugehörigen Areas für die Region
-                        var areaIds = await
-                            queryFactory.Query()
-                                        .GetAreaforRegionPGAsync(theareafilter.Replace("reg", ""), cancellationToken);
-                        thearealist.AddRange(areaIds);
+                        thearealist.AddRange(await queryFactory.Query().GetAreaforRegionPGAsync(id, cancellationToken));
                         break;
 
                     case "tvs":
-
                         //Suche alle zugehörigen TVs für die Region
-                        var areaIds4 = await
-                            queryFactory.Query()
-                                        .GetAreaforTourismvereinPGAsync(theareafilter.Replace("tvs", ""), cancellationToken);
-                        thearealist.AddRange(areaIds4);
-
+                        thearealist.AddRange(await queryFactory.Query().GetAreaforTourismvereinPGAsync(id, cancellationToken));
                         break;
 
                     case "skr":
-
                         //Suche alle zugehörigen TVs für die Region
-                        var areaIds2 = await
-                            queryFactory.Query()
-                                        .GetAreaforSkiRegionPGAsync(theareafilter.Replace("skr", ""), cancellationToken);
-                        thearealist.AddRange(areaIds2);
-
+                        thearealist.AddRange(await queryFactory.Query().GetAreaforSkiRegionPGAsync(id, cancellationToken));
                         break;
 
                     case "ska":
-
                         //Suche alle zugehörigen TVs für die Region
-                        var areaIds3 = await
-                            queryFactory.Query()
-                                        .GetAreaforSkiAreaPGAsync(theareafilter.Replace("ska", ""), cancellationToken);
-                        thearealist.AddRange(areaIds3);
-
+                        thearealist.AddRange(await queryFactory.Query().GetAreaforSkiAreaPGAsync(id, cancellationToken));
                         break;
 
                     case "are":
-                        thearealist.Add(theareafilter.Replace("are", ""));
+                        thearealist.Add(id);
                         break;
                 }
             }
-
             return thearealist.Distinct();
         }
 
