@@ -482,7 +482,7 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,
-                            searchfilter: null, language: language, lastchange: null, filterCloseData: FilterClosedData
+                            searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);
@@ -492,6 +492,70 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
+
+        #endregion
+
+        #region EventController
+
+        #endregion
+
+        #region ArticleController
+
+
+        /// <summary>
+        /// GET Article List Reduced
+        /// </summary>
+        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="articletype">Type of the Article ('null' = Filter disabled, possible values: BITMASK values: 1 = basearticle, 2 = book article, 4 = contentarticle, 8 = eventarticle, 16 = pressarticle, 32 = recipe, 64 = touroperator , 128 = b2b), (also possible for compatibily reasons: basisartikel, buchtippartikel, contentartikel, veranstaltungsartikel, presseartikel, rezeptartikel, reiseveranstalter, b2bartikel ) (default:'255' == ALL), REFERENCE TO: GET /api/ArticleTypes</param>
+        /// <param name="articlesubtype">Sub Type of the Article (depends on the Maintype of the Article 'null' = Filter disabled)</param>
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=article'), (default:'null')</param>                
+        /// <param name="active">Active Articles Filter (possible Values: 'true' only Active Articles, 'false' only Disabled Articles</param>
+        /// <param name="odhactive">ODH Active (Published) Activities Filter (Refers to field SmgActive) Article Filter (possible Values: 'true' only published Article, 'false' only not published Articles, (default:'null')</param>        
+        /// <returns>Collection of Article Objects</returns>        
+        //[Authorize(Roles = "DataReader,ArticleReader")]
+        [HttpGet, Route("api/ArticleReduced")]
+        public Task<IActionResult> GetArticleReducedList(
+            string? language = "en",
+            string? articletype = "255",
+            string? articlesubtype = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null,
+            LegacyBool odhactive = null
+           )
+        {           
+            return GetArticleReduced(language, articletype, articlesubtype, active?.Value, odhactive?.Value, odhtagfilter);
+        }
+
+        private Task<IActionResult> GetArticleReduced(string language, string articletype, string articlesubtype, bool? active, bool? smgactive, string smgtags)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                ArticleHelper helper = ArticleHelper.Create(
+                    articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null);
+
+                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From("articles")
+                        .ArticleWhereExpression(
+                            idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, languagelist: helper.languagelist,
+                            smgtaglist: helper.smgtaglist, highlight: helper.highlight, activefilter: helper.active,
+                            smgactivefilter: helper.smgactive, searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
+                        )
+                        .OrderByRaw(orderby);
+
+                // Get paginated data
+                return await query.GetAsync<ResultReduced>();
+            });
+        }
+
+
+        #endregion
+
+        #region WebcamInfoController
 
         #endregion
     }

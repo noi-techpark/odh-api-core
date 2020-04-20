@@ -182,7 +182,7 @@ namespace Helper
             IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter, 
-            string? searchfilter, string? language, string? lastchange, bool filterCloseData)
+            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
