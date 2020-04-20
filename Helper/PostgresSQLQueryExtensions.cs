@@ -421,7 +421,7 @@ namespace Helper
         //Only Begindate given
         public static Query EventDateFilterBegin(this Query query, DateTime? begin, DateTime? end) =>
             query.When(
-                begin == DateTime.MinValue && end != DateTime.MaxValue,
+                begin != DateTime.MinValue && end == DateTime.MaxValue,
                 query => query.WhereRaw(
                     "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
                 )
@@ -430,7 +430,7 @@ namespace Helper
         //Only Enddate given
         public static Query EventDateFilterEnd(this Query query, DateTime? begin, DateTime? end) =>
             query.When(
-                begin != DateTime.MinValue && end == DateTime.MaxValue,
+                begin == DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
                     "((begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "') OR (enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "'))"
                 )
