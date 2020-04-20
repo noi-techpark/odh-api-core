@@ -173,7 +173,7 @@ namespace OdhApiCore.Controllers
                             municipalitylist: mygastronomyhelper.municipalitylist, tourismvereinlist: mygastronomyhelper.tourismvereinlist,
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active, 
                             smgactivefilter: mygastronomyhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange,
+                            searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);

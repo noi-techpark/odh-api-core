@@ -389,6 +389,14 @@ namespace Helper
                 type => type
             );
 
+
+        public static Query EventTopicFilter(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
+           query.WhereInJsonb(
+               eventtopiclist,
+               topic => new { TopicRIDs = new[] { topic.ToUpper() } }
+           );
+
+
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(

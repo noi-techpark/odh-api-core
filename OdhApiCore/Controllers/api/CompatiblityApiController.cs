@@ -110,7 +110,7 @@ namespace OdhApiCore.Controllers.api
                             smgtaglist: mypoihelper.smgtaglist, districtlist: new List<string>(), municipalitylist: new List<string>(),
                             tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
                             arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
-                            smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null,
+                            smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData
                         )
                         .OrderByRaw(orderby)
@@ -210,7 +210,7 @@ namespace OdhApiCore.Controllers.api
                             altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
                             altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: null, language: language, lastchange: null,
+                            searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);
@@ -294,7 +294,7 @@ namespace OdhApiCore.Controllers.api
                             municipalitylist: mygastronomyhelper.municipalitylist, tourismvereinlist: mygastronomyhelper.tourismvereinlist,
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
-                            searchfilter: null, language: language, lastchange: null,
+                            searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData
                         )
                         .OrderByRaw(orderby)
@@ -497,10 +497,85 @@ namespace OdhApiCore.Controllers.api
 
         #region EventController
 
+        /// <summary>
+        /// GET Event List Reduced
+        /// </summary>
+        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter), (default:'null')</param>        
+        /// <param name="rancfilter">Rancfilter (Ranc 0-5 possible)</param>
+        /// <param name="typefilter">Typefilter (Type of Event: not used yet)</param>
+        /// <param name="topicfilter">Topic ID Filter (Filter by Topic ID) BITMASK</param>
+        /// <param name="orgfilter">Organization Filter (Filter by Organizer RID)</param>
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=event'), (default:'null')</param>        
+        /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events, (default:'null')</param>
+        /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field SmgActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events, (default:'null')</param>                
+        /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd)</param>
+        /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd)</param>
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <returns>Collection of EventReduced Objects</returns>        
+        //[Authorize(Roles = "DataReader,EventReader")]        
+        [HttpGet, Route("api/EventReduced")]
+        public async Task<IActionResult> GetEventsReduced(
+            string? language = "en",
+            string? locfilter = null,
+            string? rancfilter = null,
+            string? typefilter = null,
+            string? topicfilter = null,
+            string? orgfilter = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
+            string? begindate = null,
+            string? enddate = null,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null, 
+            CancellationToken cancellationToken = default)
+        {           
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+            return await GetEventReduced(language, locfilter, rancfilter, typefilter, topicfilter, orgfilter, odhactive?.Value, active?.Value, begindate, enddate, odhtagfilter, geosearchresult, cancellationToken);
+        }
+
+        private Task<IActionResult> GetEventReduced(string? language, string? locfilter, string? rancfilter, 
+            string? typefilter, string? topicfilter, string? orgfilter, bool? smgactive, bool? active, 
+            string? begindate, string? enddate, string? smgtagfilter, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                EventHelper helper = await EventHelper.CreateAsync(
+                    QueryFactory, null, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate,
+                    enddate, active, smgactive, smgtagfilter, null, cancellationToken);
+
+                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From("events")
+                        .EventWhereExpression(
+                            idlist: helper.idlist, topiclist: helper.topicrids, typelist: helper.typeidlist, ranclist: helper.rancidlist,
+                            smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
+                            tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
+                            orglist: helper.orgidlist, begindate: helper.begin, enddate: helper.end, activefilter: helper.active,
+                            smgactivefilter: helper.smgactive, languagelist: new List<string>(),
+                            searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
+                        )
+                        .OrderByRaw(orderby)
+                        .GeoSearchFilterAndOrderby(geosearchresult);
+
+                // Get paginated data
+                return await query.GetAsync<ResultReduced>();
+            });
+        }
+
+
         #endregion
 
         #region ArticleController
-
 
         /// <summary>
         /// GET Article List Reduced
@@ -519,14 +594,15 @@ namespace OdhApiCore.Controllers.api
             string? articletype = "255",
             string? articlesubtype = null,
             string? odhtagfilter = null,
-            LegacyBool active = null,
-            LegacyBool odhactive = null
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!, 
+            CancellationToken cancellationToken = default
            )
         {           
-            return GetArticleReduced(language, articletype, articlesubtype, active?.Value, odhactive?.Value, odhtagfilter);
+            return GetArticleReduced(language, articletype, articlesubtype, active?.Value, odhactive?.Value, odhtagfilter, cancellationToken);
         }
 
-        private Task<IActionResult> GetArticleReduced(string language, string articletype, string articlesubtype, bool? active, bool? smgactive, string smgtags)
+        private Task<IActionResult> GetArticleReduced(string language, string? articletype, string? articlesubtype, bool? active, bool? smgactive, string? smgtags, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {

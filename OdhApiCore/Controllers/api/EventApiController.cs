@@ -19,11 +19,11 @@ namespace OdhApiCore.Controllers
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
-    public class EventApiController : OdhController
+    public class EventController : OdhController
     {
         // Only for test purposes
 
-        public EventApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public EventController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
         }
@@ -204,7 +204,7 @@ namespace OdhApiCore.Controllers
                             regionlist: myeventhelper.regionlist, topiclist: myeventhelper.topicrids,
                             begindate: myeventhelper.begin, enddate: myeventhelper.end,
                             activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
+                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, sortifseednull)
                         .GeoSearchFilterAndOrderby(geosearchresult);
@@ -289,7 +289,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("eventtypes")
                         .Select("data")
-                        .Where("Id",id.ToUpper())
+                        .Where("id",id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
