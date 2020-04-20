@@ -250,6 +250,51 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData());
         }
 
+        //Return Where and Parameters for Event
+        public static Query EventWhereExpression(
+          this Query query,
+          IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> topiclist,
+          IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> ranclist,
+          IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
+          IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+          IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> orglist, DateTime? begindate, DateTime? enddate,
+          bool? activefilter, bool? smgactivefilter, string? searchfilter,
+          string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, topiclist,
+                typelist, ranclist,
+                smgtaglist, districtlist,
+                municipalitylist, tourismvereinlist,
+                regionlist, orglist, begindate, enddate,
+                activefilter, smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .DistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                //.AreaFilter(arealist)
+                //.ActivityTypeFilter(activitytypelist)
+                //.ActivitySubTypeFilter(subtypelist)
+                //.DifficultyFilter(difficultylist)
+                //.DistanceFilter(distance, distancemin, distancemax)
+                //.DurationFilter(duration, durationmin, durationmax)
+                //.AltitudeFilter(altitude, altitudemin, altitudemax)
+                //.HighlightFilter(highlight)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SmgTagFilter(smgtaglist)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
 
         //Return Where and Parameters for WebCamInfo
         public static Query WebCamInfoWhereExpression(

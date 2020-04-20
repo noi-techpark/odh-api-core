@@ -397,5 +397,7 @@ namespace Helper
                     "data#>>'\\{_Meta,ClosedData\\}' = 'false'"
                 )
             );
+
+       
     }
 }
