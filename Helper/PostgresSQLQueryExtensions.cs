@@ -396,6 +396,56 @@ namespace Helper
                topic => new { TopicRIDs = new[] { topic.ToUpper() } }
            );
 
+        public static Query EventTypeFilter(this Query query, IReadOnlyCollection<string> eventtypelist) =>
+           query.WhereInJsonb(
+                list: eventtypelist,
+                "Type",
+                type => type
+            );
+
+        public static Query EventRancFilter(this Query query, IReadOnlyCollection<string> eventrancfilterlist) =>
+           query.WhereInJsonb(
+                list: eventrancfilterlist,
+                "Ranc",
+                ranc => ranc
+            );
+
+        public static Query EventOrgFilter(this Query query, IReadOnlyCollection<string> eventorgfilter) =>
+           query.WhereInJsonb(
+                list: eventorgfilter,
+                "OrgRID",
+                org => org
+            );
+       
+
+        //Only Begindate given
+        public static Query EventDateFilterBegin(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin == DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                )
+            );
+
+        //Only Enddate given
+        public static Query EventDateFilterEnd(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin != DateTime.MinValue && end == DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "') OR (enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "'))"
+                )
+            );
+
+        //Both Begin and Enddate given
+        public static Query EventDateFilterBeginEnd(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin != DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "'))"
+                )
+            );
+
+
 
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
