@@ -368,11 +368,18 @@ namespace Helper
                 id => id.ToUpper()
             );
 
+        //not working
+        //public static Query HasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
+        //    query.WhereInJsonb(
+        //        list: languagelist,
+        //        "HasLanguage",
+        //        id => id.ToUpper()
+        //    );
+
         public static Query HasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
-            query.WhereInJsonb(
-                list: languagelist,
-                "HasLanguage",
-                id => id.ToUpper()
+        query.WhereInJsonb(
+                languagelist,
+                lang => new { HasLanguage = new[] { lang.ToLower() } }
             );
 
 
@@ -453,7 +460,27 @@ namespace Helper
                 )
             );
 
+        //Board Filter (Accommodation)
+        public static Query BoardFilter(this Query query, IReadOnlyCollection<string> boardlist) =>
+         query.WhereInJsonb(
+             boardlist,
+             board => new { BoardIds = new[] { board.ToLower() } }
+         );
 
+        //Badge Filter (Accommodation)
+        public static Query BadgeFilter(this Query query, IReadOnlyCollection<string> badgelist) =>
+         query.WhereInJsonb(
+             badgelist,
+             badge => new { BadgeIds = new[] { badge.ToLower() } }
+         );
+
+        //Category Filter (Accommodation)
+        public static Query CategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
+           query.WhereInJsonb(
+                list: categorylist,
+                "AccoCategoryId",
+                category => category
+            );
 
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>

@@ -17,9 +17,9 @@ namespace OdhApiCore.Controllers
     //[Route("api/ODHTag")]
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
-    public class OdhTagController : OdhController
+    public class ODHTagController : OdhController
     {
-        public OdhTagController(IWebHostEnvironment env, ISettings settings, ILogger<OdhTagController> logger, QueryFactory queryFactory)
+        public ODHTagController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
         }
