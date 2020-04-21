@@ -293,6 +293,45 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData());
         }
 
+        //Return Where and Parameters for Accommodation
+        public static Query AccommodationWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> accotypelist, IReadOnlyCollection<string> categorylist,
+            Dictionary<string, bool> featurelist, IReadOnlyCollection<string> badgelist, Dictionary<string, bool> themelist,
+            IReadOnlyCollection<string> boardlist,IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
+            IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+            IReadOnlyCollection<string> regionlist, bool? apartmentfilter, bool? bookable,
+            bool? altitude, int altitudemin, int altitudemax, bool? activefilter, bool? smgactivefilter,
+            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, accotypelist, categorylist,
+                featurelist, badgelist, languagelist, themelist, boardlist,
+                smgtaglist, districtlist, municipalitylist, tourismvereinlist,
+                regionlist, altitude, altitudemin, altitudemax, activefilter,
+                smgactivefilter, searchfilter, apartmentfilter, bookable,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .DistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                //ADD accotypelist, categorylist, featurelist, badgelist, themelist, boardlist, apartmentfilter, bookable, altitude
+                //.HasLanguageFilter(languagelist)
+                .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SmgTagFilter(smgtaglist)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
+
 
         //Return Where and Parameters for WebCamInfo
         public static Query WebCamInfoWhereExpression(

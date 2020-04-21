@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using System;
+using System.Linq;
+using System.Net;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
@@ -21,7 +24,19 @@ namespace OdhApiCore.Controllers
         private readonly QueryFactory queryFactory;
 
         protected bool CheckCC0License => settings.CheckCC0License;
-        protected bool FilterClosedData => settings.FilterClosedData;
+
+        protected bool FilterClosedData
+        {
+            get
+            {
+                var roles = new[] {
+                    "DataReader",
+                    $"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
+                };
+                return roles.Any(permission =>
+                    this.User.IsInRole(permission));
+            }
+        }
 
         public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory)
         {
