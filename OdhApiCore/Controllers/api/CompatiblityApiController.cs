@@ -688,6 +688,14 @@ namespace OdhApiCore.Controllers.api
 
 
         #endregion
+
+        #region AccommodationController
+
+        #endregion
+
+        #region Common
+
+        #endregion
     }
 
     class ResultReduced

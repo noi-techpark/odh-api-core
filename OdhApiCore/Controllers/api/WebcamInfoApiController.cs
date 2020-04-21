@@ -19,11 +19,11 @@ namespace OdhApiCore.Controllers
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
-    public class WebcamInfoApiController : OdhController
+    public class WebcamInfoController : OdhController
     {
         // Only for test purposes
 
-        public WebcamInfoApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
         }
