@@ -602,7 +602,7 @@ namespace OdhApiCore.Controllers.api
             return GetArticleReduced(language, articletype, articlesubtype, active?.Value, odhactive?.Value, odhtagfilter, cancellationToken);
         }
 
-        private Task<IActionResult> GetArticleReduced(string language, string? articletype, string? articlesubtype, bool? active, bool? smgactive, string? smgtags, CancellationToken cancellationToken)
+        private Task<IActionResult> GetArticleReduced(string? language, string? articletype, string? articlesubtype, bool? active, bool? smgactive, string? smgtags, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -632,6 +632,60 @@ namespace OdhApiCore.Controllers.api
         #endregion
 
         #region WebcamInfoController
+
+        /// <summary>
+        /// GET Webcam Reduced List
+        /// </summary>
+        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="source">Source Filter(String, ), (default:'null')</param>        
+        /// <param name="active">Active Webcam Filter (possible Values: 'true' only Active Gastronomies, 'false' only Disabled Gastronomies</param>
+        /// <param name="odhactive">ODH Active (refers to field SmgActive) (Published) Webcam Filter (possible Values: 'true' only published Webcam, 'false' only not published Webcam, (default:'null')</param>        
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in KM. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <returns>Collection of WebcamInfoReduced Objects</returns>        
+        //[Authorize(Roles = "DataReader,ActivityReader,PoiReader,SmgPoiReader,GastroReader,AccoReader,PackageReader,ArticleReader,EventReader,CommonReader,WebcamReader")]
+        [HttpGet, Route("api/WebcamInfoReduced")]
+        public Task<IActionResult> GetWebcamListReduced(
+            string? language = "en",
+            string? source = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            string? updatefrom = null
+      )
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+            return GetWebcamReduced(language, source, active?.Value, odhactive?.Value, updatefrom, geosearchresult);
+        }
+
+        private Task<IActionResult> GetWebcamReduced(string? language, string? sourcefilter, bool? active, bool? smgactive, string? datefrom, PGGeoSearchResult geosearchresult)
+        {
+            return DoAsyncReturn(async () =>
+            {
+            WebcamInfoHelper helper = WebcamInfoHelper.Create(sourcefilter, null, active, smgactive, datefrom);
+
+                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Webcamname,{language}}}' as Name";
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From("webcams")
+                        .WebCamInfoWhereExpression(
+                            languagelist: new List<string>(), idlist: helper.idlist, sourcelist: helper.sourcelist, activefilter: helper.active,
+                            smgactivefilter: helper.smgactive, searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
+                        )
+                        .OrderByRaw(orderby);
+
+                // Get paginated data
+                return await query.GetAsync<ResultReduced>();
+            });
+        }
+
 
         #endregion
     }

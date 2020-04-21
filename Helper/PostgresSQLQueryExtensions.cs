@@ -275,6 +275,14 @@ namespace Helper
                 tag => new { SmgTags = new[] { tag.ToLower() } }
             );
 
+        //NOT WORKING
+        //public static Query SmgTagFilter(this Query query, IReadOnlyCollection<string> smgtaglist) =>
+        //    query.WhereInJsonb(
+        //        smgtaglist,
+        //        "SmgTags",
+        //        tag => tag.ToLower()
+        //);
+
         public static Query SearchFilter(this Query query, string[] fields, string? searchfilter) =>
             query.When(
                 searchfilter != null && fields.Length > 0,
