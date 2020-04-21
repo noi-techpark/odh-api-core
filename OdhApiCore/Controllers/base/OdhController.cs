@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
         private readonly ILogger<OdhController> logger;
         private readonly QueryFactory queryFactory;
 
-        protected bool CheckCC0License => settings.CheckCC0License;
+        protected bool FilterCC0License => FilterClosedData;
 
         protected bool FilterClosedData
         {
