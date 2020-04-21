@@ -19,11 +19,11 @@ namespace OdhApiCore.Controllers
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
-    public class WebcamInfoApiController : OdhController
+    public class WebcamInfoController : OdhController
     {
         // Only for test purposes
 
-        public WebcamInfoApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
         }
@@ -119,8 +119,8 @@ namespace OdhApiCore.Controllers
                         .WebCamInfoWhereExpression(
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,                         
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
-                            filterClosedData: FilterClosedData)
+                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange, 
+                            languagelist: new List<string>(), filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 

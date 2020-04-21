@@ -186,7 +186,7 @@ namespace OdhApiCore.Controllers.api
                             highlight: myodhactivitypoihelper.highlight,
                             activefilter: myodhactivitypoihelper.active, smgactivefilter: myodhactivitypoihelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
-                            filterCloseData: FilterClosedData)
+                            filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 

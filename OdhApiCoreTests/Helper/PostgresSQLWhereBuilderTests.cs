@@ -43,6 +43,7 @@ namespace OdhApiCoreTests.Helper
                         searchfilter: null,
                         language: null,
                         lastchange: null,
+                        languagelist: System.Array.Empty<string>(),
                         filterClosedData: false
                     );
 
@@ -84,6 +85,7 @@ namespace OdhApiCoreTests.Helper
                         searchfilter: null,
                         language: null,
                         lastchange: null,
+                        languagelist: System.Array.Empty<string>(),
                         filterClosedData: false
                     );
 

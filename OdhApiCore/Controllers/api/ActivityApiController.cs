@@ -214,7 +214,7 @@ namespace OdhApiCore.Controllers
                             altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
                             altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange,
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
