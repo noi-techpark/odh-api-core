@@ -43,7 +43,7 @@ namespace OdhApiCore.Controllers
                     "DataReader",
                     $"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
                 };
-                return roles.Any(permission =>
+                return !roles.Any(permission =>
                     this.User.IsInRole(permission));
             }
         }
