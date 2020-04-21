@@ -20,10 +20,20 @@ namespace OdhApiCore.Controllers
     {
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
-        private readonly ILogger<OdhController> logger;
-        private readonly QueryFactory queryFactory;
 
-        protected bool CheckCC0License => settings.CheckCC0License;
+        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory)
+        {
+            this.env = env;
+            this.settings = settings;
+            this.Logger = logger;
+            this.QueryFactory = queryFactory;
+        }
+
+        protected ILogger<OdhController> Logger { get; }
+
+        protected QueryFactory QueryFactory { get; }
+
+        protected bool FilterCC0License => FilterClosedData;
 
         protected bool FilterClosedData
         {
@@ -33,21 +43,10 @@ namespace OdhApiCore.Controllers
                     "DataReader",
                     $"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
                 };
-                return roles.Any(permission =>
+                return !roles.Any(permission =>
                     this.User.IsInRole(permission));
             }
         }
-
-        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory)
-        {
-            this.env = env;
-            this.settings = settings;
-            this.logger = logger;
-            this.queryFactory = queryFactory;
-        }
-
-        protected ILogger<OdhController> Logger => logger;
-        protected QueryFactory QueryFactory => queryFactory;
 
         protected async Task<IActionResult> DoAsync(Func<Task<IActionResult>> f)
         {
