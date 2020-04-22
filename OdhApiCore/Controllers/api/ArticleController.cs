@@ -119,7 +119,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ArticleTypes")]
-        public async Task<IActionResult> GetAllODHActivityPoiTypesList()
+        public async Task<IActionResult> GetAllArticleTypesList()
         {
             return await GetArticleTypesList();
         }
@@ -135,7 +135,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ArticleTypes/{id}", Name = "SingleArticleTypes")]
-        public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(string id)
+        public async Task<IActionResult> GetAllArticlesTypeTypesSingle(string id)
         {
             return await GetArticleTypeSingle(id);
         }
