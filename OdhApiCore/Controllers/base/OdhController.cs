@@ -43,8 +43,23 @@ namespace OdhApiCore.Controllers
                     "DataReader",
                     $"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
                 };
-                return !roles.Any(permission =>
-                    this.User.IsInRole(permission));
+                return !roles.Any(User.IsInRole);
+            }
+        }
+
+        protected Func<string, string> UrlGenerator
+        {
+            get
+            {
+                return self =>
+                {
+                    var chunks = self.Split('/', 2);
+                    if (chunks.Length < 2)
+                        return self;
+                    var controller = chunks[0];
+                    var action = chunks[1];
+                    return Url.Link($"Single{controller}", new { controller, id = action }); ;
+                };
             }
         }
 

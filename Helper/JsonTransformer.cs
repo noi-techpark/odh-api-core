@@ -175,13 +175,61 @@ namespace Helper
             return token;
         }
 
-        public static JsonRaw? TransformRawData(this JsonRaw raw, string? language, string[] fields, bool checkCC0, bool filterClosedData)
+        public static JToken? TransformSelfLink(this JToken? token, Func<string, string> urlGenerator)
+        {
+            if (token == null)
+                return null;
+            static JObject? TransformObj(JObject obj, Func<string, string> urlGenerator) =>
+                new JObject(obj.Properties().Select(x => Walk(x, urlGenerator)));
+            static string? TransformSelf(string? self, Func<string, string> urlGenerator)
+            {
+                if (self == null)
+                    return null;
+                // FIXME: Temporary workaround
+                if (self.StartsWith("https://tourism.opendatahub.bz.it/api/"))
+                    self = self.Substring(38);
+                return urlGenerator(self);
+            }
+            static JProperty? TransformProp(JProperty prop, Func<string, string> urlGenerator)
+            {
+                if (prop.Name == "Self")
+                {
+                    string? value = TransformSelf(prop.Value.Value<string?>(), urlGenerator);
+                    return new JProperty(prop.Name, value);
+                }
+                else
+                {
+                    var value = Walk(prop.Value, urlGenerator);
+                    return value == null ? null : new JProperty(prop.Name, value);
+                }
+            }
+            static JToken? Walk(JToken token, Func<string, string> urlGenerator) =>
+                token switch
+                {
+                    JObject obj =>
+                        TransformObj(obj, urlGenerator),
+                    JProperty prop =>
+                        TransformProp(prop, urlGenerator),
+                    JArray arr =>
+                        new JArray(
+                            arr.Select(x => Walk(x, urlGenerator))
+                               // Filter away empty content
+                               .Where(x => x != null)),
+                    _ => token
+                };
+            return Walk(token, urlGenerator);
+        }
+
+        public static JsonRaw? TransformRawData(
+            this JsonRaw raw, string? language, string[] fields, bool checkCC0,
+            bool filterClosedData, Func<string, string> urlGenerator)
         {
             JToken? token = JToken.Parse(raw.Value);
             if (language != null) token = FilterByLanguage(token, language);
             if (fields.Length > 0) token = FilterByFields(token, fields, language);
             if (checkCC0) token = FilterImagesByCC0License(token);
             if (filterClosedData) token = token.FilterClosedData();
+            token = token.TransformSelfLink(urlGenerator);
             token = token.FilterMetaInformations();
             return (token == null) ?
                 null :
