@@ -129,7 +129,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("PoiTypes")]
+        [HttpGet, Route("PoiTypes", Name ="SinglePoiTypes")]
         public async Task<IActionResult> GetAllPoiTypesList(CancellationToken cancellationToken)
         {
             return await GetPoiTypesList(cancellationToken);
@@ -283,7 +283,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("poitypes")
                         .Select("data")
-                        .WhereJsonb("Key", "ilike", id)
+                        //.WhereJsonb("Key", "ilike", id)
+                        .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());
                         //.Where("Key", "ILIKE", id);
 

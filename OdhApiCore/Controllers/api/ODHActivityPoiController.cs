@@ -150,7 +150,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(SmgPoiTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("ODHActivityPoiTypes/{*id}")]
+        [HttpGet, Route("ODHActivityPoiTypes/{*id}", Name ="SingleODHActivityPoiTypes")]
         public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(string id)
         {
             return await GetSmgPoiTypesSingle(id);
@@ -255,7 +255,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("smgpoitypes")
                         .Select("data")
-                        .WhereJsonb("Key", "ilike", id)
+                        //.WhereJsonb("Key", "ilike", id)
+                        .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());
                 //.Where("Key", "ILIKE", id);
 

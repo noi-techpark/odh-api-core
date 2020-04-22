@@ -134,7 +134,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(ArticleTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("ArticleTypes/{id}")]
+        [HttpGet, Route("ArticleTypes/{id}", Name = "SingleArticleTypes")]
         public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(string id)
         {
             return await GetArticleTypeSingle(id);
@@ -237,7 +237,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("articletypes")
                         .Select("data")
-                        .WhereJsonb("Key", "ilike", id)
+                        //.WhereJsonb("Key", "ilike", id)
+                        .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());
                 //.Where("Key", "ILIKE", id);
 

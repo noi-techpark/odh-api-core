@@ -299,7 +299,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("activitytypes")
                         .Select("data")
-                        .WhereJsonb("Key", "ilike", id)
+                         //.WhereJsonb("Key", "ilike", id)
+                         .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());
                 //.Where("Key", "ILIKE", id);
 

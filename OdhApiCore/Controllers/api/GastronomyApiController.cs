@@ -139,7 +139,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,GastroReader")]        
-        [HttpGet, Route("GastronomyTypes/{id}")]
+        [HttpGet, Route("GastronomyTypes/{id}", Name = "SingleGastronomyTypes")]
         public async Task<IActionResult> GetAllGastronomyTypesList(string id, CancellationToken cancellationToken = default)
         {
             return await GetGastronomyTypesSingleAsync(id, cancellationToken);
@@ -251,7 +251,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("gastronomytypes")
                         .Select("data")
-                        .WhereJsonb("Key", id.ToUpper());
+                        .Where("id", id.ToUpper());
+                //.WhereJsonb("Key", id.ToUpper());
                 //.Where("data#>>'\\{Key\\}'", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
