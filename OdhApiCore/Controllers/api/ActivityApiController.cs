@@ -155,7 +155,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("ActivityTypes/{id}")]
+        [HttpGet, Route("ActivityTypes/{id}", Name = "SingleActivityType")]
         public async Task<IActionResult> GetAllActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
         {
             return await GetActivityTypesSingleAsync(id, cancellationToken);
