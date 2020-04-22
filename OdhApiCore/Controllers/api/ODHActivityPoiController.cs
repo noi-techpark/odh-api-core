@@ -255,7 +255,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("smgpoitypes")
                         .Select("data")
-                        .WhereJsonb("Key", id, "ilike")
+                        .WhereJsonb("Key", "ilike", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
                 //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
