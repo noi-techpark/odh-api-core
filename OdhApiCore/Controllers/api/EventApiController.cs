@@ -63,7 +63,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         //[Authorize]
-        [HttpGet, Route("api/Event")]
+        [HttpGet, Route("Event")]
         public async Task<IActionResult> GetEventList(
             string? language = null,
             uint pagenumber = 1,
@@ -115,7 +115,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Event/{id}")]
+        [HttpGet, Route("Event/{id}")]
         public async Task<IActionResult> GetEventSingle(
             string id, 
             string? language, 
@@ -138,7 +138,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/EventTopics")]
+        [HttpGet, Route("EventTopics")]
         public async Task<IActionResult> GetAllEventTopicListAsync(CancellationToken cancellationToken)
         {
             return await GetEventTopicListAsync(cancellationToken);
@@ -156,7 +156,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/EventTopics/{id}")]
+        [HttpGet, Route("EventTopics/{id}")]
         public async Task<IActionResult> GetAllEventTopicSingleAsync(string id, CancellationToken cancellationToken)
         {
             return await GetEventTopicSingleAsync(id, cancellationToken);

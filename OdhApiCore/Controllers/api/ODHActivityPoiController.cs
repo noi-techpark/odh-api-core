@@ -62,7 +62,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<ODHActivityPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHActivityPoi")]
+        [HttpGet, Route("ODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiList(
             string? language = null,
             uint pagenumber = 1,
@@ -111,7 +111,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(ODHActivityPoi), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHActivityPoi/{id}")]
+        [HttpGet, Route("ODHActivityPoi/{id}")]
         public async Task<IActionResult> GetODHActivityPoiSingle(
             string id, 
             string? language,
@@ -134,7 +134,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<SmgPoiTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHActivityPoiTypes")]
+        [HttpGet, Route("ODHActivityPoiTypes")]
         public async Task<IActionResult> GetAllODHActivityPoiTypesList()
         {
             return await GetSmgPoiTypesList();
@@ -150,7 +150,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(SmgPoiTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHActivityPoiTypes/{*id}")]
+        [HttpGet, Route("ODHActivityPoiTypes/{*id}")]
         public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(string id)
         {
             return await GetSmgPoiTypesSingle(id);

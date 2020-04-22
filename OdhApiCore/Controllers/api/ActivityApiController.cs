@@ -62,7 +62,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         //[Authorize]
-        [HttpGet, Route("api/Activity")]
+        [HttpGet, Route("Activity")]
         public async Task<IActionResult> GetActivityList(
             string? language = null,
             uint pagenumber = 1,
@@ -114,7 +114,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(GBLTSActivity), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Activity/{id}")]
+        [HttpGet, Route("Activity/{id}")]
         public async Task<IActionResult> GetActivitySingle(
             string id, 
             string? language, 
@@ -137,7 +137,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/ActivityTypes")]
+        [HttpGet, Route("ActivityTypes")]
         public async Task<IActionResult> GetAllActivityTypesListAsync(CancellationToken cancellationToken)
         {
             return await GetActivityTypesListAsync(cancellationToken);
@@ -155,7 +155,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/ActivityTypes/{id}")]
+        [HttpGet, Route("ActivityTypes/{id}")]
         public async Task<IActionResult> GetAllActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
         {
             return await GetActivityTypesSingleAsync(id, cancellationToken);
@@ -228,7 +228,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -329,7 +329,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("api/ActivityChanged")]
+        [HttpGet, Route("ActivityChanged")]
         public async Task<IActionResult> GetAllActivityChanged(
             uint pagenumber = 1,
             uint pagesize = 10,

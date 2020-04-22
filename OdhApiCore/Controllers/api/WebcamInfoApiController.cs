@@ -53,7 +53,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<WebcamInfo>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/WebcamInfo")]
+        [HttpGet, Route("WebcamInfo")]
         public async Task<IActionResult> Get(
             string? language = null,
             uint pagenumber = 1,
@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(WebcamInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/WebcamInfo/{id}")]
+        [HttpGet, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Get(
             string id,
             string? language = null,

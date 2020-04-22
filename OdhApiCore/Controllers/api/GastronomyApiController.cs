@@ -60,7 +60,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<Gastronomy>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Gastronomy")]
+        [HttpGet, Route("Gastronomy")]
         public async Task<IActionResult> GetGastronomyList(
             string? language = null,
             uint pagenumber = 1,
@@ -106,7 +106,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(GBLTSActivity), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Gastronomy/{id}")]
+        [HttpGet, Route("Gastronomy/{id}")]
         public async Task<IActionResult> GetGastronomySingle(
             string id,
             string? language,
@@ -125,7 +125,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,GastroReader")]        
-        [HttpGet, Route("api/GastronomyTypes")]
+        [HttpGet, Route("GastronomyTypes")]
         public async Task<IActionResult> GetAllGastronomyTypesList(CancellationToken cancellationToken = default)
         {
             return await GetGastronomyTypesListAsync(cancellationToken);
@@ -139,7 +139,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,GastroReader")]        
-        [HttpGet, Route("api/GastronomyTypes/{id}")]
+        [HttpGet, Route("GastronomyTypes/{id}")]
         public async Task<IActionResult> GetAllGastronomyTypesList(string id, CancellationToken cancellationToken = default)
         {
             return await GetGastronomyTypesSingleAsync(id, cancellationToken);

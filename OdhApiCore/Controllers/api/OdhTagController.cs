@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
 {
-    //[Route("api/ODHTag")]
+    //[Route("ODHTag")]
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ODHTagController : OdhController
@@ -38,7 +38,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<SmgTags>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHTag")]
+        [HttpGet, Route("ODHTag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetODHTagsAsync(
             string? language = null, 
@@ -75,7 +75,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(SmgTags), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ODHTag/{id}")]
+        [HttpGet, Route("ODHTag/{id}")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetODHTagSingle(string id, 
             string? language = null,

@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
 {
-
     [ApiController]
+    [Route("api")]
     [FormatFilter]
     public abstract class OdhController : ControllerBase
     {
