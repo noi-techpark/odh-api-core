@@ -54,7 +54,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Poi")]
+        [HttpGet, Route("Poi")]
         public async Task<IActionResult> GetPoiList(
             string? language = null,
             uint pagenumber = 1,
@@ -103,7 +103,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("api/Poi/{id}")]
+        [HttpGet, Route("Poi/{id}", Name = "SinglePoi")]
         public async Task<IActionResult> GetPoiSingle(
             string id, 
             string? language = null, 
@@ -129,7 +129,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("api/PoiTypes")]
+        [HttpGet, Route("PoiTypes")]
         public async Task<IActionResult> GetAllPoiTypesList(CancellationToken cancellationToken)
         {
             return await GetPoiTypesList(cancellationToken);
@@ -147,7 +147,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("api/PoiTypes/{id}")]
+        [HttpGet, Route("PoiTypes/{id}")]
         public async Task<IActionResult> GetAllPoiTypesSingle(string id, string language,  CancellationToken cancellationToken)
         {
             return await GetPoiTypesSingleAsync(id, cancellationToken);
@@ -213,7 +213,7 @@ namespace OdhApiCore.Controllers.api
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -246,7 +246,7 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
             });
         }
 
@@ -304,7 +304,7 @@ namespace OdhApiCore.Controllers.api
         ///// <returns>HttpResponseMessage</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
-        //[HttpPost, Route("api/Poi")]
+        //[HttpPost, Route("Poi")]
         //public HttpResponseMessage Post([FromBody]GBLTSPoi poi)
         //{
         //    try
@@ -340,7 +340,7 @@ namespace OdhApiCore.Controllers.api
         ///// <returns>HttpResponseMessage</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
-        //[HttpPut, Route("api/Poi/{id}")]
+        //[HttpPut, Route("Poi/{id}")]
         //public HttpResponseMessage Put(string id, [FromBody]GBLTSPoi poi)
         //{
         //    try
@@ -375,7 +375,7 @@ namespace OdhApiCore.Controllers.api
         ///// <returns>HttpResponseMessage</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
-        //[HttpDelete, Route("api/Poi/{id}")]
+        //[HttpDelete, Route("Poi/{id}")]
         //public HttpResponseMessage Delete(string id)
         //{
         //    try
@@ -424,7 +424,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("api/PoiChanged")]
+        [HttpGet, Route("PoiChanged")]
         public async Task<IActionResult> GetAllPoisChanged(
             uint pagenumber = 1,
             uint pagesize = 10,

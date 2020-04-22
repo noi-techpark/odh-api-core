@@ -49,7 +49,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("api/PoiReduced")]
+        [HttpGet, Route("PoiReduced")]
         public async Task<IActionResult> GetPoiReduced(
             string? language = "en",
             string? poitype = "511",
@@ -149,7 +149,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/ActivityReduced")]
+        [HttpGet, Route("ActivityReduced")]
         public async Task<IActionResult> GetActivityReduced(
             string? language = "en",
             string? activitytype = "1023",
@@ -244,7 +244,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<GastronomyReduced>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/GastronomyReduced")]
+        [HttpGet, Route("GastronomyReduced")]
         public async Task<IActionResult> GetGastronomyListReduced(
             string? language = "en",
             string? locfilter = null,
@@ -316,7 +316,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="localizationlanguage"></param>
         /// <returns></returns>
         //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTagReduced Objects", typeof(IEnumerable<SmgTagReduced>))]
-        [HttpGet, Route("api/ODHTagReduced")]
+        [HttpGet, Route("ODHTagReduced")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetODHTagsReduced(string localizationlanguage, string validforentity = "", CancellationToken cancellationToken = default)
         {
@@ -421,7 +421,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Collection of Activity Objects</returns>        
         //[Authorize(Roles = "DataReader,ODHPoiReader")]
         //[AllowAnonymous]        
-        [HttpGet, Route("api/ODHActivityPoiReduced")]
+        [HttpGet, Route("ODHActivityPoiReduced")]
         public async Task<IActionResult> GetODHActivityPoiListReduced(
             string? language = "en",
             string? type = "63",
@@ -516,7 +516,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
         /// <returns>Collection of EventReduced Objects</returns>        
         //[Authorize(Roles = "DataReader,EventReader")]        
-        [HttpGet, Route("api/EventReduced")]
+        [HttpGet, Route("EventReduced")]
         public async Task<IActionResult> GetEventsReduced(
             string? language = "en",
             string? locfilter = null,
@@ -588,7 +588,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactive">ODH Active (Published) Activities Filter (Refers to field SmgActive) Article Filter (possible Values: 'true' only published Article, 'false' only not published Articles, (default:'null')</param>        
         /// <returns>Collection of Article Objects</returns>        
         //[Authorize(Roles = "DataReader,ArticleReader")]
-        [HttpGet, Route("api/ArticleReduced")]
+        [HttpGet, Route("ArticleReduced")]
         public Task<IActionResult> GetArticleReducedList(
             string? language = "en",
             string? articletype = "255",
@@ -645,7 +645,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius to Search in KM. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
         /// <returns>Collection of WebcamInfoReduced Objects</returns>        
         //[Authorize(Roles = "DataReader,ActivityReader,PoiReader,SmgPoiReader,GastroReader,AccoReader,PackageReader,ArticleReader,EventReader,CommonReader,WebcamReader")]
-        [HttpGet, Route("api/WebcamInfoReduced")]
+        [HttpGet, Route("WebcamInfoReduced")]
         public Task<IActionResult> GetWebcamListReduced(
             string? language = "en",
             string? source = null,

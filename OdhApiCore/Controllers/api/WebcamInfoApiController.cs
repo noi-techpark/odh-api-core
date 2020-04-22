@@ -53,7 +53,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<WebcamInfo>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/WebcamInfo")]
+        [HttpGet, Route("WebcamInfo")]
         public async Task<IActionResult> Get(
             string? language = null,
             uint pagenumber = 1,
@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(WebcamInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/WebcamInfo/{id}")]
+        [HttpGet, Route("WebcamInfo/{id}", Name = "SingleWebcamInfo")]
         public Task<IActionResult> Get(
             string id,
             string? language = null,
@@ -133,7 +133,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -161,7 +161,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
             });
         }
 

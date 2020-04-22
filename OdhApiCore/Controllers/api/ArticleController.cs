@@ -55,7 +55,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<Article>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Article")]
+        [HttpGet, Route("Article")]
         public async Task<IActionResult> GetArticleList(
             string? language = null,
             uint pagenumber = 1,
@@ -95,7 +95,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(Article), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Article/{id}")]
+        [HttpGet, Route("Article/{id}", Name = "SingleArticle")]
         public async Task<IActionResult> GetArticleSingle(
             string id, 
             string? language,
@@ -118,7 +118,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<ArticleTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ArticleTypes")]
+        [HttpGet, Route("ArticleTypes")]
         public async Task<IActionResult> GetAllODHActivityPoiTypesList()
         {
             return await GetArticleTypesList();
@@ -134,7 +134,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(ArticleTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/ArticleTypes/{id}")]
+        [HttpGet, Route("ArticleTypes/{id}")]
         public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(string id)
         {
             return await GetArticleTypeSingle(id);
@@ -179,7 +179,7 @@ namespace OdhApiCore.Controllers.api
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -207,7 +207,7 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
             });
         }
 
