@@ -114,7 +114,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(GBLTSActivity), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Activity/{id}")]
+        [HttpGet, Route("Activity/{id}", Name = "SingleActivity")]
         public async Task<IActionResult> GetActivitySingle(
             string id, 
             string? language, 

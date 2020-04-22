@@ -115,7 +115,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Event/{id}")]
+        [HttpGet, Route("Event/{id}", Name = "SingleEvent")]
         public async Task<IActionResult> GetEventSingle(
             string id, 
             string? language, 

@@ -106,7 +106,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(GBLTSActivity), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Gastronomy/{id}")]
+        [HttpGet, Route("Gastronomy/{id}", Name = "SingleGastronomy")]
         public async Task<IActionResult> GetGastronomySingle(
             string id,
             string? language,

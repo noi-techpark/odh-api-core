@@ -103,7 +103,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("Poi/{id}")]
+        [HttpGet, Route("Poi/{id}", Name = "SinglePoi")]
         public async Task<IActionResult> GetPoiSingle(
             string id, 
             string? language = null, 

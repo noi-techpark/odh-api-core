@@ -111,7 +111,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(ODHActivityPoi), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("ODHActivityPoi/{id}")]
+        [HttpGet, Route("ODHActivityPoi/{id}", Name = "SingleODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiSingle(
             string id, 
             string? language,

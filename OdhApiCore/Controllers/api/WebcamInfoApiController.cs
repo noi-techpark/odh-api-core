@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(WebcamInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("WebcamInfo/{id}")]
+        [HttpGet, Route("WebcamInfo/{id}", Name = "SingleWebcamInfo")]
         public Task<IActionResult> Get(
             string id,
             string? language = null,
