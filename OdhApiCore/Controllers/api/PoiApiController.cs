@@ -147,7 +147,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("PoiTypes/{id}")]
+        [HttpGet, Route("PoiTypes/{id}", Name = "SinglePoiTypes")]
         public async Task<IActionResult> GetAllPoiTypesSingle(string id, string language,  CancellationToken cancellationToken)
         {
             return await GetPoiTypesSingleAsync(id, cancellationToken);
