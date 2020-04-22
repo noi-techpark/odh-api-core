@@ -56,9 +56,8 @@ namespace OdhApiCore.Controllers
                     var chunks = self.Split('/', 2);
                     if (chunks.Length < 2)
                         return self;
-                    var controller = chunks[0];
-                    var action = chunks[1];
-                    return Url.Link($"Single{controller}", new { controller, id = action }); ;
+                    var (controller, id) = (chunks[0], chunks[1]);
+                    return Url.Link($"Single{controller}", new { controller, id });
                 };
             }
         }
