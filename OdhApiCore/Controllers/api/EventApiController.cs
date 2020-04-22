@@ -156,7 +156,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("EventTopics/{id}")]
+        [HttpGet, Route("EventTopics/{id}", Name ="SingleEventTopics")]
         public async Task<IActionResult> GetAllEventTopicSingleAsync(string id, CancellationToken cancellationToken)
         {
             return await GetEventTopicSingleAsync(id, cancellationToken);
