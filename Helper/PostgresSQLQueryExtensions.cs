@@ -19,12 +19,18 @@ namespace Helper
         public static Query WhereJsonb(
             this Query query,
             string jsonPath,
-            string value,
-            string comparisonOperator = "=") =>
+            string comparisonOperator,
+            string value) =>
                 query.WhereRaw(
                     $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' {comparisonOperator} ?",
                     value
                 );
+
+        public static Query WhereJsonb(
+            this Query query,
+            string jsonPath,
+            string value) =>
+            query.WhereJsonb(jsonPath, "=", value);
 
         public static Query WhereJsonb(
             this Query query,
