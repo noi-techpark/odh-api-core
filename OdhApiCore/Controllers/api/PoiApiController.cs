@@ -283,7 +283,7 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("poitypes")
                         .Select("data")
-                        .WhereJsonb("Key", id.ToLower())
+                        .WhereJsonb("Key", "ilike", id)
                         .When(FilterClosedData, q => q.FilterClosedData());
                         //.Where("Key", "ILIKE", id);
 
