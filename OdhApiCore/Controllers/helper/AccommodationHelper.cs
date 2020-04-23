@@ -30,7 +30,7 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
 
         public static async Task<AccommodationHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, 
+            QueryFactory queryFactory, string? idfilter, string? locfilter,
             string? boardfilter, string? categoryfilter, string? typefilter, string? featurefilter,
             string? badgefilter, string? themefilter, string? smgtags,
             bool? activefilter, bool? smgactivefilter, string? lastchange,
@@ -51,7 +51,7 @@ namespace OdhApiCore.Controllers
         }
 
         private AccommodationHelper(
-            string? idfilter, string? locfilter, string? boardfilter, string? categoryfilter, string? typefilter, 
+            string? idfilter, string? locfilter, string? boardfilter, string? categoryfilter, string? typefilter,
             string? featurefilter, string? badgefilter, string? themefilter,
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
             IEnumerable<string>? tourismusvereinids)
@@ -63,7 +63,7 @@ namespace OdhApiCore.Controllers
             featurelist = AccoListCreator.CreateFeatureListDictfromFlag(featurefilter);
             badgelist = AccoListCreator.CreateBadgeListfromFlag(badgefilter);
             themelist = AccoListCreator.CreateThemeListDictfromFlag(themefilter);
-            idlist = String.IsNullOrEmpty(idfilter) ? new List<string>() : CommonListCreator.CreateIdList(idfilter.ToUpper());            
+            idlist = String.IsNullOrEmpty(idfilter) ? new List<string>() : CommonListCreator.CreateIdList(idfilter.ToUpper());
 
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();
@@ -86,7 +86,7 @@ namespace OdhApiCore.Controllers
                 apartment = true;
                 accotypelist.Remove("Apartment");
             }
-            
+
             //active
             active = activefilter;
 
@@ -96,6 +96,6 @@ namespace OdhApiCore.Controllers
             this.lastchange = lastchange;
         }
 
-       
+
     }
 }

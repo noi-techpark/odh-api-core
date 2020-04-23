@@ -35,6 +35,6 @@ namespace Helper
             string orderby = "";
             BuildSeedOrderBy(ref orderby, seed, sortifseednull);
             return query.OrderByRaw(orderby);
-        }      
+        }
     }
 }

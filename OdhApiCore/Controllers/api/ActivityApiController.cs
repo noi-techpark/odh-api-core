@@ -116,10 +116,10 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Activity/{id}", Name = "SingleActivity")]
         public async Task<IActionResult> GetActivitySingle(
-            string id, 
-            string? language, 
+            string id,
+            string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null, 
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);

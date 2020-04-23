@@ -73,7 +73,7 @@ namespace OdhApiCore.Controllers.api
             return await GetPoiReduced(language, poitype, subtype, locfilter, areafilter, highlight, active, odhactive, odhtagfilter, geosearchresult, cancellationToken);
         }
 
-       
+
         /// <summary>
         /// GET Reduced POI List
         /// </summary>
@@ -175,11 +175,11 @@ namespace OdhApiCore.Controllers.api
                 language, activitytype, subtype, locfilter, areafilter, distancefilter, altitudefilter, durationfilter,
                 highlight, difficultyfilter, active, odhactive, odhtagfilter, geosearchresult, cancellationToken);
         }
-        
+
         private Task<IActionResult> GetActivityReduced(
             string? language, string? activitytype, string? subtypefilter, string? locfilter, string? areafilter,
             string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
-            string? difficultyfilter, bool? active, bool? smgactive, string? smgtags, 
+            string? difficultyfilter, bool? active, bool? smgactive, string? smgtags,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -260,23 +260,23 @@ namespace OdhApiCore.Controllers.api
             string? longitude = null,
             string? radius = null,
             CancellationToken cancellationToken = default)
-        {           
+        {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetGastronomyReduced(language, locfilter, dishcodefilter, ceremonycodefilter, categorycodefilter, facilitycodefilter, cuisinecodefilter, active?.Value, odhactive?.Value, odhtagfilter, geosearchresult, cancellationToken);
         }
 
         private Task<IActionResult> GetGastronomyReduced(
-            string? language, string? locfilter, string? dishcodefilter, 
-            string? ceremonycodefilter, string? categorycodefilter, string? facilitycodefilter, 
-            string? cuisinecodefilter, bool? active, bool? smgactive, string? smgtagfilter, 
+            string? language, string? locfilter, string? dishcodefilter,
+            string? ceremonycodefilter, string? categorycodefilter, string? facilitycodefilter,
+            string? cuisinecodefilter, bool? active, bool? smgactive, string? smgtagfilter,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
-                    QueryFactory, idfilter : null, locfilter: locfilter, categorycodefilter: categorycodefilter, 
-                    dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, 
+                    QueryFactory, idfilter: null, locfilter: locfilter, categorycodefilter: categorycodefilter,
+                    dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter,
                     cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
                     lastchange: null, cancellationToken);
 
@@ -477,7 +477,7 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw(select)
                         .From("smgpois")
                         .ODHActivityPoiWhereExpression(
-                            idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, poitypelist: helper.poitypelist, 
+                            idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, poitypelist: helper.poitypelist,
                             smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
@@ -531,16 +531,16 @@ namespace OdhApiCore.Controllers.api
             string? enddate = null,
             string? latitude = null,
             string? longitude = null,
-            string? radius = null, 
+            string? radius = null,
             CancellationToken cancellationToken = default)
-        {           
+        {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetEventReduced(language, locfilter, rancfilter, typefilter, topicfilter, orgfilter, odhactive?.Value, active?.Value, begindate, enddate, odhtagfilter, geosearchresult, cancellationToken);
         }
 
-        private Task<IActionResult> GetEventReduced(string? language, string? locfilter, string? rancfilter, 
-            string? typefilter, string? topicfilter, string? orgfilter, bool? smgactive, bool? active, 
+        private Task<IActionResult> GetEventReduced(string? language, string? locfilter, string? rancfilter,
+            string? typefilter, string? topicfilter, string? orgfilter, bool? smgactive, bool? active,
             string? begindate, string? enddate, string? smgtagfilter, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -595,10 +595,10 @@ namespace OdhApiCore.Controllers.api
             string? articlesubtype = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
-            LegacyBool odhactive = null!, 
+            LegacyBool odhactive = null!,
             CancellationToken cancellationToken = default
            )
-        {           
+        {
             return GetArticleReduced(language, articletype, articlesubtype, active?.Value, odhactive?.Value, odhtagfilter, cancellationToken);
         }
 
@@ -666,7 +666,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-            WebcamInfoHelper helper = WebcamInfoHelper.Create(sourcefilter, null, active, smgactive, datefrom);
+                WebcamInfoHelper helper = WebcamInfoHelper.Create(sourcefilter, null, active, smgactive, datefrom);
 
                 string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Webcamname,{language}}}' as Name";
                 string orderby = "data#>>'\\{Shortname\\}' ASC";

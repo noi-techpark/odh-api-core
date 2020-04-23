@@ -75,7 +75,7 @@ namespace OdhApiCore.Controllers
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
-            string? lastchange = null, 
+            string? lastchange = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -84,12 +84,12 @@ namespace OdhApiCore.Controllers
             string[]? fields = null,
             string? searchfilter = null,
             CancellationToken cancellationToken = default)
-        {           
+        {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
-                    pagesize: pagesize, dishcodefilter: dishcodefilter, categorycodefilter: categorycodefilter, 
+                    pagesize: pagesize, dishcodefilter: dishcodefilter, categorycodefilter: categorycodefilter,
                     facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter, ceremonycodefilter: ceremonycodefilter, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: lastchange,
@@ -150,7 +150,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetFiltered(
-            string[] fields, string? language, uint pagenumber, uint pagesize, 
+            string[] fields, string? language, uint pagenumber, uint pagesize,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? idfilter, string? searchfilter, string? locfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
@@ -171,7 +171,7 @@ namespace OdhApiCore.Controllers
                             categorycodeslist: mygastronomyhelper.categorycodesids, facilitycodeslist: mygastronomyhelper.facilitycodesids,
                             smgtaglist: mygastronomyhelper.smgtaglist, districtlist: mygastronomyhelper.districtlist,
                             municipalitylist: mygastronomyhelper.municipalitylist, tourismvereinlist: mygastronomyhelper.tourismvereinlist,
-                            regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active, 
+                            regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)

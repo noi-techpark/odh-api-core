@@ -9,7 +9,7 @@ namespace OdhApiCore.Controllers.api
 {
     public class ArticleHelper
     {
-        public List<string> typelist;        
+        public List<string> typelist;
         public List<string> subtypelist;
         public List<string> idlist;
         public List<string> smgtaglist;
@@ -18,12 +18,12 @@ namespace OdhApiCore.Controllers.api
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
-    
+
         public static ArticleHelper Create(
-            string? typefilter, string? subtypefilter, string? idfilter, 
+            string? typefilter, string? subtypefilter, string? idfilter,
             string? languagefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
             string? smgtags, string? lastchange)
-        {           
+        {
             return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange);
         }
 
@@ -78,7 +78,7 @@ namespace OdhApiCore.Controllers.api
             //highlight
             highlight = highlightfilter;
             //active
-            active = activefilter;           
+            active = activefilter;
             //smgactive
             smgactive = smgactivefilter;
 

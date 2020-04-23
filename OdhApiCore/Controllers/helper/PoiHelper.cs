@@ -14,14 +14,14 @@ namespace OdhApiCore.Controllers.api
         public List<string> subtypelist;
         public List<string> idlist;
         public List<string> arealist;
-        public List<string> smgtaglist;        
+        public List<string> smgtaglist;
         public List<string> tourismvereinlist;
         public List<string> regionlist;
         public bool? highlight;
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
-    
+
         public static async Task<PoiHelper> CreateAsync(
             QueryFactory queryFactory, string? poitype, string? subtypefilter, string? idfilter, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
@@ -85,7 +85,7 @@ namespace OdhApiCore.Controllers.api
             //highlight
             highlight = highlightfilter;
             //active
-            active = activefilter;           
+            active = activefilter;
             //smgactive
             smgactive = smgactivefilter;
 

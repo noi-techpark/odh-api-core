@@ -41,7 +41,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("ODHTag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetODHTagsAsync(
-            string? language = null, 
+            string? language = null,
             string? validforentity = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -57,10 +57,10 @@ namespace OdhApiCore.Controllers
             {
                 return await Get(language, fields: fields ?? Array.Empty<string>(), cancellationToken);
             }
-            else 
+            else
             {
                 return await GetFiltered(language, validforentity, fields: fields ?? Array.Empty<string>(), cancellationToken);
-            }            
+            }
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHTag/{id}", Name = "SingleODHTag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetODHTagSingle(string id, 
+        public async Task<IActionResult> GetODHTagSingle(string id,
             string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -91,7 +91,7 @@ namespace OdhApiCore.Controllers
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
-      #endregion
+        #endregion
 
         #region GETTER
 
@@ -128,7 +128,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.GetAsync<JsonRaw>();
 
-               return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator));
+                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator));
             });
         }
 
