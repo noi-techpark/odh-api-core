@@ -105,7 +105,7 @@ namespace Helper
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
-                 "<query>", 
+                 "<query>",
                 idlist, poitypelist,
                 subtypelist, smgtaglist,
                 districtlist, municipalitylist,
@@ -158,7 +158,7 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .DistrictFilter(districtlist)                
+                .DistrictFilter(districtlist)
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
@@ -166,7 +166,7 @@ namespace Helper
                 .CategoryCodeFilter(categorycodeslist)
                 .CuisineCodeFilter(facilitycodeslist)
                 .DishCodeFilter(dishcodeslist)
-                .SmgTagFilter(smgtaglist)                
+                .SmgTagFilter(smgtaglist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
@@ -181,7 +181,7 @@ namespace Helper
             IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> sourcelist,
             IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
-            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter, 
+            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
@@ -220,7 +220,7 @@ namespace Helper
         //Return Where and Parameters for Article
         public static Query ArticleWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
-            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,            
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
             IReadOnlyCollection<string> smgtaglist, bool? highlight, bool? activefilter, bool? smgactivefilter,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
@@ -228,7 +228,7 @@ namespace Helper
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, typelist,
-                subtypelist, languagelist, smgtaglist, 
+                subtypelist, languagelist, smgtaglist,
                 highlight, activefilter,
                 smgactivefilter, searchfilter,
                 language, lastchange
@@ -298,7 +298,7 @@ namespace Helper
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> accotypelist, IReadOnlyCollection<string> categorylist,
             Dictionary<string, bool> featurelist, IReadOnlyCollection<string> badgelist, Dictionary<string, bool> themelist,
-            IReadOnlyCollection<string> boardlist,IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
+            IReadOnlyCollection<string> boardlist, IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, bool? apartmentfilter, bool? bookable,
             bool? altitude, int altitudemin, int altitudemax, bool? activefilter, bool? smgactivefilter,

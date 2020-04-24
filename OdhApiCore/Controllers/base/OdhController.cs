@@ -74,7 +74,8 @@ namespace OdhApiCore.Controllers
             }
             catch (JsonPathException ex)
             {
-                return this.BadRequest(new {
+                return this.BadRequest(new
+                {
                     error = "Invalid JSONPath selection",
                     path = ex.Path,
                     details = env.IsDevelopment() ? ex.ToString() : ex.Message

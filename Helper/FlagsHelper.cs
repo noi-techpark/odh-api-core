@@ -173,7 +173,7 @@ namespace Helper
 
             return -1;
         }
-               
+
         //Des gibmer die Liste zrugg!
         public static List<string> GetDescriptionList<T>(this IEnumerable<T> enumlist) where T : struct
         {

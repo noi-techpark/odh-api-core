@@ -20,7 +20,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Anonymous")]
         public IActionResult GetAnonymous(CancellationToken cancellationToken)
         {
-            return this.Content(User.Identity.Name  + " Anonymous working", "application/json", Encoding.UTF8);
+            return this.Content(User.Identity.Name + " Anonymous working", "application/json", Encoding.UTF8);
         }
 
         [Authorize]

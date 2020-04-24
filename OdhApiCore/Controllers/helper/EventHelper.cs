@@ -29,20 +29,20 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
 
         public static async Task<EventHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, string? rancfilter, 
+            QueryFactory queryFactory, string? idfilter, string? locfilter, string? rancfilter,
             string? typefilter, string? topicfilter, string? orgfilter, string? begindate, string? enddate,
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
             CancellationToken cancellationToken)
-        {           
+        {
             IEnumerable<string>? tourismusvereinids = null;
-           if (locfilter != null && locfilter.Contains("mta"))
+            if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
                 tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
             }
 
             return new EventHelper(
-                idfilter: idfilter, locfilter: locfilter, rancfilter: rancfilter, typefilter: typefilter, 
+                idfilter: idfilter, locfilter: locfilter, rancfilter: rancfilter, typefilter: typefilter,
                 topicfilter: topicfilter, orgfilter: orgfilter, begindate: begindate, enddate: enddate,
                 activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange,
                 tourismusvereinids: tourismusvereinids);
@@ -50,12 +50,12 @@ namespace OdhApiCore.Controllers
 
         private EventHelper(
             string? idfilter, string? locfilter, string? rancfilter,
-            string? typefilter, string? topicfilter, string? orgfilter, 
-            string? begindate, string? enddate, bool? activefilter, bool? smgactivefilter, 
+            string? typefilter, string? topicfilter, string? orgfilter,
+            string? begindate, string? enddate, bool? activefilter, bool? smgactivefilter,
             string? smgtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
         {
             idlist = CommonListCreator.CreateIdList(idfilter?.ToUpper());
-           
+
             smgtaglist = CommonListCreator.CreateIdList(smgtags);
 
             orgidlist = CommonListCreator.CreateIdList(orgfilter);
@@ -79,7 +79,7 @@ namespace OdhApiCore.Controllers
 
             if (tourismusvereinids != null)
                 tourismvereinlist.AddRange(tourismusvereinids);
-            
+
             //active
             active = activefilter;
 
