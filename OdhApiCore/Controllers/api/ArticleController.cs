@@ -119,9 +119,9 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ArticleTypes")]
-        public async Task<IActionResult> GetAllArticleTypesList()
+        public async Task<IActionResult> GetAllArticleTypesList(CancellationToken cancellationToken)
         {
-            return await GetArticleTypesList();
+            return await GetArticleTypesList(cancellationToken);
         }
 
         /// <summary>
@@ -135,9 +135,9 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ArticleTypes/{id}", Name = "SingleArticleTypes")]
-        public async Task<IActionResult> GetAllArticlesTypeTypesSingle(string id)
+        public async Task<IActionResult> GetAllArticlesTypeTypesSingle(string id, CancellationToken cancellationToken)
         {
-            return await GetArticleTypeSingle(id);
+            return await GetArticleTypeSingle(id, cancellationToken);
         }
 
 
@@ -215,7 +215,7 @@ namespace OdhApiCore.Controllers.api
 
         #region CUSTOM METODS
 
-        private Task<IActionResult> GetArticleTypesList()
+        private Task<IActionResult> GetArticleTypesList(CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -230,7 +230,7 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
-        private Task<IActionResult> GetArticleTypeSingle(string id)
+        private Task<IActionResult> GetArticleTypeSingle(string id, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
