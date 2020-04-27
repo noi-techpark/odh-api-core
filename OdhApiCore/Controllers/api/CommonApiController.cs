@@ -316,59 +316,65 @@ namespace OdhApiCore.Controllers.api
             return await CommonGetSingleHelper(id: id, tablename: "municipalities", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
         }
 
-        ///// <summary>
-        ///// GET District List
-        ///// </summary>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>Collection of District Objects</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of District Objects", typeof(IEnumerable<District>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("District")]
-        //[HttpGet, Route("api/District")]
-        //public IHttpActionResult GetDistrict(
-        //    int elements = 0,
-        //    string visibleinsearch = "false",
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null,
-        //    string fields = null,
-        //    string language = null)
-        //{
-        //    var table = CheckOpenData(User, "districts");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
+        /// <summary>
+        /// GET District List
+        /// </summary>
+        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>Collection of District Objects</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<District>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+        [HttpGet, Route("District")]
+        public async Task<IActionResult> GetDistrict(
+            bool? visibleinsearch,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            string? seed = null,
+            string? searchfilter = null,
+            CancellationToken cancellationToken = default)
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
 
-        //    if (visibleinsearch.ToLower() == "true")
-        //        return GetDistrictListVisibleinSearch(elements, geosearchresult, fieldselector, table, language);
-        //    else
-        //        return GetDistrictList(elements, geosearchresult, fieldselector, table, language);
-        //}
+            return await CommonGetListHelper(tablename: "districts", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), language: language, commonhelper, geosearchresult: geosearchresult, cancellationToken);
+        }
 
-        ///// <summary>
-        ///// GET District Single
-        ///// </summary>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>District Object</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "District Object", typeof(District))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("District")]
-        //[HttpGet, Route("api/District/{id}")]
-        //public IHttpActionResult GetDistrictSingle(string id, string fields = null, string language = null)
-        //{
-        //    var table = CheckOpenData(User, "districts");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
-
-        //    return GetDistrict(id, fieldselector, table, language);
-        //}
+        /// <summary>
+        /// GET District Single
+        /// </summary>
+        /// <param name="id">ID of the requested data</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>District Object</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(District), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("api/District/{id}")]
+        public async Task<IActionResult> GetDistrictSingle(string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await CommonGetSingleHelper(id: id, tablename: "districts", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
+        }
 
 
         ///// <summary>
@@ -510,391 +516,6 @@ namespace OdhApiCore.Controllers.api
         //}
 
         ////Localized GETTER
-
-        ///// <summary>
-        ///// GET MetaRegion Localized List
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <returns>Collection of MetaRegionLocalized Objects</returns>        
-        //[Obsolete("Deprecated, use api/MetaRegion")]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of MetaRegionLocalized Objects", typeof(IEnumerable<MetaRegionLocalized>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("MetaRegion")]
-        //[HttpGet, Route("api/MetaRegionLocalized")]
-        //public IHttpActionResult GetMetaRegionsLocalized(
-        //    string language = "en",
-        //    int elements = 0,
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null)
-        //{
-        //    var table = CheckOpenData(User, "metaregions");
-
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-        //    return GetLocalizedMetaRegionList(language, elements, geosearchresult, table);
-        //}
-
-        ///// <summary>
-        ///// GET MetaRegion Localized Single
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <returns>MetaRegionLocalized Object</returns>        
-        //[Obsolete("Deprecated, use api/MetaRegion")]
-        //[SwaggerResponse(HttpStatusCode.OK, "MetaRegionLocalized Object", typeof(MetaRegionLocalized))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("MetaRegion")]
-        //[HttpGet, Route("api/MetaRegionLocalized/{id}")]
-        //public IHttpActionResult GetMetaRegionSingleLocalized(string id, string language = "en")
-        //{
-        //    var table = CheckOpenData(User, "metaregions");
-
-        //    return GetMetaRegionLocalized(language, id, table);
-        //}
-
-        ///// <summary>
-        ///// GET ExperienceArea Localized List
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <returns>Collection of ExperienceArea Localized Objects</returns>        
-        //[Obsolete("Deprecated, use api/ExperienceArea")]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of ExperienceArea Localized Objects", typeof(IEnumerable<ExperienceAreaLocalized>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("ExperianceArea")]
-        //[HttpGet, Route("api/ExperienceAreaLocalized")]
-        //public IHttpActionResult GetExperienceAreasLocalized(
-        //    string language = "en",
-        //    int elements = 0,
-        //    string visibleinsearch = "false",
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null)
-        //{
-        //    var table = CheckOpenData(User, "experienceareas");
-
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-        //    if (visibleinsearch.ToLower() == "true")
-        //        return GetLocalizedExperienceAreasVisibleinSearch(language, elements, geosearchresult, table);
-        //    else
-        //        return GetLocalizedExperienceAreaList(language, elements, geosearchresult, table);
-        //}
-
-        ///// <summary>
-        ///// GET ExperienceArea Localized Single
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <returns>ExperienceArea Localized Object</returns>        
-        //[Obsolete("Deprecated, use api/ExperienceArea")]
-        //[SwaggerResponse(HttpStatusCode.OK, "ExperienceArea Localized Object", typeof(BaseInfosLocalized))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("ExperienceArea")]
-        //[HttpGet, Route("api/ExperienceAreaLocalized/{id}")]
-        //public IHttpActionResult GetExperienceAreaSingleLocalized(string id, string language = "en")
-        //{
-        //    var table = CheckOpenData(User, "experienceareas");
-
-        //    return GetExperienceAreaLocalized(language, id, table);
-        //}
-
-        ///// <summary>
-        ///// GET Region Localized List
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <returns>Collection of RegionLocalized Objects</returns>        
-        //[Obsolete("Deprecated, use api/Region")]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of RegionLocalized Objects", typeof(IEnumerable<RegionLocalized>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("Region")]
-        //[HttpGet, Route("api/RegionLocalized")]
-        //public IHttpActionResult GetRegionsLocalized(
-        //    string language = "en",
-        //    int elements = 0,
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null)
-        //{
-        //    var table = CheckOpenData(User, "regions");
-
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-        //    return GetLocalizedRegionList(language, elements, geosearchresult, table);
-        //}
-
-        ///// <summary>
-        ///// GET Region Localized Single
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <returns>RegionLocalized Object</returns>        
-        //[Obsolete("Deprecated, use api/Region")]
-        //[SwaggerResponse(HttpStatusCode.OK, "RegionLocalized Object", typeof(RegionLocalized))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("Region")]
-        //[HttpGet, Route("api/RegionLocalized/{id}")]
-        //public IHttpActionResult GetRegionSingleLocalized(string id, string language = "en")
-        //{
-        //    var table = CheckOpenData(User, "regions");
-
-        //    return GetRegionLocalized(language, id, table);
-        //}
-
-        ///// <summary>
-        ///// GET TourismAssociation Localized List
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <returns>Collection of TourismvereinLocalized Objects</returns>        
-        //[Obsolete("Deprecated, use api/TourismAssociation")]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of TourismvereinLocalized Objects", typeof(IEnumerable<TourismvereinLocalized>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("TourismAssociation")]
-        //[HttpGet, Route("api/TourismAssociationLocalized")]
-        //public IHttpActionResult GetTourismvereinLocalized(
-        //    string language = "en",
-        //    int elements = 0,
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null)
-        //{
-        //    var table = CheckOpenData(User, "tvs");
-
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-        //    return GetLocalizedTourismvereinList(language, elements, geosearchresult, table);
-        //}
-
-        ///// <summary>
-        ///// GET TourismAssociation Localized Single
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <returns>TourismvereinLocalized Object</returns>        
-        //[Obsolete("Deprecated, use api/TourismAssociation")]
-        //[SwaggerResponse(HttpStatusCode.OK, "TourismvereinLocalized Object", typeof(TourismvereinLocalized))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("TourismAssociation")]
-        //[HttpGet, Route("api/TourismAssociationLocalized/{id}")]
-        //public IHttpActionResult GetTourismvereinSingleLocalized(string id, string language = "en")
-        //{
-        //    var table = CheckOpenData(User, "tvs");
-
-        //    return GetTourismvereinLocalized(language, id, table);
-        //}
-
-        ///// <summary>
-        ///// GET Municipality Localized List
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <returns>Collection of MunicipalityLocalized Objects</returns>        
-        //[Obsolete("Deprecated, use api/Municipality")]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of MunicipalityLocalized Objects", typeof(IEnumerable<MunicipalityLocalized>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("Municipality")]
-        //[HttpGet, Route("api/MunicipalityLocalized")]
-        //public IHttpActionResult GetMunicipalityLocalized(
-        //    string language = "en",
-        //    int elements = 0,
-        //    string visibleinsearch = "false",
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null)
-        //{
-        //    var table = CheckOpenData(User, "municipalities");
-
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-        //    if (visibleinsearch.ToLower() == "true")
-        //        return GetLocalizedMunicipalityListVisibleinSearch(language, elements, geosearchresult, table);
-        //    else
-        //        return GetLocalizedMunicipalityList(language, elements, geosearchresult, table);
-
-        //}
-
-        ///// <summary>
-        ///// GET Municipality Localized Single
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <returns>MunicipalityLocalized Object</returns>        
-        //[Obsolete("Deprecated, use api/Municipality")]
-        //[SwaggerResponse(HttpStatusCode.OK, "MunicipalityLocalized Object", typeof(MunicipalityLocalized))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("Municipality")]
-        //[HttpGet, Route("api/MunicipalityLocalized/{id}")]
-        //public IHttpActionResult GetMunicipalitySingleLocalized(string id, string language = "en")
-        //{
-        //    var table = CheckOpenData(User, "municipalities");
-
-        //    return GetMunicipalityLocalized(language, id, table);
-        //}
-
-        ///// <summary>
-        ///// GET District Localized List
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <returns>Collection of DistrictLocalized Objects</returns>        
-        //[Obsolete("Deprecated, use api/District")]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of DistrictLocalized Objects", typeof(IEnumerable<DistrictLocalized>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("District")]
-        //[HttpGet, Route("api/DistrictLocalized")]
-        //public IHttpActionResult GetDistrictLocalized(
-        //    string language = "en",
-        //    int elements = 0,
-        //    string visibleinsearch = "false",
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null)
-        //{
-        //    var table = CheckOpenData(User, "districts");
-
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-        //    if (visibleinsearch.ToLower() == "true")
-        //        return GetLocalizedDistrictListVisibleinSearch(language, elements, geosearchresult, table);
-        //    else
-        //        return GetLocalizedDistrictList(language, elements, geosearchresult, table);
-
-        //}
-
-        ///// <summary>
-        ///// GET District Localized Single
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <returns>DistrictLocalized Object</returns>        
-        //[Obsolete("Deprecated, use api/District")]
-        //[SwaggerResponse(HttpStatusCode.OK, "DistrictLocalized Object", typeof(DistrictLocalized))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("District")]
-        //[HttpGet, Route("api/DistrictLocalized/{id}")]
-        //public IHttpActionResult GetDistrictSingleLocalized(string id, string language = "en")
-        //{
-        //    var table = CheckOpenData(User, "districts");
-
-        //    return GetDistrictLocalized(language, id, table);
-        //}
-
-        ///// <summary>
-        ///// GET SkiRegion Localized List
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <returns>Collection of SkiRegionLocalized Objects</returns>        
-        //[Obsolete("Deprecated, use api/SkiRegion")]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of SkiRegionLocalized Objects", typeof(IEnumerable<SkiRegionLocalized>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("SkiRegion")]
-        //[HttpGet, Route("api/SkiRegionLocalized")]
-        //public IHttpActionResult GetSkiRegionLocalized(
-        //    string language = "en",
-        //    int elements = 0,
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null)
-        //{
-        //    var table = CheckOpenData(User, "skiregions");
-
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-        //    return GetLocalizedSkiRegionList(language, elements, geosearchresult, table);
-        //}
-
-        ///// <summary>
-        ///// GET SkiRegion Localized Single
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <returns>SkiRegionLocalized Object</returns>        
-        //[Obsolete("Deprecated, use api/SkiRegion")]
-        //[SwaggerResponse(HttpStatusCode.OK, "SkiRegionLocalized Object", typeof(SkiRegionLocalized))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("SkiRegion")]
-        //[HttpGet, Route("api/SkiRegionLocalized/{id}")]
-        //public IHttpActionResult GetSkiRegionSingleLocalized(string id, string language = "en")
-        //{
-        //    var table = CheckOpenData(User, "skiregions");
-
-        //    return GetSkiregionLocalized(language, id, table);
-        //}
-
-        ///// <summary>
-        ///// GET SkiArea Localized List
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <returns>Collection of SkiAreaLocalized Objects</returns>        
-        //[Obsolete("Deprecated, use api/SkiArea")]
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of SkiAreaLocalized Objects", typeof(IEnumerable<SkiAreaLocalized>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("SkiArea")]
-        //[HttpGet, Route("api/SkiAreaLocalized")]
-        //public IHttpActionResult GetSkiAreaLocalized(
-        //    string language = "en",
-        //    int elements = 0,
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null)
-        //{
-        //    var table = CheckOpenData(User, "skiareas");
-
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-        //    return GetLocalizedSkiAreaList(language, elements, geosearchresult, table);
-        //}
-
-        ///// <summary>
-        ///// GET SkiArea Localized Single
-        ///// </summary>
-        ///// <param name="language">Localization Language, (default:'en')</param>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <returns>SkiAreaLocalized Object</returns>        
-        //[Obsolete("Deprecated, use api/SkiArea")]
-        //[SwaggerResponse(HttpStatusCode.OK, "SkiAreaLocalized Object", typeof(SkiAreaLocalized))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("SkiArea")]
-        //[HttpGet, Route("api/SkiAreaLocalized/{id}")]
-        //public IHttpActionResult GetSkiAreaSingleLocalized(string id, string language = "en")
-        //{
-        //    var table = CheckOpenData(User, "skiareas");
-
-        //    return GetSkiareaLocalized(language, id, table);
-        //}
 
 
         ////Reduced GETTER
