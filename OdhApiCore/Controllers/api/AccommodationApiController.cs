@@ -78,7 +78,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationFeatures")]
-        public Task<IActionResult> GetAllAccommodationFeaturesList(string source, CancellationToken cancellationToken = default)
+        public Task<IActionResult> GetAllAccommodationFeaturesList(string? source = null, CancellationToken cancellationToken = default)
         {
             if (!String.IsNullOrEmpty(source) && source == "lts")
                 return null;
@@ -108,6 +108,13 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
+        #region GETTER
+
+        #endregion
+
+        #region SPECIALMETHODS
+
+        #endregion
 
         #region CUSTOM METHODS
 
@@ -180,5 +187,9 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
+        #region PRIVATEHELPERS
+
+
+        #endregion
     }
 }
