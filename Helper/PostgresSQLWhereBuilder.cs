@@ -332,6 +332,24 @@ namespace Helper
         }
 
 
+        //Return Where and Parameters for Common
+        public static Query CommonWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist,
+            string? searchfilter,
+            string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                searchfilter, language, lastchange
+            );
+
+            return query
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
 
         //Return Where and Parameters for WebCamInfo
         public static Query WebCamInfoWhereExpression(
