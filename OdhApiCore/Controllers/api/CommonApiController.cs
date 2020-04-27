@@ -66,7 +66,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <returns>MetaRegion Object</returns>        
-        /// <response code="200">List created</response>
+        /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(MetaRegion), StatusCodes.Status200OK)]
@@ -126,7 +126,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <returns>ExperienceArea Object</returns>        
-        /// <response code="200">List created</response>
+        /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(ExperienceArea), StatusCodes.Status200OK)]
@@ -155,7 +155,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(Region), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Region>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Region")]
@@ -183,7 +183,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <returns>Region Object</returns>        
-        /// <response code="200">List created</response>
+        /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(Region), StatusCodes.Status200OK)]
@@ -199,54 +199,63 @@ namespace OdhApiCore.Controllers.api
             return await CommonGetSingleHelper(id: id, tablename: "regions", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
         }
 
-        ///// <summary>
-        ///// GET TourismAssociation List
-        ///// </summary>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>Collection of Tourismverein Objects</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of Tourismverein Objects", typeof(IEnumerable<Tourismverein>))]
-        //[OpenData("TourismAssociation")]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[HttpGet, Route("api/TourismAssociation")]
-        //public IHttpActionResult GetTourismverein(
-        //    int elements = 0,
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null,
-        //    string fields = null,
-        //    string language = null)
-        //{
-        //    var table = CheckOpenData(User, "tvs");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
+        /// <summary>
+        /// GET TourismAssociation List
+        /// </summary>
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>Collection of Tourismverein Objects</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(Tourismverein), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("TourismAssociation")]
+        public async Task<IActionResult> GetTourismverein(
+             string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            string? seed = null,
+            string? searchfilter = null,
+            CancellationToken cancellationToken = default)
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
 
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            return await CommonGetListHelper(tablename: "tvs", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), language: language, commonhelper, geosearchresult: geosearchresult, cancellationToken);
 
-        //    return GetTourismvereinList(elements, geosearchresult, fieldselector, table, language);
-        //}
+        }
 
-        ///// <summary>
-        ///// GET TourismAssociation Single
-        ///// </summary>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>Tourismverein Object</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Tourismverein Object", typeof(Tourismverein))]
-        //[OpenData("TourismAssociation")]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[HttpGet, Route("api/TourismAssociation/{id}")]
-        //public IHttpActionResult GetTourismvereinSingle(string id, string fields = null, string language = null)
-        //{
-        //    var table = CheckOpenData(User, "tvs");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
+        /// <summary>
+        /// GET TourismAssociation Single
+        /// </summary>
+        /// <param name="id">ID of the requested data</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>Tourismverein Object</returns>        
+        /// <response code="200">Object created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(Tourismverein), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        //    return GetTourismverein(id, fieldselector, table, language);
-        //}
+        [HttpGet, Route("api/TourismAssociation/{id}")]
+        public async Task<IActionResult> GetTourismvereinSingle(string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await CommonGetSingleHelper(id: id, tablename: "tvs", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
+        }
 
         ///// <summary>
         ///// GET Municipality List
