@@ -102,7 +102,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ExperienceArea")]
         public async Task<IActionResult> GetExperienceAreas(
-            bool? visibleinsearch = false,
+            bool? visibleinsearch = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
