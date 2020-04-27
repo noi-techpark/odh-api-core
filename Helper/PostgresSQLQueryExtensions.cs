@@ -489,6 +489,16 @@ namespace Helper
                 category => category
             );
 
+        public static Query VisibleInSearchFilter(this Query query, bool? visibleinsearch) =>
+            query.When(
+                visibleinsearch != null,
+                query => query.WhereJsonb(
+                    "VisibleInSearch",
+                    visibleinsearch ?? false
+                )
+            );
+
+
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(

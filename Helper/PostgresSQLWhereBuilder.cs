@@ -335,7 +335,7 @@ namespace Helper
         //Return Where and Parameters for Common
         public static Query CommonWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
-            string? searchfilter,
+            string? searchfilter, bool? visibleinsearch,
             string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
@@ -347,6 +347,7 @@ namespace Helper
             return query
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
+                .VisibleInSearchFilter(visibleinsearch)
                 .When(filterClosedData, q => q.FilterClosedData());
         }
 

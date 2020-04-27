@@ -41,7 +41,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,CommonReader")]
         [HttpGet, Route("MetaRegion")]
-        public Task<IActionResult> GetMetaRegions(
+        public async Task<IActionResult> GetMetaRegions(
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -54,7 +54,9 @@ namespace OdhApiCore.Controllers.api
         {                        
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return CommonGetListHelper(tablename: "metaregions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), language: language, geosearchresult:  geosearchresult, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+
+            return await CommonGetListHelper(tablename: "metaregions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), language: language, commonhelper, geosearchresult:  geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -67,73 +69,79 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<MetaRegion>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MetaRegion), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("MetaRegion/{id}", Name = "SingleMetaRegion")]
-        public Task<IActionResult> GetMetaRegionSingle(
+        public async Task<IActionResult> GetMetaRegionSingle(
             string id,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
             CancellationToken cancellationToken = default)
         {            
-            return CommonGetSingleHelper(id: id, tablename: "metaregions", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "metaregions", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
         }
 
-        ///// <summary>
-        ///// GET Experiencearea List
-        ///// </summary>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>Collection of ExperienceArea Objects</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of ExperienceArea Objects", typeof(IEnumerable<ExperienceArea>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("ExperienceArea")]
-        //[HttpGet, Route("api/ExperienceArea")]
-        //public IHttpActionResult GetExperienceAreas(
-        //    int elements = 0,
-        //    string visibleinsearch = "false",
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null,
-        //    string fields = null,
-        //    string language = null)
-        //{
-        //    var table = CheckOpenData(User, "experienceareas");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
+        /// <summary>
+        /// GET Experiencearea List
+        /// </summary>
+        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>Collection of ExperienceArea Objects</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<ExperienceArea>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("ExperienceArea")]
+        public async Task<IActionResult> GetExperienceAreas(
+            bool? visibleinsearch = false,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            string? seed = null,
+            string? searchfilter = null,
+            CancellationToken cancellationToken = default)
+        {          
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
 
-        //    if (visibleinsearch.ToLower() == "true")
-        //        return GetExperienceAreasVisibleinSearch(elements, geosearchresult, fieldselector, table, language);
-        //    else
-        //        return GetExperienceAreasList(elements, geosearchresult, fieldselector, table, language);
-        //}
+            return await CommonGetListHelper(tablename: "experienceareas", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), language: language, commonhelper, geosearchresult: geosearchresult, cancellationToken);
+        }
 
-        ///// <summary>
-        ///// GET ExperienceArea Single
-        ///// </summary>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>ExperienceArea Object</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "ExperienceArea Object", typeof(ExperienceArea))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("ExperienceArea")]
-        //[HttpGet, Route("api/ExperienceArea/{id}")]
-        //public IHttpActionResult GetExperienceAreaSingle(string id, string fields = null, string language = null)
-        //{
-        //    var table = CheckOpenData(User, "experienceareas");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
-
-        //    return GetExperienceArea(id, fieldselector, table, language);
-        //}
+        /// <summary>
+        /// GET ExperienceArea Single
+        /// </summary>
+        /// <param name="id">ID of the requested data</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>ExperienceArea Object</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(ExperienceArea), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("ExperienceArea/{id}", Name ="SingleExperienceArea")]
+        public async Task<IActionResult> GetExperienceAreaSingle(string id,
+           [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await CommonGetSingleHelper(id: id, tablename: "experienceareas", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
+        }
 
         ///// <summary>
         ///// GET Region List
@@ -1172,15 +1180,16 @@ namespace OdhApiCore.Controllers.api
 
         #region GETTER
 
-        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
-            {              
+            {               
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
                         .From(tablename)
-                        .CommonWhereExpression(languagelist: new List<string>(), lastchange: null, searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                        .CommonWhereExpression(languagelist: new List<string>(), lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch,
+                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
