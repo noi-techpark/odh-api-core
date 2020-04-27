@@ -27,7 +27,6 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET MetaRegion List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
@@ -58,24 +57,29 @@ namespace OdhApiCore.Controllers.api
             return CommonGetListHelper(tablename: "metaregions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), language: language, geosearchresult:  geosearchresult, cancellationToken);
         }
 
-        ///// <summary>
-        ///// GET MetaRegion Single
-        ///// </summary>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>MetaRegion Object</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "MetaRegion Object", typeof(MetaRegion))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("MetaRegion")]
-        //[HttpGet, Route("api/MetaRegion/{id}")]
-        //public IHttpActionResult GetMetaRegionSingle(string id, string fields = null, string language = null)
-        //{
-        //    var table = CheckOpenData(User, "metaregions");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
-
-        //    return GetMetaRegion(id, fieldselector, table, language);
-        //}
+        /// <summary>
+        /// GET MetaRegion Single
+        /// </summary>
+        /// <param name="id">ID of the requested data</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>MetaRegion Object</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<MetaRegion>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("MetaRegion/{id}", Name = "SingleMetaRegion")]
+        public Task<IActionResult> GetMetaRegionSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            CancellationToken cancellationToken = default)
+        {            
+            return CommonGetSingleHelper(id: id, tablename: "metaregions", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
+        }
 
         ///// <summary>
         ///// GET Experiencearea List
@@ -1194,7 +1198,21 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
+        private Task<IActionResult> CommonGetSingleHelper(string id, string tablename, string[] fields, string? language, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query(tablename)
+                        .Select("data")
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
+            });
+        }
 
         #endregion
     }
