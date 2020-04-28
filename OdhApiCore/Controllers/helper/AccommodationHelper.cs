@@ -69,6 +69,8 @@ namespace OdhApiCore.Controllers
             themelist = AccoListCreator.CreateThemeListDictfromFlag(themefilter);
             idlist = String.IsNullOrEmpty(idfilter) ? new List<string>() : CommonListCreator.CreateIdList(idfilter.ToUpper());
 
+            districtlist = new List<string>();
+            municipalitylist = new List<string>();
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();
             if (locfilter != null && locfilter.Contains("reg"))

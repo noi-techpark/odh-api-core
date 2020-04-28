@@ -370,7 +370,7 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        public Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize, string? idfilter, string? locfilter,
+        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize, string? idfilter, string? locfilter,
             string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? themefilter, string? badgefilter, string? altitudefilter, 
             bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? searchfilter,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
