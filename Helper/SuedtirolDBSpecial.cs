@@ -262,4 +262,10 @@ namespace Helper
         public string? description { get; set; }
         public string? language { get; set; }
     }
+
+    public class CommonReduced
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
 }
