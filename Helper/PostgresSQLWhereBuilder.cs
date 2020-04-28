@@ -24,6 +24,13 @@ namespace Helper
                 $"Detail.{lang}.Title"
             ).ToArray();
 
+        private static string[] AccoTitleFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"AccoDetail.{lang}.Name"
+            ).ToArray();
+
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
             language = language.ToLower();
@@ -321,12 +328,12 @@ namespace Helper
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
-                //ADD accotypelist, categorylist, featurelist, badgelist, themelist, boardlist, apartmentfilter, bookable, altitude
+                //TODO ADD accotypelist, categorylist, featurelist, badgelist, themelist, boardlist, apartmentfilter, bookable, altitude
                 //.HasLanguageFilter(languagelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SmgTagFilter(smgtaglist)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData());
         }

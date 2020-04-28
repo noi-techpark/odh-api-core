@@ -555,7 +555,6 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<Wine>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
         [HttpGet, Route("WineAward")]
         public async Task<IActionResult> GetWineAwardsList(
             string? wineid = null,
@@ -593,22 +592,7 @@ namespace OdhApiCore.Controllers.api
             return await CommonGetSingleHelper(id: id, tablename: "wines", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
         }
 
-        //MetaRegions
-
-        //REGIONS
-
-        //TVS
-
-        //Municipality        
-
-        //District        
-
-        //Wine        
-
-
-
         #endregion
-
 
         #region GETTER
 
