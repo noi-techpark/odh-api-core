@@ -190,7 +190,7 @@ namespace OdhApiCore.Controllers.api
                     altitudefilter: altitudefilter, durationfilter: durationfilter, highlightfilter: highlightfilter,
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
                     smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
-
+                
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
                 string orderby = "data#>>'\\{Shortname\\}' ASC";
 
@@ -418,9 +418,10 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=smgpoi'), (default:'null')</param>        
         /// <param name="active">Active ODHActivityPoi Filter (possible Values: 'true' only active ODHActivityPoi, 'false' only not active ODHActivityPoi, (default:'null')</param>        
         /// <param name="odhactive">ODH Active (Published) ODHActivityPoi Filter (Refers to field SmgActive) (possible Values: 'true' only published ODHActivityPoi, 'false' only not published ODHActivityPoi, (default:'null')</param>        
-        /// <returns>Collection of Activity Objects</returns>        
-        //[Authorize(Roles = "DataReader,ODHPoiReader")]
-        //[AllowAnonymous]        
+        /// <returns>Collection of ActivityPoiReduced Objects</returns>        
+        [ProducesResponseType(typeof(IEnumerable<ActivityPoiReduced>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHActivityPoiReduced")]
         public async Task<IActionResult> GetODHActivityPoiListReduced(
             string? language = "en",
@@ -515,7 +516,9 @@ namespace OdhApiCore.Controllers.api
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
         /// <returns>Collection of EventReduced Objects</returns>        
-        //[Authorize(Roles = "DataReader,EventReader")]        
+        [ProducesResponseType(typeof(IEnumerable<EventReduced>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventReduced")]
         public async Task<IActionResult> GetEventsReduced(
             string? language = "en",
@@ -548,8 +551,8 @@ namespace OdhApiCore.Controllers.api
                 EventHelper helper = await EventHelper.CreateAsync(
                     QueryFactory, null, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate,
                     enddate, active, smgactive, smgtagfilter, null, cancellationToken);
-
-                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
+                
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
                 string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
@@ -587,7 +590,9 @@ namespace OdhApiCore.Controllers.api
         /// <param name="active">Active Articles Filter (possible Values: 'true' only Active Articles, 'false' only Disabled Articles</param>
         /// <param name="odhactive">ODH Active (Published) Activities Filter (Refers to field SmgActive) Article Filter (possible Values: 'true' only published Article, 'false' only not published Articles, (default:'null')</param>        
         /// <returns>Collection of Article Objects</returns>        
-        //[Authorize(Roles = "DataReader,ArticleReader")]
+        [ProducesResponseType(typeof(IEnumerable<ArticleReduced>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ArticleReduced")]
         public Task<IActionResult> GetArticleReducedList(
             string? language = "en",
@@ -609,7 +614,7 @@ namespace OdhApiCore.Controllers.api
                 ArticleHelper helper = ArticleHelper.Create(
                     articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null);
 
-                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name"; 
                 string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
@@ -654,21 +659,22 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
-            string? updatefrom = null
+            string? updatefrom = null,
+            CancellationToken cancellationToken = default
       )
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return GetWebcamReduced(language, source, active?.Value, odhactive?.Value, updatefrom, geosearchresult);
+            return GetWebcamReduced(language, source, active?.Value, odhactive?.Value, updatefrom, geosearchresult, cancellationToken);
         }
 
-        private Task<IActionResult> GetWebcamReduced(string? language, string? sourcefilter, bool? active, bool? smgactive, string? datefrom, PGGeoSearchResult geosearchresult)
+        private Task<IActionResult> GetWebcamReduced(string? language, string? sourcefilter, bool? active, bool? smgactive, string? datefrom, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 WebcamInfoHelper helper = WebcamInfoHelper.Create(sourcefilter, null, active, smgactive, datefrom);
 
-                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Webcamname,{language}}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Webcamname,{language}\\}}' as Name";
                 string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
@@ -686,7 +692,6 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
-
         #endregion
 
         #region AccommodationController
@@ -694,6 +699,257 @@ namespace OdhApiCore.Controllers.api
         #endregion
 
         #region Common
+
+        ////Reduced GETTER
+
+        /// <summary>
+        /// GET MetaRegion Reduced List
+        /// </summary>
+        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <returns>Collection of CommonReduced Objects</returns>    
+        //[ProducesResponseType(typeof(IEnumerable<CommonR>), StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("MetaRegionReduced")]
+        public async Task<IActionResult> GetMetaRegionsReduced(
+            string language = "en",
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            string ? searchfilter = null,
+            CancellationToken cancellationToken = default)
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+
+            return await GetCommonReduced("metaregions", searchfilter, language, commonhelper, geosearchresult, cancellationToken);
+        }
+
+        /// <summary>
+        /// GET ExperienceArea Reduced List
+        /// </summary>
+        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <returns>Collection of ExperienceAreaName Objects</returns>        
+          //[ProducesResponseType(typeof(IEnumerable<CommonR>), StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("ExperienceAreaReduced")]
+        public async Task<IActionResult> GetExperienceAreasReduced(
+            string language = "en",
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            bool? visibleinsearch = null,
+            string? searchfilter = null,
+            CancellationToken cancellationToken = default)
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
+
+            return await GetCommonReduced("experienceareas", searchfilter, language, commonhelper, geosearchresult, cancellationToken);
+        }
+
+        ///// <summary>
+        ///// GET Region Reduced List
+        ///// </summary>
+        ///// <param name="language">Localization Language, (default:'en')</param>
+        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        ///// <returns>Collection of CommonReduced Objects</returns>        
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of CommonReduced Objects", typeof(IEnumerable<CommonReduced>))]
+        ////[Authorize(Roles = "DataReader,CommonReader")]
+        //[OpenData("Region")]
+        //[HttpGet, Route("api/RegionReduced")]
+        //public IHttpActionResult GetRegionsReduced(
+        //    string language = "en",
+        //    int elements = 0,
+        //    string latitude = null,
+        //    string longitude = null,
+        //    string radius = null)
+        //{
+        //    var table = CheckOpenData(User, "regions");
+
+        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+        //    return GetReducedRegionList(language, elements, geosearchresult, table);
+        //}
+
+        ///// <summary>
+        ///// GET TourismAssociation Reduced List
+        ///// </summary>
+        ///// <param name="language">Localization Language, (default:'en')</param>
+        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        ///// <returns>Collection of CommonReduced Objects</returns>        
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of CommonReduced Objects", typeof(IEnumerable<CommonReduced>))]
+        ////[Authorize(Roles = "DataReader,CommonReader")]
+        //[OpenData("TourismAssociation")]
+        //[HttpGet, Route("api/TourismAssociationReduced")]
+        //public IHttpActionResult GetTourismvereinReduced(
+        //    string language = "en",
+        //    int elements = 0,
+        //    string latitude = null,
+        //    string longitude = null,
+        //    string radius = null)
+        //{
+        //    var table = CheckOpenData(User, "tvs");
+
+        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+        //    return GetReducedTourismvereinList(language, elements, geosearchresult, table);
+        //}
+
+        ///// <summary>
+        ///// GET Municipality Reduced List
+        ///// </summary>
+        ///// <param name="language">Localization Language, (default:'en')</param>
+        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        ///// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
+        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        ///// <returns>Collection of CommonReduced Objects</returns>        
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of CommonReduced Objects", typeof(IEnumerable<CommonReduced>))]
+        ////[Authorize(Roles = "DataReader,CommonReader")]
+        //[OpenData("Municipality")]
+        //[HttpGet, Route("api/MunicipalityReduced")]
+        //public IHttpActionResult GetMunicipalityReduced(
+        //    string language = "en",
+        //    int elements = 0,
+        //    string visibleinsearch = "false",
+        //    string latitude = null,
+        //    string longitude = null,
+        //    string radius = null)
+        //{
+        //    var table = CheckOpenData(User, "municipalities");
+
+        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+        //    if (visibleinsearch.ToLower() == "true")
+        //        return GetReducedMunicipalityListVisibleinSearch(language, elements, geosearchresult, table);
+        //    else
+        //        return GetReducedMunicipalityList(language, elements, geosearchresult, table);
+        //}
+
+        ///// <summary>
+        ///// GET District Reduced List
+        ///// </summary>
+        ///// <param name="language">Localization Language, (default:'en')</param>
+        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        ///// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
+        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        ///// <returns>Collection of CommonReduced Objects</returns>        
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of CommonReduced Objects", typeof(IEnumerable<CommonReduced>))]
+        ////[Authorize(Roles = "DataReader,CommonReader")]
+        //[OpenData("District")]
+        //[HttpGet, Route("api/DistrictReduced")]
+        //public IHttpActionResult GetDistrictReduced(
+        //    string language = "en",
+        //    int elements = 0,
+        //    string visibleinsearch = "false",
+        //    string latitude = null,
+        //    string longitude = null,
+        //    string radius = null)
+        //{
+        //    var table = CheckOpenData(User, "districts");
+
+        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+        //    if (visibleinsearch.ToLower() == "true")
+        //        return GetReducedDistrictListVisibleinSearch(language, elements, geosearchresult, table);
+        //    else
+        //        return GetReducedDistrictList(language, elements, geosearchresult, table);
+        //}
+
+        ///// <summary>
+        ///// GET SkiRegion Reduced List
+        ///// </summary>
+        ///// <param name="language">Localization Language, (default:'en')</param>
+        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        ///// <returns>Collection of CommonReduced Objects</returns>        
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of CommonReduced Objects", typeof(IEnumerable<CommonReduced>))]
+        ////[Authorize(Roles = "DataReader,CommonReader")]
+        //[OpenData("SkiRegion")]
+        //[HttpGet, Route("api/SkiRegionReduced")]
+        //public IHttpActionResult GetSkiRegionReduced(
+        //    string language = "en",
+        //    int elements = 0,
+        //    string latitude = null,
+        //    string longitude = null,
+        //    string radius = null)
+        //{
+        //    var table = CheckOpenData(User, "skiregions");
+
+        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+        //    return GetReducedSkiRegionList(language, elements, geosearchresult, table);
+        //}
+
+        ///// <summary>
+        ///// GET SkiArea Reduced List
+        ///// </summary>
+        ///// <param name="language">Localization Language, (default:'en')</param>
+        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        ///// <returns>Collection of CommonReduced Objects</returns>        
+        //[SwaggerResponse(HttpStatusCode.OK, "Array of CommonReduced Objects", typeof(IEnumerable<CommonReduced>))]
+        ////[Authorize(Roles = "DataReader,CommonReader")]
+        //[OpenData("SkiArea")]
+        //[HttpGet, Route("api/SkiAreaReduced")]
+        //public IHttpActionResult GetSkiAreaReduced(
+        //    string language = "en",
+        //    int elements = 0,
+        //    string latitude = null,
+        //    string longitude = null,
+        //    string radius = null)
+        //{
+        //    var table = CheckOpenData(User, "skiareas");
+
+        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+        //    return GetReducedSkiAreaList(language, elements, geosearchresult, table);
+        //}
+
+        private Task<IActionResult> GetCommonReduced(string tablename, string? searchfilter, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name"; 
+                string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From(tablename)
+                        .CommonWhereExpression(languagelist: new List<string>(), lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch,
+                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                        .OrderByRaw(orderby)
+                        .GeoSearchFilterAndOrderby(geosearchresult);
+
+                // Get paginated data
+                return await query.GetAsync<ResultReduced>();
+            });
+        }     
 
         #endregion
     }
