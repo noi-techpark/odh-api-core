@@ -480,57 +480,58 @@ namespace OdhApiCore.Controllers.api
             return await CommonGetSingleHelper(id: id, tablename: "skiregions", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
         }
 
-        ///// <summary>
-        ///// GET SkiArea List
-        ///// </summary>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
-        ///// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
-        ///// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>Collection of SkiArea Objects</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of SkiArea Objects", typeof(IEnumerable<SkiArea>))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("SkiArea")]
-        //[HttpGet, Route("api/SkiArea")]
-        //public IHttpActionResult GetSkiArea(
-        //    int elements = 0,
-        //    string latitude = null,
-        //    string longitude = null,
-        //    string radius = null,
-        //    string fields = null,
-        //    string language = null)
-        //{
-        //    var table = CheckOpenData(User, "skiareas");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
+        /// <summary>
+        /// GET SkiArea List
+        /// </summary>
+        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>Collection of SkiArea Objects</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<SkiArea>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("SkiArea")]
+        public async Task<IActionResult> GetSkiArea(
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            string? seed = null,
+            string? searchfilter = null,
+            CancellationToken cancellationToken = default)
+        {
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
 
-        //    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            return await CommonGetListHelper(tablename: "skiareas", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), language: language, commonhelper, geosearchresult: null, cancellationToken);
+        }
 
-        //    return GetSkiareaList(elements, geosearchresult, fieldselector, table, language);
-        //}
-
-        ///// <summary>
-        ///// GET SkiArea Single
-        ///// </summary>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>SkiArea Object</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "SkiArea Object", typeof(SkiArea))]
-        ////[Authorize(Roles = "DataReader,CommonReader")]
-        //[OpenData("SkiArea")]
-        //[HttpGet, Route("api/SkiArea/{id}")]
-        //public IHttpActionResult GetSkiAreaSingle(string id, string fields = null, string language = null)
-        //{
-        //    var table = CheckOpenData(User, "skiareas");
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
-
-        //    return GetSkiarea(id, fieldselector, table, language);
-        //}
-
-        ////Localized GETTER
-
+        /// <summary>
+        /// GET SkiArea Single
+        /// </summary>
+        /// <param name="id">ID of the requested data</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>SkiArea Object</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(SkiArea), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("SkiArea/{id}", Name ="SingleSkiArea")]
+        public async Task<IActionResult> GetSkiAreaSingle(string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await CommonGetSingleHelper(id: id, tablename: "skiareas", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
+        }
 
         ////Reduced GETTER
 
