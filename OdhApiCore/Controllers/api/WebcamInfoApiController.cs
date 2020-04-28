@@ -94,7 +94,7 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             CancellationToken cancellationToken = default)
-        {           
+        {
             return GetSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
@@ -117,9 +117,9 @@ namespace OdhApiCore.Controllers
                         .SelectRaw("data")
                         .From("webcams")
                         .WebCamInfoWhereExpression(
-                            idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,                         
+                            idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange, 
+                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
                             languagelist: new List<string>(), filterClosedData: FilterClosedData)
                         .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
@@ -148,7 +148,7 @@ namespace OdhApiCore.Controllers
                     Url);
             });
         }
-        
+
         private Task<IActionResult> GetSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>

@@ -148,7 +148,7 @@ namespace Helper
             {
                 return query.WhereRaw(
                     $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ANY(?)",
-                    new [] { new[] { list } }
+                    new[] { new[] { list } }
                 );
             }
         }
@@ -438,7 +438,7 @@ namespace Helper
                 "OrgRID",
                 org => org
             );
-       
+
 
         //Only Begindate given
         public static Query EventDateFilterBegin(this Query query, DateTime? begin, DateTime? end) =>
@@ -489,6 +489,16 @@ namespace Helper
                 category => category
             );
 
+        public static Query VisibleInSearchFilter(this Query query, bool? visibleinsearch) =>
+            query.When(
+                visibleinsearch != null,
+                query => query.WhereJsonb(
+                    "VisibleInSearch",
+                    visibleinsearch ?? false
+                )
+            );
+
+
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(
@@ -498,6 +508,6 @@ namespace Helper
                 )
             );
 
-       
+
     }
 }

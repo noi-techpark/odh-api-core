@@ -26,7 +26,7 @@ namespace OdhApiCore.Controllers.api
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
-    
+
         public static async Task<ODHActivityPoiHelper> CreateAsync(
             QueryFactory queryFactory, string? typefilter, string? subtypefilter, string? poitypefilter, string? idfilter, string? locfilter,
             string? areafilter, string? languagefilter, string? sourcefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
@@ -116,7 +116,7 @@ namespace OdhApiCore.Controllers.api
             //highlight
             highlight = highlightfilter;
             //active
-            active = activefilter;           
+            active = activefilter;
             //smgactive
             smgactive = smgactivefilter;
 

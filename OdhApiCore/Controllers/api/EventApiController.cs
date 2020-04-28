@@ -117,10 +117,10 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Event/{id}", Name = "SingleEvent")]
         public async Task<IActionResult> GetEventSingle(
-            string id, 
-            string? language, 
+            string id,
+            string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null, 
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
@@ -156,7 +156,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("EventTopics/{id}", Name ="SingleEventTopics")]
+        [HttpGet, Route("EventTopics/{id}", Name = "SingleEventTopics")]
         public async Task<IActionResult> GetAllEventTopicSingleAsync(string id, CancellationToken cancellationToken)
         {
             return await GetEventTopicSingleAsync(id, cancellationToken);
@@ -166,10 +166,10 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-            private Task<IActionResult> GetFiltered(
-            string[] fields, string? language, uint pagenumber, uint pagesize, string? typefilter, string? idfilter,
-            string? rancfilter, string? searchfilter, string? locfilter, string? orgfilter, string? topicfilter, string? begindate, string? enddate,
-            string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        private Task<IActionResult> GetFiltered(
+        string[] fields, string? language, uint pagenumber, uint pagesize, string? typefilter, string? idfilter,
+        string? rancfilter, string? searchfilter, string? locfilter, string? orgfilter, string? topicfilter, string? begindate, string? enddate,
+        string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -181,7 +181,7 @@ namespace OdhApiCore.Controllers
 
                 string sortifseednull = "data #>>'\\{Shortname\\}' ASC";
 
-                if(sort != null)
+                if (sort != null)
                 {
                     if (sort.ToLower() == "asc")
                         sortifseednull = "nextbegindate ASC";
@@ -289,8 +289,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("eventtypes")
                         .Select("data")
-                        .Where("id",id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());                
+                        .Where("id", id.ToUpper())
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

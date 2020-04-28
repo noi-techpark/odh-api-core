@@ -93,7 +93,7 @@ namespace OdhApiCore.Controllers.api
 
             return await GetFiltered(
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
-                type: type, subtypefilter: subtype, poitypefilter: poitype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter, 
+                type: type, subtypefilter: subtype, poitypefilter: poitype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter,
                 sourcefilter: source, locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight?.Value, active: active?.Value,
                 smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult, cancellationToken);
         }
@@ -113,7 +113,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHActivityPoi/{id}", Name = "SingleODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiSingle(
-            string id, 
+            string id,
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -150,7 +150,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(SmgPoiTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("ODHActivityPoiTypes/{*id}", Name ="SingleODHActivityPoiTypes")]
+        [HttpGet, Route("ODHActivityPoiTypes/{*id}", Name = "SingleODHActivityPoiTypes")]
         public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(string id)
         {
             return await GetSmgPoiTypesSingle(id);
@@ -162,7 +162,7 @@ namespace OdhApiCore.Controllers.api
         #region GETTER
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize,
-            string? type, string? subtypefilter, string? poitypefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter, 
+            string? type, string? subtypefilter, string? poitypefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>

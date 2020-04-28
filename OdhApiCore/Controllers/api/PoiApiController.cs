@@ -105,8 +105,8 @@ namespace OdhApiCore.Controllers.api
         //[Authorize(Roles = "DataReader,PoiReader")]
         [HttpGet, Route("Poi/{id}", Name = "SinglePoi")]
         public async Task<IActionResult> GetPoiSingle(
-            string id, 
-            string? language = null, 
+            string id,
+            string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
          CancellationToken cancellationToken = default)
@@ -148,7 +148,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
         [HttpGet, Route("PoiTypes/{id}", Name = "SinglePoiTypes")]
-        public async Task<IActionResult> GetAllPoiTypesSingle(string id, string language,  CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllPoiTypesSingle(string id, string language, CancellationToken cancellationToken)
         {
             return await GetPoiTypesSingleAsync(id, cancellationToken);
         }
@@ -286,7 +286,7 @@ namespace OdhApiCore.Controllers.api
                         //.WhereJsonb("Key", "ilike", id)
                         .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());
-                        //.Where("Key", "ILIKE", id);
+                //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
