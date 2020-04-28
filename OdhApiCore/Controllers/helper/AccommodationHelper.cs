@@ -24,7 +24,11 @@ namespace OdhApiCore.Controllers
         public List<string> municipalitylist;
         public List<string> tourismvereinlist;
         public List<string> regionlist;
+        public bool? bookable;
         public bool apartment;
+        public bool altitude;
+        public int altitudemin;
+        public int altitudemax;
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
@@ -32,8 +36,8 @@ namespace OdhApiCore.Controllers
         public static async Task<AccommodationHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? locfilter,
             string? boardfilter, string? categoryfilter, string? typefilter, string? featurefilter,
-            string? badgefilter, string? themefilter, string? smgtags,
-            bool? activefilter, bool? smgactivefilter, string? lastchange,
+            string? badgefilter, string? themefilter, string? altitudefilter, string? smgtags,
+            bool? activefilter, bool? smgactivefilter, bool? bookablefilter, string? lastchange,
             CancellationToken cancellationToken)
         {
             IEnumerable<string>? tourismusvereinids = null;
@@ -45,14 +49,14 @@ namespace OdhApiCore.Controllers
 
             return new AccommodationHelper(
                 idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
-                featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter,
+                featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, bookablefilter: bookablefilter,
                 activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange,
                 tourismusvereinids: tourismusvereinids);
         }
 
         private AccommodationHelper(
             string? idfilter, string? locfilter, string? boardfilter, string? categoryfilter, string? typefilter,
-            string? featurefilter, string? badgefilter, string? themefilter,
+            string? featurefilter, string? badgefilter, string? themefilter, string? altitudefilter, bool? bookablefilter,
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
             IEnumerable<string>? tourismusvereinids)
         {
@@ -64,7 +68,11 @@ namespace OdhApiCore.Controllers
             badgelist = AccoListCreator.CreateBadgeListfromFlag(badgefilter);
             themelist = AccoListCreator.CreateThemeListDictfromFlag(themefilter);
             idlist = String.IsNullOrEmpty(idfilter) ? new List<string>() : CommonListCreator.CreateIdList(idfilter.ToUpper());
+            smgtaglist = CommonListCreator.CreateIdList(smgtags);
 
+
+            districtlist = new List<string>();
+            municipalitylist = new List<string>();
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();
             if (locfilter != null && locfilter.Contains("reg"))
@@ -86,6 +94,13 @@ namespace OdhApiCore.Controllers
                 apartment = true;
                 accotypelist.Remove("Apartment");
             }
+
+            //Altitude
+            altitude = altitudefilter != null;
+            if (altitude)
+                (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
+
+            bookable = bookablefilter;
 
             //active
             active = activefilter;
