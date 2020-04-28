@@ -539,58 +539,59 @@ namespace OdhApiCore.Controllers.api
         }
 
 
-
-
         ////Special GETTER
 
-        ///// <summary>
-        ///// GET Wine Awards List
-        ///// </summary>
-        ///// <param name="elements">Elements to retrieve (0 = Get All)</param>
-        ///// <param name="companyid">Company Id</param>
-        ///// <param name="wineid">WineId</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>Collection of Wine Objects</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Array of Wine Objects", typeof(IEnumerable<Wine>))]
-        ////[Authorize(Roles = "DataReader,CommonReader,SuedtirolWineReader")]
-        //[OpenData("Wine")]
-        //[HttpGet, Route("api/WineAward")]
-        //public IHttpActionResult GetWineAwardsList(
-        //    int elements = 0,
-        //    string wineid = null,
-        //    string companyid = null,
-        //    string fields = null,
-        //    string language = null
-        //    )
-        //{
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
+        /// <summary>
+        /// GET Wine Awards List
+        /// </summary>
+        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="companyid">Company Id</param>
+        /// <param name="wineid">WineId</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<Wine>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        //    if (wineid == null && companyid == null)
-        //        return GetWineAwardList(0, fieldselector, language);
-        //    else if (companyid != null || wineid != null)
-        //        return GetWineListbyCompanyId(companyid, wineid, fieldselector, language);
-        //    else
-        //        return BadRequest("not supported");
-        //}
+        [HttpGet, Route("WineAward")]
+        public async Task<IActionResult> GetWineAwardsList(
+            string? wineid = null,
+            string? companyid = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            string? seed = null,
+            string? searchfilter = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            WineHelper commonhelper = await WineHelper.CreateAsync(QueryFactory, null, companyid, wineid, null, null, null, null, null, null, cancellationToken);
 
-        ///// <summary>
-        ///// GET Wine Award Single
-        ///// </summary>
-        ///// <param name="id">ID of the requested data</param>
-        ///// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        ///// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        ///// <returns>Wine Object</returns>        
-        //[SwaggerResponse(HttpStatusCode.OK, "Wine Object", typeof(Wine))]
-        ////[Authorize(Roles = "DataReader,CommonReader,SuedtirolWineReader")]
-        //[OpenData("Wine")]
-        //[HttpGet, Route("api/WineAward/{id}")]
-        //public IHttpActionResult GetWineAwardsSingle(string id, string fields = null, string language = null)
-        //{
-        //    var fieldselector = !String.IsNullOrEmpty(fields) ? fields.Split(',') : null;
+            return await WineGetListHelper(tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), language: language, commonhelper, cancellationToken);
+        }
 
-        //    return GetWineAward(id, fieldselector, language);
-        //}
+        /// <summary>
+        /// GET Wine Award Single
+        /// </summary>
+        /// <param name="id">ID of the requested data</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>Wine Object</returns>        
+        [ProducesResponseType(typeof(SkiArea), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("WineAward/{id}", Name ="SingleWineAward")]
+        public async Task<IActionResult> GetWineAwardsSingle(string id, 
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? language = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await CommonGetSingleHelper(id: id, tablename: "wines", fields: fields ?? Array.Empty<string>(), language: language, cancellationToken);
+        }
 
         //MetaRegions
 
@@ -624,6 +625,32 @@ namespace OdhApiCore.Controllers.api
                         .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
                         .GeoSearchFilterAndOrderby(geosearchresult);
 
+                // Get paginated data
+                var data =
+                    await query
+                        .GetAsync<JsonRaw>();
+
+                var dataTransformed =
+                    data.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
+                    );
+
+                return dataTransformed;
+            });
+        }
+
+        private Task<IActionResult> WineGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From(tablename)
+                        .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
+                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC");
+                
                 // Get paginated data
                 var data =
                     await query

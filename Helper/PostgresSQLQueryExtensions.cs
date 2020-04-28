@@ -498,6 +498,20 @@ namespace Helper
                 )
             );
 
+        public static Query CompanyIdFilter(this Query query, IReadOnlyCollection<string> companyidfilter) =>
+           query.WhereInJsonb(
+                list: companyidfilter,
+                "CompanyId",
+                compid => compid
+            );
+
+        public static Query WineIdFilter(this Query query, IReadOnlyCollection<string> wineidfilter) =>
+           query.WhereInJsonb(
+                list: wineidfilter,
+                "CustomId",
+                wineid => wineid
+            );
+
 
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>

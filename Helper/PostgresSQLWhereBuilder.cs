@@ -351,6 +351,25 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData());
         }
 
+        //Return Where and Parameters for Wine
+        public static Query WineWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> companyid, IReadOnlyCollection<string> wineid,
+            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                searchfilter, language, lastchange
+            );
+
+            return query
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange)
+                .CompanyIdFilter(companyid)
+                .WineIdFilter(wineid)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
 
         //Return Where and Parameters for WebCamInfo
         public static Query WebCamInfoWhereExpression(
