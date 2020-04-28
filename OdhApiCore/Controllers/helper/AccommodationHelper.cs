@@ -68,6 +68,8 @@ namespace OdhApiCore.Controllers
             badgelist = AccoListCreator.CreateBadgeListfromFlag(badgefilter);
             themelist = AccoListCreator.CreateThemeListDictfromFlag(themefilter);
             idlist = String.IsNullOrEmpty(idfilter) ? new List<string>() : CommonListCreator.CreateIdList(idfilter.ToUpper());
+            smgtaglist = CommonListCreator.CreateIdList(smgtags);
+
 
             districtlist = new List<string>();
             municipalitylist = new List<string>();
