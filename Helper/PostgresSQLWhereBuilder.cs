@@ -308,7 +308,7 @@ namespace Helper
             IReadOnlyCollection<string> boardlist, IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, bool? apartmentfilter, bool? bookable,
-            bool? altitude, int altitudemin, int altitudemax, bool? activefilter, bool? smgactivefilter,
+            bool altitude, int altitudemin, int altitudemax, bool? activefilter, bool? smgactivefilter,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
@@ -328,7 +328,8 @@ namespace Helper
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
-                //TODO ADD accotypelist, categorylist, featurelist, badgelist, themelist, boardlist, apartmentfilter, bookable, altitude
+                .AccoAltitudeFilter(altitude, altitudemin, altitudemax)
+                //TODO ADD accotypelist, categorylist, featurelist, badgelist, themelist, boardlist, apartmentfilter, bookable, 
                 //.HasLanguageFilter(languagelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)

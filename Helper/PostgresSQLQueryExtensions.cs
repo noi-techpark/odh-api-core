@@ -512,6 +512,16 @@ namespace Helper
                 wineid => wineid
             );
 
+        public static Query AccoAltitudeFilter(this Query query, bool altitude, int altitudemin, int altitudemax) =>
+            query.When(
+                altitude,
+                query => query.WhereRaw(
+                    "(data#>>'\\{Altitude\\}')::numeric > ? AND (data#>>'\\{Altitude\\}')::numeric < ?",
+                    altitudemin,
+                    altitudemax
+                )
+            );
+
 
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
