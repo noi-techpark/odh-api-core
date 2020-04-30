@@ -467,27 +467,7 @@ namespace Helper
                 )
             );
 
-        //Board Filter (Accommodation)
-        public static Query BoardFilter(this Query query, IReadOnlyCollection<string> boardlist) =>
-         query.WhereInJsonb(
-             boardlist,
-             board => new { BoardIds = new[] { board.ToLower() } }
-         );
-
-        //Badge Filter (Accommodation)
-        public static Query BadgeFilter(this Query query, IReadOnlyCollection<string> badgelist) =>
-         query.WhereInJsonb(
-             badgelist,
-             badge => new { BadgeIds = new[] { badge.ToLower() } }
-         );
-
-        //Category Filter (Accommodation)
-        public static Query CategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
-           query.WhereInJsonb(
-                list: categorylist,
-                "AccoCategoryId",
-                category => category
-            );
+       
 
         public static Query VisibleInSearchFilter(this Query query, bool? visibleinsearch) =>
             query.When(
@@ -522,6 +502,86 @@ namespace Helper
                 )
             );
 
+        public static Query AccoTypeFilter(this Query query, IReadOnlyCollection<string> accotypefilter) =>
+          query.WhereInJsonb(
+               list: accotypefilter,
+               "AccoTypeId",
+               wineid => wineid
+           );
+
+        //Board Filter (Accommodation)
+        public static Query AccoBoardFilter(this Query query, IReadOnlyCollection<string> boardlist) =>
+         query.WhereInJsonb(
+             boardlist,
+             board => new { BoardIds = new[] { board.ToLower() } }
+         );
+
+        //Badge Filter (Accommodation)
+        public static Query AccoBadgeFilter(this Query query, IReadOnlyCollection<string> badgelist) =>
+         query.WhereInJsonb(
+             badgelist,
+             badge => new { BadgeIds = new[] { badge.ToLower() } }
+         );
+
+        //Feature Filter (Accommodation)
+        public static Query AccoFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
+         query.WhereInJsonb(
+             featurelist,
+             feature => new { SpecialFeaturesIds = new[] { feature.ToLower() } }
+         );
+
+        //Feature Filter (Accommodation)
+        public static Query AccoLTSFeatureFilter(this Query query, IReadOnlyCollection<string> ltsfeaturelist) =>
+         query.WhereInJsonb(
+             ltsfeaturelist,
+             feature => new { Features = new[] { new { Id = feature.ToUpper() } } }
+         );
+
+        //Marketinggroups Filter (Accommodation)
+        public static Query AccoMarketinggroupFilter(this Query query, IReadOnlyCollection<string> marketinggrouplist) =>
+         query.WhereInJsonb(
+             marketinggrouplist,
+             marketinggroup => new { MarketingGroupIds = new[] { marketinggroup } }
+         );
+
+        //Feature Filter (Accommodation)
+        public static Query AccoBookingPortalFeatureFilter(this Query query, IReadOnlyCollection<string> bookingportallist) =>
+         query.WhereInJsonb(
+             bookingportallist,
+             bookingportal => new { AccoBookingChannel = new[] { new { Id = bookingportal } } }
+         );
+
+        public static Query AccoThemeFilter(this Query query, IReadOnlyCollection<string> themelist) =>
+         query.WhereInJsonb(
+             themelist,
+             theme => new { ThemeIds = new[] { theme } }
+         );
+
+        //Category Filter (Accommodation)
+        public static Query AccoCategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
+           query.WhereInJsonb(
+                list: categorylist,
+                "AccoCategoryId",
+                category => category
+            );
+
+        public static Query AccoApartmentFilter(this Query query, bool? apartment) =>
+            query.When(
+                apartment != null,
+                query => query.WhereJsonb(
+                    "HasApartment",
+                    apartment ?? false
+                )
+            );
+
+        public static Query AccoBookableFilter(this Query query, bool? bookable) =>
+            query.When(
+                bookable != null,
+                query => query.WhereJsonb(
+                    "IsBookable",
+                    bookable ?? false
+                )
+            );
 
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>

@@ -329,7 +329,16 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AccoAltitudeFilter(altitude, altitudemin, altitudemax)
-                //TODO ADD accotypelist, categorylist, featurelist, badgelist, themelist, boardlist, apartmentfilter, bookable, 
+                .AccoTypeFilter(accotypelist)
+                .AccoCategoryFilter(categorylist)
+                .AccoFeatureFilter(featurelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
+                .AccoBadgeFilter(badgelist)
+                .AccoThemeFilter(themelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
+                .AccoBoardFilter(boardlist)
+                .AccoApartmentFilter(apartmentfilter)
+                .AccoBoardFilter(boardlist)
+                .AccoBookableFilter(bookable)
+                // FILTERS Available Marketinggroup, LTSFeature, BookingPortal
                 //.HasLanguageFilter(languagelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)

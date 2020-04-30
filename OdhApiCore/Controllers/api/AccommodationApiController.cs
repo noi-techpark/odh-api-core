@@ -221,7 +221,7 @@ namespace OdhApiCore.Controllers
 
             //Contains 4 Methods GETSINGLE, GETBYHGVID, GETAVAILABLESINGLE, GETAVAILABLESINGLELCS
 
-            List<string> bokfilterlist = bokfilter.Split(',').ToList();
+            List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
             //Fall 1 GET Single
             if (availabilitycheck?.Value != true && idsource == "lts")
