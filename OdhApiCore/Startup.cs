@@ -310,7 +310,7 @@ namespace OdhApiCore
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 c.RoutePrefix = string.Empty;
                 c.OAuthClientId("odh-api-core");
-                c.OAuthClientSecret("fa351874-f4cf-417d-b5e5-25b9b4bc0b7d");
+                c.OAuthClientSecret("");
                 c.OAuthRealm("noi");
             });
 
