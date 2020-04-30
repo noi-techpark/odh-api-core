@@ -22,7 +22,10 @@ using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.File;
 using SqlKata.Compilers;
 using SqlKata.Execution;
+using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace OdhApiCore
@@ -190,12 +193,28 @@ namespace OdhApiCore
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "OdhApi .Net Core", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "OdhApi Tourism .Net Core", 
+                    Version = "v1",
+                    Description = "ODH Tourism Api based on .Net Core with PostgreSQL",
+                    TermsOfService = new System.Uri("https://opendatahub.readthedocs.io/en/latest/"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Open Data Hub Team",
+                        Email = "info@opendatahub.bz.it",
+                        Url = new System.Uri("https://opendatahub.bz.it/"),
+                    },
+                });
                 //c.IncludeXmlComments(filePath);
                 c.MapType<LegacyBool>(() => new OpenApiSchema
                 {
                     Type = "boolean"
                 });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
 
             services.Configure<ForwardedHeadersOptions>(options =>
