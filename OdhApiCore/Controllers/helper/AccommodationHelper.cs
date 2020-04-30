@@ -25,7 +25,7 @@ namespace OdhApiCore.Controllers
         public List<string> tourismvereinlist;
         public List<string> regionlist;
         public bool? bookable;
-        public bool apartment;
+        public bool? apartment;
         public bool altitude;
         public int altitudemin;
         public int altitudemax;
@@ -88,7 +88,7 @@ namespace OdhApiCore.Controllers
                 tourismvereinlist.AddRange(tourismusvereinids);
 
             ///Special Case Apartment Setting Filter to HasApartment
-            apartment = false;
+            apartment = null;
             if (accotypelist.Contains("Apartment"))
             {
                 apartment = true;

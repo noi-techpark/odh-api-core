@@ -22,7 +22,12 @@ using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.File;
 using SqlKata.Compilers;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace OdhApiCore
@@ -190,12 +195,71 @@ namespace OdhApiCore
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "OdhApi .Net Core", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "OdhApi Tourism .Net Core", 
+                    Version = "v1",
+                    Description = "ODH Tourism Api based on .Net Core with PostgreSQL",
+                    TermsOfService = new System.Uri("https://opendatahub.readthedocs.io/en/latest/"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Open Data Hub Team",
+                        Email = "info@opendatahub.bz.it",
+                        Url = new System.Uri("https://opendatahub.bz.it/"),
+                    },
+                });
                 //c.IncludeXmlComments(filePath);
                 c.MapType<LegacyBool>(() => new OpenApiSchema
                 {
                     Type = "boolean"
                 });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        Password = new OpenApiOAuthFlow
+                        {
+                           TokenUrl = new Uri("https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token")
+                        }
+                        //AuthorizationCode = new OpenApiOAuthFlow
+                        //{
+                        //    AuthorizationUrl = new Uri("/auth-server/connect/authorize", UriKind.Relative),
+                        //    TokenUrl = new Uri("/auth-server/connect/token", UriKind.Relative),
+                        //    Scopes = new Dictionary<string, string>
+                        //    {
+                        //        { "readAccess", "Access read operations" },
+                        //        { "writeAccess", "Access write operations" }
+                        //    }
+                        //}
+                    },
+                    BearerFormat = "JWT"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                  {
+                    {
+                      new OpenApiSecurityScheme
+                      {
+                        Reference = new OpenApiReference
+                          {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                          },
+                          Scheme = "oauth2",
+                          Name = "Bearer",
+                          In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                      }
+                    });
+
             });
 
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -253,6 +317,10 @@ namespace OdhApiCore
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+                c.OAuthClientId("odh-api-core");
+                c.OAuthClientSecret("");
+                c.OAuthRealm("noi");
             });
 
             app.UseEndpoints(endpoints =>
