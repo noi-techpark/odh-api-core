@@ -153,6 +153,23 @@ namespace Helper
             }
         }
 
+        [Obsolete]
+        public static Query WhereAllInJsonb<T>(
+           this Query query,
+           IReadOnlyCollection<T> list,
+           Func<T, object> jsonObjectConstructor) =>
+               query.Where(q =>
+               {
+                   foreach (var item in list)
+                   {
+                       q = q.WhereJsonb(
+                           value: item,
+                           jsonObjectConstructor
+                       );
+                   }
+                   return q;
+               });
+
         public static Query DistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
             query.WhereInJsonb(
                 list: districtlist,
@@ -539,20 +556,20 @@ namespace Helper
              bookingportal => new { AccoBookingChannel = new[] { new { Id = bookingportal } } }
          );
 
-        //TODO THEMEFILTER should be connected with AND not OR
-        public static Query AccoThemeFilter(this Query query, IReadOnlyCollection<string> themelist) =>
-         query.WhereInJsonb(
+        //THEMEFILTER is AND connected
+        public static Query AccoThemeFilter(this Query query, IReadOnlyCollection<string> themelist) =>                                  
+            query.WhereAllInJsonb(
              themelist,
              theme => new { ThemeIds = new[] { theme } }
          );
 
-        //TODO THEMEFILTER should be connected with AND not OR
+        //TODO THEMEFILTER is AND connected
         public static Query AccoFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
-        query.WhereInJsonb(
+        query.WhereAllInJsonb(
              featurelist,
              feature => new { SpecialFeaturesIds = new[] { feature.ToLower() } }
          );
-        
+
         public static Query AccoCategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
            query.WhereInJsonb(
                 list: categorylist,
