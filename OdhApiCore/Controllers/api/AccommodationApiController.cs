@@ -221,7 +221,7 @@ namespace OdhApiCore.Controllers
 
             //Contains 4 Methods GETSINGLE, GETBYHGVID, GETAVAILABLESINGLE, GETAVAILABLESINGLELCS
 
-            List<string> bokfilterlist = bokfilter.Split(',').ToList();
+            List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
             //Fall 1 GET Single
             if (availabilitycheck?.Value != true && idsource == "lts")
@@ -297,7 +297,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(ArticleTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ArticleTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
@@ -319,7 +319,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
-        [HttpGet, Route("AccommodationTypes/{*id}")]
+        [HttpGet, Route("AccommodationTypes/{id}", Name = "SingleAccommodationTypes")]
         public async Task<IActionResult> GetAllAccommodationTypessingle(string id, CancellationToken cancellationToken)
         {
             return await GetAccoTypeSingle(id, cancellationToken);
@@ -333,7 +333,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(ArticleTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<AccoFeature>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
