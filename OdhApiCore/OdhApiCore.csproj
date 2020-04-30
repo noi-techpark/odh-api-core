@@ -22,6 +22,7 @@
     <PackageReference Include="Serilog.Sinks.ElasticSearch" Version="8.0.1" />
     <PackageReference Include="SqlKata.Execution" Version="2.0.2-ci-771" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.2.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.4.1" />
   </ItemGroup>
 
   <ItemGroup>

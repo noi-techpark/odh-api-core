@@ -22,7 +22,9 @@ using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.File;
 using SqlKata.Compilers;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -215,6 +217,40 @@ namespace OdhApiCore
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        Password = new OpenApiOAuthFlow
+                        {
+                           TokenUrl = new Uri("https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token")
+                        }
+                        //AuthorizationCode = new OpenApiOAuthFlow
+                        //{
+                        //    AuthorizationUrl = new Uri("/auth-server/connect/authorize", UriKind.Relative),
+                        //    TokenUrl = new Uri("/auth-server/connect/token", UriKind.Relative),
+                        //    Scopes = new Dictionary<string, string>
+                        //    {
+                        //        { "readAccess", "Access read operations" },
+                        //        { "writeAccess", "Access write operations" }
+                        //    }
+                        //}
+                    },
+                    BearerFormat = "JWT"
+                });
+                //c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {
+                //        new OpenApiSecurityScheme
+                //        {
+                //            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+                //        }
+                //    }
+                //});
+
             });
 
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -273,6 +309,9 @@ namespace OdhApiCore
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 c.RoutePrefix = string.Empty;
+                c.OAuthClientId("odh-api-core");
+                c.OAuthClientSecret("fa351874-f4cf-417d-b5e5-25b9b4bc0b7d");
+                c.OAuthRealm("noi");
             });
 
             app.UseEndpoints(endpoints =>
