@@ -99,7 +99,7 @@ namespace Helper
                     JsonConvert.SerializeObject(
                         jsonObjectConstructor(value)
                     )
-                );
+                );       
 
         [Obsolete]
         public static Query WhereInJsonb<T>(
@@ -116,7 +116,7 @@ namespace Helper
                         );
                     }
                     return q;
-                });
+                });      
 
         public static Query WhereInJsonb<T>(
             this Query query,
@@ -508,56 +508,51 @@ namespace Helper
                "AccoTypeId",
                wineid => wineid
            );
-
-        //Board Filter (Accommodation)
+        
         public static Query AccoBoardFilter(this Query query, IReadOnlyCollection<string> boardlist) =>
          query.WhereInJsonb(
              boardlist,
              board => new { BoardIds = new[] { board.ToLower() } }
          );
 
-        //Badge Filter (Accommodation)
         public static Query AccoBadgeFilter(this Query query, IReadOnlyCollection<string> badgelist) =>
          query.WhereInJsonb(
              badgelist,
              badge => new { BadgeIds = new[] { badge.ToLower() } }
          );
-
-        //Feature Filter (Accommodation)
-        public static Query AccoFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
-         query.WhereInJsonb(
-             featurelist,
-             feature => new { SpecialFeaturesIds = new[] { feature.ToLower() } }
-         );
-
-        //Feature Filter (Accommodation)
+        
         public static Query AccoLTSFeatureFilter(this Query query, IReadOnlyCollection<string> ltsfeaturelist) =>
          query.WhereInJsonb(
              ltsfeaturelist,
              feature => new { Features = new[] { new { Id = feature.ToUpper() } } }
          );
 
-        //Marketinggroups Filter (Accommodation)
         public static Query AccoMarketinggroupFilter(this Query query, IReadOnlyCollection<string> marketinggrouplist) =>
          query.WhereInJsonb(
              marketinggrouplist,
              marketinggroup => new { MarketingGroupIds = new[] { marketinggroup } }
          );
 
-        //Feature Filter (Accommodation)
         public static Query AccoBookingPortalFeatureFilter(this Query query, IReadOnlyCollection<string> bookingportallist) =>
          query.WhereInJsonb(
              bookingportallist,
              bookingportal => new { AccoBookingChannel = new[] { new { Id = bookingportal } } }
          );
 
+        //TODO THEMEFILTER should be connected with AND not OR
         public static Query AccoThemeFilter(this Query query, IReadOnlyCollection<string> themelist) =>
          query.WhereInJsonb(
              themelist,
              theme => new { ThemeIds = new[] { theme } }
          );
 
-        //Category Filter (Accommodation)
+        //TODO THEMEFILTER should be connected with AND not OR
+        public static Query AccoFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
+        query.WhereInJsonb(
+             featurelist,
+             feature => new { SpecialFeaturesIds = new[] { feature.ToLower() } }
+         );
+        
         public static Query AccoCategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
            query.WhereInJsonb(
                 list: categorylist,
