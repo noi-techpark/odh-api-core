@@ -23,6 +23,7 @@ using Serilog.Sinks.File;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -227,39 +228,25 @@ namespace OdhApiCore
                         Password = new OpenApiOAuthFlow
                         {
                            TokenUrl = new Uri("https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token")
-                        }
-                        //AuthorizationCode = new OpenApiOAuthFlow
-                        //{
-                        //    AuthorizationUrl = new Uri("/auth-server/connect/authorize", UriKind.Relative),
-                        //    TokenUrl = new Uri("/auth-server/connect/token", UriKind.Relative),
-                        //    Scopes = new Dictionary<string, string>
-                        //    {
-                        //        { "readAccess", "Access read operations" },
-                        //        { "writeAccess", "Access write operations" }
-                        //    }
-                        //}
+                        }                        
                     },
-                    BearerFormat = "JWT"
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                  {
-                    {
-                      new OpenApiSecurityScheme
-                      {
-                        Reference = new OpenApiReference
-                          {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                          },
-                          Scheme = "oauth2",
-                          Name = "Bearer",
-                          In = ParameterLocation.Header,
-
-                        },
-                        new List<string>()
-                      }
-                    });
-
+                c.OperationFilter<AuthenticationRequirementsOperationFilter>();
+                //c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {
+                //        new OpenApiSecurityScheme
+                //        {
+                //            Reference = new OpenApiReference
+                //            {
+                //                Type = ReferenceType.SecurityScheme,
+                //                Id = "bearer"
+                //            }
+                //        }, new List<string>()
+                //    }
+                //});
             });
 
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -327,6 +314,22 @@ namespace OdhApiCore
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
+        }
+    }
+
+    public class AuthenticationRequirementsOperationFilter : IOperationFilter
+    {
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        {
+            if (operation.Security == null)
+                operation.Security = new List<OpenApiSecurityRequirement>();
+
+
+            var scheme = new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" } };
+            operation.Security.Add(new OpenApiSecurityRequirement
+            {
+                [scheme] = new List<string>()
             });
         }
     }
