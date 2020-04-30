@@ -319,7 +319,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
-        [HttpGet, Route("AccommodationTypes/{*id}", Name = "SingleAccommodationTypes")]
+        [HttpGet, Route("AccommodationTypes/{id}", Name = "SingleAccommodationTypes")]
         public async Task<IActionResult> GetAllAccommodationTypessingle(string id, CancellationToken cancellationToken)
         {
             return await GetAccoTypeSingle(id, cancellationToken);
