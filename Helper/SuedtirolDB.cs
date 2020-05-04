@@ -810,6 +810,14 @@ namespace Helper
 
         //MSS Result
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
+        public ICollection<AccoRoomInfo> AccoRoomInfo { get; set; }
+    }
+
+    public class AccoRoomInfo
+    {
+        public string Id { get; set; }
+
+        public string Source { get; set; }
     }
 
     public class AccoDetail : ILanguage
@@ -836,6 +844,11 @@ namespace Helper
     {
         public string? Id { get; set; }
         public string? Name { get; set; }
+
+        public string HgvId { get; set; }
+        public string OtaCodes { get; set; }
+
+        public List<int> RoomAmenityCodes { get; set; }
     }
 
     public class AccoBookingChannel
@@ -885,6 +898,10 @@ namespace Helper
         public Nullable<int> Roomstd { get; set; }
         public Nullable<double> PriceFrom { get; set; }
         public Nullable<int> RoomQuantity { get; set; }
+
+        public List<string> RoomNumbers { get; set; }
+        public Nullable<int> RoomClassificationCodes { get; set; }
+        public Nullable<int> RoomtypeInt { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
