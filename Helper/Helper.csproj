@@ -15,4 +15,8 @@
     <PackageReference Include="System.Interactive.Async" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="LCS\" />
+  </ItemGroup>
+
 </Project>

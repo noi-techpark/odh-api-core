@@ -40,7 +40,7 @@ namespace Helper
         public double? CheapestOffer_fb { get; set; }
         public double? CheapestOffer_ai { get; set; }
 
-        public virtual ICollection<RoomDetails> RoomDetails => new List<RoomDetails>();
+        public virtual ICollection<RoomDetails> RoomDetails { get; set; } // => new List<RoomDetails>();
     }
 
     public class RoomDetails
@@ -73,7 +73,8 @@ namespace Helper
 
         public string? TotalPriceString { get; set; }
 
-        public virtual ICollection<RoomPictures> RoomPictures => new List<RoomPictures>();
+        //public virtual ICollection<RoomPictures> RoomPictures => new List<RoomPictures>();
+        public virtual ICollection<RoomPictures> RoomPictures { get; set; }
 
         ///NEU MSS Umstellung FELDER
 
@@ -112,7 +113,7 @@ namespace Helper
         public DateTime? RefundableUntil { get; set; }
         public string? Description { get; set; }
 
-        public List<Penalty> Penalties => new List<Penalty>();
+        public List<Penalty> Penalties { get; set; }  //=> new List<Penalty>();
     }
 
     public class Penalty
