@@ -10,7 +10,7 @@ namespace Helper
         public string? CheapestChannel { get; set; }
         public double? Cheapestprice { get; set; }
         public int? bookableHotels { get; set; }
-        public virtual ICollection<MssResponseShort> MssResponseShort => new HashSet<MssResponseShort>();
+        public virtual ICollection<MssResponseShort>? MssResponseShort { get; set; } //=> new HashSet<MssResponseShort>();
     }
 
 
