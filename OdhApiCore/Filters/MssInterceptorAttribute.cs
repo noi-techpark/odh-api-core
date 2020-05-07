@@ -44,10 +44,9 @@ namespace OdhApiCore.Filters
                 string source = (string?)query["source"] ?? "sinfo";
 
                 List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
-                var bookableAccoIds = new List<string>()
-                {
-                    "0A140305173D4B7A972E43EFA7A67AF3"
-                };
+
+                context.RouteData.Values.TryGetValue("id", out object id);
+                var bookableAccoIds = new List<string>() { (string)id };
 
                 if (context.Result is OkObjectResult okObject && okObject.Value is JsonRaw jRaw)
                 {
