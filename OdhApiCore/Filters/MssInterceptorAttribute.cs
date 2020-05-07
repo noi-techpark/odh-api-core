@@ -98,25 +98,26 @@ namespace OdhApiCore.Filters
             return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
         }
 
-        //private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string source)
-        //{            
-        //    var service = Common.AccoListCreator.CreateBoardListLCSfromFlag(boardfilter);
-        //    var myroomdata = GetAccommodationDataLCS.RoomstayTransformer(roominfo);
+        private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string source)
+        {
+            LcsHelper myhelper = LcsHelper.Create(bookableaccoIDs, language, roominfo, boardfilter, arrival, departure, source);
 
-        //    //Achtung muassi no schaugn!
-        //    if (bookableaccoIDs.Count > 0)
-        //    {
-        //        var accosearchrequest = GetAccommodationDataLCS.GetAccommodationDataSearchRequest("", "1", "10000", "de", "1", "", "", "0", "0", arrival, departure, "1", "0", service, bookableaccoIDs, new List<string>(), new List<string>(), new List<string>(), myroomdata, source, ltsmessagepswd);
+            if (bookableaccoIDs.Count > 0)
+            {
+                var accosearchrequest = Helper.LCS.GetAccommodationDataLCS.GetAccommodationDataSearchRequest(resultRID: "", pageNr: "1", pageSize: "10000", language: myhelper.lcsrequestlanguage, 
+                    sortingcriterion: "1", sortingorder: "", sortingpromotebookable: "", request: "0", filters: "0", timespanstart: myhelper.arrival, timespanend: myhelper.departure, 
+                    checkavailabilitystatus: "1", onlybookableresults: "0", mealplans: myhelper.service, accommodationrids: myhelper.accoidlist, tourismorg: new List<string>(), 
+                    districts: new List<string>(), marketinggroups: new List<string>(), lcsroomstay: myhelper.myroomdata, requestor: source, messagepswd: settings.LcsConfig.MessagePassword);
 
-        //        var myaccosearchlcs = new GetAccommodationDataLCS(ltsuser, ltspswd);
-        //        var response = await myaccosearchlcs.GetAccommodationDataSearchAsync(accosearchrequest);
-        //        var myparsedresponse = ParseAccoSearchResult.ParsemyLCSResponse(language, response, myroomdata.Count);
+                var myaccosearchlcs = new Helper.LCS.GetAccommodationDataLCS(settings.LcsConfig.Username, settings.LcsConfig.Password);
+                var response = await myaccosearchlcs.GetAccommodationDataSearchAsync(accosearchrequest);
+                var myparsedresponse = Helper.LCS.ParseAccoSearchResult.ParsemyLCSResponse(language, response, myhelper.rooms);
 
-        //        return myparsedresponse;
-        //    }
-        //    else
-        //        return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
-        //}
+                if (myparsedresponse != null)
+                    return myparsedresponse;
+            }
+            return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
+        }
 
         private bool CheckArrivalAndDeparture(string arrival, string departure)
         {
