@@ -13,9 +13,20 @@ namespace Helper.LCS
 
         public GetAccommodationDataLCS(string user, string pswd)
         {
-            //https://medium.com/grensesnittet/integrating-with-soap-web-services-in-net-core-adebfad173fb
+        //https://medium.com/grensesnittet/integrating-with-soap-web-services-in-net-core-adebfad173fb
+        //https://github.com/dotnet/wcf/issues/8
 
-            BasicHttpBinding basicHttpBinding = new BasicHttpBinding();
+            BasicHttpsBinding basicHttpBinding = new BasicHttpsBinding();
+            //basicHttpBinding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
+            basicHttpBinding.Security.Mode = BasicHttpsSecurityMode.TransportWithMessageCredential;
+
+            var integerMaxValue = int.MaxValue;
+            basicHttpBinding.MaxBufferSize = integerMaxValue;
+            basicHttpBinding.MaxReceivedMessageSize = integerMaxValue;
+            basicHttpBinding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
+            basicHttpBinding.AllowCookies = true;
+
+
             EndpointAddress endpointAddress = new EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
 
             lcs = new ServiceReferenceLCS.DataClient(basicHttpBinding, endpointAddress);
