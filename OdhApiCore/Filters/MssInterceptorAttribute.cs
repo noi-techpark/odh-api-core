@@ -42,6 +42,10 @@ namespace OdhApiCore.Filters
                 string source = (string?)query["source"] ?? "sinfo";
 
                 List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
+                var bookableAccoIds = new List<string>()
+                {
+                    "0A140305173D4B7A972E43EFA7A67AF3"
+                };
 
                 if (context.Result is OkObjectResult okObject && okObject.Value is JsonRaw jRaw)
                 {
@@ -54,9 +58,12 @@ namespace OdhApiCore.Filters
                         {
                             MssResult result = await GetMSSAvailability(
                                 language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                roominfo: roominfo, bokfilter: bokfilter, detail: null, bookableaccoIDs: new List<string>(), source = source);
-                            var resultJson = JsonConvert.SerializeObject(result.MssResponseShort);
-                            mssResponseShortProperty.Value = new JRaw(resultJson);
+                                roominfo: roominfo, bokfilter: bokfilter, detail: null, bookableaccoIDs: bookableAccoIds, source = source);
+                            if (result != null)
+                            {
+                                var resultJson = JsonConvert.SerializeObject(result.MssResponseShort);
+                                mssResponseShortProperty.Value = new JRaw(resultJson);
+                            }
                         }
                     }
                     okObject.Value = jtoken;
