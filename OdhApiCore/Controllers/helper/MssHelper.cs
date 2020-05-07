@@ -42,7 +42,8 @@ namespace OdhApiCore.Controllers.helper
             string arrival, string departure, int hoteldetails, int? offerdetails, string source, 
             string mssversion)
         {
-            bokfilter = bokfilter.Substring(0, bokfilter.Length - 1);
+            if (bokfilter.EndsWith(","))
+                bokfilter = bokfilter.Substring(0, bokfilter.Length - 1);
 
             mybokchannels = bokfilter.Split(',');
 
