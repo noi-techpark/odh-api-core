@@ -8,26 +8,26 @@ namespace OdhApiCore.Controllers.helper
 {
     public class MssHelper
     {
-        public string? mssrequestlanguage;        
-        public string[] mybokchannels;
-        public List<string>? a0ridlist;
-        public List<string>? hgvidlist;
-        public List<Tuple<string,string,List<string>>> myroomdata;        
-        public XElement xoffertype;
-        public XElement xhoteldetails;
-        public DateTime? arrival;
-        public DateTime? departure;
-        public int? service;
-        public int? rooms;
-        public string? hgvservicecode;
-        public string? source;
-        public string? mssversion;
+        public readonly string mssrequestlanguage;
+        public readonly string[] mybokchannels;
+        public readonly List<string> a0ridlist;
+        public readonly List<string> hgvidlist;
+        public readonly List<Tuple<string,string,List<string>>> myroomdata;
+        public readonly XElement xoffertype;
+        public readonly XElement xhoteldetails;
+        public readonly DateTime arrival;
+        public readonly DateTime departure;
+        public readonly int service;
+        public readonly int rooms;
+        public readonly string hgvservicecode;
+        public readonly string source;
+        public readonly string mssversion;
 
         public static MssHelper Create(
             List<string> a0ridlist, List<string> hgvidlist,
-            string? bokfilter, string? language, string? roominfo, string? boardfilter,
-            string? arrival, string? departure, int? hoteldetails, int? offerdetails, 
-            string? source, string? mssversion)
+            string bokfilter, string language, string roominfo, string boardfilter,
+            string arrival, string departure, int hoteldetails, int? offerdetails, 
+            string source, string mssversion)
         {
             return new MssHelper(
                 a0ridlist: a0ridlist, hgvidlist: hgvidlist, bokfilter: bokfilter, language: language,
@@ -38,12 +38,11 @@ namespace OdhApiCore.Controllers.helper
 
         private MssHelper(
             List<string> a0ridlist, List<string> hgvidlist,
-            string? bokfilter, string? language, string? roominfo, string? boardfilter,
-            string? arrival, string? departure, int? hoteldetails, int? offerdetails, string? source, 
-            string? mssversion)
+            string bokfilter, string language, string roominfo, string boardfilter,
+            string arrival, string departure, int hoteldetails, int? offerdetails, string source, 
+            string mssversion)
         {
-            if (bokfilter != null && bokfilter.EndsWith(","))
-                bokfilter = bokfilter.Substring(0, bokfilter.Length - 1);
+            bokfilter = bokfilter.Substring(0, bokfilter.Length - 1);
 
             mybokchannels = bokfilter.Split(',');
 
