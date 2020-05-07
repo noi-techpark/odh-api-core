@@ -22,7 +22,7 @@ namespace Helper
         /// <param name="departure">Abreisedatum</param>
         /// <param name="service">Verpflegungsart</param>
         /// <returns></returns>
-        public static async Task<MssResult> GetMssResponse(HttpClient httpClient, string lang, List<string> A0Ridlist, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string source, string version, string mssuser, string msspswd, bool withoutmssids = false)
+        public static async Task<MssResult?> GetMssResponse(HttpClient httpClient, string lang, List<string> A0Ridlist, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string source, string version, string mssuser, string msspswd, bool withoutmssids = false)
         {
             try
             {
@@ -34,12 +34,10 @@ namespace Helper
 
                 XElement mychannels = MssRequest.BuildChannelList(mybookingchannels);
 
-                XElement myidlist = default(XElement);
-
-                if (withoutmssids)
-                    myidlist = MssRequest.BuildIDList(new List<string>());
-                else
-                    myidlist = MssRequest.BuildIDList(A0Ridlist);
+                XElement myidlist =
+                    withoutmssids
+                    ?  MssRequest.BuildIDList(new List<string>())
+                    : myidlist = MssRequest.BuildIDList(A0Ridlist);
 
                 XElement mytyp = MssRequest.BuildType("10");
 
