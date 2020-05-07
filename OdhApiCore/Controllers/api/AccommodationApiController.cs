@@ -10,6 +10,7 @@ using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,10 +22,13 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class AccommodationController : OdhController
-    {      
-        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+    {
+        private readonly IHttpClientFactory httpClientFactory;
+
+        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
             : base(env, settings, logger, queryFactory)
         {
+            this.httpClientFactory = httpClientFactory;
         }
 
         #region SWAGGER Exposed API
@@ -201,6 +205,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
         [HttpGet, Route("Accommodation/{id}", Name = "SingleAccommodation")]
+        [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
         public async Task<IActionResult> GetAccommodation(
             string id,
             string? idsource = "lts",
@@ -222,10 +227,15 @@ namespace OdhApiCore.Controllers
 
             //Contains 4 Methods GETSINGLE, GETBYHGVID, GETAVAILABLESINGLE, GETAVAILABLESINGLELCS
 
-            List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
+            //List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
+
+            //var result = await GetMSSAvailability(
+            //    language: language ?? "de", arrival: arrival, departure: departure, boardfilter: boardfilter ?? "0",
+            //    roominfo: roominfo, bokfilter: bokfilter, detail: null, bookableaccoIDs: new List<string>(), source = source ?? "sinfo");
 
             //Fall 1 GET Single
-            if (availabilitycheck?.Value != true && idsource == "lts")
+            //if (availabilitycheck?.Value != true && idsource == "lts")
+            if (true)
             {
                 return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
             }
@@ -543,6 +553,7 @@ namespace OdhApiCore.Controllers
             {
                 //0 MSS Method Olle channels affamol mit IDList
                 var myparsedresponse = await GetMssData.GetMssResponse(
+                    httpClientFactory.CreateClient("mss"),
                     lang: myhelper.mssrequestlanguage, A0Ridlist: myhelper.a0ridlist, mybookingchannels: myhelper.mybokchannels,
                     myroomdata: myhelper.myroomdata, arrival: myhelper.arrival.Value, departure: myhelper.departure.Value, service: myhelper.service.Value,
                     hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,

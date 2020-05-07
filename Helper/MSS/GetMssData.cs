@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -21,7 +22,7 @@ namespace Helper
         /// <param name="departure">Abreisedatum</param>
         /// <param name="service">Verpflegungsart</param>
         /// <returns></returns>
-        public static async Task<MssResult> GetMssResponse(string lang, List<string> A0Ridlist, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string source, string version, string mssuser, string msspswd, bool withoutmssids = false)
+        public static async Task<MssResult> GetMssResponse(HttpClient httpClient, string lang, List<string> A0Ridlist, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string source, string version, string mssuser, string msspswd, bool withoutmssids = false)
         {
             try
             {
@@ -51,7 +52,7 @@ namespace Helper
 
                 XDocument myrequest = MssRequest.BuildPostData(myidlist, mychannels, myroomlist, arrival, departure, offerdetails, hoteldetails, mytyp, service, lang, source, version, mssuser, msspswd);
 
-                var myresponses = MssRequest.RequestAsync(myrequest);
+                var myresponses = MssRequest.RequestAsync(httpClient, myrequest);
 
                 await Task.WhenAll(myresponses);
 

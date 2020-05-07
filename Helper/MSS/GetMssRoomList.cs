@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -8,14 +9,14 @@ namespace Helper.MSS
 {
     public class GetMssRoomlist
     {
-        public static async Task<List<AccoRoom>> GetMssRoomlistAsync(string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string mssuser, string msspswd)
+        public static async Task<List<AccoRoom>> GetMssRoomlistAsync(HttpClient httpClient, string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string mssuser, string msspswd)
         {
             try
             {
 
 
                 XDocument myrequest = MssRequest.BuildRoomlistPostData(roomdetails, hotelid, hotelidofchannel, lang, source, version, mssuser, msspswd);
-                var myresponses = MssRequest.RequestRoomAsync(myrequest);
+                var myresponses = MssRequest.RequestRoomAsync(httpClient, myrequest);
 
                 await Task.WhenAll(myresponses);
 
@@ -37,14 +38,14 @@ namespace Helper.MSS
             }
         }
 
-        public static List<AccoRoom> GetMssRoomlistSync(string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string mssuser, string msspswd)
+        public static List<AccoRoom> GetMssRoomlistSync(HttpClient httpClient, string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string mssuser, string msspswd)
         {
             try
             {
 
 
                 XDocument myrequest = MssRequest.BuildRoomlistPostData(roomdetails, hotelid, hotelidofchannel, lang, source, version, mssuser, msspswd);
-                var myresponses = MssRequest.RequestRoom(myrequest);
+                var myresponses = MssRequest.RequestRoom(httpClient, myrequest);
 
                 string roomresponsecontent = myresponses.Content.ReadAsStringAsync().Result;
 
