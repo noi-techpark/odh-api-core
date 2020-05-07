@@ -80,7 +80,7 @@ namespace Helper.MSS
         }
 
 
-        public static XDocument BuildPostData(XElement idlist, XElement channel, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string source, string version, string mssuser, string msspswd)
+        public static XDocument BuildPostData(XElement idlist, XElement channel, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string idofchannel, string source, string version, string mssuser, string msspswd)
         {
             XElement myroot =
                 new XElement("root",
@@ -100,7 +100,7 @@ namespace Helper.MSS
                     new XElement("search",
                         new XElement("lang", lang),
                         idlist.Elements("id"),
-                        new XElement("id_ofchannel", "lts"),
+                        new XElement("id_ofchannel", idofchannel),
                         new XElement("search_offer",
                             channel.Elements("channel_id"),
                             new XElement("arrival", String.Format("{0:yyyy-MM-dd}", arrival)),

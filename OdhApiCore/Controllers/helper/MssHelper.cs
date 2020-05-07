@@ -10,8 +10,8 @@ namespace OdhApiCore.Controllers.helper
     {
         public readonly string mssrequestlanguage;
         public readonly string[] mybokchannels;
-        public readonly List<string> a0ridlist;
-        public readonly List<string> hgvidlist;
+        public readonly List<string> accoidlist;
+        public readonly string idsofchannel;
         public readonly List<Tuple<string,string,List<string>>> myroomdata;
         public readonly XElement xoffertype;
         public readonly XElement xhoteldetails;
@@ -24,20 +24,20 @@ namespace OdhApiCore.Controllers.helper
         public readonly string mssversion;
 
         public static MssHelper Create(
-            List<string> a0ridlist, List<string> hgvidlist,
+            List<string> accoidlist, string idsofchannel,
             string bokfilter, string language, string roominfo, string boardfilter,
             string arrival, string departure, int hoteldetails, int? offerdetails, 
             string source, string mssversion)
         {
             return new MssHelper(
-                a0ridlist: a0ridlist, hgvidlist: hgvidlist, bokfilter: bokfilter, language: language,
+                accoidlist: accoidlist, idsofchannel: idsofchannel, bokfilter: bokfilter, language: language,
                 roominfo: roominfo, boardfilter: boardfilter, arrival: arrival, 
                 departure: departure, hoteldetails: hoteldetails, offerdetails: offerdetails,
                 source: source, mssversion: mssversion);
         }
 
         private MssHelper(
-            List<string> a0ridlist, List<string> hgvidlist,
+            List<string> accoidlist, string idsofchannel,
             string bokfilter, string language, string roominfo, string boardfilter,
             string arrival, string departure, int hoteldetails, int? offerdetails, string source, 
             string mssversion)
@@ -70,9 +70,8 @@ namespace OdhApiCore.Controllers.helper
             else
                 mssrequestlanguage = language.ToLower();
 
-            this.a0ridlist = a0ridlist;
-
-            this.hgvidlist = hgvidlist;
+            this.accoidlist = accoidlist;
+            this.idsofchannel = idsofchannel;
         }
 
     }

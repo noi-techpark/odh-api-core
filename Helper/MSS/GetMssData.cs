@@ -23,7 +23,7 @@ namespace Helper
         /// <param name="departure">Abreisedatum</param>
         /// <param name="service">Verpflegungsart</param>
         /// <returns></returns>
-        public static async Task<MssResult?> GetMssResponse(HttpClient httpClient, string lang, List<string> A0Ridlist, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string source, string version, string mssuser, string msspswd, bool withoutmssids = false)
+        public static async Task<MssResult?> GetMssResponse(HttpClient httpClient, string lang, List<string> idlist, string idsofchannel, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string source, string version, string mssuser, string msspswd, bool withoutmssids = false)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace Helper
                 XElement myidlist =
                     withoutmssids
                     ?  MssRequest.BuildIDList(new List<string>())
-                    : myidlist = MssRequest.BuildIDList(A0Ridlist);
+                    : myidlist = MssRequest.BuildIDList(idlist);
 
                 XElement mytyp = MssRequest.BuildType("10");
 
@@ -49,7 +49,7 @@ namespace Helper
                 //    tracesource.TraceEvent(TraceEventType.Information, 0, "MSS Request Hotel ID Count: " + A0Ridlist.Count + " Period: " + arrival.ToShortDateString() + " " + departure.ToShortDateString() + " Service: " + service.ToString() + " Rooms: " + myroompersons.Count + " Result from Cache: " + withoutmssids.ToString());
                 //}
 
-                XDocument myrequest = MssRequest.BuildPostData(myidlist, mychannels, myroomlist, arrival, departure, offerdetails, hoteldetails, mytyp, service, lang, source, version, mssuser, msspswd);
+                XDocument myrequest = MssRequest.BuildPostData(myidlist, mychannels, myroomlist, arrival, departure, offerdetails, hoteldetails, mytyp, service, lang, idsofchannel, source, version, mssuser, msspswd);
 
                 var myresponses = await MssRequest.RequestAsync(httpClient, myrequest);
 
@@ -69,7 +69,7 @@ namespace Helper
                     allmyoffers));
 
                 //Und iatz no parsen
-                MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(lang, hgvservicecode, myresult, A0Ridlist, myroompersons, source, version);
+                MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(lang, hgvservicecode, myresult, idlist, myroompersons, source, version);
 
                 return myparsedresponse;
             }
@@ -78,7 +78,7 @@ namespace Helper
                 //var tracesource = new TraceSource("MssData");
                 //tracesource.TraceEvent(TraceEventType.Error, 0, "MSS Request Error: " + ex.Message);
 
-                Log.Logger.Error(ex, "Error while retrieving MSS information for {A0Ridlist}", A0Ridlist);
+                Log.Logger.Error(ex, "Error while retrieving MSS information for {A0Ridlist}", idlist);
 
                 return null;
             }

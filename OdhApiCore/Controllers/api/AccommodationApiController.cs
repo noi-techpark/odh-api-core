@@ -535,7 +535,7 @@ namespace OdhApiCore.Controllers
 
         #region PRIVATEHELPERS
 
-        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, string detail, List<string> bookableaccoIDs, string source, bool withoutmssids = false, string mssversion = "2")
+        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, string detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
         {
             int? offerdetail = null;
             int hoteldetail = 524288;
@@ -546,7 +546,7 @@ namespace OdhApiCore.Controllers
                 hoteldetail = 524800;
             }
 
-            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, null, bokfilter, language, roominfo, boardfilter, arrival, departure, hoteldetail, offerdetail, source, mssversion);
+            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, hoteldetail, offerdetail, source, mssversion);
                        
             //Achtung muassi no schaugn!
             if (bookableaccoIDs.Count > 0)
@@ -554,7 +554,7 @@ namespace OdhApiCore.Controllers
                 //0 MSS Method Olle channels affamol mit IDList
                 var myparsedresponse = await GetMssData.GetMssResponse(
                     httpClientFactory.CreateClient("mss"),
-                    lang: myhelper.mssrequestlanguage, A0Ridlist: myhelper.a0ridlist, mybookingchannels: myhelper.mybokchannels,
+                    lang: myhelper.mssrequestlanguage, idlist: myhelper.accoidlist, idsofchannel: idsofchannel, mybookingchannels: myhelper.mybokchannels,
                     myroomdata: myhelper.myroomdata, arrival: myhelper.arrival, departure: myhelper.departure, service: myhelper.service,
                     hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,
                     rooms: myhelper.rooms, source: myhelper.source, version: myhelper.mssversion, mssuser: "", msspswd: "", withoutmssids: withoutmssids

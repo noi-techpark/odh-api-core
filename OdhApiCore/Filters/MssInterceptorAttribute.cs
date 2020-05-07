@@ -59,8 +59,8 @@ namespace OdhApiCore.Filters
                         if (mssResponseShort is JProperty mssResponseShortProperty)
                         {
                             MssResult result = await GetMSSAvailability(
-                                language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                roominfo: roominfo, bokfilter: bokfilter, detail: detail, bookableaccoIDs: bookableAccoIds, source: source);
+                                language: availabilitychecklanguage, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                roominfo: roominfo, bokfilter: bokfilter, detail: detail, bookableaccoIDs: bookableAccoIds, idsofchannel: idsource, source: source);
                             if (result != null)
                             {
                                 var resultJson = JsonConvert.SerializeObject(result.MssResponseShort);
@@ -75,7 +75,7 @@ namespace OdhApiCore.Filters
 
         }
 
-        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, string detail, List<string> bookableaccoIDs, string source, bool withoutmssids = false, string mssversion = "2")
+        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, string detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
         {
             int? offerdetail = null;
             int hoteldetail = 524288;
@@ -86,7 +86,7 @@ namespace OdhApiCore.Filters
                 hoteldetail = 524800;
             }
 
-            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, new List<string>(), bokfilter, language, roominfo, boardfilter, arrival, departure, hoteldetail, offerdetail, source, mssversion);
+            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, hoteldetail, offerdetail, source, mssversion);
                        
             //Achtung muassi no schaugn!
             if (bookableaccoIDs.Count > 0)
@@ -94,7 +94,7 @@ namespace OdhApiCore.Filters
                 //0 MSS Method Olle channels affamol mit IDList
                 var myparsedresponse = await GetMssData.GetMssResponse(
                     httpClientFactory.CreateClient("mss"),
-                    lang: myhelper.mssrequestlanguage, A0Ridlist: myhelper.a0ridlist, mybookingchannels: myhelper.mybokchannels,
+                    lang: myhelper.mssrequestlanguage, idlist: myhelper.accoidlist, idsofchannel: myhelper.idsofchannel, mybookingchannels: myhelper.mybokchannels,
                     myroomdata: myhelper.myroomdata, arrival: myhelper.arrival, departure: myhelper.departure, service: myhelper.service,
                     hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,
                     rooms: myhelper.rooms, source: myhelper.source, version: myhelper.mssversion, mssuser: settings.MssConfig.Username, msspswd: settings.MssConfig.Password, withoutmssids: withoutmssids
