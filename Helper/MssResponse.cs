@@ -6,26 +6,16 @@ namespace Helper
     //Lei zun testen!
     public class MssResult
     {
-        public MssResult()
-        {
-            this.MssResponseShort = new HashSet<MssResponseShort>();
-        }
-
         public string? ResultId { get; set; }
         public string? CheapestChannel { get; set; }
         public double? Cheapestprice { get; set; }
         public int? bookableHotels { get; set; }
-        public virtual ICollection<MssResponseShort>? MssResponseShort { get; set; }
+        public virtual ICollection<MssResponseShort>? MssResponseShort { get; set; } = new HashSet<MssResponseShort>();
     }
 
 
     public class MssResponseShort
     {
-        public MssResponseShort()
-        {
-            this.RoomDetails = new HashSet<RoomDetails>();
-        }
-
         public int HotelId { get; set; }
         public string? A0RID { get; set; }
         public bool Bookable { get; set; }
@@ -50,7 +40,7 @@ namespace Helper
         public double? CheapestOffer_fb { get; set; }
         public double? CheapestOffer_ai { get; set; }
 
-        public virtual ICollection<RoomDetails> RoomDetails { get; set; }
+        public virtual ICollection<RoomDetails> RoomDetails { get; set; } = new List<RoomDetails>();
     }
 
     public class RoomDetails
