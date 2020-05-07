@@ -208,6 +208,15 @@ namespace OdhApiCore.Controllers
         [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
         public async Task<IActionResult> GetAccommodation(
             string id,
+            string? idsource = "lts",
+            string? availabilitychecklanguage = "en",
+            string? boardfilter = null,
+            string? arrival = null,
+            string? departure = null,
+            string? roominfo = "1-18,18",
+            string? bokfilter = "hgv",
+            string? source = "sinfo",
+            LegacyBool availabilitycheck = null!,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
