@@ -37,14 +37,14 @@ namespace OdhApiCore.Filters
                 string language = (string?)query["language"] ?? "de";
                 string availabilitychecklanguage = (string?)query["availabilitychecklanguage"] ?? "en";
                 string boardfilter = (string?)query["boardfilter"] ?? "0";
-                string? arrival = (string?)query["arrival"] ?? null;
-                string? departure = (string?)query["departure"] ?? null;
+                string arrival = (string?)query["arrival"] ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now);
+                string departure = (string?)query["departure"] ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
                 string roominfo = (string?)query["roominfo"] ?? "1-18,18";
                 string bokfilter = (string?)query["bokfilter"] ?? "hgv";
                 string source = (string?)query["source"] ?? "sinfo";
-                string? detail = (string?)query["detail"] ?? null;
+                string detail = (string?)query["detail"] ?? "0";
 
-                List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
+                List<string> bokfilterlist = bokfilter.Split(',').ToList();
 
                 context.RouteData.Values.TryGetValue("id", out object id);
                 var bookableAccoIds = new List<string>() { (string)id };
@@ -60,7 +60,7 @@ namespace OdhApiCore.Filters
                         {
                             MssResult result = await GetMSSAvailability(
                                 language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                roominfo: roominfo, bokfilter: bokfilter, detail: detail, bookableaccoIDs: bookableAccoIds, source = source);
+                                roominfo: roominfo, bokfilter: bokfilter, detail: detail, bookableaccoIDs: bookableAccoIds, source: source);
                             if (result != null)
                             {
                                 var resultJson = JsonConvert.SerializeObject(result.MssResponseShort);
