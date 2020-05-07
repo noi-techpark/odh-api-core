@@ -535,18 +535,9 @@ namespace OdhApiCore.Controllers
 
         #region PRIVATEHELPERS
 
-        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, string detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
-        {
-            int? offerdetail = null;
-            int hoteldetail = 524288;
-
-            if (detail == "1")
-            {
-                offerdetail = 33081;
-                hoteldetail = 524800;
-            }
-
-            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, hoteldetail, offerdetail, source, mssversion);
+        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
+        {            
+            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, detail, source, mssversion);
                        
             //Achtung muassi no schaugn!
             if (bookableaccoIDs.Count > 0)

@@ -26,20 +26,20 @@ namespace OdhApiCore.Controllers.helper
         public static MssHelper Create(
             List<string> accoidlist, string idsofchannel,
             string bokfilter, string language, string roominfo, string boardfilter,
-            string arrival, string departure, int hoteldetails, int? offerdetails, 
+            string arrival, string departure, int? detail, 
             string source, string mssversion)
         {
             return new MssHelper(
                 accoidlist: accoidlist, idsofchannel: idsofchannel, bokfilter: bokfilter, language: language,
                 roominfo: roominfo, boardfilter: boardfilter, arrival: arrival, 
-                departure: departure, hoteldetails: hoteldetails, offerdetails: offerdetails,
+                departure: departure, detail: detail,
                 source: source, mssversion: mssversion);
         }
 
         private MssHelper(
             List<string> accoidlist, string idsofchannel,
             string bokfilter, string language, string roominfo, string boardfilter,
-            string arrival, string departure, int hoteldetails, int? offerdetails, string source, 
+            string arrival, string departure, int? detail, string source, 
             string mssversion)
         {
             if (bokfilter.EndsWith(","))
@@ -55,9 +55,18 @@ namespace OdhApiCore.Controllers.helper
             myroomdata = Helper.AccoListCreator.BuildMyRoomInfo(roominfo);
 
             rooms = myroomdata.Count;
-            
-            xoffertype = new XElement("offer_details", offerdetails);
-            xhoteldetails = new XElement("hotel_details", hoteldetails); //524288
+
+            int? offerdetail = null;
+            int hoteldetail = 524288;
+
+            if (detail != null && detail == 1)
+            {
+                offerdetail = 33081;
+                hoteldetail = 524800;
+            }
+
+            xoffertype = new XElement("offer_details", offerdetail);
+            xhoteldetails = new XElement("hotel_details", hoteldetail); //524288
 
             this.arrival = DateTime.Parse(arrival);
             this.departure = DateTime.Parse(departure);

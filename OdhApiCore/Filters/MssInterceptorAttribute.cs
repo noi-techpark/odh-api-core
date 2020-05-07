@@ -60,7 +60,8 @@ namespace OdhApiCore.Filters
                         {
                             MssResult result = await GetMSSAvailability(
                                 language: availabilitychecklanguage, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                roominfo: roominfo, bokfilter: bokfilter, detail: detail, bookableaccoIDs: bookableAccoIds, idsofchannel: idsource, source: source);
+                                roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: bookableAccoIds, idsofchannel: idsource, source: source);
+
                             if (result != null)
                             {
                                 var resultJson = JsonConvert.SerializeObject(result.MssResponseShort);
@@ -75,18 +76,9 @@ namespace OdhApiCore.Filters
 
         }
 
-        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, string detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
-        {
-            int? offerdetail = null;
-            int hoteldetail = 524288;
-
-            if (detail != null && detail == "1")
-            {
-                offerdetail = 33081;
-                hoteldetail = 524800;
-            }
-
-            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, hoteldetail, offerdetail, source, mssversion);
+        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
+        {            
+            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, detail, source, mssversion);
                        
             //Achtung muassi no schaugn!
             if (bookableaccoIDs.Count > 0)
@@ -107,9 +99,7 @@ namespace OdhApiCore.Filters
         }
 
         //private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string source)
-        //{
-        //    //-------------------------------------------------MSSREQUEST------------------------------------------------------------
-
+        //{            
         //    var service = Common.AccoListCreator.CreateBoardListLCSfromFlag(boardfilter);
         //    var myroomdata = GetAccommodationDataLCS.RoomstayTransformer(roominfo);
 
