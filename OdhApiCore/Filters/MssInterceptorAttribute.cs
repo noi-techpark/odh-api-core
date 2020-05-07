@@ -16,10 +16,12 @@ namespace OdhApiCore.Filters
     public class MssInterceptorAttribute : ActionFilterAttribute
     {
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly ISettings settings;
 
-        public MssInterceptorAttribute(IHttpClientFactory httpClientFactory)
+        public MssInterceptorAttribute(IHttpClientFactory httpClientFactory, ISettings settings)
         {
             this.httpClientFactory = httpClientFactory;
+            this.settings = settings;
         }
 
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
@@ -95,7 +97,7 @@ namespace OdhApiCore.Filters
                     lang: myhelper.mssrequestlanguage, A0Ridlist: myhelper.a0ridlist, mybookingchannels: myhelper.mybokchannels,
                     myroomdata: myhelper.myroomdata, arrival: myhelper.arrival.Value, departure: myhelper.departure.Value, service: myhelper.service.Value,
                     hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,
-                    rooms: myhelper.rooms.Value, source: myhelper.source, version: myhelper.mssversion, mssuser: "", msspswd: "", withoutmssids: withoutmssids
+                    rooms: myhelper.rooms.Value, source: myhelper.source, version: myhelper.mssversion, mssuser: settings.MssConfig.Username, msspswd: settings.MssConfig.Password, withoutmssids: withoutmssids
                     );
                
                 return myparsedresponse;
