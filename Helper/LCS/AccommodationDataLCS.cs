@@ -13,13 +13,15 @@ namespace Helper.LCS
 
         public GetAccommodationDataLCS(string user, string pswd)
         {
+            //https://medium.com/grensesnittet/integrating-with-soap-web-services-in-net-core-adebfad173fb
+
             BasicHttpBinding basicHttpBinding = new BasicHttpBinding();
             EndpointAddress endpointAddress = new EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
 
             lcs = new ServiceReferenceLCS.DataClient(basicHttpBinding, endpointAddress);
             lcs.ClientCredentials.UserName.UserName = user;
             lcs.ClientCredentials.UserName.Password = pswd;
-            var time = new TimeSpan(0, 30, 0);
+            var time = new TimeSpan(0, 0, 30);
             lcs.Endpoint.Binding.CloseTimeout = time;
         }
 
