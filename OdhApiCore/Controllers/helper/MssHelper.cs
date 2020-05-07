@@ -56,7 +56,7 @@ namespace OdhApiCore.Controllers.helper
 
             rooms = myroomdata.Count;
             
-            xoffertype = new XElement("offer_details");
+            xoffertype = new XElement("offer_details", offerdetails);
             xhoteldetails = new XElement("hotel_details", hoteldetails); //524288
 
             this.arrival = DateTime.Parse(arrival);

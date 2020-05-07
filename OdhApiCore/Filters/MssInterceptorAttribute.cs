@@ -42,6 +42,7 @@ namespace OdhApiCore.Filters
                 string roominfo = (string?)query["roominfo"] ?? "1-18,18";
                 string bokfilter = (string?)query["bokfilter"] ?? "hgv";
                 string source = (string?)query["source"] ?? "sinfo";
+                string? detail = (string?)query["detail"] ?? null;
 
                 List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
@@ -59,7 +60,7 @@ namespace OdhApiCore.Filters
                         {
                             MssResult result = await GetMSSAvailability(
                                 language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                roominfo: roominfo, bokfilter: bokfilter, detail: null, bookableaccoIDs: bookableAccoIds, source = source);
+                                roominfo: roominfo, bokfilter: bokfilter, detail: detail, bookableaccoIDs: bookableAccoIds, source = source);
                             if (result != null)
                             {
                                 var resultJson = JsonConvert.SerializeObject(result.MssResponseShort);
@@ -79,7 +80,7 @@ namespace OdhApiCore.Filters
             int? offerdetail = null;
             int hoteldetail = 524288;
 
-            if (detail == "1")
+            if (detail != null && detail == "1")
             {
                 offerdetail = 33081;
                 hoteldetail = 524800;
