@@ -64,7 +64,7 @@ namespace OdhApiCore
 
             services.AddHttpClient("mss", client =>
             {
-                client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+                //client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
             }).ConfigureHttpMessageHandlerBuilder(config => new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
