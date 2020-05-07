@@ -1,4 +1,5 @@
 ﻿using Helper.MSS;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Xml.Linq;
 
 namespace Helper
 {
-    public class GetMssData
+    public static class GetMssData
     {
         /// <summary>
         /// MSS Response mit IDList, die IDs der Requests werden anhand der DB generiert (welches Hotel ist wo buchbar), Parallele Requests auf die Kanäle
@@ -76,6 +77,8 @@ namespace Helper
             {
                 //var tracesource = new TraceSource("MssData");
                 //tracesource.TraceEvent(TraceEventType.Error, 0, "MSS Request Error: " + ex.Message);
+
+                Log.Logger.Error(ex, "Error while retrieving MSS information for {A0Ridlist}", A0Ridlist);
 
                 return null;
             }
