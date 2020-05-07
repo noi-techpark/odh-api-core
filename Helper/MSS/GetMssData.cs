@@ -52,15 +52,11 @@ namespace Helper
 
                 XDocument myrequest = MssRequest.BuildPostData(myidlist, mychannels, myroomlist, arrival, departure, offerdetails, hoteldetails, mytyp, service, lang, source, version, mssuser, msspswd);
 
-                var myresponses = MssRequest.RequestAsync(httpClient, myrequest);
+                var myresponses = await MssRequest.RequestAsync(httpClient, myrequest);
 
-                await Task.WhenAll(myresponses);
+                var activityresponsecontent = await myresponses.Content.ReadAsStringAsync();
 
-                Task<string> activityresponsecontent = myresponses.Result.Content.ReadAsStringAsync();
-
-                await Task.WhenAll(activityresponsecontent);
-
-                XElement allmyresponses = XElement.Parse(activityresponsecontent.Result);
+                XElement allmyresponses = XElement.Parse(activityresponsecontent);
 
                 List<XElement> allmyoffers = (from xy in allmyresponses.Element("result").Elements("hotel")
                                               where
