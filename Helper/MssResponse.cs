@@ -10,7 +10,7 @@ namespace Helper
         public string? CheapestChannel { get; set; }
         public double? Cheapestprice { get; set; }
         public int? bookableHotels { get; set; }
-        public virtual ICollection<MssResponseShort>? MssResponseShort { get; set; } //=> new HashSet<MssResponseShort>();
+        public virtual ICollection<MssResponseShort>? MssResponseShort { get; set; } = new HashSet<MssResponseShort>();
     }
 
 
@@ -40,7 +40,7 @@ namespace Helper
         public double? CheapestOffer_fb { get; set; }
         public double? CheapestOffer_ai { get; set; }
 
-        public virtual ICollection<RoomDetails> RoomDetails { get; set; } // => new List<RoomDetails>();
+        public virtual ICollection<RoomDetails> RoomDetails { get; set; } = new List<RoomDetails>();
     }
 
     public class RoomDetails
