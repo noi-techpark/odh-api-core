@@ -70,7 +70,8 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Accommodation")]
+        [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
+        [HttpGet, Route("Accommodation", Name = "AccommodationList")]
         public async Task<IActionResult> GetAccommodations(
             uint pagenumber = 1,
             uint pagesize = 10,

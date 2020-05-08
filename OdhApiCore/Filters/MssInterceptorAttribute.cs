@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OdhApiCore.Controllers;
 using OdhApiCore.Controllers.helper;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,14 @@ namespace OdhApiCore.Filters
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly ISettings settings;
+        protected QueryFactory QueryFactory { get; }
 
-        public MssInterceptorAttribute(IHttpClientFactory httpClientFactory, ISettings settings)
+
+        public MssInterceptorAttribute(QueryFactory queryFactory, IHttpClientFactory httpClientFactory, ISettings settings)
         {
             this.httpClientFactory = httpClientFactory;
             this.settings = settings;
+            this.QueryFactory = queryFactory;
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -31,7 +35,20 @@ namespace OdhApiCore.Filters
 
             if (actionid == "GetAccommodations")
             {
+                //Getting the Querystrings
+                var actionarguments = context.ActionArguments;
 
+                bool? availabilitycheck = ((LegacyBool)actionarguments["availabilitycheck"]).Value;
+                
+                if(availabilitycheck != null && availabilitycheck == true)
+                {
+                    //AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
+                    //   QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
+                    //   featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
+                    //   smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, cancellationToken);
+                }
+
+                await base.OnActionExecutionAsync(context, next);
             }
             else
             {
