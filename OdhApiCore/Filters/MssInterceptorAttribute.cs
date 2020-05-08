@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Filters
@@ -42,10 +43,32 @@ namespace OdhApiCore.Filters
                 
                 if(availabilitycheck != null && availabilitycheck == true)
                 {
-                    //AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
-                    //   QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
-                    //   featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
-                    //   smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, cancellationToken);
+                    string locfilter = (string?)actionarguments["locfilter"] ?? null;
+                    string? categoryfilter = (string?)actionarguments["categoryfilter"] ?? null;
+                    string? typefilter = (string?)actionarguments["typefilter"] ?? null;
+                    string? featurefilter = (string?)actionarguments["featurefilter"] ?? null;
+                    string? badgefilter = (string?)actionarguments["badgefilter"] ?? null;
+                    string? idfilter = (string?)actionarguments["idfilter"] ?? null;
+                    string? themefilter = (string?)actionarguments["themefilter"] ?? null;
+                    string? altitudefilter = (string?)actionarguments["altitudefilter"] ?? null;
+                    string? smgtagfilter = (string?)actionarguments["smgtagfilter"] ?? null;
+                    bool? active = ((LegacyBool)actionarguments["active"]).Value ?? null;
+                    bool? smgactive = ((LegacyBool)actionarguments["smgactive"]).Value ?? null;
+                    bool? bookablefilter = ((LegacyBool)actionarguments["bookablefilter"]).Value ?? null;
+                    string? updatefrom = (string?)actionarguments["updatefrom"] ?? null;
+
+                    string language = (string?)actionarguments["language"] ?? "de";
+                    string boardfilter = (string?)actionarguments["boardfilter"] ?? "0";
+                    string arrival = (string?)actionarguments["arrival"] ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now);
+                    string departure = (string?)actionarguments["departure"] ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
+                    string roominfo = (string?)actionarguments["roominfo"] ?? "1-18,18";
+                    string source = (string?)actionarguments["source"] ?? "sinfo";
+                    string detail = (string?)actionarguments["detail"] ?? "0";
+
+                    AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
+                       QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
+                       featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
+                       smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, (CancellationToken)context.ActionArguments["cancellationToken"]);
                 }
 
                 await base.OnActionExecutionAsync(context, next);
