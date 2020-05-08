@@ -24,6 +24,21 @@ namespace OdhApiCore.Filters
             this.settings = settings;
         }
 
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            //Getting Action name
+            context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
+
+            if (actionid == "GetAccommodations")
+            {
+
+            }
+            else
+            {
+                await base.OnActionExecutionAsync(context, next);
+            }
+        }
+
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             var query = context.HttpContext.Request.Query;
