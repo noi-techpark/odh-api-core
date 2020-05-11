@@ -34,6 +34,7 @@ namespace OdhApiCore.Filters
             //Getting Action name
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
 
+            //Only if Action ID is GetAccommodations perform the Availability Check before
             if (actionid == "GetAccommodations")
             {
                 //Getting the Querystrings
@@ -56,6 +57,12 @@ namespace OdhApiCore.Filters
                     bool? smgactive = ((LegacyBool)actionarguments["smgactive"]).Value ?? null;
                     bool? bookablefilter = ((LegacyBool)actionarguments["bookablefilter"]).Value ?? null;
                     string? updatefrom = (string?)actionarguments["updatefrom"] ?? null;
+                    string? seed = (string?)actionarguments["seed"] ?? null;
+                    string? searchfilter = (string?)actionarguments["searchfilter"] ?? null;
+                    string? latitude = (string?)actionarguments["latitude"] ?? null;
+                    string? longitude = (string?)actionarguments["longitude"] ?? null;
+                    string? radius = (string?)actionarguments["radius"] ?? null;
+
 
                     string language = (string?)actionarguments["language"] ?? "de";
                     string boardfilter = (string?)actionarguments["boardfilter"] ?? "0";
@@ -69,6 +76,11 @@ namespace OdhApiCore.Filters
                        QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                        featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
                        smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, (CancellationToken)context.ActionArguments["cancellationToken"]);
+
+                    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+                    //Get Accommodations IDlist 
+                    var idlist = GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
                 }
 
                 await base.OnActionExecutionAsync(context, next);
@@ -209,6 +221,30 @@ namespace OdhApiCore.Filters
                 return false;
             else
                 return true;
+        }
+
+        private async Task<IEnumerable<AccoBookList>> GetAccommodationBookList(AccommodationHelper myhelper, string language, string? seed, string? searchfilter, PGGeoSearchResult geosearchresult)
+        {
+            var query =
+                   QueryFactory.Query()
+                       .SelectRaw("data->'Id' as Id, data->'IsBookable' as IsBookable, data -> 'AccoBookingChannel' as AccoBookingChannel")
+                       .From("accommodations")
+                       .AccommodationWhereExpression(
+                           idlist: myhelper.idlist, accotypelist: myhelper.accotypelist,
+                           categorylist: myhelper.categorylist, featurelist: myhelper.featurelist,
+                           badgelist: myhelper.badgelist, themelist: myhelper.themelist,
+                           boardlist: myhelper.boardlist, smgtaglist: myhelper.smgtaglist,
+                           districtlist: myhelper.districtlist, municipalitylist: myhelper.municipalitylist,
+                           tourismvereinlist: myhelper.tourismvereinlist, regionlist: myhelper.regionlist,
+                           apartmentfilter: myhelper.apartment, bookable: myhelper.bookable, altitude: myhelper.altitude,
+                           altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
+                           activefilter: myhelper.active, smgactivefilter: myhelper.smgactive,
+                           searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
+                           filterClosedData: false)//FilterClosedData -->TODO)
+                       .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
+                       .GeoSearchFilterAndOrderby(geosearchresult);
+
+            return await query.GetAsync<AccoBookList>();
         }
 
     }
