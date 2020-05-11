@@ -44,33 +44,35 @@ namespace OdhApiCore.Filters
                 
                 if(availabilitycheck != null && availabilitycheck == true)
                 {
-                    string locfilter = (string?)actionarguments["locfilter"] ?? null;
-                    string? categoryfilter = (string?)actionarguments["categoryfilter"] ?? null;
-                    string? typefilter = (string?)actionarguments["typefilter"] ?? null;
-                    string? featurefilter = (string?)actionarguments["featurefilter"] ?? null;
-                    string? badgefilter = (string?)actionarguments["badgefilter"] ?? null;
-                    string? idfilter = (string?)actionarguments["idfilter"] ?? null;
-                    string? themefilter = (string?)actionarguments["themefilter"] ?? null;
-                    string? altitudefilter = (string?)actionarguments["altitudefilter"] ?? null;
-                    string? smgtagfilter = (string?)actionarguments["smgtagfilter"] ?? null;
-                    bool? active = ((LegacyBool)actionarguments["active"]).Value ?? null;
-                    bool? smgactive = ((LegacyBool)actionarguments["smgactive"]).Value ?? null;
-                    bool? bookablefilter = ((LegacyBool)actionarguments["bookablefilter"]).Value ?? null;
-                    string? updatefrom = (string?)actionarguments["updatefrom"] ?? null;
-                    string? seed = (string?)actionarguments["seed"] ?? null;
-                    string? searchfilter = (string?)actionarguments["searchfilter"] ?? null;
-                    string? latitude = (string?)actionarguments["latitude"] ?? null;
-                    string? longitude = (string?)actionarguments["longitude"] ?? null;
-                    string? radius = (string?)actionarguments["radius"] ?? null;
+                    string? locfilter = actionarguments.ContainsKey("locfilter") ? (string?)actionarguments["locfilter"] : null;
+                    string? categoryfilter = actionarguments.ContainsKey("categoryfilter") ? (string?)actionarguments["categoryfilter"] : null;
+                    string? typefilter = actionarguments.ContainsKey("typefilter") ? (string?)actionarguments["typefilter"] : null;
+                    string? featurefilter = actionarguments.ContainsKey("featurefilter") ? (string?)actionarguments["featurefilter"] : null;
+                    string? badgefilter = actionarguments.ContainsKey("badgefilter") ? (string?)actionarguments["badgefilter"] : null;
+                    string? idfilter = actionarguments.ContainsKey("idfilter") ? (string?)actionarguments["idfilter"] : null;
+                    string? themefilter = actionarguments.ContainsKey("themefilter") ? (string?)actionarguments["themefilter"] : null;
+                    string? altitudefilter = actionarguments.ContainsKey("altitudefilter") ? (string?)actionarguments["altitudefilter"] : null;
+                    string? smgtagfilter = actionarguments.ContainsKey("smgtagfilter") ? (string?)actionarguments["smgtagfilter"] : null;
+                    bool? active = actionarguments.ContainsKey("active") ? ((LegacyBool)actionarguments["active"]).Value : null;
+                    bool? smgactive = actionarguments.ContainsKey("smgactive") ? ((LegacyBool)actionarguments["smgactive"]).Value : null;
+                    bool? bookablefilter = actionarguments.ContainsKey("bookablefilter") ? ((LegacyBool)actionarguments["bookablefilter"]).Value : null;
+                    string? updatefrom = actionarguments.ContainsKey("updatefrom") ? (string?)actionarguments["updatefrom"] : null;
+                    string? seed = actionarguments.ContainsKey("seed") ? (string?)actionarguments["seed"] : null;
+                    string? searchfilter = actionarguments.ContainsKey("searchfilter") ? (string?)actionarguments["searchfilter"] : null;
+                    string? latitude = actionarguments.ContainsKey("latitude") ? (string?)actionarguments["latitude"] : null;
+                    string? longitude = actionarguments.ContainsKey("longitude") ? (string?)actionarguments["longitude"] : null;
+                    string? radius = actionarguments.ContainsKey("radius") ? (string?)actionarguments["radius"] : null;
 
 
-                    string language = (string?)actionarguments["language"] ?? "de";
-                    string boardfilter = (string?)actionarguments["boardfilter"] ?? "0";
-                    string arrival = (string?)actionarguments["arrival"] ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-                    string departure = (string?)actionarguments["departure"] ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-                    string roominfo = (string?)actionarguments["roominfo"] ?? "1-18,18";
-                    string source = (string?)actionarguments["source"] ?? "sinfo";
-                    string detail = (string?)actionarguments["detail"] ?? "0";
+                    string language = actionarguments.ContainsKey("language") ? (string)actionarguments["language"] : "de";
+                    string boardfilter = actionarguments.ContainsKey("boardfilter") ? (string)actionarguments["boardfilter"] : "0";
+                    string arrival = actionarguments.ContainsKey("arrival") ? (string)actionarguments["arrival"] : String.Format("{0:yyyy-MM-dd}", DateTime.Now);
+                    string departure = actionarguments.ContainsKey("departure") ? (string)actionarguments["departure"] : String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
+                    string roominfo = actionarguments.ContainsKey("roominfo") ? (string)actionarguments["roominfo"] : "1-18,18";
+                    string source = actionarguments.ContainsKey("source") ? (string)actionarguments["source"] : "sinfo";
+                    string detail = actionarguments.ContainsKey("detail") ? (string)actionarguments["detail"] : "0";
+                    string bokfilter = actionarguments.ContainsKey("bokfilter") ? (string)actionarguments["bokfilter"] : "hgv";
+                    string idsource = actionarguments.ContainsKey("idsource") ? (string)actionarguments["idsource"] : "lts";
 
                     AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                        QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
@@ -81,6 +83,12 @@ namespace OdhApiCore.Filters
 
                     //Get Accommodations IDlist 
                     var idlist = GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
+
+                    MssResult mssresult = await GetMSSAvailability(
+                                   language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                   roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: idlist.Select(x => x.Id.ToUpper()).ToList(), idsofchannel: idsource, source: source);
+
+
                 }
 
                 await base.OnActionExecutionAsync(context, next);
