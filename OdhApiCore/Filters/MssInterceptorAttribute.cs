@@ -82,7 +82,7 @@ namespace OdhApiCore.Filters
                     var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
                     //Get Accommodations IDlist 
-                    var idlist = GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
+                    var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
 
                     MssResult mssresult = await GetMSSAvailability(
                                    language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
