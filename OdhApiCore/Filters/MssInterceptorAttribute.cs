@@ -1,4 +1,5 @@
 ﻿using Helper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
@@ -84,11 +85,14 @@ namespace OdhApiCore.Filters
                     //Get Accommodations IDlist 
                     var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
 
-                    MssResult mssresult = await GetMSSAvailability(
-                                   language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                   roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: idlist.Select(x => x.Id.ToUpper()).ToList(), idsofchannel: idsource, source: source);
+                    var booklist = idlist.Select(x => x.Id.ToUpper()).ToList();
 
+                    //MssResult mssresult = await GetMSSAvailability(
+                    //               language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                    //               roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: idlist.Select(x => x.Id.ToUpper()).ToList(), idsofchannel: idsource, source: source);
 
+                    //actionarguments.Add("accobooklist", booklist);
+                    context.HttpContext.Items.Add("accobooklist", booklist);
                 }
 
                 await base.OnActionExecutionAsync(context, next);
@@ -233,9 +237,12 @@ namespace OdhApiCore.Filters
 
         private async Task<IEnumerable<AccoBookList>> GetAccommodationBookList(AccommodationHelper myhelper, string language, string? seed, string? searchfilter, PGGeoSearchResult geosearchresult)
         {
+            string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{IsBookable\\}}' as IsBookable"; //, data#>'\\{{AccoBookingChannel\\}}' as AccoBookingChannel";
+            //"data->'Id' as Id, data->'IsBookable' as IsBookable, data -> 'AccoBookingChannel' as AccoBookingChannel"
+
             var query =
                    QueryFactory.Query()
-                       .SelectRaw("data->'Id' as Id, data->'IsBookable' as IsBookable, data -> 'AccoBookingChannel' as AccoBookingChannel")
+                       .SelectRaw(select)
                        .From("accommodations")
                        .AccommodationWhereExpression(
                            idlist: myhelper.idlist, accotypelist: myhelper.accotypelist,

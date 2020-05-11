@@ -124,6 +124,14 @@ namespace OdhApiCore.Controllers
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, cancellationToken);
             }
+            else if(availabilitycheck?.Value == true)
+            {
+                //get the passed values
+
+                var x = Request.HttpContext.Items["accobooklist"];
+
+                return null;
+            }
 
             //Fall 3 Available MSS
             //else if (availabilitycheck?.Value == true && (bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp") || bokfilterlist.Contains("bok")) && !bokfilterlist.Contains("lts"))
