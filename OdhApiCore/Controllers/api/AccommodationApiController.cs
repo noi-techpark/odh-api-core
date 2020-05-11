@@ -128,9 +128,24 @@ namespace OdhApiCore.Controllers
             {
                 //get the passed values
 
-                var x = Request.HttpContext.Items["accobooklist"];
+                var accobooklist = Request.HttpContext.Items["accobooklist"];
+                var accoavailability = Request.HttpContext.Items["mssavailablity"];
 
-                return null;
+                if(accoavailability != null)
+                {
+                    var availableonlineaccos = ((MssResult)accoavailability).MssResponseShort.Select(x => x.A0RID.ToUpper()).Distinct().ToList();
+
+                    idfilter = string.Join(",", availableonlineaccos);                    
+                }
+
+                //TODO SORT ORDER???
+
+                return await GetFiltered(
+                    fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
+                    pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
+                    typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, themefilter: themefilter, badgefilter: badgefilter,
+                    altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
+                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, cancellationToken);
             }
 
             //Fall 3 Available MSS

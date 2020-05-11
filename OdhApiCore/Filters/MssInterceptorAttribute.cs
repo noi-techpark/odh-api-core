@@ -87,12 +87,13 @@ namespace OdhApiCore.Filters
 
                     var booklist = idlist.Select(x => x.Id.ToUpper()).ToList();
 
-                    //MssResult mssresult = await GetMSSAvailability(
-                    //               language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                    //               roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: idlist.Select(x => x.Id.ToUpper()).ToList(), idsofchannel: idsource, source: source);
+                    MssResult mssresult = await GetMSSAvailability(
+                                   language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                   roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: idlist.Select(x => x.Id.ToUpper()).ToList(), idsofchannel: idsource, source: source);
 
                     //actionarguments.Add("accobooklist", booklist);
                     context.HttpContext.Items.Add("accobooklist", booklist);
+                    context.HttpContext.Items.Add("mssavailablity", mssresult);
                 }
 
                 await base.OnActionExecutionAsync(context, next);
@@ -105,6 +106,9 @@ namespace OdhApiCore.Filters
 
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
+            //Getting Action name
+            context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
+
             var query = context.HttpContext.Request.Query;
 
             string idsource = (string?)query["idsource"] ?? "lts";
@@ -235,9 +239,9 @@ namespace OdhApiCore.Filters
                 return true;
         }
 
-        private async Task<IEnumerable<AccoBookList>> GetAccommodationBookList(AccommodationHelper myhelper, string language, string? seed, string? searchfilter, PGGeoSearchResult geosearchresult)
+        private async Task<IEnumerable<AccoBookList2>> GetAccommodationBookList(AccommodationHelper myhelper, string language, string? seed, string? searchfilter, PGGeoSearchResult geosearchresult)
         {
-            string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{IsBookable\\}}' as IsBookable"; //, data#>'\\{{AccoBookingChannel\\}}' as AccoBookingChannel";
+            string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{IsBookable\\}}' as IsBookable"; //, data#>>'\\{{AccoBookingChannel\\}}' as AccoBookingChannel";
             //"data->'Id' as Id, data->'IsBookable' as IsBookable, data -> 'AccoBookingChannel' as AccoBookingChannel"
 
             var query =
@@ -259,7 +263,7 @@ namespace OdhApiCore.Filters
                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
                        .GeoSearchFilterAndOrderby(geosearchresult);
 
-            return await query.GetAsync<AccoBookList>();
+            return await query.GetAsync<AccoBookList2>();
         }
 
     }
