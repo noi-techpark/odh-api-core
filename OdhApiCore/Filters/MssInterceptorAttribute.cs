@@ -86,6 +86,15 @@ namespace OdhApiCore.Filters
                     //Get Accommodations IDlist 
                     var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
 
+                    var myaccobooklist = idlist.Select(x => new AccoBookList { Id = x.Id, IsBookable = x.IsBookable, AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(x.AccoBookingChannel.Value) }).ToList();
+
+                    //List<AccoBookList> myaccobooklist = new List<AccoBookList>();
+                    ////Manually serialize to Booklist object
+                    //foreach(var json in idlist)
+                    //{
+                    //    JsonConvert.DeserializeObject<AccoBookList>(json);
+                    //}
+
                     var booklist = idlist.Select(x => x.Id.ToUpper()).ToList();
 
                     MssResult mssresult = await GetMSSAvailability(
@@ -309,7 +318,7 @@ namespace OdhApiCore.Filters
                 return true;
         }
 
-        private async Task<IEnumerable<AccoBookList2>> GetAccommodationBookList(AccommodationHelper myhelper, string language, string? seed, string? searchfilter, PGGeoSearchResult geosearchresult)
+        private async Task<IEnumerable<AccoBookListRaw>> GetAccommodationBookList(AccommodationHelper myhelper, string language, string? seed, string? searchfilter, PGGeoSearchResult geosearchresult)
         {
             string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{IsBookable\\}}' as IsBookable, data#>>'\\{{AccoBookingChannel\\}}' as AccoBookingChannel";
             //"data->'Id' as Id, data->'IsBookable' as IsBookable, data -> 'AccoBookingChannel' as AccoBookingChannel"
@@ -333,7 +342,7 @@ namespace OdhApiCore.Filters
                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
                        .GeoSearchFilterAndOrderby(geosearchresult);
 
-            return await query.GetAsync<AccoBookList2>();
+            return await query.GetAsync<AccoBookListRaw>();
         }
 
     }

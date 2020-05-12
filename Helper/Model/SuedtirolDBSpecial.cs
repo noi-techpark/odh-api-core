@@ -12,16 +12,11 @@ namespace Helper
         public ICollection<AccoBookingChannel>? AccoBookingChannel { get; set; }
     }
 
-    public class AccoBookList2
-    {
-        public AccoBookList2()
-        {
-            AccoBookingChannel = new List<AccoBookingChannel>();
-        }
-
+    public class AccoBookListRaw
+    {        
         public string? Id { get; set; }
         public bool IsBookable { get; set; }
-        public ICollection<AccoBookingChannel>? AccoBookingChannel { get; set; }
+        public JsonRaw AccoBookingChannel { get; set; }
     }
 
     public class AccoCustom
