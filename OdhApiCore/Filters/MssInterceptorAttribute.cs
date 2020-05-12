@@ -311,7 +311,7 @@ namespace OdhApiCore.Filters
 
         private async Task<IEnumerable<AccoBookList2>> GetAccommodationBookList(AccommodationHelper myhelper, string language, string? seed, string? searchfilter, PGGeoSearchResult geosearchresult)
         {
-            string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{IsBookable\\}}' as IsBookable"; //, data#>>'\\{{AccoBookingChannel\\}}' as AccoBookingChannel";
+            string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{IsBookable\\}}' as IsBookable, data#>>'\\{{AccoBookingChannel\\}}' as AccoBookingChannel";
             //"data->'Id' as Id, data->'IsBookable' as IsBookable, data -> 'AccoBookingChannel' as AccoBookingChannel"
 
             var query =
