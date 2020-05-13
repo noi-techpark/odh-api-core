@@ -245,9 +245,18 @@ namespace OdhApiCore.Filters
                                 }
                                 if (bokfilterlist.Contains("lts"))
                                 {
-                                    MssResult lcsresult = await GetLCSAvailability(
-                                        language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                        roominfo: roominfo, bookableaccoIDs: bookableAccoIds, source: source);
+                                    MssResult lcsresult = default(MssResult);
+
+                                    if (actionid == "GetAccommodations")
+                                    {
+                                        lcsresult = (MssResult)context.HttpContext.Items["lcsavailablity"];
+                                    }
+                                    else if (actionid == "GetAccommodation")
+                                    {
+                                        lcsresult = await GetLCSAvailability(
+                                         language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                         roominfo: roominfo, bookableaccoIDs: bookableAccoIds, source: source);
+                                    }                                     
 
                                     if (lcsresult != null)
                                     {
