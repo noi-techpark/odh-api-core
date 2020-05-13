@@ -245,15 +245,16 @@ namespace OdhApiCore.Filters
 
                                 if (result.Count > 0)
                                 {
-                                    var resultJson = JsonConvert.SerializeObject(result.SelectMany(x => x.MssResponseShort));
-                                    mssResponseShortProperty.Value = new JRaw(resultJson);
+                                    string? accid = jObject.Property("Id")?.Value.ToString();
+                                    var data = result.SelectMany(x => x.MssResponseShort).Where(x => x.A0RID == accid);
+                                    mssResponseShortProperty.Value = new JRaw(JsonConvert.SerializeObject(data));
                                 }
                             }
                         }
-                        myRawList.Add(jtoken);                        
+                        myRawList.Add(jtoken);
+
+                        okObjectlist.Value = myRawList;
                     }
-                    //??
-                    //jRawList.Items = (JsonRaw)myRawList;
                 }
             }
             await base.OnResultExecutionAsync(context, next);
