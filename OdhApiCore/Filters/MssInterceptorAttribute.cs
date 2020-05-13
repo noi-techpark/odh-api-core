@@ -88,22 +88,34 @@ namespace OdhApiCore.Filters
 
                     var myaccobooklist = idlist.Select(x => new AccoBookList { Id = x.Id, IsBookable = x.IsBookable, AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(x.AccoBookingChannel.Value) }).ToList();
 
-                    //List<AccoBookList> myaccobooklist = new List<AccoBookList>();
-                    ////Manually serialize to Booklist object
-                    //foreach(var json in idlist)
-                    //{
-                    //    JsonConvert.DeserializeObject<AccoBookList>(json);
-                    //}
-
                     var booklist = idlist.Select(x => x.Id.ToUpper()).ToList();
+                    var bokfilterlist = bokfilter.Split(',').ToList(); ;
 
-                    MssResult mssresult = await GetMSSAvailability(
-                                   language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                   roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: idlist.Select(x => x.Id.ToUpper()).ToList(), idsofchannel: idsource, source: source);
-
-                    //actionarguments.Add("accobooklist", booklist);
                     context.HttpContext.Items.Add("accobooklist", booklist);
-                    context.HttpContext.Items.Add("mssavailablity", mssresult);
+
+                    if (bokfilterlist.Contains("hgv"))
+                    {
+                        MssResult mssresult = await GetMSSAvailability(
+                                  language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                  roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: booklist, idsofchannel: idsource, source: source);
+                        
+                        if (mssresult != null)
+                        {
+                            context.HttpContext.Items.Add("mssavailablity", mssresult);
+                        }
+
+                    }
+                    if (bokfilterlist.Contains("lts"))
+                    {
+                        MssResult lcsresult = await GetLCSAvailability(
+                                        language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                        roominfo: roominfo, bookableaccoIDs: booklist, source: source);
+
+                        if (lcsresult != null)
+                        {
+                            context.HttpContext.Items.Add("lcsavailablity", lcsresult);
+                        }
+                    }                                      
                 }
 
                 await base.OnActionExecutionAsync(context, next);
