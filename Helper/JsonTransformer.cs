@@ -152,8 +152,7 @@ namespace Helper
             var language = languageParam ?? "en";
             var fields = new List<(string name, string path)>
             {
-                ("Id", "Id"),
-                ("Name", $"Detail.{language}.Title")
+                ("Id", "Id")
             };
             fields.AddRange(fieldsFromQueryString.Select(field => (field, field)));
             if (token is JObject obj)
