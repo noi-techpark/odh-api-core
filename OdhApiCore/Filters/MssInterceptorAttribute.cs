@@ -103,7 +103,6 @@ namespace OdhApiCore.Filters
                         {
                             context.HttpContext.Items.Add("mssavailablity", mssresult);
                         }
-
                     }
                     if (bokfilterlist.Contains("lts"))
                     {
@@ -279,7 +278,6 @@ namespace OdhApiCore.Filters
                 }
             }
             await base.OnResultExecutionAsync(context, next);
-
         }
 
         private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")

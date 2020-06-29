@@ -544,16 +544,15 @@ namespace OdhApiCore.Controllers
             });
         }
 
+        #endregion
+
+        #region CUSTOM AVAILABILITY GETTER
+
+
 
         #endregion
 
-        #region SPECIALMETHODS
-
-
-
-        #endregion
-
-        #region CUSTOM METHODS
+        #region TYPE AND FEATURE LISTs
 
         private Task<IActionResult> GetAccoTypeList(CancellationToken cancellationToken)
         {
@@ -620,7 +619,6 @@ namespace OdhApiCore.Controllers
                 return data;
             });
         }
-
 
         #endregion
 
