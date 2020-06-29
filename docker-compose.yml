@@ -2,11 +2,10 @@ version: '3.4'
 
 services:
   api:
-    image: ${DOCKER_IMAGE_API:-odh-tourism-api}:${DOCKER_TAG_API:-latest}
+    image: ${DOCKER_IMAGE:-odh-tourism-api}:${DOCKER_TAG:-latest}
     build:
       context: .
       dockerfile: OdhApiCore/Dockerfile
-    restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80
