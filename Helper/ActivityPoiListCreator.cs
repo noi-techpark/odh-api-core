@@ -1432,7 +1432,7 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateSmgPoiSubTypefromFlag(string typefiltertext, string subtypefilter)
+        public static List<string> CreateSmgPoiSubTypefromFlag(string typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 
@@ -1484,7 +1484,7 @@ namespace Helper
             return subtypelist;
         }
 
-        public static List<string> CreateSmgPoiPoiTypefromFlag(string subtypefilter, string poitypefilter)
+        public static List<string> CreateSmgPoiPoiTypefromFlag(string subtypefilter, string? poitypefilter)
         {
             List<string> subtypelist = new List<string>();
 

@@ -163,7 +163,7 @@ namespace Helper
         //string OperationscheduleName { get; set; }
         DateTime Start { get; set; }
         DateTime Stop { get; set; }
-        bool? ClosedonPublicHolidays { get; set; }
+        //bool? ClosedonPublicHolidays { get; set; }
 
         ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
     }
@@ -310,6 +310,8 @@ namespace Helper
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware
@@ -328,6 +330,8 @@ namespace Helper
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     //NEW Erlebnisräume
@@ -338,6 +342,8 @@ namespace Helper
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public bool VisibleInSearch { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware
@@ -348,6 +354,8 @@ namespace Helper
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware
@@ -364,6 +372,8 @@ namespace Helper
 
         public int Inhabitants { get; set; }
         public string? IstatNumber { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class District : BaseInfos, IImageGalleryAware, IWebcamAware
@@ -378,6 +388,8 @@ namespace Helper
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class Area : IIdentifiable, IActivateable
@@ -443,6 +455,8 @@ namespace Helper
         public ICollection<string>? RegionIds { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IWebcamAware
@@ -450,6 +464,8 @@ namespace Helper
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
         public ICollection<Webcam>? Webcam { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class Naturepark : BaseInfos, IImageGalleryAware, IContactInfosAware, IWebcamAware
@@ -459,6 +475,8 @@ namespace Helper
 
         public ICollection<Webcam>? Webcam { get; set; }
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class Christkindlmarkt : BaseInfos, IImageGalleryAware, IContactInfosAware, IWebcamAware
@@ -565,9 +583,9 @@ namespace Helper
 
     }
 
-    //POIs
-
-    //NEU Hauptcontainer für LTS POIs alle anderen werden obsolet!
+    /// <summary>
+    /// LTS Point of Interest
+    /// </summary>
     public class LTSPoi : PoiBaseInfos
     {
         public List<LTSTags>? LTSTags { get; set; }
@@ -704,6 +722,30 @@ namespace Helper
         public string? Id { get; set; }
         public string? Name { get; set; }
         public string? Type { get; set; }
+
+        public string? Link
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(this.Type))
+                {
+                    switch (this.Type.ToLower())
+                    {
+                        case "event":
+                            return "Event/" + this.Id;
+                        case "wineaward":
+                            return "Common/WineAward/" + this.Id;
+                        case "accommodation":
+                            return "Accommodation/" + this.Id;
+                        default:
+                            return "ODHActivityPoi/" + this.Id;
+                    }
+                }
+                else return "ODHActivityPoi/" + this.Id;
+            }
+        }
+
+        public string Self { get { return this.Link; } }
     }
 
     public class AppSuggestion
@@ -764,6 +806,7 @@ namespace Helper
         public string? Shortname { get; set; }
         public int Units { get; set; }
         public int Beds { get; set; }
+        public int? Representation { get; set; }
         public bool HasApartment { get; set; }
         public bool HasRoom { get; set; }
         public bool IsCamping { get; set; }
@@ -810,12 +853,23 @@ namespace Helper
 
         //MSS Result
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
+
+        //Independent Data
+        public IndependentData IndependentData { get; set; }
+
+        public ICollection<AccoRoomInfo> AccoRoomInfo { get; set; }
+    }
+
+    public class AccoRoomInfo
+    {
+        public string Id { get; set; }
+
+        public string Source { get; set; }
     }
 
     public class AccoDetail : ILanguage
     {
         public string? Language { get; set; }
-
         public string? Name { get; set; }
         public string? NameAddition { get; set; }
         public string? Street { get; set; }
@@ -830,12 +884,18 @@ namespace Helper
         public string? City { get; set; }
         public string? Shortdesc { get; set; }
         public string? Longdesc { get; set; }
+        public string Vat { get; set; }
     }
 
     public class AccoFeature
     {
         public string? Id { get; set; }
         public string? Name { get; set; }
+
+        public string? HgvId { get; set; }
+        public string? OtaCodes { get; set; }
+
+        public List<int>? RoomAmenityCodes { get; set; }
     }
 
     public class AccoBookingChannel
@@ -885,6 +945,10 @@ namespace Helper
         public Nullable<int> Roomstd { get; set; }
         public Nullable<double> PriceFrom { get; set; }
         public Nullable<int> RoomQuantity { get; set; }
+
+        public List<string>? RoomNumbers { get; set; }
+        public Nullable<int> RoomClassificationCodes { get; set; }
+        public Nullable<int> RoomtypeInt { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -895,6 +959,27 @@ namespace Helper
         public string? Longdesc { get; set; }
         public string? Shortdesc { get; set; }
     }
+
+    public class IndependentData
+    {
+        public IndependentData()
+        {
+            IndependentDescription = new Dictionary<string, IndependentDescription>();
+        }
+
+        public Dictionary<string, IndependentDescription> IndependentDescription { get; set; }
+        public Int32? IndependentRating { get; set; }
+        public bool? Enabled { get; set; }
+    }
+
+    public class IndependentDescription : ILanguage
+    {
+        public string? Language { get; set; }
+
+        public string? Description { get; set; }
+        public string? BacklinkUrl { get; set; }
+    }
+
 
 
     #endregion
@@ -1344,6 +1429,9 @@ namespace Helper
         public string? Level { get; set; }
         public string? LevelId { get; set; }
         public Dictionary<string, string> WeatherStatus { get; set; }
+        //New
+        public string? IconID { get; set; }
+        public DateTime? Date { get; set; }
     }
 
     //SnowReport Base Data
@@ -1499,6 +1587,12 @@ namespace Helper
         public Dictionary<string, string> TypeDesc { get; set; }
     }
 
+    //Für Types Api
+    public class AccoFeatures : AccoTypes
+    {
+
+    }
+
     //Für Types Api 
     public class SmgPoiTypes
     {
@@ -1511,8 +1605,9 @@ namespace Helper
         public long Bitmask { get; set; }
         public string? Type { get; set; }
         public string? Parent { get; set; }
+        public string? Key { get; set; }
 
-        public Dictionary<string, string>? TypeDesc { get; set; }
+        public IDictionary<string, string>? TypeDesc { get; set; }
     }
 
     public class EventTypes
@@ -1546,6 +1641,9 @@ namespace Helper
 
     }
 
+    public class ODHActivityPoiTypes : SmgPoiTypes
+    {
+    }
 
     #endregion
 
@@ -1735,10 +1833,13 @@ namespace Helper
         public string? Id { get; set; }
         public int Bitmask { get; set; }
         public string? Type { get; set; }
+        public string? Key { get; set; }
         public Dictionary<string, string> Name { get; set; }
         public string? ImageURL { get; set; }
         //public int AccoCount { get; set; }
         public int SortOrder { get; set; }
+        public Nullable<bool> Active { get; set; }
+        public Nullable<int> AccoCount { get; set; }
     }
 
     public class AccoThemesFull
@@ -1750,6 +1851,53 @@ namespace Helper
         public string? ImageURL { get; set; }
         public int AccoCount { get; set; }
         public int SortOrder { get; set; }
+    }
+
+    public class AppCustomTips
+    {
+        public AppCustomTips()
+        {
+            Title = new Dictionary<string, string>();
+            Description = new Dictionary<string, string>();
+            Region = new Dictionary<string, string>();
+            Tv = new Dictionary<string, string>();
+            LinkText = new Dictionary<string, string>();
+            Category = new Dictionary<string, string>();
+            ValidForLanguage = new Dictionary<string, bool>();
+        }
+
+        public string? Id { get; set; }
+        public string? ImageUrl { get; set; }
+        public IDictionary<string, string> Title { get; set; }
+        public IDictionary<string, string> Description { get; set; }
+        public IDictionary<string, string> Region { get; set; }
+        public IDictionary<string, string> Tv { get; set; }
+        public IDictionary<string, string> LinkText { get; set; }
+        public string? Link { get; set; }
+        public bool Active { get; set; }
+        public DateTime LastChanged { get; set; }
+        public string? Type { get; set; }
+
+        public string? TvId { get; set; }
+
+        //additional
+        public IDictionary<string, string> Category { get; set; }
+        public string? Difficulty { get; set; }
+        public string? Duration { get; set; }
+        public string? Length { get; set; }
+
+        //Settings
+        public ICollection<AppCustomTipsSettings>? AppCustomTipsSettings { get; set; }
+
+        public IDictionary<string, bool> ValidForLanguage { get; set; }
+    }
+
+    public class AppCustomTipsSettings
+    {
+        public int Fixedposition { get; set; }  //position 0 is random
+        public bool Randomposition { get; set; }
+        public DateTime ValidFrom { get; set; }
+        public DateTime ValidTo { get; set; }
     }
 
     #endregion
@@ -1806,7 +1954,7 @@ namespace Helper
         public string? Id { get; set; }
         public string? Key { get; set; }
 
-        //public int Bitmask { get; set; } ??
+        public int? Bitmask { get; set; } 
 
         public string? Entity { get; set; }
         public string? TypeParent { get; set; }
@@ -1881,6 +2029,8 @@ namespace Helper
         public string? OutdooractiveID { get; set; }
         public string? OutdooractiveElevationID { get; set; }
 
+        //new
+        public Nullable<bool> CopyrightChecked { get; set; }
 
         public bool Active { get; set; }
         public string? Shortname { get; set; }
@@ -1959,7 +2109,13 @@ namespace Helper
         public Ratings? Ratings { get; set; }
         public ICollection<string>? Exposition { get; set; }
 
+        public string? OwnerRid { get; set; }
 
+        public List<string>? ChildPoiIds { get; set; }
+        public List<string>? MasterPoiIds { get; set; }
+        
+        //New
+        public Nullable<int> WayNumber { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
@@ -2084,6 +2240,9 @@ namespace Helper
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        //NEW
+        public Nullable<int> RepresentationRestriction { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
@@ -2251,6 +2410,18 @@ namespace Helper
         public IDictionary<string, string> Webcamname { get; set; }
         public string? Webcamurl { get; set; }
         public GpsInfo? GpsInfo { get; set; }
+        //Neu
+        public Nullable<int> ListPosition { get; set; }
+
+        ////NEW Webcam Properties
+        //public string Streamurl { get; set; }
+        //public string Previewurl { get; set; }
+        //public DateTime? LastChange { get; set; }
+        //public DateTime? FirstImport { get; set; }
+
+        //public bool? Active { get; set; }
+
+        //public string Source { get; set; }
     }
 
     public class WebcamLocalized
@@ -2259,7 +2430,23 @@ namespace Helper
         public string? Webcamname { get; set; }
         public string? Webcamurl { get; set; }
         public GpsInfo? GpsInfo { get; set; }
+        public Nullable<int> ListPosition { get; set; }
     }
+
+    public class WebcamInfo : Webcam
+    {
+        //NEW Webcam Properties
+        public string? Id { get; set; }
+        public string? Streamurl { get; set; }
+        public string? Previewurl { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public string? Shortname { get; set; }
+        public bool? Active { get; set; }
+        public bool? SmgActive { get; set; }
+        public string? Source { get; set; }
+    }
+
 
     public class ImageGallery : IImageGallery
     {
@@ -2286,6 +2473,7 @@ namespace Helper
         //NEU
         public string? CopyRight { get; set; }
         public string? License { get; set; }
+        public ICollection<string>? ImageTags { get; set; }
     }
 
     public class ImageGalleryLocalized
@@ -2425,7 +2613,8 @@ namespace Helper
         public DateTime Start { get; set; }
         public DateTime Stop { get; set; }
         public string? Type { get; set; }
-        public bool? ClosedonPublicHolidays { get; set; }
+        //deprecated
+        //public bool? ClosedonPublicHolidays { get; set; }
 
         public ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
     }
@@ -2740,6 +2929,26 @@ namespace Helper
         //public string AbstractsIT { get; set; }
         ////gehört zu Abstract
         //public string Documents { get; set; }
+        public List<ImageGallery>? ImageGallery { get; set; }
+        public string? VideoUrl { get; set; }
+
+        /// <summary>
+        /// ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI
+        /// </summary>
+        public Nullable<bool> ActiveWeb { get; set; }
+
+        public string? EventTextDE { get; set; }
+        public string? EventTextIT { get; set; }
+        public string? EventTextEN { get; set; }
+
+        public List<string>? TechnologyFields { get; set; }
+
+        public List<string>? CustomTagging { get; set; }
+
+        public bool? SoldOut { get; set; }
+        public List<DocumentPDF>? EventDocument { get; set; }
+
+        public bool? ExternalOrganizer { get; set; }
     }
 
     public class RoomBooked
@@ -2763,7 +2972,10 @@ namespace Helper
         public EventShortByRoom()
         {
             SpaceDescList = new List<string>();
+            TechnologyFields = new List<string>();
+            CustomTagging = new List<string>();
             EventDescription = new Dictionary<string, string>();
+            EventDocument = new Dictionary<string, string>();
         }
 
         //Room Infos
@@ -2804,8 +3016,40 @@ namespace Helper
         public string? EventLocation { get; set; }
 
         public string? CompanyName { get; set; }
+        public List<ImageGallery>? ImageGallery { get; set; }
+        public string? VideoUrl { get; set; }
+        public Nullable<bool> ActiveWeb { get; set; }
 
+        public string? EventTextDE { get; set; }
+        public string? EventTextIT { get; set; }
+        public string? EventTextEN { get; set; }
+
+        public List<string>? TechnologyFields { get; set; }
+        public List<string>? CustomTagging { get; set; }
+        public bool? SoldOut { get; set; }
+
+        public Dictionary<string, string> EventDocument { get; set; }
+
+        public bool? ExternalOrganizer { get; set; }
+        //public string MapsNoiUrl { get; set; }
+    }
+
+    public class DocumentPDF
+    {
+        public string? DocumentURL { get; set; }
+        public string? Language { get; set; }
     }
 
     #endregion
+
+    public class MetaInfosOdhActivityPoi
+    {
+        public MetaInfosOdhActivityPoi()
+        {
+            Metainfos = new Dictionary<string, List<Dictionary<string, object>>>();
+        }
+        public string? Id { get; set; }
+
+        public Dictionary<string, List<Dictionary<string, object>>> Metainfos { get; set; }
+    }
 }

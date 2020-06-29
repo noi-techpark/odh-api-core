@@ -1,8 +1,11 @@
 ﻿using Helper;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using OdhApiCore.Responses;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +23,8 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public ActivityController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, connectionFactory)
+        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -58,7 +61,8 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/Activity")]
+        //[Authorize]
+        [HttpGet, Route("Activity")]
         public async Task<IActionResult> GetActivityList(
             string? language = null,
             uint pagenumber = 1,
@@ -83,14 +87,19 @@ namespace OdhApiCore.Controllers
             string? radius = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            string? searchfilter = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
-                    fields ?? Array.Empty<string>(), language, pagenumber, pagesize, activitytype, subtype, idlist,
-                    locfilter, areafilter, distancefilter, altitudefilter, durationfilter, highlight,
-                    difficultyfilter, active, odhactive, odhtagfilter, seed, lastchange, geosearchresult, cancellationToken);
+                    fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
+                    pagesize: pagesize, activitytype: activitytype, subtypefilter: subtype, idfilter: idlist,
+                    searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
+                    distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
+                    highlightfilter: highlight, difficultyfilter: difficultyfilter, active: active,
+                    smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: lastchange,
+                    geosearchresult: geosearchresult, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -105,10 +114,15 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(GBLTSActivity), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Activity/{id}")]
-        public async Task<IActionResult> GetActivitySingle(string id, string? language, CancellationToken cancellationToken)
+        [HttpGet, Route("Activity/{id}", Name = "SingleActivity")]
+        public async Task<IActionResult> GetActivitySingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetSingle(id, language, cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         /// <summary>
@@ -123,10 +137,28 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [HttpGet, Route("api/ActivityTypes")]
+        [HttpGet, Route("ActivityTypes")]
         public async Task<IActionResult> GetAllActivityTypesListAsync(CancellationToken cancellationToken)
         {
             return await GetActivityTypesListAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// GET Activity Types Single
+        /// </summary>
+        /// <returns>ActivityTypes Object</returns>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        //[CacheOutputUntilToday(23, 59)]
+        [ProducesResponseType(typeof(ActivityTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,ActivityReader")]
+        [HttpGet, Route("ActivityTypes/{id}", Name = "SingleActivityTypes")]
+        public async Task<IActionResult> GetAllActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
+        {
+            return await GetActivityTypesSingleAsync(id, cancellationToken);
         }
 
         #endregion
@@ -153,52 +185,62 @@ namespace OdhApiCore.Controllers
         /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter, available SMGTags reference to 'api/SmgTag/ByMainEntity/Activity')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Activities Objects</returns>
-         private Task<IActionResult> GetFiltered(
+        private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
-            string? idfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
+            string? idfilter, string? searchfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
+                    QueryFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange,
                     cancellationToken);
 
-                string select = "*";
-                string orderby = "";
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From("activities")
+                        .ActivityWhereExpression(
+                            idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
+                            subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
+                            smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
+                            municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
+                            regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
+                            distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
+                            distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
+                            durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
+                            altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
+                            altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
+                            activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
+                            filterClosedData: FilterClosedData)
+                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
+                        .GeoSearchFilterAndOrderby(geosearchresult);
 
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreateActivityWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.activitytypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.difficultylist, myactivityhelper.smgtaglist, new List<string>(), new List<string>(),
-                    myactivityhelper.tourismvereinlist, myactivityhelper.regionlist, myactivityhelper.arealist,
-                    myactivityhelper.distance, myactivityhelper.distancemin, myactivityhelper.distancemax,
-                    myactivityhelper.duration, myactivityhelper.durationmin, myactivityhelper.durationmax,
-                    myactivityhelper.altitude, myactivityhelper.altitudemin, myactivityhelper.altitudemax,
-                    myactivityhelper.highlight, myactivityhelper.active, myactivityhelper.smgactive, myactivityhelper.lastchange);
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: (int)pagesize);
 
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
+                    );
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
 
-                uint pageskip = pagesize * (pagenumber - 1);
-
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "activities", select, (whereexpression, parameters), orderby, pagesize, pageskip,
-                    cancellationToken);
-
-                uint totalcount = (uint)totalCount;
-                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
-
-                return PostgresSQLHelper.GetResultJson(
+                return ResponseHelpers.GetResult(
                     pagenumber,
                     totalpages,
                     totalcount,
-                    myseed,
-                    dataTransformed);
+                    seed,
+                    dataTransformed,
+                    Url);
             });
         }
 
@@ -207,17 +249,19 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">ID of the Activity</param>
         /// <returns>Activity Object</returns>
-        private Task<IActionResult> GetSingle(string id, string? language, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
-                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "activities", "*", where, "", 0,
-                    null, cancellationToken);
+                var query =
+                    QueryFactory.Query("activities")
+                        .Select("data")
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
-                var result = data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
-                return result == null ? null : JsonConvert.SerializeObject(result);
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
             });
         }
 
@@ -225,83 +269,44 @@ namespace OdhApiCore.Controllers
 
         #region CUSTOM METHODS
 
-        private Type GetChildFlagType(object x)
-        {
-            return x switch
-            {
-                "Berg" => typeof(ActivityTypeBerg),
-                "Radfahren" => typeof(ActivityTypeRadfahren),
-                "Stadtrundgang" => typeof(ActivityTypeOrtstouren),
-                "Pferdesport" => typeof(ActivityTypePferde),
-                "Wandern" => typeof(ActivityTypeWandern),
-                "LaufenundFitness" => typeof(ActivityTypeLaufenFitness),
-                "Loipen" => typeof(ActivityTypeLoipen),
-                "Rodelbahnen" => typeof(ActivityTypeRodeln),
-                "Piste" => typeof(ActivityTypePisten),
-                "Aufstiegsanlagen" => typeof(ActivityTypeAufstiegsanlagen),
-                _ => typeof(ActivityTypeBerg),
-            };
-        }
-
         /// <summary>
-        /// GET Activity Types List (Localized Type Names and Bitmasks)
+        /// GET Activity Types List
         /// </summary>
         /// <returns>Collection of ActivityTypes Object</returns>
         private Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
-                List<ActivityTypes> mysuedtiroltypeslist = new List<ActivityTypes>();
+                var query =
+                    QueryFactory.Query("activitytypes")
+                        .SelectRaw("data")
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
-                //Get LTS Tagging Types List
-                var ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
-                        connectionFactory, "ltstaggingtypes", "*", "", "", 0,
-                        null, cancellationToken);
+                var data = await query.GetAsync<JsonRaw?>();
 
-                foreach (ActivityTypeFlag myactivitytype in EnumHelper.GetValues<ActivityTypeFlag>())
-                {
-                    ActivityTypes mysmgpoitype = new ActivityTypes();
+                return data;
+            });
+        }
 
-                    string? id = myactivitytype.GetDescription();
+        /// <summary>
+        /// GET Activity Types Single
+        /// </summary>
+        /// <returns>ActivityTypes Object</returns>
+        private Task<IActionResult> GetActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("activitytypes")
+                        .Select("data")
+                         //.WhereJsonb("Key", "ilike", id)
+                         .Where("id", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
+                //.Where("Key", "ILIKE", id);
 
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "ActivityType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "";
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                    mysmgpoitype.Bitmask = (int)myactivitytype; //FlagsHelper.GetFlagofType<ActivityTypeFlag>(id);
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                        Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(id),
-                        ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-
-                    var subtype = GetChildFlagType(myactivitytype);
-
-                    foreach (var myactivitysubtype in Enum.GetValues(subtype))
-                    {
-                        if (myactivitysubtype != null)
-                        {
-                            ActivityTypes mysmgpoisubtype = new ActivityTypes();
-
-                            string? subid = FlagsHelper.GetDescription(myactivitysubtype);
-
-                            mysmgpoisubtype.Id = subid;
-                            mysmgpoisubtype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                            mysmgpoisubtype.Parent = id;
-
-                            mysmgpoisubtype.Bitmask = (int)myactivitysubtype;
-
-                            mysmgpoisubtype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                                Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(subid),
-                                ltstaggingtypes) as Dictionary<string, string>;
-
-                            mysuedtiroltypeslist.Add(mysmgpoisubtype);
-                        }
-                    }
-                }
-
-                return JsonConvert.SerializeObject(mysuedtiroltypeslist);
+                return data;
             });
         }
 
@@ -325,7 +330,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("api/ActivityChanged")]
+        [HttpGet, Route("ActivityChanged")]
         public async Task<IActionResult> GetAllActivityChanged(
             uint pagenumber = 1,
             uint pagesize = 10,
@@ -336,8 +341,14 @@ namespace OdhApiCore.Controllers
         {
             updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
-            return await GetActivityList(null, pagenumber, pagesize, null, null, null, null, null, null, null, null, new LegacyBool(null), null, null, 
-                new LegacyBool(null), new LegacyBool(null), updatefrom, seed, null, null, null, null, cancellationToken);
+            return await GetActivityList(
+                language: null, pagenumber: pagenumber, pagesize: pagesize, activitytype: null,
+                subtype: null, idlist: null, locfilter: null, areafilter: null, distancefilter: null,
+                altitudefilter: null, durationfilter: null, highlight: new LegacyBool(null),
+                difficultyfilter: null, odhtagfilter: null, active: new LegacyBool(null),
+                odhactive: new LegacyBool(null), lastchange: updatefrom, seed: seed,
+                latitude: null, longitude: null, radius: null, fields: null, searchfilter: null,
+                cancellationToken: cancellationToken);
         }
 
         #endregion

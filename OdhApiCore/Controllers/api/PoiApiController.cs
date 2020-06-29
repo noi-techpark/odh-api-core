@@ -1,12 +1,14 @@
 ﻿using Helper;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using OdhApiCore.Responses;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,8 +21,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
     {
-        public PoiController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
-            : base(settings, connectionFactory)
+        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
         }
 
@@ -52,7 +54,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Poi")]
+        [HttpGet, Route("Poi")]
         public async Task<IActionResult> GetPoiList(
             string? language = null,
             uint pagenumber = 1,
@@ -73,6 +75,7 @@ namespace OdhApiCore.Controllers.api
             string? radius = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            string? searchfilter = null,
             CancellationToken cancellationToken = default)
         {
             //TODO
@@ -81,9 +84,11 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFiltered(
-                fields ?? Array.Empty<string>(), language, pagenumber, pagesize, poitype, subtype, idlist,
-                locfilter, areafilter, highlight, active, odhactive, odhtagfilter, seed, lastchange,
-                geosearchresult, cancellationToken);
+                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
+                activitytype: poitype, subtypefilter: subtype, idfilter: idlist, searchfilter: searchfilter,
+                locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight, active: active, smgactive: odhactive,
+                smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult: geosearchresult,
+                cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -98,13 +103,18 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("api/Poi/{id}")]
-        public async Task<IActionResult> GetPoiSingle(string id, string? language, CancellationToken cancellationToken)
+        [HttpGet, Route("Poi/{id}", Name = "SinglePoi")]
+        public async Task<IActionResult> GetPoiSingle(
+            string id,
+            string? language = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+         CancellationToken cancellationToken = default)
         {
             //TODO
             //CheckOpenData(User);
 
-            return await GetSingle(id, language, cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         /// <summary>
@@ -119,13 +129,29 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
-        [HttpGet, Route("api/PoiTypes")]
+        [HttpGet, Route("PoiTypes")]
         public async Task<IActionResult> GetAllPoiTypesList(CancellationToken cancellationToken)
         {
             return await GetPoiTypesList(cancellationToken);
         }
 
-       
+        /// <summary>
+        /// GET Poi Types Single
+        /// </summary>
+        /// <returns>PoiType Object</returns>
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        //[CacheOutputUntilToday(23, 59)]
+        [ProducesResponseType(typeof(PoiTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,PoiReader")]
+        [HttpGet, Route("PoiTypes/{id}", Name = "SinglePoiTypes")]
+        public async Task<IActionResult> GetAllPoiTypesSingle(string id, string language, CancellationToken cancellationToken)
+        {
+            return await GetPoiTypesSingleAsync(id, cancellationToken);
+        }
 
         #endregion
 
@@ -149,47 +175,57 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Result Object with Collection of Pois</returns>
         private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
-            string? idfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active, bool? smgactive,
-            string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? idfilter, string? searchfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active,
+            bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            CancellationToken cancellationToken)
         {
 
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
-                    connectionFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, lastchange, cancellationToken);
+                    QueryFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
+                    locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
+                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
 
-                string select = "*";
-                string orderby = "";
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From("pois")
+                        .PoiWhereExpression(
+                            idlist: myactivityhelper.idlist, poitypelist: myactivityhelper.poitypelist,
+                            subtypelist: myactivityhelper.subtypelist, smgtaglist: myactivityhelper.smgtaglist,
+                            districtlist: new List<string>(), municipalitylist: new List<string>(),
+                            tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
+                            arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
+                            activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
+                            filterClosedData: FilterClosedData
+                        )
+                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
+                        .GeoSearchFilterAndOrderby(geosearchresult);
 
-                var (whereexpression, parameters) = PostgresSQLWhereBuilder.CreatePoiWhereExpression(
-                    myactivityhelper.idlist, myactivityhelper.poitypelist, myactivityhelper.subtypelist,
-                    myactivityhelper.smgtaglist, new List<string>(), new List<string>(), myactivityhelper.tourismvereinlist,
-                    myactivityhelper.regionlist, myactivityhelper.arealist, myactivityhelper.highlight, myactivityhelper.active,
-                    myactivityhelper.smgactive, myactivityhelper.lastchange);
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: (int)pagesize);
 
-                //Build Orderby
-                string? myseed = PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "data ->>'Shortname' ASC");
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
+                    );
 
-                PostgresSQLHelper.ApplyGeoSearchWhereOrderby(ref whereexpression, ref orderby, geosearchresult);
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
 
-                uint pageskip = pagesize * (pagenumber - 1);
-
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "pois", select, (whereexpression, parameters), orderby, pagesize, pageskip,
-                    cancellationToken);
-
-                uint totalcount = (uint)totalCount;
-                uint totalpages = PostgresSQLHelper.PGPagingHelper(totalcount, pagesize);
-
-                var dataTransformed = data.Select(raw => raw.TransformRawData(language, fields, checkCC0: CheckCC0License));
-
-                return PostgresSQLHelper.GetResultJson(
+                return ResponseHelpers.GetResult(
                     pagenumber,
                     totalpages,
                     totalcount,
-                    myseed,
-                    dataTransformed);
+                    seed,
+                    dataTransformed,
+                    Url);
             });
         }
 
@@ -198,17 +234,19 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">ID of Poi</param>
         /// <returns>Poi Object</returns>
-        private Task<IActionResult> GetSingle(string id, string? language, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
-                var where = PostgresSQLWhereBuilder.CreateIdListWhereExpression(id.ToUpper());
-                var (totalCount, data) = await PostgresSQLHelper.SelectFromTableDataAsStringParametrizedAsync(
-                    connectionFactory, "pois", "*", where, "", 0,
-                    null, cancellationToken);
+                var query =
+                    QueryFactory.Query("pois")
+                        .Select("data")
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
 
-                var dataTransformed = data.FirstOrDefault()?.TransformRawData(language, Array.Empty<string>(), checkCC0: CheckCC0License);
-                return dataTransformed == null ? null : JsonConvert.SerializeObject(dataTransformed);
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
             });
         }
 
@@ -216,82 +254,43 @@ namespace OdhApiCore.Controllers.api
 
         #region CUSTOM METHODS
 
-        private (Type type, bool islong) GetChildFlagType(object x)
-        {
-            return x switch
-            {
-                "AertzeApotheken" => (typeof(PoiTypeAerzteApotheken), false),
-                "GeschaefteDienstleister" => (typeof(PoiTypeGeschaefteDienstleister), true),
-                "KulturSehenswuerdigkeiten" => (typeof(PoiTypeKulturSehenswuerdigkeiten), false),
-                "NachtlebenUnterhaltung" => (typeof(PoiTypeNachtlebenUnterhaltung), false),
-                "OeffentlicheEinrichtungen" => (typeof(PoiTypeOeffentlicheEinrichtungen), false),
-                "SportFreizeit" => (typeof(PoiTypeSportFreizeit), true),
-                "VerkehrTransport" => (typeof(PoiTypeVerkehrTransport), false),
-                "Dienstleister" => (typeof(PoiTypeDienstleister), true),
-                "Handwerk" => (typeof(PoiTypeHandwerk), false),
-                _ => (typeof(PoiTypeAerzteApotheken), false),
-            };
-        }
-
         /// <summary>
-        /// GET Poi Types List (Localized Type Names and Bitmasks)
+        /// GET Poi Types List
         /// </summary>
         /// <returns>Collection of PoiTypes Object</returns>
         private Task<IActionResult> GetPoiTypesList(CancellationToken cancellationToken)
         {
-            return DoAsyncReturnString(async connectionFactory =>
+            return DoAsyncReturn(async () =>
             {
-                List<PoiTypes> mysuedtiroltypeslist = new List<PoiTypes>();
+                var query =
+                     QueryFactory.Query("poitypes")
+                         .SelectRaw("data");
 
-                //Get LTS Tagging Types List
-                var ltstaggingtypes = PostgresSQLHelper.SelectFromTableDataAsObjectAsync<LTSTaggingType>(
-                    connectionFactory, "ltstaggingtypes", "*", "", "", 0, null, cancellationToken);
+                var data = await query.GetAsync<JsonRaw?>();
 
-                foreach (PoiTypeFlag myactivitytype in EnumHelper.GetValues<PoiTypeFlag>())
-                {
-                    PoiTypes mysmgpoitype = new PoiTypes();
+                return data;
+            });
+        }
 
-                    string? id = myactivitytype.GetDescription();
+        /// <summary>
+        /// GET Poi Types Single
+        /// </summary>
+        /// <returns>PoiTypes Object</returns>
+        private Task<IActionResult> GetPoiTypesSingleAsync(string id, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("poitypes")
+                        .Select("data")
+                        //.WhereJsonb("Key", "ilike", id)
+                        .Where("id", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
+                //.Where("Key", "ILIKE", id);
 
-                    mysmgpoitype.Id = id;
-                    mysmgpoitype.Type = "PoiType"; // +mysuedtiroltype.TypeParent;
-                    mysmgpoitype.Parent = "";
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                    mysmgpoitype.Bitmask = (int)myactivitytype;
-
-                    mysmgpoitype.TypeDesc = await Helper.LTSTaggingHelper.GetPoiTypeDescAsync(id, ltstaggingtypes) as Dictionary<string, string>;
-
-                    mysuedtiroltypeslist.Add(mysmgpoitype);
-
-                    var subtype = GetChildFlagType(myactivitytype);
-
-                    foreach (var myactivitysubtype in Enum.GetValues(subtype.type))
-                    {
-                        if (myactivitysubtype != null)
-                        {
-                            PoiTypes mysmgpoisubtype = new PoiTypes();
-
-                            string? subid = FlagsHelper.GetDescription(myactivitysubtype);
-
-                            mysmgpoisubtype.Id = subid;
-                            mysmgpoisubtype.Type = "ActivitySubType"; // +mysuedtiroltype.TypeParent;
-                            mysmgpoisubtype.Parent = id;
-
-                            if(subtype.islong)
-                                mysmgpoisubtype.Bitmask = (long)myactivitysubtype;
-                            else
-                                mysmgpoisubtype.Bitmask = (int)myactivitysubtype;
-
-                            mysmgpoisubtype.TypeDesc = await Helper.LTSTaggingHelper.GetActivityTypeDescAsync(
-                                Helper.LTSTaggingHelper.LTSActivityTaggingTagTranslator(subid),
-                                ltstaggingtypes) as Dictionary<string, string>;
-
-                            mysuedtiroltypeslist.Add(mysmgpoisubtype);
-                        }
-                    }
-                }
-
-                return JsonConvert.SerializeObject(mysuedtiroltypeslist);
+                return data;
             });
         }
 
@@ -306,7 +305,7 @@ namespace OdhApiCore.Controllers.api
         ///// <returns>HttpResponseMessage</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
-        //[HttpPost, Route("api/Poi")]
+        //[HttpPost, Route("Poi")]
         //public HttpResponseMessage Post([FromBody]GBLTSPoi poi)
         //{
         //    try
@@ -342,7 +341,7 @@ namespace OdhApiCore.Controllers.api
         ///// <returns>HttpResponseMessage</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
-        //[HttpPut, Route("api/Poi/{id}")]
+        //[HttpPut, Route("Poi/{id}")]
         //public HttpResponseMessage Put(string id, [FromBody]GBLTSPoi poi)
         //{
         //    try
@@ -377,7 +376,7 @@ namespace OdhApiCore.Controllers.api
         ///// <returns>HttpResponseMessage</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
-        //[HttpDelete, Route("api/Poi/{id}")]
+        //[HttpDelete, Route("Poi/{id}")]
         //public HttpResponseMessage Delete(string id)
         //{
         //    try
@@ -426,7 +425,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("api/PoiChanged")]
+        [HttpGet, Route("PoiChanged")]
         public async Task<IActionResult> GetAllPoisChanged(
             uint pagenumber = 1,
             uint pagesize = 10,
@@ -440,8 +439,12 @@ namespace OdhApiCore.Controllers.api
 
             updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
-            return await GetPoiList(null, pagenumber, pagesize, null, null, null, null, new LegacyBool(null), null, null, new LegacyBool(null), new LegacyBool(null),
-                 updatefrom, seed, null, null, null, null, cancellationToken);
+            return await GetPoiList(
+                language: null, pagenumber: pagenumber, pagesize: pagesize, poitype: null, subtype: null,
+                idlist: null, areafilter: null, highlight: new LegacyBool(null), locfilter: null,
+                odhtagfilter: null, active: new LegacyBool(null), odhactive: new LegacyBool(null),
+                lastchange: updatefrom, seed: seed, latitude: null, longitude: null, radius: null,
+                fields: null, searchfilter: null, cancellationToken: cancellationToken);
         }
 
         #endregion

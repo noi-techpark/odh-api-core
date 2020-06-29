@@ -1,32 +1,72 @@
 ﻿using Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using SqlKata.Execution;
 using System;
-using System.Text;
+using System.Linq;
+using System.Net;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
 {
-
     [ApiController]
+    [Route("api")]
+    [FormatFilter]
     public abstract class OdhController : ControllerBase
     {
-        private readonly IPostGreSQLConnectionFactory connectionFactory;
+        private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
 
-        protected bool CheckCC0License => settings.CheckCC0License;
-
-        public OdhController(ISettings settings, IPostGreSQLConnectionFactory connectionFactory)
+        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory)
         {
+            this.env = env;
             this.settings = settings;
-            this.connectionFactory = connectionFactory;
+            this.Logger = logger;
+            this.QueryFactory = queryFactory;
         }
 
-        protected async Task<IActionResult> DoAsync(Func<IPostGreSQLConnectionFactory, Task<IActionResult>> f)
+        protected ILogger<OdhController> Logger { get; }
+
+        protected QueryFactory QueryFactory { get; }
+
+        protected bool FilterCC0License => FilterClosedData;
+
+        protected bool FilterClosedData
+        {
+            get
+            {
+                var roles = new[] {
+                    "DataReader",
+                    $"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
+                };
+                return !roles.Any(User.IsInRole);
+            }
+        }
+
+        protected Func<string, string> UrlGenerator
+        {
+            get
+            {
+                return self =>
+                {
+                    var chunks = self.Split('/', 2);
+                    if (chunks.Length < 2)
+                        return self;
+                    var (controller, id) = (chunks[0], chunks[1]);
+                    return Url.Link($"Single{controller}", new { id });
+                };
+            }
+        }
+
+        protected async Task<IActionResult> DoAsync(Func<Task<IActionResult>> f)
         {
             try
             {
-                return await f(this.connectionFactory);
+                return await f();
             }
             catch (PostGresSQLHelperException ex)
             {
@@ -34,32 +74,32 @@ namespace OdhApiCore.Controllers
             }
             catch (JsonPathException ex)
             {
-                return this.BadRequest(new {
+                return this.BadRequest(new
+                {
                     error = "Invalid JSONPath selection",
                     path = ex.Path,
-                    details = ex.Message
+                    details = env.IsDevelopment() ? ex.ToString() : ex.Message
                 });
             }
             catch (Exception ex)
             {
                 if (ex.Message == "Request Error")
-                    return this.BadRequest(new { error = ex.Message });
+                    return this.BadRequest(new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
                 else
-                    return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+                    return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
             }
         }
 
-        protected Task<IActionResult> DoAsyncReturnString(Func<IPostGreSQLConnectionFactory, Task<string?>> f)
+        protected Task<IActionResult> DoAsyncReturn(Func<Task<object?>> f)
         {
-            return DoAsync(async connectionFactory =>
+            return DoAsync(async () =>
             {
-                string? result = await f(connectionFactory);
+                object? result = await f();
                 if (result == null)
                     return this.NotFound();
                 else
-                    return this.Content(result, "application/json", Encoding.UTF8);
+                    return this.Ok(result);
             });
         }
-
     }
 }

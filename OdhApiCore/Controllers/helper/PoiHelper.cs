@@ -1,4 +1,5 @@
 ﻿using Helper;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,27 +14,26 @@ namespace OdhApiCore.Controllers.api
         public List<string> subtypelist;
         public List<string> idlist;
         public List<string> arealist;
-        public List<string> smgtaglist;        
+        public List<string> smgtaglist;
         public List<string> tourismvereinlist;
         public List<string> regionlist;
         public bool? highlight;
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
-    
+
         public static async Task<PoiHelper> CreateAsync(
-        IPostGreSQLConnectionFactory connectionFactory, string? poitype, string? subtypefilter, string? idfilter, string? locfilter,
-        string? areafilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-        string? smgtags, string? lastchange, CancellationToken cancellationToken)
+            QueryFactory queryFactory, string? poitype, string? subtypefilter, string? idfilter, string? locfilter,
+            string? areafilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
+            string? smgtags, string? lastchange, CancellationToken cancellationToken)
         {
-            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
-                    connectionFactory, metaregionlist, cancellationToken).ToListAsync();
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
             }
 
             return new PoiHelper(
@@ -85,7 +85,7 @@ namespace OdhApiCore.Controllers.api
             //highlight
             highlight = highlightfilter;
             //active
-            active = activefilter;           
+            active = activefilter;
             //smgactive
             smgactive = smgactivefilter;
 

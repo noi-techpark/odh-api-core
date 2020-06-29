@@ -1,4 +1,6 @@
 ﻿using Helper;
+using SqlKata;
+using SqlKata.Execution;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -32,30 +34,34 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
 
         public static async Task<ActivityHelper> CreateAsync(
-            IPostGreSQLConnectionFactory connectionFactory, string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
-            string? areafilter, string? distancefilter, string? altitudefilter, string? durationfilter,
-            bool? highlightfilter, string? difficultyfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, CancellationToken cancellationToken)
+            QueryFactory queryFactory, string? activitytype, string? subtypefilter,
+            string? idfilter, string? locfilter, string? areafilter, string? distancefilter,
+            string? altitudefilter, string? durationfilter, bool? highlightfilter, string? difficultyfilter,
+            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            CancellationToken cancellationToken)
         {
-            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(connectionFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
                 List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
-                    connectionFactory, metaregionlist, cancellationToken).ToListAsync();
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
             }
 
             return new ActivityHelper(
-                activitytype, subtypefilter, idfilter, locfilter, arealist, distancefilter, altitudefilter, durationfilter, highlightfilter, difficultyfilter, activefilter, smgactivefilter, smgtags, lastchange, tourismusvereinids);
+                activitytype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter, locfilter: locfilter,
+                arealist: arealist, distancefilter: distancefilter, altitudefilter: altitudefilter,
+                durationfilter: durationfilter, highlightfilter: highlightfilter, difficultyfilter: difficultyfilter,
+                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange,
+                tourismusvereinids: tourismusvereinids);
         }
 
         private ActivityHelper(
-            string? activitytype, string? subtypefilter, string? idfilter, string? locfilter,
-            IEnumerable<string> arealist, string? distancefilter, string? altitudefilter, string? durationfilter,
-            bool? highlightfilter, string? difficultyfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
+            string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist,
+            string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
+            string? difficultyfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            IEnumerable<string>? tourismusvereinids)
         {
             activitytypelist = new List<string>();
             if (activitytype != null)
@@ -91,18 +97,26 @@ namespace OdhApiCore.Controllers
                 tourismvereinlist = CommonListCreator.CreateDistrictIdList(locfilter, "tvs");
 
             if (tourismusvereinids != null)
-                tourismvereinlist.AddRange(tourismusvereinids);        
+                tourismvereinlist.AddRange(tourismusvereinids);
 
             //Distance
-            var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
-            distancemin = min * 1000;
-            distancemax = max * 1000;
+            distance = distancefilter != null;
+            if (distance)
+            {
+                var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
+                distancemin = min * 1000;
+                distancemax = max * 1000;
+            }
 
             //Altitude
-            (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
+            altitude = altitudefilter != null;
+            if (altitude)
+                (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
 
             //Duration
-            (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
+            duration = durationfilter != null;
+            if (duration)
+                (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
 
             //highlight
             highlight = highlightfilter;
@@ -116,6 +130,6 @@ namespace OdhApiCore.Controllers
             this.lastchange = lastchange;
         }
 
-       
+
     }
 }

@@ -1,165 +1,98 @@
-﻿using System.Collections.Generic;
+﻿using SqlKata;
+using SqlKata.Execution;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Helper
 {
-    public class LocationListCreator
+    public static class LocationListCreator
     {
         #region PostGres
-
-        public static async Task<List<string>> CreateActivityAreaListPGAsync(string areafilter, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> CreateActivityAreaListPGAsync(QueryFactory queryFactory, string areafilter, CancellationToken cancellationToken)
         {
-            List<string> thearealist = new List<string>();
+            //Klaub asanond
+            var splittedlocfilter =
+                areafilter
+                    .Split(',', System.StringSplitOptions.RemoveEmptyEntries)
+                    .Select(areafilter => (type: areafilter.Substring(0, 3), id: areafilter.Substring(3)));
 
-            if (areafilter != null)
+            var thearealist = new List<string>();
+            foreach ((string type, string id) in splittedlocfilter)
             {
-
-                if (areafilter.Substring(areafilter.Length - 1, 1) == ",")
-                    areafilter = areafilter.Substring(0, areafilter.Length - 1);
-
-                //Klaub asanond
-                var splittedlocfilter = areafilter.Split(',');
-
-                foreach (string theareafilter in splittedlocfilter)
+                switch (type)
                 {
-                    string areatype = theareafilter.Substring(0, 3);
+                    case "reg":
+                        //Suche alle zugehörigen Areas für die Region
+                        thearealist.AddRange(await queryFactory.Query().GetAreaforRegionPGAsync(id, cancellationToken));
+                        break;
 
-                    switch (areatype)
-                    {
-                        case "reg":
+                    case "tvs":
+                        //Suche alle zugehörigen TVs für die Region
+                        thearealist.AddRange(await queryFactory.Query().GetAreaforTourismvereinPGAsync(id, cancellationToken));
+                        break;
 
-                            //Suche alle zugehörigen Areas für die Region
-                            thearealist.AddRange(await GetAreaforRegionPGAsync(theareafilter.Replace("reg", ""), connectionFactory, cancellationToken));
+                    case "skr":
+                        //Suche alle zugehörigen TVs für die Region
+                        thearealist.AddRange(await queryFactory.Query().GetAreaforSkiRegionPGAsync(id, cancellationToken));
+                        break;
 
-                            break;
+                    case "ska":
+                        //Suche alle zugehörigen TVs für die Region
+                        thearealist.AddRange(await queryFactory.Query().GetAreaforSkiAreaPGAsync(id, cancellationToken));
+                        break;
 
-                        case "tvs":
-
-                            //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforTourismvereinPGAsync(theareafilter.Replace("tvs", ""), connectionFactory, cancellationToken));
-
-                            break;
-
-                        case "skr":
-
-                            //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforSkiRegionPGAsync(theareafilter.Replace("skr", ""), connectionFactory, cancellationToken));
-
-                            break;
-
-                        case "ska":
-
-                            //Suche alle zugehörigen TVs für die Region
-                            thearealist.AddRange(await GetAreaforSkiAreaPGAsync(theareafilter.Replace("ska", ""), connectionFactory, cancellationToken));
-
-                            break;
-
-                        case "are":
-                            thearealist.Add(theareafilter.Replace("are", ""));
-                            break;
-                    }
+                    case "are":
+                        thearealist.Add(id);
+                        break;
                 }
             }
-
-            return thearealist;
+            return thearealist.Distinct();
         }
 
-        public static async Task<List<string>> GetAreaforRegionPGAsync(string regionId, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> GetAreaforRegionPGAsync(this Query query, string regionId, CancellationToken cancellationToken)
         {
-            List<string> arealist = new List<string>();
-
-            string select = "Id,data ->> 'Id'";
-            string where = "data ->> 'RegionId' = '" + regionId.ToUpper() + "'";
-
-            var result = PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionFactory, "areas", select, where, "", 0, null, cancellationToken);
-
-            await foreach (var area in result)
-            {
-                var areacodes = area.Value.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
-
-                List<string> areacodeslist = areacodes.Split(',').ToList();
-
-                foreach (var areacode in areacodeslist)
-                {
-                    if (!arealist.Contains(areacode))
-                        arealist.Add(areacode);
-                }
-            }
-
-            return arealist;
+            return await
+                query.From("areas")
+                     .SelectRaw("data#>>'\\{Id\\}'")
+                     .WhereRaw("data#>>'\\{RegionId\\}' = ?", regionId.ToUpper())
+                     .GetAsync<string>();
         }
 
-        public static async Task<List<string>> GetAreaforTourismvereinPGAsync(string tvId, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> GetAreaforTourismvereinPGAsync(this Query query, string tvId, CancellationToken cancellationToken)
         {
-            List<string> arealist = new List<string>();
-
-            string select = "Id,data ->> 'Id'";
-            string where = "data ->> 'TourismvereinId' = '" + tvId.ToUpper() + "'";
-
-            var result = PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionFactory, "areas", select, where, "", 0, null, cancellationToken);
-
-            await foreach (var area in result)
-            {
-                var areacodes = area.Value.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
-
-                List<string> areacodeslist = areacodes.Split(',').ToList();
-
-                foreach (var areacode in areacodeslist)
-                {
-                    if (!arealist.Contains(areacode))
-                        arealist.Add(areacode);
-                }
-            }
-
-            return arealist;
+            return await
+                query.From("areas")
+                     .SelectRaw("data#>>'\\{Id\\}'")
+                     .WhereRaw("data#>>'\\{TourismvereinId\\}' = ?", tvId.ToUpper())
+                     .GetAsync<string>();
         }
 
-        public static async Task<IEnumerable<string>> GetAreaforSkiRegionPGAsync(string skiregId, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
+        private static string[] FromJsonArray(string jsonArray) =>
+            Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(jsonArray);
+
+        public static async Task<IEnumerable<string>> GetAreaforSkiRegionPGAsync(this Query query, string skiregId, CancellationToken cancellationToken)
         {
-            List<string> arealist = new List<string>();
-
-            string select = "Id,data ->> 'AreaId'";
-            string where = "data ->> 'SkiRegionId' = '" + skiregId.ToUpper() + "'";
-
-            var result = PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionFactory, "skiareas", select, where, "", 0, null, cancellationToken);
-
-            await foreach (var skiarea in result)
-            {
-                var areacodes = skiarea.Value.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
-
-                List<string> areacodeslist = areacodes.Split(',').ToList();
-
-                foreach (var areacode in areacodeslist)
-                {
-                    if (!arealist.Contains(areacode))
-                        arealist.Add(areacode);
-                }
-            }
-
-            return arealist;
+            var areaIdsJson = await
+                query.From("skiareas")
+                     .SelectRaw("data#>>'\\{AreaId\\}'")
+                     .WhereRaw("data#>>'\\{SkiRegionId\\}' = ?", skiregId.ToUpper())
+                     .GetAsync<string>();
+            return areaIdsJson.SelectMany(FromJsonArray)
+                              .Distinct();
         }
 
-        public static async Task<IEnumerable<string>> GetAreaforSkiAreaPGAsync(string skiareaId, IPostGreSQLConnectionFactory connectionFactory, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<string>> GetAreaforSkiAreaPGAsync(this Query query, string skiareaId, CancellationToken cancellationToken)
         {
-            List<string> arealist = new List<string>();
-
-            //string select = "Id,data ->> 'AreaId'";
-            string select = "Id,data ->> 'AreaId'";
-            string where = "Id = '" + skiareaId.ToUpper() + "'";
-
-            var rawResult = await PostgresSQLHelper.SelectFromTableDataAsStringAsync(connectionFactory, "skiareas", select, where, "", 0, null, cancellationToken).SingleAsync();
-
-            var result = rawResult.Value;
-
-            result = result.Replace(" ", "").Replace("[", "").Replace("]", "").Replace("\"", "");
-
-            arealist = result.Split(',').ToList();
-
-            return arealist;
+            var areaIdsJson = await
+                query.From("skiareas")
+                     .SelectRaw("data#>>'\\{AreaId\\}'")
+                     .WhereRaw("data#>>'\\{Id\\}' = ?", skiareaId.ToUpper())
+                     .GetAsync<string>();
+            return areaIdsJson.SelectMany(FromJsonArray)
+                              .Distinct();
         }
-
         #endregion
     }
 }
