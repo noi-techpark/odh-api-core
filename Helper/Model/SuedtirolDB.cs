@@ -884,7 +884,7 @@ namespace Helper
         public string? City { get; set; }
         public string? Shortdesc { get; set; }
         public string? Longdesc { get; set; }
-        public string Vat { get; set; }
+        public string? Vat { get; set; }
     }
 
     public class AccoFeature
@@ -949,6 +949,8 @@ namespace Helper
         public List<string>? RoomNumbers { get; set; }
         public Nullable<int> RoomClassificationCodes { get; set; }
         public Nullable<int> RoomtypeInt { get; set; }
+
+        public Nullable<DateTime> LastChange { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
