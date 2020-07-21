@@ -595,12 +595,21 @@ namespace Helper
                 )
             );
 
+        //public static Query FilterClosedData(this Query query) =>
+        //    query.Where(q =>
+        //        q.WhereRaw(
+        //            "data#>>'\\{_Meta,ClosedData\\}' IS NULL"
+        //        ).OrWhereRaw(
+        //            "data#>>'\\{_Meta,ClosedData\\}' = 'false'"
+        //        )
+        //    );
+
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(
-                    "data#>>'\\{_Meta,ClosedData\\}' IS NULL"
+                    "data#>>'\\{LicenseInfo,ClosedData\\}' IS NULL"
                 ).OrWhereRaw(
-                    "data#>>'\\{_Meta,ClosedData\\}' = 'false'"
+                    "data#>>'\\{LicenseInfo,ClosedData\\}' = 'false'"
                 )
             );
 
