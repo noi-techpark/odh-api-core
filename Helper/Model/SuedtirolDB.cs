@@ -2473,6 +2473,7 @@ namespace Helper
         //NEU
         public string? CopyRight { get; set; }
         public string? License { get; set; }
+        public string? LicenseHolder { get; set; }
         public ICollection<string>? ImageTags { get; set; }
     }
 
