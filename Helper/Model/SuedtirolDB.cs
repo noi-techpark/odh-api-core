@@ -394,6 +394,8 @@ namespace Helper
 
     public class Area : IIdentifiable, IActivateable
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public string? Id { get; set; }
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
@@ -514,6 +516,8 @@ namespace Helper
 
     public class Marketinggroup : IIdentifiable
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public string? Id { get; set; }
         public string? Shortname { get; set; }
         public string? Beschreibung { get; set; }
@@ -794,6 +798,8 @@ namespace Helper
 
     public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public Accommodation()
         {
             AccoDetail = new Dictionary<string, AccoDetail>();
@@ -917,6 +923,8 @@ namespace Helper
 
     public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public AccoRoom()
         {
             AccoRoomDetail = new Dictionary<string, AccoRoomDetail>();
@@ -981,8 +989,6 @@ namespace Helper
         public string? Description { get; set; }
         public string? BacklinkUrl { get; set; }
     }
-
-
 
     #endregion
 
@@ -1246,6 +1252,8 @@ namespace Helper
 
     public class Package : IIdentifiable, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public Package()
         {
             PackageDetail = new Dictionary<string, PackageDetail>();
@@ -1388,6 +1396,8 @@ namespace Helper
 
     public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         //IIdentifiable
         public string? Id { get; set; }
 
@@ -1912,6 +1922,8 @@ namespace Helper
 
     public class Wine
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public Wine()
         {
             Detail = new Dictionary<string, Detail>();
@@ -1984,6 +1996,8 @@ namespace Helper
     //BaseInfos für Districts / Regions / Municipalities
     public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public BaseInfos()
         {
             Detail = new Dictionary<string, Detail>();
@@ -2019,6 +2033,8 @@ namespace Helper
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
     public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public PoiBaseInfos()
         {
             Detail = new Dictionary<string, Detail>();
@@ -2123,6 +2139,8 @@ namespace Helper
     //Erweiterte Baseinfos für ARticles
     public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public ArticleBaseInfos()
         {
             Detail = new Dictionary<string, Detail>();
@@ -2180,6 +2198,8 @@ namespace Helper
     //Erweiterte Baseinfos für Gastronomy
     public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public GastronomyBaseInfos()
         {
             Detail = new Dictionary<string, Detail>();
@@ -2250,6 +2270,8 @@ namespace Helper
     //Erweiterte BaseInfo für Events
     public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public EventBaseInfos()
         {
             Detail = new Dictionary<string, Detail>();
@@ -2437,6 +2459,8 @@ namespace Helper
 
     public class WebcamInfo : Webcam
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         //NEW Webcam Properties
         public string? Id { get; set; }
         public string? Streamurl { get; set; }
@@ -2794,7 +2818,6 @@ namespace Helper
 
     #endregion
 
-
     #region Resultset
 
     //Generic Result für Paging
@@ -2837,6 +2860,8 @@ namespace Helper
 
     public class EventShort
     {
+        public LicenseInfo LicenseInfo { get; set; }
+
         public string? Id { get; set; }
         public string? Source { get; set; }
         public string? EventLocation { get; set; }
@@ -3054,4 +3079,31 @@ namespace Helper
 
         public Dictionary<string, List<Dictionary<string, object>>> Metainfos { get; set; }
     }
+
+    #region MetaInfo
+
+    public class Metadata
+    {
+        public string Id { get; set; }
+        public string Type { get; set; }
+        public Nullable<DateTime> LastUpdate { get; set; }
+
+        //New
+        public string Source { get; set; }
+    }
+
+    #endregion
+
+    #region LicenseInfo
+
+    public class LicenseInfo
+    {
+        //public string DataType { get; set; }
+        public string License { get; set; }
+        public string LicenseHolder { get; set; }
+        public string Author { get; set; }
+        public bool ClosedData { get; set; }
+    }
+
+    #endregion
 }
