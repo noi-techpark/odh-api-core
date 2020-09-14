@@ -891,6 +891,8 @@ namespace Helper
         public string? Shortdesc { get; set; }
         public string? Longdesc { get; set; }
         public string? Vat { get; set; }
+
+        public string? CountryCode { get; set; }
     }
 
     public class AccoFeature
