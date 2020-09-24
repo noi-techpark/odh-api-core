@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Helper
+namespace DataModel
 {
     public class AccommodationLocalized
     {

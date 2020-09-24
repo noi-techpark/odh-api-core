@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Helper
+namespace DataModel
 {
     public class AccoBookList
-    {
-        
-
+    {        
         public string? Id { get; set; }
         public bool IsBookable { get; set; }
         public ICollection<AccoBookingChannel>? AccoBookingChannel { get; set; }

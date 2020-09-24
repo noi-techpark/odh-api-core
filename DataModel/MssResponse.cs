@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Helper
+namespace DataModel
 {
-    //Lei zun testen!
     public class MssResult
     {
         public string? ResultId { get; set; }
@@ -12,7 +11,6 @@ namespace Helper
         public int? bookableHotels { get; set; }
         public virtual ICollection<MssResponseShort>? MssResponseShort { get; set; } = new HashSet<MssResponseShort>();
     }
-
 
     public class MssResponseShort
     {

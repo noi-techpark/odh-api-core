@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Helper.Model
+namespace DataModel
 {
     /// <summary>
     /// This class contains the classes used by Open Data Hub PG Instance with linked data

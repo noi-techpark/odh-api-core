@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Helper.Model
+namespace DataModel
 {
     public class DDVenue
     {

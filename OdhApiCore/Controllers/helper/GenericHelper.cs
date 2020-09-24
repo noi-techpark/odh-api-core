@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Newtonsoft.Json;
 using SqlKata;
 using SqlKata.Execution;

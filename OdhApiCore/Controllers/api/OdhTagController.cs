@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

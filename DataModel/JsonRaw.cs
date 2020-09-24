@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Helper
+namespace DataModel
 {
     public class JsonRawConverter : JsonConverter<JsonRaw>
     {

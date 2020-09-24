@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Helper
+namespace DataModel
 {
     /// <summary>
     /// Interfaces welche von den anderen Klassen implementiert werden
@@ -1406,6 +1406,7 @@ namespace Helper
         //Infos zum Import
         public DateTime FirstImport { get; set; }
         public DateTime LastUpdate { get; set; }
+        public DateTime LastChange { get; set; }
 
         public bool Active { get; set; }
         public bool SmgActive { get; set; }

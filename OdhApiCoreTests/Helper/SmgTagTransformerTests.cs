@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using Helper;
+using DataModel;
 
 namespace OdhApiCoreTests.Helper
 {
