@@ -99,7 +99,9 @@ namespace Helper
         [Description("Mountain")]
         Mountain = 32,
         [Description("Apartment")]
-        Apartment = 64
+        Apartment = 64,
+        [Description("Notdefined")]
+        Notdefined = 128
     }
 
     //Kategorie für Accommodations
@@ -178,8 +180,8 @@ namespace Helper
         HüttenBerggasthöfe = 1 << 13,
         [Description("Bäuerliche Welten")]
         BäuerlicheWelten = 1 << 14,
-        [Description("Balance")]
-        Balance = 1 << 15,
+        [Description("Bonus Vacanze")]
+        BonusVacanze = 1 << 15,
         [Description("Christkindlmarkt")]
         Christkindlmarkt = 1 << 16
 
@@ -392,73 +394,80 @@ namespace Helper
         [Description("94E42C7211B9430B8F096ABB7ED59AC2")]
         SeminareTagungen = 1 << 6,
         [Description("38DCFB491D27408C990654CB64C6339D")]
-        Versammlungen = 1 << 7
+        Versammlungen = 1 << 7,
+        [Description("41543CA256A8433C8CD47109FFCEE1F7")]
+        SitzplatzAussenbereich = 1 << 8
     }
 
     //Facilities für Gastronomy
     [Flags]
-    public enum GastroFacilityFlag
+    public enum GastroFacilityFlag : long
     {
         [Description("BBD9085F89BC417B97D986A26CE86F40")]
-        Kreditkarte = 1,
+        Kreditkarte = 1L,
         [Description("9F05BA64D6614894A89FFE23A4A0F20B")]
-        BankomatMaestro = 1 << 1,
+        BankomatMaestro = 1L << 1,
         [Description("B7E9EE4A91544849B69D5A5564DDCDFB")]
-        Barrierefrei = 1 << 2,
+        Barrierefrei = 1L << 2,
         [Description("93BDE34283FF41899CCF530BE80201E2")]
-        Garten = 1 << 3,
+        Garten = 1L << 3,
         [Description("3A89DBB5F633473096C902D2CBFD2FA3")]
-        Raucherraum = 1 << 4,
+        Raucherraum = 1L << 4,
         [Description("36C354DC30F14DD7B1CCFEE78E82132C")]
-        Spielzimmer = 1 << 5,
+        Spielzimmer = 1L << 5,
         [Description("188A9BADC0324C10B0013F108CE5EA5C")]
-        Spielplatz = 1 << 6,
+        Spielplatz = 1L << 6,
         [Description("481891DECDAF443E92E9957B5EC8FCAC")]
-        Parkplaetze = 1 << 7,
+        Parkplaetze = 1L << 7,
         [Description("D579D1C8EA8445018CA5BB6DABEA0C26")]
-        Garage = 1 << 8,
+        Garage = 1L << 8,
         [Description("D9DCDD52FE444818AAFAB0E02FD92D91")]
-        Hundeerlaubt = 1 << 9,
+        Hundeerlaubt = 1L << 9,
         [Description("452422597831423F9F4E2B1A2BA9177A")]
-        Biergarten = 1 << 10,
+        Biergarten = 1L << 10,
         [Description("63534DC188314AC68DAB0EF0DE6EE5B0")]
-        Terrasse = 1 << 11,
+        Terrasse = 1L << 11,
         [Description("B3BC8F4D7BA948369515FBA8075D47DB")]
-        Wintergarten = 1 << 12,
+        Wintergarten = 1L << 12,
         [Description("52281FC851CA11D18F1400A02427D15E")]
-        GeeignetfuerBusse = 1 << 13,
+        GeeignetfuerBusse = 1L << 13,
         [Description("5228206E51CA11D18F1400A02427D15E")]
-        Bierbar = 1 << 14,
+        Bierbar = 1L << 14,
         [Description("46AD7938616B4D4882A006BEF3B199A4")]
-        GaultMillauSuedtirol = 1 << 15,
+        GaultMillauSuedtirol = 1L << 15,
         [Description("F0A385D0E8E44944AFCA3893712A1420")]
-        Guidaespresso = 1 << 16,
+        Guidaespresso = 1L << 16,
         [Description("2FA54F6F350748AE9CD1A389A5C9EDD9")]
-        Gamberorosso = 1 << 17,
+        Gamberorosso = 1L << 17,
         [Description("C0E761D71CC44F4C80D75FF68ED72C55")]
-        Feinschmecker = 1 << 18,
+        Feinschmecker = 1L << 18,
         [Description("6797D594C7BF4C7AA6D384B234EC7C44")]
-        AralSchlemmerAtlas = 1 << 19,
+        AralSchlemmerAtlas = 1L << 19,
         [Description("E5775068F5644E92B7CF94BDFCDA5175")]
-        VartaFuehrer = 1 << 20,
+        VartaFuehrer = 1L << 20,
         [Description("1FFD5352501542BF8BCB24B7BF75CF4F")]
-        Bertelsmann = 1 << 21,
+        Bertelsmann = 1L << 21,
         [Description("1641B07E28B9443EAB53E1DB7363F6F3")]
-        PreisfuerSuedtirolerWeinkultur = 1 << 22,
+        PreisfuerSuedtirolerWeinkultur = 1L << 22,
         [Description("5060F78090604B2E97A96D86B97D2E0B")]
-        Michelin = 1 << 23,
+        Michelin = 1L << 23,
         [Description("ED4028BEE0164BF185B923B3DD4FF9A0")]
-        RoterHahn = 1 << 24,
+        RoterHahn = 1L << 24,
         [Description("0DBA881DD41340FDA76196EBCEFC9ECD")]
-        Tafelspitz = 1 << 25,
+        Tafelspitz = 1L << 25,
         [Description("6C72999B96594EC08281DE9CCA00EF75")]
-        SuedtirolerGasthaus = 1 << 26,
+        SuedtirolerGasthaus = 1L << 26,
         //NEU
         [Description("098EB30324EA492DBD99F323AE20A621")]
-        KostenlosesWlan = 1 << 27,
+        KostenlosesWlan = 1L << 27,
         [Description("79EDF6ABA6F8484583D38DFDE9758B80")]
-        KleintierStreichelzoo = 1 << 28
-
+        KleintierStreichelzoo = 1L << 28,
+        [Description("DB1DDC1CC1EF4449BECD341C9DC12611")]
+        SlowFood = 1L << 29,
+        [Description("B92FFCECB4574BB9BCAE5EAB8917602D")]
+        ilgattiMassobrio = 1L << 30,
+        [Description("80BA0C6E19524ECA8956BA65294C8E5A")]
+        guidaOsterieItalia = 1L << 31
     }
 
     //Dishcodes für Gastronomy
@@ -725,9 +734,6 @@ namespace Helper
         Downhill = 1 << 5
     }
 
-
-
-
     [Flags]
     public enum SmgPoiPoiTypeFlagMuseen
     {
@@ -927,9 +933,12 @@ namespace Helper
         [Description("reiseveranstalter")]
         reiseveranstalter = 1 << 6,
         [Description("b2bartikel")]
-        b2bartikel = 1 << 7
+        b2bartikel = 1 << 7,
+        [Description("idmartikel")]
+        idmartikel = 1 << 8
     }
 
+    [Flags]
     public enum ArticleBasisArticleFlag
     {
         [Description("Suggestion")]
@@ -948,6 +957,7 @@ namespace Helper
         Detail = 1 << 6
     }
 
+    [Flags]
     public enum ArticleBuchTippFlag
     {
         [Description("Accommodation-Restaurants")]
@@ -972,6 +982,7 @@ namespace Helper
         Winter = 1 << 9
     }
 
+    [Flags]
     public enum ArticlePresseArticleFlag
     {
         [Description("allgemeinepresseartikel")]
@@ -984,6 +995,7 @@ namespace Helper
         pressethemenserviceartikel = 1 << 3
     }
 
+    [Flags]
     public enum ArticleB2BArticleFlag
     {
         [Description("B2BDetail")]
@@ -996,6 +1008,7 @@ namespace Helper
         pressethemenserviceartikel = 1 << 3
     }
 
+    [Flags]
     public enum ArticleContentArticleFlag
     {
         [Description("Site Content")]
@@ -1006,6 +1019,16 @@ namespace Helper
         PressSiteContent = 1 << 2
     }
 
+    [Flags]
+    public enum ArticleIDMArticleFlag
+    {
+        [Description("genussbotschafter")]
+        genussbotschafter = 1,
+        [Description("hersteller")]
+        hersteller = 1 << 1
+    }
+
+    [Flags]
     public enum ArticleVeranstaltungsArticleFlag
     {
         [Description("Gastronomie")]
@@ -1078,6 +1101,85 @@ namespace Helper
 
     #endregion
 
+    #region Venues
+
+    [Flags]
+    public enum VenueCategoryFlag
+    {
+        [Description("VEN03D5630AD1E1438DBA1E998F0F72B626")]
+        type_nonConventional = 1,  //1,
+        [Description("VEN410C6C89ED0041559B815FFC112870BB")]
+        type_fair = 1 << 1, // 2,
+        [Description("VEN5B35118C14FF4CB9A5546DDD6461AB62")]
+        type_historicalResidence = 1 << 2, //4,
+        [Description("VEN7324F5B3E210450C8DAF4AE3C5354ED5")]
+        type_otherConferenceSite = 1 << 3, //8,
+        [Description("VENA09AA4B479384DFBBB1605E9E8C0A93B")]
+        type_conferenceHotel = 1 << 4, //16,
+        [Description("VENAF924020EB32412C8F7FC5B0CB7DD8B3")]
+        type_institutionalSite = 1 << 5, //32,
+        [Description("VENDD2171604D37485582E9475A63198933")]
+        type_conventionCenter = 1 << 6, //64,        
+        [Description("VEN0219B13D32614E84B30221509F95E0C9")]
+        type_other = 1 << 7
+    }
+
+    [Flags]
+    public enum VenueSeatTypeFlag
+    {
+        [Description("VENE4AA0F13DDF1410489F237FF6B181831")]
+        seattype_audience = 1,  //1,
+        [Description("VEN0536C64E86B44FC2A2FBA77B6948993D")]
+        seattype_class = 1 << 1, // 2,
+        [Description("VEN3D1C707DCA794BBFBAA76ECA49465865")]
+        seattype_board = 1 << 2, //4,
+        [Description("VENDF70389DB7C54D57BCA0778AB7AA9C73")]
+        seattype_horseshoe = 1 << 3, //8,
+        [Description("VEN6E29B13DB4B04860B97DC993E203B1CF")]
+        seattype_cocktail = 1 << 4, //16,
+        [Description("VENDB7A4015D38543C5B8971362BDE1986A")]
+        seattype_galaDinner = 1 << 5 //32,           
+    }
+
+    [Flags]
+    public enum VenueFeatureFlag
+    {
+        [Description("VEN24059D25A6FC4FAE936E7CB3E776A646")]
+        faci_wardrobe = 1,  //1,
+        [Description("VEN2BF0A6C5BED846E7B35F84BB2CC39145")]
+        faci_barrierFreeAccess = 1 << 1, // 2,
+        [Description("VEN3BB8A8EA44CC465AAA91F97FA60A2666")]
+        faci_heating = 1 << 2, //4,
+        [Description("VEN479B65D5C62D44CE935E59F677477FF8")]
+        faci_table = 1 << 3, //8,
+        [Description("VEN600538A7883A4C74B6E8DE68DA2C7C04")]
+        faci_food = 1 << 4, //16,
+        [Description("VEN646D4B0F026243BFAF56709424BA53E1")]
+        faci_projector = 1 << 5, //32,
+        [Description("VEN7B56AA4CA95844B4AFA6E02DA4A234B9")]
+        faci_darkening = 1 << 6, //64,
+        [Description("VEN7CC12B6F18A5468180DA26EFB8314FFD")]
+        faci_independentAccess = 1 << 7, //128,
+        [Description("VEN8D08DF7A9A1A4FA6AA7AC3DF8FD76194")]
+        faci_parking = 1 << 8, //256,
+        [Description("VEN94ED27485E8743539BAA2F5B3A6B8AE2")]
+        faci_receptionRoom = 1 << 9, //512,
+        [Description("VENAF97953298494A5BBF4DE00DCC2724ED")]
+        faci_microphone = 1 << 10, //1024,
+        [Description("VENB7363C4DCE004B6FB163779B61577284")]
+        faci_projectorScreen = 1 << 11, //2048,
+        [Description("VENCE38E6D7EED44B8C898F6CCD53276CEB")]
+        faci_airConditioning = 1 << 12, //4096, 
+        [Description("VEND6B34DA7BA5847A7B0154998D80FD5FC")]
+        faci_lan = 1 << 13, //8192, 
+        [Description("VENEC3EE1CABD4C4507B3A6BC6511BDDEC5")]
+        faci_bar = 1 << 14, //16384, 
+        [Description("VENF5D451A120074F8F8D3BE961BBE9B526")]
+        faci_wifi = 1 << 15, //32768, 
+    }
+
+    #endregion
+
     #region ActivityData
 
     [Flags]
@@ -1108,40 +1210,31 @@ namespace Helper
     [Flags]
     public enum ActivityTypePisten
     {
-        //[Description("Weitere Pisten")]
-        //WeitereAufstiegsanlagen = 1
-        //Do tiamer derzua nor in die Tags in Typ von der Piste
-        //Do kanntmer no Schwierigkeit derzuatian
-
         [Description("nicht definiert")]
         nichtdefiniert = 1,
         [Description("Ski alpin")]
-        Skialpin = 1 << 1,
-        [Description("Halfpipe")]
-        Halfpipe = 1 << 2,
-        [Description("Tiefschnee")]
-        Tiefschnee = 1 << 3,
+        Skialpin = 1 << 1,  //2
+        //[Description("Halfpipe")]
+        //Halfpipe = 1 << 2,  //4
+        //[Description("Tiefschnee")]
+        //Tiefschnee = 1 << 3, //8
         [Description("Snowpark")]
-        Snowpark = 1 << 4,
-        [Description("Kids-Funpark")]
-        KidsFunpark = 1 << 5,
-        [Description("Geschwindigkeitspiste")]
-        Geschwindigkeitspiste = 1 << 6,
-        [Description("Slalompiste")]
-        Slalompiste = 1 << 7,
+        Snowpark = 1 << 2,
+        //[Description("Kids-Funpark")]
+        //KidsFunpark = 1 << 5, //
+        //[Description("Geschwindigkeitspiste")]
+        //Geschwindigkeitspiste = 1 << 6,
+        //[Description("Slalompiste")]
+        //Slalompiste = 1 << 7,
         [Description("Rundkurs")]
-        Rundkurs = 1 << 8,
+        Rundkurs = 1 << 3,
         [Description("Weitere Pisten")]
-        WeiterePisten = 1 << 9
+        WeiterePisten = 1 << 4
     }
 
     [Flags]
     public enum ActivityTypeAufstiegsanlagen
     {
-        //[Description("Weitere Aufstiegsanlagen")]
-        //WeitereAufstiegsanlagen = 1,
-        //Do tiamer derzua nor in die Tags in Typ von der Aufstiegsonlog        
-
         [Description("nicht definiert")]
         nichtdefiniert = 1,
         [Description("Seilbahn")]
@@ -1203,7 +1296,11 @@ namespace Helper
         [Description("Skitouren")]
         Skitouren = 1 << 5,
         [Description("Weitere Berge")]
-        WeitereBerge = 1 << 6
+        WeitereBerge = 1 << 6,
+        [Description("Eisklettern")]
+        Eisklettern = 1 << 7,
+        [Description("Eistour")]
+        Eistour = 1 << 8
     }
 
     [Flags]
@@ -1234,8 +1331,6 @@ namespace Helper
         Skating = 1 << 1,
         [Description("Klassisch und Skating")]
         KlassischundSkating = 1 << 2
-
-        //Tiamer do no Difficulty derzua?
     }
 
     [Flags]
@@ -1276,7 +1371,11 @@ namespace Helper
         [Description("Rennräder")]
         Rennraeder = 1 << 6,
         [Description("Weitere Radfahren")]
-        WeitereRadfahren = 1 << 7
+        WeitereRadfahren = 1 << 7,
+        [Description("Pumptrack")]
+        Pumptrack = 1 << 8,
+        [Description("Singletrail / Freeride")]
+        SingleTrailFreeride = 1 << 9
     }
 
     [Flags]
@@ -1431,7 +1530,9 @@ namespace Helper
         [Description("Reinigungen")]
         Reinigungen = 1L << 28,
         [Description("Weitere Geschäfte")]
-        WeitereGeschaefte = 1L << 29
+        WeitereGeschaefte = 1L << 29,
+        [Description("Wohnausstattung")]
+        Wohnausstattung = 1L << 30
     }
 
     [Flags]
@@ -1481,8 +1582,9 @@ namespace Helper
         [Description("Kunstmaler und Vergolder")]
         KunstmalerundVergolder = 1 << 3,
         [Description("Weitere Kunsthandwerker")]
-        WeitereHandwerker = 1 << 4
-
+        WeitereHandwerker = 1 << 4,
+        [Description("Künstler")]
+        Kuenstler = 1 << 5
     }
 
     [Flags]
@@ -1784,8 +1886,9 @@ namespace Helper
         [Description("Verleih von Langlaufskiern")]
         VerleihLanglaufski = 1L << 46,
         [Description("Weitere Verleih, Depot")]
-        WeitereVerleihDepot = 1L << 47
-
+        WeitereVerleihDepot = 1L << 47,
+        [Description("Schneeschuhverleih")]
+        Schneeschuhverleih = 1L << 48
     }
 
     #endregion

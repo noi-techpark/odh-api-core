@@ -244,6 +244,8 @@ namespace Helper.Model
 
     public class GastronomyLinked : Gastronomy
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -281,6 +283,8 @@ namespace Helper.Model
 
     public class AccommodationLinked : Accommodation
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -366,6 +370,8 @@ namespace Helper.Model
 
     public class AccommodationRoomLinked : AccoRoom
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -385,6 +391,8 @@ namespace Helper.Model
 
     public class EventLinked : Event
     {
+        public Metadata _Meta { get; set; }
+
         public List<DateTime> EventDatesBegin
         {
             get
@@ -451,6 +459,8 @@ namespace Helper.Model
 
     public class PackageLinked : Package
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -480,9 +490,10 @@ namespace Helper.Model
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-
     public class SmgPoiLinked : ODHActivityPoi
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -539,6 +550,8 @@ namespace Helper.Model
 
     public class LTSPoiLinked : GBLTSPoi
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -592,6 +605,8 @@ namespace Helper.Model
 
     public class LTSActivityLinked : GBLTSActivity
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -645,6 +660,8 @@ namespace Helper.Model
 
     public class ArticlesLinked : ArticleBaseInfos
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -685,6 +702,8 @@ namespace Helper.Model
 
     public class DistrictLinked : District
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -736,6 +755,8 @@ namespace Helper.Model
 
     public class MunicipalityLinked : Municipality
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -779,6 +800,8 @@ namespace Helper.Model
 
     public class TourismvereinLinked : Tourismverein
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -822,6 +845,8 @@ namespace Helper.Model
 
     public class RegionLinked : Region
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -857,6 +882,8 @@ namespace Helper.Model
 
     public class MetaRegionLinked : MetaRegion
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -908,6 +935,8 @@ namespace Helper.Model
 
     public class ExperienceAreaLinked : ExperienceArea
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -951,6 +980,8 @@ namespace Helper.Model
 
     public class AreaLinked : Area
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -1002,6 +1033,8 @@ namespace Helper.Model
 
     public class SkiAreaLinked : SkiArea
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -1061,6 +1094,8 @@ namespace Helper.Model
 
     public class SkiRegionLinked : SkiRegion
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -1088,6 +1123,8 @@ namespace Helper.Model
 
     public class WebcamInfoLinked : WebcamInfo
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
@@ -1107,6 +1144,8 @@ namespace Helper.Model
 
     public class MeasuringpointLinked : Measuringpoint
     {
+        public Metadata _Meta { get; set; }
+
         public string Self
         {
             get
