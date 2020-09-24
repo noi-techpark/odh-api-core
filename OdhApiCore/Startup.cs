@@ -28,6 +28,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 
@@ -59,6 +61,15 @@ namespace OdhApiCore
             //        Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddHttpClient("mss", client =>
+            {
+                //client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+            }).ConfigureHttpMessageHandlerBuilder(config => new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            });
+            services.AddHttpClient("lcs"); // TODO: put LCS config here
 
             services.AddLogging(options =>
             {

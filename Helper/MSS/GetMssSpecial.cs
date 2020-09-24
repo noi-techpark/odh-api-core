@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -10,7 +11,7 @@ namespace Helper.MSS
     public class GetMssSpecial
     {
         //Objekt Validity
-        public static async Task<List<Package>> GetMssSpecialPackages(string lang, List<string> Packageidlist, DateTime from, DateTime to, XElement specialdetails, int typ, int service, List<Tuple<string, string, List<string>>> myroomdata, string source, string version, string mssuser, string msspswd)
+        public static async Task<List<Package>> GetMssSpecialPackages(HttpClient httpClient, string lang, List<string> Packageidlist, DateTime from, DateTime to, XElement specialdetails, int typ, int service, List<Tuple<string, string, List<string>>> myroomdata, string source, string version, string mssuser, string msspswd)
         {
             try
             {
@@ -28,7 +29,7 @@ namespace Helper.MSS
 
                 XDocument myrequest = MssRequest.BuildSpecialPostData(myidlist, myroomlist, from, to, specialdetails, typ, service, lang, source, version, mssuser, msspswd);
 
-                var myresponses = MssRequest.RequestSpecialAsync(myrequest);
+                var myresponses = MssRequest.RequestSpecialAsync(httpClient, myrequest);
 
                 await Task.WhenAll(myresponses);
 
@@ -49,7 +50,7 @@ namespace Helper.MSS
             }
         }
 
-        public static async Task<MssResult> GetMssSpecialPackages(string lang, List<string> hgvIdList, List<string> offerIdList, DateTime from, DateTime to, XElement specialdetails, XElement hoteldetails, int typ, int service, string hgvservicecode, List<Tuple<string, string, List<string>>> myroomdata, string source, string version, string mssuser, string msspswd)
+        public static async Task<MssResult> GetMssSpecialPackages(HttpClient httpClient, string lang, List<string> hgvIdList, List<string> offerIdList, DateTime from, DateTime to, XElement specialdetails, XElement hoteldetails, int typ, int service, string hgvservicecode, List<Tuple<string, string, List<string>>> myroomdata, string source, string version, string mssuser, string msspswd)
         {
             try
             {
@@ -65,7 +66,7 @@ namespace Helper.MSS
                 XElement myofferidlist = MssRequest.BuildOfferIDList(offerIdList);
 
                 XDocument myrequest = MssRequest.BuildSpecialPostDataCheckAvailability(myidlist, myofferidlist, myroomlist, from, to, specialdetails, hoteldetails, typ, service, lang, source, version, mssuser, msspswd);
-                var myresponses = MssRequest.RequestSpecialAsync(myrequest);
+                var myresponses = MssRequest.RequestSpecialAsync(httpClient, myrequest);
 
                 await Task.WhenAll(myresponses);
 
@@ -92,7 +93,7 @@ namespace Helper.MSS
 
         #region Premium included
 
-        public static async Task<List<Package>> GetMssSpecialPackages(string lang, List<string> Packageidlist, DateTime from, DateTime to, XElement specialdetails, int typ, int premium, int service, List<Tuple<string, string, List<string>>> myroomdata, string source, string version, string mssuser, string msspswd)
+        public static async Task<List<Package>> GetMssSpecialPackages(HttpClient httpClient, string lang, List<string> Packageidlist, DateTime from, DateTime to, XElement specialdetails, int typ, int premium, int service, List<Tuple<string, string, List<string>>> myroomdata, string source, string version, string mssuser, string msspswd)
         {
             try
             {
@@ -110,7 +111,7 @@ namespace Helper.MSS
 
                 XDocument myrequest = MssRequest.BuildSpecialPostDatawithPremium(myidlist, myroomlist, from, to, specialdetails, typ, premium, service, lang, source, version, mssuser, msspswd);
 
-                var myresponses = MssRequest.RequestSpecialAsync(myrequest);
+                var myresponses = MssRequest.RequestSpecialAsync(httpClient, myrequest);
 
                 await Task.WhenAll(myresponses);
 
@@ -131,7 +132,7 @@ namespace Helper.MSS
             }
         }
 
-        public static async Task<MssResult> GetMssSpecialPackages(string lang, List<string> hgvIdList, List<string> offerIdList, DateTime from, DateTime to, XElement specialdetails, XElement hoteldetails, int typ, int premium, int service, string hgvservicecode, List<Tuple<string, string, List<string>>> myroomdata, string source, string version, string mssuser, string msspswd)
+        public static async Task<MssResult> GetMssSpecialPackages(HttpClient httpClient, string lang, List<string> hgvIdList, List<string> offerIdList, DateTime from, DateTime to, XElement specialdetails, XElement hoteldetails, int typ, int premium, int service, string hgvservicecode, List<Tuple<string, string, List<string>>> myroomdata, string source, string version, string mssuser, string msspswd)
         {
             try
             {
@@ -147,7 +148,7 @@ namespace Helper.MSS
                 XElement myofferidlist = MssRequest.BuildOfferIDList(offerIdList);
 
                 XDocument myrequest = MssRequest.BuildSpecialPostDataCheckAvailability(myidlist, myofferidlist, myroomlist, from, to, specialdetails, hoteldetails, typ, service, lang, source, version, mssuser, msspswd);
-                var myresponses = MssRequest.RequestSpecialAsync(myrequest);
+                var myresponses = MssRequest.RequestSpecialAsync(httpClient, myrequest);
 
                 await Task.WhenAll(myresponses);
 
