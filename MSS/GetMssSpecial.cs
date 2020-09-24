@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Helper.MSS
+namespace MSS
 {
     public class GetMssSpecial
     {

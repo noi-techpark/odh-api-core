@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Helper.LCS
+namespace LCS
 {
     public class ParseAccoSearchResult
     {

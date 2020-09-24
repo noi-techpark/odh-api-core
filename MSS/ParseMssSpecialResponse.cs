@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Helper.MSS
+namespace MSS
 {
     public class ParseMssSpecialResponse
     {

@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataModel\DataModel.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />
-    <ProjectReference Include="..\LCS\LCS.csproj" />
   </ItemGroup>
 
 </Project>

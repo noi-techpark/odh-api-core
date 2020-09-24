@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Helper.MSS
+namespace MSS
 {
     public class ParseMssRoomResponse
     {

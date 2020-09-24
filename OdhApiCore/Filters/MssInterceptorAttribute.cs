@@ -3,6 +3,7 @@ using Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MSS;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OdhApiCore.Controllers;
@@ -309,14 +310,14 @@ namespace OdhApiCore.Filters
 
             if (bookableaccoIDs.Count > 0)
             {
-                var accosearchrequest = Helper.LCS.GetAccommodationDataLCS.GetAccommodationDataSearchRequest(resultRID: "", pageNr: "1", pageSize: "10000", language: myhelper.lcsrequestlanguage, 
+                var accosearchrequest = LCS.GetAccommodationDataLCS.GetAccommodationDataSearchRequest(resultRID: "", pageNr: "1", pageSize: "10000", language: myhelper.lcsrequestlanguage, 
                     sortingcriterion: "1", sortingorder: "", sortingpromotebookable: "", request: "0", filters: "0", timespanstart: myhelper.arrival, timespanend: myhelper.departure, 
                     checkavailabilitystatus: "1", onlybookableresults: "0", mealplans: myhelper.service, accommodationrids: myhelper.accoidlist, tourismorg: new List<string>(), 
                     districts: new List<string>(), marketinggroups: new List<string>(), lcsroomstay: myhelper.myroomdata, requestor: source, messagepswd: settings.LcsConfig.MessagePassword);
 
-                var myaccosearchlcs = new Helper.LCS.GetAccommodationDataLCS(settings.LcsConfig.Username, settings.LcsConfig.Password);
+                var myaccosearchlcs = new LCS.GetAccommodationDataLCS(settings.LcsConfig.Username, settings.LcsConfig.Password);
                 var response = await myaccosearchlcs.GetAccommodationDataSearchAsync(accosearchrequest);
-                var myparsedresponse = Helper.LCS.ParseAccoSearchResult.ParsemyLCSResponse(language, response, myhelper.rooms);
+                var myparsedresponse = LCS.ParseAccoSearchResult.ParsemyLCSResponse(language, response, myhelper.rooms);
 
                 if (myparsedresponse != null)
                     return myparsedresponse;

@@ -10,7 +10,7 @@ namespace OdhApiCore.Controllers.helper
     {
         public readonly string lcsrequestlanguage;        
         public readonly List<string> accoidlist;        
-        public readonly List<Helper.LCS.LCSRoomStay> myroomdata;        
+        public readonly List<LCS.LCSRoomStay> myroomdata;        
         public readonly string arrival;
         public readonly string departure;
         public readonly List<string> service;
@@ -33,7 +33,7 @@ namespace OdhApiCore.Controllers.helper
         {
 
             service = Helper.AccoListCreator.CreateBoardListLCSfromFlag(boardfilter);
-            myroomdata = Helper.LCS.GetAccommodationDataLCS.RoomstayTransformer(roominfo);
+            myroomdata = LCS.GetAccommodationDataLCS.RoomstayTransformer(roominfo);
             
             rooms = myroomdata.Count;
 

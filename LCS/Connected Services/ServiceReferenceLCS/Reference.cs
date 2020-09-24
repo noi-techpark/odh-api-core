@@ -15,6 +15,8 @@ namespace ServiceReferenceLCS
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="LCS_BaseDataContract", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.PkgDealChangedItemsRS))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.PkgDealDetailRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.PkgDealAccommodationSubscriptionRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.AreaDetailRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.AreaSearchRS))]
@@ -44,13 +46,13 @@ namespace ServiceReferenceLCS
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.AccommodationDataMapRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.AccommodationDataMaps))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.AccommodationDataMap))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.VenueOfferingRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.BeaconDetailRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.BeaconSearchRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.BeaconChangedItemsRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.TourismOrganizationsRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.DistrictByPositionRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.DistrictsRS))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.RegionListRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.TranslationRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.CountryListRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.CustomGroupsRS))]
@@ -78,8 +80,6 @@ namespace ServiceReferenceLCS
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.PkgThemeDetailRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.PkgOwnerRS))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.PkgDealSearchRS))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.PkgDealChangedItemsRS))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.PkgDealDetailRS))]
     public partial class LCS_BaseDataContract : object
     {
         
@@ -191,6 +191,65 @@ namespace ServiceReferenceLCS
             set
             {
                 this.WarningField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealChangedItemsRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class PkgDealChangedItemsRS : ServiceReferenceLCS.LCS_BaseDataContract
+    {
+        
+        private ServiceReferenceLCS.PkgDealsChanged PkgDealsField;
+        
+        private ServiceReferenceLCS.PkgDealsDeleted PkgDealsDeletedField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.PkgDealsChanged PkgDeals
+        {
+            get
+            {
+                return this.PkgDealsField;
+            }
+            set
+            {
+                this.PkgDealsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.PkgDealsDeleted PkgDealsDeleted
+        {
+            get
+            {
+                return this.PkgDealsDeletedField;
+            }
+            set
+            {
+                this.PkgDealsDeletedField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealDetailRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class PkgDealDetailRS : ServiceReferenceLCS.LCS_BaseDataContract
+    {
+        
+        private ServiceReferenceLCS.PkgDeals PkgDealsField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.PkgDeals PkgDeals
+        {
+            get
+            {
+                return this.PkgDealsField;
+            }
+            set
+            {
+                this.PkgDealsField = value;
             }
         }
     }
@@ -1435,43 +1494,6 @@ namespace ServiceReferenceLCS
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="VenueOfferingRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class VenueOfferingRS : ServiceReferenceLCS.LCS_BaseDataContract
-    {
-        
-        private string lastUpdateField;
-        
-        private string typeField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string lastUpdate
-        {
-            get
-            {
-                return this.lastUpdateField;
-            }
-            set
-            {
-                this.lastUpdateField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string type
-        {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="BeaconDetailRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
     public partial class BeaconDetailRS : ServiceReferenceLCS.LCS_BaseDataContract
     {
@@ -1658,6 +1680,28 @@ namespace ServiceReferenceLCS
             set
             {
                 this.DistrictsField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegionListRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class RegionListRS : ServiceReferenceLCS.LCS_BaseDataContract
+    {
+        
+        private ServiceReferenceLCS.RegionList_Countries[] CountriesField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.RegionList_Countries[] Countries
+        {
+            get
+            {
+                return this.CountriesField;
+            }
+            set
+            {
+                this.CountriesField = value;
             }
         }
     }
@@ -2543,51 +2587,140 @@ namespace ServiceReferenceLCS
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealChangedItemsRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class PkgDealChangedItemsRS : ServiceReferenceLCS.LCS_BaseDataContract
+    [System.Runtime.Serialization.DataContractAttribute(Name="Paging", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class Paging : object
     {
         
-        private ServiceReferenceLCS.PkgDealsChanged PkgDealsField;
+        private short PageNumberField;
         
-        private ServiceReferenceLCS.PkgDealsDeleted PkgDealsDeletedField;
+        private short PageSizeField;
+        
+        private short PagesQtyField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.PkgDealsChanged PkgDeals
+        public short PageNumber
         {
             get
             {
-                return this.PkgDealsField;
+                return this.PageNumberField;
             }
             set
             {
-                this.PkgDealsField = value;
+                this.PageNumberField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.PkgDealsDeleted PkgDealsDeleted
+        public short PageSize
         {
             get
             {
-                return this.PkgDealsDeletedField;
+                return this.PageSizeField;
             }
             set
             {
-                this.PkgDealsDeletedField = value;
+                this.PageSizeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public short PagesQty
+        {
+            get
+            {
+                return this.PagesQtyField;
+            }
+            set
+            {
+                this.PagesQtyField = value;
             }
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealDetailRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class PkgDealDetailRS : ServiceReferenceLCS.LCS_BaseDataContract
+    [System.Runtime.Serialization.DataContractAttribute(Name="ParametersSearch_Pkg", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class ParametersSearch_Pkg : object
     {
         
-        private ServiceReferenceLCS.PkgDeals PkgDealsField;
+        private ServiceReferenceLCS.Language_ParametersSearch LanguageField;
+        
+        private ServiceReferenceLCS.MarketingGroups_ParametersSearch MarketingGroupsField;
+        
+        private ServiceReferenceLCS.Owners_ParametersSearch OwnersField;
+        
+        private ServiceReferenceLCS.Paging_ParametersSearch PagingField;
+        
+        private ServiceReferenceLCS.PkgDeals_ParametersSearchPkg PkgDealsField;
+        
+        private ServiceReferenceLCS.Result_ParametersSearch ResultField;
+        
+        private ServiceReferenceLCS.ReturnFormat_ParametersSearchPkg ReturnFormatField;
+        
+        private ServiceReferenceLCS.SearchTerm_ParametersSearch SearchTermField;
+        
+        private ServiceReferenceLCS.Sorting_ParametersSearch SortingField;
+        
+        private ServiceReferenceLCS.Themes_ParametersSearchPkg ThemesField;
+        
+        private ServiceReferenceLCS.TimeSpan_ParametersSearch TimeSpanField;
+        
+        private ServiceReferenceLCS.TourismOrganizations_ParametersSearch TourismOrganizationsField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.PkgDeals PkgDeals
+        public ServiceReferenceLCS.Language_ParametersSearch Language
+        {
+            get
+            {
+                return this.LanguageField;
+            }
+            set
+            {
+                this.LanguageField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.MarketingGroups_ParametersSearch MarketingGroups
+        {
+            get
+            {
+                return this.MarketingGroupsField;
+            }
+            set
+            {
+                this.MarketingGroupsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Owners_ParametersSearch Owners
+        {
+            get
+            {
+                return this.OwnersField;
+            }
+            set
+            {
+                this.OwnersField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Paging_ParametersSearch Paging
+        {
+            get
+            {
+                return this.PagingField;
+            }
+            set
+            {
+                this.PagingField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.PkgDeals_ParametersSearchPkg PkgDeals
         {
             get
             {
@@ -2596,6 +2729,97 @@ namespace ServiceReferenceLCS
             set
             {
                 this.PkgDealsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Result_ParametersSearch Result
+        {
+            get
+            {
+                return this.ResultField;
+            }
+            set
+            {
+                this.ResultField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.ReturnFormat_ParametersSearchPkg ReturnFormat
+        {
+            get
+            {
+                return this.ReturnFormatField;
+            }
+            set
+            {
+                this.ReturnFormatField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.SearchTerm_ParametersSearch SearchTerm
+        {
+            get
+            {
+                return this.SearchTermField;
+            }
+            set
+            {
+                this.SearchTermField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Sorting_ParametersSearch Sorting
+        {
+            get
+            {
+                return this.SortingField;
+            }
+            set
+            {
+                this.SortingField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Themes_ParametersSearchPkg Themes
+        {
+            get
+            {
+                return this.ThemesField;
+            }
+            set
+            {
+                this.ThemesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.TimeSpan_ParametersSearch TimeSpan
+        {
+            get
+            {
+                return this.TimeSpanField;
+            }
+            set
+            {
+                this.TimeSpanField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.TourismOrganizations_ParametersSearch TourismOrganizations
+        {
+            get
+            {
+                return this.TourismOrganizationsField;
+            }
+            set
+            {
+                this.TourismOrganizationsField = value;
             }
         }
     }
@@ -2618,6 +2842,43 @@ namespace ServiceReferenceLCS
             set
             {
                 this.PkgDealField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Result", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class Result : object
+    {
+        
+        private string RIDField;
+        
+        private int ResultsQtyField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string RID
+        {
+            get
+            {
+                return this.RIDField;
+            }
+            set
+            {
+                this.RIDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int ResultsQty
+        {
+            get
+            {
+                return this.ResultsQtyField;
+            }
+            set
+            {
+                this.ResultsQtyField = value;
             }
         }
     }
@@ -2737,6 +2998,124 @@ namespace ServiceReferenceLCS
             set
             {
                 this.ShortTextField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealsChanged", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class PkgDealsChanged : object
+    {
+        
+        private ServiceReferenceLCS.PkgDealChanged[] PkgDealField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.PkgDealChanged[] PkgDeal
+        {
+            get
+            {
+                return this.PkgDealField;
+            }
+            set
+            {
+                this.PkgDealField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealsDeleted", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class PkgDealsDeleted : object
+    {
+        
+        private ServiceReferenceLCS.PkgDealDeleted[] PkgDealField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.PkgDealDeleted[] PkgDeal
+        {
+            get
+            {
+                return this.PkgDealField;
+            }
+            set
+            {
+                this.PkgDealField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealChanged", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class PkgDealChanged : object
+    {
+        
+        private string DateField;
+        
+        private string IsEnabledField;
+        
+        private string RIDField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Date
+        {
+            get
+            {
+                return this.DateField;
+            }
+            set
+            {
+                this.DateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string IsEnabled
+        {
+            get
+            {
+                return this.IsEnabledField;
+            }
+            set
+            {
+                this.IsEnabledField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string RID
+        {
+            get
+            {
+                return this.RIDField;
+            }
+            set
+            {
+                this.RIDField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealDeleted", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class PkgDealDeleted : object
+    {
+        
+        private string RIDField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string RID
+        {
+            get
+            {
+                return this.RIDField;
+            }
+            set
+            {
+                this.RIDField = value;
             }
         }
     }
@@ -7636,58 +8015,6 @@ namespace ServiceReferenceLCS
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Paging", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class Paging : object
-    {
-        
-        private short PageNumberField;
-        
-        private short PageSizeField;
-        
-        private short PagesQtyField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public short PageNumber
-        {
-            get
-            {
-                return this.PageNumberField;
-            }
-            set
-            {
-                this.PageNumberField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public short PageSize
-        {
-            get
-            {
-                return this.PageSizeField;
-            }
-            set
-            {
-                this.PageSizeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public short PagesQty
-        {
-            get
-            {
-                return this.PagesQtyField;
-            }
-            set
-            {
-                this.PagesQtyField = value;
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ParametersSearch_Area", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
     public partial class ParametersSearch_Area : object
     {
@@ -7809,43 +8136,6 @@ namespace ServiceReferenceLCS
             set
             {
                 this.SortingField = value;
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Result", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class Result : object
-    {
-        
-        private string RIDField;
-        
-        private int ResultsQtyField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string RID
-        {
-            get
-            {
-                return this.RIDField;
-            }
-            set
-            {
-                this.RIDField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int ResultsQty
-        {
-            get
-            {
-                return this.ResultsQtyField;
-            }
-            set
-            {
-                this.ResultsQtyField = value;
             }
         }
     }
@@ -8335,13 +8625,13 @@ namespace ServiceReferenceLCS
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ReturnFormat_ParametersSearch", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchPkg))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchActivity))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchWeatherSnowObservation))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchWebCam))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchAccommodation))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchBeacon))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchGastronomy))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchPkg))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ReturnFormat_ParametersSearchArea))]
     public partial class ReturnFormat_ParametersSearch : object
     {
@@ -8373,6 +8663,88 @@ namespace ServiceReferenceLCS
             set
             {
                 this.RequestField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ReturnFormat_ParametersSearchPkg", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class ReturnFormat_ParametersSearchPkg : ServiceReferenceLCS.ReturnFormat_ParametersSearch
+    {
+        
+        private short MultimediaDescriptionsField;
+        
+        private short OnlyRootElementField;
+        
+        private short SeasonsField;
+        
+        private short ShowDisabledField;
+        
+        private short WithRIDField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public short MultimediaDescriptions
+        {
+            get
+            {
+                return this.MultimediaDescriptionsField;
+            }
+            set
+            {
+                this.MultimediaDescriptionsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public short OnlyRootElement
+        {
+            get
+            {
+                return this.OnlyRootElementField;
+            }
+            set
+            {
+                this.OnlyRootElementField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public short Seasons
+        {
+            get
+            {
+                return this.SeasonsField;
+            }
+            set
+            {
+                this.SeasonsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public short ShowDisabled
+        {
+            get
+            {
+                return this.ShowDisabledField;
+            }
+            set
+            {
+                this.ShowDisabledField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public short WithRID
+        {
+            get
+            {
+                return this.WithRIDField;
+            }
+            set
+            {
+                this.WithRIDField = value;
             }
         }
     }
@@ -8940,88 +9312,6 @@ namespace ServiceReferenceLCS
             set
             {
                 this.OnlyRootElementField = value;
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ReturnFormat_ParametersSearchPkg", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class ReturnFormat_ParametersSearchPkg : ServiceReferenceLCS.ReturnFormat_ParametersSearch
-    {
-        
-        private short MultimediaDescriptionsField;
-        
-        private short OnlyRootElementField;
-        
-        private short SeasonsField;
-        
-        private short ShowDisabledField;
-        
-        private short WithRIDField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public short MultimediaDescriptions
-        {
-            get
-            {
-                return this.MultimediaDescriptionsField;
-            }
-            set
-            {
-                this.MultimediaDescriptionsField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public short OnlyRootElement
-        {
-            get
-            {
-                return this.OnlyRootElementField;
-            }
-            set
-            {
-                this.OnlyRootElementField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public short Seasons
-        {
-            get
-            {
-                return this.SeasonsField;
-            }
-            set
-            {
-                this.SeasonsField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public short ShowDisabled
-        {
-            get
-            {
-                return this.ShowDisabledField;
-            }
-            set
-            {
-                this.ShowDisabledField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public short WithRID
-        {
-            get
-            {
-                return this.WithRIDField;
-            }
-            set
-            {
-                this.WithRIDField = value;
             }
         }
     }
@@ -17935,6 +18225,258 @@ namespace ServiceReferenceLCS
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegionList_Countries", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class RegionList_Countries : object
+    {
+        
+        private ServiceReferenceLCS.RegionList_Country[] CountryField;
+        
+        private string LanguageCodeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.RegionList_Country[] Country
+        {
+            get
+            {
+                return this.CountryField;
+            }
+            set
+            {
+                this.CountryField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LanguageCode
+        {
+            get
+            {
+                return this.LanguageCodeField;
+            }
+            set
+            {
+                this.LanguageCodeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegionList_Country", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class RegionList_Country : object
+    {
+        
+        private string CountryCodeField;
+        
+        private ServiceReferenceLCS.RegionList_Regions RegionsField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string CountryCode
+        {
+            get
+            {
+                return this.CountryCodeField;
+            }
+            set
+            {
+                this.CountryCodeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.RegionList_Regions Regions
+        {
+            get
+            {
+                return this.RegionsField;
+            }
+            set
+            {
+                this.RegionsField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegionList_Regions", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class RegionList_Regions : object
+    {
+        
+        private ServiceReferenceLCS.RegionList_Region[] RegionField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.RegionList_Region[] Region
+        {
+            get
+            {
+                return this.RegionField;
+            }
+            set
+            {
+                this.RegionField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegionList_Region", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class RegionList_Region : object
+    {
+        
+        private string ASTATRegionCodeField;
+        
+        private string ASTATRegionNameField;
+        
+        private string ISTATRegionCodeField;
+        
+        private string ISTATRegionNameField;
+        
+        private ServiceReferenceLCS.RegionList_Provinces ProvincesField;
+        
+        private string RegionNameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ASTATRegionCode
+        {
+            get
+            {
+                return this.ASTATRegionCodeField;
+            }
+            set
+            {
+                this.ASTATRegionCodeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ASTATRegionName
+        {
+            get
+            {
+                return this.ASTATRegionNameField;
+            }
+            set
+            {
+                this.ASTATRegionNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ISTATRegionCode
+        {
+            get
+            {
+                return this.ISTATRegionCodeField;
+            }
+            set
+            {
+                this.ISTATRegionCodeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ISTATRegionName
+        {
+            get
+            {
+                return this.ISTATRegionNameField;
+            }
+            set
+            {
+                this.ISTATRegionNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.RegionList_Provinces Provinces
+        {
+            get
+            {
+                return this.ProvincesField;
+            }
+            set
+            {
+                this.ProvincesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string RegionName
+        {
+            get
+            {
+                return this.RegionNameField;
+            }
+            set
+            {
+                this.RegionNameField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegionList_Provinces", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class RegionList_Provinces : object
+    {
+        
+        private ServiceReferenceLCS.RegionList_Province[] ProvinceField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.RegionList_Province[] Province
+        {
+            get
+            {
+                return this.ProvinceField;
+            }
+            set
+            {
+                this.ProvinceField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegionList_Province", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class RegionList_Province : object
+    {
+        
+        private string ProvinceCodeField;
+        
+        private string ProvinceNameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ProvinceCode
+        {
+            get
+            {
+                return this.ProvinceCodeField;
+            }
+            set
+            {
+                this.ProvinceCodeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ProvinceName
+        {
+            get
+            {
+                return this.ProvinceNameField;
+            }
+            set
+            {
+                this.ProvinceNameField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Translation_Items", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
     public partial class Translation_Items : object
     {
@@ -21745,193 +22287,6 @@ namespace ServiceReferenceLCS
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ParametersSearch_Pkg", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class ParametersSearch_Pkg : object
-    {
-        
-        private ServiceReferenceLCS.Language_ParametersSearch LanguageField;
-        
-        private ServiceReferenceLCS.MarketingGroups_ParametersSearch MarketingGroupsField;
-        
-        private ServiceReferenceLCS.Owners_ParametersSearch OwnersField;
-        
-        private ServiceReferenceLCS.Paging_ParametersSearch PagingField;
-        
-        private ServiceReferenceLCS.PkgDeals_ParametersSearchPkg PkgDealsField;
-        
-        private ServiceReferenceLCS.Result_ParametersSearch ResultField;
-        
-        private ServiceReferenceLCS.ReturnFormat_ParametersSearchPkg ReturnFormatField;
-        
-        private ServiceReferenceLCS.SearchTerm_ParametersSearch SearchTermField;
-        
-        private ServiceReferenceLCS.Sorting_ParametersSearch SortingField;
-        
-        private ServiceReferenceLCS.Themes_ParametersSearchPkg ThemesField;
-        
-        private ServiceReferenceLCS.TimeSpan_ParametersSearch TimeSpanField;
-        
-        private ServiceReferenceLCS.TourismOrganizations_ParametersSearch TourismOrganizationsField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.Language_ParametersSearch Language
-        {
-            get
-            {
-                return this.LanguageField;
-            }
-            set
-            {
-                this.LanguageField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.MarketingGroups_ParametersSearch MarketingGroups
-        {
-            get
-            {
-                return this.MarketingGroupsField;
-            }
-            set
-            {
-                this.MarketingGroupsField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.Owners_ParametersSearch Owners
-        {
-            get
-            {
-                return this.OwnersField;
-            }
-            set
-            {
-                this.OwnersField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.Paging_ParametersSearch Paging
-        {
-            get
-            {
-                return this.PagingField;
-            }
-            set
-            {
-                this.PagingField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.PkgDeals_ParametersSearchPkg PkgDeals
-        {
-            get
-            {
-                return this.PkgDealsField;
-            }
-            set
-            {
-                this.PkgDealsField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.Result_ParametersSearch Result
-        {
-            get
-            {
-                return this.ResultField;
-            }
-            set
-            {
-                this.ResultField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.ReturnFormat_ParametersSearchPkg ReturnFormat
-        {
-            get
-            {
-                return this.ReturnFormatField;
-            }
-            set
-            {
-                this.ReturnFormatField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.SearchTerm_ParametersSearch SearchTerm
-        {
-            get
-            {
-                return this.SearchTermField;
-            }
-            set
-            {
-                this.SearchTermField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.Sorting_ParametersSearch Sorting
-        {
-            get
-            {
-                return this.SortingField;
-            }
-            set
-            {
-                this.SortingField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.Themes_ParametersSearchPkg Themes
-        {
-            get
-            {
-                return this.ThemesField;
-            }
-            set
-            {
-                this.ThemesField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.TimeSpan_ParametersSearch TimeSpan
-        {
-            get
-            {
-                return this.TimeSpanField;
-            }
-            set
-            {
-                this.TimeSpanField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.TourismOrganizations_ParametersSearch TourismOrganizations
-        {
-            get
-            {
-                return this.TourismOrganizationsField;
-            }
-            set
-            {
-                this.TourismOrganizationsField = value;
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Runtime.Serialization.DataContractAttribute(Name="PkgDeals_ParametersSearchPkg", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
     public partial class PkgDeals_ParametersSearchPkg : object
     {
@@ -22020,118 +22375,2652 @@ namespace ServiceReferenceLCS
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealsChanged", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class PkgDealsChanged : object
+    [System.Runtime.Serialization.DataContractAttribute(Name="LCS_ddBaseDataContractRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ddVenueCodeTableRQ))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.ddVenueRQ))]
+    public partial class LCS_ddBaseDataContractRQ : object
     {
         
-        private ServiceReferenceLCS.PkgDealChanged[] PkgDealField;
+        private ServiceReferenceLCS.ddPosRQ posField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.PkgDealChanged[] PkgDeal
+        public ServiceReferenceLCS.ddPosRQ pos
         {
             get
             {
-                return this.PkgDealField;
+                return this.posField;
             }
             set
             {
-                this.PkgDealField = value;
+                this.posField = value;
             }
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealsDeleted", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class PkgDealsDeleted : object
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddPosRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    public partial class ddPosRQ : object
     {
         
-        private ServiceReferenceLCS.PkgDealDeleted[] PkgDealField;
+        private ServiceReferenceLCS.ddSourceRQ sourceField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ServiceReferenceLCS.PkgDealDeleted[] PkgDeal
+        public ServiceReferenceLCS.ddSourceRQ source
         {
             get
             {
-                return this.PkgDealField;
+                return this.sourceField;
             }
             set
             {
-                this.PkgDealField = value;
+                this.sourceField = value;
             }
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealChanged", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class PkgDealChanged : object
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddVenueCodeTableRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class ddVenueCodeTableRQ : ServiceReferenceLCS.LCS_ddBaseDataContractRQ
     {
         
-        private string DateField;
-        
-        private string IsEnabledField;
-        
-        private string RIDField;
+        private ServiceReferenceLCS.ddVenueCodeTableParametersRQ parametersField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Date
+        public ServiceReferenceLCS.ddVenueCodeTableParametersRQ parameters
         {
             get
             {
-                return this.DateField;
+                return this.parametersField;
             }
             set
             {
-                this.DateField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string IsEnabled
-        {
-            get
-            {
-                return this.IsEnabledField;
-            }
-            set
-            {
-                this.IsEnabledField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string RID
-        {
-            get
-            {
-                return this.RIDField;
-            }
-            set
-            {
-                this.RIDField = value;
+                this.parametersField = value;
             }
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PkgDealDeleted", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
-    public partial class PkgDealDeleted : object
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddVenueRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class ddVenueRQ : ServiceReferenceLCS.LCS_ddBaseDataContractRQ
     {
         
-        private string RIDField;
+        private ServiceReferenceLCS.ddVenueParametersRQ parametersField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string RID
+        public ServiceReferenceLCS.ddVenueParametersRQ parameters
         {
             get
             {
-                return this.RIDField;
+                return this.parametersField;
             }
             set
             {
-                this.RIDField = value;
+                this.parametersField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddVenueParametersRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class ddVenueParametersRQ : object
+    {
+        
+        private string[] categoriesField;
+        
+        private string[] featuresField;
+        
+        private string[] languagesField;
+        
+        private System.Nullable<int> minSeatNumberField;
+        
+        private System.Nullable<int> minSurfaceSizeField;
+        
+        private System.Nullable<bool> onlyActiveField;
+        
+        private string[] ownersField;
+        
+        private System.Nullable<int> pageNumberField;
+        
+        private System.Nullable<int> pageSizeField;
+        
+        private System.Nullable<int> positionField;
+        
+        private ServiceReferenceLCS.ddVenueParametersReturnFormatRQ returnFormatField;
+        
+        private string[] ridField;
+        
+        private string searchTermField;
+        
+        private string seatTypeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] categories
+        {
+            get
+            {
+                return this.categoriesField;
+            }
+            set
+            {
+                this.categoriesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] features
+        {
+            get
+            {
+                return this.featuresField;
+            }
+            set
+            {
+                this.featuresField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] languages
+        {
+            get
+            {
+                return this.languagesField;
+            }
+            set
+            {
+                this.languagesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> minSeatNumber
+        {
+            get
+            {
+                return this.minSeatNumberField;
+            }
+            set
+            {
+                this.minSeatNumberField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> minSurfaceSize
+        {
+            get
+            {
+                return this.minSurfaceSizeField;
+            }
+            set
+            {
+                this.minSurfaceSizeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> onlyActive
+        {
+            get
+            {
+                return this.onlyActiveField;
+            }
+            set
+            {
+                this.onlyActiveField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] owners
+        {
+            get
+            {
+                return this.ownersField;
+            }
+            set
+            {
+                this.ownersField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> pageNumber
+        {
+            get
+            {
+                return this.pageNumberField;
+            }
+            set
+            {
+                this.pageNumberField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> pageSize
+        {
+            get
+            {
+                return this.pageSizeField;
+            }
+            set
+            {
+                this.pageSizeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> position
+        {
+            get
+            {
+                return this.positionField;
+            }
+            set
+            {
+                this.positionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.ddVenueParametersReturnFormatRQ returnFormat
+        {
+            get
+            {
+                return this.returnFormatField;
+            }
+            set
+            {
+                this.returnFormatField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] rid
+        {
+            get
+            {
+                return this.ridField;
+            }
+            set
+            {
+                this.ridField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string searchTerm
+        {
+            get
+            {
+                return this.searchTermField;
+            }
+            set
+            {
+                this.searchTermField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string seatType
+        {
+            get
+            {
+                return this.seatTypeField;
+            }
+            set
+            {
+                this.seatTypeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddSourceRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    public partial class ddSourceRQ : object
+    {
+        
+        private ServiceReferenceLCS.ddRequestorIDRQ requestorIDField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.ddRequestorIDRQ requestorID
+        {
+            get
+            {
+                return this.requestorIDField;
+            }
+            set
+            {
+                this.requestorIDField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddRequestorIDRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    public partial class ddRequestorIDRQ : object
+    {
+        
+        private string companyNameField;
+        
+        private string idField;
+        
+        private string messagePasswordField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string companyName
+        {
+            get
+            {
+                return this.companyNameField;
+            }
+            set
+            {
+                this.companyNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string id
+        {
+            get
+            {
+                return this.idField;
+            }
+            set
+            {
+                this.idField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string messagePassword
+        {
+            get
+            {
+                return this.messagePasswordField;
+            }
+            set
+            {
+                this.messagePasswordField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddVenueCodeTableParametersRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class ddVenueCodeTableParametersRQ : object
+    {
+        
+        private string[] languagesField;
+        
+        private ServiceReferenceLCS.ddVenueCodeTableParametersReturnFormatRQ returnFormatField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] languages
+        {
+            get
+            {
+                return this.languagesField;
+            }
+            set
+            {
+                this.languagesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.ddVenueCodeTableParametersReturnFormatRQ returnFormat
+        {
+            get
+            {
+                return this.returnFormatField;
+            }
+            set
+            {
+                this.returnFormatField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddVenueCodeTableParametersReturnFormatRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class ddVenueCodeTableParametersReturnFormatRQ : object
+    {
+        
+        private System.Nullable<bool> categoriesField;
+        
+        private System.Nullable<bool> featuresField;
+        
+        private System.Nullable<bool> seatTypesField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> categories
+        {
+            get
+            {
+                return this.categoriesField;
+            }
+            set
+            {
+                this.categoriesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> features
+        {
+            get
+            {
+                return this.featuresField;
+            }
+            set
+            {
+                this.featuresField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> seatTypes
+        {
+            get
+            {
+                return this.seatTypesField;
+            }
+            set
+            {
+                this.seatTypesField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ddVenueParametersReturnFormatRQ", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class ddVenueParametersReturnFormatRQ : object
+    {
+        
+        private System.Nullable<bool> addressField;
+        
+        private System.Nullable<bool> descriptionsField;
+        
+        private System.Nullable<bool> hallDescriptionsField;
+        
+        private System.Nullable<bool> hallFeaturesField;
+        
+        private System.Nullable<bool> hallImagesField;
+        
+        private System.Nullable<bool> hallMeasuresField;
+        
+        private System.Nullable<bool> hallPositionField;
+        
+        private System.Nullable<bool> hallSetupsField;
+        
+        private System.Nullable<bool> hallsField;
+        
+        private System.Nullable<bool> imagesField;
+        
+        private System.Nullable<bool> openingHoursField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> address
+        {
+            get
+            {
+                return this.addressField;
+            }
+            set
+            {
+                this.addressField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> descriptions
+        {
+            get
+            {
+                return this.descriptionsField;
+            }
+            set
+            {
+                this.descriptionsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> hallDescriptions
+        {
+            get
+            {
+                return this.hallDescriptionsField;
+            }
+            set
+            {
+                this.hallDescriptionsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> hallFeatures
+        {
+            get
+            {
+                return this.hallFeaturesField;
+            }
+            set
+            {
+                this.hallFeaturesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> hallImages
+        {
+            get
+            {
+                return this.hallImagesField;
+            }
+            set
+            {
+                this.hallImagesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> hallMeasures
+        {
+            get
+            {
+                return this.hallMeasuresField;
+            }
+            set
+            {
+                this.hallMeasuresField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> hallPosition
+        {
+            get
+            {
+                return this.hallPositionField;
+            }
+            set
+            {
+                this.hallPositionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> hallSetups
+        {
+            get
+            {
+                return this.hallSetupsField;
+            }
+            set
+            {
+                this.hallSetupsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> halls
+        {
+            get
+            {
+                return this.hallsField;
+            }
+            set
+            {
+                this.hallsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> images
+        {
+            get
+            {
+                return this.imagesField;
+            }
+            set
+            {
+                this.imagesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<bool> openingHours
+        {
+            get
+            {
+                return this.openingHoursField;
+            }
+            set
+            {
+                this.openingHoursField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="LCS_ddBaseDataContractRS", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ServiceReferenceLCS.dd_VenueRS))]
+    public partial class LCS_ddBaseDataContractRS : object
+    {
+        
+        private ServiceReferenceLCS.dd_overview_meta metaField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_overview_meta meta
+        {
+            get
+            {
+                return this.metaField;
+            }
+            set
+            {
+                this.metaField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_overview_meta", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    public partial class dd_overview_meta : object
+    {
+        
+        private int countField;
+        
+        private ServiceReferenceLCS.dd_error[] errorsField;
+        
+        private int pagesField;
+        
+        private string successField;
+        
+        private ServiceReferenceLCS.dd_warning[] warningsField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int count
+        {
+            get
+            {
+                return this.countField;
+            }
+            set
+            {
+                this.countField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_error[] errors
+        {
+            get
+            {
+                return this.errorsField;
+            }
+            set
+            {
+                this.errorsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int pages
+        {
+            get
+            {
+                return this.pagesField;
+            }
+            set
+            {
+                this.pagesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string success
+        {
+            get
+            {
+                return this.successField;
+            }
+            set
+            {
+                this.successField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_warning[] warnings
+        {
+            get
+            {
+                return this.warningsField;
+            }
+            set
+            {
+                this.warningsField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_VenueRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_VenueRS : ServiceReferenceLCS.LCS_ddBaseDataContractRS
+    {
+        
+        private ServiceReferenceLCS.dd_VenueObjects[] objectsField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_VenueObjects[] objects
+        {
+            get
+            {
+                return this.objectsField;
+            }
+            set
+            {
+                this.objectsField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_VenueObjects", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_VenueObjects : object
+    {
+        
+        private ServiceReferenceLCS.dd_venue_attributes attributesField;
+        
+        private string idField;
+        
+        private ServiceReferenceLCS.dd_links linksField;
+        
+        private ServiceReferenceLCS.dd_meta metaField;
+        
+        private ServiceReferenceLCS.dd_venue_relationships relationshipsField;
+        
+        private string typeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_venue_attributes attributes
+        {
+            get
+            {
+                return this.attributesField;
+            }
+            set
+            {
+                this.attributesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string id
+        {
+            get
+            {
+                return this.idField;
+            }
+            set
+            {
+                this.idField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_links links
+        {
+            get
+            {
+                return this.linksField;
+            }
+            set
+            {
+                this.linksField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_meta meta
+        {
+            get
+            {
+                return this.metaField;
+            }
+            set
+            {
+                this.metaField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_venue_relationships relationships
+        {
+            get
+            {
+                return this.relationshipsField;
+            }
+            set
+            {
+                this.relationshipsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string type
+        {
+            get
+            {
+                return this.typeField;
+            }
+            set
+            {
+                this.typeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_error", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    public partial class dd_error : object
+    {
+        
+        private string codeField;
+        
+        private string descriptionField;
+        
+        private string shortTextField;
+        
+        private string typeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string code
+        {
+            get
+            {
+                return this.codeField;
+            }
+            set
+            {
+                this.codeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string description
+        {
+            get
+            {
+                return this.descriptionField;
+            }
+            set
+            {
+                this.descriptionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string shortText
+        {
+            get
+            {
+                return this.shortTextField;
+            }
+            set
+            {
+                this.shortTextField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string type
+        {
+            get
+            {
+                return this.typeField;
+            }
+            set
+            {
+                this.typeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_warning", Namespace="http://schemas.datacontract.org/2004/07/LCS.Generic")]
+    public partial class dd_warning : object
+    {
+        
+        private string codeField;
+        
+        private string descriptionField;
+        
+        private string shortTextField;
+        
+        private string typeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string code
+        {
+            get
+            {
+                return this.codeField;
+            }
+            set
+            {
+                this.codeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string description
+        {
+            get
+            {
+                return this.descriptionField;
+            }
+            set
+            {
+                this.descriptionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string shortText
+        {
+            get
+            {
+                return this.shortTextField;
+            }
+            set
+            {
+                this.shortTextField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string type
+        {
+            get
+            {
+                return this.typeField;
+            }
+            set
+            {
+                this.typeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_venue_attributes", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_venue_attributes : object
+    {
+        
+        private ServiceReferenceLCS.dd_planeText _abstractField;
+        
+        private ServiceReferenceLCS.dd_address[] addressField;
+        
+        private string bedsField;
+        
+        private string[] categoriesField;
+        
+        private ServiceReferenceLCS.dd_planeText descriptionField;
+        
+        private ServiceReferenceLCS.dd_geometries[] geometriesField;
+        
+        private ServiceReferenceLCS.dd_planeText howToArriveField;
+        
+        private ServiceReferenceLCS.dd_planeText nameField;
+        
+        private ServiceReferenceLCS.dd_openingHours openingHoursField;
+        
+        private ServiceReferenceLCS.dd_planeText shortNameField;
+        
+        private ServiceReferenceLCS.dd_planeText urlField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText _abstract
+        {
+            get
+            {
+                return this._abstractField;
+            }
+            set
+            {
+                this._abstractField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_address[] address
+        {
+            get
+            {
+                return this.addressField;
+            }
+            set
+            {
+                this.addressField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string beds
+        {
+            get
+            {
+                return this.bedsField;
+            }
+            set
+            {
+                this.bedsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] categories
+        {
+            get
+            {
+                return this.categoriesField;
+            }
+            set
+            {
+                this.categoriesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText description
+        {
+            get
+            {
+                return this.descriptionField;
+            }
+            set
+            {
+                this.descriptionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_geometries[] geometries
+        {
+            get
+            {
+                return this.geometriesField;
+            }
+            set
+            {
+                this.geometriesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText howToArrive
+        {
+            get
+            {
+                return this.howToArriveField;
+            }
+            set
+            {
+                this.howToArriveField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_openingHours openingHours
+        {
+            get
+            {
+                return this.openingHoursField;
+            }
+            set
+            {
+                this.openingHoursField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText shortName
+        {
+            get
+            {
+                return this.shortNameField;
+            }
+            set
+            {
+                this.shortNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText url
+        {
+            get
+            {
+                return this.urlField;
+            }
+            set
+            {
+                this.urlField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_links", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_links : object
+    {
+        
+        private string selfField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string self
+        {
+            get
+            {
+                return this.selfField;
+            }
+            set
+            {
+                this.selfField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_meta", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_meta : object
+    {
+        
+        private string dataProviderField;
+        
+        private string lastUpdateField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string dataProvider
+        {
+            get
+            {
+                return this.dataProviderField;
+            }
+            set
+            {
+                this.dataProviderField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string lastUpdate
+        {
+            get
+            {
+                return this.lastUpdateField;
+            }
+            set
+            {
+                this.lastUpdateField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_venue_relationships", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_venue_relationships : object
+    {
+        
+        private ServiceReferenceLCS.dd_multimediaDescriptions multimediaDescriptionsk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_subVenue[] subVenuesk__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<multimediaDescriptions>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_multimediaDescriptions multimediaDescriptionsk__BackingField
+        {
+            get
+            {
+                return this.multimediaDescriptionsk__BackingFieldField;
+            }
+            set
+            {
+                this.multimediaDescriptionsk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<subVenues>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_subVenue[] subVenuesk__BackingField
+        {
+            get
+            {
+                return this.subVenuesk__BackingFieldField;
+            }
+            set
+            {
+                this.subVenuesk__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_planeText", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_planeText : object
+    {
+        
+        private string deuk__BackingFieldField;
+        
+        private string engk__BackingFieldField;
+        
+        private string itak__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<deu>k__BackingField", IsRequired=true)]
+        public string deuk__BackingField
+        {
+            get
+            {
+                return this.deuk__BackingFieldField;
+            }
+            set
+            {
+                this.deuk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<eng>k__BackingField", IsRequired=true)]
+        public string engk__BackingField
+        {
+            get
+            {
+                return this.engk__BackingFieldField;
+            }
+            set
+            {
+                this.engk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<ita>k__BackingField", IsRequired=true)]
+        public string itak__BackingField
+        {
+            get
+            {
+                return this.itak__BackingFieldField;
+            }
+            set
+            {
+                this.itak__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_openingHours", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_openingHours : object
+    {
+        
+        private System.Collections.Generic.Dictionary<string, ServiceReferenceLCS.dd_openingHourDay[]> dailySchedulesField;
+        
+        private ServiceReferenceLCS.dd_weeklySchedules[] weeklySchedulesField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.Dictionary<string, ServiceReferenceLCS.dd_openingHourDay[]> dailySchedules
+        {
+            get
+            {
+                return this.dailySchedulesField;
+            }
+            set
+            {
+                this.dailySchedulesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_weeklySchedules[] weeklySchedules
+        {
+            get
+            {
+                return this.weeklySchedulesField;
+            }
+            set
+            {
+                this.weeklySchedulesField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_address", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_address : object
+    {
+        
+        private string[] categoriesk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_planeText cityk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_planeText complementk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_contactPoint contactPointk__BackingFieldField;
+        
+        private string countryk__BackingFieldField;
+        
+        private string regionk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_planeText streetk__BackingFieldField;
+        
+        private string zipcodek__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<categories>k__BackingField", IsRequired=true)]
+        public string[] categoriesk__BackingField
+        {
+            get
+            {
+                return this.categoriesk__BackingFieldField;
+            }
+            set
+            {
+                this.categoriesk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<city>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_planeText cityk__BackingField
+        {
+            get
+            {
+                return this.cityk__BackingFieldField;
+            }
+            set
+            {
+                this.cityk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<complement>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_planeText complementk__BackingField
+        {
+            get
+            {
+                return this.complementk__BackingFieldField;
+            }
+            set
+            {
+                this.complementk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<contactPoint>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_contactPoint contactPointk__BackingField
+        {
+            get
+            {
+                return this.contactPointk__BackingFieldField;
+            }
+            set
+            {
+                this.contactPointk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<country>k__BackingField", IsRequired=true)]
+        public string countryk__BackingField
+        {
+            get
+            {
+                return this.countryk__BackingFieldField;
+            }
+            set
+            {
+                this.countryk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<region>k__BackingField", IsRequired=true)]
+        public string regionk__BackingField
+        {
+            get
+            {
+                return this.regionk__BackingFieldField;
+            }
+            set
+            {
+                this.regionk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<street>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_planeText streetk__BackingField
+        {
+            get
+            {
+                return this.streetk__BackingFieldField;
+            }
+            set
+            {
+                this.streetk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<zipcode>k__BackingField", IsRequired=true)]
+        public string zipcodek__BackingField
+        {
+            get
+            {
+                return this.zipcodek__BackingFieldField;
+            }
+            set
+            {
+                this.zipcodek__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_geometries", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_geometries : object
+    {
+        
+        private double[] coordinatesk__BackingFieldField;
+        
+        private string typek__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<coordinates>k__BackingField", IsRequired=true)]
+        public double[] coordinatesk__BackingField
+        {
+            get
+            {
+                return this.coordinatesk__BackingFieldField;
+            }
+            set
+            {
+                this.coordinatesk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<type>k__BackingField", IsRequired=true)]
+        public string typek__BackingField
+        {
+            get
+            {
+                return this.typek__BackingFieldField;
+            }
+            set
+            {
+                this.typek__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_contactPoint", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_contactPoint : object
+    {
+        
+        private string emailk__BackingFieldField;
+        
+        private string telephonek__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<email>k__BackingField", IsRequired=true)]
+        public string emailk__BackingField
+        {
+            get
+            {
+                return this.emailk__BackingFieldField;
+            }
+            set
+            {
+                this.emailk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<telephone>k__BackingField", IsRequired=true)]
+        public string telephonek__BackingField
+        {
+            get
+            {
+                return this.telephonek__BackingFieldField;
+            }
+            set
+            {
+                this.telephonek__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_openingHourDay", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_openingHourDay : object
+    {
+        
+        private string closesField;
+        
+        private string opensField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string closes
+        {
+            get
+            {
+                return this.closesField;
+            }
+            set
+            {
+                this.closesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string opens
+        {
+            get
+            {
+                return this.opensField;
+            }
+            set
+            {
+                this.opensField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_weeklySchedules", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_weeklySchedules : object
+    {
+        
+        private ServiceReferenceLCS.dd_openingHourDay[] fridayField;
+        
+        private ServiceReferenceLCS.dd_openingHourDay[] mondayField;
+        
+        private ServiceReferenceLCS.dd_openingHourDay[] saturdayField;
+        
+        private ServiceReferenceLCS.dd_openingHourDay[] sundayField;
+        
+        private ServiceReferenceLCS.dd_openingHourDay[] thursdayField;
+        
+        private ServiceReferenceLCS.dd_openingHourDay[] tuesdayField;
+        
+        private string validFromField;
+        
+        private string validToField;
+        
+        private ServiceReferenceLCS.dd_openingHourDay[] wednesdayField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_openingHourDay[] friday
+        {
+            get
+            {
+                return this.fridayField;
+            }
+            set
+            {
+                this.fridayField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_openingHourDay[] monday
+        {
+            get
+            {
+                return this.mondayField;
+            }
+            set
+            {
+                this.mondayField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_openingHourDay[] saturday
+        {
+            get
+            {
+                return this.saturdayField;
+            }
+            set
+            {
+                this.saturdayField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_openingHourDay[] sunday
+        {
+            get
+            {
+                return this.sundayField;
+            }
+            set
+            {
+                this.sundayField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_openingHourDay[] thursday
+        {
+            get
+            {
+                return this.thursdayField;
+            }
+            set
+            {
+                this.thursdayField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_openingHourDay[] tuesday
+        {
+            get
+            {
+                return this.tuesdayField;
+            }
+            set
+            {
+                this.tuesdayField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string validFrom
+        {
+            get
+            {
+                return this.validFromField;
+            }
+            set
+            {
+                this.validFromField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string validTo
+        {
+            get
+            {
+                return this.validToField;
+            }
+            set
+            {
+                this.validToField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_openingHourDay[] wednesday
+        {
+            get
+            {
+                return this.wednesdayField;
+            }
+            set
+            {
+                this.wednesdayField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_multimediaDescriptions", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_multimediaDescriptions : object
+    {
+        
+        private ServiceReferenceLCS.dd_multimediaDescription[] datak__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<data>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_multimediaDescription[] datak__BackingField
+        {
+            get
+            {
+                return this.datak__BackingFieldField;
+            }
+            set
+            {
+                this.datak__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_subVenue", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_subVenue : object
+    {
+        
+        private ServiceReferenceLCS.dd_subVenue_attributes attributesk__BackingFieldField;
+        
+        private string idk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_links linksk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_subvenue_relationships relationshipsk__BackingFieldField;
+        
+        private string typek__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<attributes>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_subVenue_attributes attributesk__BackingField
+        {
+            get
+            {
+                return this.attributesk__BackingFieldField;
+            }
+            set
+            {
+                this.attributesk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<id>k__BackingField", IsRequired=true)]
+        public string idk__BackingField
+        {
+            get
+            {
+                return this.idk__BackingFieldField;
+            }
+            set
+            {
+                this.idk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<links>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_links linksk__BackingField
+        {
+            get
+            {
+                return this.linksk__BackingFieldField;
+            }
+            set
+            {
+                this.linksk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<relationships>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_subvenue_relationships relationshipsk__BackingField
+        {
+            get
+            {
+                return this.relationshipsk__BackingFieldField;
+            }
+            set
+            {
+                this.relationshipsk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<type>k__BackingField", IsRequired=true)]
+        public string typek__BackingField
+        {
+            get
+            {
+                return this.typek__BackingFieldField;
+            }
+            set
+            {
+                this.typek__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_multimediaDescription", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_multimediaDescription : object
+    {
+        
+        private ServiceReferenceLCS.dd_multimediaDescription_attributes attributesk__BackingFieldField;
+        
+        private string[] categoriesk__BackingFieldField;
+        
+        private string idk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_links linksk__BackingFieldField;
+        
+        private ServiceReferenceLCS.dd_multimediaDescription_relationships relationshipsk__BackingFieldField;
+        
+        private string typek__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<attributes>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_multimediaDescription_attributes attributesk__BackingField
+        {
+            get
+            {
+                return this.attributesk__BackingFieldField;
+            }
+            set
+            {
+                this.attributesk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<categories>k__BackingField", IsRequired=true)]
+        public string[] categoriesk__BackingField
+        {
+            get
+            {
+                return this.categoriesk__BackingFieldField;
+            }
+            set
+            {
+                this.categoriesk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<id>k__BackingField", IsRequired=true)]
+        public string idk__BackingField
+        {
+            get
+            {
+                return this.idk__BackingFieldField;
+            }
+            set
+            {
+                this.idk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<links>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_links linksk__BackingField
+        {
+            get
+            {
+                return this.linksk__BackingFieldField;
+            }
+            set
+            {
+                this.linksk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<relationships>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_multimediaDescription_relationships relationshipsk__BackingField
+        {
+            get
+            {
+                return this.relationshipsk__BackingFieldField;
+            }
+            set
+            {
+                this.relationshipsk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<type>k__BackingField", IsRequired=true)]
+        public string typek__BackingField
+        {
+            get
+            {
+                return this.typek__BackingFieldField;
+            }
+            set
+            {
+                this.typek__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_multimediaDescription_attributes", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_multimediaDescription_attributes : object
+    {
+        
+        private ServiceReferenceLCS.dd_planeText _abstractField;
+        
+        private string[] categoriesField;
+        
+        private string contentTypeField;
+        
+        private ServiceReferenceLCS.dd_planeText descriptionField;
+        
+        private System.Nullable<int> durationField;
+        
+        private System.Nullable<int> heightField;
+        
+        private string licenseField;
+        
+        private ServiceReferenceLCS.dd_planeText nameField;
+        
+        private ServiceReferenceLCS.dd_planeText shortNameField;
+        
+        private string urlField;
+        
+        private System.Nullable<int> widthField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText _abstract
+        {
+            get
+            {
+                return this._abstractField;
+            }
+            set
+            {
+                this._abstractField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] categories
+        {
+            get
+            {
+                return this.categoriesField;
+            }
+            set
+            {
+                this.categoriesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string contentType
+        {
+            get
+            {
+                return this.contentTypeField;
+            }
+            set
+            {
+                this.contentTypeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText description
+        {
+            get
+            {
+                return this.descriptionField;
+            }
+            set
+            {
+                this.descriptionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> duration
+        {
+            get
+            {
+                return this.durationField;
+            }
+            set
+            {
+                this.durationField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> height
+        {
+            get
+            {
+                return this.heightField;
+            }
+            set
+            {
+                this.heightField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string license
+        {
+            get
+            {
+                return this.licenseField;
+            }
+            set
+            {
+                this.licenseField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText shortName
+        {
+            get
+            {
+                return this.shortNameField;
+            }
+            set
+            {
+                this.shortNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string url
+        {
+            get
+            {
+                return this.urlField;
+            }
+            set
+            {
+                this.urlField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> width
+        {
+            get
+            {
+                return this.widthField;
+            }
+            set
+            {
+                this.widthField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_multimediaDescription_relationships", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_multimediaDescription_relationships : object
+    {
+        
+        private ServiceReferenceLCS.dd_copyrightOwner copyrightOwnerField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_copyrightOwner copyrightOwner
+        {
+            get
+            {
+                return this.copyrightOwnerField;
+            }
+            set
+            {
+                this.copyrightOwnerField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_copyrightOwner", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_copyrightOwner : object
+    {
+        
+        private ServiceReferenceLCS.dd_copyrightOwner_data dataField;
+        
+        private ServiceReferenceLCS.dd_copyrightOwner_links_related linksField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_copyrightOwner_data data
+        {
+            get
+            {
+                return this.dataField;
+            }
+            set
+            {
+                this.dataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_copyrightOwner_links_related links
+        {
+            get
+            {
+                return this.linksField;
+            }
+            set
+            {
+                this.linksField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_copyrightOwner_data", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_copyrightOwner_data : object
+    {
+        
+        private ServiceReferenceLCS.dd_copyrightOwner_attributes attributesField;
+        
+        private string idField;
+        
+        private string typeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_copyrightOwner_attributes attributes
+        {
+            get
+            {
+                return this.attributesField;
+            }
+            set
+            {
+                this.attributesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string id
+        {
+            get
+            {
+                return this.idField;
+            }
+            set
+            {
+                this.idField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string type
+        {
+            get
+            {
+                return this.typeField;
+            }
+            set
+            {
+                this.typeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_copyrightOwner_links_related", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_copyrightOwner_links_related : object
+    {
+        
+        private string relatedField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string related
+        {
+            get
+            {
+                return this.relatedField;
+            }
+            set
+            {
+                this.relatedField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_copyrightOwner_attributes", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_copyrightOwner_attributes : object
+    {
+        
+        private ServiceReferenceLCS.dd_planeText nameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_subVenue_attributes", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_subVenue_attributes : object
+    {
+        
+        private ServiceReferenceLCS.dd_planeText _abstractField;
+        
+        private ServiceReferenceLCS.dd_address addressField;
+        
+        private ServiceReferenceLCS.dd_availableSetups[] availableSetupsField;
+        
+        private string[] categoriesField;
+        
+        private ServiceReferenceLCS.dd_planeText descriptionField;
+        
+        private ServiceReferenceLCS.dd_dimension dimensionField;
+        
+        private ServiceReferenceLCS.dd_planeText nameField;
+        
+        private ServiceReferenceLCS.dd_planeText urlField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText _abstract
+        {
+            get
+            {
+                return this._abstractField;
+            }
+            set
+            {
+                this._abstractField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_address address
+        {
+            get
+            {
+                return this.addressField;
+            }
+            set
+            {
+                this.addressField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_availableSetups[] availableSetups
+        {
+            get
+            {
+                return this.availableSetupsField;
+            }
+            set
+            {
+                this.availableSetupsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] categories
+        {
+            get
+            {
+                return this.categoriesField;
+            }
+            set
+            {
+                this.categoriesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText description
+        {
+            get
+            {
+                return this.descriptionField;
+            }
+            set
+            {
+                this.descriptionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_dimension dimension
+        {
+            get
+            {
+                return this.dimensionField;
+            }
+            set
+            {
+                this.dimensionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText url
+        {
+            get
+            {
+                return this.urlField;
+            }
+            set
+            {
+                this.urlField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_subvenue_relationships", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_subvenue_relationships : object
+    {
+        
+        private ServiceReferenceLCS.dd_multimediaDescriptions multimediaDescriptionsk__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<multimediaDescriptions>k__BackingField", IsRequired=true)]
+        public ServiceReferenceLCS.dd_multimediaDescriptions multimediaDescriptionsk__BackingField
+        {
+            get
+            {
+                return this.multimediaDescriptionsk__BackingFieldField;
+            }
+            set
+            {
+                this.multimediaDescriptionsk__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_dimension", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_dimension : object
+    {
+        
+        private int doorHeightk__BackingFieldField;
+        
+        private int doorWidthk__BackingFieldField;
+        
+        private int heightk__BackingFieldField;
+        
+        private int lengthk__BackingFieldField;
+        
+        private int squareMetersk__BackingFieldField;
+        
+        private int widthk__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<doorHeight>k__BackingField", IsRequired=true)]
+        public int doorHeightk__BackingField
+        {
+            get
+            {
+                return this.doorHeightk__BackingFieldField;
+            }
+            set
+            {
+                this.doorHeightk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<doorWidth>k__BackingField", IsRequired=true)]
+        public int doorWidthk__BackingField
+        {
+            get
+            {
+                return this.doorWidthk__BackingFieldField;
+            }
+            set
+            {
+                this.doorWidthk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<height>k__BackingField", IsRequired=true)]
+        public int heightk__BackingField
+        {
+            get
+            {
+                return this.heightk__BackingFieldField;
+            }
+            set
+            {
+                this.heightk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<length>k__BackingField", IsRequired=true)]
+        public int lengthk__BackingField
+        {
+            get
+            {
+                return this.lengthk__BackingFieldField;
+            }
+            set
+            {
+                this.lengthk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<squareMeters>k__BackingField", IsRequired=true)]
+        public int squareMetersk__BackingField
+        {
+            get
+            {
+                return this.squareMetersk__BackingFieldField;
+            }
+            set
+            {
+                this.squareMetersk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<width>k__BackingField", IsRequired=true)]
+        public int widthk__BackingField
+        {
+            get
+            {
+                return this.widthk__BackingFieldField;
+            }
+            set
+            {
+                this.widthk__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_availableSetups", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_availableSetups : object
+    {
+        
+        private int capacityk__BackingFieldField;
+        
+        private string setupk__BackingFieldField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<capacity>k__BackingField", IsRequired=true)]
+        public int capacityk__BackingField
+        {
+            get
+            {
+                return this.capacityk__BackingFieldField;
+            }
+            set
+            {
+                this.capacityk__BackingFieldField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Name="<setup>k__BackingField", IsRequired=true)]
+        public string setupk__BackingField
+        {
+            get
+            {
+                return this.setupk__BackingFieldField;
+            }
+            set
+            {
+                this.setupk__BackingFieldField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_VenueCodeTableRS", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_VenueCodeTableRS : object
+    {
+        
+        private ServiceReferenceLCS.dd_VenueCodeTableObject[] categoriesField;
+        
+        private ServiceReferenceLCS.dd_VenueCodeTableObject[] featuresField;
+        
+        private ServiceReferenceLCS.dd_VenueCodeTableObject[] seatTypesField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_VenueCodeTableObject[] categories
+        {
+            get
+            {
+                return this.categoriesField;
+            }
+            set
+            {
+                this.categoriesField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_VenueCodeTableObject[] features
+        {
+            get
+            {
+                return this.featuresField;
+            }
+            set
+            {
+                this.featuresField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_VenueCodeTableObject[] seatTypes
+        {
+            get
+            {
+                return this.seatTypesField;
+            }
+            set
+            {
+                this.seatTypesField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="dd_VenueCodeTableObject", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class dd_VenueCodeTableObject : object
+    {
+        
+        private string codeField;
+        
+        private ServiceReferenceLCS.dd_planeText nameField;
+        
+        private string ridField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string code
+        {
+            get
+            {
+                return this.codeField;
+            }
+            set
+            {
+                this.codeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.dd_planeText name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string rid
+        {
+            get
+            {
+                return this.ridField;
+            }
+            set
+            {
+                this.ridField = value;
             }
         }
     }
@@ -22206,6 +25095,36 @@ namespace ServiceReferenceLCS
     [System.ServiceModel.ServiceContractAttribute(Namespace="", ConfigurationName="ServiceReferenceLCS.IData")]
     public interface IData
     {
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealSearch", ReplyAction="urn:IData/PkgDealSearchResponse")]
+        System.Xml.XmlElement PkgDealSearch(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealSearch", ReplyAction="urn:IData/PkgDealSearchResponse")]
+        System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealSearchAsync(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealSearch", ReplyAction="urn:IData/oPkgDealSearchResponse")]
+        ServiceReferenceLCS.PkgDealSearchRS oPkgDealSearch(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealSearch", ReplyAction="urn:IData/oPkgDealSearchResponse")]
+        System.Threading.Tasks.Task<ServiceReferenceLCS.PkgDealSearchRS> oPkgDealSearchAsync(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealChangedItems", ReplyAction="urn:IData/PkgDealChangedItemsResponse")]
+        System.Xml.XmlElement PkgDealChangedItems(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealChangedItems", ReplyAction="urn:IData/PkgDealChangedItemsResponse")]
+        System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealChangedItemsAsync(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealChangedItems", ReplyAction="urn:IData/oPkgDealChangedItemsResponse")]
+        ServiceReferenceLCS.PkgDealChangedItemsRS oPkgDealChangedItems(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealChangedItems", ReplyAction="urn:IData/oPkgDealChangedItemsResponse")]
+        System.Threading.Tasks.Task<ServiceReferenceLCS.PkgDealChangedItemsRS> oPkgDealChangedItemsAsync(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealDetail", ReplyAction="urn:IData/PkgDealDetailResponse")]
+        System.Xml.XmlElement PkgDealDetail(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealDetail", ReplyAction="urn:IData/PkgDealDetailResponse")]
+        System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealDetailAsync(System.Xml.XmlElement XmlData);
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealDetail", ReplyAction="urn:IData/oPkgDealDetailResponse")]
         ServiceReferenceLCS.PkgDealDetailRS oPkgDealDetail(System.Xml.XmlElement XmlData);
@@ -22747,11 +25666,29 @@ namespace ServiceReferenceLCS
         [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oAccommodationDataMap", ReplyAction="urn:IData/oAccommodationDataMapResponse")]
         System.Threading.Tasks.Task<ServiceReferenceLCS.AccommodationDataMapRS> oAccommodationDataMapAsync(System.Xml.XmlElement XmlData);
         
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oVenueOffering", ReplyAction="urn:IData/oVenueOfferingResponse")]
-        ServiceReferenceLCS.VenueOfferingRS oVenueOffering(string JsonData);
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/Venue", ReplyAction="urn:IData/VenueResponse")]
+        System.IO.Stream Venue(ServiceReferenceLCS.ddVenueRQ JsonData);
         
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oVenueOffering", ReplyAction="urn:IData/oVenueOfferingResponse")]
-        System.Threading.Tasks.Task<ServiceReferenceLCS.VenueOfferingRS> oVenueOfferingAsync(string JsonData);
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/Venue", ReplyAction="urn:IData/VenueResponse")]
+        System.Threading.Tasks.Task<System.IO.Stream> VenueAsync(ServiceReferenceLCS.ddVenueRQ JsonData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/VenueCodeTable", ReplyAction="urn:IData/VenueCodeTableResponse")]
+        System.IO.Stream VenueCodeTable(ServiceReferenceLCS.ddVenueCodeTableRQ JsonData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/VenueCodeTable", ReplyAction="urn:IData/VenueCodeTableResponse")]
+        System.Threading.Tasks.Task<System.IO.Stream> VenueCodeTableAsync(ServiceReferenceLCS.ddVenueCodeTableRQ JsonData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oVenue", ReplyAction="urn:IData/oVenueResponse")]
+        ServiceReferenceLCS.dd_VenueRS oVenue(string JsonData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oVenue", ReplyAction="urn:IData/oVenueResponse")]
+        System.Threading.Tasks.Task<ServiceReferenceLCS.dd_VenueRS> oVenueAsync(string JsonData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oVenueCodeTable", ReplyAction="urn:IData/oVenueCodeTableResponse")]
+        ServiceReferenceLCS.dd_VenueCodeTableRS oVenueCodeTable(string JsonData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oVenueCodeTable", ReplyAction="urn:IData/oVenueCodeTableResponse")]
+        System.Threading.Tasks.Task<ServiceReferenceLCS.dd_VenueCodeTableRS> oVenueCodeTableAsync(string JsonData);
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IData/BeaconDetail", ReplyAction="urn:IData/BeaconDetailResponse")]
         System.Xml.XmlElement BeaconDetail(System.Xml.XmlElement XmlData);
@@ -22836,6 +25773,18 @@ namespace ServiceReferenceLCS
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oDistricts", ReplyAction="urn:IData/oDistrictsResponse")]
         System.Threading.Tasks.Task<ServiceReferenceLCS.DistrictsRS> oDistrictsAsync(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/RegionList", ReplyAction="urn:IData/RegionListResponse")]
+        System.Xml.XmlElement RegionList(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/RegionList", ReplyAction="urn:IData/RegionListResponse")]
+        System.Threading.Tasks.Task<System.Xml.XmlElement> RegionListAsync(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oRegionList", ReplyAction="urn:IData/oRegionListResponse")]
+        ServiceReferenceLCS.RegionListRS oRegionList(System.Xml.XmlElement XmlData);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oRegionList", ReplyAction="urn:IData/oRegionListResponse")]
+        System.Threading.Tasks.Task<ServiceReferenceLCS.RegionListRS> oRegionListAsync(System.Xml.XmlElement XmlData);
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IData/Translation", ReplyAction="urn:IData/TranslationResponse")]
         System.Xml.XmlElement Translation(System.Xml.XmlElement XmlData);
@@ -23364,36 +26313,6 @@ namespace ServiceReferenceLCS
         
         [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgServiceSearch", ReplyAction="urn:IData/oPkgServiceSearchResponse")]
         System.Threading.Tasks.Task<ServiceReferenceLCS.PkgServiceSearchRS> oPkgServiceSearchAsync(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealSearch", ReplyAction="urn:IData/PkgDealSearchResponse")]
-        System.Xml.XmlElement PkgDealSearch(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealSearch", ReplyAction="urn:IData/PkgDealSearchResponse")]
-        System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealSearchAsync(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealSearch", ReplyAction="urn:IData/oPkgDealSearchResponse")]
-        ServiceReferenceLCS.PkgDealSearchRS oPkgDealSearch(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealSearch", ReplyAction="urn:IData/oPkgDealSearchResponse")]
-        System.Threading.Tasks.Task<ServiceReferenceLCS.PkgDealSearchRS> oPkgDealSearchAsync(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealChangedItems", ReplyAction="urn:IData/PkgDealChangedItemsResponse")]
-        System.Xml.XmlElement PkgDealChangedItems(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealChangedItems", ReplyAction="urn:IData/PkgDealChangedItemsResponse")]
-        System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealChangedItemsAsync(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealChangedItems", ReplyAction="urn:IData/oPkgDealChangedItemsResponse")]
-        ServiceReferenceLCS.PkgDealChangedItemsRS oPkgDealChangedItems(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/oPkgDealChangedItems", ReplyAction="urn:IData/oPkgDealChangedItemsResponse")]
-        System.Threading.Tasks.Task<ServiceReferenceLCS.PkgDealChangedItemsRS> oPkgDealChangedItemsAsync(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealDetail", ReplyAction="urn:IData/PkgDealDetailResponse")]
-        System.Xml.XmlElement PkgDealDetail(System.Xml.XmlElement XmlData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="urn:IData/PkgDealDetail", ReplyAction="urn:IData/PkgDealDetailResponse")]
-        System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealDetailAsync(System.Xml.XmlElement XmlData);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
@@ -23409,6 +26328,56 @@ namespace ServiceReferenceLCS
         public DataClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress)
         {
+        }
+        
+        public System.Xml.XmlElement PkgDealSearch(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.PkgDealSearch(XmlData);
+        }
+        
+        public System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealSearchAsync(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.PkgDealSearchAsync(XmlData);
+        }
+        
+        public ServiceReferenceLCS.PkgDealSearchRS oPkgDealSearch(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.oPkgDealSearch(XmlData);
+        }
+        
+        public System.Threading.Tasks.Task<ServiceReferenceLCS.PkgDealSearchRS> oPkgDealSearchAsync(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.oPkgDealSearchAsync(XmlData);
+        }
+        
+        public System.Xml.XmlElement PkgDealChangedItems(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.PkgDealChangedItems(XmlData);
+        }
+        
+        public System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealChangedItemsAsync(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.PkgDealChangedItemsAsync(XmlData);
+        }
+        
+        public ServiceReferenceLCS.PkgDealChangedItemsRS oPkgDealChangedItems(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.oPkgDealChangedItems(XmlData);
+        }
+        
+        public System.Threading.Tasks.Task<ServiceReferenceLCS.PkgDealChangedItemsRS> oPkgDealChangedItemsAsync(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.oPkgDealChangedItemsAsync(XmlData);
+        }
+        
+        public System.Xml.XmlElement PkgDealDetail(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.PkgDealDetail(XmlData);
+        }
+        
+        public System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealDetailAsync(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.PkgDealDetailAsync(XmlData);
         }
         
         public ServiceReferenceLCS.PkgDealDetailRS oPkgDealDetail(System.Xml.XmlElement XmlData)
@@ -24311,14 +27280,44 @@ namespace ServiceReferenceLCS
             return base.Channel.oAccommodationDataMapAsync(XmlData);
         }
         
-        public ServiceReferenceLCS.VenueOfferingRS oVenueOffering(string JsonData)
+        public System.IO.Stream Venue(ServiceReferenceLCS.ddVenueRQ JsonData)
         {
-            return base.Channel.oVenueOffering(JsonData);
+            return base.Channel.Venue(JsonData);
         }
         
-        public System.Threading.Tasks.Task<ServiceReferenceLCS.VenueOfferingRS> oVenueOfferingAsync(string JsonData)
+        public System.Threading.Tasks.Task<System.IO.Stream> VenueAsync(ServiceReferenceLCS.ddVenueRQ JsonData)
         {
-            return base.Channel.oVenueOfferingAsync(JsonData);
+            return base.Channel.VenueAsync(JsonData);
+        }
+        
+        public System.IO.Stream VenueCodeTable(ServiceReferenceLCS.ddVenueCodeTableRQ JsonData)
+        {
+            return base.Channel.VenueCodeTable(JsonData);
+        }
+        
+        public System.Threading.Tasks.Task<System.IO.Stream> VenueCodeTableAsync(ServiceReferenceLCS.ddVenueCodeTableRQ JsonData)
+        {
+            return base.Channel.VenueCodeTableAsync(JsonData);
+        }
+        
+        public ServiceReferenceLCS.dd_VenueRS oVenue(string JsonData)
+        {
+            return base.Channel.oVenue(JsonData);
+        }
+        
+        public System.Threading.Tasks.Task<ServiceReferenceLCS.dd_VenueRS> oVenueAsync(string JsonData)
+        {
+            return base.Channel.oVenueAsync(JsonData);
+        }
+        
+        public ServiceReferenceLCS.dd_VenueCodeTableRS oVenueCodeTable(string JsonData)
+        {
+            return base.Channel.oVenueCodeTable(JsonData);
+        }
+        
+        public System.Threading.Tasks.Task<ServiceReferenceLCS.dd_VenueCodeTableRS> oVenueCodeTableAsync(string JsonData)
+        {
+            return base.Channel.oVenueCodeTableAsync(JsonData);
         }
         
         public System.Xml.XmlElement BeaconDetail(System.Xml.XmlElement XmlData)
@@ -24459,6 +27458,26 @@ namespace ServiceReferenceLCS
         public System.Threading.Tasks.Task<ServiceReferenceLCS.DistrictsRS> oDistrictsAsync(System.Xml.XmlElement XmlData)
         {
             return base.Channel.oDistrictsAsync(XmlData);
+        }
+        
+        public System.Xml.XmlElement RegionList(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.RegionList(XmlData);
+        }
+        
+        public System.Threading.Tasks.Task<System.Xml.XmlElement> RegionListAsync(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.RegionListAsync(XmlData);
+        }
+        
+        public ServiceReferenceLCS.RegionListRS oRegionList(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.oRegionList(XmlData);
+        }
+        
+        public System.Threading.Tasks.Task<ServiceReferenceLCS.RegionListRS> oRegionListAsync(System.Xml.XmlElement XmlData)
+        {
+            return base.Channel.oRegionListAsync(XmlData);
         }
         
         public System.Xml.XmlElement Translation(System.Xml.XmlElement XmlData)
@@ -25339,56 +28358,6 @@ namespace ServiceReferenceLCS
         public System.Threading.Tasks.Task<ServiceReferenceLCS.PkgServiceSearchRS> oPkgServiceSearchAsync(System.Xml.XmlElement XmlData)
         {
             return base.Channel.oPkgServiceSearchAsync(XmlData);
-        }
-        
-        public System.Xml.XmlElement PkgDealSearch(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.PkgDealSearch(XmlData);
-        }
-        
-        public System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealSearchAsync(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.PkgDealSearchAsync(XmlData);
-        }
-        
-        public ServiceReferenceLCS.PkgDealSearchRS oPkgDealSearch(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.oPkgDealSearch(XmlData);
-        }
-        
-        public System.Threading.Tasks.Task<ServiceReferenceLCS.PkgDealSearchRS> oPkgDealSearchAsync(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.oPkgDealSearchAsync(XmlData);
-        }
-        
-        public System.Xml.XmlElement PkgDealChangedItems(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.PkgDealChangedItems(XmlData);
-        }
-        
-        public System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealChangedItemsAsync(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.PkgDealChangedItemsAsync(XmlData);
-        }
-        
-        public ServiceReferenceLCS.PkgDealChangedItemsRS oPkgDealChangedItems(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.oPkgDealChangedItems(XmlData);
-        }
-        
-        public System.Threading.Tasks.Task<ServiceReferenceLCS.PkgDealChangedItemsRS> oPkgDealChangedItemsAsync(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.oPkgDealChangedItemsAsync(XmlData);
-        }
-        
-        public System.Xml.XmlElement PkgDealDetail(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.PkgDealDetail(XmlData);
-        }
-        
-        public System.Threading.Tasks.Task<System.Xml.XmlElement> PkgDealDetailAsync(System.Xml.XmlElement XmlData)
-        {
-            return base.Channel.PkgDealDetailAsync(XmlData);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

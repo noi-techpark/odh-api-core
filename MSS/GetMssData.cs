@@ -1,5 +1,6 @@
 ﻿using DataModel;
-using Helper.MSS;
+using Helper;
+using MSS;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Helper
+namespace MSS
 {
     public static class GetMssData
     {

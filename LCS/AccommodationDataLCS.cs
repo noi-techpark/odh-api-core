@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Helper;
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Helper.LCS
+namespace LCS
 {
     public class GetAccommodationDataLCS
     {

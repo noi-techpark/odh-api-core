@@ -7,6 +7,8 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine3.10 AS build
 WORKDIR /src
 COPY DataModel/DataModel.csproj DataModel/
 COPY Helper/Helper.csproj Helper/
+COPY MSS/MSS.csproj MSS/
+COPY LCS/LCS.csproj LCS/
 COPY WeatherData/WeatherData.csproj WeatherData/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj

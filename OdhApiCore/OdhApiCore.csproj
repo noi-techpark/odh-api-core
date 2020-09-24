@@ -32,6 +32,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Helper\Helper.csproj" />
+    <ProjectReference Include="..\LCS\LCS.csproj" />
+    <ProjectReference Include="..\MSS\MSS.csproj" />
   </ItemGroup>
 
 </Project>
