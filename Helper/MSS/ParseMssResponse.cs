@@ -746,7 +746,6 @@ namespace Helper.MSS
 
                             }
 
-
                             myparsedresponselist.MssResponseShort.Add(myresp);
                         }
                     }

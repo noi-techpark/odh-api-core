@@ -5,9 +5,18 @@ namespace Helper
 {
     public class AccoBookList
     {
+        
+
         public string? Id { get; set; }
         public bool IsBookable { get; set; }
         public ICollection<AccoBookingChannel>? AccoBookingChannel { get; set; }
+    }
+
+    public class AccoBookListRaw
+    {        
+        public string? Id { get; set; }
+        public bool IsBookable { get; set; }
+        public JsonRaw AccoBookingChannel { get; set; }
     }
 
     public class AccoCustom

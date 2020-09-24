@@ -2482,6 +2482,7 @@ namespace Helper
         {
             ImageTitle = new Dictionary<string, string>();
             ImageDesc = new Dictionary<string, string>();
+            ImageAltText = new Dictionary<string, string>();
         }
 
         public string? ImageName { get; set; }
@@ -2492,7 +2493,8 @@ namespace Helper
 
         public IDictionary<string, string> ImageTitle { get; set; }
         public IDictionary<string, string> ImageDesc { get; set; }
-        //public string Language { get; set; }
+        public IDictionary<string, string> ImageAltText { get; set; }
+
         public Nullable<bool> IsInGallery { get; set; }
         public Nullable<int> ListPosition { get; set; }
         public Nullable<DateTime> ValidFrom { get; set; }
@@ -2501,6 +2503,7 @@ namespace Helper
         //NEU
         public string? CopyRight { get; set; }
         public string? License { get; set; }
+        public string? LicenseHolder { get; set; }
         public ICollection<string>? ImageTags { get; set; }
     }
 

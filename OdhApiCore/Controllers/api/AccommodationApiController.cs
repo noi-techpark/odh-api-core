@@ -10,6 +10,7 @@ using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,10 +22,13 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class AccommodationController : OdhController
-    {      
-        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+    {
+        private readonly IHttpClientFactory httpClientFactory;
+
+        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
             : base(env, settings, logger, queryFactory)
         {
+            this.httpClientFactory = httpClientFactory;
         }
 
         #region SWAGGER Exposed API
@@ -66,7 +70,8 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Accommodation")]
+        [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
+        [HttpGet, Route("Accommodation", Name = "AccommodationList")]
         public async Task<IActionResult> GetAccommodations(
             uint pagenumber = 1,
             uint pagesize = 10,
@@ -112,6 +117,29 @@ namespace OdhApiCore.Controllers
 
             if (availabilitycheck?.Value != true)
             {
+                return await GetFiltered(
+                    fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
+                    pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
+                    typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, themefilter: themefilter, badgefilter: badgefilter,
+                    altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
+                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, cancellationToken);
+            }
+            else if(availabilitycheck?.Value == true)
+            {
+                //get the passed values
+
+                var accobooklist = Request.HttpContext.Items["accobooklist"];
+                var accoavailability = Request.HttpContext.Items["mssavailablity"];
+
+                if(accoavailability != null)
+                {
+                    var availableonlineaccos = ((MssResult)accoavailability).MssResponseShort.Select(x => x.A0RID.ToUpper()).Distinct().ToList();
+
+                    idfilter = string.Join(",", availableonlineaccos);                    
+                }
+
+                //TODO SORT ORDER???
+
                 return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
                     pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
@@ -201,6 +229,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
         [HttpGet, Route("Accommodation/{id}", Name = "SingleAccommodation")]
+        [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
         public async Task<IActionResult> GetAccommodation(
             string id,
             string? idsource = "lts",
@@ -217,75 +246,7 @@ namespace OdhApiCore.Controllers
             string? language = null,
             CancellationToken cancellationToken = default)
         {
-            //string table = CheckOpenData(User);
-            //bool availabilitysearchallowed = CheckAvailabilitySearch(User);
-
-            //Contains 4 Methods GETSINGLE, GETBYHGVID, GETAVAILABLESINGLE, GETAVAILABLESINGLELCS
-
-            List<string> bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
-
-            //Fall 1 GET Single
-            if (availabilitycheck?.Value != true && idsource == "lts")
-            {
-                return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
-            }
-
-            //Fall 2 GET by HGVId
-            //else if (availabilitycheck?.Value != true && idsource == "hgv")
-            //{
-            //    return GetbyHgvId(id, fieldselector, table, language);
-            //}
-
-            ////Fall 3 GET MSS
-            //else if (availabilitycheck?.Value == true && (bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp") || bokfilterlist.Contains("bok")) && !bokfilterlist.Contains("lts"))
-            //{
-            //    if (availabilitysearchallowed)
-            //    {
-            //        string idtocheck = id;
-
-            //        if (idsource == "hgv")
-            //            idtocheck = GetAccoIdByHGVId(id);
-
-            //        if (String.IsNullOrEmpty(arrival))
-            //            arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //        if (String.IsNullOrEmpty(departure))
-            //            departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //        if (boardfilter == null)
-            //            boardfilter = "0";
-
-            //        return await GetAvailableSingleAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, idtocheck, bokfilter, source, fieldselector, language);
-            //    }
-            //    else
-            //        return BadRequest("AvailabilitySearch only available for logged Users, not as open data!");
-            //}
-
-            ////Fall 4 GET LCS
-            //else if (availabilitycheck?.Value == true && !bokfilterlist.Contains("hgv") && !bokfilterlist.Contains("htl") && !bokfilterlist.Contains("exp") && !bokfilterlist.Contains("bok") && bokfilterlist.Contains("lts"))
-            //{
-            //    if (availabilitysearchallowed)
-            //    {
-            //        string idtocheck = id;
-
-            //        if (idsource == "hgv")
-            //            idtocheck = GetAccoIdByHGVId(id);
-
-            //        if (String.IsNullOrEmpty(arrival))
-            //            arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //        if (String.IsNullOrEmpty(departure))
-            //            departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //        if (boardfilter == null)
-            //            boardfilter = "0";
-
-            //        return await GetAvailableSingleLCSAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, idtocheck, fieldselector, language);
-            //    }
-            //    else
-            //        return BadRequest("AvailabilitySearch only available for logged Users, not as open data!");
-            //}
-
-            else
-            {
-                return BadRequest("not supported");
-            }
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);           
         }
 
 
@@ -367,6 +328,146 @@ namespace OdhApiCore.Controllers
         }
 
 
+        //SPECIAL GETTER
+
+        //SPECIAL GETTER
+
+        /// <summary>
+        /// POST Available Accommodations HGV(Booking Suedtirol MSS) / LTS on posted IDs
+        /// </summary>
+        /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
+        /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
+        /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED</param>
+        /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
+        /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
+        /// <param name="detail">Include Offer Details (Boolean, 1 = full Details)</param>
+        /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
+        /// <param name="withoutmssids">Search over all bookable Accommodations on HGV MSS (No Ids have to be provided as Post Data) (default: false)</param>        
+        /// <param name="withoutlcsids">Search over all Accommodations on LTS (No Ids have to be provided as Post Data) (default: false)</param>        
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by ,)</param>
+        /// <returns>Result Object with Collection of Accommodation Objects</returns>
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
+        [HttpPost, Route("AccommodationAvailable")]
+        public async Task<IActionResult> PostAvailableAccommodations(
+            [FromBody] string idfilter,
+            string availabilitychecklanguage = "en",
+            string? boardfilter = null,
+            string? arrival = null,
+            string? departure = null,
+            string roominfo = "1-18,18",
+            string bokfilter = "hgv",
+            string source = "sinfo",
+            int detail = 0,
+            bool withoutmssids = false,
+            bool withoutlcsids = false
+            )
+        {
+            //if (String.IsNullOrEmpty(arrival))
+            //    arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
+            //if (String.IsNullOrEmpty(departure))
+            //    departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
+            //if (boardfilter == null)
+            //    boardfilter = "0";
+
+
+            ////Fix Remove string value from swagger
+            //if (idfilter.ToLower() == "string" || idfilter == "{}")
+            //    idfilter = "";
+
+            //List<string> bokfilterlist = bokfilter.Split(',').ToList();
+
+            //if ((bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && bokfilterlist.Contains("lts"))
+            //{
+            //    return await PostAvailableMSSLCSAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, detail, source, "0", idfilter, withoutmssids, withoutlcsids);
+            //}
+            //else if ((bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && !bokfilterlist.Contains("lts"))
+            //{
+            //    return await PostAvailableMSSAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, detail, source, "0", idfilter, withoutmssids);
+            //}
+            //else if (!(bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && bokfilterlist.Contains("lts"))
+            //{
+            //    return await PostAvailableLCSAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, "0", idfilter, withoutlcsids);
+            //}
+            //else
+            //{
+            //    return BadRequest("not supported");
+            //}
+
+            return null;
+        }
+
+        /// <summary>
+        /// POST Available Accommodations HGV(Booking Suedtirol MSS) / LTS on posted IDs only Availability Response NOT AVAILABLE AS OPEN DATA
+        /// </summary>
+        /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
+        /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
+        /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED</param>
+        /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
+        /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
+        /// <param name="detail">Include Offer Details (Boolean, 1 = full Details)</param>
+        /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
+        /// <param name="withoutmssids">Search over all bookable Accommodations on HGV MSS (No Ids have to be provided as Post Data) (default: false)</param>        
+        /// <param name="withoutlcsids">Search over all Accommodations on LTS (No Ids have to be provided as Post Data) (default: false)</param>        
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by ,)</param>
+        /// <returns>Result Object with Collection of MssResponseShort Objects</returns>
+        [ProducesResponseType(typeof(IEnumerable<MssResponseShort>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
+        [HttpPost, Route("AvailabilityCheck")]
+        public async Task<IActionResult> PostAvailableMSSResponseonlyAccommodations(
+            [FromBody] string idfilter,
+            string availabilitychecklanguage = "en",
+            string? boardfilter = null,
+            string? arrival = null,
+            string? departure = null,
+            string roominfo = "1-18,18",
+            string bokfilter = "hgv",
+            string source = "sinfo",
+            int detail = 0,
+            bool withoutmssids = false,
+            bool withoutlcsids = false
+            )
+        {
+            //if (String.IsNullOrEmpty(arrival))
+            //    arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
+            //if (String.IsNullOrEmpty(departure))
+            //    departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
+            //if (boardfilter == null)
+            //    boardfilter = "0";
+
+
+            ////Fix Remove string value from swagger
+            //if (idfilter.ToLower() == "string" || idfilter == "{}")
+            //    idfilter = "";
+
+            //List<string> bokfilterlist = bokfilter.Split(',').ToList();
+
+            //if ((bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && bokfilterlist.Contains("lts"))
+            //{
+            //    return await PostAvailableMssLcsOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, detail, source, "0", idfilter, withoutmssids, withoutlcsids);
+            //}
+            //else if ((bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && !bokfilterlist.Contains("lts"))
+            //{
+            //    return await PostAvailableMssOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, detail, source, "0", idfilter, withoutmssids);
+            //}
+            //else if (!(bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && bokfilterlist.Contains("lts"))
+            //{
+            //    return await PostAvailableLCSOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, idfilter, withoutlcsids);
+            //}
+            //else
+            //{
+            //    return BadRequest("not supported");
+            //}
+
+            return null;
+        }
+
+
         #endregion
 
         #region GETTER
@@ -443,16 +544,15 @@ namespace OdhApiCore.Controllers
             });
         }
 
+        #endregion
+
+        #region CUSTOM AVAILABILITY GETTER
+
+
 
         #endregion
 
-        #region SPECIALMETHODS
-
-
-
-        #endregion
-
-        #region CUSTOM METHODS
+        #region TYPE AND FEATURE LISTs
 
         private Task<IActionResult> GetAccoTypeList(CancellationToken cancellationToken)
         {
@@ -520,39 +620,30 @@ namespace OdhApiCore.Controllers
             });
         }
 
-
         #endregion
 
         #region PRIVATEHELPERS
 
-        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, string detail, List<string> bookableaccoIDs, string source, bool withoutmssids = false, string mssversion = "2")
-        {
-            int? offerdetail = null;
-            int hoteldetail = 524288;
-
-            if (detail == "1")
-            {
-                offerdetail = 33081;
-                hoteldetail = 524800;
-            }
-
-            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, null, bokfilter, language, roominfo, boardfilter, arrival, departure, hoteldetail, offerdetail, source, mssversion);
+        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
+        {            
+            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, detail, source, mssversion);
                        
             //Achtung muassi no schaugn!
             if (bookableaccoIDs.Count > 0)
             {
                 //0 MSS Method Olle channels affamol mit IDList
                 var myparsedresponse = await GetMssData.GetMssResponse(
-                    lang: myhelper.mssrequestlanguage, A0Ridlist: myhelper.a0ridlist, mybookingchannels: myhelper.mybokchannels,
-                    myroomdata: myhelper.myroomdata, arrival: myhelper.arrival.Value, departure: myhelper.departure.Value, service: myhelper.service.Value,
+                    httpClientFactory.CreateClient("mss"),
+                    lang: myhelper.mssrequestlanguage, idlist: myhelper.accoidlist, idsofchannel: idsofchannel, mybookingchannels: myhelper.mybokchannels,
+                    myroomdata: myhelper.myroomdata, arrival: myhelper.arrival, departure: myhelper.departure, service: myhelper.service,
                     hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,
-                    rooms: myhelper.rooms.Value, source: myhelper.source, version: myhelper.mssversion, mssuser: "", msspswd: "", withoutmssids: withoutmssids
+                    rooms: myhelper.rooms, source: myhelper.source, version: myhelper.mssversion, mssuser: "", msspswd: "", withoutmssids: withoutmssids
                     );
                
-                return myparsedresponse;
+                if (myparsedresponse != null)
+                    return myparsedresponse;
             }
-            else
-                return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
+            return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
         }
 
         //private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string source)

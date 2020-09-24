@@ -15,13 +15,13 @@ namespace Helper.MSS
         //neu getroomlist
         public const string serviceurlroomlist = @"http://www.easymailing.eu/mss/mss_service.php?function=getRoomList&mode=1";
 
-        public static async Task<HttpResponseMessage> RequestAsync(XDocument request)
+        public static async Task<HttpResponseMessage> RequestAsync(HttpClient httpClient, XDocument request)
         {
             try
             {
-                HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
-                myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-                var myresponse = await myclient.PostAsync(serviceurl, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
+                //HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
+                //myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+                var myresponse = await httpClient.PostAsync(serviceurl, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
 
                 return myresponse;
             }
@@ -31,13 +31,13 @@ namespace Helper.MSS
             }
         }
 
-        public static async Task<HttpResponseMessage> RequestSpecialAsync(XDocument request)
+        public static async Task<HttpResponseMessage> RequestSpecialAsync(HttpClient httpClient, XDocument request)
         {
             try
             {
-                HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
-                myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-                var myresponse = await myclient.PostAsync(serviceurlspecial, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
+                //HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
+                //myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+                var myresponse = await httpClient.PostAsync(serviceurlspecial, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
 
                 return myresponse;
             }
@@ -47,13 +47,13 @@ namespace Helper.MSS
             }
         }
 
-        public static async Task<HttpResponseMessage> RequestRoomAsync(XDocument request)
+        public static async Task<HttpResponseMessage> RequestRoomAsync(HttpClient httpClient, XDocument request)
         {
             try
             {
-                HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
-                myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-                var myresponse = await myclient.PostAsync(serviceurlroomlist, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
+                //HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
+                //myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+                var myresponse = await httpClient.PostAsync(serviceurlroomlist, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
 
                 return myresponse;
             }
@@ -63,13 +63,13 @@ namespace Helper.MSS
             }
         }
 
-        public static HttpResponseMessage RequestRoom(XDocument request)
+        public static HttpResponseMessage RequestRoom(HttpClient httpClient, XDocument request)
         {
             try
             {
-                HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
-                myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-                var myresponse = myclient.PostAsync(serviceurlroomlist, new StringContent(request.ToString(), Encoding.UTF8, "text/xml")).Result;
+                //HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
+                //myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+                var myresponse = httpClient.PostAsync(serviceurlroomlist, new StringContent(request.ToString(), Encoding.UTF8, "text/xml")).Result;
 
                 return myresponse;
             }
@@ -80,7 +80,7 @@ namespace Helper.MSS
         }
 
 
-        public static XDocument BuildPostData(XElement idlist, XElement channel, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string source, string version, string mssuser, string msspswd)
+        public static XDocument BuildPostData(XElement idlist, XElement channel, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string idofchannel, string source, string version, string mssuser, string msspswd)
         {
             XElement myroot =
                 new XElement("root",
@@ -100,7 +100,7 @@ namespace Helper.MSS
                     new XElement("search",
                         new XElement("lang", lang),
                         idlist.Elements("id"),
-                        new XElement("id_ofchannel", "lts"),
+                        new XElement("id_ofchannel", idofchannel),
                         new XElement("search_offer",
                             channel.Elements("channel_id"),
                             new XElement("arrival", String.Format("{0:yyyy-MM-dd}", arrival)),
