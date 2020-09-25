@@ -22,19 +22,17 @@ namespace OdhApiCore.Controllers
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
-    public class WeatherApiController : OdhController
+    public class WeatherController : OdhController
     {
         private readonly ISettings settings;
 
-        public WeatherApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public WeatherController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
             this.settings = settings;
         }
 
         #region SwaggerExposed API
-
-        //Weather
 
         /// <summary>
         /// GET Current Suedtirol Weather LIVE
@@ -45,7 +43,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(Weather), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Weather")]
+        [HttpGet, Route("Weather")]
         public async Task<ActionResult<Weather>> GetWeather(
             string language = "en", 
             string locfilter = "",            
@@ -61,8 +59,6 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        //DistrictWeather
-
         /// <summary>
         /// GET District Weather LIVE
         /// </summary>
@@ -72,7 +68,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(BezirksWeather), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Weather/District")]
+        [HttpGet, Route("Weather/District")]
         public async Task<ActionResult<BezirksWeather>> GetDistrictWeather(
             string locfilter,
             string language = "en",             
@@ -96,7 +92,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<WeatherRealTime>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Weather/Realtime")]
+        [HttpGet, Route("Weather/Realtime")]
         public async Task<ActionResult<IEnumerable<WeatherRealTime>>> GetRealtimeWeather(
             string language = "en",
             CancellationToken cancellationToken = default)
@@ -111,8 +107,6 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        //Measuringpoints
-
         /// <summary>
         /// GET Measuringpoint LIST
         /// </summary>
@@ -123,7 +117,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<Measuringpoint>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Weather/Measuringpoint")]
+        [HttpGet, Route("Weather/Measuringpoint")]
         public async Task<IActionResult> GetMeasuringPoints(
             string? idlist = null,
             string? locfilter = null, 
@@ -160,7 +154,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(Measuringpoint), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Weather/Measuringpoint/{id}")]
+        [HttpGet, Route("Weather/Measuringpoint/{id}")]
         public async Task<IActionResult> GetMeasuringPoint(
             string id,
             string? language = null,
@@ -171,8 +165,6 @@ namespace OdhApiCore.Controllers
             return await GetMeasuringPointSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
-        //Snowreport
-
         /// <summary>
         /// GET Snowreport Data LIVE
         /// </summary>
@@ -182,7 +174,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(SnowReportBaseData), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Weather/SnowReport")]
+        [HttpGet, Route("Weather/SnowReport")]
         public async Task<ActionResult<SnowReportBaseData>> GetSnowReportBase(
             string lang, 
             string skiareaid,
@@ -197,8 +189,6 @@ namespace OdhApiCore.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
         }
-
-
 
         #endregion
 
