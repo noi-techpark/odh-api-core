@@ -385,7 +385,7 @@ namespace OdhApiCore.Controllers
         #region SnowReport
 
         /// GET Snowreport Data by SkiareaID LIVE
-         public async Task<ActionResult<SnowReportBaseData>> GetSnowReportBaseData(
+         private async Task<ActionResult<SnowReportBaseData>> GetSnowReportBaseData(
              string lang, 
              string skiareaid,
              CancellationToken cancellationToken)
