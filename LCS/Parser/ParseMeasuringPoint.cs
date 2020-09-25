@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace WeatherData
+namespace LCS
 {
     public class ParseMeasuringPoint
     {

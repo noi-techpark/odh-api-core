@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace WeatherData
+namespace SIAG
 {
     public class GetWeatherData
     {
@@ -20,7 +20,7 @@ namespace WeatherData
         public static async Task<Weather> GetCurrentWeatherAsync(string lang, string xmldir, string siaguser, string siagpswd)
         {
             //Request mochn
-            HttpResponseMessage weatherresponse = await WeatherData.GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source);
+            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source);
             //Content auslesen und XDocument Parsen
             var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
             XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
@@ -36,7 +36,7 @@ namespace WeatherData
         {
             try
             {
-                HttpResponseMessage weatherresponse = await WeatherData.GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source);
+                HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source);
 
                 //Content auslesen und XDocument Parsen
                 var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
@@ -102,7 +102,7 @@ namespace WeatherData
 
             if (!String.IsNullOrEmpty(currentbezirksid))
             {
-                HttpResponseMessage weatherresponse = await WeatherData.GetWeatherFromSIAG.RequestBezirksWeatherAsync(lang, currentbezirksid, siaguser, siagpswd, source);
+                HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestBezirksWeatherAsync(lang, currentbezirksid, siaguser, siagpswd, source);
 
                 //Content auslesen und XDocument Parsen
                 var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
@@ -117,7 +117,7 @@ namespace WeatherData
 
         public static async Task<IEnumerable<WeatherRealTime>> GetCurrentRealTimeWEatherAsync(string lang)
         {
-            HttpResponseMessage weatherresponse = await WeatherData.GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
+            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
 
             //Content auslesen und XDocument Parsen
             var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
@@ -182,7 +182,7 @@ namespace WeatherData
 
         public static async Task<WeatherRealTime> GetCurrentRealTimeWEatherSingleAsync(string lang, string stationid)
         {
-            HttpResponseMessage weatherresponse = await WeatherData.GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
+            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
 
             //Content auslesen und XDocument Parsen
             var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();

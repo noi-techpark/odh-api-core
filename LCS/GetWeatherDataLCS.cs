@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using LCS;
 using ServiceReferenceLCS;
 
-namespace WeatherData
+namespace LCS
 {
     public class GetWeatherDataLCS
     {

@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherData
+namespace SIAG
 {
     public class GetWeatherFromSIAG
     {
@@ -16,6 +16,8 @@ namespace WeatherData
 
         public const string serviceurl = @"http://daten.buergernetz.bz.it/services/weather/bulletin";
         public const string serviceurlbezirk = @" http://daten.buergernetz.bz.it/services/weather/district/";
+
+        public const string serviceurlsiagjson = @"http://daten.buergernetz.bz.it/services/weather/bulletin?format=json";
 
         public static async Task<HttpResponseMessage> RequestAsync(string lang, string siaguser, string siagpswd, string source)
         {

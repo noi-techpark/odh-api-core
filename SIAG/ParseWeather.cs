@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace WeatherData
+namespace SIAG
 {
     public class ParseWeather
     {
@@ -445,6 +445,13 @@ namespace WeatherData
 
             return myweather;
         }
+
+        //TODO ADD JSON Parser
+
+        //public static Weather ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, )
+        //{
+
+        //}
 
     }
 }

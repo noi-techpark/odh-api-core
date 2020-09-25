@@ -9,7 +9,7 @@ COPY DataModel/DataModel.csproj DataModel/
 COPY Helper/Helper.csproj Helper/
 COPY MSS/MSS.csproj MSS/
 COPY LCS/LCS.csproj LCS/
-COPY WeatherData/WeatherData.csproj WeatherData/
+COPY SIAG/SIAG.csproj SIAG/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj
 COPY . .

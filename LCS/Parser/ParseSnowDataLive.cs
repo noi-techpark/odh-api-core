@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using ServiceReferenceLCS;
 
-namespace WeatherData
+namespace LCS
 {
     public class ParseSnowDataLive
     {

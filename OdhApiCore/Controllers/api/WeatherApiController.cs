@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using LCS;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -8,13 +9,13 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Npgsql;
 using OdhApiCore.Responses;
+using SIAG;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WeatherData;
 
 namespace OdhApiCore.Controllers
 {
@@ -202,7 +203,7 @@ namespace OdhApiCore.Controllers
 
             if(String.IsNullOrEmpty(locfilter))
             {
-                weatherresult = await WeatherData.GetWeatherData.GetCurrentWeatherAsync(language, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
+                weatherresult = await SIAG.GetWeatherData.GetCurrentWeatherAsync(language, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
             }
             else
             {
@@ -235,7 +236,7 @@ namespace OdhApiCore.Controllers
                     }
                 }
 
-                weatherresult = await WeatherData.GetWeatherData.GetCurrentStationWeatherAsync(language, locfilter, stationidtype, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
+                weatherresult = await SIAG.GetWeatherData.GetCurrentStationWeatherAsync(language, locfilter, stationidtype, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
             }
 
             return Ok(weatherresult);
