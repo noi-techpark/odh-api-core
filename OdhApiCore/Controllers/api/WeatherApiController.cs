@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Npgsql;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
@@ -176,8 +177,8 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Weather/SnowReport")]
         public async Task<ActionResult<SnowReportBaseData>> GetSnowReportBase(
-            string lang, 
             string skiareaid,
+            string? lang = "de",             
             CancellationToken cancellationToken = default)
         {
             try
@@ -264,21 +265,23 @@ namespace OdhApiCore.Controllers
                 }
                 if (locfilter.Contains("mun"))
                 {
-                    tvrid =
+                    var query =
                    QueryFactory.Query()
                        .SelectRaw("data ->>'TourismvereinId'")
                        .From("municipalities")
-                       .Where("Id", locfilter.Replace("mun", "").ToUpper())
-                       .FirstOrDefault();                    
+                       .Where("id", locfilter.Replace("mun", "").ToUpper());
+
+                    tvrid = await query.FirstOrDefaultAsync<string>();
                 }
                 if (locfilter.Contains("fra"))
                 {
-                    tvrid =
+                    var query =
                    QueryFactory.Query()
                        .SelectRaw("data ->>'TourismvereinId'")
                        .From("districts")
-                       .Where("Id", locfilter.Replace("fra", "").ToUpper())
-                       .FirstOrDefault();
+                       .Where("id", locfilter.Replace("fra", "").ToUpper());
+
+                    tvrid = await query.FirstOrDefaultAsync<string>();
                 }
             }
 
@@ -381,13 +384,26 @@ namespace OdhApiCore.Controllers
              CancellationToken cancellationToken)
         {
 
-            var myskiarea = QueryFactory.Query()
+            var query = QueryFactory.Query()
                        .SelectRaw("data")
-                       .From("districts")
-                       .Where("Id", skiareaid)
-                       .FirstOrDefault();
+                       .From("skiareas")
+                       .Where("id", skiareaid);                       
 
-            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, myskiarea, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
+            //Des passt kriagi als jsonraw mit infos drinnen
+            var skiarea = await query.FirstOrDefaultAsync<JsonRaw>();
+
+            //Schoffts net afn SkiArea object zu bringen kriag do ollm a laars object
+            var skiarea2 = await query.FirstOrDefaultAsync<SkiArea>();
+
+            //Des hingegen geat
+            var skiareastring = await query.FirstOrDefaultAsync<string>();
+            var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
+
+            if (skiarea == null)
+                return BadRequest("skiarea not found!");
+
+
+            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiareaobject, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
 
             return Ok(mysnowreport);
         }
