@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -448,10 +449,14 @@ namespace SIAG
 
         //TODO ADD JSON Parser
 
-        //public static Weather ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, )
-        //{
+        public static Weather ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson)
+        {
+            var siagweather = JsonConvert.DeserializeObject<WeatherModel.Rootobject>(weatherresponsejson);
 
-        //}
+            //TODO Parse Weather
+
+            return null;
+        }
 
     }
 }
