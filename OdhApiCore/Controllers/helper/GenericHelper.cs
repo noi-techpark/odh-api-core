@@ -28,6 +28,8 @@ namespace OdhApiCore.Controllers
             }
         }
 
+
+
         public static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(
             QueryFactory queryFactory, IReadOnlyCollection<string> metaregionlist, CancellationToken cancellationToken)
         {
@@ -41,6 +43,6 @@ namespace OdhApiCore.Controllers
                     where region.TourismvereinIds != null
                     from tid in region.TourismvereinIds
                     select tid).Distinct().ToList();
-        }
+        }       
     }
 }

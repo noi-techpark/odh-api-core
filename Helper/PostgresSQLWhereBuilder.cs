@@ -348,7 +348,6 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData());
         }
 
-
         //Return Where and Parameters for Common
         public static Query CommonWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
@@ -387,7 +386,6 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData());
         }
 
-
         //Return Where and Parameters for WebCamInfo
         public static Query WebCamInfoWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
@@ -408,6 +406,38 @@ namespace Helper
                 .IdUpperFilter(idlist)
                 .SourceFilter(sourcelist)
                 .ActiveFilter(activefilter)
+                .SmgActiveFilter(smgactivefilter)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
+        //Return Where and Parameters for Measuringpoint
+        public static Query MeasuringpointWhereExpression(
+            this Query query, 
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> districtlist,
+            IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist,
+            bool? activefilter, bool? smgactivefilter, string? searchfilter,
+            string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, districtlist, municipalitylist, tourismvereinlist, regionlist,
+                arealist, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .LocFilterDistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .AreaFilterMeasuringpoints(arealist)
+                .ActiveFilter(activefilter)                
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter(lastchange)

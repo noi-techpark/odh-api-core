@@ -110,7 +110,7 @@ namespace OdhApiCore.Controllers.api
             string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
-         CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
         {
             //TODO
             //CheckOpenData(User);
@@ -235,7 +235,10 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">ID of Poi</param>
         /// <returns>Poi Object</returns>
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, 
+            string? language, 
+            string[] fields, 
+            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {

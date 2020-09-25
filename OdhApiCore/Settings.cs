@@ -30,11 +30,38 @@ namespace OdhApiCore
         public string MessagePassword { get; private set; }
     }
 
+    public class SiagConfig
+    {
+        public SiagConfig(string username, string password)
+        {
+            this.Username = username;
+            this.Password = password;            
+        }
+
+        public string Username { get; private set; }
+        public string Password { get; private set; }        
+    }
+
+    public class XmlConfig
+    {
+        public XmlConfig(string xmldir, string xmldirweather)
+        {
+            this.Xmldir = xmldir;
+            this.XmldirWeather = xmldirweather;
+        }
+
+        public string Xmldir { get; private set; }
+        public string XmldirWeather { get; private set; }        
+    }
+
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
         MssConfig MssConfig { get; }
         LcsConfig LcsConfig { get; }
+        SiagConfig SiagConfig { get; }
+        XmlConfig XmlConfig { get; }
     }
 
     public class Settings : ISettings
@@ -43,6 +70,8 @@ namespace OdhApiCore
         private readonly Lazy<string> connectionString;
         private readonly MssConfig mssConfig;
         private readonly LcsConfig lcsConfig;
+        private readonly SiagConfig siagConfig;
+        private readonly XmlConfig xmlConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -53,11 +82,17 @@ namespace OdhApiCore
             this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
             var lcs = this.configuration.GetSection("LcsConfig");
             this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""));
+            var siag = this.configuration.GetSection("SiagConfig");
+            this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
+            var xml = this.configuration.GetSection("XmlConfig");
+            this.xmlConfig = new XmlConfig(xml.GetValue<string>("Username", ""), xml.GetValue<string>("Password", ""));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
 
         public MssConfig MssConfig => this.mssConfig;
         public LcsConfig LcsConfig => this.lcsConfig;
+        public SiagConfig SiagConfig => this.siagConfig;
+        public XmlConfig XmlConfig => this.xmlConfig;
     }
 }

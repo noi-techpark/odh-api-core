@@ -236,6 +236,12 @@ namespace Helper
                 areaid => new { AreaId = new[] { areaid } }
             );
 
+        public static Query AreaFilterMeasuringpoints(this Query query, IReadOnlyCollection<string> arealist) =>
+            query.WhereInJsonb(
+                arealist,
+                areaid => new { AreaIds = new[] { areaid } }
+            );
+
         public static Query HighlightFilter(this Query query, bool? highlight) =>
             query.When(
                 highlight != null,

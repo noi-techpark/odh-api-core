@@ -10,6 +10,7 @@ namespace Helper
     public static class LocationListCreator
     {
         #region PostGres
+
         public static async Task<IEnumerable<string>> CreateActivityAreaListPGAsync(QueryFactory queryFactory, string areafilter, CancellationToken cancellationToken)
         {
             //Klaub asanond
