@@ -85,7 +85,7 @@ namespace OdhApiCore
             var siag = this.configuration.GetSection("SiagConfig");
             this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
             var xml = this.configuration.GetSection("XmlConfig");
-            this.xmlConfig = new XmlConfig(xml.GetValue<string>("Username", ""), xml.GetValue<string>("Password", ""));
+            this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;

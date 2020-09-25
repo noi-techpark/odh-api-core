@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="docker\postgres\" />
+    <Folder Include="xml\" />
     <Folder Include="wwwroot\json\" />
   </ItemGroup>
 

@@ -45,8 +45,8 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Weather")]
         public async Task<ActionResult<Weather>> GetWeather(
-            string language = "en", 
-            string locfilter = "",            
+            string? language = "en", 
+            string? locfilter = null,            
             CancellationToken cancellationToken = default)
         {
             try
@@ -71,7 +71,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Weather/District")]
         public async Task<ActionResult<BezirksWeather>> GetDistrictWeather(
             string locfilter,
-            string language = "en",             
+            string? language = "en",             
             CancellationToken cancellationToken = default)
         {
             try
@@ -94,7 +94,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Weather/Realtime")]
         public async Task<ActionResult<IEnumerable<WeatherRealTime>>> GetRealtimeWeather(
-            string language = "en",
+            string? language = "en",
             CancellationToken cancellationToken = default)
         {
             try
@@ -316,8 +316,8 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Fix add are to every arefilter item
-                string? arefilterwithprefix = "are" + areafilter;
-                string? skiarefilterwithprefix = "ska" + skiareafilter;
+                string? arefilterwithprefix = String.IsNullOrEmpty(areafilter) ? "" : "are" + areafilter;
+                string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
 
                 MeasuringPointsHelper mymeasuringpointshelper = await MeasuringPointsHelper.Create(QueryFactory, idfilter, locfilter,
                     arefilterwithprefix, skiarefilterwithprefix, active, smgactive, lastchange, cancellationToken);
