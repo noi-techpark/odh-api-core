@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -19,13 +20,19 @@ namespace SIAG
 
         public const string serviceurlsiagjson = @"http://daten.buergernetz.bz.it/services/weather/bulletin?format=json";
 
-        public static async Task<HttpResponseMessage> RequestAsync(string lang, string siaguser, string siagpswd, string source)
+        public static async Task<HttpResponseMessage> RequestAsync(string lang, string siaguser, string siagpswd, string source, bool usejson = false)
         {
             try
             {
-                string requesturl = serviceurl + "?lang=" + lang + "&format=xml";
+                string format = "xml";
+                if (usejson)
+                {
+                    format = "xml";
+                }                    
+
+                string requesturl = serviceurl + "?lang=" + lang + "&format=" + format;
                 if (source == "siag")
-                    requesturl = serviceurlsiag + "?lang=" + lang + "&format=xml";
+                    requesturl = serviceurlsiag + "?lang=" + lang + "&format=" + format;
 
                 CredentialCache wrCache = new CredentialCache();
                 wrCache.Add(new Uri(requesturl), "Basic", new NetworkCredential(siaguser, siagpswd));
