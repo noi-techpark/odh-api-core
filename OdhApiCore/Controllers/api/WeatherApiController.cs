@@ -392,20 +392,21 @@ namespace OdhApiCore.Controllers
                        .Where("id", skiareaid);                       
 
             //Des passt kriagi als jsonraw mit infos drinnen
-            var skiarea = await query.FirstOrDefaultAsync<JsonRaw>();
+            var skiarearaw = await query.FirstOrDefaultAsync<JsonRaw>();
+            var skiarea = JsonConvert.DeserializeObject<SkiArea>(skiarearaw.Value);
 
             //Schoffts net afn SkiArea object zu bringen kriag do ollm a laars object
-            var skiarea2 = await query.FirstOrDefaultAsync<SkiArea>();
+            //var skiarea2 = await query.FirstOrDefaultAsync<SkiArea>();
 
             //Des hingegen geat
-            var skiareastring = await query.FirstOrDefaultAsync<string>();
-            var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
+            //var skiareastring = await query.FirstOrDefaultAsync<string>();
+            //var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
 
-            if (skiarea == null)
+            if (skiarearaw == null)
                 return BadRequest("skiarea not found!");
 
 
-            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiareaobject, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
+            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
 
             return Ok(mysnowreport);
         }
