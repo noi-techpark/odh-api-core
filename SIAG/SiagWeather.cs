@@ -34,18 +34,18 @@ namespace SIAG.WeatherModel
         public string weather { get; set; }
         public int bulletinStatus { get; set; }
         public string type { get; set; }
-        public int tMinMin { get; set; }
-        public int tMinMax { get; set; }
-        public int tMaxMin { get; set; }
-        public int tMaxMax { get; set; }
+        public double tMinMin { get; set; }
+        public double tMinMax { get; set; }
+        public double tMaxMin { get; set; }
+        public double tMaxMax { get; set; }
         public int reliability { get; set; }
     }
 
     public class Stationdata
     {
         public Symbol symbol { get; set; }
-        public int max { get; set; }
-        public int min { get; set; }
+        public double max { get; set; }
+        public double min { get; set; }
     }
 
     public class Symbol
@@ -67,10 +67,10 @@ namespace SIAG.WeatherModel
         public string weather { get; set; }
         public int bulletinStatus { get; set; }
         public string type { get; set; }
-        public int tMinMin { get; set; }
-        public int tMinMax { get; set; }
-        public int tMaxMin { get; set; }
-        public int tMaxMax { get; set; }
+        public double tMinMin { get; set; }
+        public double tMinMax { get; set; }
+        public double tMaxMin { get; set; }
+        public double tMaxMax { get; set; }
         public int reliability { get; set; }
     }
 
@@ -80,12 +80,12 @@ namespace SIAG.WeatherModel
         public string title { get; set; }
         public string weather { get; set; }
         public string conditions { get; set; }
-        public int temp1000 { get; set; }
-        public int temp2000 { get; set; }
-        public int temp3000 { get; set; }
-        public int temp4000 { get; set; }
-        public int[] snowLimit { get; set; }
-        public int zeroLimit { get; set; }
+        public double temp1000 { get; set; }
+        public double temp2000 { get; set; }
+        public double temp3000 { get; set; }
+        public double temp4000 { get; set; }
+        public double[] snowLimit { get; set; }
+        public double zeroLimit { get; set; }
         public North north { get; set; }
         public South south { get; set; }
         public Wind wind { get; set; }
@@ -124,12 +124,12 @@ namespace SIAG.WeatherModel
         public string title { get; set; }
         public string weather { get; set; }
         public string conditions { get; set; }
-        public int temp1000 { get; set; }
-        public int temp2000 { get; set; }
-        public int temp3000 { get; set; }
-        public int temp4000 { get; set; }
-        public int[] snowLimit { get; set; }
-        public int zeroLimit { get; set; }
+        public double temp1000 { get; set; }
+        public double temp2000 { get; set; }
+        public double temp3000 { get; set; }
+        public double temp4000 { get; set; }
+        public double[] snowLimit { get; set; }
+        public double zeroLimit { get; set; }
         public North north { get; set; }
         public South south { get; set; }
         public Wind wind { get; set; }
@@ -152,14 +152,14 @@ namespace SIAG.WeatherModel
 
     public class Tempmax
     {
-        public int min { get; set; }
-        public int max { get; set; }
+        public double min { get; set; }
+        public double max { get; set; }
     }
 
     public class Tempmin
     {
-        public int min { get; set; }
-        public int max { get; set; }
+        public double min { get; set; }
+        public double max { get; set; }
     }
 
 }

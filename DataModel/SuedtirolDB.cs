@@ -1108,6 +1108,7 @@ namespace DataModel
         public string? Winddesc { get; set; }
         public string? WindImgurl { get; set; }
 
+        public List<string> Snowlimit { get; set; }
     }
 
     public class Stationdata

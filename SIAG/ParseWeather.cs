@@ -473,11 +473,11 @@ namespace SIAG
                     myforecast.Weatherdesc = forecast.symbol.description;
                     myforecast.WeatherImgurl = forecast.symbol.imageUrl;
 
-                    myforecast.TempMaxmax = forecast.tempMax.max;
-                    myforecast.TempMaxmin = forecast.tempMax.min;
+                    myforecast.TempMaxmax = Convert.ToInt32(forecast.tempMax.max);
+                    myforecast.TempMaxmin = Convert.ToInt32(forecast.tempMax.min);
 
-                    myforecast.TempMinmax = forecast.tempMin.max;
-                    myforecast.TempMinmin = forecast.tempMin.min;
+                    myforecast.TempMinmax = Convert.ToInt32(forecast.tempMin.max);
+                    myforecast.TempMinmin = Convert.ToInt32(forecast.tempMin.min);
 
                     myweather.Forecast.Add(myforecast);
                 }
@@ -490,6 +490,8 @@ namespace SIAG
                     mymountaintoday.date = siagweather.mountainToday.date;
                     mymountaintoday.Title = siagweather.mountainToday.title;
                     mymountaintoday.Zerolimit = siagweather.mountainToday.zeroLimit.ToString();
+                    mymountaintoday.Snowlimit = siagweather.mountainToday.snowLimit.Select(x => x.ToString()).ToList<string>();
+
                     mymountaintoday.Weatherdesc = siagweather.mountainToday.weather;
 
                     mymountaintoday.Conditions = siagweather.mountainToday.conditions;
@@ -500,10 +502,10 @@ namespace SIAG
                     mymountaintoday.Sunset = siagweather.mountainToday.sunSet;
 
                     mymountaintoday.Reliability = siagweather.mountainToday.reliability.ToString();
-                    mymountaintoday.Temp1000 = siagweather.mountainToday.temp1000;
-                    mymountaintoday.Temp2000 = siagweather.mountainToday.temp2000;
-                    mymountaintoday.Temp3000 = siagweather.mountainToday.temp3000;
-                    mymountaintoday.Temp4000 = siagweather.mountainToday.temp4000;
+                    mymountaintoday.Temp1000 = Convert.ToInt32(siagweather.mountainToday.temp1000);
+                    mymountaintoday.Temp2000 = Convert.ToInt32(siagweather.mountainToday.temp2000);
+                    mymountaintoday.Temp3000 = Convert.ToInt32(siagweather.mountainToday.temp3000);
+                    mymountaintoday.Temp4000 = Convert.ToInt32(siagweather.mountainToday.temp4000);
 
                     mymountaintoday.Northcode = siagweather.mountainToday.north.code;
                     mymountaintoday.Northdesc = siagweather.mountainToday.north.description;
@@ -525,6 +527,8 @@ namespace SIAG
                     mymountaintomorrow.date = siagweather.mountainTomorrow.date;
                     mymountaintomorrow.Title = siagweather.mountainTomorrow.title;
                     mymountaintomorrow.Zerolimit = siagweather.mountainTomorrow.zeroLimit.ToString();
+                    mymountaintomorrow.Snowlimit = siagweather.mountainTomorrow.snowLimit.Select(x => x.ToString()).ToList<string>();
+
                     mymountaintomorrow.Weatherdesc = siagweather.mountainTomorrow.weather;
 
                     mymountaintomorrow.Conditions = siagweather.mountainTomorrow.conditions;
@@ -534,10 +538,10 @@ namespace SIAG
                     mymountaintomorrow.Sunrise = siagweather.mountainTomorrow.sunRise;
                     mymountaintomorrow.Sunset = siagweather.mountainTomorrow.sunSet;
                     mymountaintomorrow.Reliability = siagweather.mountainTomorrow.reliability.ToString();
-                    mymountaintomorrow.Temp1000 = siagweather.mountainTomorrow.temp1000;
-                    mymountaintomorrow.Temp2000 = siagweather.mountainTomorrow.temp3000;
-                    mymountaintomorrow.Temp3000 = siagweather.mountainTomorrow.temp3000;
-                    mymountaintomorrow.Temp4000 = siagweather.mountainTomorrow.temp4000;
+                    mymountaintomorrow.Temp1000 = Convert.ToInt32(siagweather.mountainTomorrow.temp1000);
+                    mymountaintomorrow.Temp2000 = Convert.ToInt32(siagweather.mountainTomorrow.temp3000);
+                    mymountaintomorrow.Temp3000 = Convert.ToInt32(siagweather.mountainTomorrow.temp3000);
+                    mymountaintomorrow.Temp4000 = Convert.ToInt32(siagweather.mountainTomorrow.temp4000);
 
                     mymountaintomorrow.Northcode = siagweather.mountainTomorrow.north.code;
                     mymountaintomorrow.Northdesc = siagweather.mountainTomorrow.north.description;
@@ -566,10 +570,10 @@ namespace SIAG
 
                     myconditiontoday.bulletinStatus = siagweather.today.bulletinStatus;
                     myconditiontoday.Reliability = siagweather.today.reliability.ToString();
-                    myconditiontoday.TempMaxmax = siagweather.today.tMaxMax;
-                    myconditiontoday.TempMaxmin = siagweather.today.tMaxMin;
-                    myconditiontoday.TempMinmax = siagweather.today.tMinMax;
-                    myconditiontoday.TempMinmin = siagweather.today.tMinMin;
+                    myconditiontoday.TempMaxmax = Convert.ToInt32(siagweather.today.tMaxMax);
+                    myconditiontoday.TempMaxmin = Convert.ToInt32(siagweather.today.tMaxMin);
+                    myconditiontoday.TempMinmax = Convert.ToInt32(siagweather.today.tMinMax);
+                    myconditiontoday.TempMinmin = Convert.ToInt32(siagweather.today.tMinMin);
 
                     myweather.Conditions.Add(myconditiontoday);
                 }
@@ -589,7 +593,7 @@ namespace SIAG
                             mystationdatatoday.date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
 
                             mystationdatatoday.Id = i;
-                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(i)).FirstOrDefault();
+                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(i.ToString())).FirstOrDefault();
                             mystationdatatoday.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
 
                             if (lang == "en")
@@ -604,8 +608,8 @@ namespace SIAG
                             mystationdatatoday.WeatherCode = stationtoday.symbol.code;
                             mystationdatatoday.WeatherDesc = stationtoday.symbol.description;
                             mystationdatatoday.WeatherImgUrl = stationtoday.symbol.imageUrl;
-                            mystationdatatoday.Maxtemp = stationtoday.max;
-                            mystationdatatoday.MinTemp = stationtoday.min;
+                            mystationdatatoday.Maxtemp = Convert.ToInt32(stationtoday.max);
+                            mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.min);
                             
                             myweather.Stationdata.Add(mystationdatatoday);
 
@@ -628,10 +632,10 @@ namespace SIAG
 
                     myconditiontomorrow.bulletinStatus = siagweather.tomorrow.bulletinStatus;
                     myconditiontomorrow.Reliability = siagweather.tomorrow.reliability.ToString();
-                    myconditiontomorrow.TempMaxmax = siagweather.tomorrow.tMaxMax;
-                    myconditiontomorrow.TempMaxmin = siagweather.tomorrow.tMaxMin;
-                    myconditiontomorrow.TempMinmax = siagweather.tomorrow.tMinMax;
-                    myconditiontomorrow.TempMinmin = siagweather.tomorrow.tMinMin;
+                    myconditiontomorrow.TempMaxmax = Convert.ToInt32(siagweather.tomorrow.tMaxMax);
+                    myconditiontomorrow.TempMaxmin = Convert.ToInt32(siagweather.tomorrow.tMaxMin);
+                    myconditiontomorrow.TempMinmax = Convert.ToInt32(siagweather.tomorrow.tMinMax);
+                    myconditiontomorrow.TempMinmin = Convert.ToInt32(siagweather.tomorrow.tMinMin);
 
                     myweather.Conditions.Add(myconditiontomorrow);                 
                 }
@@ -652,7 +656,7 @@ namespace SIAG
                             mystationdatatomorrow.date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour);
 
                             mystationdatatomorrow.Id = j;
-                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(j)).FirstOrDefault();
+                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(j.ToString())).FirstOrDefault();
                             mystationdatatomorrow.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
                             //mystationdatatomorrow.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
 
@@ -668,8 +672,8 @@ namespace SIAG
                             mystationdatatomorrow.WeatherDesc = stationtomorrow.symbol.description;
                             mystationdatatomorrow.WeatherImgUrl = stationtomorrow.symbol.imageUrl;
 
-                            mystationdatatomorrow.Maxtemp = stationtomorrow.max;
-                            mystationdatatomorrow.MinTemp = stationtomorrow.min;
+                            mystationdatatomorrow.Maxtemp = Convert.ToInt32(stationtomorrow.max);
+                            mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.min);
 
                             myweather.Stationdata.Add(mystationdatatomorrow);
 
