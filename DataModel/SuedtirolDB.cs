@@ -1054,6 +1054,14 @@ namespace DataModel
         public string? WeatherImgurl { get; set; }
         public string? Temperatures { get; set; }
         public string? Weatherdesc { get; set; }
+
+        //NEW
+        public string? Reliability { get; set; }
+        public int TempMaxmax { get; set; }
+        public int TempMaxmin { get; set; }
+        public int TempMinmax { get; set; }
+        public int TempMinmin { get; set; }
+        public int bulletinStatus { get; set; }
     }
 
     public class Forecast
@@ -1114,6 +1122,9 @@ namespace DataModel
         public string? WeatherImgUrl { get; set; }
         public int MinTemp { get; set; }
         public int Maxtemp { get; set; }
+
+        //Fix
+        public int MaxTemp { get { return Maxtemp; } }
     }
 
     public class BezirksWeather

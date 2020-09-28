@@ -6,7 +6,7 @@ namespace SIAG.WeatherModel
 {
     //TODO ADD SIAG Weather json generated class
 
-    public class Rootobject
+    public class SiagWeather
     {
         public int id { get; set; }
         public DateTime date { get; set; }
@@ -105,7 +105,7 @@ namespace SIAG.WeatherModel
         public Wind wind { get; set; }
         public int reliability { get; set; }
         public string moonRise { get; set; }
-        public object moonSet { get; set; }
+        public string moonSet { get; set; }
         public string sunRise { get; set; }
         public string sunSet { get; set; }
         public string imageUrl { get; set; }

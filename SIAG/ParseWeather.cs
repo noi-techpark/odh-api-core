@@ -451,11 +451,239 @@ namespace SIAG
 
         public static Weather ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson)
         {
-            var siagweather = JsonConvert.DeserializeObject<WeatherModel.Rootobject>(weatherresponsejson);
+            var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(weatherresponsejson);
+            
+            try
+            {
+                Weather myweather = new Weather();
 
-            //TODO Parse Weather
+                myweather.Id = Convert.ToInt32(siagweather.id);
+                myweather.date = siagweather.date;
+                myweather.evolution = siagweather.evolution;
+                myweather.evolutiontitle = siagweather.evolutionTitle;
+          
+                //Forecast info
+                foreach (var forecast in siagweather.dayForecasts)
+                {
+                    Forecast myforecast = new Forecast();
 
-            return null;
+                    myforecast.date = forecast.date;
+                    myforecast.Reliability = forecast.reliability.ToString();
+                    myforecast.Weathercode = forecast.symbol.code;
+                    myforecast.Weatherdesc = forecast.symbol.description;
+                    myforecast.WeatherImgurl = forecast.symbol.imageUrl;
+
+                    myforecast.TempMaxmax = forecast.tempMax.max;
+                    myforecast.TempMaxmin = forecast.tempMax.min;
+
+                    myforecast.TempMinmax = forecast.tempMin.max;
+                    myforecast.TempMinmin = forecast.tempMin.min;
+
+                    myweather.Forecast.Add(myforecast);
+                }
+
+                // mountain Info
+
+                if (siagweather.mountainToday != null)
+                {
+                    Mountain mymountaintoday = new Mountain();
+                    mymountaintoday.date = siagweather.mountainToday.date;
+                    mymountaintoday.Title = siagweather.mountainToday.title;
+                    mymountaintoday.Zerolimit = siagweather.mountainToday.zeroLimit.ToString();
+                    mymountaintoday.Weatherdesc = siagweather.mountainToday.weather;
+
+                    mymountaintoday.Conditions = siagweather.mountainToday.conditions;
+                    mymountaintoday.MountainImgurl = siagweather.mountainToday.imageUrl;
+                    mymountaintoday.Moonrise = siagweather.mountainToday.moonRise;
+                    mymountaintoday.Moonset = siagweather.mountainToday.moonSet;
+                    mymountaintoday.Sunrise = siagweather.mountainToday.sunRise;
+                    mymountaintoday.Sunset = siagweather.mountainToday.sunSet;
+
+                    mymountaintoday.Reliability = siagweather.mountainToday.reliability.ToString();
+                    mymountaintoday.Temp1000 = siagweather.mountainToday.temp1000;
+                    mymountaintoday.Temp2000 = siagweather.mountainToday.temp2000;
+                    mymountaintoday.Temp3000 = siagweather.mountainToday.temp3000;
+                    mymountaintoday.Temp4000 = siagweather.mountainToday.temp4000;
+
+                    mymountaintoday.Northcode = siagweather.mountainToday.north.code;
+                    mymountaintoday.Northdesc = siagweather.mountainToday.north.description;
+                    mymountaintoday.Northimgurl = siagweather.mountainToday.north.imageUrl;
+                    mymountaintoday.Southcode = siagweather.mountainToday.south.code;
+                    mymountaintoday.Southdesc = siagweather.mountainToday.south.description;
+                    mymountaintoday.Southimgurl = siagweather.mountainToday.south.imageUrl;
+                    mymountaintoday.Windcode = siagweather.mountainToday.wind.code;
+                    mymountaintoday.Winddesc = siagweather.mountainToday.wind.description;
+                    mymountaintoday.WindImgurl = siagweather.mountainToday.wind.imageUrl;
+
+                    myweather.Mountain.Add(mymountaintoday);
+                }
+
+                // mountain Info Tomorrow
+                if (siagweather.mountainTomorrow != null)
+                {
+                    Mountain mymountaintomorrow = new Mountain();
+                    mymountaintomorrow.date = siagweather.mountainTomorrow.date;
+                    mymountaintomorrow.Title = siagweather.mountainTomorrow.title;
+                    mymountaintomorrow.Zerolimit = siagweather.mountainTomorrow.zeroLimit.ToString();
+                    mymountaintomorrow.Weatherdesc = siagweather.mountainTomorrow.weather;
+
+                    mymountaintomorrow.Conditions = siagweather.mountainTomorrow.conditions;
+                    mymountaintomorrow.MountainImgurl = siagweather.mountainTomorrow.imageUrl;
+                    mymountaintomorrow.Moonrise = siagweather.mountainTomorrow.moonRise;
+                    mymountaintomorrow.Moonset = siagweather.mountainTomorrow.moonSet;
+                    mymountaintomorrow.Sunrise = siagweather.mountainTomorrow.sunRise;
+                    mymountaintomorrow.Sunset = siagweather.mountainTomorrow.sunSet;
+                    mymountaintomorrow.Reliability = siagweather.mountainTomorrow.reliability.ToString();
+                    mymountaintomorrow.Temp1000 = siagweather.mountainTomorrow.temp1000;
+                    mymountaintomorrow.Temp2000 = siagweather.mountainTomorrow.temp3000;
+                    mymountaintomorrow.Temp3000 = siagweather.mountainTomorrow.temp3000;
+                    mymountaintomorrow.Temp4000 = siagweather.mountainTomorrow.temp4000;
+
+                    mymountaintomorrow.Northcode = siagweather.mountainTomorrow.north.code;
+                    mymountaintomorrow.Northdesc = siagweather.mountainTomorrow.north.description;
+                    mymountaintomorrow.Northimgurl = siagweather.mountainTomorrow.north.imageUrl;
+                    mymountaintomorrow.Southcode = siagweather.mountainTomorrow.south.code;
+                    mymountaintomorrow.Southdesc = siagweather.mountainTomorrow.south.description;
+                    mymountaintomorrow.Southimgurl = siagweather.mountainTomorrow.south.imageUrl;
+                    mymountaintomorrow.Windcode = siagweather.mountainTomorrow.wind.code;
+                    mymountaintomorrow.Winddesc = siagweather.mountainTomorrow.wind.description;
+                    mymountaintomorrow.WindImgurl = siagweather.mountainTomorrow.wind.imageUrl;
+
+                    myweather.Mountain.Add(mymountaintomorrow);                   
+                }
+
+                //Today Info
+                if (siagweather.today != null)
+                {
+                    Conditions myconditiontoday = new Conditions();
+                    
+                    myconditiontoday.date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour) ; //TODO CHeck
+                    myconditiontoday.WeatherCondition = siagweather.today.conditions;
+                    myconditiontoday.WeatherImgurl = siagweather.today.imageUrl;
+                    myconditiontoday.Weatherdesc = siagweather.today.weather;
+                    myconditiontoday.Title = siagweather.today.title;
+                    myconditiontoday.Temperatures = siagweather.today.temperatures;
+
+                    myconditiontoday.bulletinStatus = siagweather.today.bulletinStatus;
+                    myconditiontoday.Reliability = siagweather.today.reliability.ToString();
+                    myconditiontoday.TempMaxmax = siagweather.today.tMaxMax;
+                    myconditiontoday.TempMaxmin = siagweather.today.tMaxMin;
+                    myconditiontoday.TempMinmax = siagweather.today.tMinMax;
+                    myconditiontoday.TempMinmin = siagweather.today.tMinMin;
+
+                    myweather.Conditions.Add(myconditiontoday);
+                }
+                //Stationdata today
+                if (siagweather.today != null)
+                {
+                    var stationstoday = siagweather.today.stationData;
+
+                    if (stationstoday != null)
+                    {
+                        int i = 1;
+
+                        foreach (var stationtoday in stationstoday)
+                        {
+                            Stationdata mystationdatatoday = new Stationdata();
+
+                            mystationdatatoday.date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
+
+                            mystationdatatoday.Id = i;
+                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(i)).FirstOrDefault();
+                            mystationdatatoday.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+
+                            if (lang == "en")
+                            {
+                                if (mystationdatatoday.CityName.Contains("/"))
+                                {
+                                    mystationdatatoday.CityName = mystationdatatoday.CityName.Replace("/", " / ");
+                                }
+                            }
+                            //mystationdatatoday.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
+
+                            mystationdatatoday.WeatherCode = stationtoday.symbol.code;
+                            mystationdatatoday.WeatherDesc = stationtoday.symbol.description;
+                            mystationdatatoday.WeatherImgUrl = stationtoday.symbol.imageUrl;
+                            mystationdatatoday.Maxtemp = stationtoday.max;
+                            mystationdatatoday.MinTemp = stationtoday.min;
+                            
+                            myweather.Stationdata.Add(mystationdatatoday);
+
+                            i++;
+                        }
+                    }
+                }
+
+                //Tomorrow info
+                if (siagweather.tomorrow != null)
+                {                    
+                    Conditions myconditiontomorrow = new Conditions();
+
+                    myconditiontomorrow.date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour); //TODO CHeck
+                    myconditiontomorrow.WeatherCondition = siagweather.tomorrow.conditions;
+                    myconditiontomorrow.WeatherImgurl = siagweather.tomorrow.imageUrl;
+                    myconditiontomorrow.Weatherdesc = siagweather.tomorrow.weather;
+                    myconditiontomorrow.Title = siagweather.tomorrow.title;
+                    myconditiontomorrow.Temperatures = siagweather.tomorrow.temperatures;
+
+                    myconditiontomorrow.bulletinStatus = siagweather.tomorrow.bulletinStatus;
+                    myconditiontomorrow.Reliability = siagweather.tomorrow.reliability.ToString();
+                    myconditiontomorrow.TempMaxmax = siagweather.tomorrow.tMaxMax;
+                    myconditiontomorrow.TempMaxmin = siagweather.tomorrow.tMaxMin;
+                    myconditiontomorrow.TempMinmax = siagweather.tomorrow.tMinMax;
+                    myconditiontomorrow.TempMinmin = siagweather.tomorrow.tMinMin;
+
+                    myweather.Conditions.Add(myconditiontomorrow);                 
+                }
+
+                //Stationdata today
+                if (siagweather.tomorrow != null)
+                {                    
+                    var stationstomorrow = siagweather.tomorrow.stationData;
+                    
+                    if (stationstomorrow != null)
+                    {
+                        int j = 1;
+
+                        foreach (var stationtomorrow in stationstomorrow)
+                        {
+                            Stationdata mystationdatatomorrow = new Stationdata();
+
+                            mystationdatatomorrow.date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour);
+
+                            mystationdatatomorrow.Id = j;
+                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(j)).FirstOrDefault();
+                            mystationdatatomorrow.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                            //mystationdatatomorrow.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
+
+                            if (lang == "en")
+                            {
+                                if (mystationdatatomorrow.CityName.Contains("/"))
+                                {
+                                    mystationdatatomorrow.CityName = mystationdatatomorrow.CityName.Replace("/", " / ");
+                                }
+                            }
+
+                            mystationdatatomorrow.WeatherCode = stationtomorrow.symbol.code;
+                            mystationdatatomorrow.WeatherDesc = stationtomorrow.symbol.description;
+                            mystationdatatomorrow.WeatherImgUrl = stationtomorrow.symbol.imageUrl;
+
+                            mystationdatatomorrow.Maxtemp = stationtomorrow.max;
+                            mystationdatatomorrow.MinTemp = stationtomorrow.min;
+
+                            myweather.Stationdata.Add(mystationdatatomorrow);
+
+                            j++;
+                        }
+                    }                    
+                }
+
+                return myweather;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
     }
