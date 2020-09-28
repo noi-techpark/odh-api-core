@@ -62,7 +62,7 @@ namespace SIAG.WeatherModel
         public string title { get; set; }
         public string conditions { get; set; }
         public string temperatures { get; set; }
-        public Stationdata1[] stationData { get; set; }
+        public Stationdata[] stationData { get; set; }
         public string imageUrl { get; set; }
         public string weather { get; set; }
         public int bulletinStatus { get; set; }
@@ -72,20 +72,6 @@ namespace SIAG.WeatherModel
         public int tMaxMin { get; set; }
         public int tMaxMax { get; set; }
         public int reliability { get; set; }
-    }
-
-    public class Stationdata1
-    {
-        public Symbol1 symbol { get; set; }
-        public int max { get; set; }
-        public int min { get; set; }
-    }
-
-    public class Symbol1
-    {
-        public string code { get; set; }
-        public string description { get; set; }
-        public string imageUrl { get; set; }
     }
 
     public class Mountaintoday
@@ -144,9 +130,9 @@ namespace SIAG.WeatherModel
         public int temp4000 { get; set; }
         public int[] snowLimit { get; set; }
         public int zeroLimit { get; set; }
-        public North1 north { get; set; }
-        public South1 south { get; set; }
-        public Wind1 wind { get; set; }
+        public North north { get; set; }
+        public South south { get; set; }
+        public Wind wind { get; set; }
         public int reliability { get; set; }
         public string moonRise { get; set; }
         public string moonSet { get; set; }
@@ -155,41 +141,13 @@ namespace SIAG.WeatherModel
         public string imageUrl { get; set; }
     }
 
-    public class North1
-    {
-        public string code { get; set; }
-        public string description { get; set; }
-        public string imageUrl { get; set; }
-    }
-
-    public class South1
-    {
-        public string code { get; set; }
-        public string description { get; set; }
-        public string imageUrl { get; set; }
-    }
-
-    public class Wind1
-    {
-        public string code { get; set; }
-        public string description { get; set; }
-        public string imageUrl { get; set; }
-    }
-
     public class Dayforecast
     {
         public DateTime date { get; set; }
         public int reliability { get; set; }
-        public Symbol2 symbol { get; set; }
+        public Symbol symbol { get; set; }
         public Tempmax tempMax { get; set; }
         public Tempmin tempMin { get; set; }
-    }
-
-    public class Symbol2
-    {
-        public string code { get; set; }
-        public string description { get; set; }
-        public string imageUrl { get; set; }
     }
 
     public class Tempmax

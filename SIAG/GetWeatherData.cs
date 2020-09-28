@@ -20,7 +20,7 @@ namespace SIAG
         public static async Task<Weather> GetCurrentWeatherAsync(string lang, string xmldir, string siaguser, string siagpswd, bool json = false)
         {
             //Request mochn
-            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source);
+            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source, json);
             //Content auslesen und XDocument Parsen
             var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
             var weatherinfo = XDocument.Load(xmldir + "Weather.xml");

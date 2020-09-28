@@ -27,11 +27,12 @@ namespace SIAG
                 string format = "xml";
                 if (usejson)
                 {
-                    format = "xml";
+                    format = "json";
                 }                    
 
                 string requesturl = serviceurl + "?lang=" + lang + "&format=" + format;
-                if (source == "siag")
+                
+                if (source == "siag" && !usejson)
                     requesturl = serviceurlsiag + "?lang=" + lang + "&format=" + format;
 
                 CredentialCache wrCache = new CredentialCache();

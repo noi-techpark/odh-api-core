@@ -48,12 +48,13 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Weather")]
         public async Task<ActionResult<Weather>> GetWeather(
             string? language = "en", 
-            string? locfilter = null,            
+            string? locfilter = null,
+            bool extended = false,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await Get(language, locfilter, cancellationToken);
+                return await Get(language, locfilter, extended, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -197,13 +198,13 @@ namespace OdhApiCore.Controllers
         #region SiagWeather
 
         /// GET Current Suedtirol Weather LIVE Request
-        private async Task<ActionResult<Weather>> Get(string language, string locfilter, CancellationToken cancellationToken = default)
+        private async Task<ActionResult<Weather>> Get(string language, string locfilter, bool extended, CancellationToken cancellationToken = default)
         {
             var weatherresult = default(Weather);
 
             if(String.IsNullOrEmpty(locfilter))
             {
-                weatherresult = await SIAG.GetWeatherData.GetCurrentWeatherAsync(language, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
+                weatherresult = await SIAG.GetWeatherData.GetCurrentWeatherAsync(language, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password, extended);
             }
             else
             {
