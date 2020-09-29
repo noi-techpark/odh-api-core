@@ -77,6 +77,41 @@ namespace OdhApiCore.Controllers.api
         }
 
 
+        /// <summary>
+        /// GET EventShort Single
+        /// </summary>
+        /// <param name="id">Id of the Event</param>
+        /// <returns>EventShort Object</returns>
+        /// <response code="200">Object created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        /// //[Authorize(Roles = "DataReader,ActivityReader")]
+        [ProducesResponseType(typeof(EventShort), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[EnableCors(origins: "*", headers: "*", methods: "*")]
+        [HttpGet, Route("EventShort/{id}")]
+        public async Task<IActionResult> GetSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await GetEventShortSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+        }
+
+        //Compatibility Route
+        [HttpGet, Route("api/EventShort/Detail/{id}")]
+        public async Task<IActionResult> GetDetail(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
+        {
+            return await GetEventShortSingle(id, language, fields, cancellationToken);
+        }
 
         #endregion
 
@@ -103,7 +138,9 @@ namespace OdhApiCore.Controllers.api
                            start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
                            searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
                            filterClosedData: FilterClosedData)
-                       .OrderBy("data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);                       
+                      .OrderBySeed(ref seed, "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);
+                       
+                //.OrderBy("data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);                       
 
                 // Get paginated data
                 var data =
@@ -128,6 +165,23 @@ namespace OdhApiCore.Controllers.api
                     dataTransformed,
                     Url);
             });           
+        }
+
+        private Task<IActionResult> GetEventShortSingle(
+            string id, string? language, string[] fields, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("eventeuracnoi")
+                        .Select("data")
+                        .Where("id", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
+            });
         }
 
         #endregion
