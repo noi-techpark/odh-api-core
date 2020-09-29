@@ -489,9 +489,7 @@ namespace Helper
                     "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "'))"
                 )
             );
-
-       
-
+      
         public static Query VisibleInSearchFilter(this Query query, bool? visibleinsearch) =>
             query.When(
                 visibleinsearch != null,
@@ -600,6 +598,58 @@ namespace Helper
                     bookable ?? false
                 )
             );
+
+        public static Query EventShortLocationFilter(this Query query, IReadOnlyCollection<string> eventlocationlist) =>
+           query.WhereInJsonb(
+               list: eventlocationlist,
+               "EventLocation",
+               id => id.ToUpper()
+           );
+
+        public static Query EventShortWebaddressFilter(this Query query, IReadOnlyCollection<string> webaddresslist) =>
+           query.WhereInJsonb(
+               list: webaddresslist,
+               "WebAddress",
+               id => id
+           );
+
+        public static Query EventShortActiveFilter(this Query query, string? active) =>
+            query.When(
+                active != null,
+                query => query.WhereJsonb(
+                    "Display1",
+                    active ?? ""
+                )
+            );
+
+        //Only Begindate given
+        public static Query EventShortDateFilterBegin(this Query query, DateTime? start, DateTime? end) =>
+            query.When(
+                start != DateTime.MinValue && end == DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((to_timestamp(data ->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
+                )
+            );
+
+        //Only Enddate given
+        public static Query EventShortDateFilterEnd(this Query query, DateTime? start, DateTime? end) =>
+            query.When(
+                start == DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+                )
+            );
+
+        //Both Begin and Enddate given
+        public static Query EventShortDateFilterBeginEnd(this Query query, DateTime? start, DateTime? end) =>
+            query.When(
+                start != DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "(((to_timestamp(data ->> 'StartDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "')))"
+                )
+            );
+
+
 
         //public static Query FilterClosedData(this Query query) =>
         //    query.Where(q =>

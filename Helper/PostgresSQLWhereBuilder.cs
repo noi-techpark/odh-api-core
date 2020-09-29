@@ -443,5 +443,36 @@ namespace Helper
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData());
         }
+
+        //Return Where and Parameters for Measuringpoint
+        public static Query EventShortWhereExpression(
+            this Query query, 
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
+            IReadOnlyCollection<string> eventlocationlist, IReadOnlyCollection<string> webaddresslist,
+            string? activefilter, DateTime? start, DateTime? end, string? searchfilter,
+            string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, sourcelist, eventlocationlist, webaddresslist,
+                activefilter, start, end,
+                searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdLowerFilter(idlist)
+                .SourceFilter(sourcelist)
+                .EventShortLocationFilter(eventlocationlist)
+                .EventShortWebaddressFilter(webaddresslist)
+                .EventShortActiveFilter(activefilter)
+                .EventShortDateFilterEnd(start, end)
+                .EventShortDateFilterBegin(start, end)
+                .EventShortDateFilterBeginEnd(start, end)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
     }
 }
