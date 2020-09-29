@@ -4,8 +4,6 @@ using System.Text;
 
 namespace SIAG.WeatherModel
 {
-    //TODO ADD SIAG Weather json generated class
-
     public class SiagWeather
     {
         public int id { get; set; }
@@ -161,5 +159,4 @@ namespace SIAG.WeatherModel
         public double min { get; set; }
         public double max { get; set; }
     }
-
 }

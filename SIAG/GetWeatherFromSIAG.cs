@@ -18,8 +18,6 @@ namespace SIAG
         public const string serviceurl = @"http://daten.buergernetz.bz.it/services/weather/bulletin";
         public const string serviceurlbezirk = @" http://daten.buergernetz.bz.it/services/weather/district/";
 
-        public const string serviceurlsiagjson = @"http://daten.buergernetz.bz.it/services/weather/bulletin?format=json";
-
         public static async Task<HttpResponseMessage> RequestAsync(string lang, string siaguser, string siagpswd, string source, bool usejson = false)
         {
             try

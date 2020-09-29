@@ -447,7 +447,7 @@ namespace SIAG
             return myweather;
         }
 
-        //TODO ADD JSON Parser
+        //JSON Response Parser
 
         public static Weather ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson)
         {
