@@ -458,7 +458,7 @@ namespace SIAG
                 Weather myweather = new Weather();
 
                 myweather.Id = Convert.ToInt32(siagweather.id);
-                myweather.date = siagweather.date;
+                myweather.date = Convert.ToDateTime(siagweather.date.ToShortDateString() + " " + siagweather.hour);
                 myweather.evolution = siagweather.evolution;
                 myweather.evolutiontitle = siagweather.evolutionTitle;
           
@@ -561,7 +561,7 @@ namespace SIAG
                 {
                     Conditions myconditiontoday = new Conditions();
                     
-                    myconditiontoday.date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour) ; //TODO CHeck
+                    myconditiontoday.date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
                     myconditiontoday.WeatherCondition = siagweather.today.conditions;
                     myconditiontoday.WeatherImgurl = siagweather.today.imageUrl;
                     myconditiontoday.Weatherdesc = siagweather.today.weather;
