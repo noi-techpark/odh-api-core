@@ -82,10 +82,16 @@ namespace OdhApiCore.Controllers.api
             else
                 activefilter = null;
 
-            this.sortorder = sortorder.ToUpper();
+            this.sortorder = sortorder;
 
-            if (sortorder != "ASC" && sortorder != "DESC")
-                sortorder = "";
+            if(sortorder != null)
+            {
+                sortorder = sortorder.ToUpper();
+
+                if (sortorder != "ASC" && sortorder != "DESC")
+                    sortorder = "";
+            }
+            
 
             this.lastchange = lastchange;
         }

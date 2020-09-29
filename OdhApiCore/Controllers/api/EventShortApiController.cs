@@ -156,7 +156,6 @@ namespace OdhApiCore.Controllers.api
             return await GetBDPNoiRoomsWithLink();
         }
 
-
         #endregion
 
         #region GETTER
