@@ -623,29 +623,56 @@ namespace Helper
             );
 
         //Only Begindate given
-        public static Query EventShortDateFilterBegin(this Query query, DateTime? start, DateTime? end) =>
+        public static Query EventShortDateFilterBegin(this Query query, DateTime? start, DateTime? end, bool active) =>
             query.When(
-                start != DateTime.MinValue && end == DateTime.MaxValue,
+                start != DateTime.MinValue && end == DateTime.MaxValue && active,
                 query => query.WhereRaw(
                     "((to_timestamp(data ->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
                 )
             );
 
         //Only Enddate given
-        public static Query EventShortDateFilterEnd(this Query query, DateTime? start, DateTime? end) =>
+        public static Query EventShortDateFilterEnd(this Query query, DateTime? start, DateTime? end, bool active) =>
             query.When(
-                start == DateTime.MinValue && end != DateTime.MaxValue,
+                start == DateTime.MinValue && end != DateTime.MaxValue && active,
                 query => query.WhereRaw(
                     "((to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
                 )
             );
 
         //Both Begin and Enddate given
-        public static Query EventShortDateFilterBeginEnd(this Query query, DateTime? start, DateTime? end) =>
+        public static Query EventShortDateFilterBeginEnd(this Query query, DateTime? start, DateTime? end, bool active) =>
             query.When(
-                start != DateTime.MinValue && end != DateTime.MaxValue,
+                start != DateTime.MinValue && end != DateTime.MaxValue && active,
                 query => query.WhereRaw(
                     "(((to_timestamp(data ->> 'StartDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "')))"
+                )
+            );
+
+        //Only Begindate given
+        public static Query EventShortDateFilterBeginByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start != DateTime.MinValue && end == DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
+                )
+            );
+
+        //Only Enddate given
+        public static Query EventShortDateFilterEndByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start == DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((to_date(data->> 'EndDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                )
+            );
+
+        //Both Begin and Enddate given
+        public static Query EventShortDateFilterBeginEndByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "(((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", start) + "') AND (to_date(data->> 'StartDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')))"
                 )
             );
 

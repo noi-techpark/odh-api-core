@@ -450,7 +450,7 @@ namespace Helper
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
             IReadOnlyCollection<string> eventlocationlist, IReadOnlyCollection<string> webaddresslist,
             string? activefilter, DateTime? start, DateTime? end, string? searchfilter,
-            string? language, string? lastchange, bool filterClosedData)
+            string? language, string? lastchange, bool filterClosedData, bool getbyrooms = false)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -467,9 +467,12 @@ namespace Helper
                 .EventShortLocationFilter(eventlocationlist)
                 .EventShortWebaddressFilter(webaddresslist)
                 .EventShortActiveFilter(activefilter)
-                .EventShortDateFilterEnd(start, end)
-                .EventShortDateFilterBegin(start, end)
-                .EventShortDateFilterBeginEnd(start, end)
+                .EventShortDateFilterEnd(start, end, !getbyrooms)
+                .EventShortDateFilterBegin(start, end, !getbyrooms)
+                .EventShortDateFilterBeginEnd(start, end, !getbyrooms)
+                .EventShortDateFilterEndByRoom(start, end, getbyrooms)
+                .EventShortDateFilterBeginByRoom(start, end, getbyrooms)
+                .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData());

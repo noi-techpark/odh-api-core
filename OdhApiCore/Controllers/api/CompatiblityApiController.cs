@@ -699,6 +699,12 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
+        #region EventShortController
+
+
+
+        #endregion
+
         #region Common
 
         ////Reduced GETTER
