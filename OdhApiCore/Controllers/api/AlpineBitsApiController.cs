@@ -45,8 +45,10 @@ namespace OdhApiCore.Controllers.api
         /// <returns>AlpineBits InventoryBasicObject</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
-        [HttpGet, Route("api/AlpineBits/InventoryBasic")]
-        public async Task<IActionResult> Get(string accoid = "", bool last = true)
+        [HttpGet, Route("AlpineBits/InventoryBasic")]
+        public async Task<IActionResult> Get(
+            string? accoid = null, 
+            bool last = true)
         {
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity.Name, "InventoryBasicPush");
@@ -61,7 +63,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>InventoryBasic Object</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
-        [HttpGet, Route("api/AlpineBits/InventoryBasic/{RequestId}")]
+        [HttpGet, Route("AlpineBits/InventoryBasic/{RequestId}")]
         public async Task<IActionResult> Get(string RequestId)
         {
             return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity.Name, "InventoryBasicPush", null, false);
@@ -73,7 +75,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>HttpResponseMessage</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsInventoryBasicWriter")]
-        [HttpPost, Route("api/AlpineBits/InventoryBasic")]
+        [HttpPost, Route("AlpineBits/InventoryBasic")]
         public async Task<IActionResult> PostInventoryBasicData()
         {
             return await PostInventoryBasic(Request);
@@ -89,8 +91,10 @@ namespace OdhApiCore.Controllers.api
         /// <returns>AlpineBits InventoryHotelInfoObject</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryHotelInfoReader")]
-        [HttpGet, Route("api/AlpineBits/InventoryHotelInfo")]
-        public async Task<IActionResult> GetInventoryHotelInfo(string accoid = "", bool last = true)
+        [HttpGet, Route("AlpineBits/InventoryHotelInfo")]
+        public async Task<IActionResult> GetInventoryHotelInfo(
+            string? accoid = null, 
+            bool last = true)
         {
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity.Name, "InventoryHotelInfoPush");
@@ -106,7 +110,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>InventoryHotelInfo Object</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryHotelInfoReader")]
-        [HttpGet, Route("api/AlpineBits/InventoryHotelInfo/{RequestId}")]
+        [HttpGet, Route("AlpineBits/InventoryHotelInfo/{RequestId}")]
         public async Task<IActionResult> GetInventoryHotelInfoSingle(string RequestId)
         {
             return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity.Name, "InventoryHotelInfoPush", null, false);
@@ -118,7 +122,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>HttpResponseMessage</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsInventoryHotelInfoWriter")]
-        [HttpPost, Route("api/AlpineBits/InventoryHotelInfo")]
+        [HttpPost, Route("AlpineBits/InventoryHotelInfo")]
         public async Task<IActionResult> PostInventoryHotelInfo()
         {
             return null; // await PostInventoryHotelInfo(Request);
@@ -134,8 +138,10 @@ namespace OdhApiCore.Controllers.api
         /// <returns>AlpineBits FreeRoomsObject</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsFreeRoomsReader")]
-        [HttpGet, Route("api/AlpineBits/FreeRooms")]
-        public async Task<IActionResult> GetFreeRooms(string accoid = "", bool last = true)
+        [HttpGet, Route("AlpineBits/FreeRooms")]
+        public async Task<IActionResult> GetFreeRooms(
+            string? accoid = null, 
+            bool last = true)
         {
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity.Name, "FreeRoomsPush");
@@ -151,7 +157,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>FreeRooms Object</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsFreeRoomsReader")]
-        [HttpGet, Route("api/AlpineBits/FreeRooms/{RequestId}")]
+        [HttpGet, Route("AlpineBits/FreeRooms/{RequestId}")]
         public async Task<IActionResult> GetFreeRoomsSingle(string RequestId)
         {
             return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity.Name, "FreeRoomsPush", null, false);
@@ -163,7 +169,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>HttpResponseMessage</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsFreeRoomsWriter")]
-        [HttpPost, Route("api/AlpineBits/FreeRooms")]
+        [HttpPost, Route("AlpineBits/FreeRooms")]
         public async Task<IActionResult> PostFreeRooms()
         {
             return null;
@@ -258,8 +264,8 @@ namespace OdhApiCore.Controllers.api
                     input.RequestDate = DateTime.Now;
                     input.Source = this.User.Identity.Name;
 
-                    var query = QueryFactory.Query("alpinebits").AsInsert(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
-             
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
+                  
                     return Ok(new GenericResult() { Message = "INSERT AlpineBits InventoryBasicPush succeeded, Request Id:" + id + " username:" + this.User.Identity.Name });                    
                 }
                 else
@@ -271,93 +277,64 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        //private async Task<IActionResult> PostInventoryHotelInfo()
-        //{
-        //    try
-        //    {
-        //        HttpContent requestContent = Request.Content;
-        //        string jsonContent = requestContent.ReadAsStringAsync().Result;
+        private async Task<IActionResult> PostInventoryHotelInfo(HttpRequest request)
+        {
+            try
+            {
+                string jsonContent = await ReadStringDataManual(request);
 
-        //        if (!string.IsNullOrEmpty(jsonContent))
-        //        {
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-        //                conn.Open();
+                if (!string.IsNullOrEmpty(jsonContent))
+                {
+                    dynamic input = JsonConvert.DeserializeObject(jsonContent);
 
-        //                //dynamic testdata = data;
-        //                //var id = testdata.RequestId;
+                    var id = input.RequestId.Value;
 
-        //                // Convert input Json string to a dynamic object
-        //                //dynamic input = data;
-        //                dynamic input = JsonConvert.DeserializeObject(jsonContent);
+                    input.MessageType = "InventoryHotelInfoPush";
+                    input.RequestDate = DateTime.Now;
+                    input.Source = this.User.Identity.Name;
 
-        //                var id = input.RequestId.Value;
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
+                    //var query = QueryFactory.Query("alpinebits").AsInsert(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
 
-        //                input.MessageType = "InventoryHotelInfoPush";
-        //                input.RequestDate = DateTime.Now;
-        //                input.Source = this.User.Identity.Name;
+                    return Ok(new GenericResult() { Message = "INSERT AlpineBits InventoryHotelInfoPush succeeded, Request Id:" + id + " username:" + this.User.Identity.Name });
+                }
+                else
+                    throw new Exception("no Content");                                              
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new GenericResult() { Message = ex.Message });
+            }
+        }
 
-        //                //var expConverter = new ExpandoObjectConverter();
-        //                //dynamic obj = JsonConvert.DeserializeObject<ExpandoObject>(data, expConverter);
+        private async Task<IActionResult> PostFreeRooms(HttpRequest request)
+        {
+            try
+            {
+                string jsonContent = await ReadStringDataManual(request);
 
-        //                PostgresSQLHelper.InsertDataIntoTable(conn, "alpinebits", JsonConvert.SerializeObject(input), id);
+                if (!string.IsNullOrEmpty(jsonContent))
+                {
+                    dynamic input = JsonConvert.DeserializeObject(jsonContent);
 
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResult() { Message = "INSERT AlpineBits InventoryHotelInfoPush succeeded, Request Id:" + id + " username:" + this.User.Identity.Name }, "application/json");
-        //            }
-        //        }
-        //        else
-        //            throw new Exception("no Content");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
-        //    }
-        //}
+                    var id = input.RequestId.Value;
 
-        //private async Task<IActionResult> PostFreeRooms()
-        //{
-        //    try
-        //    {
+                    input.MessageType = "FreeRoomsPush";
+                    input.RequestDate = DateTime.Now;
+                    input.Source = this.User.Identity.Name;
 
-        //        HttpContent requestContent = Request.Content;
-        //        string jsonContent = requestContent.ReadAsStringAsync().Result;
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
 
-        //        if (!string.IsNullOrEmpty(jsonContent))
-        //        {
-
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-        //                conn.Open();
-
-        //                //dynamic testdata = data;
-        //                //var id = testdata.RequestId;
-
-        //                // Convert input Json string to a dynamic object
-        //                //dynamic input = data;
-        //                dynamic input = JsonConvert.DeserializeObject(jsonContent);
-
-        //                var id = input.RequestId.Value;
-
-        //                input.MessageType = "FreeRoomsPush";
-        //                input.RequestDate = DateTime.Now;
-        //                input.Source = this.User.Identity.Name;
-
-        //                //var expConverter = new ExpandoObjectConverter();
-        //                //dynamic obj = JsonConvert.DeserializeObject<ExpandoObject>(data, expConverter);
-
-        //                PostgresSQLHelper.InsertDataIntoTable(conn, "alpinebits", JsonConvert.SerializeObject(input), id);
-
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResult() { Message = "INSERT AlpineBits FreeRoomsPush succeeded, Request Id:" + id + " username:" + this.User.Identity.Name }, "application/json");
-        //            }
-        //        }
-        //        else
-        //            throw new Exception("no Content");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
-        //    }
-        //}
+                    return Ok(new GenericResult() { Message = "INSERT AlpineBits FreeRoomsPush succeeded, Request Id:" + id + " username:" + this.User.Identity.Name });
+                }
+                else
+                    throw new Exception("no Content");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new GenericResult() { Message = ex.Message });
+            }           
+        }
 
 
         #endregion

@@ -162,7 +162,7 @@ namespace OdhApiCore
                 jwtBearerOptions.Audience = "account";
                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = "name",
+                    NameClaimType = "preferred_username",
                 };
                 //jwtBearerOptions.Events = new JwtBearerEvents()
                 //{
