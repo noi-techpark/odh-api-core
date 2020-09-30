@@ -197,6 +197,16 @@ namespace Helper
                 return q;
             });
 
+        public static Query IdIlikeFilter(this Query query, IReadOnlyCollection<string> idlist) =>
+           query.Where(q =>
+           {
+               foreach (var id in idlist)
+               {
+                   q = q.OrWhere("id", "ILIKE", id);
+               }
+               return q;
+           });
+
         public static Query LastChangedFilter(this Query query, string? updatefrom) =>
             query.When(
                 updatefrom != null,
@@ -676,6 +686,21 @@ namespace Helper
                 )
             );
 
+        //AlpineBits
+        public static Query AlpineBitsAccommodationIdFilter(this Query query, IReadOnlyCollection<string> accommodationids) =>
+            query.WhereInJsonb(
+                list: accommodationids,
+                "AccommodationId",
+                id => id
+            );
+
+        //AlpineBits
+        public static Query AlpineBitsMessageFilter(this Query query, IReadOnlyCollection<string> messagetypelist) =>
+            query.WhereInJsonb(
+                list: messagetypelist,
+                "MessageType",
+                id => id
+            );
 
 
         //public static Query FilterClosedData(this Query query) =>

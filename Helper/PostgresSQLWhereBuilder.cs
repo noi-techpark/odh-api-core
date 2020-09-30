@@ -477,5 +477,25 @@ namespace Helper
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData());
         }
+
+        //Return Where and Parameters for AlpineBits
+        public static Query AlpineBitsWhereExpression(
+            this Query query,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
+            IReadOnlyCollection<string> accommodationIds, IReadOnlyCollection<string> messagetypelist,
+            string requestdate)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, sourcelist, accommodationIds, messagetypelist, requestdate
+            );
+
+            return query
+                .IdIlikeFilter(idlist)
+                .SourceFilter(sourcelist)
+                .AlpineBitsMessageFilter(messagetypelist)
+                .AlpineBitsAccommodationIdFilter(accommodationIds);
+        }
     }
 }
