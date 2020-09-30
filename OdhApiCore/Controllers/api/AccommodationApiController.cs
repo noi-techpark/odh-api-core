@@ -27,7 +27,7 @@ namespace OdhApiCore.Controllers
     {
         private readonly IHttpClientFactory httpClientFactory;
 
-        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
+        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
             : base(env, settings, logger, queryFactory)
         {
             this.httpClientFactory = httpClientFactory;

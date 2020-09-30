@@ -28,7 +28,7 @@ namespace OdhApiCore.Controllers
     {
         private readonly ISettings settings;
 
-        public WeatherController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public WeatherController(IWebHostEnvironment env, ISettings settings, ILogger<WeatherController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
             this.settings = settings;

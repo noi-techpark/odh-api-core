@@ -24,7 +24,7 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<WebcamInfoController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
         }

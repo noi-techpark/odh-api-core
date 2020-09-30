@@ -24,7 +24,7 @@ namespace OdhApiCore.Controllers
     {
         // Only for test purposes
 
-        public EventController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public EventController(IWebHostEnvironment env, ISettings settings, ILogger<EventController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
         }

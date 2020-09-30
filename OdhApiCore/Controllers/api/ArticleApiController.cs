@@ -22,7 +22,7 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class ArticleController : OdhController
     {
-        public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ArticleController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
         {
         }

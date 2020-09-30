@@ -16,7 +16,7 @@ namespace OdhApiCore.Controllers.api
 {
     public class CommonController : OdhController
     {
-        public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<CommonController> logger, QueryFactory queryFactory)
        : base(env, settings, logger, queryFactory)
         {
         }

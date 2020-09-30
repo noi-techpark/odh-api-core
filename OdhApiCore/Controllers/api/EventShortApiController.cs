@@ -22,9 +22,9 @@ namespace OdhApiCore.Controllers.api
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
-    public class EventShortApiController : OdhController
+    public class EventShortController : OdhController
     {
-        public EventShortApiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public EventShortController(IWebHostEnvironment env, ISettings settings, ILogger<EventShortController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
         {
         }
