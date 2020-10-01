@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SqlKata;
 using SqlKata.Execution;
 
@@ -264,7 +265,8 @@ namespace OdhApiCore.Controllers.api
                     input.RequestDate = DateTime.Now;
                     input.Source = this.User.Identity.Name;
 
-                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
+
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JToken.FromObject(input) });
                   
                     return Ok(new GenericResult() { Message = "INSERT AlpineBits InventoryBasicPush succeeded, Request Id:" + id + " username:" + this.User.Identity.Name });                    
                 }
