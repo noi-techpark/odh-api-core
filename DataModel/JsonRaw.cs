@@ -33,6 +33,11 @@ namespace DataModel
             Value = data;
         }
 
+        public JsonRaw(object data)
+        {
+            Value = JsonConvert.SerializeObject(data);
+        }
+
         public string Value { get; }
 
         public void AddParameter(IDbCommand command, string name)
