@@ -76,7 +76,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <returns>HttpResponseMessage</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsInventoryBasicWriter")]
+        [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsInventoryBasicWriter")]
         [HttpPost, Route("AlpineBits/InventoryBasic")]
         public async Task<IActionResult> PostInventoryBasicData()
         {
@@ -266,9 +266,7 @@ namespace OdhApiCore.Controllers.api
                     input.RequestDate = DateTime.Now;
                     input.Source = this.User.Identity.Name;
 
-
-                    var data = new JsonRaw(JsonConvert.SerializeObject(input));
-                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = data });
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
                   
                     return Ok(new GenericResult() { Message = "INSERT AlpineBits InventoryBasicPush succeeded, Request Id:" + id + " username:" + this.User.Identity.Name });                    
                 }
