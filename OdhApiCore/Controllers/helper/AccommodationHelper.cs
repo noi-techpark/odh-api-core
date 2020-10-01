@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers
             if (tourismusvereinids != null)
                 tourismvereinlist.AddRange(tourismusvereinids);
 
-            ///Special Case Apartment Setting Filter to HasApartment
+            //Special Case Apartment Setting Filter to HasApartment
             apartment = null;
             if (accotypelist.Contains("Apartment"))
             {
