@@ -1,9 +1,12 @@
-﻿using Microsoft.VisualBasic.CompilerServices;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Text;
+using static Dapper.SqlMapper;
 
 namespace DataModel
 {
@@ -17,12 +20,13 @@ namespace DataModel
 
         public override JsonRaw ReadJson(JsonReader reader, Type objectType, JsonRaw? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            throw new JsonReaderException("Deserialization of JsonRaw is not supported.");
+            string json = reader.ReadAsString();
+            return new JsonRaw(json);
         }
     }
 
     [JsonConverter(typeof(JsonRawConverter))]
-    public class JsonRaw
+    public class JsonRaw : ICustomQueryParameter
     {
         public JsonRaw(string data)
         {
@@ -30,6 +34,13 @@ namespace DataModel
         }
 
         public string Value { get; }
+
+        public void AddParameter(IDbCommand command, string name)
+        {
+            var parameter = new NpgsqlParameter(name, NpgsqlDbType.Json);
+            parameter.Value = Value;
+            command.Parameters.Add(parameter);
+        }
 
         public override string? ToString()
         {

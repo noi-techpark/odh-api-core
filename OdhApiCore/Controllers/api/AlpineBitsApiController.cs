@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -45,7 +46,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>        
         /// <returns>AlpineBits InventoryBasicObject</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
+        //[Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
         [HttpGet, Route("AlpineBits/InventoryBasic")]
         public async Task<IActionResult> Get(
             string? accoid = null, 
@@ -63,7 +64,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="RequestId">Request ID</param>
         /// <returns>InventoryBasic Object</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
+        //[Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
         [HttpGet, Route("AlpineBits/InventoryBasic/{RequestId}")]
         public async Task<IActionResult> Get(string RequestId)
         {
@@ -75,7 +76,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <returns>HttpResponseMessage</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsInventoryBasicWriter")]
+        //[Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsInventoryBasicWriter")]
         [HttpPost, Route("AlpineBits/InventoryBasic")]
         public async Task<IActionResult> PostInventoryBasicData()
         {
@@ -266,7 +267,8 @@ namespace OdhApiCore.Controllers.api
                     input.Source = this.User.Identity.Name;
 
 
-                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JToken.FromObject(input) });
+                    var data = new JsonRaw(JsonConvert.SerializeObject(input));
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = data });
                   
                     return Ok(new GenericResult() { Message = "INSERT AlpineBits InventoryBasicPush succeeded, Request Id:" + id + " username:" + this.User.Identity.Name });                    
                 }
