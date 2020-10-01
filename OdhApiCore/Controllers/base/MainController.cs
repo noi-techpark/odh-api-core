@@ -21,6 +21,9 @@ namespace OdhApiCore.Controllers
 
         private static IEnumerable<TourismData> GetMainApi(string url)
         {
+            if (url.Contains("api"))
+                url = url.Replace("api","");
+
             List<TourismData> tourismdatalist = new List<TourismData>();
 
             tourismdatalist.Add(new TourismData(url) { ApiIdentifier = "ODHActivityPoi", Description = "Activities Pois and Gastronomies of South Tyrol from various Data Sources (LTS, Suedtirol Wein, Siag, IDM...)", Id = "it.bz.opendatahub.odhactivitypoi", SwaggerUrl = "index#/ODHActivityPoi", License = "CC0/Proprietary" }); ;
