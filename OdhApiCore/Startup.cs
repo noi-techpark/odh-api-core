@@ -71,6 +71,7 @@ namespace OdhApiCore
             });
             services.AddHttpClient("lcs"); // TODO: put LCS config here
 
+
             services.AddLogging(options =>
             {
                 options.ClearProviders();
@@ -123,6 +124,7 @@ namespace OdhApiCore
             {
                 options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
             });
+
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
@@ -265,6 +267,8 @@ namespace OdhApiCore
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
+
+            //services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -326,6 +330,9 @@ namespace OdhApiCore
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
+
+            //Not needed at moment
+            //app.UseHttpContext();
         }
     }
 
