@@ -14,7 +14,7 @@ using System;
 namespace OdhApiCore.Controllers.api
 {
     /// <summary>
-    /// Compatiblity Api (Old Routes & methods for compatiblity reasons)
+    /// Compatiblity Api (Old Routes &amp; methods for compatiblity reasons)
     /// </summary>
     [ApiExplorerSettings(IgnoreApi = true)]
     [EnableCors("CorsPolicy")]

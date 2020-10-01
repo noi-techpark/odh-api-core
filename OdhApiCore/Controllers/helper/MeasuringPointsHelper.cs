@@ -40,7 +40,7 @@ namespace OdhApiCore.Controllers
             return new MeasuringPointsHelper(
                 idfilter: idfilter, locfilter: locfilter, areafilterlist: arealistfromarea, skiareafilterlist: arealistfromskiarea,
                 activefilter: activefilter, smgactivefilter: smgactivefilter,
-                lastchange: lastchange, tourismusvereinids = tourismusvereinids);
+                lastchange: lastchange, tourismusvereinids: tourismusvereinids);
         }
 
         private MeasuringPointsHelper(
