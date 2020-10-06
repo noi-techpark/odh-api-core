@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using DataModel;
@@ -15,8 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SqlKata;
 using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers.api
@@ -46,7 +41,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>        
         /// <returns>AlpineBits InventoryBasicObject</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
+        [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
         [HttpGet, Route("AlpineBits/InventoryBasic")]
         public async Task<IActionResult> Get(
             string? accoid = null, 
@@ -64,7 +59,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="RequestId">Request ID</param>
         /// <returns>InventoryBasic Object</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
+        [Authorize(Roles = "DataReader,AlpineBitsReader,AlpineBitsInventoryBasicReader")]
         [HttpGet, Route("AlpineBits/InventoryBasic/{RequestId}")]
         public async Task<IActionResult> Get(string RequestId)
         {
