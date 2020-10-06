@@ -694,6 +694,8 @@ namespace DataModel
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
+        //new for Wine Importers
+        public IDictionary<string, List<AdditionalContact>> AdditionalContact { get; set; }
 
         //NEU LISTE Suggestions
         //public IDictionary<string, string> LinkedAppSuggestions { get; set; }
@@ -710,15 +712,20 @@ namespace DataModel
             GpsPoints = new Dictionary<string, GpsInfo>();
         }
 
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }        
     }
-
-
 
     public class PoiProperty
     {
         public string? Name { get; set; }
         public string? Value { get; set; }
+    }
+
+    public class AdditionalContact
+    {
+        public string Type { get; set; }
+        public ContactInfos ContactInfos { get; set; }
+        public string Description { get; set; }
     }
 
     public class RelatedContent
