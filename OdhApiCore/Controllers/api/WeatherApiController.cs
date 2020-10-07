@@ -390,8 +390,7 @@ namespace OdhApiCore.Controllers
                        .SelectRaw("data")
                        .From("skiareas")
                        .Where("id", skiareaid);                       
-
-            //Des passt kriagi als jsonraw mit infos drinnen
+            
             var skiarearaw = await query.FirstOrDefaultAsync<JsonRaw>();
             var skiarea = JsonConvert.DeserializeObject<SkiArea>(skiarearaw.Value);
 
@@ -404,7 +403,6 @@ namespace OdhApiCore.Controllers
 
             if (skiarearaw == null)
                 return BadRequest("skiarea not found!");
-
 
             var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
 
