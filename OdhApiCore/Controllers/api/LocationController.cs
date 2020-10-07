@@ -40,12 +40,12 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<LocHelperclass>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("api/Location")]
+        [HttpGet, Route("Location")]
         public async Task<IActionResult> GetTheLocationList(
-            string language = "en",
-            string type = "null",
-            bool showall = true,
-            string locfilter = "null")
+            string? language = "en",
+            string? type = "null",
+            bool? showall = true,
+            string? locfilter = null)
         {
             //var result = default(List<LocHelperclass>);
 
@@ -56,9 +56,7 @@ namespace OdhApiCore.Controllers.api
             //else
             //    result = await ;
 
-            //return Ok(await GetLocationInfoFiltered(language, locfilter, showall, type));
-
-            return null;
+            return Ok(await GetLocationInfoFiltered(language, locfilter, showall, type));            
         } 
 
         /// <summary>
@@ -71,10 +69,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,GastroReader")]
-        [HttpGet, Route("api/Location/Skiarea")]
+        [HttpGet, Route("Location/Skiarea")]
         public async Task<IActionResult> GetTheSkiareaList(
-            string language = "en",
-            string locfilter = "null")
+            string? language = "en",
+            string? locfilter = null)
         {
             return Ok(await GetSkiAreaInfoFiltered(language, locfilter));
         }
@@ -83,216 +81,262 @@ namespace OdhApiCore.Controllers.api
 
         #region Private GETTER
 
-        ///// <summary>
-        ///// Get Filtered LocationList based on TV & TVBs
-        ///// </summary>
-        ///// <param name="lang">Language</param>
-        ///// <param name="locfilter">Location Filter</param>
-        ///// <returns>Collection of Reduced Location Objects</returns>
-        //private async Task<List<LocHelperclass>> GetLocationInfoFiltered(string lang, string locfilter, bool allactivedata = false, string type = "null")
-        //{
-        //    List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
+        /// <summary>
+        /// Get Filtered LocationList based on TV & TVBs
+        /// </summary>
+        /// <param name="lang">Language</param>
+        /// <param name="locfilter">Location Filter</param>
+        /// <returns>Collection of Reduced Location Objects</returns>
+        private async Task<List<LocHelperclass>> GetLocationInfoFiltered(string? lang, string? locfilter, bool? allactivedata = false, string? type = null)
+        {
+            List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 
-        //    string loctype = locfilter.ToLower().Substring(0, 3);
-        //    string locid = locfilter.Substring(3).ToUpper();
+            string loctype = locfilter.ToLower().Substring(0, 3);
+            string locid = locfilter.Substring(3).ToUpper();
 
-        //    string defaultmunfrafilter = "data->'VisibleInSearch'='true'";
-        //    if (allactivedata)
-        //        defaultmunfrafilter = "data->'Active'='true'";
+            string defaultmunfrafilter = "data->'VisibleInSearch'='true'";
+            if (allactivedata.Value == true)
+                defaultmunfrafilter = "data->'Active'='true'";
 
-        //    List<string> locationtypes = new List<string>() { "mta", "reg", "tvs", "mun", "", "fra" };
+            List<string> locationtypes = new List<string>() { "mta", "reg", "tvs", "mun", "", "fra" };
 
-        //    if (type != "null")
-        //        locationtypes = type.ToLower().Split(',').ToList();
-
-
-        //    if (loctype == "mta")
-        //    {
-        //        using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //        {
-        //            conn.Open();
-
-        //            var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObject<MetaRegion>(conn, "metaregions", "*", "Id = '" + locid + "'", "", 0, null).FirstOrDefault();
-
-        //            var regionlist = mymetaregion.RegionIds;
-
-        //            string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-        //            var myregionlist = PostgresSQLHelper.SelectFromTableDataAsObject<Region>(conn, "regions", "*", regionlistwhere, "", 0, null);
-
-        //            string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-        //            var mytvlist = PostgresSQLHelper.SelectFromTableDataAsObject<Tourismverein>(conn, "tvs", "*", tvlistwhere, "", 0, null);
-
-        //            string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-        //            var mylocalitylist = PostgresSQLHelper.SelectFromTableDataAsObject<Municipality>(conn, "municipalities", "*", localitylistwhere, "", 0, null);
-
-        //            string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-        //            var myfractionlist = PostgresSQLHelper.SelectFromTableDataAsObject<District>(conn, "districts", "*", fractionlistwhere, "", 0, null);
+            if (type != null && type != "null")
+                locationtypes = type.ToLower().Split(',').ToList();
 
 
-        //            var mymetaregionlistreduced = new LocHelperclass { typ = "reg", name = mymetaregion.Detail[lang].Title, id = mymetaregion.Id };
-        //            var myregionlistreduced = myregionlist.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
-        //            var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-        //            var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-        //            var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+            if (loctype == "mta")
+            {
+                var mymetaregion = await QueryFactory.Query()
+                       .Select("data")
+                       .From("metaregions")
+                       .Where("id", locid)
+                       .GetObjectSingleAsync<MetaRegion>();
 
-        //            if (locationtypes.Contains("mta"))
-        //                mylocationlist.Add(mymetaregionlistreduced);
-        //            if (locationtypes.Contains("reg"))
-        //                mylocationlist.AddRange(myregionlistreduced);
-        //            if (locationtypes.Contains("tvs"))
-        //                mylocationlist.AddRange(mylocalitylistreduced);
-        //            if (locationtypes.Contains("mun"))
-        //                mylocationlist.AddRange(mytvlistreduced);
-        //            if (locationtypes.Contains("fra"))
-        //                mylocationlist.AddRange(myfractionlistreduced);
-        //            conn.Close();
-        //        }
-        //    }
-        //    if (loctype == "reg")
-        //    {
-        //        using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //        {
-        //            conn.Open();
+                var regionlist = mymetaregion.RegionIds;
 
-        //            var myregion = PostgresSQLHelper.SelectFromTableDataAsObject<Region>(conn, "regions", "*", "Id = '" + locid + "'", "", 0, null).FirstOrDefault();
+                string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                var myregionlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("regions")
+                       .WhereRaw(regionlistwhere)
+                       .GetObjectListAsync<Region>();
 
-        //            string tvlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-        //            var mytvlist = PostgresSQLHelper.SelectFromTableDataAsObject<Tourismverein>(conn, "tvs", "*", tvlistwhere, "", 0, null);
+                string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                var mytvlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("tvs")
+                       .WhereRaw(tvlistwhere)
+                       .GetObjectListAsync<Tourismverein>();
 
-        //            string localitylistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-        //            var mylocalitylist = PostgresSQLHelper.SelectFromTableDataAsObject<Municipality>(conn, "municipalities", "*", localitylistwhere, "", 0, null);
+                string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                var mylocalitylist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("municipalities")
+                       .WhereRaw(localitylistwhere)
+                       .GetObjectListAsync<Municipality>();
 
-        //            string fractionlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-        //            var myfractionlist = PostgresSQLHelper.SelectFromTableDataAsObject<District>(conn, "districts", "*", fractionlistwhere, "", 0, null);
+                string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                var myfractionlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("districts")
+                       .WhereRaw(fractionlistwhere)
+                       .GetObjectListAsync<District>();
 
+                var mymetaregionlistreduced = new LocHelperclass { typ = "reg", name = mymetaregion.Detail[lang].Title, id = mymetaregion.Id };
+                var myregionlistreduced = myregionlist.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
+                var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
 
-        //            var myregionlistreduced = new LocHelperclass { typ = "reg", name = myregion.Detail[lang].Title, id = myregion.Id };
-        //            var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-        //            var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-        //            var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                if (locationtypes.Contains("mta"))
+                    mylocationlist.Add(mymetaregionlistreduced);
+                if (locationtypes.Contains("reg"))
+                    mylocationlist.AddRange(myregionlistreduced);
+                if (locationtypes.Contains("tvs"))
+                    mylocationlist.AddRange(mylocalitylistreduced);
+                if (locationtypes.Contains("mun"))
+                    mylocationlist.AddRange(mytvlistreduced);
+                if (locationtypes.Contains("fra"))
+                    mylocationlist.AddRange(myfractionlistreduced);
+            }
+            if (loctype == "reg")
+            {
 
-        //            if (locationtypes.Contains("reg"))
-        //                mylocationlist.Add(myregionlistreduced);
-        //            if (locationtypes.Contains("tvs"))
-        //                mylocationlist.AddRange(mylocalitylistreduced);
-        //            if (locationtypes.Contains("mun"))
-        //                mylocationlist.AddRange(mytvlistreduced);
-        //            if (locationtypes.Contains("fra"))
-        //                mylocationlist.AddRange(myfractionlistreduced);
-        //            conn.Close();
-        //        }
-        //    }
-        //    if (loctype == "tvs")
-        //    {
-        //        using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //        {
-        //            conn.Open();
+                var myregion = await QueryFactory.Query()
+                       .Select("data")
+                       .From("regions")
+                       .Where("id", locid)
+                       .GetObjectSingleAsync<Region>();
 
-        //            var mytv = PostgresSQLHelper.SelectFromTableDataAsObject<Tourismverein>(conn, "tvs", "*", "Id = '" + locid + "'", "", 0, null).FirstOrDefault();
+                string tvlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
+                var mytvlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("tvs")
+                       .WhereRaw(tvlistwhere)
+                       .GetObjectListAsync<Tourismverein>();
 
-        //            string localitylistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
-        //            var mylocalitylist = PostgresSQLHelper.SelectFromTableDataAsObject<Municipality>(conn, "municipalities", "*", localitylistwhere, "", 0, null);
+                string localitylistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
+                var mylocalitylist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("municipalities")
+                       .WhereRaw(localitylistwhere)
+                       .GetObjectListAsync<Municipality>();
 
-        //            string fractionlistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
-        //            var myfractionlist = PostgresSQLHelper.SelectFromTableDataAsObject<District>(conn, "districts", "*", fractionlistwhere, "", 0, null);
+                string fractionlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
+                var myfractionlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("districts")
+                       .WhereRaw(fractionlistwhere)
+                       .GetObjectListAsync<District>();
 
-        //            var mytvlistreduced = new LocHelperclass { typ = "tvs", name = mytv.Detail[lang].Title, id = mytv.Id };
-        //            var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-        //            var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                var myregionlistreduced = new LocHelperclass { typ = "reg", name = myregion.Detail[lang].Title, id = myregion.Id };
+                var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
 
-        //            if (locationtypes.Contains("tvs"))
-        //                mylocationlist.Add(mytvlistreduced);
-        //            if (locationtypes.Contains("mun"))
-        //                mylocationlist.AddRange(mylocalitylistreduced);
-        //            if (locationtypes.Contains("fra"))
-        //                mylocationlist.AddRange(myfractionlistreduced);
+                if (locationtypes.Contains("reg"))
+                    mylocationlist.Add(myregionlistreduced);
+                if (locationtypes.Contains("tvs"))
+                    mylocationlist.AddRange(mylocalitylistreduced);
+                if (locationtypes.Contains("mun"))
+                    mylocationlist.AddRange(mytvlistreduced);
+                if (locationtypes.Contains("fra"))
+                    mylocationlist.AddRange(myfractionlistreduced);
+            }
+            if (loctype == "tvs")
+            {
+                var mytv = await QueryFactory.Query()
+                       .Select("data")
+                       .From("tvs")
+                       .Where("id", locid)
+                       .GetObjectSingleAsync<Tourismverein>();
 
-        //            conn.Close();
-        //        }
-        //    }
-        //    if (loctype == "mun")
-        //    {
-        //        using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //        {
-        //            conn.Open();
+                string localitylistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
+                var mylocalitylist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("municipalities")
+                       .WhereRaw(localitylistwhere)
+                       .GetObjectListAsync<Municipality>();
 
-        //            var mymun = PostgresSQLHelper.SelectFromTableDataAsObject<Municipality>(conn, "mun", "*", "Id = '" + locid + "'", "", 0, null).FirstOrDefault();
+                string fractionlistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
+                var myfractionlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("districts")
+                       .WhereRaw(fractionlistwhere)
+                       .GetObjectListAsync<District>();
 
-        //            string fractionlistwhere = "data->>'MunicipalityId' = '" + locid + "' AND " + defaultmunfrafilter;
-        //            var myfractionlist = PostgresSQLHelper.SelectFromTableDataAsObject<District>(conn, "districts", "*", fractionlistwhere, "", 0, null);
+                var mytvlistreduced = new LocHelperclass { typ = "tvs", name = mytv.Detail[lang].Title, id = mytv.Id };
+                var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
 
-        //            var mylocalitylistreduced = new LocHelperclass { typ = "mun", name = mymun.Detail[lang].Title, id = mymun.Id };
-        //            var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                if (locationtypes.Contains("tvs"))
+                    mylocationlist.Add(mytvlistreduced);
+                if (locationtypes.Contains("mun"))
+                    mylocationlist.AddRange(mylocalitylistreduced);
+                if (locationtypes.Contains("fra"))
+                    mylocationlist.AddRange(myfractionlistreduced);
+            }
+            if (loctype == "mun")
+            {
+                var mymun = await QueryFactory.Query()
+                       .Select("data")
+                       .From("municipalities")
+                       .Where("id", locid)
+                       .GetObjectSingleAsync<Municipality>();
 
-        //            if (locationtypes.Contains("mun"))
-        //                mylocationlist.Add(mylocalitylistreduced);
-        //            if (locationtypes.Contains("fra"))
-        //                mylocationlist.AddRange(myfractionlistreduced);
+                string fractionlistwhere = "data->>'MunicipalityId' = '" + locid + "' AND " + defaultmunfrafilter;
+                var myfractionlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("districts")
+                       .WhereRaw(fractionlistwhere)
+                       .GetObjectListAsync<District>();
 
-        //            conn.Close();
-        //        }
-        //    }
-        //    if (loctype == "fra")
-        //    {
-        //        using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //        {
-        //            conn.Open();
+                var mylocalitylistreduced = new LocHelperclass { typ = "mun", name = mymun.Detail[lang].Title, id = mymun.Id };
+                var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
 
-        //            var myfra = PostgresSQLHelper.SelectFromTableDataAsObject<District>(conn, "districts", "*", "Id = '" + locid + "'", "", 0, null).FirstOrDefault();
+                if (locationtypes.Contains("mun"))
+                    mylocationlist.Add(mylocalitylistreduced);
+                if (locationtypes.Contains("fra"))
+                    mylocationlist.AddRange(myfractionlistreduced);
+            }
+            if (loctype == "fra")
+            {
+                var myfra = await QueryFactory.Query()
+                       .Select("data")
+                       .From("districts")
+                       .Where("id", locid)
+                       .GetObjectSingleAsync<District>();
 
-        //            var myfralistreduced = new LocHelperclass { typ = "fra", name = myfra.Detail[lang].Title, id = myfra.Id };
+                var myfralistreduced = new LocHelperclass { typ = "fra", name = myfra.Detail[lang].Title, id = myfra.Id };
 
-        //            if (locationtypes.Contains("fra"))
-        //                mylocationlist.Add(myfralistreduced);
+                if (locationtypes.Contains("fra"))
+                    mylocationlist.Add(myfralistreduced);
+            }
+            else
+            {
+                if (locationtypes.Contains("mta"))
+                {
+                    var mymetaregion = await QueryFactory.Query()
+                       .Select("data")
+                       .From("metaregions")
+                       .WhereRaw("data->'Active'='true'")
+                       .GetObjectListAsync<MetaRegion>();                    
 
-        //            conn.Close();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (locationtypes.Contains("mta"))
-        //        {
-        //            var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObject<MetaRegion>(conn, "metaregions", "*", "data->'Active'='true'", "", 0, null);
+                    var mymetaregionlistreduced = mymetaregion.Select(x => new LocHelperclass { typ = "mta", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(mymetaregionlistreduced);
+                }
 
-        //            var mymetaregionlistreduced = mymetaregion.Select(x => new LocHelperclass { typ = "mta", name = x.Detail[lang].Title, id = x.Id });
-        //            mylocationlist.AddRange(mymetaregionlistreduced);
-        //        }
+                if (locationtypes.Contains("reg"))
+                {
+                    var myregion = await QueryFactory.Query()
+                       .Select("data")
+                       .From("regions")
+                       .WhereRaw("data->'Active'='true'")
+                       .GetObjectListAsync<Region>();
 
-        //        if (locationtypes.Contains("reg"))
-        //        {
-        //            var myregion = PostgresSQLHelper.SelectFromTableDataAsObject<Region>(conn, "regions", "*", "data->'Active'='true'", "", 0, null);
+                    var myregionlistreduced = myregion.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(myregionlistreduced);
+                }
 
-        //            var myregionlistreduced = myregion.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
-        //            mylocationlist.AddRange(myregionlistreduced);
-        //        }
+                if (locationtypes.Contains("tvs"))
+                {
+                    var mytv = await QueryFactory.Query()
+                       .Select("data")
+                       .From("tvs")
+                       .WhereRaw("data->'Active'='true'")
+                       .GetObjectListAsync<Tourismverein>();
 
-        //        if (locationtypes.Contains("tvs"))
-        //        {
-        //            var mytv = PostgresSQLHelper.SelectFromTableDataAsObject<Tourismverein>(conn, "tvs", "*", "data->'Active'='true'", "", 0, null);
+                    var mytourismvereinlistreduced = mytv.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(mytourismvereinlistreduced);
+                }
 
-        //            var mytourismvereinlistreduced = mytv.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-        //            mylocationlist.AddRange(mytourismvereinlistreduced);
-        //        }
+                if (locationtypes.Contains("mun"))
+                {
+                    var mylocalitylist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("municipalities")
+                       .WhereRaw("data->'Active'='true'")
+                       .GetObjectListAsync<Municipality>();
 
-        //        if (locationtypes.Contains("mun"))
-        //        {
-        //            var mylocalitylist = PostgresSQLHelper.SelectFromTableDataAsObject<Municipality>(conn, "municipalities", "*", defaultmunfrafilter, "", 0, null);
+                    var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(mylocalitylistreduced);
+                }
 
-        //            var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-        //            mylocationlist.AddRange(mylocalitylistreduced);
-        //        }
+                if (locationtypes.Contains("fra"))
+                {
+                    var myfractionlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("districts")
+                       .WhereRaw("data->'Active'='true'")
+                       .GetObjectListAsync<District>();
 
-        //        if (locationtypes.Contains("fra"))
-        //        {
-        //            var myfractionlist = PostgresSQLHelper.SelectFromTableDataAsObject<District>(conn, "districts", "*", defaultmunfrafilter, "", 0, null);
+                    var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(myfractionlistreduced);
+                }
+            }
 
-        //            var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-        //            mylocationlist.AddRange(myfractionlistreduced);
-        //        }
-        //    }
-
-        //    return mylocationlist;
-        //}
+            return mylocationlist;
+        }
 
 
         /// <summary>
@@ -309,7 +353,7 @@ namespace OdhApiCore.Controllers.api
             string loctype = "";
             string locid = "";
 
-            if (locfilter == "null")
+            if (locfilter == null || locfilter == "null")
             {
                 loctype = "";
             }
