@@ -44,7 +44,7 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> GetTheLocationList(
             string? language = "en",
             string? type = "null",
-            bool? showall = true,
+            bool showall = true,
             string? locfilter = null)
         {
             //var result = default(List<LocHelperclass>);
@@ -87,15 +87,22 @@ namespace OdhApiCore.Controllers.api
         /// <param name="lang">Language</param>
         /// <param name="locfilter">Location Filter</param>
         /// <returns>Collection of Reduced Location Objects</returns>
-        private async Task<List<LocHelperclass>> GetLocationInfoFiltered(string? lang, string? locfilter, bool? allactivedata = false, string? type = null)
+        private async Task<List<LocHelperclass>> GetLocationInfoFiltered(string? lang, string? locfilter, bool allactivedata = false, string? type = null)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 
-            string loctype = locfilter.ToLower().Substring(0, 3);
-            string locid = locfilter.Substring(3).ToUpper();
+            string loctype = "";
+            string locid = "";
+
+
+            if (locfilter != null && locfilter != "null")
+            {
+                loctype = locfilter.ToLower().Substring(0, 3);
+                locid = locfilter.Substring(3).ToUpper();
+            }
 
             string defaultmunfrafilter = "data->'VisibleInSearch'='true'";
-            if (allactivedata.Value == true)
+            if (allactivedata == true)
                 defaultmunfrafilter = "data->'Active'='true'";
 
             List<string> locationtypes = new List<string>() { "mta", "reg", "tvs", "mun", "", "fra" };
@@ -315,7 +322,7 @@ namespace OdhApiCore.Controllers.api
                     var mylocalitylist = await QueryFactory.Query()
                        .Select("data")
                        .From("municipalities")
-                       .WhereRaw("data->'Active'='true'")
+                       .WhereRaw(defaultmunfrafilter)
                        .GetObjectListAsync<Municipality>();
 
                     var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
@@ -327,7 +334,7 @@ namespace OdhApiCore.Controllers.api
                     var myfractionlist = await QueryFactory.Query()
                        .Select("data")
                        .From("districts")
-                       .WhereRaw("data->'Active'='true'")
+                       .WhereRaw(defaultmunfrafilter)
                        .GetObjectListAsync<District>();
 
                     var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
@@ -337,7 +344,6 @@ namespace OdhApiCore.Controllers.api
 
             return mylocationlist;
         }
-
 
         /// <summary>
         /// Get Filtered SkiAreaList based on TV & TVBs
