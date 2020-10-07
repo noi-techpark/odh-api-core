@@ -76,9 +76,7 @@ namespace OdhApiCore.Controllers.api
             string language = "en",
             string locfilter = "null")
         {
-            //return Ok(await GetSkiAreaInfoFiltered(language, locfilter));
-
-            return null;
+            return Ok(await GetSkiAreaInfoFiltered(language, locfilter));
         }
 
         #endregion
@@ -297,87 +295,108 @@ namespace OdhApiCore.Controllers.api
         //}
 
 
-        ///// <summary>
-        ///// Get Filtered SkiAreaList based on TV & TVBs
-        ///// </summary>
-        ///// <param name="lang"></param>
-        ///// <param name="locfilter"></param>
-        ///// <returns>Collection of Reduced Location Objects</returns>
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //private async Task<List<LocHelperclass>> GetSkiAreaInfoFiltered(string lang, string locfilter)
-        //{
-        //    List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
+        /// <summary>
+        /// Get Filtered SkiAreaList based on TV & TVBs
+        /// </summary>
+        /// <param name="lang"></param>
+        /// <param name="locfilter"></param>
+        /// <returns>Collection of Reduced Location Objects</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        private async Task<List<LocHelperclass>> GetSkiAreaInfoFiltered(string lang, string locfilter)
+        {
+            List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 
-        //    string loctype = "";
-        //    string locid = "";
+            string loctype = "";
+            string locid = "";
 
-        //    if (locfilter == "null")
-        //    {
-        //        loctype = "";
-        //    }
-        //    else
-        //    {
-        //        loctype = locfilter.Substring(0, 3);
-        //        locid = locfilter.Substring(3).ToUpper();
-        //    }
+            if (locfilter == "null")
+            {
+                loctype = "";
+            }
+            else
+            {
+                loctype = locfilter.Substring(0, 3);
+                locid = locfilter.Substring(3).ToUpper();
+            }
 
 
-        //    if (loctype == "tvs")
-        //    {
-        //        string skiarealistwhere = "data @> '{ \"TourismvereinIds\": [\"" + locid + "\"]}'";
-        //        //var myskiarealist = PostgresSQLHelper.SelectFromTableDataAsObject<SkiArea>(conn, "skiareas", "*", skiarealistwhere, "", 0, null);
+            if (loctype == "tvs")
+            {
+                string skiarealistwhere = "data @> '{ \"TourismvereinIds\": [\"" + locid + "\"]}'";
+                //var myskiarealist = PostgresSQLHelper.SelectFromTableDataAsObject<SkiArea>(conn, "skiareas", "*", skiarealistwhere, "", 0, null);
 
-        //        var myskiarealistquery =
-        //           QueryFactory.Query()
-        //               .Select("data")
-        //               .From("municipalities")
-        //               .WhereRaw(skiarealistwhere);
+                var myskiarealistquery =
+                   QueryFactory.Query()
+                       .Select("data")
+                       .From("skiareas")
+                       .WhereRaw(skiarealistwhere);
 
-        //        var myskiareliststring = await myskiarealistquery.GetAreaforRegionPGAsync GetAsync<string>();
-        //        var myskiarelist = JsonConvert.DeserializeObject<IEnumerable<SkiArea>>(myskiareliststring);
+                var myskiarealist = await myskiarealistquery.GetObjectListAsync<SkiArea>();
 
-        //        var myskiarealistreduced = myskiarelist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
+                var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
 
-        //        mylocationlist.AddRange(myskiarealistreduced);
-        //    }
-        //        if (loctype == "reg")
-        //        {
-        //            string skiarealistwhere = "data @> '{ \"RegionIds\": [\"" + locid + "\"]}'";
-        //            var myskiarealist = PostgresSQLHelper.SelectFromTableDataAsObject<SkiArea>(conn, "skiareas", "*", skiarealistwhere, "", 0, null);
+                mylocationlist.AddRange(myskiarealistreduced);
+            }
+            if (loctype == "reg")
+            {
+                string skiarealistwhere = "data @> '{ \"RegionIds\": [\"" + locid + "\"]}'";
+                
+                var myskiarealistquery =
+                   QueryFactory.Query()
+                       .Select("data")
+                       .From("skiareas")
+                       .WhereRaw(skiarealistwhere);
 
-        //            var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
+                var myskiarealist = await myskiarealistquery.GetObjectListAsync<SkiArea>();
 
-        //            mylocationlist.AddRange(myskiarealistreduced);
-        //        }
-        //        if (loctype == "mta")
-        //        {
-        //            var mymetaregion = PostgresSQLHelper.SelectFromTableDataAsObject<MetaRegion>(conn, "metaregions", "*", "Id = '" + locid + "'", "", 0, null).FirstOrDefault();
+                var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
 
-        //            string regionfilter = "";
-        //            foreach (var regionid in mymetaregion.RegionIds)
-        //            {
-        //                regionfilter = regionfilter + "data @> '{ \"RegionIds\": [\"" + regionid + "\"]}' OR ";
-        //            }
+                mylocationlist.AddRange(myskiarealistreduced);
+            }
+            if (loctype == "mta")
+            {
+                var mymetaregion = await QueryFactory.Query()
+                       .Select("data")
+                       .From("metaregions")
+                       .Where("id", locid)
+                       .GetObjectSingleAsync<MetaRegion>();
 
-        //            regionfilter = regionfilter.Remove(regionfilter.Length - 4);
+                string regionfilter = "";
+                foreach (var regionid in mymetaregion.RegionIds)
+                {
+                    regionfilter = regionfilter + "data @> '{ \"RegionIds\": [\"" + regionid + "\"]}' OR ";
+                }
 
-        //            var myskiarealist = PostgresSQLHelper.SelectFromTableDataAsObject<SkiArea>(conn, "skiareas", "*", regionfilter, "", 0, null);
+                regionfilter = regionfilter.Remove(regionfilter.Length - 4);
 
-        //            var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
+                var myskiarealistquery =
+                  QueryFactory.Query()
+                      .Select("data")
+                      .From("skiareas")
+                      .WhereRaw(regionfilter);
 
-        //            mylocationlist.AddRange(myskiarealistreduced);
-        //        }
-        //    if (String.IsNullOrEmpty(loctype))
-        //    {
-        //        var myskiarealist = PostgresSQLHelper.SelectFromTableDataAsObject<SkiArea>(conn, "skiareas", "*", "", "", 0, null);
+                var myskiarealist = await myskiarealistquery.GetObjectListAsync<SkiArea>();
 
-        //        var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
+                var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
 
-        //        mylocationlist.AddRange(myskiarealistreduced);
-        //    }               
+                mylocationlist.AddRange(myskiarealistreduced);
+            }
+            if (String.IsNullOrEmpty(loctype))
+            {
+                var myskiarealistquery =
+                  QueryFactory.Query()
+                      .Select("data")
+                      .From("skiareas");
 
-        //    return mylocationlist;
-        //}
+                var myskiarealist = await myskiarealistquery.GetObjectListAsync<SkiArea>();
+                
+                var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
+
+                mylocationlist.AddRange(myskiarealistreduced);
+            }
+
+            return mylocationlist;
+        }
 
         #endregion
     }

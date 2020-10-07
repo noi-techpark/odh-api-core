@@ -13,13 +13,13 @@ namespace Helper
 {
     public static class QueryFactoryExtension
     {
-        public static async Task<T> GetObjectSingleAsync<T>(this Query query, CancellationToken cancellationToken)
+        public static async Task<T> GetObjectSingleAsync<T>(this Query query, CancellationToken cancellationToken = default)
         {
             var result = await query.FirstOrDefaultAsync<JsonRaw>();
             return JsonConvert.DeserializeObject<T>(result.Value);
         }
 
-        public static async Task<IEnumerable<T>> GetObjectListAsync<T>(this Query query, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<T>> GetObjectListAsync<T>(this Query query, CancellationToken cancellationToken = default)
         {
             var result = await query.GetAsync<JsonRaw>();            
             return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value));
