@@ -1651,7 +1651,11 @@ namespace Helper
         [Description("Tankstellen Wasserstoff")]
         TankstellenWasserstoff = 1 << 9,
         [Description("Weitere Verkehr und Transport")]
-        WeitereVerkehrundTransport = 1 << 10
+        WeitereVerkehrundTransport = 1 << 10,
+        [Description("E-Bike Ladestation")]
+        EBikeLadestation = 1 << 11,
+        [Description("Fahrradbox")]
+        Fahrradbox = 1 << 12
     }
 
     [Flags]
