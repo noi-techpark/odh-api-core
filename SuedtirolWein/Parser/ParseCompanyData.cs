@@ -405,7 +405,35 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop24);
             }
 
+            //new descriptionsparklingwineproducer
+            if (companydata.Element("descriptionsparklingwineproducer") != null)
+            {
+                PoiProperty myprop25 = new PoiProperty();
+                myprop25.Name = "descriptionsparklingwineproducer";
 
+                myprop25.Value = companydata.Element("descriptionsparklingwineproducer").Value;
+                mypropertylist.Add(myprop25);
+            }
+
+            //new h1sparklingwineproducer
+            if (companydata.Element("h1sparklingwineproducer") != null)
+            {
+                PoiProperty myprop26 = new PoiProperty();
+                myprop26.Name = "h1sparklingwineproducer";
+
+                myprop26.Value = companydata.Element("h1sparklingwineproducer").Value;
+                mypropertylist.Add(myprop26);
+            }
+
+            //new h2sparklingwineproducer
+            if (companydata.Element("h2sparklingwineproducer") != null)
+            {
+                PoiProperty myprop27 = new PoiProperty();
+                myprop27.Name = "h2sparklingwineproducer";
+
+                myprop27.Value = companydata.Element("h2sparklingwineproducer").Value;
+                mypropertylist.Add(myprop27);
+            }
 
             mywinecompany.PoiProperty.TryAddOrUpdate(language, mypropertylist);
         }
