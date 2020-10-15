@@ -10,5 +10,14 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80
       ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
+      ASPNETCORE_MssConfig__Username: ${MSS_USER}
+      ASPNETCORE_MssConfig__Password: ${MSS_PSWD}
+      ASPNETCORE_LcsConfig__Username: ${LCS_USER}
+      ASPNETCORE_LcsConfig__Password: ${LCS_PSWD}
+      ASPNETCORE_LcsConfig__MessagePassword: ${LCS_MSGPSWD}
+      ASPNETCORE_SiagConfig__Username: ${SIAG_USER}
+      ASPNETCORE_SiagConfig__Password: ${SIAG_PSWD}
+      ASPNETCORE_XmlConfig__XmldirWeather: ${XMLDIR}
+      ASPNETCORE_Xmldir__Xmldir: ${XMLDIR}
     ports:
       - "60209:80"
