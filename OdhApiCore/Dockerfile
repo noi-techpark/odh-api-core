@@ -10,6 +10,8 @@ COPY Helper/Helper.csproj Helper/
 COPY MSS/MSS.csproj MSS/
 COPY LCS/LCS.csproj LCS/
 COPY SIAG/SIAG.csproj SIAG/
+COPY CDB/CDB.csproj CDB/
+COPY SuedtirolWein/SuedtirolWein.csproj SuedtirolWein/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj
 COPY . .
