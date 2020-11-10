@@ -579,10 +579,10 @@ namespace Helper
 
         //TODO THEMEFILTER is AND connected
         public static Query AccoFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
-        query.WhereAllInJsonb(
-             featurelist,
-             feature => new { SpecialFeaturesIds = new[] { feature.ToLower() } }
-         );
+            query.WhereInJsonb(
+                featurelist,
+                tag => new { Features = new[] { new { Id = tag.ToUpper() } } }
+            );
 
         public static Query AccoCategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
            query.WhereInJsonb(
@@ -590,6 +590,13 @@ namespace Helper
                 "AccoCategoryId",
                 category => category
             );
+
+        public static Query AccoFeatureIdFilter(this Query query, IReadOnlyCollection<string> featureidlist) =>
+          query.WhereInJsonb(
+               list: featureidlist,
+               "AccoCategoryId",
+               category => category
+           );
 
         public static Query AccoApartmentFilter(this Query query, bool? apartment) =>
             query.When(

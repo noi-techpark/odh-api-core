@@ -494,7 +494,7 @@ namespace OdhApiCore.Controllers
                         .From("accommodations")
                         .AccommodationWhereExpression(
                             idlist: myhelper.idlist, accotypelist: myhelper.accotypelist,
-                            categorylist: myhelper.categorylist, featurelist: myhelper.featurelist,
+                            categorylist: myhelper.categorylist, featurelist: myhelper.featurelist, featureidlist: myhelper.featureidlist,
                             badgelist: myhelper.badgelist, themelist: myhelper.themelist, 
                             boardlist: myhelper.boardlist, smgtaglist: myhelper.smgtaglist,
                             districtlist: myhelper.districtlist, municipalitylist: myhelper.municipalitylist, 

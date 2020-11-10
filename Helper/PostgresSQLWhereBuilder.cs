@@ -304,7 +304,7 @@ namespace Helper
         public static Query AccommodationWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> accotypelist, IReadOnlyCollection<string> categorylist,
-            Dictionary<string, bool> featurelist, IReadOnlyCollection<string> badgelist, Dictionary<string, bool> themelist,
+            Dictionary<string, bool> featurelist, IReadOnlyCollection<string> featureidlist, IReadOnlyCollection<string> badgelist, Dictionary<string, bool> themelist,
             IReadOnlyCollection<string> boardlist, IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, bool? apartmentfilter, bool? bookable,
@@ -315,7 +315,7 @@ namespace Helper
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, accotypelist, categorylist,
-                featurelist, badgelist, languagelist, themelist, boardlist,
+                featurelist, featureidlist, badgelist, languagelist, themelist, boardlist,
                 smgtaglist, districtlist, municipalitylist, tourismvereinlist,
                 regionlist, altitude, altitudemin, altitudemax, activefilter,
                 smgactivefilter, searchfilter, apartmentfilter, bookable,
@@ -332,6 +332,7 @@ namespace Helper
                 .AccoTypeFilter(accotypelist)
                 .AccoCategoryFilter(categorylist)
                 .AccoFeatureFilter(featurelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
+                .AccoFeatureIdFilter(featureidlist)
                 .AccoBadgeFilter(badgelist)
                 .AccoThemeFilter(themelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
                 .AccoBoardFilter(boardlist)

@@ -52,6 +52,7 @@ namespace OdhApiCore.Filters
                     string? categoryfilter = actionarguments.ContainsKey("categoryfilter") ? (string?)actionarguments["categoryfilter"] : null;
                     string? typefilter = actionarguments.ContainsKey("typefilter") ? (string?)actionarguments["typefilter"] : null;
                     string? featurefilter = actionarguments.ContainsKey("featurefilter") ? (string?)actionarguments["featurefilter"] : null;
+                    string? featureidfilter = actionarguments.ContainsKey("featureidfilter") ? (string?)actionarguments["featureidfilter"] : null;
                     string? badgefilter = actionarguments.ContainsKey("badgefilter") ? (string?)actionarguments["badgefilter"] : null;
                     string? idfilter = actionarguments.ContainsKey("idfilter") ? (string?)actionarguments["idfilter"] : null;
                     string? themefilter = actionarguments.ContainsKey("themefilter") ? (string?)actionarguments["themefilter"] : null;
@@ -80,7 +81,7 @@ namespace OdhApiCore.Filters
 
                     AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                        QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
-                       featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
+                       featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
                        smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, (CancellationToken)context.ActionArguments["cancellationToken"]);
 
                     var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -351,7 +352,7 @@ namespace OdhApiCore.Filters
                        .From("accommodations")
                        .AccommodationWhereExpression(
                            idlist: myhelper.idlist, accotypelist: myhelper.accotypelist,
-                           categorylist: myhelper.categorylist, featurelist: myhelper.featurelist,
+                           categorylist: myhelper.categorylist, featurelist: myhelper.featurelist, featureidlist: myhelper.featureidlist,
                            badgelist: myhelper.badgelist, themelist: myhelper.themelist,
                            boardlist: myhelper.boardlist, smgtaglist: myhelper.smgtaglist,
                            districtlist: myhelper.districtlist, municipalitylist: myhelper.municipalitylist,
