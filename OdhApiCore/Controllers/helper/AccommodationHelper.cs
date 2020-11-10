@@ -71,7 +71,7 @@ namespace OdhApiCore.Controllers
             idlist = String.IsNullOrEmpty(idfilter) ? new List<string>() : CommonListCreator.CreateIdList(idfilter.ToUpper());
             smgtaglist = CommonListCreator.CreateIdList(smgtags);
 
-            featureidlist = String.IsNullOrEmpty(featurefilter) ? new List<string>() : CommonListCreator.CreateIdList(featurefilter.ToUpper());
+            featureidlist = String.IsNullOrEmpty(featureidfilter) ? new List<string>() : CommonListCreator.CreateIdList(featureidfilter.ToUpper());
 
             districtlist = new List<string>();
             municipalitylist = new List<string>();
