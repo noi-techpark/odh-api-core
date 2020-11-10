@@ -89,7 +89,21 @@ namespace OdhApiCore.Filters
                     //Get Accommodations IDlist 
                     var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
 
-                    var myaccobooklist = idlist.Select(x => new AccoBookList { Id = x.Id, IsBookable = x.IsBookable, AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(x.AccoBookingChannel.Value) }).ToList();
+                    ////Fix
+                    //List<AccoBookList> myaccoboklist = new List<AccoBookList>();
+                    //foreach(var item in idlist)
+                    //{
+                    //    var x = new AccoBookList();
+                    //    x.Id = item.Id;
+                    //    x.IsBookable = item.IsBookable;
+                    //    x.AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(item.AccoBookingChannel.Value);                        
+                    //}
+
+                    //crashes because some AccobookingChannels are null TODO!
+                    //var myaccobooklist = idlist.Select(x => new AccoBookList { Id = x.Id, IsBookable = x.IsBookable, AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(x.AccoBookingChannel.Value) }).ToList();
+                    
+                    //TODO NOT WORKING, Availability Request is returned without paging
+
 
                     var booklist = idlist.Select(x => x.Id.ToUpper()).ToList();
                     var bokfilterlist = bokfilter.Split(',').ToList(); ;
