@@ -57,7 +57,7 @@ namespace OdhApiCore.Controllers.api
             return this.Content(User.Identity.Name + " WithRole2 working", "application/json", Encoding.UTF8);
         }
 
-        [HttpGet, Route("Anonymous")]
+        [HttpGet, Route("Environment")]
         public IActionResult GetEnvironmentV(CancellationToken cancellationToken)
         {
             var siaguser = settings.SiagConfig.Username;
