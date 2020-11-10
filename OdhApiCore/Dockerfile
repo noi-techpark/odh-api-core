@@ -28,5 +28,5 @@ RUN dotnet publish OdhApiCore.csproj -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-COPY OdhApiCore/xml/Weather.xml app/xml/
+COPY OdhApiCore/xml/Weather.xml xml/
 ENTRYPOINT ["dotnet", "OdhApiCore.dll"]
