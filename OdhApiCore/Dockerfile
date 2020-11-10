@@ -13,6 +13,7 @@ COPY SIAG/SIAG.csproj SIAG/
 COPY CDB/CDB.csproj CDB/
 COPY SuedtirolWein/SuedtirolWein.csproj SuedtirolWein/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
+COPY OdhApiCore/xml xml/
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj
 COPY . .
 WORKDIR /src/OdhApiCore
