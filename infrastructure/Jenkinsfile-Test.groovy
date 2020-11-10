@@ -13,7 +13,7 @@ pipeline {
 	MSS_PSWD = credentials('odh-tourism-api-test-mss-pswd')
 	LCS_USER = credentials('odh-tourism-api-test-lcs-user')
 	LCS_PSWD = credentials('odh-tourism-api-test-lcs-pswd')
-	MSS_MSGPSWD = credentials('odh-tourism-api-test-lcs-msgpswd')
+	LCS_MSGPSWD = credentials('odh-tourism-api-test-lcs-msgpswd')
 	SIAG_USER = credentials('odh-tourism-api-test-siag-user')
 	SIAG_PSWD = credentials('odh-tourism-api-test-siag-pswd')
 	XMLDIR = credentials('odh-tourism-api-test-xmldir')
@@ -28,10 +28,16 @@ pipeline {
                     echo 'COMPOSE_PROJECT_NAME=${DOCKER_PROJECT_NAME}' >> .env
                     echo 'DOCKER_IMAGE=${DOCKER_IMAGE}' >> .env
                     echo 'DOCKER_TAG=${DOCKER_TAG}' >> .env
-
-					echo 'SERVER_PORT=${SERVER_PORT}' >> .env
-                    
+                    echo 'SERVER_PORT=${SERVER_PORT}' >> .env                    
                     echo 'PG_CONNECTION=${PG_CONNECTION}' >> .env
+		    echo 'MSS_USER=${MSS_USER}' >> .env
+		    echo 'MSS_PSWD=${MSS_PSWD}' >> .env
+		    echo 'LCS_USER=${LCS_USER}' >> .env
+		    echo 'LCS_PSWD=${LCS_PSWD}' >> .env
+		    echo 'LCS_MSGPSWD=${LCS_MSGPSWD}' >> .env
+		    echo 'SIAG_USER=${SIAG_USER}' >> .env
+		    echo 'SIAG_PSWD=${SIAG_PSWD}' >> .env
+		    echo 'XMLDIR=${XMLDIR}' >> .env
                 """
             }
         }
