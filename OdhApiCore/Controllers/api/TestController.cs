@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -18,6 +21,15 @@ namespace OdhApiCore.Controllers.api
     [ApiController]
     public class TestController : ControllerBase
     {
+        private readonly IWebHostEnvironment env;
+        private readonly ISettings settings;
+
+        public TestController(IWebHostEnvironment env, ISettings settings)           
+        {
+            this.env = env;
+            this.settings = settings;
+        }
+
         [HttpGet, Route("Anonymous")]
         public IActionResult GetAnonymous(CancellationToken cancellationToken)
         {
@@ -43,6 +55,18 @@ namespace OdhApiCore.Controllers.api
         public IActionResult GetWithRole2(CancellationToken cancellationToken)
         {
             return this.Content(User.Identity.Name + " WithRole2 working", "application/json", Encoding.UTF8);
+        }
+
+        [HttpGet, Route("Anonymous")]
+        public IActionResult GetEnvironmentV(CancellationToken cancellationToken)
+        {
+            var siaguser = settings.SiagConfig.Username;
+            var mssuser = settings.MssConfig.Username;
+            var xmldir = settings.XmlConfig.Xmldir;
+            var xmldir2 = settings.XmlConfig.XmldirWeather;
+
+
+            return this.Content(" mss user: " + mssuser + " siag user " + siaguser + " xmldir " + xmldir + " " + xmldir2 , "application/json", Encoding.UTF8);
         }
     }
 }
