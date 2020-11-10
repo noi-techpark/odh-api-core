@@ -13,11 +13,12 @@ COPY SIAG/SIAG.csproj SIAG/
 COPY CDB/CDB.csproj CDB/
 COPY SuedtirolWein/SuedtirolWein.csproj SuedtirolWein/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
-COPY OdhApiCore/xml xml/
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj
 COPY . .
 WORKDIR /src/OdhApiCore
 RUN dotnet build OdhApiCore.csproj -c Release -o /app
+
+COPY OdhApiCore/xml app/xml/
 
 FROM build AS test
 WORKDIR /src
