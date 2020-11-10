@@ -18,8 +18,6 @@ COPY . .
 WORKDIR /src/OdhApiCore
 RUN dotnet build OdhApiCore.csproj -c Release -o /app
 
-COPY OdhApiCore/xml app/xml/
-
 FROM build AS test
 WORKDIR /src
 RUN dotnet test --filter Category!=Integration OdhApiCore.sln
@@ -30,4 +28,5 @@ RUN dotnet publish OdhApiCore.csproj -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
+COPY OdhApiCore/xml/Weather.xml app/xml/
 ENTRYPOINT ["dotnet", "OdhApiCore.dll"]
