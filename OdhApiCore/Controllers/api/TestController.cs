@@ -64,9 +64,10 @@ namespace OdhApiCore.Controllers.api
             var mssuser = settings.MssConfig.Username;
             var xmldir = settings.XmlConfig.Xmldir;
             var xmldir2 = settings.XmlConfig.XmldirWeather;
+            var pgconnection = settings.PostgresConnectionString;
 
 
-            return this.Content(" mss user: " + mssuser + " siag user " + siaguser + " xmldir " + xmldir + " " + xmldir2 , "application/json", Encoding.UTF8);
+            return this.Content(" mss user: " + mssuser + " siag user " + siaguser + " xmldir " + xmldir + " " + xmldir2  + " pgconnection " + pgconnection.Substring(0,50), "application/json", Encoding.UTF8);
         }
     }
 }
