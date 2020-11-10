@@ -289,11 +289,14 @@ namespace OdhApiCore.Filters
                             }
                         }
                         myRawList.Add(jtoken);
-
-                        okObjectlist.Value = myRawList;
+                
+                        okObjectlist.Value = myRawList;                
                     }
                 }
             }
+
+            //TODO REturn paginated result on list https://localhost:5001/api/Accommodation?pagenumber=1&pagesize=10&categoryfilter=30720&typefilter=1&arrival=01-02-2021&departure=05-02-2021&roominfo=1-18%2C18&bokfilter=hgv&source=sinfo&availabilitychecklanguage=en&availabilitycheck=true
+
             await base.OnResultExecutionAsync(context, next);
         }
 
