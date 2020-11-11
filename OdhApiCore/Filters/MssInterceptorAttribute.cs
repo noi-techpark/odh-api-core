@@ -241,7 +241,7 @@ namespace OdhApiCore.Filters
 
                                 if (bokfilterlist.Contains("hgv"))
                                 {
-                                    MssResult mssresult = default(MssResult);
+                                    MssResult? mssresult = null;
 
                                     if (actionid == "GetAccommodations")
                                     {
@@ -261,7 +261,7 @@ namespace OdhApiCore.Filters
                                 }
                                 if (bokfilterlist.Contains("lts"))
                                 {
-                                    MssResult lcsresult = default(MssResult);
+                                    MssResult? lcsresult = null;
 
                                     if (actionid == "GetAccommodations")
                                     {
@@ -289,9 +289,9 @@ namespace OdhApiCore.Filters
                             }
                         }
                         myRawList.Add(jtoken);
-                
-                        okObjectlist.Value = myRawList;                
                     }
+
+                    jRawList.Items = myRawList.Select(jtoken => new JsonRaw(jtoken.ToString()));
                 }
             }
 
