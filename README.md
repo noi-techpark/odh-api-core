@@ -13,3 +13,9 @@ Project Goals/Requirements:
 * better Api Error Handling
 
 Test Server on https://api.tourism.testingmachine.eu
+
+Used Postgres Extensions on DB
+
+* extension earthdistance;
+* extension cube;
+* extension pg_trgm;
