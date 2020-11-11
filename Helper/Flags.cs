@@ -1209,29 +1209,28 @@ namespace Helper
         Telemix = 1 << 9,
         [Description("Förderband")]
         Foerderband = 1 << 10,
+        [Description("1er Sessellift kuppelbar")]
+        EinserSesselLiftkuppelbar = 1 << 11,
         [Description("2er Sessellift kuppelbar")]
-        ZweierSesselliftkuppelbar = 1 << 11,
+        ZweierSesselliftkuppelbar = 1 << 12,
         [Description("3er Sessellift kuppelbar")]
-        DreierSesselliftkuppelbar = 1 << 12,
+        DreierSesselliftkuppelbar = 1 << 13,
         [Description("4er Sessellift kuppelbar")]
-        ViererSesselliftkuppelbar = 1 << 13,
+        ViererSesselliftkuppelbar = 1 << 14,
         [Description("6er Sessellift kuppelbar")]
-        SechserSesselliftkuppelbar = 1 << 14,
+        SechserSesselliftkuppelbar = 1 << 15,
         [Description("8er Sessellift kuppelbar")]
-        AchterSesselliftkuppelbar = 1 << 15,
+        AchterSesselliftkuppelbar = 1 << 16,
         [Description("Klein-Skilift")]
-        KleinSkilift = 1 << 16,
+        KleinSkilift = 1 << 17,
         //NEU
         [Description("Skibus")]
-        Skibus = 1 << 17,
-        [Description("1er Sessellift kuppelbar")]
-        EinserSesselLiftkuppelbar = 1 << 18,
+        Skibus = 1 << 18,
         [Description("Zug")]
         Zug = 1 << 19,
         [Description("Weitere Aufstiegsanlagen")]
         WeitereAufstiegsanlagen = 1 << 20
     }
-
 
     #endregion
 
