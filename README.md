@@ -2,7 +2,7 @@
 
 Port of ODH Tourim Api to .Net Core.
 
-##Project Goals/Requirements:
+## Project Goals/Requirements:
 
 * Using .Net Core 3
 * PostgreSQL Database
@@ -13,7 +13,7 @@ Port of ODH Tourim Api to .Net Core.
 * better Api Error Handling
 * Advanced api operation (fields chooser, language selector, search terms)
 
-##Database Info
+## Database Info
 
 Used Postgres 12 
 Extensions active on DB
