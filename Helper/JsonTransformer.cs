@@ -46,14 +46,14 @@ namespace Helper
         {
             if (token == null)
                 return null;
-            static JObject? TransformObj(JObject obj)
+            static JObject TransformObj(JObject obj)
             {
                 // Get the License property of an object
                 var licenseProp = obj.Property("License");
                 // If License property exists and it's value isn't CC0 return null,
                 // which filters away the whole object
-                return licenseProp != null && !licenseProp.Value.Equals(new JValue("CC0")) ?
-                    null :
+                return licenseProp != null && (licenseProp.Value == null || !licenseProp.Value.Equals(new JValue("CC0"))) ?
+                    new JObject() :
                     new JObject(obj.Properties().Select(x => Walk(x)));
             };
             static JProperty? TransformProp(JProperty prop)
