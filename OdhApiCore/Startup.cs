@@ -161,10 +161,11 @@ namespace OdhApiCore
                 .AddJwtBearer(jwtBearerOptions =>
             {
                 jwtBearerOptions.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/";
-                jwtBearerOptions.Audience = "account";
+                //jwtBearerOptions.Audience = "account";                
                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = "preferred_username",
+                    ValidateAudience = false
                 };
                 //jwtBearerOptions.Events = new JwtBearerEvents()
                 //{
