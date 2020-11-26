@@ -8,6 +8,7 @@
     <Compile Include="Types.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="Writer.fs" />
+    <Compile Include="Transformer.fs" />
     <Compile Include="ParserTests.fs" />
   </ItemGroup>
 
