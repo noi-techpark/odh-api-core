@@ -38,6 +38,7 @@
     <ProjectReference Include="..\Helper\Helper.csproj" />
     <ProjectReference Include="..\LCS\LCS.csproj" />
     <ProjectReference Include="..\MSS\MSS.csproj" />
+    <ProjectReference Include="..\RawQueryParser\RawQueryParser.fsproj" />
     <ProjectReference Include="..\SIAG\SIAG.csproj" />
   </ItemGroup>
 
