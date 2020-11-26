@@ -9,11 +9,9 @@
     <Compile Include="Parser.fs" />
     <Compile Include="Writer.fs" />
     <Compile Include="Transformer.fs" />
-    <Compile Include="ParserTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Expecto" Version="9.0.2" />
     <PackageReference Include="FParsec" Version="1.1.1" />
   </ItemGroup>
 
