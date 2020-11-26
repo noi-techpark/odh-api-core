@@ -203,11 +203,7 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData
                         )
-                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
-                        .GeoSearchFilterAndOrderby(geosearchresult);
-
-                if (rawsort != null)
-                    query = query.OrderByRaw(RawQueryParser.Transformer.TransformSort(rawsort));
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =
