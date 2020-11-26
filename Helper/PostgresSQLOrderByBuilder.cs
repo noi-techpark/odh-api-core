@@ -39,11 +39,11 @@ namespace Helper
 
         public static Query ApplyOrdering(this Query query, ref string? seed, PGGeoSearchResult geosearchresult, string? rawsort)
         {
-            switch (seed, geosearchresult, rawsort)
+            switch (geosearchresult, rawsort)
             {
-                case (_, PGGeoSearchResult geosr, _) when geosr.geosearch:
+                case (PGGeoSearchResult geosr, _) when geosr.geosearch:
                     return query.GeoSearchFilterAndOrderby(geosr);
-                case (_, _, string raw):
+                case (_, string raw):
                     string rawOrderBy = RawQueryParser.Transformer.TransformSort(raw);
                     return query.OrderByRaw(rawOrderBy);
                 default:
