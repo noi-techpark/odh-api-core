@@ -7,7 +7,7 @@ let writeDirection = function
 let writeProperty (Property fields) =
     fields
     |> String.concat ","
-    |> sprintf "#{%s}"
+    |> sprintf "data#>>'\\{%s\\}'"
 
 let writeStatement statement =
     let s = writeDirection statement.Direction
