@@ -1,0 +1,67 @@
+﻿module RawQueryParser.Tests
+
+open Expecto
+open Parser
+
+[<AutoOpen>]
+module TestHelpers =
+    open FParsec
+
+    let run p input =
+        match run p input with
+        | Success (x, _, _) -> x
+        | Failure (msg, _, _) -> failwith $"{msg}"
+
+[<Tests>]
+let testParser =
+    testList "Parser" [
+        testList "Property" [
+            test "Simple property should parse correctly" {
+                let expected = Property [ "Detail" ]
+                let actual = run property "Detail"
+                Expect.equal actual expected ""
+            }
+            test "Hierarchial property should parse correctly" {
+                let expected = Property [ "Detail"; "de"; "Title" ]
+                let actual = run property "Detail.de.Title"
+                Expect.equal actual expected ""
+            }
+        ]
+        testList "Order" [
+            test "Order ascending" {
+                let actual = run sortOrder ""
+                Expect.equal actual Ascending ""
+            }
+            test "Order descending" {
+                let actual = run sortOrder "-"
+                Expect.equal actual Descending ""
+            }
+        ]
+        testList "OrderAndProperty" [
+            test "Sort by single" {
+                let expected = [
+                    { Property = Property ["Detail"; "de"; "Title"]; Direction = Descending }
+                ]
+                let actual = run statements "-Detail.de.Title"
+                Expect.equal actual expected ""
+            }
+            test "Sort by multiple" {
+                let expected = [
+                    { Property = Property ["Detail"; "de"; "Title"]; Direction = Descending }
+                    { Property = Property ["Detail"; "de"; "Body"]; Direction = Ascending }
+                ]
+                let actual = run statements "-Detail.de.Title,Detail.de.Body"
+                Expect.equal actual expected ""
+            }
+        ]
+    ]
+
+// Erroneous input should also be tested:
+//run statements "Detail:de.Title,-Detail.de.Body"
+//run statements "Detail.de.Title;-Detail.de.Body"
+//run statements "Detail.de.Title,+Detail.de.Body"
+//run statements "Detail.de.Title -- something bad"
+//run statements "Detail.12de"
+
+
+

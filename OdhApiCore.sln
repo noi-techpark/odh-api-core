@@ -26,7 +26,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIAG", "SIAG\SIAG.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CDB", "CDB\CDB.csproj", "{8804E917-19A5-4AC8-A811-153992815EC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuedtirolWein", "SuedtirolWein\SuedtirolWein.csproj", "{C74C0E5F-F6F6-4F31-8037-3BD9BC4F8A9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuedtirolWein", "SuedtirolWein\SuedtirolWein.csproj", "{C74C0E5F-F6F6-4F31-8037-3BD9BC4F8A9A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RawQueryParser", "RawQueryParser\RawQueryParser.fsproj", "{AFEF98C8-8959-4A39-BAC8-936E928D2F01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{C74C0E5F-F6F6-4F31-8037-3BD9BC4F8A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C74C0E5F-F6F6-4F31-8037-3BD9BC4F8A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C74C0E5F-F6F6-4F31-8037-3BD9BC4F8A9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFEF98C8-8959-4A39-BAC8-936E928D2F01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFEF98C8-8959-4A39-BAC8-936E928D2F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFEF98C8-8959-4A39-BAC8-936E928D2F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFEF98C8-8959-4A39-BAC8-936E928D2F01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
