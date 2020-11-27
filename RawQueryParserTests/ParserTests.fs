@@ -27,22 +27,22 @@ let testParser =
                 Expect.equal actual expected ""
             }
         ]
-        testList "Order" [
+        testList "Sort order" [
             test "Order ascending" {
-                let actual = run sortOrder ""
+                let actual = run sortDirection ""
                 Expect.equal actual Ascending ""
             }
             test "Order descending" {
-                let actual = run sortOrder "-"
+                let actual = run sortDirection "-"
                 Expect.equal actual Descending ""
             }
         ]
-        testList "OrderAndProperty" [
+        testList "Sort order and property" [
             test "Sort by single" {
                 let expected = [
                     { Property = Property ["Detail"; "de"; "Title"]; Direction = Descending }
                 ]
-                let actual = run statements "-Detail.de.Title"
+                let actual = run sortStatements "-Detail.de.Title"
                 Expect.equal actual expected ""
             }
             test "Sort by multiple" {
@@ -50,7 +50,7 @@ let testParser =
                     { Property = Property ["Detail"; "de"; "Title"]; Direction = Descending }
                     { Property = Property ["Detail"; "de"; "Body"]; Direction = Ascending }
                 ]
-                let actual = run statements "-Detail.de.Title,Detail.de.Body"
+                let actual = run sortStatements "-Detail.de.Title,Detail.de.Body"
                 Expect.equal actual expected ""
             }
         ]
