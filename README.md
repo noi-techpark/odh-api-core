@@ -30,6 +30,7 @@ Clone the repository
 
 ### Environment Variables
 
+* PG_CONNECTION
 * MSS_USER;
 * MSS_PSWD;
 * LCS_USER;
