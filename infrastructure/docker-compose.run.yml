@@ -5,6 +5,7 @@ services:
     image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     environment:
       ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
       ASPNETCORE_MssConfig__Username: ${MSS_USER}
       ASPNETCORE_MssConfig__Password: ${MSS_PSWD}
