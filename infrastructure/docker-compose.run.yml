@@ -4,7 +4,7 @@ services:
   api:
     image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       ASPNETCORE_URLS: http://+:80
       ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
       ASPNETCORE_MssConfig__Username: ${MSS_USER}
