@@ -2,12 +2,11 @@ pipeline {
     agent any
 
     environment {
+	ASPNETCORE_ENVIRONMENT = "Development"
         DOCKER_PROJECT_NAME = "odh-tourism-api"
         DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api'
         DOCKER_TAG = "test-$BUILD_NUMBER"
-
-		SERVER_PORT = "1011"
-        
+	SERVER_PORT = "1011"        
         PG_CONNECTION = credentials('odh-tourism-api-test-pg-connection')
 	MSS_USER = credentials('odh-tourism-api-test-mss-user')
 	MSS_PSWD = credentials('odh-tourism-api-test-mss-pswd')
@@ -28,7 +27,8 @@ pipeline {
                     echo 'COMPOSE_PROJECT_NAME=${DOCKER_PROJECT_NAME}' >> .env
                     echo 'DOCKER_IMAGE=${DOCKER_IMAGE}' >> .env
                     echo 'DOCKER_TAG=${DOCKER_TAG}' >> .env
-                    echo 'SERVER_PORT=${SERVER_PORT}' >> .env                    
+                    echo 'SERVER_PORT=${SERVER_PORT}' >> .env         
+		    echo 'ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}' >> .env         
                     echo 'PG_CONNECTION=${PG_CONNECTION}' >> .env
 		    echo 'MSS_USER=${MSS_USER}' >> .env
 		    echo 'MSS_PSWD=${MSS_PSWD}' >> .env
