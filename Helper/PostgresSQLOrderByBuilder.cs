@@ -36,5 +36,19 @@ namespace Helper
             BuildSeedOrderBy(ref orderby, seed, sortifseednull);
             return query.OrderByRaw(orderby);
         }
+
+        public static Query ApplyOrdering(this Query query, ref string? seed, PGGeoSearchResult geosearchresult, string? rawsort)
+        {
+            switch (geosearchresult, rawsort)
+            {
+                case (PGGeoSearchResult geosr, _) when geosr.geosearch:
+                    return query.GeoSearchFilterAndOrderby(geosr);
+                case (_, string raw):
+                    string rawOrderBy = RawQueryParser.Transformer.TransformSort(raw);
+                    return query.OrderByRaw(rawOrderBy);
+                default:
+                    return query.OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC");
+            }
+        }
     }
 }
