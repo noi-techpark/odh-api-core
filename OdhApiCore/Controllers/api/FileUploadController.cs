@@ -30,7 +30,8 @@ namespace OdhApiCore.Controllers.api
         }
 
         //TODO have a look here https://weblog.west-wind.com/posts/2017/sep/14/accepting-raw-request-body-content-in-aspnet-core-api-controllers
-
+        //TODO UPload on S3 https://stackoverflow.com/questions/56813075/aws-c-sharp-net-core-how-to-upload-a-jpg-image-to-s3-bucket-without-saving-i
+        //TODO https://docs.aws.amazon.com/sdkfornet1/latest/apidocs/html/T_Amazon_S3_Model_PutObjectRequest.htm
 
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
@@ -177,7 +178,7 @@ namespace OdhApiCore.Controllers.api
     //        Guid filenameguid = Guid.NewGuid();
 
     //        var name = filenameguid.ToString() + fileExtension;
-            
+
     //        return name;
     //    }
     //}
