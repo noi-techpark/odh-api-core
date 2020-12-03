@@ -21,8 +21,8 @@ namespace OdhApiCore.Controllers
 
         private static IEnumerable<TourismData> GetMainApi(string url)
         {
-            if (url.Contains("api"))
-                url = url.Replace("api","");
+            //if (url.Contains("api"))
+            //    url = url.Replace("api","");
 
             List<TourismData> tourismdatalist = new List<TourismData>();
 
