@@ -56,7 +56,7 @@ namespace OdhApiCore.Controllers.api
             //else
             //    result = await ;
 
-            return Ok(await GetLocationInfoFiltered(language, locfilter, showall, type));            
+            return Ok(await GetLocationInfoFiltered(language ?? "en", locfilter, showall, type));            
         } 
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace OdhApiCore.Controllers.api
             string? language = "en",
             string? locfilter = null)
         {
-            return Ok(await GetSkiAreaInfoFiltered(language, locfilter));
+            return Ok(await GetSkiAreaInfoFiltered(language ?? "en", locfilter));
         }
 
         #endregion
@@ -82,12 +82,12 @@ namespace OdhApiCore.Controllers.api
         #region Private GETTER
 
         /// <summary>
-        /// Get Filtered LocationList based on TV & TVBs
+        /// Get Filtered LocationList based on TV &amp; TVBs
         /// </summary>
         /// <param name="lang">Language</param>
         /// <param name="locfilter">Location Filter</param>
         /// <returns>Collection of Reduced Location Objects</returns>
-        private async Task<List<LocHelperclass>> GetLocationInfoFiltered(string? lang, string? locfilter, bool allactivedata = false, string? type = null)
+        private async Task<List<LocHelperclass>> GetLocationInfoFiltered(string lang, string? locfilter, bool allactivedata = false, string? type = null)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 
@@ -119,7 +119,7 @@ namespace OdhApiCore.Controllers.api
                        .Where("id", locid)
                        .GetObjectSingleAsync<MetaRegion>();
 
-                var regionlist = mymetaregion.RegionIds;
+                var regionlist = mymetaregion.RegionIds ?? Enumerable.Empty<string>();
 
                 string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
                 var myregionlist = await QueryFactory.Query()
@@ -346,13 +346,13 @@ namespace OdhApiCore.Controllers.api
         }
 
         /// <summary>
-        /// Get Filtered SkiAreaList based on TV & TVBs
+        /// Get Filtered SkiAreaList based on TV &amp; TVBs
         /// </summary>
         /// <param name="lang"></param>
         /// <param name="locfilter"></param>
         /// <returns>Collection of Reduced Location Objects</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        private async Task<List<LocHelperclass>> GetSkiAreaInfoFiltered(string lang, string locfilter)
+        private async Task<List<LocHelperclass>> GetSkiAreaInfoFiltered(string lang, string? locfilter)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 
@@ -412,7 +412,7 @@ namespace OdhApiCore.Controllers.api
                        .GetObjectSingleAsync<MetaRegion>();
 
                 string regionfilter = "";
-                foreach (var regionid in mymetaregion.RegionIds)
+                foreach (var regionid in mymetaregion.RegionIds ?? new List<string>())
                 {
                     regionfilter = regionfilter + "data @> '{ \"RegionIds\": [\"" + regionid + "\"]}' OR ";
                 }

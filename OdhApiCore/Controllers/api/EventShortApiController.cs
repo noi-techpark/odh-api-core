@@ -113,7 +113,7 @@ namespace OdhApiCore.Controllers.api
             string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventShortSingle(id, language, fields, cancellationToken);
+            return await GetEventShortSingle(id, language, fields ?? new string[] { }, cancellationToken);
         }
 
 
@@ -260,19 +260,19 @@ namespace OdhApiCore.Controllers.api
             return Ok(TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter));
         }
 
-        private IEnumerable<EventShortByRoom> TransformEventShortToRoom(IEnumerable<EventShort> eventsshort, DateTime start, DateTime end, string onlyactive)
+        private IEnumerable<EventShortByRoom> TransformEventShortToRoom(IEnumerable<EventShort> eventsshort, DateTime start, DateTime end, string? onlyactive)
         {
             List<EventShortByRoom> eventshortlistbyroom = new List<EventShortByRoom>();
 
-            foreach (var eventshort in eventsshort)
+            foreach (EventShort eventshort in eventsshort)
             {
                 // 1 Event goes for more days
                 //Hack, if Event Room is 
 
-                foreach (var room in eventshort.RoomBooked)
+                foreach (RoomBooked room in eventshort.RoomBooked ?? new List<RoomBooked>())
                 {
                     //Display room only if not comment x inserted
-                    if (room.Comment.ToLower() != "x" && room.EndDate >= DateTime.Now)
+                    if (room.Comment?.ToLower() != "x" && room.EndDate >= DateTime.Now)
                     {
                         if (room.StartDate <= end)
                         {
@@ -289,12 +289,12 @@ namespace OdhApiCore.Controllers.api
                             myeventshortbyroom.EventDescription.TryAddOrUpdate("it", eventshort.EventDescriptionIT != null ? eventshort.EventDescriptionIT.Trim() : "");
                             myeventshortbyroom.EventDescription.TryAddOrUpdate("en", eventshort.EventDescriptionEN != null ? eventshort.EventDescriptionEN.Trim() : "");
 
-                            if (String.IsNullOrEmpty(myeventshortbyroom.EventDescription["it"]))
-                                myeventshortbyroom.EventDescription.TryAddOrUpdate("it", eventshort.EventDescriptionDE);
-                            if (String.IsNullOrEmpty(myeventshortbyroom.EventDescription["en"]))
-                                myeventshortbyroom.EventDescription.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
+                            if (String.IsNullOrEmpty(myeventshortbyroom.EventDescription["it"]) && eventshort.EventDescriptionDE != null)
+                                myeventshortbyroom.EventDescription?.TryAddOrUpdate("it", eventshort.EventDescriptionDE);
+                            if (String.IsNullOrEmpty(myeventshortbyroom?.EventDescription?["en"]) && eventshort.EventDescriptionDE != null)
+                                myeventshortbyroom!.EventDescription?.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
 
-                            myeventshortbyroom.EventEndDate = eventshort.EndDate;
+                            myeventshortbyroom!.EventEndDate = eventshort.EndDate;
                             myeventshortbyroom.EventEndDateUTC = eventshort.EndDateUTC;
                             myeventshortbyroom.EventId = eventshort.EventId;
                             myeventshortbyroom.EventLocation = eventshort.EventLocation;
@@ -323,9 +323,9 @@ namespace OdhApiCore.Controllers.api
                             //else
                             //    myeventshortbyroom.MapsNoiUrl = "";
 
-                            string roomname = room.SpaceDesc;
+                            string roomname = room.SpaceDesc ?? "";
                             if (roomname.StartsWith("NOI ") || roomname.StartsWith("Noi ") || roomname.StartsWith("noi "))
-                                roomname = room.SpaceDesc.Remove(0, 3).Trim();
+                                roomname = roomname.Remove(0, 3).Trim();
 
                             myeventshortbyroom.SpaceDescList.Add(roomname);
                             myeventshortbyroom.CompanyName = eventshort.CompanyName;
@@ -360,8 +360,8 @@ namespace OdhApiCore.Controllers.api
                                 {
                                     foreach (var eventdocument in eventshort.EventDocument)
                                     {
-                                        if (!myeventshortbyroom.EventDocument.ContainsKey(eventdocument.Language))
-                                            myeventshortbyroom.EventDocument.TryAddOrUpdate(eventdocument.Language, eventdocument.DocumentURL);
+                                        if (!myeventshortbyroom.EventDocument?.ContainsKey(eventdocument.Language ?? "") ?? false)
+                                            myeventshortbyroom!.EventDocument?.TryAddOrUpdate(eventdocument.Language ?? "", eventdocument.DocumentURL ?? "");
                                     }
                                 }
                             }
@@ -415,9 +415,9 @@ namespace OdhApiCore.Controllers.api
 
             if (sameevent != null)
             {
-                string roomname = roomtoadd.SpaceDesc;
+                string roomname = roomtoadd.SpaceDesc ?? "";
                 if (roomname.StartsWith("NOI ") || roomname.StartsWith("Noi ") || roomname.StartsWith("noi "))
-                    roomname = roomtoadd.SpaceDesc.Remove(0, 3).Trim();
+                    roomname = roomname.Remove(0, 3).Trim();
 
                 sameevent.SpaceDescList.Add(roomname);
             }
@@ -461,9 +461,9 @@ namespace OdhApiCore.Controllers.api
 
                 return noimaproomlist;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return null;
+                return new Dictionary<string, string>();
             }
         }
 

@@ -33,28 +33,28 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Anonymous")]
         public IActionResult GetAnonymous(CancellationToken cancellationToken)
         {
-            return this.Content(User.Identity.Name + " Anonymous working", "application/json", Encoding.UTF8);
+            return this.Content(User.Identity?.Name + " Anonymous working", "application/json", Encoding.UTF8);
         }
 
         [Authorize]
         [HttpGet, Route("Restricted")]
         public IActionResult GetRestricted(CancellationToken cancellationToken)
         {
-            return this.Content(User.Identity.Name + " Restricted working", "application/json", Encoding.UTF8);
+            return this.Content(User.Identity?.Name + " Restricted working", "application/json", Encoding.UTF8);
         }
 
         [Authorize(Roles = "DataReader")]
         [HttpGet, Route("WithRole")]
         public IActionResult GetWithRole(CancellationToken cancellationToken)
         {
-            return this.Content(User.Identity.Name + " WithRole working", "application/json", Encoding.UTF8);
+            return this.Content(User.Identity?.Name + " WithRole working", "application/json", Encoding.UTF8);
         }
 
         [Authorize(Roles = "Hallihallo")]
         [HttpGet, Route("WithRole2")]
         public IActionResult GetWithRole2(CancellationToken cancellationToken)
         {
-            return this.Content(User.Identity.Name + " WithRole2 working", "application/json", Encoding.UTF8);
+            return this.Content(User.Identity?.Name + " WithRole2 working", "application/json", Encoding.UTF8);
         }
 
         [HttpGet, Route("Environment")]
