@@ -105,7 +105,7 @@ namespace OdhApiCore.Filters
                     //TODO NOT WORKING, Availability Request is returned without paging
 
 
-                    var booklist = idlist.Select(x => x.Id.ToUpper()).ToList();
+                    var booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
                     var bokfilterlist = bokfilter.Split(',').ToList(); ;
 
                     context.HttpContext.Items.Add("accobooklist", booklist);
@@ -165,10 +165,11 @@ namespace OdhApiCore.Filters
                 string departure = (string?)query["departure"] ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
                 string roominfo = (string?)query["roominfo"] ?? "1-18,18";
                 string source = (string?)query["source"] ?? "sinfo";
-                string detail = (string?)query["detail"] ?? "0";                
+                string detail = (string?)query["detail"] ?? "0";
 
-                context.RouteData.Values.TryGetValue("id", out object id);
-                var bookableAccoIds = new List<string>() { (string)id };
+                var bookableAccoIds = new List<string>();
+                if (context.RouteData.Values.TryGetValue("id", out object? id) && id != null)
+                    bookableAccoIds.Add((string)id);
 
                 if (context.Result is OkObjectResult okObject && okObject.Value is JsonRaw jRaw)
                 {
@@ -184,11 +185,11 @@ namespace OdhApiCore.Filters
 
                             if (bokfilterlist.Contains("hgv"))
                             {
-                                MssResult mssresult = default(MssResult);
+                                MssResult? mssresult = default(MssResult);
 
                                 if (actionid == "GetAccommodations")
                                 {
-                                    mssresult = (MssResult)context.HttpContext.Items["mssavailablity"];
+                                    mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
                                 }
                                 else if (actionid == "GetAccommodation")
                                 {
@@ -245,7 +246,7 @@ namespace OdhApiCore.Filters
 
                                     if (actionid == "GetAccommodations")
                                     {
-                                        mssresult = (MssResult)context.HttpContext.Items["mssavailablity"];
+                                        mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
                                     }
                                     else if (actionid == "GetAccommodation")
                                     {
@@ -265,7 +266,7 @@ namespace OdhApiCore.Filters
 
                                     if (actionid == "GetAccommodations")
                                     {
-                                        lcsresult = (MssResult)context.HttpContext.Items["lcsavailablity"];
+                                        lcsresult = (MssResult?)context.HttpContext.Items["lcsavailablity"];
                                     }
                                     else if (actionid == "GetAccommodation")
                                     {

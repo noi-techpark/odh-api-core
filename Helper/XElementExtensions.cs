@@ -12,7 +12,7 @@ namespace Helper
         {
             var doc = new XmlDocument();
             doc.Load(el.CreateReader());
-            return doc.DocumentElement;
+            return doc.DocumentElement!;
         }
     }
 }

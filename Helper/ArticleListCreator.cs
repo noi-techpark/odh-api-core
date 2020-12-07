@@ -30,7 +30,7 @@ namespace Helper
         {
             List<string> typeids = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null && subtypefilter != "null")
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
                     subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
