@@ -57,7 +57,7 @@ namespace OdhApiCore.Controllers
                     if (chunks.Length < 2)
                         return self;
                     var (controller, id) = (chunks[0], chunks[1]);
-                    return Url.Link($"Single{controller}", new { id });
+                    return Url.Link($"Single{controller}", new { id })!;
                 };
             }
         }

@@ -70,7 +70,7 @@ namespace Helper
             return topicids;
         }
 
-        public static List<string> CreateEventTopicRidListfromFlag(string topicfilter)
+        public static List<string> CreateEventTopicRidListfromFlag(string? topicfilter)
         {
             List<string> topicids = new List<string>();
 

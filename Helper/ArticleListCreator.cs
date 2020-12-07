@@ -26,7 +26,7 @@ namespace Helper
             return typeids;
         }
 
-        public static List<string> CreateArticleSubTypeList(string articletype, string subtypefilter)
+        public static List<string> CreateArticleSubTypeList(string? articletype, string? subtypefilter)
         {
             List<string> typeids = new List<string>();
 
@@ -252,7 +252,7 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateArticleSubTypefromFlag(string typefiltertext, string subtypefilter)
+        public static List<string> CreateArticleSubTypefromFlag(string? typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 
