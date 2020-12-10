@@ -82,10 +82,10 @@ namespace OdhApiCore.Controllers.api
                 poitypelist = new List<string>();
 
 
-            if (poitypelist.Count > 0)
-                subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
-            else
-                subtypelist = new List<string>();
+            //if (poitypelist.Count > 0)
+            //    subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
+            //else
+            //    subtypelist = new List<string>();
 
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());

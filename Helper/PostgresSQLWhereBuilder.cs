@@ -212,7 +212,7 @@ namespace Helper
                 .AreaFilter(arealist)
                 .ODHActivityPoiTypeFilter(typelist)
                 .ODHActivityPoiSubTypeFilter(subtypelist)
-                .ODHActivityPoiPoiTypeFilter(subtypelist)
+                .ODHActivityPoiPoiTypeFilter(poitypelist)
                 .SourceFilter(sourcelist)
                 .HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
@@ -484,7 +484,7 @@ namespace Helper
             this Query query,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
             IReadOnlyCollection<string> accommodationIds, IReadOnlyCollection<string> messagetypelist,
-            string requestdate)
+            string? requestdate)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,

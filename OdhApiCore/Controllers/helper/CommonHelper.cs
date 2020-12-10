@@ -19,14 +19,14 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
 
-        public static async Task<CommonHelper> CreateAsync(
+        public static Task<CommonHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? languagefilter, bool? visibleinsearch, 
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
             CancellationToken cancellationToken)
         {           
-            return new CommonHelper(
+            return Task.FromResult(new CommonHelper(
                idfilter: idfilter, languagefilter: languagefilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, smgtags: smgtags, lastchange: lastchange);
+                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, smgtags: smgtags, lastchange: lastchange));
         }
 
         private CommonHelper(

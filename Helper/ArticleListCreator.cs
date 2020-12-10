@@ -26,11 +26,11 @@ namespace Helper
             return typeids;
         }
 
-        public static List<string> CreateArticleSubTypeList(string articletype, string subtypefilter)
+        public static List<string> CreateArticleSubTypeList(string? articletype, string? subtypefilter)
         {
             List<string> typeids = new List<string>();
 
-            if (subtypefilter != "null")
+            if (subtypefilter != null && subtypefilter != "null")
             {
                 if (subtypefilter.Substring(subtypefilter.Length - 1, 1) == ",")
                     subtypefilter = subtypefilter.Substring(0, subtypefilter.Length - 1);
@@ -252,7 +252,7 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateArticleSubTypefromFlag(string typefiltertext, string subtypefilter)
+        public static List<string> CreateArticleSubTypefromFlag(string? typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 

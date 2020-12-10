@@ -597,7 +597,7 @@ namespace OdhApiCore.Controllers.api
 
         #region GETTER
 
-        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult? geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {               

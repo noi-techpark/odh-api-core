@@ -117,7 +117,7 @@ namespace OdhApiCore.Controllers
 
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            List<string> bokfilterlist = bokfilter.Split(',').ToList();
+            List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
 
             if (availabilitycheck?.Value != true)
             {
@@ -137,7 +137,7 @@ namespace OdhApiCore.Controllers
 
                 if(accoavailability != null)
                 {
-                    var availableonlineaccos = ((MssResult)accoavailability).MssResponseShort.Select(x => x.A0RID.ToUpper()).Distinct().ToList();
+                    var availableonlineaccos = ((MssResult?)accoavailability)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper()).Distinct().ToList() ?? new List<string?>();
 
                     idfilter = string.Join(",", availableonlineaccos);                    
                 }
@@ -356,7 +356,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [HttpPost, Route("AccommodationAvailable")]
-        public async Task<IActionResult> PostAvailableAccommodations(
+        public IActionResult? PostAvailableAccommodations(
             [FromBody] string idfilter,
             string availabilitychecklanguage = "en",
             string? boardfilter = null,
@@ -423,7 +423,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [HttpPost, Route("AvailabilityCheck")]
-        public async Task<IActionResult> PostAvailableMSSResponseonlyAccommodations(
+        public IActionResult? PostAvailableMSSResponseonlyAccommodations(
             [FromBody] string idfilter,
             string availabilitychecklanguage = "en",
             string? boardfilter = null,

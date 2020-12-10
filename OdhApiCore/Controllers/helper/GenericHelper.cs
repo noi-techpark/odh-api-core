@@ -41,7 +41,7 @@ namespace OdhApiCore.Controllers
             var mymetaregion = data.Select(raw => JsonConvert.DeserializeObject<MetaRegion>(raw.Value));
             return (from region in mymetaregion
                     where region.TourismvereinIds != null
-                    from tid in region.TourismvereinIds
+                    from tid in region.TourismvereinIds ?? Enumerable.Empty<string>()
                     select tid).Distinct().ToList();
         }       
     }

@@ -444,6 +444,25 @@ namespace Helper
                 type => type
             );
 
+        //To change, ODH Type Filtering based on 
+        public static Query ODHActivityPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> typelist) =>
+            query.WhereInJsonb(
+                typelist,
+                type => new { SmgTags = new[] { type.ToLower() } }
+            );
+
+        public static Query ODHActivityPoiSubTypeFilterTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
+           query.WhereInJsonb(
+               subtypelist,
+               subtype => new { SmgTags = new[] { subtype.ToLower() } }
+           );
+
+        public static Query ODHActivityPoiPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
+           query.WhereInJsonb(
+               poitypelist,
+               poitype => new { SmgTags = new[] { poitype.ToLower() } }
+           );
+
 
         public static Query EventTopicFilter(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
            query.WhereInJsonb(
@@ -487,7 +506,7 @@ namespace Helper
             query.When(
                 begin == DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
-                    "((begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "') OR (enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "'))"
+                    "((begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
                 )
             );
 
@@ -496,7 +515,7 @@ namespace Helper
             query.When(
                 begin != DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
-                    "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "'))"
+                    "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
                 )
             );
       

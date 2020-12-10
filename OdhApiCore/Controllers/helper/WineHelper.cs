@@ -21,14 +21,14 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
 
-        public static async Task<WineHelper> CreateAsync(
+        public static Task<WineHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? companyidfilter, string? wineidfilter, string? languagefilter, bool? visibleinsearch, 
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
             CancellationToken cancellationToken)
         {           
-            return new WineHelper(
+            return Task.FromResult(new WineHelper(
                idfilter: idfilter, languagefilter: languagefilter, companyidfilter: companyidfilter, wineidfilter: wineidfilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, smgtags: smgtags, lastchange: lastchange);
+                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, smgtags: smgtags, lastchange: lastchange));
         }
 
         private WineHelper(

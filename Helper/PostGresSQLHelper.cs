@@ -103,7 +103,7 @@ namespace Helper
 
         public static Query GeoSearchFilterAndOrderby(
             this Query query,
-            PGGeoSearchResult geosearchresult)
+            PGGeoSearchResult? geosearchresult)
         {
             if (geosearchresult == null || !geosearchresult.geosearch)
                 return query;

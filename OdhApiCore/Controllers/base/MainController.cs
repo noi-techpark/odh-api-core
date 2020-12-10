@@ -16,7 +16,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api", Name = "TourismApi")]
         public IActionResult Get()
         {
-            return Ok(GetMainApi(Url.Link("", null)));
+            return Ok(GetMainApi(Url.Link("", null)!));
         }
 
         private static IEnumerable<TourismData> GetMainApi(string url)
@@ -65,12 +65,12 @@ namespace OdhApiCore.Controllers
 
         private string ApplicationURL { get; set; }
 
-        public string ApiIdentifier { get; set; }
-        public string Id { get; set; }
-        public string Description { get; set; }
-        public string License { get; set; }
+        public string ApiIdentifier { get; set; } = default!;
+        public string Id { get; set; } = default!;
+        public string Description { get; set; } = default!;
+        public string License { get; set; } = default!;
 
-        private string swaggerUrl;
+        private string swaggerUrl = default!;
         public string SwaggerUrl
         {
             get { return Uri.EscapeUriString(ApplicationURL + "swagger/ui/" + Uri.EscapeUriString(swaggerUrl)); }

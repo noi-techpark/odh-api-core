@@ -13,7 +13,7 @@ let writeDirection = function
 /// Write a property like
 /// <c>Property ["Detail"; "de"; "Title"]</c>
 /// as
-/// <c>data#>>'{Detail, de, Title}'</c>
+/// <c>data#>>'{Detail,de,Title}'</c>
 /// </summary>
 let writeProperty (Property fields) =
     fields
