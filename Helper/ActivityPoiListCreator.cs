@@ -1641,7 +1641,7 @@ namespace Helper
 
                             break;
 
-                        case "Öffentliche Einrichtung":
+                        case "Öffentliche Einrichtungen":
                             SmgPoiPoiTypeFlagOeffentlichEinrichtungen mypoitypeflag23 = (SmgPoiPoiTypeFlagOeffentlichEinrichtungen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag23.GetFlags().GetDescriptionList());
 
