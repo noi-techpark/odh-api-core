@@ -444,6 +444,25 @@ namespace Helper
                 type => type
             );
 
+        //To change, ODH Type Filtering based on 
+        public static Query ODHActivityPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> typelist) =>
+            query.WhereInJsonb(
+                typelist,
+                type => new { SmgTags = new[] { type.ToLower() } }
+            );
+
+        public static Query ODHActivityPoiSubTypeFilterTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
+           query.WhereInJsonb(
+               subtypelist,
+               subtype => new { SmgTags = new[] { subtype.ToLower() } }
+           );
+
+        public static Query ODHActivityPoiPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
+           query.WhereInJsonb(
+               poitypelist,
+               poitype => new { SmgTags = new[] { poitype.ToLower() } }
+           );
+
 
         public static Query EventTopicFilter(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
            query.WhereInJsonb(
