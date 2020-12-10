@@ -212,7 +212,7 @@ namespace Helper
                 .AreaFilter(arealist)
                 .ODHActivityPoiTypeFilter(typelist)
                 .ODHActivityPoiSubTypeFilter(subtypelist)
-                .ODHActivityPoiPoiTypeFilter(subtypelist)
+                .ODHActivityPoiPoiTypeFilter(poitypelist)
                 .SourceFilter(sourcelist)
                 .HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
