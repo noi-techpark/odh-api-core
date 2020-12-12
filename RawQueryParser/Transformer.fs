@@ -14,9 +14,19 @@ let transformSort input =
     if isNull input then
         nullArg (nameof input)
     else
-        match run Parser.sortStatements input with
+        match run Parser.Sorting.sortStatements input with
         | Success (statements, _, _) ->
-            Writer.writeSortStatements statements
+            Writer.Sorting.writeSortStatements statements
+        | Failure (msg, _, _) ->
+            raise (ParserException msg)
+
+let transformFilter input =
+    if isNull input then
+        nullArg (nameof input)
+    else
+        match run Parser.Filtering.statement input with
+        | Success (statement, _, _) ->
+            Writer.Filtering.writeStatement statement
         | Failure (msg, _, _) ->
             raise (ParserException msg)
 
