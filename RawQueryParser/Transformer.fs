@@ -7,7 +7,7 @@ exception ParserException of string
 
 /// <summary>
 /// Transform a sort expression into a
-/// PostgreSQL <c>ORDER BY</c> statement.
+/// PostgreSQL <c>ORDER BY</c> expression.
 /// </summary>
 [<CompiledName "TransformSort">]
 let transformSort input =
@@ -20,6 +20,10 @@ let transformSort input =
         | Failure (msg, _, _) ->
             raise (ParserException msg)
 
+/// <summary>
+/// Transform a filter expression into a
+/// PostgreSQL <c>WHERE</c> expression.
+/// </summary>
 [<CompiledName "TransformFilter">]
 let transformFilter input =
     if isNull input then

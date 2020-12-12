@@ -22,6 +22,7 @@ module Sorting =
     type SortStatements = SortStatement list
 
 module Filtering =
+    /// Defines the possible operators.
     type Operator =
         | Eq
         | Ne
@@ -30,16 +31,20 @@ module Filtering =
         | Gt
         | Ge
 
+    /// Defines the values of tye booleans, number or string.
     type Value =
         | Boolean of bool
         | Number of float
         | String of string
 
+    /// The condition is the combination of a property, an operator and a value.
     type Condition =
         { Property: Property
           Operator: Operator
           Value: Value }
 
+    /// A filter statement can be a simple condition or a bunch
+    /// of conditions inside an AND or an OR binary statement.
     type FilterStatement =
         | And of left: FilterStatement * right: FilterStatement
         | Or of left: FilterStatement * right: FilterStatement
