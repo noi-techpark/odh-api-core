@@ -29,6 +29,11 @@ let transfomerTests =
                 let actual = Transformer.transformFilter "eq(Active, true)"
                 Expect.equal actual expected ""
             }
+            test "Simple stringy filter" {
+                let expected = "data#>>'\{Type\}' = 'Wandern'"
+                let actual = Transformer.transformFilter "eq(Type, 'Wandern')"
+                Expect.equal actual expected ""
+            }
             test "Simple AND filter" {
                 let expected = "(data#>>'\{Geo,Altitude\}' >= 200 AND data#>>'\{Geo,Altitude\}' <= 400)"
                 let actual = Transformer.transformFilter "and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400))"
