@@ -37,18 +37,18 @@ namespace Helper
             return query.OrderByRaw(orderby);
         }
 
-        public static Query ApplyOrdering(this Query query, ref string? seed, PGGeoSearchResult geosearchresult, string? rawsort)
-        {
-            switch (geosearchresult, rawsort)
+        public static Query ApplyOrdering(this Query query, ref string? seed, PGGeoSearchResult geosearchresult, string? rawsort) =>
+            (geosearchresult, rawsort) switch
             {
-                case (PGGeoSearchResult geosr, _) when geosr.geosearch:
-                    return query.GeoSearchFilterAndOrderby(geosr);
-                case (_, string raw):
-                    string rawOrderBy = RawQueryParser.Transformer.TransformSort(raw);
-                    return query.OrderByRaw(rawOrderBy);
-                default:
-                    return query.OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC");
-            }
-        }
+                (PGGeoSearchResult geosr, _) when geosr.geosearch =>
+                    query.GeoSearchFilterAndOrderby(geosr),
+                (_, string raw) =>
+                    query.OrderByRaw(RawQueryParser.Transformer.TransformSort(raw)),
+                _ =>
+                    query.OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
+            };
+
+        public static Query ApplyRawFilter(this Query query, string? rawFilter) =>
+            rawFilter != null ? query.WhereRaw(RawQueryParser.Transformer.TransformFilter(rawFilter)) : query;
     }
 }
