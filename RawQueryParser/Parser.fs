@@ -42,8 +42,8 @@ module Sorting =
               Direction = order }
 
     /// sortStatements consist of multiple statements divided by a comma.
-    let sortStatements: Parser<SortStatements> =
-        sepBy sortStatement (pstring ",") .>> eof
+    let statements: Parser<SortStatements> =
+        sepBy1 sortStatement (pchar ',' >>. spaces) .>> eof
 
 module Filtering =
     open Filtering
