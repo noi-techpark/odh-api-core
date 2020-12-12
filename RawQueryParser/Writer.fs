@@ -48,16 +48,21 @@ module Filtering =
         | Le -> "<="
 
     let writeValue = function
-        | Boolean true -> "'true'"
-        | Boolean false -> "'false'"
-        | Number value -> $"'{value}'"
+        | Boolean true -> "TRUE"
+        | Boolean false -> "FALSE"
+        | Number value -> $"{value}"
         | String value -> $"'%s{value}'"
 
     let writeCondition condition =
         let p = writeProperty condition.Property
         let op = writeOperator condition.Operator
         let v = writeValue condition.Value
-        $"{p} {op} {v}"
+        let withCast p =
+            match condition.Value with
+            | Boolean _ -> $"({p})::boolean"
+            | Number _ -> $"({p})::float"
+            | _ -> p
+        $"{withCast p} {op} {v}"
 
     let rec writeStatement = function 
         | Condition value -> writeCondition value
