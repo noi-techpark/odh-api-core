@@ -11,7 +11,7 @@ type Parser<'a> = Parser<'a, unit>
 /// </summary>
 let property =
     let options = IdentifierOptions()
-    sepBy (identifier options) (pchar '.')
+    sepBy (identifier options <|> (pint32 |>> string)) (pchar '.')
     |>> Property
     <?> "property"
 
