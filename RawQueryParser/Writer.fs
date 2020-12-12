@@ -48,10 +48,10 @@ module Filtering =
         | Le -> "<="
 
     let writeValue = function
-        | Boolean true -> "true"
-        | Boolean false -> "false"
-        | Number value -> $"{value}"
-        | String value -> $"\'%s{value}\'"
+        | Boolean true -> "'true'"
+        | Boolean false -> "'false'"
+        | Number value -> $"'{value}'"
+        | String value -> $"'%s{value}'"
 
     let writeCondition condition =
         let p = writeProperty condition.Property

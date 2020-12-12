@@ -25,7 +25,7 @@ let transfomerTests =
         ]
         testList "Filtering" [
             test "Simple filter" {
-                let expected = "data#>>'\{Active\}' = true"
+                let expected = "data#>>'\{Active\}' = 'true'"
                 let actual = Transformer.transformFilter "eq(Active, true)"
                 Expect.equal actual expected ""
             }
@@ -35,17 +35,17 @@ let transfomerTests =
                 Expect.equal actual expected ""
             }
             test "Simple AND filter" {
-                let expected = "(data#>>'\{Geo,Altitude\}' >= 200 AND data#>>'\{Geo,Altitude\}' <= 400)"
+                let expected = "(data#>>'\{Geo,Altitude\}' >= '200' AND data#>>'\{Geo,Altitude\}' <= '400')"
                 let actual = Transformer.transformFilter "and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400))"
                 Expect.equal actual expected ""
             }
             test "AND filter with multiple conditions" {
-                let expected = "(data#>>'\{Active\}' = true AND (data#>>'\{Geo,Altitude\}' >= 200 AND data#>>'\{Geo,Altitude\}' <= 400))"
+                let expected = "(data#>>'\{Active\}' = 'true' AND (data#>>'\{Geo,Altitude\}' >= '200' AND data#>>'\{Geo,Altitude\}' <= '400'))"
                 let actual = Transformer.transformFilter "and(eq(Active, true), ge(Geo.Altitude, 200), le(Geo.Altitude, 400))"
                 Expect.equal actual expected ""
             }
             test "AND filter with nested OR" {
-                let expected = "(data#>>'\{Active\}' = true OR (data#>>'\{Geo,Altitude\}' >= 200 AND data#>>'\{Geo,Altitude\}' <= 400))"
+                let expected = "(data#>>'\{Active\}' = 'true' OR (data#>>'\{Geo,Altitude\}' >= '200' AND data#>>'\{Geo,Altitude\}' <= '400'))"
                 let actual = Transformer.transformFilter "or(eq(Active, true), and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400)))"
                 Expect.equal actual expected ""
             }
