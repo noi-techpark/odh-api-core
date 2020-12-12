@@ -31,7 +31,7 @@ module Sorting =
         $"{p} {s}"
 
     /// Statements are concatenated <see cref=">writeStatement</c>
-    let writeSortStatements (statements: SortStatements) =
+    let writeStatements (statements: SortStatements) =
         statements
         |> List.map writeSortStatement
         |> String.concat ", "

@@ -1,19 +1,10 @@
-﻿module RawQueryParser.Tests
+﻿module RawQueryParser.ParserTests
 
 open Expecto
 open Parser
 
-[<AutoOpen>]
-module TestHelpers =
-    open FParsec
-
-    let run p input =
-        match run p input with
-        | Success (x, _, _) -> Core.Ok x
-        | Failure (msg, _, _) -> Core.Error msg
-
 [<Tests>]
-let testParser =
+let parserTests =
     testList "Parser" [
         testList "Property" [
             test "Simple property should parse correctly" {
@@ -43,7 +34,7 @@ let testParser =
                     let expected: Result<Sorting.SortStatements, _> = Ok [
                         { Property = Property ["Detail"; "de"; "Title"]; Direction = Sorting.Descending }
                     ]
-                    let actual = run Sorting.sortStatements "-Detail.de.Title"
+                    let actual = run Sorting.statements "-Detail.de.Title"
                     Expect.equal actual expected ""
                 }
                 test "Sort by multiple" {
@@ -51,7 +42,7 @@ let testParser =
                         { Property = Property ["Detail"; "de"; "Title"]; Direction = Sorting.Descending }
                         { Property = Property ["Detail"; "de"; "Body"]; Direction = Sorting.Ascending }
                     ]
-                    let actual = run Sorting.sortStatements "-Detail.de.Title,Detail.de.Body"
+                    let actual = run Sorting.statements "-Detail.de.Title,Detail.de.Body"
                     Expect.equal actual expected ""
                 }
             ]
