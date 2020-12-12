@@ -77,6 +77,7 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
             string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
@@ -90,7 +91,7 @@ namespace OdhApiCore.Controllers.api
                 activitytype: poitype, subtypefilter: subtype, idfilter: idlist, searchfilter: searchfilter,
                 locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight, active: active, smgactive: odhactive,
                 smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult: geosearchresult,
-                rawsort: rawsort, cancellationToken: cancellationToken);
+                rawfilter: rawfilter, rawsort: rawsort, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -178,7 +179,7 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active,
-            bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, string? rawsort,
+            bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort,
             CancellationToken cancellationToken)
         {
 
@@ -203,6 +204,7 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData
                         )
+                        .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
