@@ -10,7 +10,7 @@ module RawQueryParser.Writer
 let writeProperty (Property fields) =
     fields
     |> String.concat ","
-    |> sprintf "data#>>'\\{%s\\}'"
+    |> sprintf "data#>'\\{%s\\}'"
 
 module Sorting =
     open Sorting
