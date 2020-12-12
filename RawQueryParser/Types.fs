@@ -1,7 +1,7 @@
 ﻿namespace RawQueryParser
 
 /// Defines the sort direction.
-type SortDirection =
+type OrderBy =
     | Ascending
     | Descending
 
@@ -15,7 +15,7 @@ type Property = Property of fields: string list
 /// property and a sort direction.
 type SortStatement =
     { Property: Property
-      Direction: SortDirection }
+      Direction: OrderBy }
 
 /// Sort statements are a list of sort statement.
 type SortStatements = SortStatement list

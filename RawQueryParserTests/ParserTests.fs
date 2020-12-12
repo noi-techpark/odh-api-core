@@ -29,11 +29,11 @@ let testParser =
         ]
         testList "Sort order" [
             test "Order ascending" {
-                let actual = run sortDirection ""
+                let actual = run orderBy ""
                 Expect.equal actual Ascending ""
             }
             test "Order descending" {
-                let actual = run sortDirection "-"
+                let actual = run orderBy "-"
                 Expect.equal actual Descending ""
             }
         ]

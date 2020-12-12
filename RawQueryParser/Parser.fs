@@ -14,7 +14,7 @@ type Parser<'a> = Parser<'a, unit>
 /// <item>If <c>-</c> the sort is descending</item>
 /// </list>
 /// </remarks>
-let sortDirection: Parser<_> =
+let orderBy: Parser<_> =
     opt (pstring "-")
     |>> function
         | Some _ -> Descending
@@ -31,7 +31,7 @@ let property =
 
 /// A sortStatement consists of a sort direction and a property.
 let sortStatement =
-    sortDirection .>>. property
+    orderBy .>>. property
     |>> fun (order, prop) ->
         { Property = prop
           Direction = order }
