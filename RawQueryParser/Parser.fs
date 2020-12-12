@@ -11,7 +11,7 @@ type Parser<'a> = Parser<'a, unit>
 /// </summary>
 let property =
     let options = IdentifierOptions()
-    sepBy (identifier options) (pstring ".")
+    sepBy (identifier options) (pchar '.')
     |>> Property
     <?> "property"
 
@@ -37,9 +37,10 @@ module Sorting =
     /// A sortStatement consists of a sort direction and a property.
     let sortStatement =
         orderBy .>>. property
-        |>> fun (order, prop) ->
+        |>> (fun (order, prop) ->
             { Property = prop
-              Direction = order }
+              Direction = order })
+        <?> "sort statement, e.g. Detail.de.Title"
 
     /// sortStatements consist of multiple statements divided by a comma.
     let statements: Parser<SortStatements> =
