@@ -48,12 +48,36 @@ let parserTests =
             ]
         ]
         testList "Filtering" [
-            test "Simple condition" {
+            test "Simple condition with boolean" {
+                let expected: Result<Filtering.FilterStatement, _> =
+                    Ok (Filtering.Condition { Property = Property ["Active"]
+                                              Operator = Filtering.Operator.Eq
+                                              Value = Filtering.Boolean true })
+                let actual = run Filtering.statement "eq(Active, true)"
+                Expect.equal actual expected ""
+            }
+            test "Simple condition with number" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (Filtering.Condition { Property = Property ["Geo"; "Altitude"]
                                               Operator = Filtering.Operator.Eq
                                               Value = Filtering.Number 200. })
                 let actual = run Filtering.statement "eq(Geo.Altitude, 200)"
+                Expect.equal actual expected ""
+            }
+            test "Simple condition with single quote string" {
+                let expected: Result<Filtering.FilterStatement, _> =
+                    Ok (Filtering.Condition { Property = Property ["Detail"; "de"; "Title"]
+                                              Operator = Filtering.Operator.Eq
+                                              Value = Filtering.String "Foo" })
+                let actual = run Filtering.statement "eq(Detail.de.Title, 'Foo')"
+                Expect.equal actual expected ""
+            }
+            test "Simple condition with double quote string" {
+                let expected: Result<Filtering.FilterStatement, _> =
+                    Ok (Filtering.Condition { Property = Property ["Detail"; "de"; "Title"]
+                                              Operator = Filtering.Operator.Eq
+                                              Value = Filtering.String "Foo" })
+                let actual = run Filtering.statement """eq(Detail.de.Title, "Foo")"""
                 Expect.equal actual expected ""
             }
             test "And condition" {
