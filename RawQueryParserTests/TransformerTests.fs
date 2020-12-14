@@ -24,12 +24,17 @@ let transfomerTests =
             }
         ]
         testList "Filtering" [
-            test "Simple filter" {
+            test "Simple boolean filter" {
                 let expected = "(data#>'\{Active\}')::boolean = TRUE"
                 let actual = Transformer.transformFilter "eq(Active, true)"
                 Expect.equal actual expected ""
             }
-            test "Simple stringy filter" {
+            test "Simple number filter" {
+                let expected = "(data#>'\{Altitude\}')::float = 200"
+                let actual = Transformer.transformFilter "eq(Altitude, 200)"
+                Expect.equal actual expected ""
+            }
+            test "Simple string filter" {
                 let expected = "(data#>'\{Type\}')::text = 'Wandern'"
                 let actual = Transformer.transformFilter "eq(Type, 'Wandern')"
                 Expect.equal actual expected ""

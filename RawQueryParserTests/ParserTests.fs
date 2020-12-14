@@ -135,7 +135,7 @@ let parserTests =
                 let actual = run Filtering.statement "or(eq(Active, true), and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400)))"
                 Expect.equal actual expected ""
             }
-            test "Test for NULL" {
+            test "Condition with NULL check" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (Filtering.IsNull (Property ["Detail"; "ru"; "Title"]))
                 let actual = run Filtering.statement "isnull(Detail.ru.Title)"
