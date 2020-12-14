@@ -24,7 +24,7 @@ Usage: `?rawfilter=<filter(s)>`
 
 ```javascript
 eq(Active, true)                                       // all active entries
-eq(Detail.de.Title, '')                                // all entries with no german title
+ne(Detail.ru.Title, '')                                // all entries with a russian title
 and(ge(Geo.0.Altitude, 200), le(Geo.0.Altitude, 400))  // all entries with an altitude between 200 and 400 meters
 ```
 
