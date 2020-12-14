@@ -7,10 +7,15 @@ module RawQueryParser.Writer
 /// as
 /// <c>data#>>'{Detail,de,Title}'</c>
 /// </summary>
-let writeProperty (Property fields) =
+let writeRawProperty (Property fields) =
     fields
     |> String.concat ","
     |> sprintf "data#>'\\{%s\\}'"
+
+let writeTextProperty (Property fields) =
+    fields
+    |> String.concat ","
+    |> sprintf "data#>>'\\{%s\\}'"
 
 module Sorting =
     open Sorting
@@ -27,7 +32,7 @@ module Sorting =
     /// a property with a sort direction.
     let writeSortStatement statement =
         let s = writeDirection statement.Direction
-        let p = writeProperty statement.Property
+        let p = writeTextProperty statement.Property
         $"{p} {s}"
 
     /// Statements are concatenated <see cref=">writeStatement</c>
@@ -55,7 +60,7 @@ module Filtering =
 
     let writeCondition condition =
         let p =
-            let p = writeProperty condition.Property
+            let p = writeRawProperty condition.Property
             match condition.Value with
             | Boolean _ -> $"({p})::boolean"
             | Number _ -> $"({p})::float"
@@ -68,6 +73,6 @@ module Filtering =
         | Condition value -> writeCondition value
         | And (left, right) -> $"(%s{writeStatement left} AND %s{writeStatement right})"
         | Or (left, right) -> $"(%s{writeStatement left} OR %s{writeStatement right})"
-        | IsNull property -> $"{writeProperty property} IS NULL"
-        | IsNotNull property -> $"{writeProperty property} IS NOT NULL"
+        | IsNull property -> $"{writeRawProperty property} IS NULL"
+        | IsNotNull property -> $"{writeRawProperty property} IS NOT NULL"
 
