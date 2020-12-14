@@ -11,7 +11,9 @@ type Parser<'a> = Parser<'a, unit>
 /// </summary>
 let property =
     let options = IdentifierOptions()
-    sepBy (identifier options <|> (pint32 |>> string)) (pchar '.')
+    sepBy (
+        identifier options <|> (pint32 |>> string)
+    ) (pchar '.')
     |>> Property
     <?> "property"
 
@@ -49,6 +51,13 @@ module Sorting =
 module Filtering =
     open Filtering
 
+    let betweenBrackets p =
+        between (pchar '(') (pchar ')') p
+
+    let betweenQuotes p =
+        let quotes = pchar '\"' <|> pchar '\''
+        between quotes quotes p
+
     let operator: Parser<Operator> =
         choice [
             pstring "eq" >>% Eq
@@ -71,9 +80,9 @@ module Filtering =
         <?> "number"
 
     let string: Parser<Value> =
-        let bracket = pchar '\"' <|> pchar '\''
-        let bla = manySatisfy (fun char -> char <> '\"' && char <> '\'')
-        between bracket bracket bla
+        betweenQuotes (
+            manySatisfy (fun char -> char <> '\"' && char <> '\'')
+        )
         |>> String
         <?> "string"
 
@@ -84,12 +93,11 @@ module Filtering =
             string
         ]
 
-    let inside: Parser<Property * Value> =
-        property .>>. (pchar ',' >>. spaces >>. value)
-        <?> "field"
-
     let call: Parser<Property * Value> =
-        between (pchar '(') (pchar ')') inside
+        betweenBrackets (
+            property .>>. (pchar ',' >>. spaces >>. value)
+            <?> "field"
+        )
 
     let condition: Parser<Condition> =
         operator .>>. call
@@ -103,9 +111,7 @@ module Filtering =
 
     do statementRef :=
         let innerParser: Parser<FilterStatement list> =
-            between (pchar '(')
-                    (pchar ')')
-                    (sepBy1 statement' (pchar ',' >>. spaces))
+            betweenBrackets (sepBy1 statement' (pchar ',' >>. spaces))
         let rec recurse f (statements: FilterStatement list) =
             match statements with
             | [] ->
@@ -120,8 +126,8 @@ module Filtering =
         choice [
             pstring "and" >>. innerParser |>> recurse And
             pstring "or" >>. innerParser |>> recurse Or
-            pstring "isnull" >>. pchar '(' >>.  property .>> pchar ')' |>> IsNull
-            pstring "isnotnull" >>. pchar '(' >>. property .>> pchar ')' |>> IsNotNull
+            pstring "isnull" >>. betweenBrackets property |>> IsNull
+            pstring "isnotnull" >>. betweenBrackets property |>> IsNotNull
             condition |>> Condition
         ]
 
