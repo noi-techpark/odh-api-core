@@ -12,8 +12,6 @@
     <Compile Include="Transformer.fs" />
   </ItemGroup>
 
-  <ItemGroup />
-
   <ItemGroup>
     <PackageReference Include="FParsec" Version="1.1.1" />
   </ItemGroup>
