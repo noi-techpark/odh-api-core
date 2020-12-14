@@ -40,7 +40,9 @@ and(foo, bar, baz)
 
 Negation isn't supported altough it might be implemented later if needed. I need to think of a case where negation can't be replaced by the keywords from above. 
 
-No `between` or other special functions.
+No `between`, `startswith` and other special functions. Altough this may change dependeing of the actual use cases.
+
+> To legitimate the addition of such special functions a production use case has to be satisfied.
 
 Testing a field if it is NULL or not NULL has special meaning in SQL. You cannot simply query a field for NULL with equality or inequality. You have to use special syntax for that, e.g. `FIELD IS NULL` or `FIELD IS NOT NULL`.    
 Because of this special meaning of NULL there exist `isnull` and `isnotnull` functions.
