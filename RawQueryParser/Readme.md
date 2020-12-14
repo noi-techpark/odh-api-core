@@ -18,7 +18,7 @@ The custom filtering and sorting is enabled via query strings.
 - `rawfilter` allows the filtering of the data returned by the API endpoint
 - `rawsort` allows the sorting of the data returned by the API endpoint
 
-## `rawfilter`
+### `rawfilter`
 
 Usage: `?rawfilter=<filter(s)>`
 
@@ -47,7 +47,7 @@ No `between`, `startswith` and other special functions. Altough this may change 
 Testing a field if it is NULL or not NULL has special meaning in SQL. You cannot simply query a field for NULL with equality or inequality. You have to use special syntax for that, e.g. `FIELD IS NULL` or `FIELD IS NOT NULL`.    
 Because of this special meaning of NULL there exist `isnull` and `isnotnull` functions.
 
-### Supported data types:
+#### Supported data types:
 
 - Boolean: `true`, `false`
 - Number: `1`, `1.12` (exponential notation is not allowed) are always interpreted as a floating point number
@@ -63,7 +63,7 @@ The following error will be thrown by PostreSQL if you try to compare a boolean 
 22023: cannot cast jsonb boolean to type double precision
 ```
 
-## `rawsort`
+### `rawsort`
 
 The `rawsort` syntax follows the proposal for sorting on the destination data: https://gitlab.com/alpinebits/destinationdata/standard-specification/-/issues/4
 
