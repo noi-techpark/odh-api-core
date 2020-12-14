@@ -80,7 +80,7 @@ let parserTests =
                 let actual = run Filtering.statement """eq(Detail.de.Title, "Foo")"""
                 Expect.equal actual expected ""
             }
-            test "And condition" {
+            test "AND condition" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
                         Filtering.And (
@@ -95,7 +95,7 @@ let parserTests =
                 let actual = run Filtering.statement "and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400))"
                 Expect.equal actual expected ""
             }
-            test "And with multiple conditions" {
+            test "AND with multiple conditions" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
                         Filtering.And (
@@ -115,7 +115,7 @@ let parserTests =
                 let actual = run Filtering.statement "and(eq(Active, true), ge(Geo.Altitude, 200), le(Geo.Altitude, 400))"
                 Expect.equal actual expected ""
             }
-            test "And with nested or" {
+            test "AND with nested OR" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
                         Filtering.Or (
