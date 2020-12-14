@@ -8,7 +8,7 @@ With custom filtering and sorting a consumer of the API can filter and sort for 
 that aren't supported otherwise.
 
 > The tourism API has some predefined filters and sorting suited
-> especially for the domain of the tourism sector and the
+> especially for the domain and the
 > different endpoints of the tourism sector, like points of interest, activities, and
 > so on...  
 > These filters are documented in the OpenAPI specification.
