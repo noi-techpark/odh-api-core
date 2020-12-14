@@ -81,6 +81,13 @@ As safe as you can expect a feature like that to be!
 
 Keep in mind that at the end you get a string that gets inserted as a raw string into the SQL statement. So every SQL injection that you are able to get into the query strings are sent to the database engine.
 
+## Is it performant?
+
+The query parsing is super performant, but the execution time on the DB is nothing that can be easily predicted.    
+The execution performance totally depends on the JSON capabilities of PostgreSQL, the query planner and the indizes that are defined on the fields.
+
+> There exist special filters on the endpoints that are optimized for specific production use cases.
+
 ## Why F#?
 
 This project is written in F# as it allows for a very expressive and concise code and the usage of a parser combinator as an integrated DSL.
