@@ -30,7 +30,7 @@ let transfomerTests =
                 Expect.equal actual expected ""
             }
             test "Simple stringy filter" {
-                let expected = "data#>'\{Type\}' = 'Wandern'"
+                let expected = "(data#>'\{Type\}')::text = 'Wandern'"
                 let actual = Transformer.transformFilter "eq(Type, 'Wandern')"
                 Expect.equal actual expected ""
             }

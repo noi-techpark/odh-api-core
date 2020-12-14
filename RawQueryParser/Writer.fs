@@ -54,15 +54,15 @@ module Filtering =
         | String value -> $"'%s{value}'"
 
     let writeCondition condition =
-        let p = writeProperty condition.Property
-        let op = writeOperator condition.Operator
-        let v = writeValue condition.Value
-        let withCast p =
+        let p =
+            let p = writeProperty condition.Property
             match condition.Value with
             | Boolean _ -> $"({p})::boolean"
             | Number _ -> $"({p})::float"
-            | _ -> p
-        $"{withCast p} {op} {v}"
+            | String _ -> $"({p})::text"
+        let op = writeOperator condition.Operator
+        let v = writeValue condition.Value
+        $"{p} {op} {v}"
 
     let rec writeStatement = function 
         | Condition value -> writeCondition value
