@@ -2,9 +2,6 @@
 
 open FParsec
 
-/// Defines an exception that is thrown when parsing failed.
-exception ParserException of string
-
 /// <summary>
 /// Transform a sort expression into a
 /// PostgreSQL <c>ORDER BY</c> expression.
@@ -18,7 +15,7 @@ let transformSort input =
         | Success (statements, _, _) ->
             Writer.Sorting.writeStatements statements
         | Failure (msg, _, _) ->
-            raise (ParserException msg)
+            failwith msg
 
 /// <summary>
 /// Transform a filter expression into a
@@ -33,5 +30,5 @@ let transformFilter input =
         | Success (statement, _, _) ->
             Writer.Filtering.writeStatement statement
         | Failure (msg, _, _) ->
-            raise (ParserException msg)
+            failwith msg
 
