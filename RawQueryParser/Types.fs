@@ -49,4 +49,6 @@ module Filtering =
         | And of left: FilterStatement * right: FilterStatement
         | Or of left: FilterStatement * right: FilterStatement
         | Condition of Condition
+        | IsNull of Property
+        | IsNotNull of Property
 

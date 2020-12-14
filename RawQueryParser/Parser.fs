@@ -120,6 +120,8 @@ module Filtering =
         choice [
             pstring "and" >>. innerParser |>> recurse And
             pstring "or" >>. innerParser |>> recurse Or
+            pstring "isnull" >>. pchar '(' >>.  property .>> pchar ')' |>> IsNull
+            pstring "isnotnull" >>. pchar '(' >>. property .>> pchar ')' |>> IsNotNull
             condition |>> Condition
         ]
 

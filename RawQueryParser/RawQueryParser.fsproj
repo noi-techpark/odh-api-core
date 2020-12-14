@@ -5,11 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Readme.md" />
     <Compile Include="Types.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="Writer.fs" />
     <Compile Include="Transformer.fs" />
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="FParsec" Version="1.1.1" />

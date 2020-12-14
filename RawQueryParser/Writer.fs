@@ -68,4 +68,6 @@ module Filtering =
         | Condition value -> writeCondition value
         | And (left, right) -> $"(%s{writeStatement left} AND %s{writeStatement right})"
         | Or (left, right) -> $"(%s{writeStatement left} OR %s{writeStatement right})"
+        | IsNull property -> $"{writeProperty property} IS NULL"
+        | IsNotNull property -> $"{writeProperty property} IS NOT NULL"
 

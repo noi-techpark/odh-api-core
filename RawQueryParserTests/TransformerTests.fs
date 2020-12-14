@@ -49,5 +49,15 @@ let transfomerTests =
                 let actual = Transformer.transformFilter "or(eq(Active, true), and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400)))"
                 Expect.equal actual expected ""
             }
+            test "NULL" {
+                let expected = "data#>'\{Detail,ru,Title\}' IS NULL"
+                let actual = Transformer.transformFilter "isnull(Detail.ru.Title)"
+                Expect.equal actual expected ""
+            }
+            test "NOT NULL" {
+                let expected = "data#>'\{Detail,ru,Title\}' IS NOT NULL"
+                let actual = Transformer.transformFilter "isnotnull(Detail.ru.Title)"
+                Expect.equal actual expected ""
+            }
         ]
     ]
