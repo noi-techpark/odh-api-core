@@ -60,11 +60,10 @@ module Filtering =
 
     let writeCondition condition =
         let p =
-            let p = writeRawProperty condition.Property
             match condition.Value with
-            | Boolean _ -> $"({p})::boolean"
-            | Number _ -> $"({p})::float"
-            | String _ -> $"({p})::text"
+            | Boolean _ -> $"({writeRawProperty condition.Property})::boolean"
+            | Number _ -> $"({writeRawProperty condition.Property})::float"
+            | String _ -> writeTextProperty condition.Property
         let op = writeOperator condition.Operator
         let v = writeValue condition.Value
         $"{p} {op} {v}"
