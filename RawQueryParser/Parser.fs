@@ -6,16 +6,16 @@ open FParsec
 type Parser<'a> = Parser<'a, unit>
 
 /// <summary>
-/// Parse a property path.
-/// <c>Detail.de.Title => Property ["Detail"; "de"; "Title"]</c>
+/// Parse a field path.
+/// <c>Detail.de.Title => Field ["Detail"; "de"; "Title"]</c>
 /// </summary>
-let property =
+let field =
     let options = IdentifierOptions()
     sepBy (
         identifier options <|> (pint32 |>> string)
     ) (pchar '.')
-    |>> Property
-    <?> "property"
+    |>> Field
+    <?> "field"
 
 module Sorting =
     open Sorting
@@ -38,9 +38,9 @@ module Sorting =
 
     /// A sortStatement consists of a sort direction and a property.
     let sortStatement =
-        orderBy .>>. property
+        orderBy .>>. field
         |>> (fun (order, prop) ->
-            { Property = prop
+            { Field = prop
               Direction = order })
         <?> "sort statement, e.g. Detail.de.Title"
 
@@ -93,16 +93,15 @@ module Filtering =
             string
         ]
 
-    let call: Parser<Property * Value> =
+    let call: Parser<Field * Value> =
         betweenBrackets (
-            property .>>. (pchar ',' >>. spaces >>. value)
-            <?> "field"
+            field .>>. (pchar ',' >>. spaces >>. value)
         )
 
     let condition: Parser<Condition> =
         operator .>>. call
         |>> (fun (op, (prop, value)) ->
-            { Property = prop
+            { Field = prop
               Operator = op
               Value = value })
         <?> "condition, e.g. `eq(field, value)`"
@@ -126,8 +125,8 @@ module Filtering =
         choice [
             pstring "and" >>. innerParser |>> recurse And
             pstring "or" >>. innerParser |>> recurse Or
-            pstring "isnull" >>. betweenBrackets property |>> IsNull
-            pstring "isnotnull" >>. betweenBrackets property |>> IsNotNull
+            pstring "isnull" >>. betweenBrackets field |>> IsNull
+            pstring "isnotnull" >>. betweenBrackets field |>> IsNotNull
             condition |>> Condition
         ]
 

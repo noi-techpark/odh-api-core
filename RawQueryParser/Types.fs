@@ -1,10 +1,10 @@
 ﻿namespace RawQueryParser
 
 /// <summary>
-/// Defines a Property with hierarchial access fields.
-/// E.g. <c>Property ["Detail"; "de"; "Title"]</c>
+/// Defines a field with hierarchial access fields.
+/// E.g. <c>Field ["Detail"; "de"; "Title"]</c>
 /// </summary>
-type Property = Property of fields: string list
+type Field = Field of fields: string list
 
 module Sorting =
     /// Defines the sort direction.
@@ -15,7 +15,7 @@ module Sorting =
     /// A sort statement is composed of a
     /// property and a sort direction.
     type SortStatement =
-        { Property: Property
+        { Field: Field
           Direction: OrderBy }
 
     /// Sort statements are a list of sort statement.
@@ -39,7 +39,7 @@ module Filtering =
 
     /// The condition is the combination of a property, an operator and a value.
     type Condition =
-        { Property: Property
+        { Field: Field
           Operator: Operator
           Value: Value }
 
@@ -49,6 +49,6 @@ module Filtering =
         | And of left: FilterStatement * right: FilterStatement
         | Or of left: FilterStatement * right: FilterStatement
         | Condition of Condition
-        | IsNull of Property
-        | IsNotNull of Property
+        | IsNull of Field
+        | IsNotNull of Field
 

@@ -6,15 +6,15 @@ open Parser
 [<Tests>]
 let parserTests =
     testList "Parser" [
-        testList "Property" [
-            test "Simple property should parse correctly" {
-                let expected = Ok (Property [ "Detail" ])
-                let actual = run property "Detail"
+        testList "Field" [
+            test "Simple field should parse correctly" {
+                let expected = Ok (Field [ "Detail" ])
+                let actual = run field "Detail"
                 Expect.equal actual expected ""
             }
-            test "Hierarchial property should parse correctly" {
-                let expected = Ok (Property [ "Detail"; "de"; "Title" ])
-                let actual = run property "Detail.de.Title"
+            test "Hierarchial field should parse correctly" {
+                let expected = Ok (Field [ "Detail"; "de"; "Title" ])
+                let actual = run field "Detail.de.Title"
                 Expect.equal actual expected ""
             }
         ]
@@ -29,18 +29,18 @@ let parserTests =
                     Expect.equal actual (Ok Sorting.Descending) ""
                 }
             ]
-            testList "Sort order and property" [
+            testList "Sort order and field" [
                 test "Sort by single" {
                     let expected: Result<Sorting.SortStatements, _> = Ok [
-                        { Property = Property ["Detail"; "de"; "Title"]; Direction = Sorting.Descending }
+                        { Field = Field ["Detail"; "de"; "Title"]; Direction = Sorting.Descending }
                     ]
                     let actual = run Sorting.statements "-Detail.de.Title"
                     Expect.equal actual expected ""
                 }
                 test "Sort by multiple" {
                     let expected: Result<Sorting.SortStatements, _> = Ok [
-                        { Property = Property ["Detail"; "de"; "Title"]; Direction = Sorting.Descending }
-                        { Property = Property ["Detail"; "de"; "Body"]; Direction = Sorting.Ascending }
+                        { Field = Field ["Detail"; "de"; "Title"]; Direction = Sorting.Descending }
+                        { Field = Field ["Detail"; "de"; "Body"]; Direction = Sorting.Ascending }
                     ]
                     let actual = run Sorting.statements "-Detail.de.Title,Detail.de.Body"
                     Expect.equal actual expected ""
@@ -50,7 +50,7 @@ let parserTests =
         testList "Filtering" [
             test "Simple condition with boolean" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.Condition { Property = Property ["Active"]
+                    Ok (Filtering.Condition { Field = Field ["Active"]
                                               Operator = Filtering.Operator.Eq
                                               Value = Filtering.Boolean true })
                 let actual = run Filtering.statement "eq(Active, true)"
@@ -58,7 +58,7 @@ let parserTests =
             }
             test "Simple condition with number" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.Condition { Property = Property ["Geo"; "Altitude"]
+                    Ok (Filtering.Condition { Field = Field ["Geo"; "Altitude"]
                                               Operator = Filtering.Operator.Eq
                                               Value = Filtering.Number 200. })
                 let actual = run Filtering.statement "eq(Geo.Altitude, 200)"
@@ -66,7 +66,7 @@ let parserTests =
             }
             test "Simple condition with single quote string" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.Condition { Property = Property ["Detail"; "de"; "Title"]
+                    Ok (Filtering.Condition { Field = Field ["Detail"; "de"; "Title"]
                                               Operator = Filtering.Operator.Eq
                                               Value = Filtering.String "Foo" })
                 let actual = run Filtering.statement "eq(Detail.de.Title, 'Foo')"
@@ -74,7 +74,7 @@ let parserTests =
             }
             test "Simple condition with double quote string" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.Condition { Property = Property ["Detail"; "de"; "Title"]
+                    Ok (Filtering.Condition { Field = Field ["Detail"; "de"; "Title"]
                                               Operator = Filtering.Operator.Eq
                                               Value = Filtering.String "Foo" })
                 let actual = run Filtering.statement """eq(Detail.de.Title, "Foo")"""
@@ -84,10 +84,10 @@ let parserTests =
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
                         Filtering.And (
-                            Filtering.Condition { Property = Property ["Geo"; "Altitude"]
+                            Filtering.Condition { Field = Field ["Geo"; "Altitude"]
                                                   Operator = Filtering.Operator.Ge
                                                   Value = Filtering.Number 200. },
-                            Filtering.Condition { Property = Property ["Geo"; "Altitude"]
+                            Filtering.Condition { Field = Field ["Geo"; "Altitude"]
                                                   Operator = Filtering.Operator.Le
                                                   Value = Filtering.Number 400. }
                         )
@@ -99,14 +99,14 @@ let parserTests =
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
                         Filtering.And (
-                            Filtering.Condition { Property = Property ["Active"]
+                            Filtering.Condition { Field = Field ["Active"]
                                                   Operator = Filtering.Operator.Eq
                                                   Value = Filtering.Boolean true },
                             Filtering.And (
-                                Filtering.Condition { Property = Property ["Geo"; "Altitude"]
+                                Filtering.Condition { Field = Field ["Geo"; "Altitude"]
                                                       Operator = Filtering.Operator.Ge
                                                       Value = Filtering.Number 200. },
-                                Filtering.Condition { Property = Property ["Geo"; "Altitude"]
+                                Filtering.Condition { Field = Field ["Geo"; "Altitude"]
                                                       Operator = Filtering.Operator.Le
                                                       Value = Filtering.Number 400. }
                             )
@@ -119,14 +119,14 @@ let parserTests =
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
                         Filtering.Or (
-                            Filtering.Condition { Property = Property ["Active"]
+                            Filtering.Condition { Field = Field ["Active"]
                                                   Operator = Filtering.Operator.Eq
                                                   Value = Filtering.Boolean true },
                             Filtering.And (
-                                Filtering.Condition { Property = Property ["Geo"; "Altitude"]
+                                Filtering.Condition { Field = Field ["Geo"; "Altitude"]
                                                       Operator = Filtering.Operator.Ge
                                                       Value = Filtering.Number 200. },
-                                Filtering.Condition { Property = Property ["Geo"; "Altitude"]
+                                Filtering.Condition { Field = Field ["Geo"; "Altitude"]
                                                       Operator = Filtering.Operator.Le
                                                       Value = Filtering.Number 400. }
                             )
@@ -137,7 +137,7 @@ let parserTests =
             }
             test "Condition with NULL check" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.IsNull (Property ["Detail"; "ru"; "Title"]))
+                    Ok (Filtering.IsNull (Field ["Detail"; "ru"; "Title"]))
                 let actual = run Filtering.statement "isnull(Detail.ru.Title)"
                 Expect.equal actual expected ""
             }

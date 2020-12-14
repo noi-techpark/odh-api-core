@@ -2,17 +2,23 @@
 module RawQueryParser.Writer
 
 /// <summary>
-/// Write a property like
-/// <c>Property ["Detail"; "de"; "Title"]</c>
+/// Write a field like
+/// <c>Field ["Detail"; "de"; "Title"]</c>
 /// as
-/// <c>data#>>'{Detail,de,Title}'</c>
+/// <c>data#>'{Detail,de,Title}'</c>
 /// </summary>
-let writeRawProperty (Property fields) =
+let writeRawField (Field fields) =
     fields
     |> String.concat ","
     |> sprintf "data#>'\\{%s\\}'"
 
-let writeTextProperty (Property fields) =
+/// <summary>
+/// Write a field like
+/// <c>Field ["Detail"; "de"; "Title"]</c>
+/// as
+/// <c>data#>>'{Detail,de,Title}'</c>
+/// </summary>
+let writeTextField (Field fields) =
     fields
     |> String.concat ","
     |> sprintf "data#>>'\\{%s\\}'"
@@ -31,9 +37,9 @@ module Sorting =
     /// A statement gets written by concatenating
     /// a property with a sort direction.
     let writeSortStatement statement =
-        let s = writeDirection statement.Direction
-        let p = writeTextProperty statement.Property
-        $"{p} {s}"
+        let direction = writeDirection statement.Direction
+        let field = writeTextField statement.Field
+        $"{field} {direction}"
 
     /// Statements are concatenated <see cref=">writeStatement</c>
     let writeStatements (statements: SortStatements) =
@@ -59,19 +65,19 @@ module Filtering =
         | String value -> $"'%s{value}'"
 
     let writeCondition condition =
-        let p =
+        let field =
             match condition.Value with
-            | Boolean _ -> $"({writeRawProperty condition.Property})::boolean"
-            | Number _ -> $"({writeRawProperty condition.Property})::float"
-            | String _ -> writeTextProperty condition.Property
-        let op = writeOperator condition.Operator
-        let v = writeValue condition.Value
-        $"{p} {op} {v}"
+            | Boolean _ -> $"({writeRawField condition.Field})::boolean"
+            | Number _ -> $"({writeRawField condition.Field})::float"
+            | String _ -> writeTextField condition.Field
+        let operator = writeOperator condition.Operator
+        let value = writeValue condition.Value
+        $"{field} {operator} {value}"
 
     let rec writeStatement = function 
         | Condition value -> writeCondition value
         | And (left, right) -> $"(%s{writeStatement left} AND %s{writeStatement right})"
         | Or (left, right) -> $"(%s{writeStatement left} OR %s{writeStatement right})"
-        | IsNull property -> $"{writeRawProperty property} IS NULL"
-        | IsNotNull property -> $"{writeRawProperty property} IS NOT NULL"
+        | IsNull property -> $"{writeRawField property} IS NULL"
+        | IsNotNull property -> $"{writeRawField property} IS NOT NULL"
 
