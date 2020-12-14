@@ -51,7 +51,8 @@ Because of this special meaning of NULL there exist `isnull` and `isnotnull` fun
 
 - Boolean: `true`, `false`
 - Number: `1`, `1.12` (exponential notation is not allowed) are always interpreted as a floating point number
-- No magic treatment of strings, they need to be defined in quotes (single or double quotes are both legal, unicode escapes are not allowed) 
+- Strings need to be defined in quotes (single or double quotes are both legal, unicode escapes are not allowed) 
+  They are special in that they leverage PostgreSQL special capability to represent different data types (e.g. dates) as strings (`#>>`) which allows to filter them by strings.
 
 No special or magical conversion happens between the data types.    
 E.g. `1` applied to a boolean field doesn't get converterted into a boolean type 'automagically'. It is the underlying DB's responsibility to handle such a type missmatch.
