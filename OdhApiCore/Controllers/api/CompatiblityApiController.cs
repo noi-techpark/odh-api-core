@@ -64,6 +64,11 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             //TODO
@@ -71,7 +76,11 @@ namespace OdhApiCore.Controllers.api
 
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return await GetPoiReduced(language, poitype, subtype, locfilter, areafilter, highlight, active, odhactive, odhtagfilter, geosearchresult, cancellationToken);
+            return await GetPoiReduced(
+                language, poitype, subtype, locfilter, areafilter, 
+                highlight, active, odhactive, odhtagfilter,
+                fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
+                geosearchresult, cancellationToken);
         }
 
 
@@ -91,7 +100,8 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetPoiReduced(
             string? language, string? poitype, string? subtypefilter, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive,
-            string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? smgtags, string[] fields, string? rawfilter, string? rawsort, string? searchfilter,
+            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -99,26 +109,41 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
                     highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
+                string? seed = null;
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
-                string orderby = "data#>>'\\{Shortname\\}' ASC";
+                //string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                //Custom Fields filter
+                if (fields.Length > 0)
+                {                 
+                    foreach (var field in fields)
+                    {                        
+                        select = select + $", data#>>'\\{{" + field.Replace(".", ",") + "\\}' as \"" + field + "\",";
+                    }
+                    select = select.Substring(0, select.Length - 1);
+                }
 
                 var query =
                     QueryFactory.Query()
                         .SelectRaw(select)
-                        .From("activities")
+                        .From("pois")
                         .PoiWhereExpression(
                             idlist: mypoihelper.idlist, poitypelist: mypoihelper.poitypelist, subtypelist: mypoihelper.subtypelist,
                             smgtaglist: mypoihelper.smgtaglist, districtlist: new List<string>(), municipalitylist: new List<string>(),
                             tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
                             arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
-                            smgactivefilter: mypoihelper.smgactive, searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
+                            smgactivefilter: mypoihelper.smgactive, searchfilter: searchfilter, language: language, lastchange: null, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData
                         )
-                        .OrderByRaw(orderby)
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
-                // Get paginated data
-                return await query.GetAsync<ResultReduced>();
+                // Get REDUCED data
+                var data =
+                        await query
+                            .GetAsync<JsonRaw>();
+
+                return data;
             });
         }
 
