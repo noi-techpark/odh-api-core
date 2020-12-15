@@ -89,6 +89,8 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -100,7 +102,7 @@ namespace OdhApiCore.Controllers
                     distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
                     highlightfilter: highlight, difficultyfilter: difficultyfilter, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: lastchange,
-                    geosearchresult: geosearchresult, cancellationToken: cancellationToken);
+                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -190,7 +192,8 @@ namespace OdhApiCore.Controllers
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
-            string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, 
+            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -217,8 +220,8 @@ namespace OdhApiCore.Controllers
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =
