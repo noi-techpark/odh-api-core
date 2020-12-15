@@ -533,6 +533,8 @@ namespace OdhApiCore.Controllers.api
             LegacyBool odhactive = null!,
             string? begindate = null,
             string? enddate = null,
+            string? langfilter = null,
+            string? source = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -540,18 +542,18 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return await GetEventReduced(language, locfilter, rancfilter, typefilter, topicfilter, orgfilter, odhactive?.Value, active?.Value, begindate, enddate, odhtagfilter, geosearchresult, cancellationToken);
+            return await GetEventReduced(language, locfilter, rancfilter, typefilter, topicfilter, orgfilter, odhactive?.Value, active?.Value, source, langfilter, begindate, enddate, odhtagfilter, geosearchresult, cancellationToken);
         }
 
         private Task<IActionResult> GetEventReduced(string? language, string? locfilter, string? rancfilter,
-            string? typefilter, string? topicfilter, string? orgfilter, bool? smgactive, bool? active,
+            string? typefilter, string? topicfilter, string? orgfilter, bool? smgactive, bool? active, string? source, string? langfilter,
             string? begindate, string? enddate, string? smgtagfilter, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 EventHelper helper = await EventHelper.CreateAsync(
                     QueryFactory, null, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate,
-                    enddate, active, smgactive, smgtagfilter, null, cancellationToken);
+                    enddate, active, smgactive, smgtagfilter, null, langfilter, source, cancellationToken);
                 
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
                 string orderby = "data#>>'\\{Shortname\\}' ASC";
@@ -563,9 +565,9 @@ namespace OdhApiCore.Controllers.api
                         .EventWhereExpression(
                             idlist: helper.idlist, topiclist: helper.topicrids, typelist: helper.typeidlist, ranclist: helper.rancidlist,
                             smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
-                            tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
-                            orglist: helper.orgidlist, begindate: helper.begin, enddate: helper.end, activefilter: helper.active,
-                            smgactivefilter: helper.smgactive, languagelist: new List<string>(),
+                            tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist, 
+                            orglist: helper.orgidlist, sourcelist: helper.sourcelist, begindate: helper.begin, enddate: helper.end, activefilter: helper.active,
+                            smgactivefilter: helper.smgactive, languagelist: helper.languagelist,
                             searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
                         .OrderByRaw(orderby)
