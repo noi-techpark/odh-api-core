@@ -37,7 +37,7 @@ namespace Helper
             return query.OrderByRaw(orderby);
         }
 
-        public static Query ApplyOrdering(this Query query, ref string? seed, PGGeoSearchResult geosearchresult, string? rawsort) =>
+        public static Query ApplyOrdering(this Query query, ref string? seed, PGGeoSearchResult geosearchresult, string? rawsort, string? overwritestandardorder = null) =>
             (geosearchresult, rawsort) switch
             {
                 (PGGeoSearchResult geosr, _) when geosr.geosearch =>
@@ -45,7 +45,7 @@ namespace Helper
                 (_, string raw) =>
                     query.OrderByRaw(RawQueryParser.Transformer.TransformSort(raw)),
                 _ =>
-                    query.OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
+                    query.OrderBySeed(ref seed, overwritestandardorder != null ? overwritestandardorder : "data#>>'\\{Shortname\\}' ASC")
             };
 
         public static Query ApplyRawFilter(this Query query, string? rawFilter) =>

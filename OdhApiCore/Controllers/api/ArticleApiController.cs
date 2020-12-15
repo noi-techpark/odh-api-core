@@ -151,7 +151,8 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize,
             string? type, string? subtypefilter, string? searchfilter, string? idfilter, string? languagefilter, bool? highlightfilter,
-            bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, bool? sortbyarticledate, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+            bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, bool? sortbyarticledate, string? rawfilter, string? rawsort, 
+            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {

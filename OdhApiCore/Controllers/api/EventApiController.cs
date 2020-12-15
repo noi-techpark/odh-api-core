@@ -187,12 +187,11 @@ namespace OdhApiCore.Controllers
                     cancellationToken);
 
 
-                //string sortifseednull = "data #>>'\\{Shortname\\}' ASC";
+                string sortifseednull = null;
 
                 if (sort != null)
                 {
-                    string sortifseednull = "";
-
+                  
                     if (sort.ToLower() == "asc")
                         sortifseednull = "nextbegindate ASC";
                     else
@@ -200,8 +199,9 @@ namespace OdhApiCore.Controllers
 
                     //Set seed to null
                     seed = null;
-                    //Set Rawfilter to this
-                    rawfilter = sortifseednull;
+                    
+                    //Set Rawfilter to this RTHOENI rawfilter can overwrite this ;)
+                    //rawfilter = sortifseednull;
                 }
 
                 var query =
@@ -219,7 +219,7 @@ namespace OdhApiCore.Controllers
                             searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
                             filterClosedData: FilterClosedData)
                          .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort, sortifseednull);
                 //.OrderBySeed(ref seed, sortifseednull)
                 //.GeoSearchFilterAndOrderby(geosearchresult);
                 //TODO Use sorting

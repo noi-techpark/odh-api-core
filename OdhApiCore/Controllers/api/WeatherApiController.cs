@@ -137,6 +137,8 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -146,7 +148,8 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
                     skiareafilter: skiareafilter, active: active,
                     smgactive: odhactive, seed: seed, lastchange: lastchange,
-                    geosearchresult: geosearchresult, cancellationToken: cancellationToken);
+                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
+                    cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -316,6 +319,8 @@ namespace OdhApiCore.Controllers
             string? seed,
             string[] fields,
             PGGeoSearchResult geosearchresult,
+            string? rawfilter,
+            string? rawsort,
             CancellationToken cancellationToken = default)
         {
             return DoAsyncReturn(async () =>
@@ -337,8 +342,9 @@ namespace OdhApiCore.Controllers
                             activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+
 
                 var data =
                         await query

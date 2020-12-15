@@ -67,15 +67,19 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? lastchange = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default
             )
         {
             return await GetEventShortList(
                fields: fields ?? Array.Empty<string>(), language: "", pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
-                   searchfilter: "", sourcefilter: source, eventlocationfilter: eventlocation,
+                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, active: onlyactive.Value,
-                   sortorder: sortorder, seed: seed, lastchange: lastchange, cancellationToken: cancellationToken);
+                   sortorder: sortorder, seed: seed, lastchange: lastchange,
+                   rawfilter: rawfilter, rawsort: rawsort, cancellationToken: cancellationToken);
         }
 
 
@@ -93,6 +97,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpGet, Route("EventShort/{id}")]
+        [HttpGet, Route("EventShort/Detail/{id}")]
         public async Task<IActionResult> GetSingle(
             string id,
             string? language,
@@ -102,20 +107,6 @@ namespace OdhApiCore.Controllers.api
         {
             return await GetEventShortSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
-
-        //Compatibility Route
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("EventShort/Detail/{id}")]
-        public async Task<IActionResult> GetDetail(
-            string id,
-            string? language,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await GetEventShortSingle(id, language, fields ?? new string[] { }, cancellationToken);
-        }
-
 
         /// <summary>
         /// GET EventShort List by Room Occupation
@@ -163,7 +154,7 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, uint pagesize, string? startdate, string? enddate, string? datetimeformat,
             string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, string? sortorder, string? seed,
-            string? lastchange, CancellationToken cancellationToken)
+            string? lastchange, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -181,8 +172,11 @@ namespace OdhApiCore.Controllers.api
                            start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
                            searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
                            filterClosedData: FilterClosedData, getbyrooms: false)
-                      .OrderBySeed(ref seed, "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);
-                       
+                       .ApplyRawFilter(rawfilter)
+                       .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);
+
+                //.OrderBySeed(ref seed, );
+
                 //.OrderBy("data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);                       
 
                 // Get paginated data

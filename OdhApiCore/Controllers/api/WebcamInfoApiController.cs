@@ -71,11 +71,17 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return await GetFilteredAsync(fields: fields ?? Array.Empty<string>(), language, pagenumber, pagesize, source, idlist, searchfilter, active?.Value, odhactive?.Value, seed, updatefrom, geosearchresult, cancellationToken);
+            return await GetFilteredAsync(
+                fields: fields ?? Array.Empty<string>(), language, pagenumber, pagesize,
+                source, idlist, searchfilter, active?.Value, odhactive?.Value, 
+                seed, updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
+                cancellationToken);
         }
 
         /// <summary>
@@ -106,7 +112,8 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFilteredAsync(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? source,
             string? idfilter, string? searchfilter, bool? active, bool? smgactive,
-            string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -122,8 +129,9 @@ namespace OdhApiCore.Controllers
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
                             languagelist: new List<string>(), filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+
 
                 // Get paginated data
                 var data =
