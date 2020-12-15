@@ -56,7 +56,7 @@ namespace OdhApiCore.Controllers.api
                 if (int.TryParse(typefilter, out typeinteger))
                 {
                     //Sonderfall wenn alles abgefragt wird um keine unnötige Where zu erzeugen
-                    if (typeinteger != 63)
+                    if (typeinteger != 255)
                         typelist = Helper.ActivityPoiListCreator.CreateSmgPoiTypefromFlag(typefilter);
                 }
                 else
