@@ -263,7 +263,9 @@ namespace Helper
           IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> ranclist,
           IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
           IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
-          IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> orglist, DateTime? begindate, DateTime? enddate,
+          IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> orglist,
+          IReadOnlyCollection<string> sourcelist,
+          DateTime? begindate, DateTime? enddate,
           bool? activefilter, bool? smgactivefilter, string? searchfilter,
           string? language, string? lastchange, bool filterClosedData)
         {
@@ -274,7 +276,7 @@ namespace Helper
                 typelist, ranclist,
                 smgtaglist, districtlist,
                 municipalitylist, tourismvereinlist,
-                regionlist, orglist, begindate, enddate,
+                regionlist, orglist, sourcelist, languagelist, begindate, enddate,
                 activefilter, smgactivefilter, searchfilter,
                 language, lastchange
             );
@@ -292,6 +294,8 @@ namespace Helper
                 .EventDateFilterEnd(begindate, enddate)
                 .EventDateFilterBegin(begindate, enddate)
                 .EventDateFilterBeginEnd(begindate, enddate)
+                .HasLanguageFilter(languagelist)
+                .SourceFilterMeta(sourcelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SmgTagFilter(smgtaglist)

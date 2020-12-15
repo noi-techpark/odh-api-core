@@ -408,6 +408,13 @@ namespace Helper
                 id => id.ToUpper()
             );
 
+        public static Query SourceFilterMeta(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.WhereInJsonb(
+                list: sourcelist,
+                "Meta.Source",
+                id => id.ToUpper()
+            );
+
         //not working
         //public static Query HasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
         //    query.WhereInJsonb(

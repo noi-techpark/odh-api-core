@@ -83,12 +83,16 @@ namespace OdhApiCore.Controllers
             string? sort = null,
             string? lastchange = null,
             string? seed = null,
+            string? langfilter = null,
+            string? source = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -99,7 +103,9 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, topicfilter: topicfilter, orgfilter: orgfilter,
                     begindate: begindate, enddate: enddate, sort: sort, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: lastchange,
-                    geosearchresult: geosearchresult, cancellationToken: cancellationToken);
+                    langfilter: langfilter, source: source,
+                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
+                    cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -170,20 +176,23 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(
         string[] fields, string? language, uint pagenumber, uint pagesize, string? typefilter, string? idfilter,
         string? rancfilter, string? searchfilter, string? locfilter, string? orgfilter, string? topicfilter, string? begindate, string? enddate,
-        string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? source, 
+        PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 EventHelper myeventhelper = await EventHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate, enddate,
-                    active, smgactive, smgtags, lastchange,
+                    active, smgactive, smgtags, lastchange, langfilter, source,
                     cancellationToken);
 
 
-                string sortifseednull = "data #>>'\\{Shortname\\}' ASC";
+                //string sortifseednull = "data #>>'\\{Shortname\\}' ASC";
 
                 if (sort != null)
                 {
+                    string sortifseednull = "";
+
                     if (sort.ToLower() == "asc")
                         sortifseednull = "nextbegindate ASC";
                     else
@@ -191,6 +200,8 @@ namespace OdhApiCore.Controllers
 
                     //Set seed to null
                     seed = null;
+                    //Set Rawfilter to this
+                    rawfilter = sortifseednull;
                 }
 
                 var query =
@@ -202,13 +213,16 @@ namespace OdhApiCore.Controllers
                             ranclist: myeventhelper.rancidlist, orglist: myeventhelper.orgidlist,
                             smgtaglist: myeventhelper.smgtaglist, districtlist: myeventhelper.districtlist,
                             municipalitylist: myeventhelper.municipalitylist, tourismvereinlist: myeventhelper.tourismvereinlist,
-                            regionlist: myeventhelper.regionlist, topiclist: myeventhelper.topicrids,
-                            begindate: myeventhelper.begin, enddate: myeventhelper.end,
+                            regionlist: myeventhelper.regionlist, topiclist: myeventhelper.topicrids, sourcelist: myeventhelper.sourcelist,
+                            languagelist: myeventhelper.languagelist, begindate: myeventhelper.begin, enddate: myeventhelper.end,
                             activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange, languagelist: new List<string>(),
+                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, sortifseednull)
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                         .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                //.OrderBySeed(ref seed, sortifseednull)
+                //.GeoSearchFilterAndOrderby(geosearchresult);
+                //TODO Use sorting
 
                 // Get paginated data
                 var data =
