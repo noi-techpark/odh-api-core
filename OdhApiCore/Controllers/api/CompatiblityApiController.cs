@@ -138,7 +138,7 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
-                // Get REDUCED data
+                // Get REDUCED data TODO RESOLVE ERRORS
                 var data =
                         await query
                             .GetAsync<JsonRaw>();
