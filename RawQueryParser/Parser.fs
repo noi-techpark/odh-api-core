@@ -81,7 +81,7 @@ module Filtering =
 
     let string: Parser<Value> =
         betweenQuotes (
-            manySatisfy (fun char -> char <> '\"' && char <> '\'')
+            manySatisfy (isNoneOf ['\"'; '\''])
         )
         |>> String
         <?> "string"
@@ -111,23 +111,15 @@ module Filtering =
     do statementRef :=
         let innerParser: Parser<FilterStatement list> =
             betweenBrackets (sepBy1 statement' (pchar ',' >>. spaces))
-        let rec recurse f (statements: FilterStatement list) =
-            match statements with
-            | [] ->
-                // TODO: Find a more idiomatic solution instead of throwing an exception.
-                // Not a big problem, because the parser never reaches this state because
-                // of `sepBy1` already guarantees a non empty list
-                failwith "Empty statements are not allowed"
-            | [value] ->
-                value
-            | head::tail ->
-                f (head, recurse f tail)
+        let combineWith f (statements: FilterStatement list) =
+            statements |> List.rev |> List.reduce (fun y x -> f (x, y))
         choice [
-            pstring "and" >>. innerParser |>> recurse And
-            pstring "or" >>. innerParser |>> recurse Or
+            pstring "and" >>. innerParser |>> combineWith And
+            pstring "or" >>. innerParser |>> combineWith Or
             pstring "isnull" >>. betweenBrackets field |>> IsNull
             pstring "isnotnull" >>. betweenBrackets field |>> IsNotNull
             condition |>> Condition
         ]
 
     let statement = statement' .>> eof
+
