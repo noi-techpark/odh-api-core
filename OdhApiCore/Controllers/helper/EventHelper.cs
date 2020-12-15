@@ -46,8 +46,8 @@ namespace OdhApiCore.Controllers
             return new EventHelper(
                 idfilter: idfilter, locfilter: locfilter, rancfilter: rancfilter, typefilter: typefilter,
                 topicfilter: topicfilter, orgfilter: orgfilter, begindate: begindate, enddate: enddate,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, sourcefilter: source, languagefilter: langfilter,
-                tourismusvereinids: tourismusvereinids);
+                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, sourcefilter: source, 
+                languagefilter: langfilter, tourismusvereinids: tourismusvereinids);
         }
 
         private EventHelper(
