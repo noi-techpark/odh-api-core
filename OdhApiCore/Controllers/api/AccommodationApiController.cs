@@ -108,6 +108,8 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             
@@ -126,7 +128,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
-                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
             }
             else if(availabilitycheck?.Value == true)
             {
@@ -149,7 +151,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
-                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
             }
 
             //Fall 3 Available MSS
@@ -478,8 +480,8 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize, string? idfilter, string? locfilter,
             string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? featureidfilter, string? themefilter, string? badgefilter, string? altitudefilter, 
-            bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? searchfilter,
-            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? searchfilter, 
+            PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -504,8 +506,8 @@ namespace OdhApiCore.Controllers
                             activefilter: myhelper.active, smgactivefilter: myhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =
