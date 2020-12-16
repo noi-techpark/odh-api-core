@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -116,11 +117,15 @@ namespace OdhApiCore.Controllers.api
                 //Custom Fields filter
                 if (fields.Length > 0)
                 {                 
-                    foreach (var field in fields)
-                    {                        
-                        select = select + $", data#>>'\\{{" + field.Replace(".", ",") + "\\}' as \"" + field + "\",";
-                    }
-                    select = select.Substring(0, select.Length - 1);
+                    //foreach (var field in fields)
+                    //{                        
+                    //    select = select + $", data#>>'\\{{" + field.Replace(".", ",") + "\\}' as \"" + field + "\",";
+                    //}
+                    //select = select.Substring(0, select.Length - 1);
+
+                    select += string.Join("", fields.Select(field =>
+                  $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+
                 }
 
                 var query =
@@ -141,7 +146,7 @@ namespace OdhApiCore.Controllers.api
                 // Get REDUCED data TODO RESOLVE ERRORS
                 var data =
                         await query
-                            .GetAsync<JsonRaw>();
+                            .GetAsync<object>();
 
                 return data;
             });
