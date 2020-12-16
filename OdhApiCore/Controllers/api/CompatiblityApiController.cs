@@ -111,7 +111,7 @@ namespace OdhApiCore.Controllers.api
                     highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string? seed = null;
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
