@@ -16,6 +16,10 @@ pipeline {
 	SIAG_USER = credentials('odh-tourism-api-test-siag-user')
 	SIAG_PSWD = credentials('odh-tourism-api-test-siag-pswd')
 	XMLDIR = credentials('odh-tourism-api-test-xmldir')
+	IMG_URL = "https://images.tourism.testingmachine.eu/api/Image/GetImage?imageurl="
+	S3_BUCKET_ACCESSPOINT = credentials('odh-tourism-api-bucket-accesspoint')
+	S3_IMAGEUPLOADER_ACCESSKEY = credentials('odh-tourism-api-s3-imageuploader-accesskey')
+	S3_IMAGEUPLOADER_SECRETKEY = credentials('odh-tourism-api-s3-imageuploader-secretkey')
     }
 
     stages {
@@ -38,6 +42,10 @@ pipeline {
 		    echo 'SIAG_USER=${SIAG_USER}' >> .env
 		    echo 'SIAG_PSWD=${SIAG_PSWD}' >> .env
 		    echo 'XMLDIR=${XMLDIR}' >> .env
+		    echo 'IMG_URL=${IMG_URL}' >> .env
+		    echo 'S3_BUCKET_ACCESSPOINT=${S3_BUCKET_ACCESSPOINT}' >> .env
+		    echo 'S3_IMAGEUPLOADER_ACCESSKEY=${S3_IMAGEUPLOADER_ACCESSKEY}' >> .env
+		    echo 'S3_IMAGEUPLOADER_SECRETKEY=${S3_IMAGEUPLOADER_SECRETKEY}' >> .env
                 """
             }
         }
