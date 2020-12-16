@@ -123,8 +123,8 @@ namespace OdhApiCore
 
             services.AddControllers().AddNewtonsoftJson(options =>
             {
-                options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-            }).AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);            
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
 
             services.AddRazorPages();
 
@@ -268,6 +268,7 @@ namespace OdhApiCore
                 //    }
                 //});
             });
+            services.AddSwaggerGenNewtonsoftSupport();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
