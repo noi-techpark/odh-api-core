@@ -52,7 +52,7 @@ namespace OdhApiCore.Controllers.api
 
             foreach (var file in form.Files)
             {
-                var filename = $"{Guid.NewGuid()}.{Path.GetExtension(file.FileName)}";
+                var filename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
                 var request = new UploadPartRequest
                 {
                     BucketName = bucketName,
