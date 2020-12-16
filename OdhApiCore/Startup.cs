@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
 using OdhApiCore.Factories;
@@ -123,7 +124,7 @@ namespace OdhApiCore
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-            });
+            }).AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);            
 
             services.AddRazorPages();
 
@@ -185,11 +186,16 @@ namespace OdhApiCore
                 //};
             });
 
-            services.AddMvc(options =>
-            {
-                options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
-                options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
-            });
+            services
+                .AddMvc(options =>
+                {
+                    options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
+                    options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
+                });
+                //.AddJsonOptions(options =>
+                //{
+                //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = new DefaultContractResolver();
+                //});
 
             //TO TEST
             // Here I stored necessary permissions/roles in a constant
@@ -336,6 +342,7 @@ namespace OdhApiCore
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
+            
             //Not needed at moment
             //app.UseHttpContext();
         }

@@ -30,6 +30,14 @@ namespace OdhApiCore.Controllers.api
             this.settings = settings;
         }
 
+        [HttpGet, Route("TestObject")]
+        public IActionResult GetTagObject(CancellationToken cancellationToken)
+        {
+            var tag = new SmgTags() { Id = "test", MainEntity = "Blah", Shortname = "hallo", TagName = null, ValidForEntity = new List<string>() { "hallo" } };
+
+            return Ok(tag);
+        }
+
         [HttpGet, Route("Anonymous")]
         public IActionResult GetAnonymous(CancellationToken cancellationToken)
         {
