@@ -53,10 +53,12 @@ namespace OdhApiCore.Controllers.api
             foreach (var file in form.Files)
             {
                 var filename = $"{Guid.NewGuid()}.{Path.GetExtension(file.FileName)}";
-                var request = new UploadPartRequest();
-                request.BucketName = bucketName;
-                request.Key = filename;
-                request.InputStream = file.OpenReadStream();
+                var request = new UploadPartRequest
+                {
+                    BucketName = bucketName,
+                    Key = filename,
+                    InputStream = file.OpenReadStream()
+                };
                 var response = await client.UploadPartAsync(request);
                 filenames.Add(String.Format("{0},{1}", settings.S3ImageresizerConfig.Url, filename));
             }
