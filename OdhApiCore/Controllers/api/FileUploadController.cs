@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.IO;
 using System.Text;
+using Amazon.Runtime;
+using Amazon.S3;
+using Amazon;
+using Amazon.S3.Model;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -27,6 +31,35 @@ namespace OdhApiCore.Controllers.api
             this.env = env;
             this.settings = settings;
             this.Logger = logger;
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
+        [HttpPost, Route("api/FileUpload/{type}/{directory}")]
+        public async Task<IActionResult> PostFormData(string type, string directory, IFormCollection form)
+        {
+            var filenames = new List<string>();
+
+            // read from settings
+            var keyid = "";
+            var key = "";
+            var bucketName = "";
+
+            var creds = new BasicAWSCredentials(keyid, key);
+            var config = new AmazonS3Config();
+            var client = new AmazonS3Client(creds, config);
+
+            foreach (var file in form.Files)
+            {
+                var filename = $"{Guid.NewGuid()}.{Path.GetExtension(file.FileName)}";
+                var request = new UploadPartRequest();
+                request.BucketName = bucketName;
+                request.Key = filename;
+                request.InputStream = file.OpenReadStream();
+                var response = await client.UploadPartAsync(request);
+                filenames.Add(filename);
+            }
+            return Ok(filenames);
         }
 
         //TODO have a look here https://weblog.west-wind.com/posts/2017/sep/14/accepting-raw-request-body-content-in-aspnet-core-api-controllers
