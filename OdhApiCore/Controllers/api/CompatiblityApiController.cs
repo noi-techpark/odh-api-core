@@ -110,22 +110,12 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
                     highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string? seed = null;
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
-                //string orderby = "data#>>'\\{Shortname\\}' ASC";
-
+                
                 //Custom Fields filter
                 if (fields.Length > 0)
-                {                 
-                    //foreach (var field in fields)
-                    //{                        
-                    //    select = select + $", data#>>'\\{{" + field.Replace(".", ",") + "\\}' as \"" + field + "\",";
-                    //}
-                    //select = select.Substring(0, select.Length - 1);
-
-                    select += string.Join("", fields.Select(field =>
-                  $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
-
+                {
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
                 }
 
                 var query =
@@ -141,14 +131,10 @@ namespace OdhApiCore.Controllers.api
                             filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                        .ApplyOrdering(geosearchresult, rawsort);
+                
+                return await query.GetAsync<object>();
 
-                // Get REDUCED data TODO RESOLVE ERRORS
-                var data =
-                        await query
-                            .GetAsync<object>();
-
-                return data;
             });
         }
 
@@ -198,19 +184,27 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetActivityReduced(
                 language, activitytype, subtype, locfilter, areafilter, distancefilter, altitudefilter, durationfilter,
-                highlight, difficultyfilter, active, odhactive, odhtagfilter, geosearchresult, cancellationToken);
+                highlight, difficultyfilter, active, odhactive, odhtagfilter,
+                fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
+                geosearchresult, cancellationToken);
         }
 
         private Task<IActionResult> GetActivityReduced(
             string? language, string? activitytype, string? subtypefilter, string? locfilter, string? areafilter,
             string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
             string? difficultyfilter, bool? active, bool? smgactive, string? smgtags,
+            string[] fields, string? rawfilter, string? rawsort, string? searchfilter,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -223,7 +217,12 @@ namespace OdhApiCore.Controllers.api
                     smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
                 
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
-                string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                //Custom Fields filter
+                if (fields.Length > 0)
+                {
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                }
 
                 var query =
                     QueryFactory.Query()
@@ -243,11 +242,10 @@ namespace OdhApiCore.Controllers.api
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
-                        .OrderByRaw(orderby)
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(geosearchresult, rawsort);
 
-                // Get paginated data
-                return await query.GetAsync<ResultReduced>();
+                return await query.GetAsync<object>();
             });
         }
 
@@ -290,17 +288,27 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return await GetGastronomyReduced(language, locfilter, dishcodefilter, ceremonycodefilter, categorycodefilter, facilitycodefilter, cuisinecodefilter, active?.Value, odhactive?.Value, odhtagfilter, geosearchresult, cancellationToken);
+            return await GetGastronomyReduced(
+                language, locfilter, dishcodefilter, ceremonycodefilter, categorycodefilter, facilitycodefilter, 
+                cuisinecodefilter, active?.Value, odhactive?.Value, odhtagfilter,
+                fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter, 
+                geosearchresult, cancellationToken);
         }
 
         private Task<IActionResult> GetGastronomyReduced(
             string? language, string? locfilter, string? dishcodefilter,
             string? ceremonycodefilter, string? categorycodefilter, string? facilitycodefilter,
             string? cuisinecodefilter, bool? active, bool? smgactive, string? smgtagfilter,
+            string[] fields, string? rawfilter, string? rawsort, string? searchfilter,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -312,7 +320,12 @@ namespace OdhApiCore.Controllers.api
                     lastchange: null, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
-                string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                //Custom Fields filter
+                if (fields.Length > 0)
+                {
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                }
 
                 var query =
                     QueryFactory.Query()
@@ -328,11 +341,10 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData
                         )
-                        .OrderByRaw(orderby)
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(geosearchresult, rawsort);
 
-                // Get paginated data
-                return await query.GetAsync<ResultReduced>();
+                return  await query.GetAsync<object>();
             });
         }
 

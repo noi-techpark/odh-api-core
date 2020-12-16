@@ -48,6 +48,17 @@ namespace Helper
                     query.OrderBySeed(ref seed, overwritestandardorder != null ? overwritestandardorder : "data#>>'\\{Shortname\\}' ASC")
             };
 
+        public static Query ApplyOrdering(this Query query, PGGeoSearchResult geosearchresult, string? rawsort, string? overwritestandardorder = null) =>
+            (geosearchresult, rawsort) switch
+            {
+                (PGGeoSearchResult geosr, _) when geosr.geosearch =>
+                    query.GeoSearchFilterAndOrderby(geosr),
+                (_, string raw) =>
+                    query.OrderByRaw(RawQueryParser.Transformer.TransformSort(raw)),
+                _ =>
+                    query.OrderBy(overwritestandardorder != null ? overwritestandardorder : "data#>>'\\{Shortname\\}' ASC")
+            };
+
         public static Query ApplyRawFilter(this Query query, string? rawFilter) =>
             rawFilter != null ? query.WhereRaw(RawQueryParser.Transformer.TransformFilter(rawFilter)) : query;
     }
