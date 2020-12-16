@@ -62,7 +62,6 @@ namespace OdhApiCore
         LcsConfig LcsConfig { get; }
         SiagConfig SiagConfig { get; }
         XmlConfig XmlConfig { get; }
-        string ImageResizerPath { get; }
     }
 
     public class Settings : ISettings
@@ -73,7 +72,6 @@ namespace OdhApiCore
         private readonly LcsConfig lcsConfig;
         private readonly SiagConfig siagConfig;
         private readonly XmlConfig xmlConfig;
-        private readonly string imageResizerPath;
 
         public Settings(IConfiguration configuration)
         {
@@ -88,7 +86,6 @@ namespace OdhApiCore
             this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
             var xml = this.configuration.GetSection("XmlConfig");
             this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
-            this.imageResizerPath = this.configuration.GetValue<string>("ImageResizerPath");
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -97,6 +94,5 @@ namespace OdhApiCore
         public LcsConfig LcsConfig => this.lcsConfig;
         public SiagConfig SiagConfig => this.siagConfig;
         public XmlConfig XmlConfig => this.xmlConfig;
-        public string ImageResizerPath => this.imageResizerPath;
     }
 }
