@@ -18,7 +18,7 @@ using Amazon.S3.Model;
 namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     [ApiController]
     public class FileUploadController : ControllerBase
     {
@@ -34,19 +34,20 @@ namespace OdhApiCore.Controllers.api
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
+        //[Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
         [HttpPost, Route("api/FileUpload/{type}/{directory}")]
         public async Task<IActionResult> PostFormData(string type, string directory, IFormCollection form)
         {
             var filenames = new List<string>();
 
             // read from settings
-            var keyid = "";
-            var key = "";
-            var bucketName = "";
+            var keyid = settings.S3ImageresizerConfig.AccessKey;
+            var key = settings.S3ImageresizerConfig.SecretKey;
+            var bucketName = settings.S3ImageresizerConfig.BucketAccessPoint;
 
             var creds = new BasicAWSCredentials(keyid, key);
             var config = new AmazonS3Config();
+            config.RegionEndpoint = RegionEndpoint.EUWest1;
             var client = new AmazonS3Client(creds, config);
 
             foreach (var file in form.Files)
@@ -57,7 +58,7 @@ namespace OdhApiCore.Controllers.api
                 request.Key = filename;
                 request.InputStream = file.OpenReadStream();
                 var response = await client.UploadPartAsync(request);
-                filenames.Add(filename);
+                filenames.Add(String.Format("{0},{1}", settings.S3ImageresizerConfig.Url, filename));
             }
             return Ok(filenames);
         }
