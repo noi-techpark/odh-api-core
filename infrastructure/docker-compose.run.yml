@@ -16,6 +16,10 @@ services:
       ASPNETCORE_SiagConfig__Password: ${SIAG_PSWD}
       ASPNETCORE_XmlConfig__Xmldir: ${XMLDIR}
       ASPNETCORE_XmlConfig__XmldirWeather: ${XMLDIR}
+      ASPNETCORE_S3ImageresizerConfig__Url: ${IMG_URL}
+      ASPNETCORE_S3ImageresizerConfig__BucketAccessPoint: ${S3_BUCKET_ACCESSPOINT}
+      ASPNETCORE_S3ImageresizerConfig__AccessKey: ${S3_IMAGEUPLOADER_ACCESSKEY}
+      ASPNETCORE_S3ImageresizerConfig__SecretKey: ${S3_IMAGEUPLOADER_SECRETKEY}
     restart: unless-stopped
     ports:
       - "${SERVER_PORT}:80"
