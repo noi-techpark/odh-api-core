@@ -56,8 +56,8 @@ namespace Helper
                 (_, string raw) =>
                     query.OrderByRaw(RawQueryParser.Transformer.TransformSort(raw)),
                 _ =>
-                    query.OrderBy(overwritestandardorder != null ? overwritestandardorder : "data#>>'\\{Shortname\\}' ASC")
-            };
+                    query.OrderByRaw(overwritestandardorder != null ? overwritestandardorder : "data#>>'\\{Shortname\\}' ASC")
+            };        
 
         public static Query ApplyRawFilter(this Query query, string? rawFilter) =>
             rawFilter != null ? query.WhereRaw(RawQueryParser.Transformer.TransformFilter(rawFilter)) : query;

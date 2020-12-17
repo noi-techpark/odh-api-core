@@ -46,6 +46,9 @@ namespace OdhApiCore.Controllers
             string? validforentity = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             string? localizationlanguage = null,  //TODO ignore this in swagger
             CancellationToken cancellationToken = default)
         {
@@ -53,15 +56,11 @@ namespace OdhApiCore.Controllers
             if (String.IsNullOrEmpty(language) && !String.IsNullOrEmpty(localizationlanguage))
                 language = localizationlanguage;
 
-            //Fall 1 Getter auf ALL
-            if (string.IsNullOrEmpty(validforentity))
-            {
-                return await Get(language, fields: fields ?? Array.Empty<string>(), cancellationToken);
-            }
-            else
-            {
-                return await GetFiltered(language, validforentity, fields: fields ?? Array.Empty<string>(), cancellationToken);
-            }
+
+            return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(), 
+                  searchfilter, rawfilter, rawsort,
+                    cancellationToken);
+           
         }
 
         /// <summary>
@@ -96,42 +95,37 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> Get(string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> Get(string? language, string? smgtagtype, string[] fields,
+            string? searchfilter, string? rawfilter, string? rawsort,
+            CancellationToken cancellationToken)
         {
-            return DoAsyncReturn(async () =>
-            {
-                var query = QueryFactory.Query("smgtags")
-                    .Select("data")
-                    .When(FilterClosedData, q => q.FilterClosedData())
-                    .OrderByRaw("data#>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
-
-                var data = await query.GetAsync<JsonRaw>();
-
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator));
-            });
-        }
-
-        private Task<IActionResult> GetFiltered(string? smgtagtype, string? language, string[] fields, CancellationToken cancellationToken)
-        {
-            var smgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var mysmgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query("smgtags")
-                        .Select("data")
-                        .WhereInJsonb(
-                            smgtagtypelist,
-                            id => new { ValidForEntity = new[] { id.ToLower() } }
+                //if (String.IsNullOrEmpty(rawsort))
+                //    rawsort = "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'";
+                
+                var query = 
+                    QueryFactory.Query()
+                    .SelectRaw("data")
+                    .From("smgtags")
+                    .ODHTagWhereExpression(
+                        languagelist: new List<string>(), 
+                        smgtagtypelist: mysmgtagtypelist,
+                        searchfilter: searchfilter,
+                        language: language,
+                        filterClosedData: FilterClosedData
                         )
-                        .When(FilterClosedData, q => q.FilterClosedData())
-                        .OrderByRaw("data#>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
+                    .ApplyRawFilter(rawfilter)
+                    .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
+
 
                 var data = await query.GetAsync<JsonRaw>();
 
                 return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator));
             });
-        }
+        }      
 
         /// <summary>
         /// GET Single SMGTag by ID

@@ -78,7 +78,7 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetPoiReduced(
-                language, poitype, subtype, locfilter, areafilter, 
+                language.ToLower(), poitype, subtype, locfilter, areafilter, 
                 highlight, active, odhactive, odhtagfilter,
                 fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
                 geosearchresult, cancellationToken);
@@ -194,7 +194,7 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetActivityReduced(
-                language, activitytype, subtype, locfilter, areafilter, distancefilter, altitudefilter, durationfilter,
+                language.ToLower(), activitytype, subtype, locfilter, areafilter, distancefilter, altitudefilter, durationfilter,
                 highlight, difficultyfilter, active, odhactive, odhtagfilter,
                 fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
                 geosearchresult, cancellationToken);
@@ -298,7 +298,7 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetGastronomyReduced(
-                language, locfilter, dishcodefilter, ceremonycodefilter, categorycodefilter, facilitycodefilter, 
+                language.ToLower(), locfilter, dishcodefilter, ceremonycodefilter, categorycodefilter, facilitycodefilter, 
                 cuisinecodefilter, active?.Value, odhactive?.Value, odhtagfilter,
                 fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter, 
                 geosearchresult, cancellationToken);
@@ -361,83 +361,53 @@ namespace OdhApiCore.Controllers.api
         //[SwaggerResponse(HttpStatusCode.OK, "Array of SmgTagReduced Objects", typeof(IEnumerable<SmgTagReduced>))]
         [HttpGet, Route("ODHTagReduced")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetODHTagsReduced(string localizationlanguage, string validforentity = "", CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetODHTagsReduced(
+            string? language = "en",
+            string? localizationlanguage = null, 
+            string? validforentity = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
-            {
-                return await GetReducedLocalized(localizationlanguage, cancellationToken);
-            }
-            //Fall 7 GET auf GetReducedFilteredLocalized
-            else if (!string.IsNullOrEmpty(validforentity) && !string.IsNullOrEmpty(localizationlanguage))
-            {
-                return await GetReducedFilteredLocalized(localizationlanguage, validforentity, cancellationToken);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status501NotImplemented, new { error = "not implemented" });
-            }
+            //Compatibility
+            if (!String.IsNullOrEmpty(localizationlanguage))
+                language = localizationlanguage;
+
+            return await GetODHTagReduced(language.ToLower(), validforentity, searchfilter, 
+                fields: fields ?? Array.Empty<string>(), rawfilter, 
+                rawsort, cancellationToken);      
         }
 
-        /// <summary>
-        /// GET Complete Reduced SMGTag List
-        /// </summary>
-        /// <param name="language">Language</param>
-        /// <returns>Collection Localized Reduced SMGTag Object</returns>
-        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        [HttpGet, Route("ReducedAsync/{language}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetReducedLocalized(string language, CancellationToken cancellationToken)
+      private Task<IActionResult> GetODHTagReduced(
+            string? language, string? validforentity,
+            string? searchfilter, string[] fields, 
+            string? rawfilter, string? rawsort, 
+            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'{{TagName,{language.ToLower()}}}' as Name";
-                string where = $"data#>>'\\{{TagName,{language.ToLower()}\\}}' NOT LIKE ''";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'{{TagName,{language}}}' as Name";
+                string where = $"data#>>'\\{{TagName,{language}\\}}' NOT LIKE ''";
 
-                var data =
+                //Custom Fields filter
+                if (fields.Length > 0)
+                {
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                }
+
+                var query =
                     QueryFactory.Query("smgtags")
                         .SelectRaw(select)
                         .WhereRaw(where)
                         .When(FilterClosedData, q => q.FilterClosedData());
 
-                return await data.GetAsync<ResultReduced>();
+                return await query.GetAsync<object>();
             });
         }
-
-        /// <summary>
-        /// GET Filtered Reduced SMGTag List by smgtagtype
-        /// </summary>
-        /// <param name="language">Language</param>
-        /// <param name="smgtagtype">SMGTag Type</param>
-        /// <returns>Collection Localized Reduced SMGTag Object</returns>
-        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        [HttpGet, Route("Reduced/{language}/{smgtagtype}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetReducedFilteredLocalized(
-            string language, string smgtagtype, CancellationToken cancellationToken)
-        {
-            var smgtagtypelist = smgtagtype.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-            return DoAsyncReturn(async () =>
-            {
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{TagName,{language.ToLower()}\\}}' as Name";
-                string where = $"data#>>'\\{{TagName,{language.ToLower()}\\}}' NOT LIKE ''";
-
-                var data =
-                    QueryFactory.Query("smgtags")
-                        .SelectRaw(select)
-                        .WhereRaw(where)
-                        .WhereInJsonb(
-                            smgtagtypelist,
-                            smgtag => new { ValidForEntity = new[] { smgtag.ToLower() } }
-                        )
-                        .When(FilterClosedData, q => q.FilterClosedData());
-
-                return await data.GetAsync<ResultReduced>();
-            });
-        }
-
-
-
+      
         #endregion
 
         #region ODHActivityPoiController

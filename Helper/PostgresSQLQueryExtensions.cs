@@ -719,6 +719,12 @@ namespace Helper
                 )
             );
 
+        public static Query ODHTagValidForEntityFilter(this Query query, IReadOnlyCollection<string> smgtagtypelist) =>           
+           query.WhereInJsonb(
+               smgtagtypelist,
+               smgtagtype => new { ValidForEntity = new[] { smgtagtype.ToLower() } }
+           );         
+
         //AlpineBits
         public static Query AlpineBitsAccommodationIdFilter(this Query query, IReadOnlyCollection<string> accommodationids) =>
             query.WhereInJsonb(

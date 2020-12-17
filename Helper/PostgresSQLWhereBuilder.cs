@@ -31,6 +31,20 @@ namespace Helper
                 $"AccoDetail.{lang}.Name"
             ).ToArray();
 
+        private static string[] TagNameFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"TagName.{lang}"
+            ).ToArray();
+
+        private static string[] WebcamnameFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"Webcamname.{lang}"
+            ).ToArray();
+
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
             language = language.ToLower();
@@ -412,7 +426,7 @@ namespace Helper
                 .SourceFilter(sourcelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
+                .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData());
         }
@@ -502,5 +516,23 @@ namespace Helper
                 .AlpineBitsMessageFilter(messagetypelist)
                 .AlpineBitsAccommodationIdFilter(accommodationIds);
         }
+
+        //Return Where and Parameters for Wine
+        public static Query ODHTagWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> smgtagtypelist,
+            string? searchfilter, string? language, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                searchfilter, language, smgtagtypelist
+            );
+
+            return query
+                .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
+                .ODHTagValidForEntityFilter(smgtagtypelist)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
     }
 }
