@@ -338,7 +338,7 @@ namespace OdhApiCore.Controllers.api
                             municipalitylist: mygastronomyhelper.municipalitylist, tourismvereinlist: mygastronomyhelper.tourismvereinlist,
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
-                            searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
+                            searchfilter: searchfilter, language: language, lastchange: null, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)
@@ -389,8 +389,12 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'{{TagName,{language}}}' as Name";
-                string where = $"data#>>'\\{{TagName,{language}\\}}' NOT LIKE ''";
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{TagName,{language}\\}}' as Name";
+
+                //TODO is this needed or better to not filter?
+                //string where = $"data#>>'\\{{TagName,{language}\\}}' NOT LIKE ''";
+
+                var mysmgtagtypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
                 //Custom Fields filter
                 if (fields.Length > 0)
@@ -399,10 +403,18 @@ namespace OdhApiCore.Controllers.api
                 }
 
                 var query =
-                    QueryFactory.Query("smgtags")
+                    QueryFactory.Query()
                         .SelectRaw(select)
-                        .WhereRaw(where)
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                       .From("smgtags")
+                        .ODHTagWhereExpression(
+                            languagelist: new List<string>(),
+                            smgtagtypelist: mysmgtagtypelist,
+                            searchfilter: searchfilter,
+                            language: language,
+                            filterClosedData: FilterClosedData
+                            )
+                    .ApplyRawFilter(rawfilter)
+                    .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
 
                 return await query.GetAsync<object>();
             });
@@ -452,11 +464,18 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return await GetODHActivityPoiReduced(language, type, subtype, poitype, locfilter, areafilter, highlight?.Value, active?.Value, odhactive?.Value, source, odhtagfilter, geosearchresult, cancellationToken);
+            return await GetODHActivityPoiReduced(language, type, subtype, poitype, locfilter, areafilter, highlight?.Value, active?.Value, odhactive?.Value, 
+                source, odhtagfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
+                geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -475,7 +494,8 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetODHActivityPoiReduced(
             string? language, string? type, string? subtype, string? poitype, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? source,
-            string? smgtags, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? smgtags, string[] fields, string? rawfilter, string? rawsort, string? searchfilter,
+            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -484,7 +504,7 @@ namespace OdhApiCore.Controllers.api
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
                 string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
-                string orderby = "data#>>'\\{Shortname\\}' ASC";
+                //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -496,16 +516,15 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,
-                            searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
+                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
-                        .OrderByRaw(orderby)
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(geosearchresult, rawsort);
 
                 // Get paginated data
-                return await query.GetAsync<ResultReduced>();
+                return await query.GetAsync<object>();
             });
         }
-
 
         #endregion
 
@@ -550,16 +569,26 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return await GetEventReduced(language, locfilter, rancfilter, typefilter, topicfilter, orgfilter, odhactive?.Value, active?.Value, source, langfilter, begindate, enddate, odhtagfilter, geosearchresult, cancellationToken);
+            return await GetEventReduced(language, locfilter, rancfilter, typefilter, 
+                topicfilter, orgfilter, odhactive?.Value, active?.Value, 
+                source, langfilter, begindate, enddate, odhtagfilter,
+                fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
+                geosearchresult, cancellationToken);
         }
 
         private Task<IActionResult> GetEventReduced(string? language, string? locfilter, string? rancfilter,
             string? typefilter, string? topicfilter, string? orgfilter, bool? smgactive, bool? active, string? source, string? langfilter,
-            string? begindate, string? enddate, string? smgtagfilter, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? begindate, string? enddate, string? smgtagfilter, string[] fields, string? rawfilter, string? rawsort, string? searchfilter, 
+            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -568,7 +597,7 @@ namespace OdhApiCore.Controllers.api
                     enddate, active, smgactive, smgtagfilter, null, langfilter, source, cancellationToken);
                 
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
-                string orderby = "data#>>'\\{Shortname\\}' ASC";
+                //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -580,16 +609,15 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist, 
                             orglist: helper.orgidlist, sourcelist: helper.sourcelist, begindate: helper.begin, enddate: helper.end, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, languagelist: helper.languagelist,
-                            searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
+                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
-                        .OrderByRaw(orderby)
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(geosearchresult, rawsort);
 
                 // Get paginated data
-                return await query.GetAsync<ResultReduced>();
+                return await query.GetAsync<object>();
             });
         }
-
 
         #endregion
 
@@ -616,13 +644,25 @@ namespace OdhApiCore.Controllers.api
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default
            )
         {
-            return GetArticleReduced(language, articletype, articlesubtype, active?.Value, odhactive?.Value, odhtagfilter, cancellationToken);
+            return GetArticleReduced(language, articletype, articlesubtype, 
+                active?.Value, odhactive?.Value, odhtagfilter,
+                fields: fields ?? Array.Empty<string>(), rawfilter, 
+                rawsort, searchfilter, 
+                cancellationToken);
         }
 
-        private Task<IActionResult> GetArticleReduced(string? language, string? articletype, string? articlesubtype, bool? active, bool? smgactive, string? smgtags, CancellationToken cancellationToken)
+        private Task<IActionResult> GetArticleReduced(string? language, string? articletype, string? articlesubtype, 
+            bool? active, bool? smgactive, string? smgtags,
+            string[] fields, string? rawfilter, string? rawsort, string? searchfilter,
+            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -630,7 +670,7 @@ namespace OdhApiCore.Controllers.api
                     articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null);
 
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name"; 
-                string orderby = "data#>>'\\{Shortname\\}' ASC";
+                //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -639,15 +679,15 @@ namespace OdhApiCore.Controllers.api
                         .ArticleWhereExpression(
                             idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, languagelist: helper.languagelist,
                             smgtaglist: helper.smgtaglist, highlight: helper.highlight, activefilter: helper.active,
-                            smgactivefilter: helper.smgactive, searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
+                            smgactivefilter: helper.smgactive, searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
-                        .OrderByRaw(orderby);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(new PGGeoSearchResult() { geosearch=false }, rawsort);
 
                 // Get paginated data
-                return await query.GetAsync<ResultReduced>();
+                return await query.GetAsync<object>();
             });
         }
-
 
         #endregion
 
