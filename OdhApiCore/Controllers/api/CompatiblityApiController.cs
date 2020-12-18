@@ -114,9 +114,7 @@ namespace OdhApiCore.Controllers.api
                 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                {
                     select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
-                }
 
                 var query =
                     QueryFactory.Query()
@@ -220,9 +218,7 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                {
                     select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
-                }
 
                 var query =
                     QueryFactory.Query()
@@ -323,9 +319,7 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                {
                     select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
-                }
 
                 var query =
                     QueryFactory.Query()
@@ -398,9 +392,7 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                {
                     select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
-                }
 
                 var query =
                     QueryFactory.Query()
@@ -506,6 +498,10 @@ namespace OdhApiCore.Controllers.api
                 string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
+                //Custom Fields filter
+                if (fields.Length > 0)
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw(select)
@@ -521,7 +517,7 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(geosearchresult, rawsort);
 
-                // Get paginated data
+                // Get whole data
                 return await query.GetAsync<object>();
             });
         }
@@ -599,6 +595,10 @@ namespace OdhApiCore.Controllers.api
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
+                //Custom Fields filter
+                if (fields.Length > 0)
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw(select)
@@ -614,7 +614,7 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(geosearchresult, rawsort);
 
-                // Get paginated data
+                // Get whole data
                 return await query.GetAsync<object>();
             });
         }
@@ -669,8 +669,12 @@ namespace OdhApiCore.Controllers.api
                 ArticleHelper helper = ArticleHelper.Create(
                     articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null);
 
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name"; 
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                //Custom Fields filter
+                if (fields.Length > 0)
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
                     QueryFactory.Query()
@@ -684,7 +688,7 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(new PGGeoSearchResult() { geosearch=false }, rawsort);
 
-                // Get paginated data
+                // Get whole data
                 return await query.GetAsync<object>();
             });
         }
@@ -715,22 +719,35 @@ namespace OdhApiCore.Controllers.api
             string? longitude = null,
             string? radius = null,
             string? updatefrom = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default
       )
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return GetWebcamReduced(language, source, active?.Value, odhactive?.Value, updatefrom, geosearchresult, cancellationToken);
+            return GetWebcamReduced(
+                language, source, active?.Value, odhactive?.Value, updatefrom,
+                fields: fields ?? Array.Empty<string>(), rawfilter,
+                rawsort, searchfilter, geosearchresult, cancellationToken);
         }
 
-        private Task<IActionResult> GetWebcamReduced(string? language, string? sourcefilter, bool? active, bool? smgactive, string? datefrom, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        private Task<IActionResult> GetWebcamReduced(string? language, string? sourcefilter, bool? active, bool? smgactive, 
+            string? datefrom, string[] fields, string? rawfilter, string? rawsort, string? searchfilter, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 WebcamInfoHelper helper = WebcamInfoHelper.Create(sourcefilter, null, active, smgactive, datefrom);
 
                 string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Webcamname,{language}\\}}' as Name";
-                string orderby = "data#>>'\\{Shortname\\}' ASC";
+                //string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                //Custom Fields filter
+                if (fields.Length > 0)
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
                     QueryFactory.Query()
@@ -740,10 +757,11 @@ namespace OdhApiCore.Controllers.api
                             languagelist: new List<string>(), idlist: helper.idlist, sourcelist: helper.sourcelist, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
-                        .OrderByRaw(orderby);
+                         .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(geosearchresult, rawsort);
 
-                // Get paginated data
-                return await query.GetAsync<ResultReduced>();
+                // Get whole data
+                return await query.GetAsync<object>();
             });
         }
 
