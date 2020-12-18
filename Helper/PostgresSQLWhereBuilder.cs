@@ -497,6 +497,56 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData());
         }
 
+        //Return Where and Parameters for Venue
+        public static Query VenueWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> categorylist,
+            IReadOnlyCollection<string> featurelist, IReadOnlyCollection<string> setuptypelist, 
+            IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
+            IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> sourcelist, 
+            bool capacity, int capacitymin, int capacitymax, bool roomcount, int roomcountmin, int roomcountmax, 
+            bool? activefilter, bool? smgactivefilter, string? searchfilter,
+            string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, categorylist,
+                featurelist, setuptypelist,
+                smgtaglist, districtlist,
+                municipalitylist, tourismvereinlist,
+                regionlist, sourcelist, languagelist, capacity,
+                capacitymin, capacitymax, roomcount,
+                roomcountmin, roomcountmax, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            //TODO
+            return query
+                .IdUpperFilter(idlist)
+                //.DistrictFilter(districtlist)
+                //.LocFilterMunicipalityFilter(municipalitylist)
+                //.LocFilterTvsFilter(tourismvereinlist)
+                //.LocFilterRegionFilter(regionlist)
+                //.AreaFilter(arealist)
+                //.ActivityTypeFilter(activitytypelist)
+                //.ActivitySubTypeFilter(subtypelist)
+                //.DifficultyFilter(difficultylist)
+                //.DistanceFilter(distance, distancemin, distancemax)
+                //.DurationFilter(duration, durationmin, durationmax)
+                //.AltitudeFilter(altitude, altitudemin, altitudemax)
+                //.HighlightFilter(highlight)
+                //.ActiveFilter(activefilter)
+                //.SmgActiveFilter(smgactivefilter)
+                //.SmgTagFilter(smgtaglist)
+                //.SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                //.LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
+
         //Return Where and Parameters for AlpineBits
         public static Query AlpineBitsWhereExpression(
             this Query query,

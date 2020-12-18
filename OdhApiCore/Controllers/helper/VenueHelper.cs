@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OdhApiCore.Controllers.api
+namespace OdhApiCore.Controllers
 {
     public class VenueHelper
     {
@@ -26,12 +26,12 @@ namespace OdhApiCore.Controllers.api
         public string? lastchange;
        
         public bool capacity;
-        public int? capacitymin;
-        public int? capacitymax;
+        public int capacitymin;
+        public int capacitymax;
 
         public bool roomcount;
-        public int? roomcountmin;
-        public int? roomcountmax;
+        public int roomcountmin;
+        public int roomcountmax;
 
         public static async Task<VenueHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? categoryfilter, string? featurefilter, string? setuptypefilter, string? locfilter,
