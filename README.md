@@ -4,18 +4,19 @@ Port of ODH Tourim Api to .Net Core.
 
 ## Project Goals/Requirements:
 
-* Using .Net Core 5
+* .Net Core 5
 * PostgreSQL Database
 * Docker Support
 * Swagger Support
 * Identity Server Integration (Keycloak)
 * Full Async Api
 * better Api Error Handling
-* Advanced api operation (fields chooser, language selector, search terms)
+* Advanced api operations 1/2 (fields chooser, language selector, search terms)
+* Advanced api operation 2/2 (raw sorting, raw filtering)
 
 ## Database Info
 
-Used Postgres 12 
+Postgres 12 
 Extensions active on DB
 
 * extension earthdistance;
@@ -30,15 +31,18 @@ Clone the repository
 
 ### Environment Variables
 
-* PG_CONNECTION
-* MSS_USER;
-* MSS_PSWD;
-* LCS_USER;
-* LCS_PSWD;
-* LCS_MSGPSWD;
-* SIAG_USER;
-* SIAG_PSWD;
-* XMLDIR;
+* PG_CONNECTION (Connection to Postgres Database)
+* MSS_USER; (Optional User to retrieve availability request from HGV Mss)
+* MSS_PSWD; (Optional Pswd to retrieve availability request from HGV Mss)
+* LCS_USER; (Optional User to retrieve availability request from Lts)
+* LCS_PSWD; (Optional Pswd to retrieve availability request from Lts)
+* LCS_MSGPSWD; (Optional Messagepswd to retrieve availability requests from LTS)
+* SIAG_USER; (Optional User to retrieve data from Siag)
+* SIAG_PSWD; (Optional Pswd to retrieve data from Siag)
+* XMLDIR; (Directory where xml config file is stored)
+* S3_BUCKET_ACCESSPOINT (S3 Bucket for Image Upload accesspoint)
+* S3_IMAGEUPLOADER_ACCESSKEY (S3 Bucket for Image Upload accesskey)
+* S3_IMAGEUPLOADER_SECRETKEY (S3 Bucket for Image Upload secretkey)
 
 ### using Docker
 
