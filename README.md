@@ -10,9 +10,11 @@ Port of ODH Tourim Api to .Net Core.
 * Swagger Support
 * Identity Server Integration (Keycloak)
 * Full Async Api
-* better Api Error Handling
+* improved Api Error Handling
+* Browseable Api
 * Advanced api operations 1/2 (fields chooser, language selector, search terms)
 * Advanced api operation 2/2 (raw sorting, raw filtering)
+* Compatibility tourism api
 
 ## Database Info
 
