@@ -882,6 +882,13 @@ namespace Helper
                 )
             );
 
-
+        public static Query FilterClosedDataVenues(this Query query) =>
+            query.Where(q =>
+                q.WhereRaw(
+                    "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' IS NULL"
+                ).OrWhereRaw(
+                    "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' = 'false'"
+                )
+            );
     }
 }

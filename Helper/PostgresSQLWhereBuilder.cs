@@ -543,7 +543,7 @@ namespace Helper
                 //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
                 //.SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedDataVenues());
         }
 
 
