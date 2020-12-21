@@ -16,13 +16,16 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("api", Name = "TourismApi")]
         public IActionResult Get()
         {
-            return Ok(GetMainApi(Url.Link("", null)!));
+            //var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+            var location = new Uri($"{Request.Scheme}://{Request.Host}");
+
+            return Ok(GetMainApi(location.AbsoluteUri));
         }
 
         private static IEnumerable<TourismData> GetMainApi(string url)
         {
-            if (url.Contains("/api"))
-                url = url.Replace("/api", "/");
+            //if (url.Contains("/api"))
+            //    url = url.Replace("/api", "/");
 
             List<TourismData> tourismdatalist = new List<TourismData>();
 
