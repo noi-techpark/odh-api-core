@@ -12,6 +12,7 @@ Port of ODH Tourim Api to .Net Core.
 * Full Async Api
 * improved Api Error Handling
 * Browseable Api
+* Swagger / Openapi Support
 * Advanced api operations 1/2 (fields chooser, language selector, search terms)
 * Advanced api operation 2/2 (raw sorting, raw filtering)
 * Compatibility tourism api
