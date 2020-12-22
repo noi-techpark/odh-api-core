@@ -46,8 +46,8 @@ namespace Helper
             string jsonPath,
             bool value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
-                    value ? "true" : "false"
+                    $"(data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}')::boolean = ?",
+                    value
                 );
 
         public static Query OrWhereJsonb(
@@ -73,8 +73,8 @@ namespace Helper
             string jsonPath,
             bool value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
-                    value ? "true" : "false"
+                    $"(data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}')::boolean = ?",
+                    value
                 );
 
         [Obsolete]
