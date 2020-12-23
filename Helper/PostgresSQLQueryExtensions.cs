@@ -37,8 +37,8 @@ namespace Helper
             string jsonPath,
             int value) =>
                 query.WhereRaw(
-                    $"(data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}')::int = ?",
-                    value
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
+                    value.ToString()
                 );
 
         public static Query WhereJsonb(
@@ -64,8 +64,8 @@ namespace Helper
             string jsonPath,
             int value) =>
                 query.OrWhereRaw(
-                    $"(data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}')::int = ?",
-                    value
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
+                    value.ToString()
                 );
 
         public static Query OrWhereJsonb(
