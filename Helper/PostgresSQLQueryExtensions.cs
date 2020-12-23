@@ -878,7 +878,7 @@ namespace Helper
                 q.WhereRaw(
                     "data#>>'\\{LicenseInfo,ClosedData\\}' IS NULL"
                 ).OrWhereRaw(
-                    "(data#>>'\\{LicenseInfo,ClosedData\\}')::boolean = false"
+                    "data#>>'\\{LicenseInfo,ClosedData\\}' = 'false'"
                 )
             );
 
@@ -887,7 +887,7 @@ namespace Helper
                 q.WhereRaw(
                     "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' IS NULL"
                 ).OrWhereRaw(
-                    "(data#>>'\\{odhdata,LicenseInfo,ClosedData\\}')::boolean = false"
+                    "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' = 'false'"
                 )
             );
     }
