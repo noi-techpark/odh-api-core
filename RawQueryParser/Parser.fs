@@ -13,7 +13,7 @@ let field =
     let options = IdentifierOptions()
     sepBy (
         identifier options <|> (pint32 |>> string)
-    ) (pchar '.')
+    ) (skipChar '.')
     |>> Field
     <?> "field"
 
@@ -30,7 +30,7 @@ module Sorting =
     /// </list>
     /// </remarks>
     let orderBy: Parser<_> =
-        opt (pstring "-")
+        opt (skipString "-")
         |>> function
             | Some _ -> Descending
             | None -> Ascending
@@ -46,32 +46,32 @@ module Sorting =
 
     /// sortStatements consist of multiple statements divided by a comma.
     let statements: Parser<SortStatements> =
-        sepBy1 sortStatement (pchar ',' >>. spaces) .>> eof
+        sepBy1 sortStatement (skipChar ',' >>. spaces) .>> eof
 
 module Filtering =
     open Filtering
 
     let betweenBrackets p =
-        between (pchar '(') (pchar ')') p
+        between (skipChar '(') (skipChar ')') p
 
     let betweenQuotes p =
-        let quotes = pchar '\"' <|> pchar '\''
+        let quotes = skipChar '\"' <|> skipChar '\''
         between quotes quotes p
 
     let operator: Parser<Operator> =
         choice [
-            pstring "eq" >>% Eq
-            pstring "ne" >>% Ne
-            pstring "gt" >>% Gt
-            pstring "ge" >>% Ge
-            pstring "lt" >>% Lt
-            pstring "le" >>% Le
+            skipString "eq" >>% Eq
+            skipString "ne" >>% Ne
+            skipString "gt" >>% Gt
+            skipString "ge" >>% Ge
+            skipString "lt" >>% Lt
+            skipString "le" >>% Le
         ]
 
     let boolean: Parser<Value> =
         choice [
-            pstring "true" >>% Boolean true
-            pstring "false" >>% Boolean false
+            skipString "true" >>% Boolean true
+            skipString "false" >>% Boolean false
         ]
         <?> "boolean"
 
@@ -95,7 +95,7 @@ module Filtering =
 
     let call: Parser<Field * Value> =
         betweenBrackets (
-            field .>>. (pchar ',' >>. spaces >>. value)
+            field .>>. (skipChar ',' >>. spaces >>. value)
         )
 
     let condition: Parser<Condition> =
@@ -110,7 +110,7 @@ module Filtering =
 
     do statementRef :=
         let innerParser: Parser<FilterStatement list> =
-            betweenBrackets (sepBy1 statement' (pchar ',' >>. spaces))
+            betweenBrackets (sepBy1 statement' (skipChar ',' >>. spaces))
         let combineWith f (statements: FilterStatement list) =
             statements |> List.rev |> List.reduce (fun y x -> f (x, y))
         choice [
