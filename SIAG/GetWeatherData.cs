@@ -14,8 +14,8 @@ namespace SIAG
 {
     public class GetWeatherData
     {
-        public const string source = "siag";
-        //public const string source = "opendata";
+        //public const string source = "siag";
+        public const string source = "opendata";
 
         public static async Task<Weather> GetCurrentWeatherAsync(string lang, string xmldir, string siaguser, string siagpswd, bool json = false)
         {
