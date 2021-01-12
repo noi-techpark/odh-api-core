@@ -78,6 +78,14 @@ module Filtering =
         | Condition value -> writeCondition value
         | And (left, right) -> $"(%s{writeStatement left} AND %s{writeStatement right})"
         | Or (left, right) -> $"(%s{writeStatement left} OR %s{writeStatement right})"
+        | In (field, values) ->
+            let values =
+                values
+                |> List.map writeValue
+                |> String.concat ","
+            $"{writeRawField field} && ARRAY({values})"
+        | NotIn (field, values) ->
+            failwith "Not implemented for PostgreSQL"
         | IsNull property -> $"{writeRawField property} IS NULL"
         | IsNotNull property -> $"{writeRawField property} IS NOT NULL"
 

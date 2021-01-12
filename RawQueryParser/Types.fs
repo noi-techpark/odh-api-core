@@ -49,6 +49,8 @@ module Filtering =
         | And of left: FilterStatement * right: FilterStatement
         | Or of left: FilterStatement * right: FilterStatement
         | Condition of Condition
+        | In of field: Field * values: Value list
+        | NotIn of field: Field * values: Value list
         | IsNull of Field
         | IsNotNull of Field
 

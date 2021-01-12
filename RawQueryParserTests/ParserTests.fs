@@ -141,6 +141,14 @@ let parserTests =
                 let actual = run Filtering.statement "isnull(Detail.ru.Title)"
                 Expect.equal actual expected ""
             }
+            test "Condition with IN" {
+                let expected =
+                    Ok (
+                        Filtering.In (Field ["HasLanguage"], [Filtering.String "de"; Filtering.String "it"])
+                    )
+                let actual = run Filtering.statement "in(HasLanguage,'de','it')"
+                Expect.equal actual expected ""
+            }
         ]
     ]
 

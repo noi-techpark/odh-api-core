@@ -64,5 +64,10 @@ let transfomerTests =
                 let actual = Transformer.transformFilter "isnotnull(Detail.ru.Title)"
                 Expect.equal actual expected ""
             }
+            test "IN" {
+                let expected = "data#>'\{HasLanguage\}' && ARRAY('de')"
+                let actual = Transformer.transformFilter "in(HasLanguage,'de')"
+                Expect.equal actual expected ""
+            }
         ]
     ]

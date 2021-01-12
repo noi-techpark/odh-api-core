@@ -17,6 +17,8 @@ let field =
     |>> Field
     <?> "field"
 
+let whitespace = many (skipChar ' ')
+
 module Sorting =
     open Sorting
 
@@ -46,7 +48,7 @@ module Sorting =
 
     /// sortStatements consist of multiple statements divided by a comma.
     let statements: Parser<SortStatements> =
-        sepBy1 sortStatement (skipChar ',' >>. spaces) .>> eof
+        sepBy1 sortStatement (skipChar ',' >>. whitespace) .>> eof
 
 module Filtering =
     open Filtering
@@ -95,7 +97,7 @@ module Filtering =
 
     let call: Parser<Field * Value> =
         betweenBrackets (
-            field .>>. (skipChar ',' >>. spaces >>. value)
+            field .>>. (skipChar ',' >>. whitespace >>. value)
         )
 
     let condition: Parser<Condition> =
@@ -106,11 +108,14 @@ module Filtering =
               Value = value })
         <?> "condition, e.g. `eq(field, value)`"
 
+    let inParser =
+        field .>>. (skipChar ',' >>. whitespace >>. sepBy1 value (skipChar ',' .>> whitespace))
+
     let statement', statementRef = createParserForwardedToRef<FilterStatement, unit>()
 
     do statementRef :=
         let innerParser: Parser<FilterStatement list> =
-            betweenBrackets (sepBy1 statement' (skipChar ',' >>. spaces))
+            betweenBrackets (sepBy1 statement' (skipChar ',' >>. whitespace))
         let combineWith f (statements: FilterStatement list) =
             statements |> List.rev |> List.reduce (fun y x -> f (x, y))
         choice [
@@ -118,6 +123,8 @@ module Filtering =
             pstring "or" >>. innerParser |>> combineWith Or
             pstring "isnull" >>. betweenBrackets field |>> IsNull
             pstring "isnotnull" >>. betweenBrackets field |>> IsNotNull
+            pstring "in" >>. (betweenBrackets inParser |>> In)
+            pstring "nin" >>. (betweenBrackets inParser |>> NotIn)
             condition |>> Condition
         ]
 
