@@ -614,7 +614,7 @@ namespace Helper
         public static Query AccoFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
             query.WhereAllInJsonb(
              featurelist,
-             feature => new { SpecialFeaturesIds = new[] { feature.ToLower() } }
+             feature => new { SpecialFeaturesIds = new[] { feature } }
          );
 
         public static Query AccoCategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
