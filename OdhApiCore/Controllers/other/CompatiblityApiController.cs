@@ -769,6 +769,106 @@ namespace OdhApiCore.Controllers.api
 
         #region AccommodationController
 
+        /// <summary>
+        /// GET Reduced Accommodation List
+        /// </summary>
+        /// <param name="language">Localization Language</param>
+        /// <param name="categoryfilter">Categoryfilter (BITMASK values: 1 = (not categorized), 2 = (1star), 4 = (1flower), 8 = (1sun), 14 = (1star/1flower/1sun), 16 = (2stars), 32 = (2flowers), 64 = (2suns), 112 = (2stars/2flowers/2suns), 128 = (3stars), 256 = (3flowers), 512 = (3suns), 1024 = (3sstars), 1920 = (3stars/3flowers/3suns/3sstars), 2048 = (4stars), 4096 = (4flowers), 8192 = (4suns), 16384 = (4sstars), 30720 = (4stars/4flowers/4suns/4sstars), 32768 = (5stars), 65536 = (5flowers), 131072 = (5suns), 229376 = (5stars/5flowers/5suns), 'null' = No Filter), (default:'null')</param>
+        /// <param name="typefilter">Typefilter (BITMASK values: 1 = (HotelPension), 2 = (BedBreakfast), 4 = (Farm), 8 = (Camping), 16 = (Youth), 32 = (Mountain), 64 = (Apartment), 128 = (Not defined),'null' = No Filter), (default:'null')</param>
+        /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter), (default:'0')</param>
+        /// <param name="featurefilter">FeatureFilter (BITMASK values: 1 = (Group-friendly), 2 = (Meeting rooms), 4 = (Swimming pool), 8 = (Sauna), 16 = (Garage), 32 = (Pick-up service), 64 = (WLAN), 128 = (Barrier-free), 256 = (Special menus for allergy sufferers), 512 = (Pets welcome), 'null' = No Filter), (default:'null')</param>
+        /// <param name="featureidfilter">Feature Id Filter, filter over ALL Features vailable (Separator ',' List of Feature IDs, 'null' = No Filter), (default:'null')</param>
+        /// <param name="themefilter">Themefilter (BITMASK values: 1 = (Gourmet), 2 = (At altitude), 4 = (Regional wellness offerings), 8 = (on the wheels), 16 = (With family), 32 = (Hiking), 64 = (In the vineyards), 128 = (Urban vibe), 256 = (At the ski resort), 512 = (Mediterranean), 1024 = (In the Dolomites), 2048 = (Alpine), 4096 = (Small and charming), 8192 = (Huts and mountain inns), 16384 = (Rural way of life), 32768 = (Balance), 65536 = (Christmas markets), 'null' = No Filter), (default:'null')</param>
+        /// <param name="badgefilter">BadgeFilter (BITMASK values: 1 = (Belvita Wellness Hotel), 2 = (Familyhotel), 4 = (Bikehotel), 8 = (Red Rooster Farm), 16 = (Barrier free certificated), 32 = (Vitalpina Hiking Hotel), 64 = (Private Rooms in South Tyrol), 128 = (Vinum Hotels), 'null' = No Filter), (default:'null')</param>        
+        /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter), (default:'null')</param>        
+        /// <param name="odhtagfilter">ODHTag Filter (refers to Array SmgTags) (String, Separator ',' more ODHTags possible, 'null' = No Filter, available ODHTags reference to 'api/ODHTag?validforentity=accommodation'), (default:'null')</param>
+        /// <param name="odhactive">ODHActive Filter (refers to field SmgActive) (possible Values: 'null' Displays all Accommodations, 'true' only ODH Active Accommodations, 'false' only ODH Disabled Accommodations, (default:'null')</param>       
+        /// <param name="active">TIC Active Filter (possible Values: 'null' Displays all Accommodations, 'true' only TIC Active Accommodations, 'false' only TIC Disabled Accommodations, (default:'null')</param>       
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <param name="fields">Select fields to display, by Default Title and Id are selected if fields filter is null More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <returns>Collection with Accommodation Reduced Objects</returns> 
+        [ProducesResponseType(typeof(IEnumerable<AccommodationReduced>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("AccommodationReduced")]
+        public async Task<IActionResult> GetReducedAccosAsync(
+            string? language = "en",
+            string? categoryfilter = null,
+            string? typefilter = null,
+            string? boardfilter = null,
+            string? featurefilter = null,
+            string? featureidfilter = null,
+            string? themefilter = null,
+            string? badgefilter = null,
+            string? locfilter = null,
+            string? odhtagfilter = null,
+            LegacyBool odhactive = null!,
+            LegacyBool active = null!,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            bool suedtirolmobil = false,
+            CancellationToken cancellationToken = default)
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+            return await GetAccommodationReduced(language, categoryfilter, typefilter, boardfilter, featurefilter, themefilter, badgefilter, locfilter, active?.Value, odhactive?.Value, 
+                odhtagfilter, featureidfilter, geosearchresult, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter, suedtirolmobil, cancellationToken);          
+        }
+
+        private Task<IActionResult> GetAccommodationReduced(
+            string? language, string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? themefilter, 
+            string? badgefilter, string? locfilter, bool? active, bool? smgactive, string? smgtagfilter, string? featureridfilter, 
+            PGGeoSearchResult geosearchresult, string[] fields, string? rawfilter, string? rawsort, string? searchfilter,            
+            bool stahack, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
+                    QueryFactory, idfilter: null, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
+                    featurefilter: featurefilter, featureidfilter: featureridfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: null, smgtags: smgtagfilter, activefilter: active,
+                    smgactivefilter: smgactive, bookablefilter: null, lastchange: null, cancellationToken);
+
+                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                //string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                //Custom Fields filter
+                if (fields.Length > 0)
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From("accommodations")
+                        .AccommodationWhereExpression(
+                            idlist: myhelper.idlist, accotypelist: myhelper.accotypelist,
+                            categorylist: myhelper.categorylist, featurelist: myhelper.featurelist, featureidlist: myhelper.featureidlist,
+                            badgelist: myhelper.badgelist, themelist: myhelper.themelist,
+                            boardlist: myhelper.boardlist, smgtaglist: myhelper.smgtaglist,
+                            districtlist: myhelper.districtlist, municipalitylist: myhelper.municipalitylist,
+                            tourismvereinlist: myhelper.tourismvereinlist, regionlist: myhelper.regionlist,
+                            apartmentfilter: myhelper.apartment, bookable: myhelper.bookable, altitude: myhelper.altitude,
+                            altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
+                            activefilter: myhelper.active, smgactivefilter: myhelper.smgactive,
+                            searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
+                            filterClosedData: FilterClosedData)
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(geosearchresult, rawsort);
+
+                // Get whole data
+                return await query.GetAsync<object>();
+            });
+
+        }
+
+
         #endregion
 
         #region EventShortController
