@@ -38,10 +38,15 @@ module Filtering =
         | String of string
 
     /// The condition is the combination of a property, an operator and a value.
-    type Condition =
+    type Comparison =
         { Field: Field
           Operator: Operator
           Value: Value }
+
+    type Condition =
+        | Comparison of Comparison
+        | In of field: Field * values: Value list
+        | NotIn of field: Field * values: Value list
 
     /// A filter statement can be a simple condition or a bunch
     /// of conditions inside an AND or an OR binary statement.
@@ -49,8 +54,6 @@ module Filtering =
         | And of left: FilterStatement * right: FilterStatement
         | Or of left: FilterStatement * right: FilterStatement
         | Condition of Condition
-        | In of field: Field * values: Value list
-        | NotIn of field: Field * values: Value list
         | IsNull of Field
         | IsNotNull of Field
 

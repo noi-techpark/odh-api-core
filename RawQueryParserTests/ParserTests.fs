@@ -50,46 +50,46 @@ let parserTests =
         testList "Filtering" [
             test "Simple condition with boolean" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.Condition { Field = Field ["Active"]
-                                              Operator = Filtering.Operator.Eq
-                                              Value = Filtering.Boolean true })
+                    Ok (Comp { Field = Field ["Active"]
+                               Operator = Filtering.Operator.Eq
+                               Value = Filtering.Boolean true })
                 let actual = run Filtering.statement "eq(Active, true)"
                 Expect.equal actual expected ""
             }
             test "Simple condition with number" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.Condition { Field = Field ["Geo"; "Altitude"]
-                                              Operator = Filtering.Operator.Eq
-                                              Value = Filtering.Number 200. })
+                    Ok (Comp { Field = Field ["Geo"; "Altitude"]
+                               Operator = Filtering.Operator.Eq
+                               Value = Filtering.Number 200. })
                 let actual = run Filtering.statement "eq(Geo.Altitude, 200)"
                 Expect.equal actual expected ""
             }
             test "Simple condition with single quote string" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.Condition { Field = Field ["Detail"; "de"; "Title"]
-                                              Operator = Filtering.Operator.Eq
-                                              Value = Filtering.String "Foo" })
+                    Ok (Comp { Field = Field ["Detail"; "de"; "Title"]
+                               Operator = Filtering.Operator.Eq
+                               Value = Filtering.String "Foo" })
                 let actual = run Filtering.statement "eq(Detail.de.Title, 'Foo')"
                 Expect.equal actual expected ""
             }
             test "Simple condition with double quote string" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.Condition { Field = Field ["Detail"; "de"; "Title"]
-                                              Operator = Filtering.Operator.Eq
-                                              Value = Filtering.String "Foo" })
+                    Ok (Comp { Field = Field ["Detail"; "de"; "Title"]
+                               Operator = Filtering.Operator.Eq
+                               Value = Filtering.String "Foo" })
                 let actual = run Filtering.statement """eq(Detail.de.Title, "Foo")"""
                 Expect.equal actual expected ""
             }
             test "AND condition" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
-                        Filtering.And (
-                            Filtering.Condition { Field = Field ["Geo"; "Altitude"]
-                                                  Operator = Filtering.Operator.Ge
-                                                  Value = Filtering.Number 200. },
-                            Filtering.Condition { Field = Field ["Geo"; "Altitude"]
-                                                  Operator = Filtering.Operator.Le
-                                                  Value = Filtering.Number 400. }
+                        And (
+                            Comp { Field = Field ["Geo"; "Altitude"]
+                                   Operator = Filtering.Operator.Ge
+                                   Value = Filtering.Number 200. },
+                            Comp { Field = Field ["Geo"; "Altitude"]
+                                   Operator = Filtering.Operator.Le
+                                   Value = Filtering.Number 400. }
                         )
                     )
                 let actual = run Filtering.statement "and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400))"
@@ -98,17 +98,17 @@ let parserTests =
             test "AND with multiple conditions" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
-                        Filtering.And (
-                            Filtering.Condition { Field = Field ["Active"]
-                                                  Operator = Filtering.Operator.Eq
-                                                  Value = Filtering.Boolean true },
-                            Filtering.And (
-                                Filtering.Condition { Field = Field ["Geo"; "Altitude"]
-                                                      Operator = Filtering.Operator.Ge
-                                                      Value = Filtering.Number 200. },
-                                Filtering.Condition { Field = Field ["Geo"; "Altitude"]
-                                                      Operator = Filtering.Operator.Le
-                                                      Value = Filtering.Number 400. }
+                        And (
+                            Comp { Field = Field ["Active"]
+                                   Operator = Filtering.Operator.Eq
+                                   Value = Filtering.Boolean true },
+                            And (
+                                Comp { Field = Field ["Geo"; "Altitude"]
+                                       Operator = Filtering.Operator.Ge
+                                       Value = Filtering.Number 200. },
+                                Comp { Field = Field ["Geo"; "Altitude"]
+                                       Operator = Filtering.Operator.Le
+                                       Value = Filtering.Number 400. }
                             )
                         )
                     )
@@ -118,17 +118,17 @@ let parserTests =
             test "AND with nested OR" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (
-                        Filtering.Or (
-                            Filtering.Condition { Field = Field ["Active"]
-                                                  Operator = Filtering.Operator.Eq
-                                                  Value = Filtering.Boolean true },
-                            Filtering.And (
-                                Filtering.Condition { Field = Field ["Geo"; "Altitude"]
-                                                      Operator = Filtering.Operator.Ge
-                                                      Value = Filtering.Number 200. },
-                                Filtering.Condition { Field = Field ["Geo"; "Altitude"]
-                                                      Operator = Filtering.Operator.Le
-                                                      Value = Filtering.Number 400. }
+                        Or (
+                            Comp { Field = Field ["Active"]
+                                   Operator = Filtering.Operator.Eq
+                                   Value = Filtering.Boolean true },
+                            And (
+                                Comp { Field = Field ["Geo"; "Altitude"]
+                                       Operator = Filtering.Operator.Ge
+                                       Value = Filtering.Number 200. },
+                                Comp { Field = Field ["Geo"; "Altitude"]
+                                       Operator = Filtering.Operator.Le
+                                       Value = Filtering.Number 400. }
                             )
                         )
                     )
@@ -144,7 +144,7 @@ let parserTests =
             test "Condition with IN" {
                 let expected =
                     Ok (
-                        Filtering.In (Field ["HasLanguage"], [Filtering.String "de"; Filtering.String "it"])
+                        In (Field ["HasLanguage"], [Filtering.String "de"; Filtering.String "it"])
                     )
                 let actual = run Filtering.statement "in(HasLanguage,'de','it')"
                 Expect.equal actual expected ""

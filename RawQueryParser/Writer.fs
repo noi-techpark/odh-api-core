@@ -64,27 +64,27 @@ module Filtering =
         | Number value -> $"{value}"
         | String value -> $"'%s{value}'"
 
-    let writeCondition condition =
+    let writeComparison comparison =
         let field =
-            match condition.Value with
-            | Boolean _ -> $"({writeRawField condition.Field})::boolean"
-            | Number _ -> $"({writeRawField condition.Field})::float"
-            | String _ -> writeTextField condition.Field
-        let operator = writeOperator condition.Operator
-        let value = writeValue condition.Value
+            match comparison.Value with
+            | Boolean _ -> $"({writeRawField comparison.Field})::boolean"
+            | Number _ -> $"({writeRawField comparison.Field})::float"
+            | String _ -> writeTextField comparison.Field
+        let operator = writeOperator comparison.Operator
+        let value = writeValue comparison.Value
         $"{field} {operator} {value}"
 
     let rec writeStatement = function 
-        | Condition value -> writeCondition value
         | And (left, right) -> $"(%s{writeStatement left} AND %s{writeStatement right})"
         | Or (left, right) -> $"(%s{writeStatement left} OR %s{writeStatement right})"
-        | In (field, values) ->
+        | Condition (Comparison value) -> writeComparison value
+        | Condition (In (field, values)) ->
             let values =
                 values
                 |> List.map writeValue
                 |> String.concat ","
             $"{writeRawField field} && ARRAY({values})"
-        | NotIn (field, values) ->
+        | Condition (NotIn (field, values)) ->
             failwith "Not implemented for PostgreSQL"
         | IsNull property -> $"{writeRawField property} IS NULL"
         | IsNotNull property -> $"{writeRawField property} IS NOT NULL"

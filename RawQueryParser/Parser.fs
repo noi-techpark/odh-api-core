@@ -100,7 +100,7 @@ module Filtering =
             field .>>. (skipChar ',' >>. whitespace >>. value)
         )
 
-    let condition: Parser<Condition> =
+    let condition: Parser<Comparison> =
         operator .>>. call
         |>> (fun (op, (prop, value)) ->
             { Field = prop
@@ -123,9 +123,9 @@ module Filtering =
             pstring "or" >>. innerParser |>> combineWith Or
             pstring "isnull" >>. betweenBrackets field |>> IsNull
             pstring "isnotnull" >>. betweenBrackets field |>> IsNotNull
-            pstring "in" >>. (betweenBrackets inParser |>> In)
-            pstring "nin" >>. (betweenBrackets inParser |>> NotIn)
-            condition |>> Condition
+            pstring "in" >>. (betweenBrackets inParser |>> (In >> Condition))
+            pstring "nin" >>. (betweenBrackets inParser |>> (NotIn >> Condition))
+            condition |>> (Comparison >> Condition)
         ]
 
     let statement = statement' .>> eof
