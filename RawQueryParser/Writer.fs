@@ -86,6 +86,6 @@ module Filtering =
             $"{writeRawField field} && ARRAY({values})"
         | Condition (NotIn (field, values)) ->
             failwith "Not implemented for PostgreSQL"
-        | IsNull property -> $"{writeRawField property} IS NULL"
-        | IsNotNull property -> $"{writeRawField property} IS NOT NULL"
+        | Condition (IsNull property) -> $"{writeRawField property} IS NULL"
+        | Condition (IsNotNull property) -> $"{writeRawField property} IS NOT NULL"
 

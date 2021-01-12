@@ -137,7 +137,7 @@ let parserTests =
             }
             test "Condition with NULL check" {
                 let expected: Result<Filtering.FilterStatement, _> =
-                    Ok (Filtering.IsNull (Field ["Detail"; "ru"; "Title"]))
+                    Ok (Cond (Filtering.IsNull (Field ["Detail"; "ru"; "Title"])))
                 let actual = run Filtering.statement "isnull(Detail.ru.Title)"
                 Expect.equal actual expected ""
             }

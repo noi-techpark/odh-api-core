@@ -47,6 +47,8 @@ module Filtering =
         | Comparison of Comparison
         | In of field: Field * values: Value list
         | NotIn of field: Field * values: Value list
+        | IsNull of Field
+        | IsNotNull of Field
 
     /// A filter statement can be a simple condition or a bunch
     /// of conditions inside an AND or an OR binary statement.
@@ -54,6 +56,4 @@ module Filtering =
         | And of left: FilterStatement * right: FilterStatement
         | Or of left: FilterStatement * right: FilterStatement
         | Condition of Condition
-        | IsNull of Field
-        | IsNotNull of Field
 

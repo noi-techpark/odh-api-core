@@ -121,8 +121,8 @@ module Filtering =
         choice [
             pstring "and" >>. innerParser |>> combineWith And
             pstring "or" >>. innerParser |>> combineWith Or
-            pstring "isnull" >>. betweenBrackets field |>> IsNull
-            pstring "isnotnull" >>. betweenBrackets field |>> IsNotNull
+            pstring "isnull" >>. betweenBrackets field |>> (IsNull >> Condition)
+            pstring "isnotnull" >>. betweenBrackets field |>> (IsNotNull >> Condition)
             pstring "in" >>. (betweenBrackets inParser |>> (In >> Condition))
             pstring "nin" >>. (betweenBrackets inParser |>> (NotIn >> Condition))
             condition |>> (Comparison >> Condition)

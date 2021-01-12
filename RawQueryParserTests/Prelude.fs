@@ -21,4 +21,3 @@ module TestHelpers =
 
     let Or x = Filtering.Or x
 
-
