@@ -79,11 +79,11 @@ module Filtering =
         | Or (left, right) -> $"(%s{writeStatement left} OR %s{writeStatement right})"
         | Condition (Comparison value) -> writeComparison value
         | Condition (In (field, values)) ->
-            let values =
-                values
-                |> List.map writeValue
-                |> String.concat ","
-            $"({writeRawField field})::jsonb @> to_jsonb(array\[{values}\])"
+            values
+            |> List.map (fun value ->
+                $"({writeValue value})::text IN (SELECT JSONB_ARRAY_ELEMENTS_TEXT({writeRawField field}))")
+            |> String.concat " OR "
+            |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->
             failwith "Not implemented for PostgreSQL"
         | Condition (IsNull property) -> $"{writeRawField property} IS NULL"
