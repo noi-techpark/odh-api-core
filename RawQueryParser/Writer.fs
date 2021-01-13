@@ -81,7 +81,7 @@ module Filtering =
         | Condition (In (field, values)) ->
             values
             |> List.map (fun value ->
-                $"({writeValue value})::text IN (SELECT JSONB_ARRAY_ELEMENTS_TEXT({writeRawField field}))")
+                $"({writeRawField field})::jsonb @> to_jsonb(array\[{writeValue value}\])")
             |> String.concat " OR "
             |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->
