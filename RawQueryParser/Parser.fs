@@ -10,10 +10,10 @@ type Parser<'a> = Parser<'a, unit>
 /// <c>Detail.de.Title => Field ["Detail"; "de"; "Title"]</c>
 /// </summary>
 let field =
-    let options = IdentifierOptions()
-    sepBy (
-        identifier options <|> (pint32 |>> string)
-    ) (skipChar '.')
+    let lettersDigitsAndUnderscore c = isAsciiLetter c || isDigit c || c = '_'
+    let options = IdentifierOptions(isAsciiIdStart = lettersDigitsAndUnderscore,
+                                    isAsciiIdContinue = lettersDigitsAndUnderscore)
+    sepBy (identifier options) (skipChar '.')
     |>> Field
     <?> "field"
 
