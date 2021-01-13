@@ -65,7 +65,7 @@ let transfomerTests =
                 Expect.equal actual expected ""
             }
             test "IN" {
-                let expected = "data#>'\{HasLanguage\}' && ARRAY('de')"
+                let expected = "((data#>'\{HasLanguage\}')::jsonb @> to_jsonb(array\['de'\]))"
                 let actual = Transformer.transformFilter "in(HasLanguage,'de')"
                 Expect.equal actual expected ""
             }
