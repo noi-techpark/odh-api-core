@@ -1,10 +1,18 @@
 ﻿namespace RawQueryParser
 
 /// <summary>
-/// Defines a field with hierarchial access fields.
-/// E.g. <c>Field ["Detail"; "de"; "Title"]</c>
+/// Differentiate between an identifier segment, e.g. 'Detail' and an array segment: []
 /// </summary>
-type Field = Field of fields: string list
+type FieldSegment =
+    | IdentifierSegment of string
+    | ArraySegment
+
+/// <summary>
+/// Defines a field with hierarchial access fields.
+/// E.g. <c>Field [IdentifierSegment "Detail"; IdentifierSegment "de"; IdentifierSegment "Title"]</c>
+/// or <c>Field [IdentifierSegment "Features"; ArraySegment; IdentifierSegment "Id"]</c>
+/// </summary>
+type Field = Field of fields: FieldSegment list
 
 module Sorting =
     /// Defines the sort direction.

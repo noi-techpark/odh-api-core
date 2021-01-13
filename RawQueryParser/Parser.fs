@@ -13,7 +13,9 @@ let field =
     let lettersDigitsAndUnderscore c = isAsciiLetter c || isDigit c || c = '_'
     let options = IdentifierOptions(isAsciiIdStart = lettersDigitsAndUnderscore,
                                     isAsciiIdContinue = lettersDigitsAndUnderscore)
-    sepBy (identifier options) (skipChar '.')
+    let identifierSegment = identifier options |>> IdentifierSegment
+    let arraySegment = skipString "[]" >>% ArraySegment
+    sepBy (identifierSegment <|> arraySegment) (skipChar '.')
     |>> Field
     <?> "field"
 
