@@ -85,7 +85,7 @@ module Filtering =
             |> String.concat " OR "
             |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->
-            failwith "Not implemented for PostgreSQL"
+            failwith "NIN operator not implemented for PostgreSQL"
         | Condition (IsNull property) -> $"{writeRawField property} IS NULL"
         | Condition (IsNotNull property) -> $"{writeRawField property} IS NOT NULL"
 
