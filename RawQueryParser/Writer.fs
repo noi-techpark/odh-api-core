@@ -83,7 +83,7 @@ module Filtering =
                 values
                 |> List.map writeValue
                 |> String.concat ","
-            $"{writeRawField field} && ARRAY({values})"
+            $"({writeRawField field})::jsonb @> to_jsonb(array\[{values}\])"
         | Condition (NotIn (field, values)) ->
             failwith "Not implemented for PostgreSQL"
         | Condition (IsNull property) -> $"{writeRawField property} IS NULL"
