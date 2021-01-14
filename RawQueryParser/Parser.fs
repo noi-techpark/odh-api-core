@@ -83,18 +83,31 @@ module Filtering =
         pfloat |>> Number
         <?> "number"
 
-    let string: Parser<Value> =
+    let quotedString =
         betweenQuotes (
             manySatisfy (isNoneOf ['\"'; '\''])
         )
+
+    let string: Parser<Value> =
+        quotedString
         |>> String
         <?> "string"
+
+    let datetime: Parser<Value> =
+        skipString "dt" >>. quotedString
+        >>= fun x ->
+            match System.DateTime.TryParse x with
+            | true, dateTime -> preturn dateTime
+            | false, _ -> fail $"Invalid date time value: {x}"
+        |>> DateTime
+        <?> "datetime"
 
     let value: Parser<Value> =
         choice [
             boolean
             number
             string
+            datetime
         ]
 
     let call: Parser<Field * Value> =

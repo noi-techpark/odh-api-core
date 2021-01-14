@@ -85,6 +85,14 @@ let parserTests =
                 let actual = run Filtering.statement """eq(Detail.de.Title, "Foo")"""
                 Expect.equal actual expected ""
             }
+            test "Simple condition with date time" {
+                let expected: Result<Filtering.FilterStatement, _> =
+                    Ok (Comp { Field = Field [ IdentifierSegment "LastChange" ]
+                               Operator = Filtering.Operator.Eq
+                               Value = Filtering.DateTime (System.DateTime(2010,01,01)) })
+                let actual = run Filtering.statement """eq(LastChange, dt"2010-01-01")"""
+                Expect.equal actual expected ""
+            }
             test "AND condition" {
                 let expected: Result<Filtering.FilterStatement, _> =
                     Ok (

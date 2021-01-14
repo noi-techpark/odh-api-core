@@ -74,6 +74,7 @@ module Filtering =
         | Boolean false -> "FALSE"
         | Number value -> $"{value}"
         | String value -> $"'%s{value}'"
+        | DateTime value -> $"""'%s{value.ToString("o")}'::timestamp"""
 
     let writeComparison comparison =
         let field =
@@ -81,6 +82,7 @@ module Filtering =
             | Boolean _ -> $"({writeRawField comparison.Field})::boolean"
             | Number _ -> $"({writeRawField comparison.Field})::float"
             | String _ -> writeTextField comparison.Field
+            | DateTime _ -> $"({writeTextField comparison.Field})::timestamp"
         let operator = writeOperator comparison.Operator
         let value = writeValue comparison.Value
         $"{field} {operator} {value}"

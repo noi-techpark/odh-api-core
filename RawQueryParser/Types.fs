@@ -54,6 +54,7 @@ module Filtering =
         | Boolean of bool
         | Number of float
         | String of string
+        | DateTime of System.DateTime
 
     /// The condition is the combination of a property, an operator and a value.
     type Comparison =
