@@ -442,7 +442,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("ODHActivityPoiReduced")]
         public async Task<IActionResult> GetODHActivityPoiListReduced(
             string? language = "en",
-            string? type = "63",
+            string? type = "255",
             string? subtype = null,
             string? poitype = null,
             string? locfilter = null,

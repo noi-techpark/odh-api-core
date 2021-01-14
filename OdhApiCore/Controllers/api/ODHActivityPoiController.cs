@@ -68,7 +68,7 @@ namespace OdhApiCore.Controllers.api
             string? language = null,
             uint pagenumber = 1,
             uint pagesize = 10,
-            string? type = "63",
+            string? type = "255",
             string? subtype = null,
             string? poitype = null,
             string? idlist = null,
