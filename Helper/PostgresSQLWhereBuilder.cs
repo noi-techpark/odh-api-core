@@ -31,6 +31,20 @@ namespace Helper
                 $"AccoDetail.{lang}.Name"
             ).ToArray();
 
+
+        //TODO search name example
+        //name: {
+        //    deu: "Akademie deutsch-italienischer Studien",
+        //    ita: "Accademia di studi italo-tedeschi",
+        //    eng: "Academy of German-Italian Studies"
+        //    },
+        //private static string[] VenueTitleFieldsToSearchFor(string? language) =>
+        // _languagesToSearchFor.Where(lang =>
+        //     language != null ? lang == language : true
+        // ).Select(lang =>
+        //     $"odhdata.Detail.{lang}.Name"
+        // ).ToArray();
+
         private static string[] TagNameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
@@ -458,7 +472,7 @@ namespace Helper
                 .AreaFilterMeasuringpoints(arealist)
                 .ActiveFilter(activefilter)                
                 .SmgActiveFilter(smgactivefilter)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
+                .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData());
         }
