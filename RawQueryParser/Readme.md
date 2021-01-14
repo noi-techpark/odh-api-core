@@ -31,6 +31,9 @@ and(ge(GpsInfo.0.Altitude, 200), le(GpsInfo.0.Altitude, 400))  // all entries wi
 in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries with a specific feature ID
 ```
 
+> `<field>` is described [here](#Supported-value-types:)   
+> `<value>` is described [here](#Field-syntax:)
+
 Keywords/functions: `eq`, `ne`, `gt`, `ge`, `lt`, `le`, `and`, `or`, `isnull`, `isnotnull`, `in`, `nin`
 
 Precedence is archieved by nesting `and` and `or`.  
@@ -49,22 +52,6 @@ No `between`, `startswith` and other special functions. Altough this may change 
 Testing a field if it is NULL or not NULL has special meaning in SQL. You cannot simply query a field for NULL with equality or inequality. You have to use special syntax for that, e.g. `FIELD IS NULL` or `FIELD IS NOT NULL`.    
 Because of this special meaning of NULL there exist `isnull` and `isnotnull` functions.
 
-#### Supported data types:
-
-- Boolean: `true`, `false`
-- Number: `1`, `1.12` (exponential notation is not allowed) are always interpreted as a floating point number
-- Strings need to be defined in quotes (single or double quotes are both legal, unicode escapes are not allowed) 
-  They are special in that they leverage PostgreSQL special capability to represent different data types (e.g. dates) as strings (`#>>`) which allows to filter them by strings.
-
-No special or magical conversion happens between the data types.    
-E.g. `1` applied to a boolean field doesn't get converterted into a boolean type 'automagically'. It is the underlying DB's responsibility to handle such a type missmatch.
-
-The following error will be thrown by PostreSQL if you try to compare a boolean field with a numeric value (`eq(Active,1)`):
-
-```
-22023: cannot cast jsonb boolean to type double precision
-```
-
 ### `rawsort`
 
 The `rawsort` syntax follows the proposal for sorting on the destination data: https://gitlab.com/alpinebits/destinationdata/standard-specification/-/issues/4
@@ -77,12 +64,14 @@ Detail.de.Title
 Geo.0.Altitude
 -Geo.0.Altitude, Detail.de.Title
 ```
+> `<field>` is described [here](#Supported-value-types:)
 
 Prepending a minus does significate that the field gets sorted descending.
 
 ## Field syntax
 
-A Field (the `<field>` placeholder in the examples above) can be a simple flat selection like `Active` or `Type`, which matches a document with the following JSON structure:
+*The `<field>` placeholder in the examples above.*    
+A field  can be a simple flat selection like `Active` or `Type`, which matches a document with the following JSON structure:
 
 ```json
 { "Active": <value>, "Type": <value>, ... }
@@ -101,6 +90,24 @@ It is also possible to query arrays:
 
 ```json
 { "Features": [{ "Id": <value>, ... }, { "Id": <value>, ... }, ...], ... }
+```
+
+## Supported value types:
+
+*The `<value>` placeholder in the examples above.*
+
+- Boolean: `true`, `false`
+- Number: `1`, `1.12` (exponential notation is not allowed) are always interpreted as a floating point number
+- Strings need to be defined in quotes (single or double quotes are both legal, unicode escapes are not allowed) 
+  They are special in that they leverage PostgreSQL special capability to represent different data types (e.g. dates) as strings (`#>>`) which allows to filter them by strings.
+
+No special or magical conversion happens between the data types.    
+E.g. `1` applied to a boolean field doesn't get converterted into a boolean type 'automagically'. It is the underlying DB's responsibility to handle such a type missmatch.
+
+The following error will be thrown by PostreSQL if you try to compare a boolean field with a numeric value (`eq(Active,1)`):
+
+```
+22023: cannot cast jsonb boolean to type double precision
 ```
 
 ## Is it safe?
