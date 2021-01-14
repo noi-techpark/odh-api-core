@@ -8,11 +8,21 @@ type FieldSegment =
     | ArraySegment
 
 /// <summary>
-/// Defines a field with hierarchial access fields.
+/// Defines a field with hierarchical access fields.
 /// E.g. <c>Field [IdentifierSegment "Detail"; IdentifierSegment "de"; IdentifierSegment "Title"]</c>
 /// or <c>Field [IdentifierSegment "Features"; ArraySegment; IdentifierSegment "Id"]</c>
 /// </summary>
 type Field = Field of fields: FieldSegment list
+with member self.ToNestedObject(value) =
+        let (Field fields) = self
+        let rec loop m = function
+            | [] ->
+                (box value)
+            | IdentifierSegment h::t ->
+                box (dict [h, box (loop m t)])
+            | ArraySegment::t ->
+                box [loop m t]
+        loop value fields
 
 module Sorting =
     /// Defines the sort direction.
@@ -39,7 +49,7 @@ module Filtering =
         | Gt
         | Ge
 
-    /// Defines the values of tye booleans, number or string.
+    /// Defines values of booleans, numbers and strings.
     type Value =
         | Boolean of bool
         | Number of float

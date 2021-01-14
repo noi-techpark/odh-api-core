@@ -57,9 +57,17 @@ namespace Helper
                     query.OrderByRaw(RawQueryParser.Transformer.TransformSort(raw)),
                 _ =>
                     query.OrderByRaw(overwritestandardorder != null ? overwritestandardorder : "data#>>'\\{Shortname\\}' ASC")
-            };        
+            };
 
-        public static Query ApplyRawFilter(this Query query, string? rawFilter) =>
-            rawFilter != null ? query.WhereRaw(RawQueryParser.Transformer.TransformFilter(rawFilter)) : query;
+        public static Query ApplyRawFilter(this Query query, string? rawFilter)
+        {
+            static string jsonSerializer(object value)
+            {
+                System.Console.WriteLine(value);
+                return Newtonsoft.Json.JsonConvert.SerializeObject(value);
+            }
+
+            return rawFilter != null ? query.WhereRaw(RawQueryParser.Transformer.TransformFilter(jsonSerializer, rawFilter)) : query;
+        }
     }
 }

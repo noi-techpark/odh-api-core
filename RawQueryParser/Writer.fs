@@ -64,6 +64,11 @@ module Filtering =
         | Lt -> "<"
         | Le -> "<="
 
+    let writeRawValue = function
+        | Boolean x -> box x
+        | Number x -> box x
+        | String x -> box x
+
     let writeValue = function
         | Boolean true -> "TRUE"
         | Boolean false -> "FALSE"
@@ -80,14 +85,24 @@ module Filtering =
         let value = writeValue comparison.Value
         $"{field} {operator} {value}"
 
-    let rec writeStatement = function 
-        | And (left, right) -> $"(%s{writeStatement left} AND %s{writeStatement right})"
-        | Or (left, right) -> $"(%s{writeStatement left} OR %s{writeStatement right})"
+    let rec writeStatement (jsonSerializer: obj -> string) = function 
+        | And (left, right) -> $"(%s{writeStatement jsonSerializer left} AND %s{writeStatement jsonSerializer right})"
+        | Or (left, right) -> $"(%s{writeStatement jsonSerializer left} OR %s{writeStatement jsonSerializer right})"
         | Condition (Comparison value) -> writeComparison value
         | Condition (In (field, values)) ->
+            let escapeBrackets (x: string) =
+                x.Replace("[", "\[")
+                 .Replace("]", "\]")
+                 .Replace("{", "\{")
+                 .Replace("}", "\}")
+            let writeValue =
+                writeRawValue
+                >> field.ToNestedObject
+                >> jsonSerializer
+                >> escapeBrackets
+                >> sprintf "data @> '%s'"
             values
-            |> List.map (fun value ->
-                $"({writeRawField field})::jsonb @> to_jsonb(array\[{writeValue value}\])")
+            |> List.map writeValue
             |> String.concat " OR "
             |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->

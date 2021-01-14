@@ -22,13 +22,13 @@ let transformSort input =
 /// PostgreSQL <c>WHERE</c> expression.
 /// </summary>
 [<CompiledName "TransformFilter">]
-let transformFilter input =
+let transformFilter(jsonSerializer: System.Func<obj, string>, input) =
     if isNull input then
         nullArg (nameof input)
     else
         match run Parser.Filtering.statement input with
         | Success (statement, _, _) ->
-            Writer.Filtering.writeStatement statement
+            Writer.Filtering.writeStatement jsonSerializer.Invoke statement
         | Failure (msg, _, _) ->
             failwith msg
 
