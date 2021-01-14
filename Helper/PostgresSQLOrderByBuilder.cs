@@ -61,12 +61,7 @@ namespace Helper
 
         public static Query ApplyRawFilter(this Query query, string? rawFilter)
         {
-            static string jsonSerializer(object value)
-            {
-                System.Console.WriteLine(value);
-                return Newtonsoft.Json.JsonConvert.SerializeObject(value);
-            }
-
+            static string jsonSerializer(object value) => Newtonsoft.Json.JsonConvert.SerializeObject(value);
             return rawFilter != null ? query.WhereRaw(RawQueryParser.Transformer.TransformFilter(jsonSerializer, rawFilter)) : query;
         }
     }
