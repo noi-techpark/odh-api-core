@@ -23,13 +23,15 @@ The custom filtering and sorting is enabled via query strings.
 Usage: `?rawfilter=<filter(s)>`
 
 ```javascript
-eq(Active, true)                                       // all active entries
-eq(Type, 'Wandern')                                    // all entries of type 'Wandern'
-isnotnull(Detail.ru.Title)                             // all entries with a russian title set
-and(ge(Geo.0.Altitude, 200), le(Geo.0.Altitude, 400))  // all entries with an altitude between 200 and 400 meters
+eq(<field>, <value>)
+eq(Active, true)                                               // all active entries
+eq(Type, 'Wandern')                                            // all entries of type 'Wandern'
+isnotnull(Detail.ru.Title)                                     // all entries with a russian title set
+and(ge(GpsInfo.0.Altitude, 200), le(GpsInfo.0.Altitude, 400))  // all entries with an altitude between 200 and 400 meters
+in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries with a specific feature ID
 ```
 
-Keywords/functions: `eq`, `ne`, `gt`, `ge`, `lt`, `le`, `and`, `or`, `isnull`, `isnotnull`
+Keywords/functions: `eq`, `ne`, `gt`, `ge`, `lt`, `le`, `and`, `or`, `isnull`, `isnotnull`, `in`, `nin`
 
 Precedence is archieved by nesting `and` and `or`.  
 You can chain multiple conditions inside `and` and `or`:
@@ -70,9 +72,35 @@ The `rawsort` syntax follows the proposal for sorting on the destination data: h
 Usage: `?rawsort=<sorting(s)>`
 
 ```javascript
+[-]<field>
 Detail.de.Title
 Geo.0.Altitude
 -Geo.0.Altitude, Detail.de.Title
+```
+
+Prepending a minus does significate that the field gets sorted descending.
+
+## Field syntax
+
+A Field (the `<field>` placeholder in the examples above) can be a simple flat selection like `Active` or `Type`, which matches a document with the following JSON structure:
+
+```json
+{ "Active": <value>, "Type": <value>, ... }
+```
+
+But it is possible to traverse throgh the document's hierarchy by separating the names by a dot (.).
+
+`Detail.ru.Title` matches on a document with the following JSON structure:
+
+```json
+{ "Detail": { "ru": { "Title": <value>, ... }, ... }, ... }
+```
+
+It is also possible to query arrays:   
+`Features.[].Id` matches on a document with the following JSON structure:
+
+```json
+{ "Features": [{ "Id": <value>, ... }, { "Id": <value>, ... }, ...], ... }
 ```
 
 ## Is it safe?
