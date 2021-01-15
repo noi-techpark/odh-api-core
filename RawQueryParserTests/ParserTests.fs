@@ -54,7 +54,7 @@ let parserTests =
         ]
         testList "Filtering" [
             test "Simple condition with boolean" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (Comp { Field = Field [IdentifierSegment "Active"]
                                Operator = Filtering.Operator.Eq
                                Value = Filtering.Boolean true })
@@ -62,7 +62,7 @@ let parserTests =
                 Expect.equal actual expected ""
             }
             test "Simple condition with number" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (Comp { Field = Field (List.map IdentifierSegment ["Geo"; "Altitude"])
                                Operator = Filtering.Operator.Eq
                                Value = Filtering.Number 200. })
@@ -70,7 +70,7 @@ let parserTests =
                 Expect.equal actual expected ""
             }
             test "Simple condition with single quote string" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (Comp { Field = Field (List.map IdentifierSegment ["Detail"; "de"; "Title"])
                                Operator = Filtering.Operator.Eq
                                Value = Filtering.String "Foo" })
@@ -78,7 +78,7 @@ let parserTests =
                 Expect.equal actual expected ""
             }
             test "Simple condition with double quote string" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (Comp { Field = Field (List.map IdentifierSegment ["Detail"; "de"; "Title"])
                                Operator = Filtering.Operator.Eq
                                Value = Filtering.String "Foo" })
@@ -86,7 +86,7 @@ let parserTests =
                 Expect.equal actual expected ""
             }
             test "Simple condition with date time" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (Comp { Field = Field [ IdentifierSegment "LastChange" ]
                                Operator = Filtering.Operator.Eq
                                Value = Filtering.DateTime (System.DateTime(2010,01,01)) })
@@ -94,7 +94,7 @@ let parserTests =
                 Expect.equal actual expected ""
             }
             test "AND condition" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (
                         And (
                             Comp { Field = Field (List.map IdentifierSegment ["Geo"; "Altitude"])
@@ -109,7 +109,7 @@ let parserTests =
                 Expect.equal actual expected ""
             }
             test "AND with multiple conditions" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (
                         And (
                             Comp { Field = Field (List.map IdentifierSegment ["Active"])
@@ -129,7 +129,7 @@ let parserTests =
                 Expect.equal actual expected ""
             }
             test "AND with nested OR" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (
                         Or (
                             Comp { Field = Field [IdentifierSegment "Active"]
@@ -149,7 +149,7 @@ let parserTests =
                 Expect.equal actual expected ""
             }
             test "Condition with NULL check" {
-                let expected: Result<Filtering.FilterStatement, _> =
+                let expected =
                     Ok (Cond (Filtering.IsNull (Field (List.map IdentifierSegment ["Detail"; "ru"; "Title"]))))
                 let actual = run Filtering.statement "isnull(Detail.ru.Title)"
                 Expect.equal actual expected ""
