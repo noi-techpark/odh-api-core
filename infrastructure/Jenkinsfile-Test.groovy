@@ -20,6 +20,7 @@ pipeline {
 	S3_BUCKET_ACCESSPOINT = credentials('odh-tourism-api-test-bucket-accesspoint')
 	S3_IMAGEUPLOADER_ACCESSKEY = credentials('odh-tourism-api-test-s3-imageuploader-accesskey')
 	S3_IMAGEUPLOADER_SECRETKEY = credentials('odh-tourism-api-test-s3-imageuploader-secretkey')
+	OAUTH_AUTORITY = credentials('odh-tourism-api-test-oauth-authority')
     }
 
     stages {
@@ -46,6 +47,7 @@ pipeline {
 		    echo 'S3_BUCKET_ACCESSPOINT=${S3_BUCKET_ACCESSPOINT}' >> .env
 		    echo 'S3_IMAGEUPLOADER_ACCESSKEY=${S3_IMAGEUPLOADER_ACCESSKEY}' >> .env
 		    echo 'S3_IMAGEUPLOADER_SECRETKEY=${S3_IMAGEUPLOADER_SECRETKEY}' >> .env
+		    echo 'OAUTH_AUTORITY=${OAUTH_AUTORITY}' >> .env
                 """
             }
         }
