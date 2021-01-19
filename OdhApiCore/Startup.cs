@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
 using OdhApiCore.Factories;
@@ -71,6 +72,7 @@ namespace OdhApiCore
             });
             services.AddHttpClient("lcs"); // TODO: put LCS config here
 
+
             services.AddLogging(options =>
             {
                 options.ClearProviders();
@@ -121,8 +123,9 @@ namespace OdhApiCore
 
             services.AddControllers().AddNewtonsoftJson(options =>
             {
-                options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
+
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
@@ -159,10 +162,11 @@ namespace OdhApiCore
                 .AddJwtBearer(jwtBearerOptions =>
             {
                 jwtBearerOptions.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/";
-                jwtBearerOptions.Audience = "account";
+                //jwtBearerOptions.Audience = "account";                
                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = "name",
+                    NameClaimType = "preferred_username",
+                    ValidateAudience = false
                 };
                 //jwtBearerOptions.Events = new JwtBearerEvents()
                 //{
@@ -182,11 +186,16 @@ namespace OdhApiCore
                 //};
             });
 
-            services.AddMvc(options =>
-            {
-                options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
-                options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
-            });
+            services
+                .AddMvc(options =>
+                {
+                    options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
+                    options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
+                });
+                //.AddJsonOptions(options =>
+                //{
+                //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = new DefaultContractResolver();
+                //});
 
             //TO TEST
             // Here I stored necessary permissions/roles in a constant
@@ -259,18 +268,25 @@ namespace OdhApiCore
                 //    }
                 //});
             });
+            services.AddSwaggerGenNewtonsoftSupport();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
+
+            //services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseForwardedHeaders();
+            //app.UseForwardedHeaders();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+            });
 
             if (env.IsDevelopment())
             {
@@ -308,7 +324,13 @@ namespace OdhApiCore
             app.UseResponseCompression();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((swagger, httpReq) =>
+                {
+                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
+                });
+            });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
@@ -326,6 +348,10 @@ namespace OdhApiCore
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
+
+            
+            //Not needed at moment
+            //app.UseHttpContext();
         }
     }
 

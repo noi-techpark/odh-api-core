@@ -23,8 +23,9 @@ namespace OdhApiCore.Factories
             Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
+            base.Dispose();
             if (Connection != null)
             {
                 Connection.Dispose();

@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -51,7 +52,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<GBLTSPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Poi")]
@@ -76,6 +77,8 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             //TODO
@@ -88,7 +91,7 @@ namespace OdhApiCore.Controllers.api
                 activitytype: poitype, subtypefilter: subtype, idfilter: idlist, searchfilter: searchfilter,
                 locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight, active: active, smgactive: odhactive,
                 smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult: geosearchresult,
-                cancellationToken: cancellationToken);
+                rawfilter: rawfilter, rawsort: rawsort, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -109,7 +112,7 @@ namespace OdhApiCore.Controllers.api
             string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
-         CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
         {
             //TODO
             //CheckOpenData(User);
@@ -176,7 +179,7 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active,
-            bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort,
             CancellationToken cancellationToken)
         {
 
@@ -201,8 +204,8 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData
                         )
-                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =
@@ -234,7 +237,10 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">ID of Poi</param>
         /// <returns>Poi Object</returns>
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, 
+            string? language, 
+            string[] fields, 
+            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {

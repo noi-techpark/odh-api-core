@@ -1,7 +1,9 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MSS;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OdhApiCore.Controllers;
@@ -50,6 +52,7 @@ namespace OdhApiCore.Filters
                     string? categoryfilter = actionarguments.ContainsKey("categoryfilter") ? (string?)actionarguments["categoryfilter"] : null;
                     string? typefilter = actionarguments.ContainsKey("typefilter") ? (string?)actionarguments["typefilter"] : null;
                     string? featurefilter = actionarguments.ContainsKey("featurefilter") ? (string?)actionarguments["featurefilter"] : null;
+                    string? featureidfilter = actionarguments.ContainsKey("featureidfilter") ? (string?)actionarguments["featureidfilter"] : null;
                     string? badgefilter = actionarguments.ContainsKey("badgefilter") ? (string?)actionarguments["badgefilter"] : null;
                     string? idfilter = actionarguments.ContainsKey("idfilter") ? (string?)actionarguments["idfilter"] : null;
                     string? themefilter = actionarguments.ContainsKey("themefilter") ? (string?)actionarguments["themefilter"] : null;
@@ -78,7 +81,7 @@ namespace OdhApiCore.Filters
 
                     AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                        QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
-                       featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
+                       featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
                        smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, (CancellationToken)context.ActionArguments["cancellationToken"]);
 
                     var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -86,9 +89,23 @@ namespace OdhApiCore.Filters
                     //Get Accommodations IDlist 
                     var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
 
-                    var myaccobooklist = idlist.Select(x => new AccoBookList { Id = x.Id, IsBookable = x.IsBookable, AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(x.AccoBookingChannel.Value) }).ToList();
+                    ////Fix
+                    //List<AccoBookList> myaccoboklist = new List<AccoBookList>();
+                    //foreach(var item in idlist)
+                    //{
+                    //    var x = new AccoBookList();
+                    //    x.Id = item.Id;
+                    //    x.IsBookable = item.IsBookable;
+                    //    x.AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(item.AccoBookingChannel.Value);                        
+                    //}
 
-                    var booklist = idlist.Select(x => x.Id.ToUpper()).ToList();
+                    //crashes because some AccobookingChannels are null TODO!
+                    //var myaccobooklist = idlist.Select(x => new AccoBookList { Id = x.Id, IsBookable = x.IsBookable, AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(x.AccoBookingChannel.Value) }).ToList();
+                    
+                    //TODO NOT WORKING, Availability Request is returned without paging
+
+
+                    var booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
                     var bokfilterlist = bokfilter.Split(',').ToList(); ;
 
                     context.HttpContext.Items.Add("accobooklist", booklist);
@@ -148,10 +165,11 @@ namespace OdhApiCore.Filters
                 string departure = (string?)query["departure"] ?? String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
                 string roominfo = (string?)query["roominfo"] ?? "1-18,18";
                 string source = (string?)query["source"] ?? "sinfo";
-                string detail = (string?)query["detail"] ?? "0";                
+                string detail = (string?)query["detail"] ?? "0";
 
-                context.RouteData.Values.TryGetValue("id", out object id);
-                var bookableAccoIds = new List<string>() { (string)id };
+                var bookableAccoIds = new List<string>();
+                if (context.RouteData.Values.TryGetValue("id", out object? id) && id != null)
+                    bookableAccoIds.Add((string)id);
 
                 if (context.Result is OkObjectResult okObject && okObject.Value is JsonRaw jRaw)
                 {
@@ -167,11 +185,11 @@ namespace OdhApiCore.Filters
 
                             if (bokfilterlist.Contains("hgv"))
                             {
-                                MssResult mssresult = default(MssResult);
+                                MssResult? mssresult = default(MssResult);
 
                                 if (actionid == "GetAccommodations")
                                 {
-                                    mssresult = (MssResult)context.HttpContext.Items["mssavailablity"];
+                                    mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
                                 }
                                 else if (actionid == "GetAccommodation")
                                 {
@@ -224,11 +242,11 @@ namespace OdhApiCore.Filters
 
                                 if (bokfilterlist.Contains("hgv"))
                                 {
-                                    MssResult mssresult = default(MssResult);
+                                    MssResult? mssresult = null;
 
                                     if (actionid == "GetAccommodations")
                                     {
-                                        mssresult = (MssResult)context.HttpContext.Items["mssavailablity"];
+                                        mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
                                     }
                                     else if (actionid == "GetAccommodation")
                                     {
@@ -244,11 +262,11 @@ namespace OdhApiCore.Filters
                                 }
                                 if (bokfilterlist.Contains("lts"))
                                 {
-                                    MssResult lcsresult = default(MssResult);
+                                    MssResult? lcsresult = null;
 
                                     if (actionid == "GetAccommodations")
                                     {
-                                        lcsresult = (MssResult)context.HttpContext.Items["lcsavailablity"];
+                                        lcsresult = (MssResult?)context.HttpContext.Items["lcsavailablity"];
                                     }
                                     else if (actionid == "GetAccommodation")
                                     {
@@ -272,11 +290,14 @@ namespace OdhApiCore.Filters
                             }
                         }
                         myRawList.Add(jtoken);
-
-                        okObjectlist.Value = myRawList;
                     }
+
+                    jRawList.Items = myRawList.Select(jtoken => new JsonRaw(jtoken.ToString()));
                 }
             }
+
+            //TODO REturn paginated result on list https://localhost:5001/api/Accommodation?pagenumber=1&pagesize=10&categoryfilter=30720&typefilter=1&arrival=01-02-2021&departure=05-02-2021&roominfo=1-18%2C18&bokfilter=hgv&source=sinfo&availabilitychecklanguage=en&availabilitycheck=true
+
             await base.OnResultExecutionAsync(context, next);
         }
 
@@ -308,14 +329,14 @@ namespace OdhApiCore.Filters
 
             if (bookableaccoIDs.Count > 0)
             {
-                var accosearchrequest = Helper.LCS.GetAccommodationDataLCS.GetAccommodationDataSearchRequest(resultRID: "", pageNr: "1", pageSize: "10000", language: myhelper.lcsrequestlanguage, 
+                var accosearchrequest = LCS.GetAccommodationDataLCS.GetAccommodationDataSearchRequest(resultRID: "", pageNr: "1", pageSize: "10000", language: myhelper.lcsrequestlanguage, 
                     sortingcriterion: "1", sortingorder: "", sortingpromotebookable: "", request: "0", filters: "0", timespanstart: myhelper.arrival, timespanend: myhelper.departure, 
                     checkavailabilitystatus: "1", onlybookableresults: "0", mealplans: myhelper.service, accommodationrids: myhelper.accoidlist, tourismorg: new List<string>(), 
                     districts: new List<string>(), marketinggroups: new List<string>(), lcsroomstay: myhelper.myroomdata, requestor: source, messagepswd: settings.LcsConfig.MessagePassword);
 
-                var myaccosearchlcs = new Helper.LCS.GetAccommodationDataLCS(settings.LcsConfig.Username, settings.LcsConfig.Password);
+                var myaccosearchlcs = new LCS.GetAccommodationDataLCS(settings.LcsConfig.Username, settings.LcsConfig.Password);
                 var response = await myaccosearchlcs.GetAccommodationDataSearchAsync(accosearchrequest);
-                var myparsedresponse = Helper.LCS.ParseAccoSearchResult.ParsemyLCSResponse(language, response, myhelper.rooms);
+                var myparsedresponse = LCS.ParseAccoSearchResult.ParsemyLCSResponse(language, response, myhelper.rooms);
 
                 if (myparsedresponse != null)
                     return myparsedresponse;
@@ -349,7 +370,7 @@ namespace OdhApiCore.Filters
                        .From("accommodations")
                        .AccommodationWhereExpression(
                            idlist: myhelper.idlist, accotypelist: myhelper.accotypelist,
-                           categorylist: myhelper.categorylist, featurelist: myhelper.featurelist,
+                           categorylist: myhelper.categorylist, featurelist: myhelper.featurelist, featureidlist: myhelper.featureidlist,
                            badgelist: myhelper.badgelist, themelist: myhelper.themelist,
                            boardlist: myhelper.boardlist, smgtaglist: myhelper.smgtaglist,
                            districtlist: myhelper.districtlist, municipalitylist: myhelper.municipalitylist,

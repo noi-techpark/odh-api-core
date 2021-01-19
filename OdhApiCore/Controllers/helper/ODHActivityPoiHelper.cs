@@ -56,7 +56,7 @@ namespace OdhApiCore.Controllers.api
                 if (int.TryParse(typefilter, out typeinteger))
                 {
                     //Sonderfall wenn alles abgefragt wird um keine unnötige Where zu erzeugen
-                    if (typeinteger != 63)
+                    if (typeinteger != 255)
                         typelist = Helper.ActivityPoiListCreator.CreateSmgPoiTypefromFlag(typefilter);
                 }
                 else
@@ -82,10 +82,10 @@ namespace OdhApiCore.Controllers.api
                 poitypelist = new List<string>();
 
 
-            if (poitypelist.Count > 0)
-                subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
-            else
-                subtypelist = new List<string>();
+            //if (poitypelist.Count > 0)
+            //    subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
+            //else
+            //    subtypelist = new List<string>();
 
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());

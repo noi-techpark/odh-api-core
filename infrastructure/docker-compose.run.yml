@@ -4,9 +4,22 @@ services:
   api:
     image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
+      ASPNETCORE_MssConfig__Username: ${MSS_USER}
+      ASPNETCORE_MssConfig__Password: ${MSS_PSWD}
+      ASPNETCORE_LcsConfig__Username: ${LCS_USER}
+      ASPNETCORE_LcsConfig__Password: ${LCS_PSWD}
+      ASPNETCORE_LcsConfig__MessagePassword: ${LCS_MSGPSWD}
+      ASPNETCORE_SiagConfig__Username: ${SIAG_USER}
+      ASPNETCORE_SiagConfig__Password: ${SIAG_PSWD}
+      ASPNETCORE_XmlConfig__Xmldir: ${XMLDIR}
+      ASPNETCORE_XmlConfig__XmldirWeather: ${XMLDIR}
+      ASPNETCORE_S3ImageresizerConfig__Url: ${IMG_URL}
+      ASPNETCORE_S3ImageresizerConfig__BucketAccessPoint: ${S3_BUCKET_ACCESSPOINT}
+      ASPNETCORE_S3ImageresizerConfig__AccessKey: ${S3_IMAGEUPLOADER_ACCESSKEY}
+      ASPNETCORE_S3ImageresizerConfig__SecretKey: ${S3_IMAGEUPLOADER_SECRETKEY}
     restart: unless-stopped
     ports:
       - "${SERVER_PORT}:80"

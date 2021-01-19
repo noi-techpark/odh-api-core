@@ -1221,7 +1221,7 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateActivitySubTypefromFlag(string typefiltertext, string? subtypefilter)
+        public static List<string> CreateActivitySubTypefromFlag(string? typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 
@@ -1327,7 +1327,7 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreatePoiSubTypefromFlag(string typefiltertext, string? subtypefilter)
+        public static List<string> CreatePoiSubTypefromFlag(string? typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 
@@ -1432,7 +1432,7 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateSmgPoiSubTypefromFlag(string typefiltertext, string? subtypefilter)
+        public static List<string> CreateSmgPoiSubTypefromFlag(string? typefiltertext, string? subtypefilter)
         {
             List<string> subtypelist = new List<string>();
 
@@ -1475,6 +1475,18 @@ namespace Helper
 
                             break;
 
+                        case "Mobilität":
+                            SmgPoiSubTypeFlagMobility mypoitypeflag7 = (SmgPoiSubTypeFlagMobility)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag7.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Geschäfte und Dienstleister":
+                            SmgPoiSubTypeFlagShopsAndServices mypoitypeflag8 = (SmgPoiSubTypeFlagShopsAndServices)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag8.GetFlags().GetDescriptionList());
+
+                            break;
+
                     }
                 }
                 else
@@ -1484,7 +1496,7 @@ namespace Helper
             return subtypelist;
         }
 
-        public static List<string> CreateSmgPoiPoiTypefromFlag(string subtypefilter, string? poitypefilter)
+        public static List<string> CreateSmgPoiPoiTypefromFlag(string? subtypefilter, string? poitypefilter)
         {
             List<string> subtypelist = new List<string>();
 
@@ -1604,6 +1616,54 @@ namespace Helper
 
                             break;
 
+                        case "Aufstiegsanlagen":
+                            SmgPoiPoiTypeFlagAufstiegsanlagen mypoitypeflag27 = (SmgPoiPoiTypeFlagAufstiegsanlagen)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag27.GetFlags().GetDescriptionList());
+
+                            break;
+
+
+                        case "Gesundheit":
+                            SmgPoiPoiTypeFlagGesundheit mypoitypeflag20 = (SmgPoiPoiTypeFlagGesundheit)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag20.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Geschäfte":
+                            SmgPoiPoiTypeFlagGeschaefte mypoitypeflag21 = (SmgPoiPoiTypeFlagGeschaefte)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag21.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Dienstleister":
+                            SmgPoiPoiTypeFlagDienstleister mypoitypeflag22 = (SmgPoiPoiTypeFlagDienstleister)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag22.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Öffentliche Einrichtungen":
+                            SmgPoiPoiTypeFlagOeffentlichEinrichtungen mypoitypeflag23 = (SmgPoiPoiTypeFlagOeffentlichEinrichtungen)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag23.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Nachtleben und Unterhaltung":
+                            SmgPoiPoiTypeFlagNachtlebenUnterhaltung mypoitypeflag24 = (SmgPoiPoiTypeFlagNachtlebenUnterhaltung)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag24.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Spiel und Sportanlagen":
+                            SmgPoiPoiTypeFlagSpielundSportanlagen mypoitypeflag25 = (SmgPoiPoiTypeFlagSpielundSportanlagen)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag25.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Guides Schulen":
+                            SmgPoiPoiTypeFlagGuidesSchulen mypoitypeflag26 = (SmgPoiPoiTypeFlagGuidesSchulen)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag26.GetFlags().GetDescriptionList());
+
+                            break;
                     }
 
 

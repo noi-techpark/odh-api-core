@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -41,7 +42,7 @@ namespace OdhApiCoreTests.IntegrationTets
             var response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
-                response.Content.Headers.ContentType.ToString());
+                response.Content.Headers.ContentType?.ToString());
             string json = await response.Content.ReadAsStringAsync();
             dynamic? data = JsonConvert.DeserializeObject(json);
             Assert.NotNull(data);
@@ -69,7 +70,7 @@ namespace OdhApiCoreTests.IntegrationTets
             var response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
-                response.Content.Headers.ContentType.ToString());
+                response.Content.Headers.ContentType?.ToString());
             string json = await response.Content.ReadAsStringAsync();
             dynamic? data = JsonConvert.DeserializeObject(json);
             Assert.NotNull(data);
@@ -110,7 +111,7 @@ namespace OdhApiCoreTests.IntegrationTets
             var response = await _client.GetAsync("/api/PoiTypes");
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
-                response.Content.Headers.ContentType.ToString());
+                response.Content.Headers.ContentType?.ToString());
             string json = await response.Content.ReadAsStringAsync();
             dynamic? data = JsonConvert.DeserializeObject<PoiTypes[]>(json);
             Assert.NotEmpty(data);

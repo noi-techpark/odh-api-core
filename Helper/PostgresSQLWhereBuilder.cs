@@ -31,6 +31,34 @@ namespace Helper
                 $"AccoDetail.{lang}.Name"
             ).ToArray();
 
+
+        //TODO search name example
+        //name: {
+        //    deu: "Akademie deutsch-italienischer Studien",
+        //    ita: "Accademia di studi italo-tedeschi",
+        //    eng: "Academy of German-Italian Studies"
+        //    },
+        //private static string[] VenueTitleFieldsToSearchFor(string? language) =>
+        // _languagesToSearchFor.Where(lang =>
+        //     language != null ? lang == language : true
+        // ).Select(lang =>
+        //     $"odhdata.Detail.{lang}.Name"
+        // ).ToArray();
+
+        private static string[] TagNameFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"TagName.{lang}"
+            ).ToArray();
+
+        private static string[] WebcamnameFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"Webcamname.{lang}"
+            ).ToArray();
+
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
             language = language.ToLower();
@@ -212,7 +240,7 @@ namespace Helper
                 .AreaFilter(arealist)
                 .ODHActivityPoiTypeFilter(typelist)
                 .ODHActivityPoiSubTypeFilter(subtypelist)
-                .ODHActivityPoiPoiTypeFilter(subtypelist)
+                .ODHActivityPoiPoiTypeFilter(poitypelist)
                 .SourceFilter(sourcelist)
                 .HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
@@ -263,7 +291,9 @@ namespace Helper
           IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> ranclist,
           IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
           IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
-          IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> orglist, DateTime? begindate, DateTime? enddate,
+          IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> orglist,
+          IReadOnlyCollection<string> sourcelist,
+          DateTime? begindate, DateTime? enddate,
           bool? activefilter, bool? smgactivefilter, string? searchfilter,
           string? language, string? lastchange, bool filterClosedData)
         {
@@ -274,7 +304,7 @@ namespace Helper
                 typelist, ranclist,
                 smgtaglist, districtlist,
                 municipalitylist, tourismvereinlist,
-                regionlist, orglist, begindate, enddate,
+                regionlist, orglist, sourcelist, languagelist, begindate, enddate,
                 activefilter, smgactivefilter, searchfilter,
                 language, lastchange
             );
@@ -292,6 +322,8 @@ namespace Helper
                 .EventDateFilterEnd(begindate, enddate)
                 .EventDateFilterBegin(begindate, enddate)
                 .EventDateFilterBeginEnd(begindate, enddate)
+                .HasLanguageFilter(languagelist)
+                .SourceFilterMeta(sourcelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SmgTagFilter(smgtaglist)
@@ -304,7 +336,7 @@ namespace Helper
         public static Query AccommodationWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> accotypelist, IReadOnlyCollection<string> categorylist,
-            Dictionary<string, bool> featurelist, IReadOnlyCollection<string> badgelist, Dictionary<string, bool> themelist,
+            Dictionary<string, bool> featurelist, IReadOnlyCollection<string> featureidlist, IReadOnlyCollection<string> badgelist, Dictionary<string, bool> themelist,
             IReadOnlyCollection<string> boardlist, IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, bool? apartmentfilter, bool? bookable,
@@ -315,7 +347,7 @@ namespace Helper
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, accotypelist, categorylist,
-                featurelist, badgelist, languagelist, themelist, boardlist,
+                featurelist, featureidlist, badgelist, languagelist, themelist, boardlist,
                 smgtaglist, districtlist, municipalitylist, tourismvereinlist,
                 regionlist, altitude, altitudemin, altitudemax, activefilter,
                 smgactivefilter, searchfilter, apartmentfilter, bookable,
@@ -332,6 +364,7 @@ namespace Helper
                 .AccoTypeFilter(accotypelist)
                 .AccoCategoryFilter(categorylist)
                 .AccoFeatureFilter(featurelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
+                .AccoFeatureIdFilter(featureidlist)
                 .AccoBadgeFilter(badgelist)
                 .AccoThemeFilter(themelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
                 .AccoBoardFilter(boardlist)
@@ -347,7 +380,6 @@ namespace Helper
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData());
         }
-
 
         //Return Where and Parameters for Common
         public static Query CommonWhereExpression(
@@ -387,7 +419,6 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData());
         }
 
-
         //Return Where and Parameters for WebCamInfo
         public static Query WebCamInfoWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
@@ -409,9 +440,163 @@ namespace Helper
                 .SourceFilter(sourcelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
+                .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
+        //Return Where and Parameters for Measuringpoint
+        public static Query MeasuringpointWhereExpression(
+            this Query query, 
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> districtlist,
+            IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist,
+            bool? activefilter, bool? smgactivefilter, string? searchfilter,
+            string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, districtlist, municipalitylist, tourismvereinlist, regionlist,
+                arealist, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .LocFilterDistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .AreaFilterMeasuringpoints(arealist)
+                .ActiveFilter(activefilter)                
+                .SmgActiveFilter(smgactivefilter)
+                .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
+                .LastChangedFilter(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
+        //Return Where and Parameters for Measuringpoint
+        public static Query EventShortWhereExpression(
+            this Query query, 
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
+            IReadOnlyCollection<string> eventlocationlist, IReadOnlyCollection<string> webaddresslist,
+            string? activefilter, DateTime? start, DateTime? end, string? searchfilter,
+            string? language, string? lastchange, bool filterClosedData, bool getbyrooms = false)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, sourcelist, eventlocationlist, webaddresslist,
+                activefilter, start, end,
+                searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdLowerFilter(idlist)
+                .SourceFilter(sourcelist)
+                .EventShortLocationFilter(eventlocationlist)
+                .EventShortWebaddressFilter(webaddresslist)
+                .EventShortActiveFilter(activefilter)
+                .EventShortDateFilterEnd(start, end, !getbyrooms)
+                .EventShortDateFilterBegin(start, end, !getbyrooms)
+                .EventShortDateFilterBeginEnd(start, end, !getbyrooms)
+                .EventShortDateFilterEndByRoom(start, end, getbyrooms)
+                .EventShortDateFilterBeginByRoom(start, end, getbyrooms)
+                .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData());
         }
+
+        //Return Where and Parameters for Venue
+        public static Query VenueWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> categorylist,
+            IReadOnlyCollection<string> featurelist, IReadOnlyCollection<string> setuptypelist, 
+            IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
+            IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> sourcelist, 
+            bool capacity, int capacitymin, int capacitymax, bool roomcount, int roomcountmin, int roomcountmax, 
+            bool? activefilter, bool? smgactivefilter, string? searchfilter,
+            string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, categorylist,
+                featurelist, setuptypelist,
+                smgtaglist, districtlist,
+                municipalitylist, tourismvereinlist,
+                regionlist, sourcelist, languagelist, capacity,
+                capacitymin, capacitymax, roomcount,
+                roomcountmin, roomcountmax, activefilter,
+                smgactivefilter, searchfilter,
+                language, lastchange
+            );
+
+            //TODO
+            return query
+                .IdUpperFilter(idlist)
+                .VenueLocFilterDistrictFilter(districtlist)
+                .VenueLocFilterMunicipalityFilter(municipalitylist)
+                .VenueLocFilterTvsFilter(tourismvereinlist)
+                .VenueLocFilterRegionFilter(regionlist)
+                .VenueActiveFilter(activefilter)
+                .VenueODHActiveFilter(smgactivefilter)
+                .VenueCategoryFilter(categorylist)
+                .VenueFeatureFilter(featurelist)
+                .VenueSetupTypeFilter(setuptypelist)
+                .VenueRoomCountFilter(roomcount, roomcountmin, roomcountmax)
+                .VenueODHTagFilter(smgtaglist)
+                .VenueLastChangedFilter(lastchange)
+                .VenueSourceFilter(sourcelist)
+                .VenueHasLanguageFilter(languagelist)
+                //TODO
+                //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
+                //.SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                
+                .When(filterClosedData, q => q.FilterClosedDataVenues());
+        }
+
+
+        //Return Where and Parameters for AlpineBits
+        public static Query AlpineBitsWhereExpression(
+            this Query query,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
+            IReadOnlyCollection<string> accommodationIds, IReadOnlyCollection<string> messagetypelist,
+            string? requestdate)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, sourcelist, accommodationIds, messagetypelist, requestdate
+            );
+
+            return query
+                .IdIlikeFilter(idlist)
+                .SourceFilter(sourcelist)
+                .AlpineBitsMessageFilter(messagetypelist)
+                .AlpineBitsAccommodationIdFilter(accommodationIds);
+        }
+
+        //Return Where and Parameters for Wine
+        public static Query ODHTagWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> smgtagtypelist,
+            string? searchfilter, string? language, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                searchfilter, language, smgtagtypelist
+            );
+
+            return query
+                .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
+                .ODHTagValidForEntityFilter(smgtagtypelist)
+                .When(filterClosedData, q => q.FilterClosedData());
+        }
+
     }
 }

@@ -197,6 +197,16 @@ namespace Helper
                 return q;
             });
 
+        public static Query IdIlikeFilter(this Query query, IReadOnlyCollection<string> idlist) =>
+           query.Where(q =>
+           {
+               foreach (var id in idlist)
+               {
+                   q = q.OrWhere("id", "ILIKE", id);
+               }
+               return q;
+           });
+
         public static Query LastChangedFilter(this Query query, string? updatefrom) =>
             query.When(
                 updatefrom != null,
@@ -234,6 +244,12 @@ namespace Helper
             query.WhereInJsonb(
                 arealist,
                 areaid => new { AreaId = new[] { areaid } }
+            );
+
+        public static Query AreaFilterMeasuringpoints(this Query query, IReadOnlyCollection<string> arealist) =>
+            query.WhereInJsonb(
+                arealist,
+                areaid => new { AreaIds = new[] { areaid } }
             );
 
         public static Query HighlightFilter(this Query query, bool? highlight) =>
@@ -392,6 +408,20 @@ namespace Helper
                 id => id.ToUpper()
             );
 
+        public static Query SyncSourceInterfaceFilter(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.WhereInJsonb(
+                list: sourcelist,
+                "SyncSourceInterface",
+                id => id.ToUpper()
+            );
+
+        public static Query SourceFilterMeta(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.WhereInJsonb(
+                list: sourcelist,
+                "Meta.Source",
+                id => id.ToUpper()
+            );
+
         //not working
         //public static Query HasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
         //    query.WhereInJsonb(
@@ -427,6 +457,25 @@ namespace Helper
                 "PoiType",
                 type => type
             );
+
+        //To change, ODH Type Filtering based on 
+        public static Query ODHActivityPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> typelist) =>
+            query.WhereInJsonb(
+                typelist,
+                type => new { SmgTags = new[] { type.ToLower() } }
+            );
+
+        public static Query ODHActivityPoiSubTypeFilterTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
+           query.WhereInJsonb(
+               subtypelist,
+               subtype => new { SmgTags = new[] { subtype.ToLower() } }
+           );
+
+        public static Query ODHActivityPoiPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
+           query.WhereInJsonb(
+               poitypelist,
+               poitype => new { SmgTags = new[] { poitype.ToLower() } }
+           );
 
 
         public static Query EventTopicFilter(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
@@ -471,7 +520,7 @@ namespace Helper
             query.When(
                 begin == DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
-                    "((begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "') OR (enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "'))"
+                    "((begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
                 )
             );
 
@@ -480,12 +529,10 @@ namespace Helper
             query.When(
                 begin != DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
-                    "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end.Value.AddDays(1)) + "'))"
+                    "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
                 )
             );
-
-       
-
+      
         public static Query VisibleInSearchFilter(this Query query, bool? visibleinsearch) =>
             query.When(
                 visibleinsearch != null,
@@ -565,9 +612,9 @@ namespace Helper
 
         //TODO THEMEFILTER is AND connected
         public static Query AccoFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
-        query.WhereAllInJsonb(
+            query.WhereAllInJsonb(
              featurelist,
-             feature => new { SpecialFeaturesIds = new[] { feature.ToLower() } }
+             feature => new { SpecialFeaturesIds = new[] { feature } }
          );
 
         public static Query AccoCategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
@@ -576,6 +623,13 @@ namespace Helper
                 "AccoCategoryId",
                 category => category
             );
+
+        public static Query AccoFeatureIdFilter(this Query query, IReadOnlyCollection<string> featureidlist) =>
+        query.WhereInJsonb(
+                featureidlist,
+                tag => new { Features = new[] { new { Id = tag.ToUpper() } } }
+            );
+
 
         public static Query AccoApartmentFilter(this Query query, bool? apartment) =>
             query.When(
@@ -595,6 +649,221 @@ namespace Helper
                 )
             );
 
+        public static Query EventShortLocationFilter(this Query query, IReadOnlyCollection<string> eventlocationlist) =>
+           query.WhereInJsonb(
+               list: eventlocationlist,
+               "EventLocation",
+               id => id.ToUpper()
+           );
+
+        public static Query EventShortWebaddressFilter(this Query query, IReadOnlyCollection<string> webaddresslist) =>
+           query.WhereInJsonb(
+               list: webaddresslist,
+               "WebAddress",
+               id => id
+           );
+
+        public static Query EventShortActiveFilter(this Query query, string? active) =>
+            query.When(
+                active != null,
+                query => query.WhereJsonb(
+                    "Display1",
+                    active ?? ""
+                )
+            );
+
+        //Only Begindate given
+        public static Query EventShortDateFilterBegin(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start != DateTime.MinValue && end == DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((to_timestamp(data ->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
+                )
+            );
+
+        //Only Enddate given
+        public static Query EventShortDateFilterEnd(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start == DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+                )
+            );
+
+        //Both Begin and Enddate given
+        public static Query EventShortDateFilterBeginEnd(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "(((to_timestamp(data ->> 'StartDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "')))"
+                )
+            );
+
+        //Only Begindate given
+        public static Query EventShortDateFilterBeginByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start != DateTime.MinValue && end == DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
+                )
+            );
+
+        //Only Enddate given
+        public static Query EventShortDateFilterEndByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start == DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((to_date(data->> 'EndDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                )
+            );
+
+        //Both Begin and Enddate given
+        public static Query EventShortDateFilterBeginEndByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "(((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", start) + "') AND (to_date(data->> 'StartDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')))"
+                )
+            );
+
+        public static Query ODHTagValidForEntityFilter(this Query query, IReadOnlyCollection<string> smgtagtypelist) =>           
+           query.WhereInJsonb(
+               smgtagtypelist,
+               smgtagtype => new { ValidForEntity = new[] { smgtagtype.ToLower() } }
+           );         
+
+        //AlpineBits
+        public static Query AlpineBitsAccommodationIdFilter(this Query query, IReadOnlyCollection<string> accommodationids) =>
+            query.WhereInJsonb(
+                list: accommodationids,
+                "AccommodationId",
+                id => id
+            );
+
+        //AlpineBits
+        public static Query AlpineBitsMessageFilter(this Query query, IReadOnlyCollection<string> messagetypelist) =>
+            query.WhereInJsonb(
+                list: messagetypelist,
+                "MessageType",
+                id => id
+            );
+
+        //Venue Filters (Special case)
+
+        public static Query VenueLocFilterDistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
+          query.WhereInJsonb(
+              list: districtlist,
+              jsonPath: "odhdata.LocationInfo.DistrictInfo.Id"
+          );
+
+        public static Query VenueLocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
+            query.WhereInJsonb(
+                list: municipalitylist,
+                jsonPath: "odhdata.LocationInfo.MunicipalityInfo.Id"
+            );
+
+        public static Query VenueLocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
+            query.WhereInJsonb(
+                list: tourismvereinlist,
+                jsonPath: "odhdata.LocationInfo.TvInfo.Id"
+            );
+
+        public static Query VenueLocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
+            query.WhereInJsonb(
+                list: regionlist,
+                jsonPath: "odhdata.LocationInfo.RegionInfo.Id"
+            );
+
+        public static Query VenueActiveFilter(this Query query, bool? active) =>
+            query.When(
+                active != null,
+                query => query.WhereJsonb(
+                    "odhdata.Active",
+                    active ?? false
+                )
+            );
+
+        public static Query VenueODHActiveFilter(this Query query, bool? odhactive) =>
+            query.When(
+                odhactive != null,
+                query => query.WhereJsonb(
+                    "odhdata.ODHActive",
+                    odhactive ?? false
+                )
+            );
+
+        public static Query VenueCategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
+           query.WhereInJsonb(
+                   categorylist,
+                   tag => new { odhdata = new { VenueCategory = new[] { new { Id = tag.ToUpper() } } } }
+               );
+        
+        public static Query VenueFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
+           query.WhereInJsonb(
+                   featurelist,
+                   tag => new { odhdata = new { RoomDetails = new[] { new { VenueFeatures = new[] { new { Id = tag.ToUpper() } } } } } }
+               );
+
+        public static Query VenueSetupTypeFilter(this Query query, IReadOnlyCollection<string> setuptypelist) =>
+          query.WhereInJsonb(
+                  setuptypelist,
+                  tag => new { odhdata = new { RoomDetails = new[] { new { VenueSetup = new[] { new { Id = tag.ToUpper() } } } } } }
+              );
+
+        public static Query VenueRoomCountFilter(this Query query, bool roomcount, int roomcountmin, int roomcountmax) =>
+            query.When(
+                roomcount,
+                query => query.WhereRaw(
+                    "(data#>>'\\{odhdata,RoomCount\\}')::numeric > ? AND (data#>>'\\{odhdata,RoomCount\\}')::numeric < ?",
+                    roomcountmin,
+                    roomcountmax
+                )
+            );
+
+        public static Query VenueODHTagFilter(this Query query, IReadOnlyCollection<string> smgtaglist) =>
+          query.WhereInJsonb(
+              smgtaglist,
+              tag => new { odhdata = new { ODHTags = new[] { tag.ToLower() } } }
+          );
+
+        public static Query VenueLastChangedFilter(this Query query, string? updatefrom) =>
+           query.When(
+               updatefrom != null,
+               query => query.WhereRaw(
+                   "to_date(data#>>'\\{meta,lastUpdate\\}', 'YYYY-MM-DD') > date(?)",
+                   updatefrom
+               )
+           );
+
+        public static Query VenueSourceFilter(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.WhereInJsonb(
+                list: sourcelist,
+                "odhdata.SyncSourceInterface",
+                id => id.ToUpper()
+            );
+
+        public static Query VenueHasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
+            query.WhereInJsonb(
+               languagelist,
+               lang => new { odhdata = new { HasLanguage = new[] { lang.ToLower() } } }
+           );
+
+        //private static Query VenueCapacityFilterWhere(bool capacity, int capacitymin, int capacitymax)
+        //{
+        //    //TODO!!!
+        //    if (capacity)
+        //    {
+        //        //if (!String.IsNullOrEmpty(whereexpression))
+        //        //    whereexpression = whereexpression + " AND ";
+
+        //        //whereexpression = whereexpression + "(data ->'odhdata' ->> 'RoomCount')::numeric > @roomcountmin AND (data ->'odhdata' ->> 'RoomCount')::numeric < @roomcountmax";
+        //        //parameters.Add(new PGParameters() { Name = "roomcountmin", Type = NpgsqlTypes.NpgsqlDbType.Numeric, Value = roomcountmin.ToString() });
+        //        //parameters.Add(new PGParameters() { Name = "roomcountmax", Type = NpgsqlTypes.NpgsqlDbType.Numeric, Value = roomcountmax.ToString() });
+        //    }
+
+        //}
+
+
         //public static Query FilterClosedData(this Query query) =>
         //    query.Where(q =>
         //        q.WhereRaw(
@@ -613,6 +882,13 @@ namespace Helper
                 )
             );
 
-
+        public static Query FilterClosedDataVenues(this Query query) =>
+            query.Where(q =>
+                q.WhereRaw(
+                    "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' IS NULL"
+                ).OrWhereRaw(
+                    "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' = 'false'"
+                )
+            );
     }
 }

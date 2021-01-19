@@ -16,7 +16,7 @@ namespace OdhApiCore.Controllers
                 var value = context.ActionArguments[key];
                 if (value as string == "null")
                 {
-                    context.ActionArguments[key] = null;
+                    context.ActionArguments[key] = null!;
                 }
             }
             base.OnActionExecuting(context);

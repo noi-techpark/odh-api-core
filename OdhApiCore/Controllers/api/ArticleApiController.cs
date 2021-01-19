@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class ArticleController : OdhController
     {
-        public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ArticleController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
         {
         }
@@ -52,7 +53,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<Article>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<Article>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Article")]
@@ -73,13 +74,16 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
 
             return await GetFiltered(
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: articletype, subtypefilter: articlesubtype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter, highlightfilter: null,
-                active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: lastchange, sortbyarticledate: sortbyarticledate?.Value, cancellationToken);
+                active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: lastchange, sortbyarticledate: sortbyarticledate?.Value,
+                rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -147,7 +151,8 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize,
             string? type, string? subtypefilter, string? searchfilter, string? idfilter, string? languagefilter, bool? highlightfilter,
-            bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, bool? sortbyarticledate, CancellationToken cancellationToken)
+            bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, bool? sortbyarticledate, string? rawfilter, string? rawsort, 
+            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -168,7 +173,8 @@ namespace OdhApiCore.Controllers.api
                             activefilter: myrticlehelper.active, smgactivefilter: myrticlehelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myrticlehelper.lastchange,
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC");
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
                 // Get paginated data
                 var data =

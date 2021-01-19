@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -39,7 +40,7 @@ namespace OdhApiCore.Formatters
                 static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)
                 {
                     var eo = new ExpandoObject();
-                    var eoColl = (ICollection<KeyValuePair<string, object>>)eo;
+                    var eoColl = (ICollection<KeyValuePair<string, object>>)eo!;
                     foreach (var kvp in dict)
                     {
                         // Filter out IEnumerables, because they cannot be serialized to CSV

@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class ODHActivityPoiController : OdhController
     {
-        public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
         {
         }
@@ -59,7 +60,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<ODHActivityPoi>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<ODHActivityPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHActivityPoi")]
@@ -67,7 +68,7 @@ namespace OdhApiCore.Controllers.api
             string? language = null,
             uint pagenumber = 1,
             uint pagesize = 10,
-            string? type = "63",
+            string? type = "255",
             string? subtype = null,
             string? poitype = null,
             string? idlist = null,
@@ -87,6 +88,8 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -95,7 +98,8 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: type, subtypefilter: subtype, poitypefilter: poitype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter,
                 sourcefilter: source, locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight?.Value, active: active?.Value,
-                smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult, cancellationToken);
+                smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
+                cancellationToken);
         }
 
         /// <summary>
@@ -163,7 +167,8 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize,
             string? type, string? subtypefilter, string? poitypefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter,
-            string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -187,8 +192,8 @@ namespace OdhApiCore.Controllers.api
                             activefilter: myodhactivitypoihelper.active, smgactivefilter: myodhactivitypoihelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data#>>'\\{Shortname\\}' ASC")
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =

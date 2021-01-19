@@ -532,7 +532,7 @@ namespace Helper
 
     #endregion
 
-    #region SmgPois
+    #region ODHActivityPois
 
     [Flags]
     public enum SmgPoiTypeFlag
@@ -549,6 +549,10 @@ namespace Helper
         Anderes = 1 << 4,
         [Description("Essen Trinken")]
         EssenTrinken = 1 << 5,
+        [Description("Mobilität")]
+        Mobility = 1 << 6,
+        [Description("Geschäfte und Dienstleister")]
+        ShopsAndServices = 1 << 7
     }
 
     //Subtype
@@ -657,21 +661,22 @@ namespace Helper
         [Description("Aufstiegsanlagen")]
         Aufstiegsanlagen = 1 << 4,
         [Description("Stadtrundgang")]
-        Fitnessparcours = 1 << 5
+        Fitnessparcours = 1 << 5,
+        //NEW 
+        [Description("Guides Schulen")]
+        GuidesSchulen = 1 << 6,
+        [Description("Spiel und Sportanlagen")]
+        SpielSportAnlagen = 1 << 7,
+        [Description("Verleihe")]
+        Verleihe = 1 << 8,
+        [Description("Parks und Grünanlagen")]
+        ParksGruenanlagen = 1 << 9,
+        [Description("Kulturzentren und Theater")]
+        KulturzentrenundTheater = 1 << 10,
+        [Description("Weitere Kultur und Sehenswürdigkeiten")]
+        WeitereKultur = 1 << 11
     }
-
-    //public enum SmgPoiSubTypeFlagEssenTrinken
-    //{
-    //    [Description("Restaurants Gasthäuser")]
-    //    RestaurantsGasthaeuser = 1,   
-    //    [Description("Hütten Almen")]
-    //    HuettenAlmen = 1 << 1,
-    //    [Description("Bäuerliche Schankbetriebe")]
-    //    BaeuerlicheSchankbetriebe = 1 << 2,
-    //    [Description("Weinkellereien")]
-    //    Weinkellereien = 1 << 3       
-    //}
-
+    
     [Flags]
     public enum SmgPoiSubTypeFlagEssenTrinken
     {
@@ -685,9 +690,242 @@ namespace Helper
         HuettenAlmen = 1 << 3,
         [Description("Bäuerliche Schankbetriebe")]
         BauerlicheSchankbetriebe = 1 << 4
-
     }
 
+    [Flags]
+    public enum SmgPoiSubTypeFlagMobility
+    {
+        [Description("Bushaltestellen")]
+        Bushaltestellen = 1,
+        [Description("Parkplätze")]
+        Parkplaetze = 1 << 1,
+        [Description("Tankstellen Benzin Diesel")]
+        TankstellenBenzinDiesel = 1 << 2,
+        [Description("E-Tankstellen Ladestationen")]
+        ETankstellenLadestationen = 1 << 3,
+        [Description("Taxi, Mietwagen mit Fahrer, Bus")]
+        TaxiMietwagenmitFahrerBus = 1 << 4,
+        [Description("Zugbahnhöfe")]
+        Zugbahnhoefe = 1 << 5,
+        [Description("Carsharing")]
+        Carsharing = 1 << 6,
+        [Description("Tankstellen Methan")]
+        TankstellenMethan = 1 << 7,
+        [Description("Tankstellen Autogas")]
+        TankstellenAutogas = 1 << 8,
+        [Description("Tankstellen Wasserstoff")]
+        TankstellenWasserstoff = 1 << 9,
+        [Description("Weitere Verkehr und Transport")]
+        WeitereVerkehrundTransport = 1 << 10,
+        [Description("E-Bike Ladestation")]
+        EBikeLadestation = 1 << 11,
+        [Description("Fahrradbox")]
+        Fahrradbox = 1 << 12
+    }
+
+    [Flags]
+    public enum SmgPoiSubTypeFlagShopsAndServices : long
+    {
+        [Description("Gesundheit")]
+        Gesundheit = 1,
+        [Description("Geschäfte")]
+        Geschaefte = 1 << 1,
+        [Description("Dienstleister")]
+        Dienstleister = 1 << 2,
+        [Description("Öffentliche Einrichtungen")]
+        OeffentlicheEinrichtung = 1 << 3,
+        [Description("Nachtleben und Unterhaltung")]
+        NachtlebenUnterhaltung = 1 << 4
+    }
+
+    //POI Type Health
+    [Flags]
+    public enum SmgPoiPoiTypeFlagGesundheit
+    {
+        ////Ärzte Apotheken
+        [Description("Apotheken")]
+        Apotheken = 1,
+        [Description("Ärzte")]
+        Aerzte = 1 << 1,
+        [Description("Feriendialysen")]
+        Feriendialysen = 1 << 2,
+        [Description("Kinderärzte")]
+        Kinderaerzte = 1 << 3,
+        [Description("Tierärzte")]
+        Tieraerzte = 1 << 4,
+        [Description("Zahnärzte")]
+        Zahnaerzte = 1 << 5,
+        [Description("Medizinausgabestellen, Medikamentenautomaten")]
+        MedizinausgabestellenMedikamentenautomatn = 1 << 6,
+        [Description("Privatkliniken, Trauma Zentren, Physiotherapeuten")]
+        PrivatklinikenTraumaZentrenPhysiotherapeuten = 1 << 7,
+        [Description("Weitere Ärzte, Apotheken")]
+        WeitereAertzeApotheken = 1 << 8
+    }
+
+    //POI Type Shops
+    [Flags]
+    public enum SmgPoiPoiTypeFlagGeschaefte : long
+    {
+        //Geschäfte 
+        [Description("Getränke")]
+        Getraenke = 1L,
+        [Description("Antiquitäten")]
+        Antiquitaeten = 1L << 1,
+        [Description("Blumen")]
+        Blumen = 1L << 2,
+        [Description("Computerzubehör, Technik")]
+        ComputerzubehoerTechnik = 1L << 3,
+        [Description("Drogerie")]
+        Drogerie = 1L << 4,
+        [Description("Fahrräder")]
+        Fahrraeder = 1L << 5,
+        [Description("Farben, Tapeten")]
+        FarbenTapeten = 1L << 6,
+        [Description("Fleisch und Wurstwaren")]
+        FleischundWurstwaren = 1L << 7,
+        [Description("Brot und Gebäck")]
+        BrotundGebaeck = 1L << 8,
+        [Description("Haushaltswaren")]
+        Haushaltswaren = 1L << 9,
+        [Description("Juweliere, Goldschmiede")]
+        JuweliereGoldschmiede = 1L << 10,
+        [Description("Kunsthandwerke")]
+        Kunsthandwerke = 1L << 11,
+        [Description("Landwirtschaftliche Artikel")]
+        LandwirtschaftlicheArtikel = 1L << 12,
+        [Description("Lebensmittel")]
+        Lebensmittel = 1L << 13,
+        [Description("Lederwaren, Schuhe")]
+        LederwarenSchuhe = 1L << 14,
+        [Description("Lokale traditionelle Produkte")]
+        LokaletraditionelleProdukte = 1L << 15,
+        [Description("Mode, Bekleidung")]
+        ModeBekleidung = 1L << 16,
+        [Description("Obst- und Gemüse")]
+        ObstundGemuese = 1L << 17,
+        [Description("Optiker, Foto")]
+        OptikerFoto = 1L << 18,
+        [Description("Produktionsstätten, Hofläden")]
+        ProduktionsstaettenHoflaeden = 1L << 19,
+        [Description("Souvenir")]
+        Souvenir = 1L << 20,
+        [Description("Spielwaren")]
+        Spielwaren = 1L << 21,
+        [Description("Sportartikel")]
+        Sportartikel = 1 << 22,
+        [Description("Tierbedarf")]
+        Tierbedarf = 1L << 23,
+        [Description("Zeitungen, Bücher und Papierwaren")]
+        ZeitungenBuecherundPapierwaren = 1L << 24,
+        [Description("Kindermode")]
+        Kindermode = 1L << 25,
+        [Description("Auto und Motor")]
+        AutoundMotor = 1L << 26,
+        [Description("Bausektor, Handwerk")]
+        BausektorHandwerk = 1L << 27,
+        [Description("Reinigungen")]
+        Reinigungen = 1L << 28,
+        [Description("Weitere Geschäfte")]
+        WeitereGeschaefte = 1L << 29,
+        [Description("Wohnausstattung")]
+        Wohnausstattung = 1L << 30
+    }
+
+    //POI Type Dienstleister
+    [Flags]
+    public enum SmgPoiPoiTypeFlagDienstleister : long
+    {
+        //Diensleister
+        [Description("Auto und Motor")]
+        AutoundMotor = 1L,
+        [Description("Bausektor, Handwerk")]
+        BausektorHandwerk = 1L << 1,
+        [Description("Kinderbetreuung & Animation")]
+        KinderbetreuungAnimation = 1L << 2,
+        [Description("Werbung und Grafik")]
+        WerbungundGrafik = 1L << 3,
+        [Description("Reinigung")]
+        Reinigung = 1L << 4,
+        [Description("Tierpflege")]
+        Tierpflege = 1L << 5,
+        [Description("Bank, Bankomat")]
+        BankBankomat = 1L << 6,
+        [Description("Beauty und Wellness")]
+        BeautyundWellness = 1L << 7,
+        [Description("Friseur")]
+        Friseur = 1L << 8,
+        [Description("Kosmetik")]
+        Kosmetik = 1L << 9,
+        [Description("Massage, Heilbäder")]
+        MassageHeilbaeder = 1L << 10,
+        [Description("Day Spa, Sauna")]
+        DaySpaSauna = 1L << 11,
+        [Description("Kneippbäder")]
+        Kneippbaeder = 1L << 12,
+        [Description("Weitere Beauty und Wellness")]
+        WeitereBeautyundWellness = 1L << 13,
+        [Description("Weitere Dienstleister")]
+        WeitereDienstleister = 1L << 14,
+
+        //Handwerk
+        [Description("Bildhauer")]
+        Bildhauer = 1L << 15,
+        [Description("Kunstwebereien")]
+        Kunstwebereien = 1L << 16,
+        [Description("Federkielstickereien")]
+        Federkielstickereien = 1L << 17,
+        [Description("Kunstmaler und Vergolder")]
+        KunstmalerundVergolder = 1L << 18,
+        [Description("Weitere Kunsthandwerker")]
+        WeitereHandwerker = 1L << 19,
+        [Description("Künstler")]
+        Kuenstler = 1L << 20
+    }
+
+    //POI Type Public Services
+    [Flags]
+    public enum SmgPoiPoiTypeFlagOeffentlichEinrichtungen
+    {
+        //Öffentliche Einrichtungen
+        [Description("Bibliotheken")]
+        Bibliotheken = 1,
+        [Description("Gemeinden")]
+        Gemeinden = 1 << 1,
+        [Description("Öffentliches WLANs")]
+        OeffentlichesWLANs = 1 << 2,
+        [Description("Polizei, Carabinieri")]
+        PolizeiCarabinieri = 1 << 3,
+        [Description("Post")]
+        Post = 1 << 4,
+        [Description("Recyclinghöfe")]
+        Recyclinghoefe = 1 << 5,
+        [Description("Infobüro")]
+        Infobuero = 1 << 6,
+        [Description("Infopoint")]
+        Infopoint = 1 << 7,
+        [Description("WCs")]
+        WCs = 1 << 8,
+        [Description("Krankenhaus")]
+        Krankenhaus = 1 << 9,
+        [Description("Weitere öffentliche Einrichtungen")]
+        WeitereoeffentlicheEinrichtungen = 1 << 10
+    }
+
+    //POI Type Nachtleben Unterhaltung
+    [Flags]
+    public enum SmgPoiPoiTypeFlagNachtlebenUnterhaltung
+    {
+        //Nachtleben Unterhaltung
+        [Description("Biergärten")]
+        Biergaerten = 1,
+        [Description("Cocktailbars")]
+        Cocktailbars = 1 << 1,
+        [Description("Diskotheken, Nachtclubs")]
+        DiskothekenNachtclubs = 1 << 2,
+        [Description("Weitere Nachtleben und Unterhaltungen")]
+        WeitereNachtlebenundUnterhaltungen = 1 << 3
+    }
 
     //Poi Poi Type
 
@@ -910,6 +1148,89 @@ namespace Helper
         SkiverbundEisacktalerWipptal = 1 << 3
     }
 
+    [Flags]
+    public enum SmgPoiPoiTypeFlagGuidesSchulen
+    {
+        [Description("Ski- und Bergführer")]
+        SkiBergfuehrer = 1,
+        [Description("Bikeguides")]
+        Bikeguides = 1 << 1,
+        [Description("Wanderführer")]
+        Wanderfuehrer = 1 << 2,
+        [Description("Weitere Guides Schulen")]
+        Weitere = 1 << 3
+    }
+
+    [Flags]
+    public enum SmgPoiPoiTypeFlagSpielundSportanlagen
+    {
+        [Description("Bogenschiessanlagen")]
+        Bogenschiessanlagen = 1,
+        [Description("Fitnesscenter")]
+        Fitnesscenter = 1 << 1,
+        [Description("Fussballplätze")]
+        Fußballplaetze = 1 << 2,
+        [Description("Kinderspielplätze")]
+        Kinderspielplaetze = 1 << 3,
+        [Description("Pferdekutschenfahrten")]
+        Pferdekutschenfahrten = 1 << 4,
+        [Description("Radraststätten")]
+        Radraststaetten = 1 << 5,
+        [Description("Tennisplätze")]
+        Tennisplaetze = 1 << 6,
+        [Description("Zip-lines")]
+        Ziplines = 1 << 7,
+        [Description("Weitere Spiel und Sportanlagen")]
+        WeitereSpielSportanlagen = 1 << 8
+    }
+
+    [Flags]
+    public enum SmgPoiPoiTypeFlagAufstiegsanlagen
+    {
+        [Description("nicht definiert")]
+        nichtdefiniert = 1,
+        [Description("Seilbahn")]
+        Seilbahn = 1 << 1,
+        [Description("Umlaufbahn")]
+        Umlaufbahn = 1 << 2,
+        [Description("Kabinenbahn")]
+        Kabinenbahn = 1 << 3,
+        [Description("Unterirdische Bahn")]
+        UnterirdischeBahn = 1 << 4,
+        [Description("Sessellift")]
+        Sessellift = 1 << 5,
+        [Description("Skilift")]
+        Skilift = 1 << 6,
+        [Description("Schrägaufzug")]
+        Schraegaufzug = 1 << 7,
+        [Description("Standseilbahn/Zahnradbahn")]
+        StandseilbahnZahnradbahn = 1 << 8,
+        [Description("Telemix")]
+        Telemix = 1 << 9,
+        [Description("Förderband")]
+        Foerderband = 1 << 10,
+        [Description("1er Sessellift kuppelbar")]
+        EinserSesselLiftkuppelbar = 1 << 11,
+        [Description("2er Sessellift kuppelbar")]
+        ZweierSesselliftkuppelbar = 1 << 12,
+        [Description("3er Sessellift kuppelbar")]
+        DreierSesselliftkuppelbar = 1 << 13,
+        [Description("4er Sessellift kuppelbar")]
+        ViererSesselliftkuppelbar = 1 << 14,
+        [Description("6er Sessellift kuppelbar")]
+        SechserSesselliftkuppelbar = 1 << 15,
+        [Description("8er Sessellift kuppelbar")]
+        AchterSesselliftkuppelbar = 1 << 16,
+        [Description("Klein-Skilift")]
+        KleinSkilift = 1 << 17,
+        //NEU
+        [Description("Skibus")]
+        Skibus = 1 << 18,
+        [Description("Zug")]
+        Zug = 1 << 19,
+        [Description("Weitere Aufstiegsanlagen")]
+        WeitereAufstiegsanlagen = 1 << 20
+    }
 
     #endregion
 
@@ -1651,7 +1972,11 @@ namespace Helper
         [Description("Tankstellen Wasserstoff")]
         TankstellenWasserstoff = 1 << 9,
         [Description("Weitere Verkehr und Transport")]
-        WeitereVerkehrundTransport = 1 << 10
+        WeitereVerkehrundTransport = 1 << 10,
+        [Description("E-Bike Ladestation")]
+        EBikeLadestation = 1 << 11,
+        [Description("Fahrradbox")]
+        Fahrradbox = 1 << 12
     }
 
     [Flags]

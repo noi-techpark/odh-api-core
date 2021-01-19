@@ -22,6 +22,8 @@ namespace OdhApiCore.Controllers
         public List<string> municipalitylist;
         public List<string> tourismvereinlist;
         public List<string> regionlist;
+        public List<string> languagelist;
+        public List<string> sourcelist;
         public bool? active;
         public bool? smgactive;
         public DateTime? begin;
@@ -31,7 +33,7 @@ namespace OdhApiCore.Controllers
         public static async Task<EventHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? locfilter, string? rancfilter,
             string? typefilter, string? topicfilter, string? orgfilter, string? begindate, string? enddate,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? langfilter, string? source,
             CancellationToken cancellationToken)
         {
             IEnumerable<string>? tourismusvereinids = null;
@@ -44,19 +46,21 @@ namespace OdhApiCore.Controllers
             return new EventHelper(
                 idfilter: idfilter, locfilter: locfilter, rancfilter: rancfilter, typefilter: typefilter,
                 topicfilter: topicfilter, orgfilter: orgfilter, begindate: begindate, enddate: enddate,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange,
-                tourismusvereinids: tourismusvereinids);
+                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, sourcefilter: source, 
+                languagefilter: langfilter, tourismusvereinids: tourismusvereinids);
         }
 
         private EventHelper(
             string? idfilter, string? locfilter, string? rancfilter,
             string? typefilter, string? topicfilter, string? orgfilter,
             string? begindate, string? enddate, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
+            string? smgtags, string? lastchange, string? languagefilter, string? sourcefilter, IEnumerable<string>? tourismusvereinids)
         {
             idlist = CommonListCreator.CreateIdList(idfilter?.ToUpper());
 
             smgtaglist = CommonListCreator.CreateIdList(smgtags);
+            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
+            languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
             orgidlist = CommonListCreator.CreateIdList(orgfilter);
             rancidlist = CommonListCreator.CreateIdList(rancfilter);

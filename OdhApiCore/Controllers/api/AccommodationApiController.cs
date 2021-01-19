@@ -1,9 +1,11 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MSS;
 using OdhApiCore.Controllers.helper;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
@@ -25,7 +27,7 @@ namespace OdhApiCore.Controllers
     {
         private readonly IHttpClientFactory httpClientFactory;
 
-        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
+        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
             : base(env, settings, logger, queryFactory)
         {
             this.httpClientFactory = httpClientFactory;
@@ -43,6 +45,7 @@ namespace OdhApiCore.Controllers
         /// <param name="typefilter">Typefilter (BITMASK values: 1 = (HotelPension), 2 = (BedBreakfast), 4 = (Farm), 8 = (Camping), 16 = (Youth), 32 = (Mountain), 64 = (Apartment), 128 = (Not defined),'null' = No Filter), (default:'null')</param>
         /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter), (default:'0')</param>
         /// <param name="featurefilter">FeatureFilter (BITMASK values: 1 = (Group-friendly), 2 = (Meeting rooms), 4 = (Swimming pool), 8 = (Sauna), 16 = (Garage), 32 = (Pick-up service), 64 = (WLAN), 128 = (Barrier-free), 256 = (Special menus for allergy sufferers), 512 = (Pets welcome), 'null' = No Filter), (default:'null')</param>
+        /// <param name="featureidfilter">Feature Id Filter, filter over ALL Features vailable (Separator ',' List of Feature IDs, 'null' = No Filter), (default:'null')</param>
         /// <param name="themefilter">Themefilter (BITMASK values: 1 = (Gourmet), 2 = (At altitude), 4 = (Regional wellness offerings), 8 = (on the wheels), 16 = (With family), 32 = (Hiking), 64 = (In the vineyards), 128 = (Urban vibe), 256 = (At the ski resort), 512 = (Mediterranean), 1024 = (In the Dolomites), 2048 = (Alpine), 4096 = (Small and charming), 8192 = (Huts and mountain inns), 16384 = (Rural way of life), 32768 = (Balance), 65536 = (Christmas markets), 'null' = No Filter), (default:'null')</param>
         /// <param name="badgefilter">BadgeFilter (BITMASK values: 1 = (Belvita Wellness Hotel), 2 = (Familyhotel), 4 = (Bikehotel), 8 = (Red Rooster Farm), 16 = (Barrier free certificated), 32 = (Vitalpina Hiking Hotel), 64 = (Private Rooms in South Tyrol), 128 = (Vinum Hotels), 'null' = No Filter), (default:'null')</param>        
         /// <param name="idfilter">IDFilter (Separator ',' List of Accommodation IDs, 'null' = No Filter), (default:'null')</param>
@@ -67,7 +70,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<Accommodation>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
@@ -80,6 +83,7 @@ namespace OdhApiCore.Controllers
             string? typefilter = null,
             string? boardfilter = null,
             string? featurefilter = null,
+            string? featureidfilter = null,
             string? themefilter = null,
             string? badgefilter = null,
             string? idfilter = null,
@@ -104,6 +108,8 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
             
@@ -113,16 +119,16 @@ namespace OdhApiCore.Controllers
 
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            List<string> bokfilterlist = bokfilter.Split(',').ToList();
+            List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
 
             if (availabilitycheck?.Value != true)
             {
                 return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
                     pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
-                    typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, themefilter: themefilter, badgefilter: badgefilter,
+                    typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
-                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
             }
             else if(availabilitycheck?.Value == true)
             {
@@ -133,7 +139,7 @@ namespace OdhApiCore.Controllers
 
                 if(accoavailability != null)
                 {
-                    var availableonlineaccos = ((MssResult)accoavailability).MssResponseShort.Select(x => x.A0RID.ToUpper()).Distinct().ToList();
+                    var availableonlineaccos = ((MssResult?)accoavailability)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper()).Distinct().ToList() ?? new List<string?>();
 
                     idfilter = string.Join(",", availableonlineaccos);                    
                 }
@@ -143,9 +149,9 @@ namespace OdhApiCore.Controllers
                 return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
                     pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
-                    typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, themefilter: themefilter, badgefilter: badgefilter,
+                    typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
-                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
             }
 
             //Fall 3 Available MSS
@@ -352,7 +358,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [HttpPost, Route("AccommodationAvailable")]
-        public async Task<IActionResult> PostAvailableAccommodations(
+        public IActionResult? PostAvailableAccommodations(
             [FromBody] string idfilter,
             string availabilitychecklanguage = "en",
             string? boardfilter = null,
@@ -419,7 +425,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [HttpPost, Route("AvailabilityCheck")]
-        public async Task<IActionResult> PostAvailableMSSResponseonlyAccommodations(
+        public IActionResult? PostAvailableMSSResponseonlyAccommodations(
             [FromBody] string idfilter,
             string availabilitychecklanguage = "en",
             string? boardfilter = null,
@@ -473,15 +479,15 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize, string? idfilter, string? locfilter,
-            string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? themefilter, string? badgefilter, string? altitudefilter, 
-            bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? searchfilter,
-            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+            string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? featureidfilter, string? themefilter, string? badgefilter, string? altitudefilter, 
+            bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? searchfilter, 
+            PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                     QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
-                    featurefilter: featurefilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active, 
+                    featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active, 
                     smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, cancellationToken);
 
                 var query =
@@ -490,7 +496,7 @@ namespace OdhApiCore.Controllers
                         .From("accommodations")
                         .AccommodationWhereExpression(
                             idlist: myhelper.idlist, accotypelist: myhelper.accotypelist,
-                            categorylist: myhelper.categorylist, featurelist: myhelper.featurelist,
+                            categorylist: myhelper.categorylist, featurelist: myhelper.featurelist, featureidlist: myhelper.featureidlist,
                             badgelist: myhelper.badgelist, themelist: myhelper.themelist, 
                             boardlist: myhelper.boardlist, smgtaglist: myhelper.smgtaglist,
                             districtlist: myhelper.districtlist, municipalitylist: myhelper.municipalitylist, 
@@ -500,8 +506,8 @@ namespace OdhApiCore.Controllers
                             activefilter: myhelper.active, smgactivefilter: myhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
-                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =
