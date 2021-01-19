@@ -12,7 +12,7 @@ pipeline {
 	MSS_PSWD = credentials('odh-tourism-api-test-mss-pswd')
 	LCS_USER = credentials('odh-tourism-api-test-lcs-user')
 	LCS_PSWD = credentials('odh-tourism-api-test-lcs-pswd')
-	MSS_MSGPSWD = credentials('odh-tourism-api-test-lcs-msgpswd')
+	LCS_MSGPSWD = credentials('odh-tourism-api-test-lcs-msgpswd')
 	SIAG_USER = credentials('odh-tourism-api-test-siag-user')
 	SIAG_PSWD = credentials('odh-tourism-api-test-siag-pswd')
 	XMLDIR = credentials('odh-tourism-api-test-xmldir')
