@@ -27,4 +27,4 @@ services:
       ASPNETCORE_ElasticSearchConfig__ElasticUrl: ${ELK_URL}
       ASPNETCORE_ElasticSearchConfig__ElasticAuthtoken: ${ELK_TOKEN}
     ports:
-      - "60209:80"
+      - "${SERVER_PORT}:80"
