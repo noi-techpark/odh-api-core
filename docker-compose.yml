@@ -23,5 +23,8 @@ services:
       ASPNETCORE_S3ImageresizerConfig__BucketAccessPoint: ${S3_BUCKET_ACCESSPOINT}
       ASPNETCORE_S3ImageresizerConfig__AccessKey: ${S3_IMAGEUPLOADER_ACCESSKEY}
       ASPNETCORE_S3ImageresizerConfig__SecretKey: ${S3_IMAGEUPLOADER_SECRETKEY}
+      ASPNETCORE_OauthServerConfig__Authority: ${OAUTH_AUTORITY}
+      ASPNETCORE_ElasticSearchConfig__ElasticUrl: ${ELK_URL}
+      ASPNETCORE_ElasticSearchConfig__ElasticAuthtoken: ${ELK_TOKEN}
     ports:
       - "60209:80"
