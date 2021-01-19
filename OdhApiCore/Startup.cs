@@ -154,37 +154,38 @@ namespace OdhApiCore
             //  });
 
             //Initialize JWT Authentication
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(jwtBearerOptions =>
-            {
-                jwtBearerOptions.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/";
-                //jwtBearerOptions.Audience = "account";                
-                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+            services
+                .AddAuthentication(options =>
                 {
-                    NameClaimType = "preferred_username",
-                    ValidateAudience = false
-                };
-                //jwtBearerOptions.Events = new JwtBearerEvents()
-                //{
-                //    OnAuthenticationFailed = c =>
-                //    {
-                //        c.NoResult();
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(jwtBearerOptions =>
+                {
+                    jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");
+                    //jwtBearerOptions.Audience = "account";                
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = "preferred_username",
+                        ValidateAudience = false
+                    };
+                    //jwtBearerOptions.Events = new JwtBearerEvents()
+                    //{
+                    //    OnAuthenticationFailed = c =>
+                    //    {
+                    //        c.NoResult();
 
-                //        c.Response.StatusCode = 500;
-                //        c.Response.ContentType = "text/plain";
-                //        //if (env.IsDevelopment())
-                //        //{
-                //        //    return c.Response.WriteAsync(c.Exception.ToString());
-                //        //}
-                //        //return c.Response.WriteAsync("An error occured processing your authentication.");
-                //        return c.Response.WriteAsync(c.Exception.ToString());
-                //    }
-                //};
-            });
+                    //        c.Response.StatusCode = 500;
+                    //        c.Response.ContentType = "text/plain";
+                    //        //if (env.IsDevelopment())
+                    //        //{
+                    //        //    return c.Response.WriteAsync(c.Exception.ToString());
+                    //        //}
+                    //        //return c.Response.WriteAsync("An error occured processing your authentication.");
+                    //        return c.Response.WriteAsync(c.Exception.ToString());
+                    //    }
+                    //};
+                });
 
             services
                 .AddMvc(options =>

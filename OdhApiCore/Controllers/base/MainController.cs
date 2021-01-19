@@ -13,7 +13,7 @@ namespace OdhApiCore.Controllers
     [ApiController]
     public class MainController : ControllerBase
     {
-        [HttpGet, Route("api", Name = "TourismApi")]
+        [HttpGet, Route("v1", Name = "TourismApi")]
         public IActionResult Get()
         {
             //var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
@@ -24,9 +24,6 @@ namespace OdhApiCore.Controllers
 
         private static IEnumerable<TourismData> GetMainApi(string url)
         {
-            //if (url.Contains("/api"))
-            //    url = url.Replace("/api", "/");
-
             List<TourismData> tourismdatalist = new List<TourismData>();
 
             tourismdatalist.Add(new TourismData(url) { ApiIdentifier = "ODHActivityPoi", Description = "Activities Pois and Gastronomies of South Tyrol from various Data Sources (LTS, Suedtirol Wein, Siag, IDM...)", Id = "it.bz.opendatahub.odhactivitypoi", SwaggerUrl = "index#/ODHActivityPoi", License = "CC0/Proprietary" }); ;
@@ -84,7 +81,7 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                return Uri.EscapeUriString(ApplicationURL + "api/" + Uri.EscapeUriString(this.ApiIdentifier));
+                return Uri.EscapeUriString(ApplicationURL + "v1/" + Uri.EscapeUriString(this.ApiIdentifier));
                 //return Uri.EscapeUriString(MyHttpContext.AppBaseUrl + "api/" + Uri.EscapeUriString(this.ApiIdentifier));
             }
         }
