@@ -345,7 +345,7 @@ namespace Helper
                 type => type
             );
 
-        public static Query ActivityTypeFilterTags(this Query query, IReadOnlyCollection<string> activitytypelist) =>
+        public static Query ActivityTypeFilterOnTags(this Query query, IReadOnlyCollection<string> activitytypelist) =>
             query.WhereInJsonb(
                 list: activitytypelist,
                 tag => new { SmgTags = new[] { tag.ToLower() } }
@@ -363,13 +363,13 @@ namespace Helper
                 jsonPath: "Difficulty"
             );
 
-        public static Query PoiTypeFilter(this Query query, IReadOnlyCollection<string> poitypelist) =>
+        public static Query PoiTypeFilterOnTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
             query.WhereInJsonb(
                 poitypelist,
                 poitype => new { SmgTags = new[] { poitype.ToLower() } }
             );
 
-        public static Query PoiSubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
+        public static Query PoiSubTypeFilterOnTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
             query.WhereInJsonb(
                 subtypelist,
                 poitype => new { SmgTags = new[] { poitype.ToLower() } }
@@ -465,19 +465,19 @@ namespace Helper
             );
 
         //To change, ODH Type Filtering based on 
-        public static Query ODHActivityPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> typelist) =>
+        public static Query ODHActivityPoiTypeFilterOnTags(this Query query, IReadOnlyCollection<string> typelist) =>
             query.WhereInJsonb(
                 typelist,
                 type => new { SmgTags = new[] { type.ToLower() } }
             );
 
-        public static Query ODHActivityPoiSubTypeFilterTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
+        public static Query ODHActivityPoiSubTypeFilterOnTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
            query.WhereInJsonb(
                subtypelist,
                subtype => new { SmgTags = new[] { subtype.ToLower() } }
            );
 
-        public static Query ODHActivityPoiPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
+        public static Query ODHActivityPoiPoiTypeFilterOnTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
            query.WhereInJsonb(
                poitypelist,
                poitype => new { SmgTags = new[] { poitype.ToLower() } }
@@ -869,16 +869,7 @@ namespace Helper
 
         //}
 
-
-        //public static Query FilterClosedData(this Query query) =>
-        //    query.Where(q =>
-        //        q.WhereRaw(
-        //            "data#>>'\\{_Meta,ClosedData\\}' IS NULL"
-        //        ).OrWhereRaw(
-        //            "data#>>'\\{_Meta,ClosedData\\}' = 'false'"
-        //        )
-        //    );
-
+        //Standard JSON Filter
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(
@@ -896,5 +887,19 @@ namespace Helper
                     "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' = 'false'"
                 )
             );
+
+        //Filter on Generated Field gen_licenseinfo_closeddata
+        public static Query FilterClosedData_GeneratedColumn(this Query query) =>
+            query.Where(q =>
+                q.WhereRaw(
+                    "gen_licenseinfo_closeddata IS NULL"
+                ).OrWhereRaw(
+                    "gen_licenseinfo_closeddata = false"
+                )
+            );
+
+        //Filter on Generated Field gen_haslanguage
+        public static Query HasLanguageFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
+         query.WhereContains("gen_haslanguage", languagelist);
     }
 }

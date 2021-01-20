@@ -166,7 +166,7 @@ namespace Helper
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedDataGeneratedColumn());
         }
 
         //Return Where and Parameters for Gastronomy
