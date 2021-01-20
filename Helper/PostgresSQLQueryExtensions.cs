@@ -898,8 +898,14 @@ namespace Helper
                 )
             );
 
+        //NOT WORKING! TODO
+
         //Filter on Generated Field gen_haslanguage
         public static Query HasLanguageFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
          query.WhereContains("gen_haslanguage", languagelist);
+
+        //Filter on Generated Field gen_haslanguage
+        public static Query SmgTagFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
+         query.WhereContains("gen_smgtags", list);
     }
 }
