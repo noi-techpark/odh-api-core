@@ -214,7 +214,7 @@ namespace OdhApiCore.Controllers.api
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
                     smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
                 
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
 
                 //Custom Fields filter
                 if (fields.Length > 0)
@@ -315,7 +315,7 @@ namespace OdhApiCore.Controllers.api
                     cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
                     lastchange: null, cancellationToken);
 
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
 
                 //Custom Fields filter
                 if (fields.Length > 0)
@@ -383,7 +383,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{TagName,{language}\\}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{TagName,{language}\\}}' as \"Name\"";
 
                 //TODO is this needed or better to not filter?
                 //string where = $"data#>>'\\{{TagName,{language}\\}}' NOT LIKE ''";
@@ -495,7 +495,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string select = $"data#>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title}}' as Name";
+                string select = $"data#>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
@@ -592,7 +592,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, null, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate,
                     enddate, active, smgactive, smgtagfilter, null, langfilter, source, cancellationToken);
                 
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
@@ -669,7 +669,7 @@ namespace OdhApiCore.Controllers.api
                 ArticleHelper helper = ArticleHelper.Create(
                     articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null);
 
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
@@ -742,7 +742,7 @@ namespace OdhApiCore.Controllers.api
             {
                 WebcamInfoHelper helper = WebcamInfoHelper.Create(sourcefilter, null, active, smgactive, datefrom);
 
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Webcamname,{language}\\}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Webcamname,{language}\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
@@ -836,7 +836,7 @@ namespace OdhApiCore.Controllers.api
                     featurefilter: featurefilter, featureidfilter: featureridfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: null, smgtags: smgtagfilter, activefilter: active,
                     smgactivefilter: smgactive, bookablefilter: null, lastchange: null, cancellationToken);
 
-                string select = $"data#>>'\\{{Id\\}}' as Id, data#>>'\\{{Detail,{language},Title\\}}' as Name";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
@@ -872,6 +872,8 @@ namespace OdhApiCore.Controllers.api
         #endregion
 
         #region EventShortController
+
+        //TODO ADD EVENTSHORT REDUCED METHOD
 
 
 
