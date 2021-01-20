@@ -351,7 +351,7 @@ namespace Helper
                 tag => new { SmgTags = new[] { tag.ToLower() } }
             );
 
-        public static Query ActivitySubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
+        public static Query ActivitySubTypeFilterOnTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
             query.WhereInJsonb(
                 list: subtypelist,
                 tag => new { SmgTags = new[] { tag.ToLower() } }

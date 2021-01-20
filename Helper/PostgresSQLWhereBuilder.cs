@@ -113,8 +113,8 @@ namespace Helper
                 .LocFilterRegionFilter(regionlist)
                 .AreaFilter(arealist)
                 //.ActivityTypeFilter(activitytypelist)
-                .ActivityTypeFilterTags(activitytypelist)
-                .ActivitySubTypeFilter(subtypelist)
+                .ActivityTypeFilterOnTags(activitytypelist)
+                .ActivitySubTypeFilterOnTags(subtypelist)
                 .DifficultyFilter(difficultylist)
                 .DistanceFilter(distance, distancemin, distancemax)
                 .DurationFilter(duration, durationmin, durationmax)
@@ -158,15 +158,16 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AreaFilter(arealist)
-                .PoiTypeFilter(poitypelist)
-                .PoiSubTypeFilter(subtypelist)
+                .PoiTypeFilterOnTags(poitypelist)
+                .PoiSubTypeFilterOnTags(subtypelist)
                 .SmgTagFilter(smgtaglist)
                 .HighlightFilter(highlight)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedDataGeneratedColumn());
+                .When(languagelist.Count > 0, q => q.HasLanguageFilter_GeneratedColumn(languagelist))
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());                
         }
 
         //Return Where and Parameters for Gastronomy
@@ -239,9 +240,9 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AreaFilter(arealist)
-                .ODHActivityPoiTypeFilterTags(typelist)
-                .ODHActivityPoiSubTypeFilterTags(subtypelist)
-                .ODHActivityPoiPoiTypeFilterTags(poitypelist)
+                .ODHActivityPoiTypeFilterOnTags(typelist)
+                .ODHActivityPoiSubTypeFilterOnTags(subtypelist)
+                .ODHActivityPoiPoiTypeFilterOnTags(poitypelist)
                 .SourceFilter(sourcelist)
                 .HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
