@@ -205,7 +205,7 @@ namespace OdhApiCore.Controllers.api
                             filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                        .ApplyOrdering_Generated(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =
