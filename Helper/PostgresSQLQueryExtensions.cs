@@ -345,6 +345,12 @@ namespace Helper
                 type => type
             );
 
+        public static Query ActivityTypeFilterTags(this Query query, IReadOnlyCollection<string> activitytypelist) =>
+            query.WhereInJsonb(
+                list: activitytypelist,
+                tag => new { SmgTags = new[] { tag.ToLower() } }
+            );
+
         public static Query ActivitySubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
             query.WhereInJsonb(
                 list: subtypelist,
