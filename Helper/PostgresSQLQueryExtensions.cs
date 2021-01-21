@@ -897,15 +897,13 @@ namespace Helper
                     "gen_licenseinfo_closeddata = false"
                 )
             );
-
-        //NOT WORKING! TODO
-
+        
         //Filter on Generated Field gen_haslanguage
         public static Query HasLanguageFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
-         query.WhereContains("gen_haslanguage", languagelist);
+         query.Where(q => q.WhereRaw("gen_haslanguage @> array\\[?\\]", String.Join(",", languagelist.Select(x => x.ToLower()))));
 
         //Filter on Generated Field gen_haslanguage
         public static Query SmgTagFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
-         query.WhereContains("gen_smgtags", list);
+         query.Where(q => q.WhereRaw("gen_smgtags @> array\\[?\\]", String.Join(",", list.Select(x => x.ToLower())) ));
     }
 }
