@@ -13,27 +13,25 @@ namespace Helper
         /// <param name="sortfield"></param>
         /// <param name="direction"></param>
         /// <returns></returns>
-        public static string? BuildSeedOrderBy(ref string orderby, string? seed, string sortifseednull)
+        public static void BuildSeedOrderBy(ref string orderby, ref string? seed, string sortifseednull)
         {
-            string? myseed = seed;
+            //string? myseed = seed;
 
             if (seed != null)
             {
-                myseed = Helper.CreateSeed.GetSeed(seed);
-                orderby = $"md5(id || '{myseed}')";
+                seed = Helper.CreateSeed.GetSeed(seed);
+                orderby = $"md5(id || '{seed}')";
             }
             else
             {
                 orderby = sortifseednull;
             }
-
-            return myseed;
         }
 
         public static Query OrderBySeed(this Query query, ref string? seed, string sortifseednull)
         {
             string orderby = "";
-            BuildSeedOrderBy(ref orderby, seed, sortifseednull);
+            BuildSeedOrderBy(ref orderby, ref seed, sortifseednull);
             return query.OrderByRaw(orderby);
         }
 
