@@ -33,7 +33,6 @@ namespace Helper
 
         public static string? GetSeed(string seedstring)
         {
-
             if (seedstring == null)
                 return null;
 
