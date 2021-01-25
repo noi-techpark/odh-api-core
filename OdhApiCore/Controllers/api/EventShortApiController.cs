@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Npgsql;
 using OdhApiCore.Responses;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -797,61 +798,68 @@ namespace OdhApiCore.Controllers.api
         //    }
         //}
 
-        //// DELETE: api/EventShort/5
-        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
-        //[HttpDelete, Route("api/EventShort/{id}")]
+        // DELETE: api/EventShort/5
+        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        [HttpDelete, Route("api/EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //public HttpResponseMessage Delete(string id)
-        //{
-        //    try
-        //    {
-        //        if (id != null)
-        //        {
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                if (id != null)
+                {
+                    var query =
+                         QueryFactory.Query("eventeuracnoi")
+                             .Select("data")
+                             .Where("id", id.ToLower())
+                             .When(FilterClosedData, q => q.FilterClosedData());
 
-        //                conn.Open();
+                    //TO CHECK First select as JsonRaw then convert to eventshort????
+                    var myevent = await query.FirstOrDefaultAsync<EventShort?>();
 
-        //                string selectexp = "*";
-        //                string whereexp = "id ILIKE '" + id + "'";
+                    if(myevent != null)
+                    {
+                        if (myevent.Source != "EBMS")
+                        {
+                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation != "VV")
+                                throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
 
-        //                var myevent = PostgresSQLHelper.SelectFromTableDataAsObject<EventShort>(conn, "eventeuracnoi", selectexp, whereexp, "", 0, null).FirstOrDefault();
+                            //TODO CHECK IF THIS WORKS     
+                            var deletequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsDelete();
 
-        //                if (myevent.Source != "EBMS")
-        //                {
-        //                    if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation != "VV")
-        //                        throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
+                            return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+                        }
+                        else
+                        {
+                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
+                            {
+                                //TODO CHECK IF THIS WORKS     
+                                var deletequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsDelete();
 
-        //                    PostgresSQLHelper.DeleteDataFromTable(conn, "eventeuracnoi", id);
-
-        //                    return Request.CreateResponse(HttpStatusCode.OK, new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id }, "application/json");
-        //                }
-        //                else
-        //                {
-        //                    if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
-        //                    {
-        //                        PostgresSQLHelper.DeleteDataFromTable(conn, "eventeuracnoi", id);
-
-        //                        return Request.CreateResponse(HttpStatusCode.OK, new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id }, "application/json");
-        //                    }
-        //                    else
-        //                    {
-        //                        throw new Exception("EventShort cannot be deleted");
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No EventShort Id provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
-        //    }
-        //}
+                                return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+                            }
+                            else
+                            {
+                                throw new Exception("EventShort cannot be deleted");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("EventShort not found");
+                    }
+                }
+                else
+                {
+                    throw new Exception("No EventShort Id provided");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         //// DELETE: api/EventShort/5
         //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
