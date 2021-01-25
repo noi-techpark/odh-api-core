@@ -1,11 +1,13 @@
 ﻿using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Npgsql;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
@@ -419,6 +421,481 @@ namespace OdhApiCore.Controllers.api
                 eventshortlistbyroom.Add(roomtoadd);
 
         }
+
+        #endregion
+
+        #region POST PUT DELETE
+
+        // POST: api/EventShort
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        [HttpPost, Route("api/EventShort")]
+        //[InvalidateCacheOutput("GetReducedAsync")]
+        public async Task<IActionResult> Post([FromBody] EventShort eventshort)
+        {
+            try
+            {
+                if (eventshort != null)
+                {
+                    if (eventshort.EventLocation == null)
+                        throw new Exception("Eventlocation needed");
+
+                    eventshort.EventLocation = eventshort.EventLocation.ToUpper();
+
+                    if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
+                        throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+
+                    if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
+                        throw new Exception("Start + End Time not set correctly");
+
+                    eventshort.ChangedOn = DateTime.Now;
+                    eventshort.AnchorVenueShort = eventshort.AnchorVenue;
+
+                    //Save DAtetime without Offset??
+                    //eventshort.StartDate = DateTime.SpecifyKind(eventshort.StartDate, DateTimeKind.Utc);
+                    //eventshort.EndDate = DateTime.SpecifyKind(eventshort.EndDate, DateTimeKind.Utc);
+
+                    eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
+                    eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+
+                    bool addroomautomatically = false;
+
+                    if (eventshort.RoomBooked == null)
+                    {
+                        addroomautomatically = true;
+                    }
+                    else if (eventshort.RoomBooked.Count == 0)
+                    {
+                        addroomautomatically = true;
+                    }
+
+                    if (addroomautomatically)
+                    {
+                        //Default, Add Eventdate as Room
+                        RoomBooked myroom = new RoomBooked();
+                        myroom.StartDate = eventshort.StartDate;
+                        myroom.EndDate = eventshort.EndDate;
+                        myroom.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
+                        myroom.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+                        myroom.Comment = "";
+                        myroom.Space = eventshort.AnchorVenueShort;
+                        myroom.SpaceAbbrev = eventshort.AnchorVenue;
+                        myroom.SpaceDesc = eventshort.AnchorVenue;
+                        //myroom.Space = eventshort.AnchorVenue;
+
+                        if (eventshort.EventLocation == "NOI")
+                            myroom.SpaceType = "NO";
+                        else
+                            myroom.SpaceType = eventshort.EventLocation;
+
+                        myroom.Subtitle = "";
+
+                        eventshort.RoomBooked = new List<RoomBooked>();
+                        eventshort.RoomBooked.Add(myroom);
+                    }
+                    else
+                    {
+                        //TODO on rooms
+                        foreach (var room in eventshort.RoomBooked)
+                        {
+                            //Save DAtetime without Offset??
+                            //room.StartDate = DateTime.SpecifyKind(room.StartDate, DateTimeKind.Utc);
+                            //room.EndDate = DateTime.SpecifyKind(room.EndDate, DateTimeKind.Utc);
+
+                            room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
+                            room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+                        }
+                    }
+
+                    //Event Title IT EN
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
+                        eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
+                        eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+
+                    //TraceSource tracesource = new TraceSource("CustomData");
+                    //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
+                    eventshort.Id = System.Guid.NewGuid().ToString();
+
+                    //LicenseInfo
+                    eventshort.LicenseInfo = new LicenseInfo() { Author = User.Identity.Name, ClosedData = false, LicenseHolder = "https://noi.bz.it/", License = "CC0" };
+
+                    //PostgresSQLHelper.InsertDataIntoTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
+                    //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
+
+                    var query = await QueryFactory.Query("eventshort").InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+
+                    return Ok(new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
+                        //new CreatedAtActionResult(nameof(GetById), "Products", new { id = product.Id }, product); ; //Request.CreateResponse(HttpStatusCode.Created, new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
+                }
+                else
+                {
+                    throw new Exception("No EventShort Data provided");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
+        //[HttpPost, Route("api/EventShortVirtualVillage")]
+        //[InvalidateCacheOutput("GetReducedAsync")]
+        //public HttpResponseMessage PostVirtualVillage([FromBody] EventShort eventshort)
+        //{
+        //    try
+        //    {
+        //        if (eventshort != null)
+        //        {
+        //            if (!User.IsInRole("VirtualVillageManager"))
+        //                throw new Exception("Not Allowed");
+
+        //            if (eventshort.EventLocation == null)
+        //                throw new Exception("Eventlocation needed");
+
+        //            eventshort.EventLocation = eventshort.EventLocation.ToUpper();
+        //            eventshort.Source = User.Identity.Name;
+
+        //            if (eventshort.EventLocation != "VV")
+        //                throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+
+        //            if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
+        //                throw new Exception("Start + End Time not set correctly");
+
+        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
+        //            {
+        //                conn.Open();
+
+        //                eventshort.ChangedOn = DateTime.Now;
+
+        //                eventshort.AnchorVenueShort = eventshort.AnchorVenue;
+
+        //                //Save DAtetime without Offset??
+        //                //eventshort.StartDate = DateTime.SpecifyKind(eventshort.StartDate, DateTimeKind.Utc);
+        //                //eventshort.EndDate = DateTime.SpecifyKind(eventshort.EndDate, DateTimeKind.Utc);
+
+        //                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
+        //                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+
+        //                bool addroomautomatically = false;
+
+        //                if (eventshort.RoomBooked == null)
+        //                {
+        //                    addroomautomatically = true;
+        //                }
+        //                else if (eventshort.RoomBooked.Count == 0)
+        //                {
+        //                    addroomautomatically = true;
+        //                }
+
+        //                if (addroomautomatically)
+        //                {
+        //                    //Default, Add Eventdate as Room
+        //                    RoomBooked myroom = new RoomBooked();
+        //                    myroom.StartDate = eventshort.StartDate;
+        //                    myroom.EndDate = eventshort.EndDate;
+        //                    myroom.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
+        //                    myroom.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+        //                    myroom.Comment = "";
+        //                    myroom.Space = eventshort.AnchorVenueShort;
+        //                    myroom.SpaceAbbrev = eventshort.AnchorVenue;
+        //                    myroom.SpaceDesc = eventshort.AnchorVenue;
+        //                    //myroom.Space = eventshort.AnchorVenue;
+
+        //                    if (eventshort.EventLocation == "NOI")
+        //                        myroom.SpaceType = "NO";
+        //                    else
+        //                        myroom.SpaceType = eventshort.EventLocation;
+
+        //                    myroom.Subtitle = "";
+
+        //                    eventshort.RoomBooked = new List<RoomBooked>();
+        //                    eventshort.RoomBooked.Add(myroom);
+        //                }
+        //                else
+        //                {
+        //                    //TODO on rooms
+        //                    foreach (var room in eventshort.RoomBooked)
+        //                    {
+        //                        //Save DAtetime without Offset??
+        //                        //room.StartDate = DateTime.SpecifyKind(room.StartDate, DateTimeKind.Utc);
+        //                        //room.EndDate = DateTime.SpecifyKind(room.EndDate, DateTimeKind.Utc);
+
+        //                        room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
+        //                        room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+        //                    }
+        //                }
+
+        //                //Event Title IT EN
+        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
+        //                    eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+
+        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
+        //                    eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+
+
+
+        //                //TraceSource tracesource = new TraceSource("CustomData");
+        //                //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
+        //                eventshort.Id = System.Guid.NewGuid().ToString();
+
+        //                //LicenseInfo
+        //                eventshort.LicenseInfo = new LicenseInfo() { Author = User.Identity.Name, ClosedData = false, LicenseHolder = "https://noi.bz.it/", License = "CC0" };
+
+        //                PostgresSQLHelper.InsertDataIntoTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
+        //                //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
+
+        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("No EventShort Data provided");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+        //    }
+        //}
+
+        //// PUT: api/EventShort/5
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
+        //[HttpPut, Route("api/EventShort/{id}")]
+        //[InvalidateCacheOutput("GetReducedAsync")]
+        //public HttpResponseMessage Put(string id, [FromBody] EventShort eventshort)
+        //{
+        //    try
+        //    {
+        //        if (eventshort != null && id != null)
+        //        {
+        //            if (eventshort.EventLocation == null)
+        //                throw new Exception("Eventlocation needed");
+
+        //            eventshort.EventLocation = eventshort.EventLocation.ToUpper();
+
+        //            if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
+        //                throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+
+        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
+        //            {
+
+        //                conn.Open();
+
+        //                eventshort.ChangedOn = DateTime.Now;
+
+        //                eventshort.AnchorVenueShort = eventshort.AnchorVenue;
+
+        //                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
+        //                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+
+        //                //TODO on rooms
+        //                foreach (var room in eventshort.RoomBooked)
+        //                {
+        //                    room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
+        //                    room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+        //                }
+
+        //                //Event Title IT EN
+        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
+        //                    eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+
+        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
+        //                    eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+
+
+        //                PostgresSQLHelper.UpdateDataFromTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
+
+        //                return Request.CreateResponse(HttpStatusCode.OK, new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
+        //            }
+        //            //}
+        //            //else
+        //            //{
+        //            //    throw new Exception("EventShort cannot be updated");
+        //            //}
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("No eventshort Data provided");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+        //    }
+        //}
+
+        //// PUT: api/EventShort/5
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
+        //[HttpPut, Route("api/EventShortVirtualVillage/{id}")]
+        //[InvalidateCacheOutput("GetReducedAsync")]
+        //public HttpResponseMessage PutVirtualVillage(string id, [FromBody] EventShort eventshort)
+        //{
+        //    try
+        //    {
+        //        if (eventshort != null && id != null)
+        //        {
+        //            if (eventshort.EventLocation == null)
+        //                throw new Exception("Eventlocation needed");
+
+        //            eventshort.EventLocation = eventshort.EventLocation.ToUpper();
+        //            eventshort.Source = User.Identity.Name;
+
+        //            if (eventshort.EventLocation != "VV")
+        //                throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+
+        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
+        //            {
+
+        //                conn.Open();
+
+        //                eventshort.ChangedOn = DateTime.Now;
+
+        //                eventshort.AnchorVenueShort = eventshort.AnchorVenue;
+
+        //                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
+        //                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+
+        //                //TODO on rooms
+        //                foreach (var room in eventshort.RoomBooked)
+        //                {
+        //                    room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
+        //                    room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+        //                }
+
+        //                //Event Title IT EN
+        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
+        //                    eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+
+        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
+        //                    eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+
+
+        //                PostgresSQLHelper.UpdateDataFromTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
+
+        //                return Request.CreateResponse(HttpStatusCode.OK, new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
+        //            }
+        //            //}
+        //            //else
+        //            //{
+        //            //    throw new Exception("EventShort cannot be updated");
+        //            //}
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("No eventshort Data provided");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+        //    }
+        //}
+
+        //// DELETE: api/EventShort/5
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        //[HttpDelete, Route("api/EventShort/{id}")]
+        //[InvalidateCacheOutput("GetReducedAsync")]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //public HttpResponseMessage Delete(string id)
+        //{
+        //    try
+        //    {
+        //        if (id != null)
+        //        {
+        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
+        //            {
+
+        //                conn.Open();
+
+        //                string selectexp = "*";
+        //                string whereexp = "id ILIKE '" + id + "'";
+
+        //                var myevent = PostgresSQLHelper.SelectFromTableDataAsObject<EventShort>(conn, "eventeuracnoi", selectexp, whereexp, "", 0, null).FirstOrDefault();
+
+        //                if (myevent.Source != "EBMS")
+        //                {
+        //                    if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation != "VV")
+        //                        throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
+
+        //                    PostgresSQLHelper.DeleteDataFromTable(conn, "eventeuracnoi", id);
+
+        //                    return Request.CreateResponse(HttpStatusCode.OK, new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id }, "application/json");
+        //                }
+        //                else
+        //                {
+        //                    if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
+        //                    {
+        //                        PostgresSQLHelper.DeleteDataFromTable(conn, "eventeuracnoi", id);
+
+        //                        return Request.CreateResponse(HttpStatusCode.OK, new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id }, "application/json");
+        //                    }
+        //                    else
+        //                    {
+        //                        throw new Exception("EventShort cannot be deleted");
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("No EventShort Id provided");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+        //    }
+        //}
+
+        //// DELETE: api/EventShort/5
+        //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
+        //[HttpDelete, Route("api/EventShortVirtualVillage/{id}")]
+        //[InvalidateCacheOutput("GetReducedAsync")]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //public HttpResponseMessage DeleteVirtualVillage(string id)
+        //{
+        //    try
+        //    {
+        //        if (id != null)
+        //        {
+        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
+        //            {
+
+        //                conn.Open();
+
+        //                string selectexp = "*";
+        //                string whereexp = "id ILIKE '" + id + "'";
+
+        //                var myevent = PostgresSQLHelper.SelectFromTableDataAsObject<EventShort>(conn, "eventeuracnoi", selectexp, whereexp, "", 0, null).FirstOrDefault();
+
+        //                if (myevent.EventLocation == "VV")
+        //                {
+        //                    PostgresSQLHelper.DeleteDataFromTable(conn, "eventeuracnoi", id);
+
+        //                    return Request.CreateResponse(HttpStatusCode.OK, new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id }, "application/json");
+        //                }
+        //                else
+        //                {
+        //                    throw new Exception("EventShort cannot be deleted");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            throw new Exception("No EventShort Id provided");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+        //    }
+        //}
 
         #endregion
 
