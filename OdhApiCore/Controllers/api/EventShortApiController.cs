@@ -556,7 +556,7 @@ namespace OdhApiCore.Controllers.api
         //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPut, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
-        public IActionResult Put(string id, [FromBody] EventShort eventshort)
+        public async Task<IActionResult> Put(string id, [FromBody] EventShort eventshort)
         {
             try
             {
@@ -598,7 +598,10 @@ namespace OdhApiCore.Controllers.api
                         eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
 
                     //TODO CHECK IF THIS WORKS     
-                    var updatequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsUpdate(new { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                    var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
+                        .UpdateAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+
+                    var result = QueryFactory.Query();
 
                     return Ok(new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
                 }
@@ -641,7 +644,7 @@ namespace OdhApiCore.Controllers.api
                                 throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
 
                             //TODO CHECK IF THIS WORKS     
-                            var deletequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsDelete();
+                            var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
                             return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
                         }
@@ -650,7 +653,7 @@ namespace OdhApiCore.Controllers.api
                             if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
                             {
                                 //TODO CHECK IF THIS WORKS     
-                                var deletequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsDelete();
+                                var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
                                 return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
                             }
