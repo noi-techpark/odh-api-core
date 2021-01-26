@@ -158,7 +158,7 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AreaFilter(arealist)
-                .When(poitypelist.Count > 0, q => q.SmgTagFilter_GeneratedColumnOR(poitypelist))
+                .When(poitypelist.Count > 0, q => q.SmgTagFilter_GeneratedColumnAND(poitypelist))
                 //.PoiTypeFilterOnTags(poitypelist)
                 .PoiSubTypeFilterOnTags(subtypelist)
                 .SmgTagFilter(smgtaglist)

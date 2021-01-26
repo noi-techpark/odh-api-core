@@ -99,8 +99,8 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[EnableCors(origins: "*", headers: "*", methods: "*")]
-        [HttpGet, Route("EventShort/{id}")]
         [HttpGet, Route("EventShort/Detail/{id}")]
+        [HttpGet, Route("EventShort/{id}")]
         public async Task<IActionResult> GetSingle(
             string id,
             string? language,
