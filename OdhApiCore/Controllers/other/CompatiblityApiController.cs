@@ -915,7 +915,7 @@ namespace OdhApiCore.Controllers.api
 
 
         private Task<IActionResult> GetEventShortReduced(
-         string[] fields, string? language, string? searchfilter, string? startdate, string? enddate, string? datetimeformat,
+         string[] fields, string language, string? searchfilter, string? startdate, string? enddate, string? datetimeformat,
          string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, string? sortorder,
          string? lastchange, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
@@ -950,8 +950,6 @@ namespace OdhApiCore.Controllers.api
                 return await query.GetAsync<object>();
             });
         }
-
-
 
         #endregion
 
