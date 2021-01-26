@@ -429,7 +429,7 @@ namespace OdhApiCore.Controllers.api
 
         // POST: api/EventShort
         [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
         [HttpPost, Route("EventShort")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Post([FromBody] EventShort eventshort)
@@ -443,10 +443,10 @@ namespace OdhApiCore.Controllers.api
 
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
-                    if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
+                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }) && eventshort.EventLocation != "VV")
                         throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
-                    if (User.IsInRole("VirtualVillageManager"))
+                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }))
                         eventshort.Source = User.Identity != null ? User.Identity.Name :"";
 
                     if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
@@ -553,7 +553,7 @@ namespace OdhApiCore.Controllers.api
 
         // PUT: api/EventShort/5
         [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
+        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPut, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Put(string id, [FromBody] EventShort eventshort)
@@ -567,10 +567,10 @@ namespace OdhApiCore.Controllers.api
 
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
-                    if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
+                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }) && eventshort.EventLocation != "VV")
                         throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
-                    if(User.IsInRole("VirtualVillageManager"))
+                    if(CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }))
                         eventshort.Source = User.Identity != null ? User.Identity.Name : "";
 
                     eventshort.ChangedOn = DateTime.Now;
@@ -615,7 +615,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         // DELETE: api/EventShort/5
-        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
         [HttpDelete, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -638,7 +638,7 @@ namespace OdhApiCore.Controllers.api
                     {
                         if (myevent.Source != "EBMS")
                         {
-                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation != "VV")
+                            if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
                                 throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
 
                             //TODO CHECK IF THIS WORKS     
@@ -910,6 +910,22 @@ namespace OdhApiCore.Controllers.api
         //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
         //    }
         //}
+
+        private bool CheckIfUserIsOnlyInRole(string role, List<string> rolestocheck)
+        {
+            bool returnbool = false;
+
+            if (User.IsInRole(role))
+                returnbool = true;
+
+            foreach(string roletocheck in rolestocheck)
+            {
+                if(User.IsInRole(roletocheck))
+                    returnbool = false;
+            }
+
+            return returnbool;
+        }
 
         #endregion
 
