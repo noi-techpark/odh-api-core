@@ -12,7 +12,7 @@ namespace OdhApiCoreTests.Helper
         public void BuildSeedOrderBy_WithSeed(string seed, string resultSeed)
         {
             string orderby = "";
-            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, seed, "");
+            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, ref seed, "");
             Assert.Equal($"md5(id || '{resultSeed}')", orderby);
         }
 
@@ -20,7 +20,9 @@ namespace OdhApiCoreTests.Helper
         public void BuildSeedOrderBy_WithoutSeed()
         {
             string orderby = "";
-            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, null, "orderbyclause");
+            string? nullseed = null;
+
+            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, ref nullseed, "orderbyclause");
             Assert.Equal("orderbyclause", orderby);
         }
 
@@ -28,7 +30,9 @@ namespace OdhApiCoreTests.Helper
         public void BuildSeedOrderBy_WithInvalidSeed()
         {
             string orderby = "";
-            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, "invalidnumber", "orderbyclause");
+            string invalidseed = "invalidnumber";
+
+            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, ref invalidseed, "orderbyclause");
             // CHECK: Is this the correct behavior?
             Assert.Equal("md5(id || '')", orderby);
         }
