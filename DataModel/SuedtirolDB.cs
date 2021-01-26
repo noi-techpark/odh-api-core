@@ -2885,7 +2885,7 @@ namespace DataModel
 
     public class EventShort
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
         public string? Source { get; set; }
