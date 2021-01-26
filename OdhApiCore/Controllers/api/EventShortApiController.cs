@@ -446,8 +446,8 @@ namespace OdhApiCore.Controllers.api
                     if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
                         throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
-                    if (User.IsInRole("VirtualVillageManager")
-                        eventshort.Source = User.Identity.Name;
+                    if (User.IsInRole("VirtualVillageManager"))
+                        eventshort.Source = User.Identity != null ? User.Identity.Name :"";
 
                     if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
                         throw new Exception("Start + End Time not set correctly");
@@ -525,7 +525,7 @@ namespace OdhApiCore.Controllers.api
                     eventshort.Id = System.Guid.NewGuid().ToString();
 
                     string author = "unknown";
-                    if (User.Identity.Name != null)
+                    if (User.Identity != null && User.Identity.Name != null)
                         author = User.Identity.Name;
 
                     //LicenseInfo
@@ -571,7 +571,7 @@ namespace OdhApiCore.Controllers.api
                         throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
                     if(User.IsInRole("VirtualVillageManager"))
-                        eventshort.Source = User.Identity.Name;
+                        eventshort.Source = User.Identity != null ? User.Identity.Name : "";
 
                     eventshort.ChangedOn = DateTime.Now;
 
