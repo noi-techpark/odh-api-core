@@ -92,7 +92,7 @@ namespace OdhApiCoreTests.Helper
             var result = compiler.Compile(query);
 
             Assert.Equal(
-                "SELECT * FROM \"activities\" WHERE (\"id\" = ? OR \"id\" = ?) AND data#>>'{LocationInfo,RegionInfo,Id}' = ANY(?) AND (data @> jsonb(?)) AND (data#>>'{Type}' = ?) AND data#>>'{Highlight}' = ?",
+                "SELECT * FROM \"activities\" WHERE (\"id\" = ? OR \"id\" = ?) AND data#>>'{LocationInfo,RegionInfo,Id}' = ANY(?) AND (data @> jsonb(?)) AND (data @> jsonb(?)) AND data#>>'{Highlight}' = ?",
                 result.RawSql
             );
 
@@ -101,7 +101,7 @@ namespace OdhApiCoreTests.Helper
             Assert.Equal("ID2", result.NamedBindings["@p1"]);
             Assert.Equal(new[] { "region1" }, result.NamedBindings["@p2"]);
             Assert.Equal("{\"AreaId\":[\"area1\"]}", result.NamedBindings["@p3"]);
-            Assert.Equal("1024", result.NamedBindings["@p4"]);
+            Assert.Equal("{\"SmgTags\":[\"1024\"]}", result.NamedBindings["@p4"]);
             Assert.Equal("true", result.NamedBindings["@p5"]);
         }
     }

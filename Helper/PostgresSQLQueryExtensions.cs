@@ -902,8 +902,21 @@ namespace Helper
         public static Query HasLanguageFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
          query.Where(q => q.WhereRaw("gen_haslanguage @> array\\[?\\]", String.Join(",", languagelist.Select(x => x.ToLower()))));
 
-        //Filter on Generated Field gen_haslanguage
-        public static Query SmgTagFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
+        //Filter on Generated Field gen_smgtags
+        public static Query SmgTagFilter_GeneratedColumnAND(this Query query, IReadOnlyCollection<string> list) =>
          query.Where(q => q.WhereRaw("gen_smgtags @> array\\[?\\]", String.Join(",", list.Select(x => x.ToLower())) ));
+
+        //Filter on Generated Field gen_smgtags
+        public static Query SmgTagFilter_GeneratedColumnOR(this Query query, IReadOnlyCollection<string> list) =>
+        query.Where(q =>
+        {
+            foreach (var item in list)
+            {
+                q = q.OrWhereRaw(
+                    "gen_smgtags @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
     }
 }

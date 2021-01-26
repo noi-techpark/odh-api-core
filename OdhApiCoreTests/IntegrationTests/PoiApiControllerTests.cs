@@ -27,16 +27,16 @@ namespace OdhApiCoreTests.IntegrationTets
         }
 
         [Theory]
-        [InlineData("/api/Poi")]
-        [InlineData("/api/Poi?pagesize=1")]
-        [InlineData("/api/Poi?poitype=12")]
-        [InlineData("/api/Poi?language=de")]
-        [InlineData("/api/Poi?language=en")]
-        [InlineData("/api/Poi?pagenumber=1&pagesize=100&poitype=511&areafilter=skaSKIC57DA31F859141A1802E86B410FEBD70&active=true&seed=null")]
-        [InlineData("/api/Poi?pagenumber=1&pagesize=100&poitype=511&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
-        //[InlineData("/api/Poi?pagenumber=1&pagesize=10&poitype=11&locfilter=tvs5228229651CA11D18F1400A02427D15E&odhactive=true&active=true&seed=null")]
-        [InlineData("/api/Poi?pagenumber=1&pagesize=10&poitype=511&highlight=true&seed=null")]
-        [InlineData("/api/Poi?pagenumber=1&pagesize=20&poitype=Sport%20und%20Freizeit&subtype=null&idlist=null&locfilter=null&areafilter=null&highlight=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
+        [InlineData("/v1/Poi")]
+        [InlineData("/v1/Poi?pagesize=1")]
+        [InlineData("/v1/Poi?poitype=12")]
+        [InlineData("/v1/Poi?language=de")]
+        [InlineData("/v1/Poi?language=en")]
+        [InlineData("/v1/Poi?pagenumber=1&pagesize=100&poitype=511&areafilter=skaSKIC57DA31F859141A1802E86B410FEBD70&active=true&seed=null")]
+        [InlineData("/v1/Poi?pagenumber=1&pagesize=100&poitype=511&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
+        //[InlineData("/v1/Poi?pagenumber=1&pagesize=10&poitype=11&locfilter=tvs5228229651CA11D18F1400A02427D15E&odhactive=true&active=true&seed=null")]
+        [InlineData("/v1/Poi?pagenumber=1&pagesize=10&poitype=511&highlight=true&seed=null")]
+        [InlineData("/v1/Poi?pagenumber=1&pagesize=20&poitype=Sport%20und%20Freizeit&subtype=null&idlist=null&locfilter=null&areafilter=null&highlight=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
         public async Task Get_Pois(string url)
         {
             var response = await _client.GetAsync(url);
@@ -63,8 +63,8 @@ namespace OdhApiCoreTests.IntegrationTets
         }
 
         [Theory]
-        [InlineData("/api/Poi/EF22956102A175B15EA27EEBC03EB10D")]
-        [InlineData("/api/Poi/D1AFE8FAB27A00518DEA1576119E03DE")]
+        [InlineData("/v1/Poi/EF22956102A175B15EA27EEBC03EB10D")]
+        [InlineData("/v1/Poi/D1AFE8FAB27A00518DEA1576119E03DE")]
         public async Task Get_SinglePoi(string url)
         {
             var response = await _client.GetAsync(url);
@@ -97,8 +97,8 @@ namespace OdhApiCoreTests.IntegrationTets
         }
 
         [Theory]
-        [InlineData("/api/Poi/UF22956102A175B15EA27EEBC03EB10D")]
-        [InlineData("/api/Poi/O1AFE8FAB27A00518DEA1576119E03DE")]
+        [InlineData("/v1/Poi/UF22956102A175B15EA27EEBC03EB10D")]
+        [InlineData("/v1/Poi/O1AFE8FAB27A00518DEA1576119E03DE")]
         public async Task Get_SingleNonExistentPoi(string url)
         {
             var response = await _client.GetAsync(url);
@@ -108,7 +108,7 @@ namespace OdhApiCoreTests.IntegrationTets
         [Fact]
         public async Task Get_PoiTypes()
         {
-            var response = await _client.GetAsync("/api/PoiTypes");
+            var response = await _client.GetAsync("/v1/PoiTypes");
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType?.ToString());

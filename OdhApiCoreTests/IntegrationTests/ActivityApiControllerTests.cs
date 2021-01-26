@@ -27,16 +27,16 @@ namespace OdhApiCoreTests.IntegrationTets
         }
 
         [Theory]
-        [InlineData("/api/Activity")]
-        [InlineData("/api/Activity?pagesize=1")]
-        [InlineData("/api/Activity?activitytype=12")]
-        [InlineData("/api/Activity?language=de")]
-        [InlineData("/api/Activity?language=en")]
-        [InlineData("/api/Activity?pagenumber=1&pagesize=100&activitytype=1023&areafilter=skaSKIC57DA31F859141A1802E86B410FEBD70&active=true&seed=null")]
-        [InlineData("/api/Activity?pagenumber=1&pagesize=100&activitytype=1023&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
-        [InlineData("/api/Activity?pagenumber=1&pagesize=10&activitytype=11&locfilter=tvs5228229651CA11D18F1400A02427D15E&odhactive=true&active=true&seed=null")]
-        [InlineData("/api/Activity?pagenumber=1&pagesize=10&activitytype=511&highlight=true&seed=null")]
-        [InlineData("/api/Activity?pagenumber=1&pagesize=20&activitytype=Berg&subtype=null&idlist=null&locfilter=null&areafilter=null&distancefilter=null&altitudefilter=null&durationfilter=null&highlight=null&difficultyfilter=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
+        [InlineData("/v1/Activity")]
+        [InlineData("/v1/Activity?pagesize=1")]
+        [InlineData("/v1/Activity?activitytype=12")]
+        [InlineData("/v1/Activity?language=de")]
+        [InlineData("/v1/Activity?language=en")]
+        [InlineData("/v1/Activity?pagenumber=1&pagesize=100&activitytype=1023&areafilter=skaSKIC57DA31F859141A1802E86B410FEBD70&active=true&seed=null")]
+        [InlineData("/v1/Activity?pagenumber=1&pagesize=100&activitytype=1023&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
+        [InlineData("/v1/Activity?pagenumber=1&pagesize=10&activitytype=11&locfilter=tvs5228229651CA11D18F1400A02427D15E&odhactive=true&active=true&seed=null")]
+        [InlineData("/v1/Activity?pagenumber=1&pagesize=10&activitytype=511&highlight=true&seed=null")]
+        [InlineData("/v1/Activity?pagenumber=1&pagesize=20&activitytype=Berg&subtype=null&idlist=null&locfilter=null&areafilter=null&distancefilter=null&altitudefilter=null&durationfilter=null&highlight=null&difficultyfilter=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
         public async Task Get_Activities(string url)
         {
             var response = await _client.GetAsync(url);
@@ -63,8 +63,8 @@ namespace OdhApiCoreTests.IntegrationTets
         }
 
         [Theory]
-        [InlineData("/api/Activity/078883A95FF002AA246B5B99DA5BB9D7")]
-        [InlineData("/api/Activity/EC73E28E771A21C431A7F8B5B931007E")]
+        [InlineData("/v1/Activity/078883A95FF002AA246B5B99DA5BB9D7")]
+        [InlineData("/v1/Activity/EC73E28E771A21C431A7F8B5B931007E")]
         public async Task Get_SingleActivity(string url)
         {
             var response = await _client.GetAsync(url);
@@ -97,8 +97,8 @@ namespace OdhApiCoreTests.IntegrationTets
         }
 
         [Theory]
-        [InlineData("/api/Activity/878883A95FF002AA246B5B99DA5BB9D7")]
-        [InlineData("/api/Activity/EC73E28E771A21C431A7F8B5B931007V")]
+        [InlineData("/v1/Activity/878883A95FF002AA246B5B99DA5BB9D7")]
+        [InlineData("/v1/Activity/EC73E28E771A21C431A7F8B5B931007V")]
         public async Task Get_SingleNonExistentActivity(string url)
         {
             var response = await _client.GetAsync(url);
@@ -108,7 +108,7 @@ namespace OdhApiCoreTests.IntegrationTets
         [Fact]
         public async Task Get_ActivityTypes()
         {
-            var response = await _client.GetAsync("/api/ActivityTypes");
+            var response = await _client.GetAsync("/v1/ActivityTypes");
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType?.ToString());
