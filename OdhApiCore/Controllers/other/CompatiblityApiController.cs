@@ -890,6 +890,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventShort/Reduced")]
+        [HttpGet, Route("EventShortReduced")]
         public Task<IActionResult> GetReducedAsync(
             string language = "en", 
             string? startdate = null, 
@@ -921,14 +922,13 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                string select = $"data#>'\\{{Id\\}}' as \"Id\", data#>>'\\{{EventDescription,{language.ToUpper()}\\}}' as \"Name\"";
+                string select = $"data#>'\\{{Id\\}}' as \"Id\", data#>>'\\{{EventDescription{language.ToUpper()}\\}}' as \"Name\"";
 
-                string orderby = $"data#>>'\\{{EventDescription,{language.ToUpper()}\\}}' {sortorder}";
+                string orderby = $"data#>>'\\{{EventDescription{language.ToUpper()}\\}}' {sortorder}";
 
                 //Custom Fields filter
                 if (fields.Length > 0)
                     select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
-
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
                     sourcefilter, eventlocationfilter, active, null, webaddressfilter, lastchange, sortorder);
