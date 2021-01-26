@@ -525,6 +525,7 @@ namespace OdhApiCore.Controllers.api
                     //PostgresSQLHelper.InsertDataIntoTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
 
+                    //check if this works
                     var query = await QueryFactory.Query("eventshort").InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
 
                     return Ok(new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
@@ -663,72 +664,65 @@ namespace OdhApiCore.Controllers.api
         //    }
         //}
 
-        //// PUT: api/EventShort/5
-        //[ApiExplorerSettings(IgnoreApi = true)]
+        // PUT: api/EventShort/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
-        //[HttpPut, Route("api/EventShort/{id}")]
+        [HttpPut, Route("api/EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
-        //public HttpResponseMessage Put(string id, [FromBody] EventShort eventshort)
-        //{
-        //    try
-        //    {
-        //        if (eventshort != null && id != null)
-        //        {
-        //            if (eventshort.EventLocation == null)
-        //                throw new Exception("Eventlocation needed");
+        public IActionResult Put(string id, [FromBody] EventShort eventshort)
+        {
+            try
+            {
+                if (eventshort != null && id != null)
+                {
+                    if (eventshort.EventLocation == null)
+                        throw new Exception("Eventlocation needed");
 
-        //            eventshort.EventLocation = eventshort.EventLocation.ToUpper();
+                    eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
-        //            if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
-        //                throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
-
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-
-        //                conn.Open();
-
-        //                eventshort.ChangedOn = DateTime.Now;
-
-        //                eventshort.AnchorVenueShort = eventshort.AnchorVenue;
-
-        //                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
-        //                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
-
-        //                //TODO on rooms
-        //                foreach (var room in eventshort.RoomBooked)
-        //                {
-        //                    room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
-        //                    room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
-        //                }
-
-        //                //Event Title IT EN
-        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-        //                    eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
-
-        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
-        //                    eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+                    if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
+                        throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
 
-        //                PostgresSQLHelper.UpdateDataFromTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
+                    eventshort.ChangedOn = DateTime.Now;
 
-        //                return Request.CreateResponse(HttpStatusCode.OK, new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
-        //            }
-        //            //}
-        //            //else
-        //            //{
-        //            //    throw new Exception("EventShort cannot be updated");
-        //            //}
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No eventshort Data provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
-        //    }
-        //}
+                    eventshort.AnchorVenueShort = eventshort.AnchorVenue;
+
+                    eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
+                    eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+
+                    //TODO on rooms
+                    if(eventshort.RoomBooked != null)
+                    {
+                        foreach (var room in eventshort.RoomBooked)
+                        {
+                            room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
+                            room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+                        }
+                    }                    
+
+                    //Event Title IT EN
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
+                        eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
+                        eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+
+                    //TODO CHECK IF THIS WORKS     
+                    var updatequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsUpdate(new { Id = eventshort.Id, data = JsonConvert.SerializeObject(eventshort) });
+
+                    return Ok(new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
+                }
+                else
+                {
+                    throw new Exception("No eventshort Data provided");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         //// PUT: api/EventShort/5
         //[ApiExplorerSettings(IgnoreApi = true)]
@@ -799,7 +793,7 @@ namespace OdhApiCore.Controllers.api
         //}
 
         // DELETE: api/EventShort/5
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
         [HttpDelete, Route("api/EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         [ApiExplorerSettings(IgnoreApi = true)]
