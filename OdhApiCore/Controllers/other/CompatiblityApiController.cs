@@ -935,7 +935,7 @@ namespace OdhApiCore.Controllers.api
 
                 var query =
                    QueryFactory.Query()
-                       .SelectRaw("data")
+                       .SelectRaw(select)
                        .From("eventeuracnoi")
                        .EventShortWhereExpression(
                            idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
