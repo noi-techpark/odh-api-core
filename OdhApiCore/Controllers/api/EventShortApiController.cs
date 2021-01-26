@@ -528,7 +528,7 @@ namespace OdhApiCore.Controllers.api
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
 
                     //check if this works
-                    var query = await QueryFactory.Query("eventshort").InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                    var query = await QueryFactory.Query("eventeuracnoi").InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
 
                     return Ok(new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
                         //new CreatedAtActionResult(nameof(GetById), "Products", new { id = product.Id }, product); ; //Request.CreateResponse(HttpStatusCode.Created, new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
@@ -589,7 +589,7 @@ namespace OdhApiCore.Controllers.api
                         eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
 
                     //TODO CHECK IF THIS WORKS     
-                    var updatequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsUpdate(new { Id = eventshort.Id, data = JsonConvert.SerializeObject(eventshort) });
+                    var updatequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsUpdate(new { id = eventshort.Id, data = new JsonRaw(eventshort) });
 
                     return Ok(new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
                 }
