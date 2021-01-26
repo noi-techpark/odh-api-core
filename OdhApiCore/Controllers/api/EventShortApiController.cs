@@ -521,8 +521,12 @@ namespace OdhApiCore.Controllers.api
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
                     eventshort.Id = System.Guid.NewGuid().ToString();
 
+                    string author = "unknown";
+                    if (User.Identity.Name != null)
+                        author = User.Identity.Name;
+
                     //LicenseInfo
-                    eventshort.LicenseInfo = new LicenseInfo() { Author = User.Identity.Name, ClosedData = false, LicenseHolder = "https://noi.bz.it/", License = "CC0" };
+                    eventshort.LicenseInfo = new LicenseInfo() { Author = author, ClosedData = false, LicenseHolder = "https://noi.bz.it/", License = "CC0" };
 
                     //PostgresSQLHelper.InsertDataIntoTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));

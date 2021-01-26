@@ -3124,9 +3124,9 @@ namespace DataModel
     public class LicenseInfo
     {
         //public string DataType { get; set; }
-        public string License { get; set; }
-        public string LicenseHolder { get; set; }
-        public string Author { get; set; }
+        public string? License { get; set; }
+        public string? LicenseHolder { get; set; }
+        public string? Author { get; set; }
         public bool ClosedData { get; set; }
     }
 
