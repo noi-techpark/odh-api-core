@@ -601,8 +601,6 @@ namespace OdhApiCore.Controllers.api
                     var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
                         .UpdateAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
 
-                    var result = QueryFactory.Query();
-
                     return Ok(new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
                 }
                 else
