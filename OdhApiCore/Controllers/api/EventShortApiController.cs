@@ -429,7 +429,7 @@ namespace OdhApiCore.Controllers.api
 
         // POST: api/EventShort
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
         [HttpPost, Route("api/EventShort")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Post([FromBody] EventShort eventshort)
@@ -534,6 +534,129 @@ namespace OdhApiCore.Controllers.api
                 else
                 {
                     throw new Exception("No EventShort Data provided");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT: api/EventShort/5
+        [ApiExplorerSettings(IgnoreApi = true)]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
+        [HttpPut, Route("api/EventShort/{id}")]
+        //[InvalidateCacheOutput("GetReducedAsync")]
+        public IActionResult Put(string id, [FromBody] EventShort eventshort)
+        {
+            try
+            {
+                if (eventshort != null && id != null)
+                {
+                    if (eventshort.EventLocation == null)
+                        throw new Exception("Eventlocation needed");
+
+                    eventshort.EventLocation = eventshort.EventLocation.ToUpper();
+
+                    if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
+                        throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+
+
+                    eventshort.ChangedOn = DateTime.Now;
+
+                    eventshort.AnchorVenueShort = eventshort.AnchorVenue;
+
+                    eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
+                    eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+
+                    //TODO on rooms
+                    if (eventshort.RoomBooked != null)
+                    {
+                        foreach (var room in eventshort.RoomBooked)
+                        {
+                            room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
+                            room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+                        }
+                    }
+
+                    //Event Title IT EN
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
+                        eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
+                        eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+
+                    //TODO CHECK IF THIS WORKS     
+                    var updatequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsUpdate(new { Id = eventshort.Id, data = JsonConvert.SerializeObject(eventshort) });
+
+                    return Ok(new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
+                }
+                else
+                {
+                    throw new Exception("No eventshort Data provided");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE: api/EventShort/5
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        [HttpDelete, Route("api/EventShort/{id}")]
+        //[InvalidateCacheOutput("GetReducedAsync")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                if (id != null)
+                {
+                    var query =
+                         QueryFactory.Query("eventeuracnoi")
+                             .Select("data")
+                             .Where("id", id.ToLower())
+                             .When(FilterClosedData, q => q.FilterClosedData());
+
+                    //TO CHECK First select as JsonRaw then convert to eventshort????
+                    var myevent = await query.FirstOrDefaultAsync<EventShort?>();
+
+                    if (myevent != null)
+                    {
+                        if (myevent.Source != "EBMS")
+                        {
+                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation != "VV")
+                                throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
+
+                            //TODO CHECK IF THIS WORKS     
+                            var deletequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsDelete();
+
+                            return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+                        }
+                        else
+                        {
+                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
+                            {
+                                //TODO CHECK IF THIS WORKS     
+                                var deletequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsDelete();
+
+                                return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+                            }
+                            else
+                            {
+                                throw new Exception("EventShort cannot be deleted");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("EventShort not found");
+                    }
+                }
+                else
+                {
+                    throw new Exception("No EventShort Id provided");
                 }
             }
             catch (Exception ex)
@@ -664,66 +787,6 @@ namespace OdhApiCore.Controllers.api
         //    }
         //}
 
-        // PUT: api/EventShort/5
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
-        [HttpPut, Route("api/EventShort/{id}")]
-        //[InvalidateCacheOutput("GetReducedAsync")]
-        public IActionResult Put(string id, [FromBody] EventShort eventshort)
-        {
-            try
-            {
-                if (eventshort != null && id != null)
-                {
-                    if (eventshort.EventLocation == null)
-                        throw new Exception("Eventlocation needed");
-
-                    eventshort.EventLocation = eventshort.EventLocation.ToUpper();
-
-                    if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
-                        throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
-
-
-                    eventshort.ChangedOn = DateTime.Now;
-
-                    eventshort.AnchorVenueShort = eventshort.AnchorVenue;
-
-                    eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
-                    eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
-
-                    //TODO on rooms
-                    if(eventshort.RoomBooked != null)
-                    {
-                        foreach (var room in eventshort.RoomBooked)
-                        {
-                            room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
-                            room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
-                        }
-                    }                    
-
-                    //Event Title IT EN
-                    if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-                        eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
-
-                    if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
-                        eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
-
-                    //TODO CHECK IF THIS WORKS     
-                    var updatequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsUpdate(new { Id = eventshort.Id, data = JsonConvert.SerializeObject(eventshort) });
-
-                    return Ok(new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
-                }
-                else
-                {
-                    throw new Exception("No eventshort Data provided");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         //// PUT: api/EventShort/5
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
@@ -791,69 +854,6 @@ namespace OdhApiCore.Controllers.api
         //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
         //    }
         //}
-
-        // DELETE: api/EventShort/5
-        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
-        [HttpDelete, Route("api/EventShort/{id}")]
-        //[InvalidateCacheOutput("GetReducedAsync")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> Delete(string id)
-        {
-            try
-            {
-                if (id != null)
-                {
-                    var query =
-                         QueryFactory.Query("eventeuracnoi")
-                             .Select("data")
-                             .Where("id", id.ToLower())
-                             .When(FilterClosedData, q => q.FilterClosedData());
-
-                    //TO CHECK First select as JsonRaw then convert to eventshort????
-                    var myevent = await query.FirstOrDefaultAsync<EventShort?>();
-
-                    if(myevent != null)
-                    {
-                        if (myevent.Source != "EBMS")
-                        {
-                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation != "VV")
-                                throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
-
-                            //TODO CHECK IF THIS WORKS     
-                            var deletequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsDelete();
-
-                            return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
-                        }
-                        else
-                        {
-                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
-                            {
-                                //TODO CHECK IF THIS WORKS     
-                                var deletequery = QueryFactory.Query("eventeuracnoi").Where("id", id).AsDelete();
-
-                                return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
-                            }
-                            else
-                            {
-                                throw new Exception("EventShort cannot be deleted");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("EventShort not found");
-                    }
-                }
-                else
-                {
-                    throw new Exception("No EventShort Id provided");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
 
         //// DELETE: api/EventShort/5
         //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
