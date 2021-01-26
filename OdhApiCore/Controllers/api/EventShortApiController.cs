@@ -430,7 +430,7 @@ namespace OdhApiCore.Controllers.api
         // POST: api/EventShort
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
-        [HttpPost, Route("api/EventShort")]
+        [HttpPost, Route("EventShort")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Post([FromBody] EventShort eventshort)
         {
@@ -496,15 +496,17 @@ namespace OdhApiCore.Controllers.api
                     }
                     else
                     {
-                        //TODO on rooms
-                        foreach (var room in eventshort.RoomBooked)
+                        if(eventshort.RoomBooked != null)
                         {
-                            //Save DAtetime without Offset??
-                            //room.StartDate = DateTime.SpecifyKind(room.StartDate, DateTimeKind.Utc);
-                            //room.EndDate = DateTime.SpecifyKind(room.EndDate, DateTimeKind.Utc);
+                            foreach (var room in eventshort.RoomBooked)
+                            {
+                                //Save DAtetime without Offset??
+                                //room.StartDate = DateTime.SpecifyKind(room.StartDate, DateTimeKind.Utc);
+                                //room.EndDate = DateTime.SpecifyKind(room.EndDate, DateTimeKind.Utc);
 
-                            room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
-                            room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+                                room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
+                                room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+                            }
                         }
                     }
 
@@ -545,7 +547,7 @@ namespace OdhApiCore.Controllers.api
         // PUT: api/EventShort/5
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
-        [HttpPut, Route("api/EventShort/{id}")]
+        [HttpPut, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public IActionResult Put(string id, [FromBody] EventShort eventshort)
         {
@@ -604,7 +606,7 @@ namespace OdhApiCore.Controllers.api
 
         // DELETE: api/EventShort/5
         //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
-        [HttpDelete, Route("api/EventShort/{id}")]
+        [HttpDelete, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Delete(string id)
