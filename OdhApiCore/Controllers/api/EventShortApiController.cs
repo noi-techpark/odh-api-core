@@ -446,6 +446,9 @@ namespace OdhApiCore.Controllers.api
                     if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
                         throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
+                    if (User.IsInRole("VirtualVillageManager")
+                        eventshort.Source = User.Identity.Name;
+
                     if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
                         throw new Exception("Start + End Time not set correctly");
 
@@ -567,6 +570,8 @@ namespace OdhApiCore.Controllers.api
                     if (User.IsInRole("VirtualVillageManager") && eventshort.EventLocation != "VV")
                         throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
+                    if(User.IsInRole("VirtualVillageManager"))
+                        eventshort.Source = User.Identity.Name;
 
                     eventshort.ChangedOn = DateTime.Now;
 
