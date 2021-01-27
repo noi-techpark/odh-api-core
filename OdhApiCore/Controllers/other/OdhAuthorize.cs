@@ -28,22 +28,23 @@ namespace OdhApiCore.Controllers
         {
             bool allowed = false;
 
-            if(context.HttpContext.User.Identity != null && context.HttpContext.User.Identity.IsAuthenticated)
+            if (context.HttpContext.User.Identity != null && context.HttpContext.User.Identity.IsAuthenticated)
             {
                 foreach (var role in _roles)
                 {
                     if (context.HttpContext.User.IsInRole(role))
                         allowed = true;
                 }
-            }
-            
-            if (!allowed)
-            {
-                context.Result = new ForbidResult();
-            }
 
+                if (!allowed)
+                {
+                    context.Result = new ForbidResult();
+                }
+            }
+            else
+                context.Result = new UnauthorizedResult();
+                                    
             //TODO, if Token is invalid POST not workign anymore?
-
         }
     }
 }
