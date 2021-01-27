@@ -116,11 +116,13 @@ namespace OdhApiCore
 
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             {
-                builder.AllowAnyOrigin()
+                builder.AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .SetIsOriginAllowed(hostName => true);
+                //AllowAnyOrigin()
                 //builder.SetIsOriginAllowed(_ => true) //Hack
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
-                       //.AllowCredentials();
+
             }));
 
             services.AddCors(o => o.AddPolicy("DataBrowserCorsPolicy", builder =>
