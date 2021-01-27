@@ -429,8 +429,9 @@ namespace OdhApiCore.Controllers.api
 
         // POST: api/EventShort
         [ApiExplorerSettings(IgnoreApi = true)]
-        [EnableCors("DataBrowserCorsPolicy")]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        //[EnableCors("DataBrowserCorsPolicy")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        [OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPost, Route("EventShort")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Post([FromBody] EventShort eventshort)
@@ -554,7 +555,8 @@ namespace OdhApiCore.Controllers.api
 
         // PUT: api/EventShort/5
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
+        [OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPut, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Put(string id, [FromBody] EventShort eventshort)
@@ -616,7 +618,8 @@ namespace OdhApiCore.Controllers.api
         }
 
         // DELETE: api/EventShort/5
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        [OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpDelete, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         [ApiExplorerSettings(IgnoreApi = true)]

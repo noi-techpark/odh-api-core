@@ -114,25 +114,26 @@ namespace OdhApiCore
 
             services.AddResponseCompression();
 
-            services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
+            services.AddCors(o =>
             {
-                builder.AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials()
-                        .SetIsOriginAllowed(hostName => true);
-                //AllowAnyOrigin()
-                //builder.SetIsOriginAllowed(_ => true) //Hack
-
-            }));
-
-            services.AddCors(o => o.AddPolicy("DataBrowserCorsPolicy", builder =>
-            {
-                builder.WithOrigins("https://localhost:6001")
-                                        .AllowAnyHeader()
-                                        .AllowAnyMethod()
-                                        .AllowCredentials();
-            }));
-
+                o.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials()
+                            .SetIsOriginAllowed(hostName => true);
+                    //AllowAnyOrigin()
+                    //builder.SetIsOriginAllowed(_ => true) //Hack
+                });
+                o.AddPolicy("DataBrowserCorsPolicy", builder =>
+                {
+                    builder.WithOrigins("https://localhost:6001")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod()
+                                            .AllowCredentials();
+                });
+            });
+            
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
