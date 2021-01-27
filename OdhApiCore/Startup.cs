@@ -117,9 +117,18 @@ namespace OdhApiCore
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
+                //builder.SetIsOriginAllowed(_ => true) //Hack
                        .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .AllowCredentials();
+                       .AllowAnyHeader();
+                       //.AllowCredentials();
+            }));
+
+            services.AddCors(o => o.AddPolicy("DataBrowserCorsPolicy", builder =>
+            {
+                builder.WithOrigins("https://localhost:6001")
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod()
+                                        .AllowCredentials();
             }));
 
             services.AddControllers().AddNewtonsoftJson(options =>

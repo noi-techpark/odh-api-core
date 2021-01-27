@@ -429,9 +429,9 @@ namespace OdhApiCore.Controllers.api
 
         // POST: api/EventShort
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
         [HttpPost, Route("EventShort")]
-        //[EnableCors]
+        [EnableCors("DataBrowserCorsPolicy")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Post([FromBody] EventShort eventshort)
         {
