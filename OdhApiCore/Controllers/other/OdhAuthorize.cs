@@ -41,6 +41,9 @@ namespace OdhApiCore.Controllers
             {
                 context.Result = new ForbidResult();
             }
+
+            //TODO, if Token is invalid POST not workign anymore?
+
         }
     }
 }
