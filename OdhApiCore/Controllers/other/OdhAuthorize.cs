@@ -28,10 +28,13 @@ namespace OdhApiCore.Controllers
         {
             bool allowed = false;
 
-            foreach(var role in _roles)
+            if(context.HttpContext.User.Identity != null && context.HttpContext.User.Identity.IsAuthenticated)
             {
-                if (context.HttpContext.User.IsInRole(role))
-                    allowed = true;
+                foreach (var role in _roles)
+                {
+                    if (context.HttpContext.User.IsInRole(role))
+                        allowed = true;
+                }
             }
             
             if (!allowed)
