@@ -118,7 +118,8 @@ namespace OdhApiCore
             {
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
-                       .AllowAnyHeader();
+                       .AllowAnyHeader()
+                       .AllowCredentials();
             }));
 
             services.AddControllers().AddNewtonsoftJson(options =>
