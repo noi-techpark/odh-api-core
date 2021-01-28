@@ -329,13 +329,12 @@ namespace OdhApiCore
             app.UseRouting();
 
             //app.UseCookiePolicy();
-
+            
+            //Important! Register Cors Policz before Using Authentication and Authorization
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-
 
             app.UseResponseCompression();
 
