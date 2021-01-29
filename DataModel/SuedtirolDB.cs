@@ -2156,6 +2156,8 @@ namespace DataModel
         
         //New
         public Nullable<int> WayNumber { get; set; }
+
+        public Nullable<int> Number { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
