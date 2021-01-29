@@ -888,6 +888,32 @@ namespace Helper
                 )
             );
 
+        #region Generated Columns Basic
+
+        public static Query WhereArrayInListOr(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
+                query.Where(q =>
+                {
+                    foreach (var item in list)
+                    {
+                        q = q.OrWhereRaw(
+                            generatedcolumn + " @> array\\[?\\]", item.ToLower()
+                        );
+                    }
+                    return q;
+                });
+
+        public static Query WhereArrayInListAnd(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
+            query.Where(q => 
+            q.WhereRaw(
+                generatedcolumn + " @> array\\[?\\]", list.Select(x => x.ToLower())
+                )
+            );
+
+
+        #endregion
+
+        #region Generated Clolumns Where Expressions
+
         //Filter on Generated Field gen_licenseinfo_closeddata
         public static Query FilterClosedData_GeneratedColumn(this Query query) =>
             query.Where(q =>
@@ -898,16 +924,37 @@ namespace Helper
                 )
             );
         
-        //Filter on Generated Field gen_haslanguage
-        public static Query HasLanguageFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
-         query.Where(q => q.WhereRaw("gen_haslanguage @> array\\[?\\]", languagelist.Select(x => x.ToLower())));
+        //Filter on Generated Field gen_haslanguage AND
+        public static Query HasLanguageFilterAnd_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
+         query.Where(q => q.WhereRaw(
+             "gen_haslanguage @> array\\[?\\]", 
+             languagelist.Select(x => x.ToLower())
+             )
+         );
 
-        //Filter on Generated Field gen_smgtags
-        public static Query SmgTagFilter_GeneratedColumnAND(this Query query, IReadOnlyCollection<string> list) =>
-         query.Where(q => q.WhereRaw("gen_smgtags @> array\\[?\\]", list.Select(x => x.ToLower())));
+        //Filter on Generated Field gen_haslanguage AND
+        public static Query HasLanguageFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
+         query.Where(q =>
+         {
+             foreach (var item in languagelist)
+             {
+                 q = q.OrWhereRaw(
+                     "gen_haslanguage @> array\\[?\\]", item.ToLower()
+                 );
+             }
+             return q;
+         });
 
-        //Filter on Generated Field gen_smgtags
-        public static Query SmgTagFilter_GeneratedColumnOR(this Query query, IReadOnlyCollection<string> list) =>
+        //Filter on Generated Field gen_smgtags AND
+        public static Query SmgTagFilterAnd_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
+         query.Where(q => q.WhereRaw(
+             "gen_smgtags @> array\\[?\\]", 
+             list.Select(x => x.ToLower())
+             )
+         );
+
+        //Filter on Generated Field gen_smgtags OR
+        public static Query SmgTagFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
         query.Where(q =>
         {
             foreach (var item in list)
@@ -918,5 +965,28 @@ namespace Helper
             }
             return q;
         });
+        
+        //Filter on Generated Field gen_active 
+        public static Query ActiveFilter_GeneratedColumn(this Query query, bool? active) =>
+            query.When(
+                active != null,
+                query => query.WhereRaw(
+                    "gen_active", 
+                    active ?? false
+                )
+            );
+
+        //Filter on Generated Field gen_odhactive 
+        public static Query OdhActiveFilter_GeneratedColumn(this Query query, bool? odhactive) =>
+            query.When(
+                odhactive != null,
+                query => query.WhereRaw(
+                    "gen_odhactive",
+                    odhactive ?? false
+                )
+            );
+
     }
+
+    #endregion
 }

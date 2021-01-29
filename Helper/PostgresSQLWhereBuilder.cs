@@ -158,7 +158,7 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AreaFilter(arealist)
-                .When(poitypelist.Count > 0, q => q.SmgTagFilter_GeneratedColumnAND(poitypelist))
+                .When(poitypelist.Count > 0, q => q.SmgTagFilterAnd_GeneratedColumn(poitypelist))
                 //.PoiTypeFilterOnTags(poitypelist)
                 .PoiSubTypeFilterOnTags(subtypelist)
                 .SmgTagFilter(smgtaglist)
@@ -167,7 +167,7 @@ namespace Helper
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(languagelist.Count > 0, q => q.HasLanguageFilter_GeneratedColumn(languagelist))
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());                
         }
 
