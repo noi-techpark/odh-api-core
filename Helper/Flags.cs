@@ -680,8 +680,8 @@ namespace Helper
     [Flags]
     public enum SmgPoiSubTypeFlagEssenTrinken
     {
-        [Description("Allgemein")]
-        Allgemein = 1,
+        [Description("Andere Gastronomiebetriebe")]
+        AndereGastronomiebetriebe = 1,
         [Description("Weinkellereien")]
         Weinkellereien = 1 << 1,
         [Description("Restaurants Gasthäuser")]
@@ -1099,7 +1099,7 @@ namespace Helper
     }
 
     [Flags]
-    public enum SmgPoiPoiTypeFlagEssenTrinkenAllgemein
+    public enum SmgPoiPoiTypeFlagAndereGastronomiebetriebe
     {
         [Description("Pub Disco")]
         PubDisco = 1,
