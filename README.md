@@ -27,6 +27,7 @@ Extensions active on DB
 * extension pg_trgm;
 
 Test Server on https://api.tourism.testingmachine.eu
+Production Server on https://tourism.api.opendatahub.bz.it
 
 ## Getting started:
 
