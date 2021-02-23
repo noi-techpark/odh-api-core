@@ -504,6 +504,8 @@ namespace DataModel
         public ICollection<string> ValidForEntity { get; set; }
 
         public string? MainEntity { get; set; }
+
+        public ICollection<string> Source { get; set; }
     }
 
     #endregion
