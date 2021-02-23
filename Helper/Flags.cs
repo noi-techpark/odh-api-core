@@ -1155,9 +1155,9 @@ namespace Helper
         [Description("Buschen Hofschänke")]
         BuschenHofschaenke = 1,
         [Description("Buschenschank")]
-        Buschenschank = 1,
+        Buschenschank = 1 << 1,
         [Description("Hofschank")]
-        Hofschank = 1
+        Hofschank = 1 << 2
     }
 
     [Flags]
