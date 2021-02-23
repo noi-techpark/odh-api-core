@@ -1132,10 +1132,10 @@ namespace Helper
         Vinotheken = 1 << 3,
         [Description("Bars Cafes Bistros")]
         BarsCafesBistros = 1 << 4,
-        [Description("Michelin Sternerestaurants")]
-        michelin = 1 << 5,
-        [Description("Gault Millau Südtirol")]
-        gaultmillau = 1 << 6
+        [Description("Gasthaus")]
+        Gasthaus = 1 << 5,
+        [Description("Gasthof")]
+        Gasthof = 1 << 6
     }
 
     [Flags]
