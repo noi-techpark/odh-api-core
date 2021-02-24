@@ -261,7 +261,7 @@ namespace OdhApiCore
                     {
                         Password = new OpenApiOAuthFlow
                         {
-                           TokenUrl = new Uri("https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token")
+                           TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
                         }                        
                     },
                     BearerFormat = "JWT",
