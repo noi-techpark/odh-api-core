@@ -68,6 +68,17 @@ namespace Helper
                     query.OrderByRaw(overwritestandardorder != null ? overwritestandardorder : "data#>>'\\{Shortname\\}' ASC")
             };
 
+        public static Query ApplyOrdering_GeneratedColumns(this Query query, PGGeoSearchResult geosearchresult, string? rawsort, string? overwritestandardorder = null) =>
+            (geosearchresult, rawsort) switch
+            {
+                (PGGeoSearchResult geosr, _) when geosr.geosearch =>
+                    query.GeoSearchFilterAndOrderby_GeneratedColumns(geosr),
+                (_, string raw) =>
+                    query.OrderByRaw(RawQueryParser.Transformer.TransformSort(raw)),
+                _ =>
+                    query.OrderByRaw(overwritestandardorder != null ? overwritestandardorder : "data#>>'\\{Shortname\\}' ASC")
+            };
+
         public static Query ApplyRawFilter(this Query query, string? rawFilter)
         {
             static string jsonSerializer(object value) => Newtonsoft.Json.JsonConvert.SerializeObject(value);

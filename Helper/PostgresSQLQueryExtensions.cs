@@ -971,7 +971,7 @@ namespace Helper
             query.When(
                 active != null,
                 query => query.WhereRaw(
-                    "gen_active", 
+                    "gen_active = ?", 
                     active ?? false
                 )
             );
@@ -981,7 +981,7 @@ namespace Helper
             query.When(
                 odhactive != null,
                 query => query.WhereRaw(
-                    "gen_odhactive",
+                    "gen_odhactive = ?",
                     odhactive ?? false
                 )
             );

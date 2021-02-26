@@ -129,7 +129,7 @@ namespace OdhApiCore.Controllers.api
                             filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
                 
                 return await query.GetAsync<object>();
 
