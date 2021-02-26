@@ -986,6 +986,16 @@ namespace Helper
                 )
             );
 
+        //Filter on Generated Field gen_lastchange 
+        public static Query LastChangedFilter_GeneratedColumn(this Query query, string? updatefrom) =>
+            query.When(
+                updatefrom != null,
+                query => query.WhereRaw(
+                    "to_date(gen_lastchange, 'YYYY-MM-DD') > date(?)",
+                    updatefrom
+                )
+            );
+
     }
 
     #endregion

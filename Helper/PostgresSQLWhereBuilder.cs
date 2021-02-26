@@ -111,21 +111,21 @@ namespace Helper
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
-                .AreaFilter(arealist)
-                //.ActivityTypeFilter(activitytypelist)
-                .ActivityTypeFilterOnTags(activitytypelist)
-                .ActivitySubTypeFilterOnTags(subtypelist)
+                .AreaFilter(arealist)                
+                .When(activitytypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(activitytypelist))  //.ActivityTypeFilterOnTags(activitytypelist)
+                .When(subtypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(subtypelist)) //.ActivitySubTypeFilterOnTags(subtypelist)
                 .DifficultyFilter(difficultylist)
                 .DistanceFilter(distance, distancemin, distancemax)
                 .DurationFilter(duration, durationmin, durationmax)
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
-                .HighlightFilter(highlight)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .HighlightFilter(highlight)                
+                .ActiveFilter_GeneratedColumn(activefilter) //.ActiveFilter(activefilter)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .LastChangedFilter_GeneratedColumn(lastchange) //.LastChangedFilter(lastchange)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))    //OK GENERATED COLUMNS
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Poi
