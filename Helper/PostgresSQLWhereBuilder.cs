@@ -153,22 +153,21 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .DistrictFilter(districtlist)
-                .LocFilterMunicipalityFilter(municipalitylist)
-                .LocFilterTvsFilter(tourismvereinlist)
-                .LocFilterRegionFilter(regionlist)
-                .AreaFilter(arealist)
-                .When(poitypelist.Count > 0, q => q.SmgTagFilterAnd_GeneratedColumn(poitypelist))
-                //.PoiTypeFilterOnTags(poitypelist)
-                .PoiSubTypeFilterOnTags(subtypelist)
-                .SmgTagFilter(smgtaglist)
+                .DistrictFilter(districtlist)                       //Use generated columns also here?
+                .LocFilterMunicipalityFilter(municipalitylist)      //Use generated columns also here?
+                .LocFilterTvsFilter(tourismvereinlist)              //Use generated columns also here?
+                .LocFilterRegionFilter(regionlist)                  //Use generated columns also here?
+                .AreaFilter(arealist)                               //Use generated columns also here?
+                .When(poitypelist.Count > 0, q => q.SmgTagFilterAnd_GeneratedColumn(poitypelist))  //OK GENERATED COLUMNS //.PoiTypeFilterOnTags(poitypelist)
+                .When(subtypelist.Count > 0, q => q.SmgTagFilterAnd_GeneratedColumn(subtypelist))  //OK GENERATED COLUMNS //.PoiSubTypeFilterOnTags(subtypelist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .HighlightFilter(highlight)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());                
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))    //OK GENERATED COLUMNS
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());                 //OK GENERATED COLUMNS   
         }
 
         //Return Where and Parameters for Gastronomy
