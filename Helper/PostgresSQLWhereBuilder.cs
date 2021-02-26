@@ -158,8 +158,8 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)              //Use generated columns also here?
                 .LocFilterRegionFilter(regionlist)                  //Use generated columns also here?
                 .AreaFilter(arealist)                               //Use generated columns also here?
-                .When(poitypelist.Count > 0, q => q.SmgTagFilterAnd_GeneratedColumn(poitypelist))  //OK GENERATED COLUMNS //.PoiTypeFilterOnTags(poitypelist)
-                .When(subtypelist.Count > 0, q => q.SmgTagFilterAnd_GeneratedColumn(subtypelist))  //OK GENERATED COLUMNS //.PoiSubTypeFilterOnTags(subtypelist)
+                .When(poitypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(poitypelist))  //OK GENERATED COLUMNS //.PoiTypeFilterOnTags(poitypelist)
+                .When(subtypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(subtypelist))  //OK GENERATED COLUMNS //.PoiSubTypeFilterOnTags(subtypelist)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .HighlightFilter(highlight)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
