@@ -208,7 +208,7 @@ namespace Helper
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Activity
@@ -251,7 +251,7 @@ namespace Helper
                 .SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Article
@@ -283,7 +283,7 @@ namespace Helper
                 .SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Event
@@ -331,7 +331,7 @@ namespace Helper
                 .SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Accommodation
@@ -380,7 +380,7 @@ namespace Helper
                 .SmgTagFilter(smgtaglist)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Common
@@ -399,7 +399,7 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
                 .VisibleInSearchFilter(visibleinsearch)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Wine
@@ -418,7 +418,7 @@ namespace Helper
                 .LastChangedFilter(lastchange)
                 .CompanyIdFilter(companyid)
                 .WineIdFilter(wineid)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for WebCamInfo
@@ -444,7 +444,7 @@ namespace Helper
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Measuringpoint
@@ -476,7 +476,7 @@ namespace Helper
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Measuringpoint
@@ -510,7 +510,7 @@ namespace Helper
                 .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Venue
@@ -559,7 +559,8 @@ namespace Helper
                 //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
                 //.SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                
-                .When(filterClosedData, q => q.FilterClosedDataVenues());
+                //.When(filterClosedData, q => q.FilterClosedDataVenues());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
 
@@ -597,7 +598,7 @@ namespace Helper
             return query
                 .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
                 .ODHTagValidForEntityFilter(smgtagtypelist)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
     }
