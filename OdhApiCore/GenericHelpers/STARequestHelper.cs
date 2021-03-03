@@ -72,6 +72,14 @@ namespace OdhApiCore.GenericHelpers
 
                 var data = await query.GetAsync<object>();
 
+                //Json has to much Escapes! TO RESOLVE
+                var datatransformed = new List<JsonRaw>();
+
+                foreach(var myobject in data)
+                {
+                    datatransformed.Add(new JsonRaw(myobject));
+                }
+
                 //Save json
 
                 string fileName = jsondir + "\\STAAccommodations_" + language + ".json";
@@ -93,7 +101,7 @@ namespace OdhApiCore.GenericHelpers
                             2,                    
                             (uint)data.Count(),
                             null,
-                            data,
+                            datatransformed,
                             null));
 
                     Byte[] mybyte = new UTF8Encoding(true).GetBytes(sz);
