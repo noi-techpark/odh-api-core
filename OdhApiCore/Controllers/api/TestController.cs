@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
+using OdhApiCore.Filters;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -30,6 +31,7 @@ namespace OdhApiCore.Controllers.api
             this.settings = settings;
         }
 
+        [TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
         [HttpGet, Route("TestObject")]
         public IActionResult GetTagObject(CancellationToken cancellationToken)
         {

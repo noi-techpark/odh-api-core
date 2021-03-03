@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using DataModel;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using OdhApiCore.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,27 +21,50 @@ namespace OdhApiCore.Filters
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            //Getting Action name example actionid == "GetAccommodations"
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
 
-            //Configure here the Actions where Interceptor should do something and configure it globally
+            if (GetActionsToIntercept(actionid))
+            {
+                //Configure here the Actions where Interceptor should do something and configure it globally
 
-            //Getting the Querystrings
-            var actionarguments = context.ActionArguments;
+                //Getting the Querystrings
+                var actionarguments = context.ActionArguments;
+                //bool? availabilitycheck = ((LegacyBool)actionarguments["availabilitycheck"]).Value;  //EX
 
-            //actionarguments["availabilitycheck"]).Value;
+                //Getting Referer
+                var httpheaders = context.HttpContext.Request.Headers;
+                var referer = httpheaders["Referer"].ToString();
 
-            await base.OnActionExecutionAsync(context, next);
+                //actionarguments["availabilitycheck"]).Value;
+
+                await GetReturnObject(context, actionid, actionarguments, httpheaders);                
+            }
+            else
+            {
+                await base.OnActionExecutionAsync(context, next);
+            }
+           
+
         }
 
-        public bool GetActionsToIntercept()
+        //public override async Task OnActionExecuting(HttpActionContext context, ActionExecutionDelegate next)
+        //{
+
+        //}
+
+        public bool GetActionsToIntercept(string? actionid)
         {
-            return false;
+            if (actionid == "GetTagObject")
+                return true;
+            else
+                return false;
         }
 
-        public void GetReturnObject(string action)
+        public async Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
         {
+            context.Result = new OkObjectResult(new JsonRaw("hallo " + action));
 
+            return;
         }
     }
 }
