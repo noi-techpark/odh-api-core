@@ -135,7 +135,7 @@ namespace OdhApiCore.GenericHelpers
                             filterClosedData: true)
                     .OrderByRaw(orderby);
 
-                var data = await query.GetAsync<JsonRaw?>();
+                var data = await query.GetAsync<object>();
 
                 //Save json
 

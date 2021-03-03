@@ -63,22 +63,25 @@ namespace OdhApiCore.Responses
         {
             string? previouspage = null;
             string? nextpage = null;
-            var query = url.ActionContext.HttpContext.Request.Query;
-            var queryDict = query.ToDictionary(x => x.Key, x => x.Value.ToString());
-            if (seed != null)
+            if (url != null)
             {
-                queryDict["seed"] = seed;
-            }
-            if (pagenumber > 1 && pagenumber <= totalpages)
-            {
-                queryDict["pagenumber"] = (pagenumber - 1).ToString();
-                previouspage = url.Link(null, queryDict);
-            }
-            if (pagenumber < totalpages)
-            {
-                queryDict["pagenumber"] = (pagenumber + 1).ToString();
-                nextpage = url.Link(null, queryDict);
-            }
+                var query = url.ActionContext.HttpContext.Request.Query;
+                var queryDict = query.ToDictionary(x => x.Key, x => x.Value.ToString());
+                if (seed != null)
+                {
+                    queryDict["seed"] = seed;
+                }
+                if (pagenumber > 1 && pagenumber <= totalpages)
+                {
+                    queryDict["pagenumber"] = (pagenumber - 1).ToString();
+                    previouspage = url.Link(null, queryDict);
+                }
+                if (pagenumber < totalpages)
+                {
+                    queryDict["pagenumber"] = (pagenumber + 1).ToString();
+                    nextpage = url.Link(null, queryDict);
+                }
+            }            
             return (previouspage, nextpage);
         }
 
