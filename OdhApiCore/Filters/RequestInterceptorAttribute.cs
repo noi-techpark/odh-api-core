@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using OdhApiCore.Responses;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -62,8 +63,19 @@ namespace OdhApiCore.Filters
         }
 
         public async Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
-        {
-            context.Result = new OkObjectResult(new JsonRaw("hallo " + action));
+        {     
+            var language = (string?)actionarguments["language"];
+
+            using (StreamReader r = new StreamReader(settings.JsonConfig.Jsondir + "\\STAAccommodations_" + language.ToLower() + ".json"))
+            {
+                string json = r.ReadToEndAsync().Result;
+
+                //var response = this.Request.CreateResponse(HttpStatusCode.OK);
+                //response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                //return ResponseMessage(response);
+
+                context.Result = new OkObjectResult(new JsonRaw(json));
+            }
 
             return;
         }

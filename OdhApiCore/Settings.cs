@@ -116,7 +116,7 @@ namespace OdhApiCore
             var xml = this.configuration.GetSection("XmlConfig");
             this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
             var json = this.configuration.GetSection("JsonConfig");
-            this.jsonConfig = new JsonConfig(xml.GetValue<string>("Jsondir", ""));
+            this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
         }
