@@ -203,7 +203,7 @@ namespace Helper
                 .CategoryCodeFilter(categorycodeslist)
                 .CuisineCodeFilter(facilitycodeslist)
                 .DishCodeFilter(dishcodeslist)
-                .SmgTagFilter(smgtaglist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
@@ -248,7 +248,7 @@ namespace Helper
                 .HighlightFilter(highlight)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
@@ -280,7 +280,7 @@ namespace Helper
                 .HighlightFilter(highlight)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
@@ -328,7 +328,7 @@ namespace Helper
                 .SourceFilterMeta(sourcelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
@@ -377,7 +377,7 @@ namespace Helper
                 //.HasLanguageFilter(languagelist)
                 .ActiveFilter(activefilter)
                 .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
@@ -552,7 +552,7 @@ namespace Helper
                 .VenueFeatureFilter(featurelist)
                 .VenueSetupTypeFilter(setuptypelist)
                 .VenueRoomCountFilter(roomcount, roomcountmin, roomcountmax)
-                .VenueODHTagFilter(smgtaglist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.VenueODHTagFilter(smgtaglist)
                 .VenueLastChangedFilter(lastchange)
                 .VenueSourceFilter(sourcelist)
                 .VenueHasLanguageFilter(languagelist)
