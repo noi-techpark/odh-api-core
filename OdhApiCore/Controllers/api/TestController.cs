@@ -33,7 +33,7 @@ namespace OdhApiCore.Controllers.api
 
         [TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
         [HttpGet, Route("TestObject")]
-        public IActionResult GetTagObject(CancellationToken cancellationToken)
+        public IActionResult GetTagObject(string language = null, CancellationToken cancellationToken = default)
         {
             var tag = new SmgTags() { Id = "test", MainEntity = "Blah", Shortname = "hallo", TagName = null, ValidForEntity = new List<string>() { "hallo" } };
 
