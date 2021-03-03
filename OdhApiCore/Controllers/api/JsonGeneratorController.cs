@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using OdhApiCore.Filters;
+using OdhApiCore.GenericHelpers;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -30,19 +31,19 @@ namespace OdhApiCore.Controllers.api
         }
 
         [HttpGet, Route("STA/JsonPoi")]
-        public IActionResult ProducePoiSTAJson(CancellationToken cancellationToken)
+        public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
         {
-            //TODO
-            
-            return Ok("json generated");
+            await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
+
+            return Ok("json odhactivitypoi generated");
         }
 
         [HttpGet, Route("STA/JsonAccommodation")]
-        public IActionResult ProduceAccoSTAJson(CancellationToken cancellationToken)
+        public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
         {
-            //TODO
+            await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
 
-            return Ok("json generated");
+            return Ok("json accommodations generated");
         }
     }
 }

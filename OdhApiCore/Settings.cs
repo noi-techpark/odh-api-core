@@ -54,6 +54,16 @@ namespace OdhApiCore
         public string XmldirWeather { get; private set; }        
     }
 
+    public class JsonConfig
+    {
+        public JsonConfig(string jsondir)
+        {
+            this.Jsondir = jsondir;            
+        }
+
+        public string Jsondir { get; private set; }
+    }
+
     public class S3ImageresizerConfig
     {
         public S3ImageresizerConfig(string url, string bucketaccesspoint, string accesskey, string secretkey)
@@ -77,6 +87,7 @@ namespace OdhApiCore
         LcsConfig LcsConfig { get; }
         SiagConfig SiagConfig { get; }
         XmlConfig XmlConfig { get; }
+        JsonConfig JsonConfig { get; }
         S3ImageresizerConfig S3ImageresizerConfig { get; }
     }
 
@@ -88,6 +99,7 @@ namespace OdhApiCore
         private readonly LcsConfig lcsConfig;
         private readonly SiagConfig siagConfig;
         private readonly XmlConfig xmlConfig;
+        private readonly JsonConfig jsonConfig;
         private readonly S3ImageresizerConfig s3imageresizerConfig;
 
         public Settings(IConfiguration configuration)
@@ -103,6 +115,8 @@ namespace OdhApiCore
             this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
             var xml = this.configuration.GetSection("XmlConfig");
             this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
+            var json = this.configuration.GetSection("JsonConfig");
+            this.jsonConfig = new JsonConfig(xml.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
         }
@@ -113,6 +127,8 @@ namespace OdhApiCore
         public LcsConfig LcsConfig => this.lcsConfig;
         public SiagConfig SiagConfig => this.siagConfig;
         public XmlConfig XmlConfig => this.xmlConfig;
+        public JsonConfig JsonConfig => this.jsonConfig;
+
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
     }
 }

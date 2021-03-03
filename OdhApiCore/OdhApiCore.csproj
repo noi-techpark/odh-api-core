@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="xml\STACategories.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="3.5.6.1" />
     <PackageReference Include="CsvHelper" Version="15.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
@@ -33,7 +37,6 @@
   <ItemGroup>
     <Folder Include="docker\postgres\" />
     <Folder Include="wwwroot\jsongenerated\" />
-    <Folder Include="xml\" />
     <Folder Include="wwwroot\json\" />
   </ItemGroup>
 

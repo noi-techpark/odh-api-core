@@ -2,6 +2,7 @@
 using Helper;
 using Newtonsoft.Json;
 using OdhApiCore.Controllers;
+using OdhApiCore.Controllers.api;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
@@ -15,9 +16,8 @@ using System.Xml.Linq;
 namespace OdhApiCore.GenericHelpers
 {
     public class STARequestHelper
-    {
-      
-        private static List<string> GetUrlstoCheck(string domain)
+    {      
+        public static List<string> GetUrlstoCheck(string domain)
         {
             List<string> urltorequest = new List<string>();
             urltorequest.Add(domain + "/v1/Poi?language=de&poitype=447&active=true&fields=Id,Detail.de.Title,ContactInfos.de.City&pagesize=20000");
@@ -50,28 +50,23 @@ namespace OdhApiCore.GenericHelpers
             {
                 string select = "data->'Id' as Id, data->'AccoDetail'->'" + language + "'->'Name', data->'AccoDetail'->'" + language + "'->'City'";
                 string orderby = "data ->>'Shortname' ASC";
-                List<string> fieldselectorlist = new List<string>() { "Id", "AccoDetail." + language + ".Name", "AccoDetail." + language + ".City" };
+                //List<string> fieldselectorlist = new List<string>() { "Id", "AccoDetail." + language + ".Name", "AccoDetail." + language + ".City" };
          
-                AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
-                   queryFactory, idfilter: null, locfilter: null, boardfilter: null, categoryfilter: null, typefilter: null,
-                   featurefilter: null, featureidfilter: null, badgefilter: null, themefilter: null, altitudefilter: null, smgtags: null, activefilter: true,
-                   smgactivefilter: null, bookablefilter: null, lastchange: null, default);
-
-                var query =
+                   var query =
                   queryFactory.Query()
                       .SelectRaw(select)
                       .From("accommodations")
                       .AccommodationWhereExpression(
-                            idlist: myhelper.idlist, accotypelist: myhelper.accotypelist,
-                            categorylist: myhelper.categorylist, featurelist: myhelper.featurelist, featureidlist: myhelper.featureidlist,
-                            badgelist: myhelper.badgelist, themelist: myhelper.themelist,
-                            boardlist: myhelper.boardlist, smgtaglist: myhelper.smgtaglist,
-                            districtlist: myhelper.districtlist, municipalitylist: myhelper.municipalitylist,
-                            tourismvereinlist: myhelper.tourismvereinlist, regionlist: myhelper.regionlist,
-                            apartmentfilter: myhelper.apartment, bookable: myhelper.bookable, altitude: myhelper.altitude,
-                            altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
-                            activefilter: myhelper.active, smgactivefilter: myhelper.smgactive,
-                            searchfilter: null, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
+                            idlist: new List<string>(), accotypelist: new List<string>(),
+                            categorylist: new List<string>(), featurelist: new Dictionary<string, bool>(), featureidlist: new List<string>(),
+                            badgelist: new List<string>(), themelist: new Dictionary<string, bool>(),
+                            boardlist: new List<string>(), smgtaglist: new List<string>(),
+                            districtlist: new List<string>(), municipalitylist: new List<string>(),
+                            tourismvereinlist: new List<string>(), regionlist: new List<string>(),
+                            apartmentfilter: null, bookable: null, altitude: false,
+                            altitudemin: 0, altitudemax: 0,
+                            activefilter: true, smgactivefilter: null,
+                            searchfilter: null, language: language, lastchange: null, languagelist: new List<string>() { language },
                             filterClosedData: true)
                       .OrderByRaw(orderby)
                  ;
@@ -93,13 +88,14 @@ namespace OdhApiCore.GenericHelpers
                 {
                     //var sz = JsonConvert.SerializeObject(data);
 
-                    var sz = JsonConvert.SerializeObject(ResponseHelpers.GetResult(
-                    1,
-                    2,
-                    (uint)data.Count(),
-                    null,
-                    data,
-                    null));
+                    var sz = JsonConvert.SerializeObject(
+                        ResponseHelpers.GetResult(
+                            1,                    
+                            2,                    
+                            (uint)data.Count(),
+                            null,
+                            data,
+                            null));
 
                     Byte[] mybyte = new UTF8Encoding(true).GetBytes(sz);
                     fs.Write(mybyte, 0, mybyte.Length);
@@ -109,50 +105,69 @@ namespace OdhApiCore.GenericHelpers
             }
         }
 
-        //public static void GenerateJSONODHActivityPoiForSTA(QueryFactory queryFactory, string jsondir, string xmlconfig)
-        //{           
-        //        List<string> languagelist = new List<string>() { "de", "it", "en" };
+        public static async Task GenerateJSONODHActivityPoiForSTA(QueryFactory queryFactory, string jsondir, string xmlconfig)
+        {
+            List<string> languagelist = new List<string>() { "de", "it", "en" };
 
-        //    foreach (var language in languagelist)
-        //    {               
-        //        string select = "data->'Id' as Id, data->'Detail'->'" + language + "'->'Title', data->'ContactInfos'->'" + language + "'->'City'";
+            foreach (var language in languagelist)
+            {
+                string select = "data->'Id' as Id, data->'Detail'->'" + language + "'->'Title', data->'ContactInfos'->'" + language + "'->'City'";
 
-        //        string orderby = "data ->>'Shortname' ASC";
-        //        List<string> fieldselectorlist = new List<string>() { "Id", "Detail." + language + ".Title", "ContactInfos." + language + ".City" };
+                string orderby = "data ->>'Shortname' ASC";
+                //List<string> fieldselectorlist = new List<string>() { "Id", "Detail." + language + ".Title", "ContactInfos." + language + ".City" };
 
+                var categoriestoretrieve = GetSTACategoriesToFilter(xmlconfig);
 
-        //        var categoriestoretrieve = GetSTACategoriesToFilter(xmlconfig);
+                var query =
+                queryFactory.Query()
+                    .SelectRaw(select)
+                    .From("smgpois")
+                        .ODHActivityPoiWhereExpression(
+                            idlist: new List<string>(), typelist: new List<string>(),
+                            subtypelist: new List<string>(), poitypelist: new List<string>(),
+                            smgtaglist: categoriestoretrieve, districtlist: new List<string>(),
+                            municipalitylist: new List<string>(), tourismvereinlist: new List<string>(),
+                            regionlist: new List<string>(), arealist: new List<string>(),
+                            sourcelist: new List<string>(), languagelist: new List<string>() { language },
+                            highlight: null,
+                            activefilter: true, smgactivefilter: null,
+                            searchfilter: null, language: language, lastchange: null,
+                            filterClosedData: true)
+                    .OrderByRaw(orderby);
 
-        //        var where = PostgresSQLWhereBuilder.CreateSmgPoiWhereExpression(new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>() { language },
-        //            categoriestoretrieve, new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), null, true, null, null, null);
-        //        string whereexpression = where.Item1;
+                var data = await query.GetAsync<JsonRaw?>();
 
-        //        var data = PostgresSQLHelper.SelectFromTableDataAsJsonParametrizedJsonRaw(conn, "smgpoisopen", select, whereexpression, where.Item2, orderby, 0, null, fieldselectorlist);
+                //Save json
 
-        //        //Save json
+                string fileName = jsondir + "\\STAOdhActivitiesPois_" + language + ".json";
 
-        //        string fileName = jsondir + "\\STAOdhActivitiesPois_" + language + ".json";
+                // Check if file already exists. If yes, delete it. 
+                if (System.IO.File.Exists(fileName))
+                {
+                    System.IO.File.Delete(fileName);
+                }
 
-        //        // Check if file already exists. If yes, delete it. 
-        //        if (System.IO.File.Exists(fileName))
-        //        {
-        //            System.IO.File.Delete(fileName);
-        //        }
+                // Create a new file 
+                using (FileStream fs = System.IO.File.Create(fileName))
+                {
+                    //var sz = JsonConvert.SerializeObject(data);
 
-        //        // Create a new file 
-        //        using (FileStream fs = System.IO.File.Create(fileName))
-        //        {
-        //            //var sz = JsonConvert.SerializeObject(data);
+                    var sz = JsonConvert.SerializeObject(
+                         ResponseHelpers.GetResult(
+                            1,
+                            2,
+                            (uint)data.Count(),
+                            null,
+                            data,
+                            null));
 
-        //            var sz = JsonConvert.SerializeObject(PostgresSQLHelper.GetResult(1, 1, data.Count(), "", data));
+                    Byte[] mybyte = new UTF8Encoding(true).GetBytes(sz);
+                    fs.Write(mybyte, 0, mybyte.Length);
 
-        //            Byte[] mybyte = new UTF8Encoding(true).GetBytes(sz);
-        //            fs.Write(mybyte, 0, mybyte.Length);
-
-        //            Console.WriteLine("ODH Activities & Pois for STA created " + language);
-        //        }
-        //    }
-        //}
+                    Console.WriteLine("ODH Activities & Pois for STA created " + language);
+                }
+            }
+        }
 
         public static List<string> GetSTACategoriesToFilter(string xmldir)
         {
