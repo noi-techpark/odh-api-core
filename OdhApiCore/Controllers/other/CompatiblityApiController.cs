@@ -1196,7 +1196,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query()
                         .SelectRaw(select)
                         .From(tablename)
-                        .CommonWhereExpression(languagelist: new List<string>(), lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch,
+                        .CommonWhereExpression(languagelist: new List<string>(), lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
                                                searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
                         .OrderByRaw(orderby)
                         .GeoSearchFilterAndOrderby(geosearchresult);
