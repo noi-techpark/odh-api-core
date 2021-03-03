@@ -19,14 +19,13 @@ namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]    
     [ApiController]
-    public class JsonGeneratorController : ControllerBase
-    {
-        private readonly IWebHostEnvironment env;
+    public class JsonGeneratorController : OdhController
+    {        
         private readonly ISettings settings;
 
-        public JsonGeneratorController(IWebHostEnvironment env, ISettings settings)           
+        public JsonGeneratorController(IWebHostEnvironment env, ISettings settings, ILogger<AlpineBitsController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
-            this.env = env;
             this.settings = settings;
         }
 
