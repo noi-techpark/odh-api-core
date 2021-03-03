@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Folder Include="docker\postgres\" />
+    <Folder Include="wwwroot\jsongenerated\" />
     <Folder Include="xml\" />
     <Folder Include="wwwroot\json\" />
   </ItemGroup>

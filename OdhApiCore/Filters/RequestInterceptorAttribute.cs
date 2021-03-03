@@ -44,6 +44,7 @@ namespace OdhApiCore.Filters
                 await base.OnActionExecutionAsync(context, next);
             }
            
+            //Maybe with config like "action", match (parameter:blah) (referer:blah) return "json", withlanguage true/false
 
         }
 
