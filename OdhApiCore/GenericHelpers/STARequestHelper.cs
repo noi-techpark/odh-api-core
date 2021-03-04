@@ -93,7 +93,7 @@ namespace OdhApiCore.GenericHelpers
 
             foreach (var language in languagelist)
             {
-                string select = "data->'Id' as \"Id\", data->'Detail'->'" + language + "'->'Title' AS \"Detail." + language + ".Title\", data->'ContactInfos'->'" + language + "'->'City' AS \"ContactInfos." + language + ".City\"";
+                string select = $"data->'Id' as \"Id\", data->'Detail'->'{language}'->>'Title' AS \"Detail.{language}.Title\", data->'ContactInfos'->'{language}'->>'City' AS \"ContactInfos.{language}.City\"";
 
                 string orderby = "data ->>'Shortname' ASC";
                 //List<string> fieldselectorlist = new List<string>() { "Id", "Detail." + language + ".Title", "ContactInfos." + language + ".City" };
@@ -117,7 +117,8 @@ namespace OdhApiCore.GenericHelpers
                             filterClosedData: true)
                     .OrderByRaw(orderby);
 
-                var data = await query.GetAsync();
+                var data = (await query.GetAsync()).ToList();
+                var result = ResponseHelpers.GetResult(1, 1, (uint)data.Count, null, data, null);
 
                 //Save json
 
@@ -125,7 +126,7 @@ namespace OdhApiCore.GenericHelpers
 
                 using (var writer = File.CreateText(fileName))
                 {
-                    serializer.Serialize(writer, ResponseHelpers.GetResult(1,2,(uint)data.Count(),null,data,null));
+                    serializer.Serialize(writer, result);
                 }
                 Console.WriteLine("ODH Activities & Pois for STA created " + language);
 
