@@ -87,6 +87,7 @@ namespace OdhApiCore.GenericHelpers
         public static async Task GenerateJSONODHActivityPoiForSTA(QueryFactory queryFactory, string jsondir, string xmlconfig)
         {
             List<string> languagelist = new List<string>() { "de", "it", "en" };
+            var serializer = new JsonSerializer();
 
             foreach (var language in languagelist)
             {
@@ -114,37 +115,37 @@ namespace OdhApiCore.GenericHelpers
                             filterClosedData: true)
                     .OrderByRaw(orderby);
 
-                var data = await query.GetAsync<object>();
+                var data = await query.GetAsync();
 
                 //Save json
 
-                string fileName = jsondir + "\\STAOdhActivitiesPois_" + language + ".json";
+                string fileName = Path.Combine(jsondir, $"STAOdhActivitiesPois_{language}.json");
 
-                // Check if file already exists. If yes, delete it. 
-                if (System.IO.File.Exists(fileName))
+                using (var writer = File.CreateText(fileName))
                 {
-                    System.IO.File.Delete(fileName);
+                    serializer.Serialize(writer, ResponseHelpers.GetResult(1,2,(uint)data.Count(),null,data,null));
                 }
+                Console.WriteLine("ODH Activities & Pois for STA created " + language);
 
-                // Create a new file 
-                using (FileStream fs = System.IO.File.Create(fileName))
-                {
-                    //var sz = JsonConvert.SerializeObject(data);
+                //// Create a new file 
+                //using (FileStream fs = System.IO.File.Create(fileName))
+                //{
+                //    //var sz = JsonConvert.SerializeObject(data);
 
-                    var sz = JsonConvert.SerializeObject(
-                         ResponseHelpers.GetResult(
-                            1,
-                            2,
-                            (uint)data.Count(),
-                            null,
-                            data,
-                            null));
+                //    var sz = JsonConvert.SerializeObject(
+                //         ResponseHelpers.GetResult(
+                //            1,
+                //            2,
+                //            (uint)data.Count(),
+                //            null,
+                //            data,
+                //            null));
 
-                    Byte[] mybyte = new UTF8Encoding(true).GetBytes(sz);
-                    fs.Write(mybyte, 0, mybyte.Length);
+                //    Byte[] mybyte = new UTF8Encoding(true).GetBytes(sz);
+                //    fs.Write(mybyte, 0, mybyte.Length);
 
-                    Console.WriteLine("ODH Activities & Pois for STA created " + language);
-                }
+                    
+                //}
             }
         }
 
