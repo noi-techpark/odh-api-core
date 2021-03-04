@@ -59,7 +59,7 @@ namespace OdhApiCore.Responses
 
     public static class ResponseHelpers
     {
-        private static (string? previouspage, string? nextpage) GetPreviousAndNextPage(uint pagenumber, uint totalpages, IUrlHelper url, string? seed)
+        private static (string? previouspage, string? nextpage) GetPreviousAndNextPage(uint pagenumber, uint totalpages, IUrlHelper? url, string? seed)
         {
             string? previouspage = null;
             string? nextpage = null;
@@ -86,7 +86,7 @@ namespace OdhApiCore.Responses
         }
 
         public static JsonResult<T> GetResult<T>(
-            uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data, IUrlHelper url)
+            uint pagenumber, uint totalpages, uint totalcount, string? seed, IEnumerable<T> data, IUrlHelper? url)
         {
             var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url, seed);
             return new JsonResult<T>

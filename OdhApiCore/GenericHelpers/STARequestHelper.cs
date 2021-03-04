@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OdhApiCore.Controllers;
 using OdhApiCore.Controllers.api;
@@ -71,13 +72,13 @@ namespace OdhApiCore.GenericHelpers
                             filterClosedData: true)
                       .OrderByRaw(orderby);
 
-                var data = await query.GetAsync();
+                var data = (await query.GetAsync()).ToList();
 
                 //Save json
                 string fileName = Path.Combine(jsondir, $"STAAccommodations_{language}.json");
                 using (var writer = File.CreateText(fileName))
                 {
-                    serializer.Serialize(writer, data);
+                    serializer.Serialize(writer, ResponseHelpers.GetResult(1, 1, (uint)data.Count, null, data, null));
                 }
 
                 Console.WriteLine("ODH Accommodations for STA created " + language);
