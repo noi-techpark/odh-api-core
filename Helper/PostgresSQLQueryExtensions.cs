@@ -1004,6 +1004,15 @@ namespace Helper
                 )
             );
 
+        public static Query SourceFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
+             query.Where(q =>
+             {
+                 foreach (var source in sourcelist)
+                 {
+                     q = q.OrWhere("gen_syncsourceinterface", "ILIKE", source);
+                 }
+                 return q;
+             });
     }
 
     #endregion
