@@ -20,7 +20,6 @@ using System.IO;
 namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    [Route("[v1/STA]")]
     [ApiController]
     public class STAController : ControllerBase
     {
@@ -34,7 +33,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
-        [HttpGet, Route("ODHActivityPoi")]
+        [HttpGet, Route("v1/STA/ODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiListSTA(
             string language,
             CancellationToken cancellationToken)
@@ -57,7 +56,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
-        [HttpGet, Route("Accommodation")]
+        [HttpGet, Route("v1/STA/Accommodation")]
         public async Task<IActionResult> GetAccommodationsSTA(
            string language,
            CancellationToken cancellationToken)
