@@ -46,14 +46,15 @@ namespace OdhApiCore.GenericHelpers
         {
             List<string> languagelist = new List<string>() { "de", "it", "en" };
 
+            var serializer = new JsonSerializer();
             foreach (var language in languagelist)
             {
                 string select = $"data->>'Id' as Id, data->'AccoDetail'->'{language}'->>'Name' AS \"AccoDetail.{language}.Name\", data->'AccoDetail'->'{language}'->>'City' AS \"AccoDetail.{language}.City\"";
                 string orderby = "data ->>'Shortname' ASC";
                 //List<string> fieldselectorlist = new List<string>() { "Id", "AccoDetail." + language + ".Name", "AccoDetail." + language + ".City" };
          
-                   var query =
-                  queryFactory.Query()
+                var query =
+                    queryFactory.Query()
                       .SelectRaw(select)
                       .From("accommodations")
                       .AccommodationWhereExpression(
@@ -70,45 +71,16 @@ namespace OdhApiCore.GenericHelpers
                             filterClosedData: true)
                       .OrderByRaw(orderby);
 
-                var data = await query.GetAsync<object>();
-
-                //Json has to much Escapes! TO RESOLVE
-                var datatransformed = new List<JsonRaw>();
-
-                foreach(var myobject in data)
-                {
-                    datatransformed.Add(new JsonRaw(myobject));
-                }
+                var data = await query.GetAsync();
 
                 //Save json
-
-                string fileName = jsondir + "\\STAAccommodations_" + language + ".json";
-
-                // Check if file already exists. If yes, delete it. 
-                if (System.IO.File.Exists(fileName))
+                string fileName = Path.Combine(jsondir, $"STAAccommodations_{language}.json");
+                using (var writer = File.CreateText(fileName))
                 {
-                    System.IO.File.Delete(fileName);
+                    serializer.Serialize(writer, data);
                 }
 
-                // Create a new file 
-                using (FileStream fs = System.IO.File.Create(fileName))
-                {
-                    //var sz = JsonConvert.SerializeObject(data);
-
-                    var sz = JsonConvert.SerializeObject(
-                        ResponseHelpers.GetResult(
-                            1,                    
-                            2,                    
-                            (uint)data.Count(),
-                            null,
-                            datatransformed,
-                            null));
-
-                    Byte[] mybyte = new UTF8Encoding(true).GetBytes(sz);
-                    fs.Write(mybyte, 0, mybyte.Length);
-
-                    Console.WriteLine("ODH Accommodations for STA created " + language);
-                }
+                Console.WriteLine("ODH Accommodations for STA created " + language);
             }
         }
 
