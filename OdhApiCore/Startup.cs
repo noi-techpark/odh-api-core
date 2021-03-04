@@ -203,6 +203,9 @@ namespace OdhApiCore
                     //};
                 });
 
+
+            services.AddInMemoryCacheOutput();
+
             services
                 .AddMvc(options =>
                 {
@@ -295,7 +298,6 @@ namespace OdhApiCore
 
             //services.AddHttpContextAccessor();
 
-            services.AddInMemoryCacheOutput();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -334,8 +336,7 @@ namespace OdhApiCore
 
             app.UseRouting();
 
-            app.UseCacheOutput();
-
+          
             //app.UseCookiePolicy();
 
             //Important! Register Cors Policz before Using Authentication and Authorization
@@ -373,7 +374,8 @@ namespace OdhApiCore
                 //endpoints.MapDefaultControllerRoute();
             });
 
-            
+            app.UseCacheOutput();
+
             //Not needed at moment
             //app.UseHttpContext();
         }
