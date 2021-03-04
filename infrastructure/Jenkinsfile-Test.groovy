@@ -7,7 +7,7 @@ pipeline {
         DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api'
         DOCKER_TAG = "test-$BUILD_NUMBER"
 	SERVER_PORT = "1011"        
-        PG_CONNECTION = credentials('odh-tourism-api-test-pg-connection')
+        PG_CONNECTION = credentials('odh-tourism-api-test2-pg-connection')
 	MSS_USER = credentials('odh-tourism-api-test-mss-user')
 	MSS_PSWD = credentials('odh-tourism-api-test-mss-pswd')
 	LCS_USER = credentials('odh-tourism-api-test-lcs-user')
