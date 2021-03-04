@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using OdhApiCore.Filters;
+using AspNetCore.CacheOutput;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -80,5 +81,43 @@ namespace OdhApiCore.Controllers.api
 
             return this.Content(" mss user: " + mssuser + " siag user " + siaguser + " xmldir " + xmldir + " " + xmldir2  + " pgconnection " + pgconnection.Substring(0,50), "application/json", Encoding.UTF8);
         }
+
+        #region CacheTestController
+
+        // Cache for 100 seconds on the server, inform the client that response is valid for 100 seconds
+        [CacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100)]
+        [HttpGet, Route("Cached100")]
+        public IEnumerable<string> GetCached100()
+        {
+            return new string[] { "value1", "value2" };
+        }
+
+        // Cache for 100 seconds on the server, inform the client that response is valid for 100 seconds. Cache for anonymous users only.
+        [CacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100, AnonymousOnly = true)]
+        [HttpGet, Route("Cached100Anonymous")]
+        public IEnumerable<string> GetCached100Anonymous()
+        {
+            return new string[] { "value1", "value2" };
+        }
+
+        // Inform the client that response is valid for 50 seconds. Force client to revalidate.
+        [CacheOutput(ClientTimeSpan = 50, MustRevalidate = true)]
+        [HttpGet, Route("Cached50Revalidate")]
+        public IEnumerable<string> GetCached50Revalidate(string hello)
+        {
+            return new string[] { "value1", "value2" };
+        }
+
+        // Cache for 50 seconds on the server. Ignore querystring parameters when serving cached content.
+        [CacheOutput(ServerTimeSpan = 50, ExcludeQueryStringFromCacheKey = true)]
+        [HttpGet, Route("Cached50WithoutQS")]
+        public IEnumerable<string> GetCached50WithoutQS(string hello)
+        {
+            return new string[] { "value1", "value2" };
+        }
+
+        //TODO SEE if Cache distinguish between Authenticated and not authenticated user
+
+        #endregion
     }
 }

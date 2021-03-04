@@ -1,3 +1,5 @@
+using AspNetCore.CacheOutput.Extensions;
+using AspNetCore.CacheOutput.InMemory.Extensions;
 using Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -292,6 +294,8 @@ namespace OdhApiCore
             });
 
             //services.AddHttpContextAccessor();
+
+            services.AddInMemoryCacheOutput();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -330,8 +334,10 @@ namespace OdhApiCore
 
             app.UseRouting();
 
+            app.UseCacheOutput();
+
             //app.UseCookiePolicy();
-            
+
             //Important! Register Cors Policz before Using Authentication and Authorization
             app.UseCors("CorsPolicy");
 
