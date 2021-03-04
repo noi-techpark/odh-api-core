@@ -75,6 +75,7 @@ namespace OdhApiCore
             });
             services.AddHttpClient("lcs"); // TODO: put LCS config here
 
+            services.AddInMemoryCacheOutput();
 
             services.AddLogging(options =>
             {
@@ -170,13 +171,12 @@ namespace OdhApiCore
             //  });
 
             //Initialize JWT Authentication
-            services
-                .AddAuthentication(options =>
+            services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(jwtBearerOptions =>
+                    .AddJwtBearer(jwtBearerOptions =>
                 {
                     jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");
                     //jwtBearerOptions.Audience = "account";                
@@ -203,11 +203,7 @@ namespace OdhApiCore
                     //};
                 });
 
-
-            services.AddInMemoryCacheOutput();
-
-            services
-                .AddMvc(options =>
+            services.AddMvc(options =>
                 {
                     options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
                     options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
@@ -332,11 +328,12 @@ namespace OdhApiCore
                 //FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
                 //RequestPath = new PathString("")
                 //FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot")), RequestPath = "/StaticFiles" 
-            });            
+            });
+
+            app.UseCacheOutput();
 
             app.UseRouting();
 
-          
             //app.UseCookiePolicy();
 
             //Important! Register Cors Policz before Using Authentication and Authorization
@@ -374,8 +371,7 @@ namespace OdhApiCore
                 //endpoints.MapDefaultControllerRoute();
             });
 
-            app.UseCacheOutput();
-
+       
             //Not needed at moment
             //app.UseHttpContext();
         }

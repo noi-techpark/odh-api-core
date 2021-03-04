@@ -583,7 +583,7 @@ namespace Helper
 
             return query
                 .IdIlikeFilter(idlist)
-                .SourceFilter(sourcelist)
+                .SourceFilterAlpineBits(sourcelist)
                 .AlpineBitsMessageFilter(messagetypelist)
                 .AlpineBitsAccommodationIdFilter(accommodationIds);
         }

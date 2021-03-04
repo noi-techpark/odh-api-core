@@ -15,6 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="xml\RequestInterceptor.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="xml\RequestInterceptor.xml" />
     <Content Include="xml\STACategories.xml" />
   </ItemGroup>
 

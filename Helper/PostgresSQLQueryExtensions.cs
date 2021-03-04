@@ -414,6 +414,14 @@ namespace Helper
                 id => id.ToUpper()
             );
 
+        //For Alpinebits
+        public static Query SourceFilterAlpineBits(this Query query, IReadOnlyCollection<string> sourcelist) =>
+           query.WhereInJsonb(
+                list: sourcelist,
+                "Source",
+                id => id.ToLower()
+            );
+
         public static Query SyncSourceInterfaceFilter(this Query query, IReadOnlyCollection<string> sourcelist) =>
             query.WhereInJsonb(
                 list: sourcelist,

@@ -1,0 +1,21 @@
+﻿<RequestInterceptor>
+  <Rules>
+    <ODHActityitPoisSTA>
+      <action>GetODHActivityPoiList</action>
+      <match>
+        <parameters>
+          <parameter id=""></parameter>
+          <parameter id=""></parameter>
+          <parameter id=""></parameter>
+        </parameters>
+        <headers>
+          <header id=""></header>
+        </headers>
+      </match>
+      <language>true</language>
+    </ODHActityitPoisSTA>
+    <AccommodationsSTA></AccommodationsSTA>
+  </Rules>  
+</RequestInterceptor>
+
+<!--Maybe with config like "action", match (parameter:blah) (referer:blah) return "json", withlanguage true/false-->
