@@ -49,7 +49,7 @@ namespace OdhApiCore.GenericHelpers
             var serializer = new JsonSerializer();
             foreach (var language in languagelist)
             {
-                string select = $"data->>'Id' as Id, data->'AccoDetail'->'{language}'->>'Name' AS \"AccoDetail.{language}.Name\", data->'AccoDetail'->'{language}'->>'City' AS \"AccoDetail.{language}.City\"";
+                string select = $"data->>'Id' as \"Id\", data->'AccoDetail'->'{language}'->>'Name' AS \"AccoDetail.{language}.Name\", data->'AccoDetail'->'{language}'->>'City' AS \"AccoDetail.{language}.City\"";
                 string orderby = "data ->>'Shortname' ASC";
                 //List<string> fieldselectorlist = new List<string>() { "Id", "AccoDetail." + language + ".Name", "AccoDetail." + language + ".City" };
          
@@ -90,7 +90,7 @@ namespace OdhApiCore.GenericHelpers
 
             foreach (var language in languagelist)
             {
-                string select = "data->'Id' as Id, data->'Detail'->'" + language + "'->'Title' AS \"Detail." + language + ".Title\", data->'ContactInfos'->'" + language + "'->'City' AS \"ContactInfos." + language + ".City\"";
+                string select = "data->'Id' as \"Id\", data->'Detail'->'" + language + "'->'Title' AS \"Detail." + language + ".Title\", data->'ContactInfos'->'" + language + "'->'City' AS \"ContactInfos." + language + ".City\"";
 
                 string orderby = "data ->>'Shortname' ASC";
                 //List<string> fieldselectorlist = new List<string>() { "Id", "Detail." + language + ".Title", "ContactInfos." + language + ".City" };
