@@ -30,4 +30,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
 COPY OdhApiCore/xml/Weather.xml xml/
+COPY OdhApiCore/xml/STACategories.xml xml/
+COPY OdhApiCore/xml/BezirkWeather.xml xml/
+COPY OdhApiCore/xml/RequestInterceptor.xml xml/
+
 ENTRYPOINT ["dotnet", "OdhApiCore.dll"]

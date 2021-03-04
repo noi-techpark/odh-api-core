@@ -63,6 +63,7 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {
+                //DOCKER ERROR Could not find a part of the path '/app/.\wwwroot\json\/STAAccommodations_de.json'.
                 string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAAccommodations_{language}.json");
 
                 using (StreamReader r = new StreamReader(fileName))
