@@ -23,6 +23,7 @@ pipeline {
 	OAUTH_AUTORITY = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/"
 	ELK_URL = credentials('odh-tourism-api-test-elk-url')
 	ELK_TOKEN = credentials('odh-tourism-api-test-elk-token')
+	JSONPATH = ".\\wwwroot\\json\\"
     }
 
     stages {
@@ -52,6 +53,7 @@ pipeline {
 		    echo 'OAUTH_AUTORITY=${OAUTH_AUTORITY}' >> .env
 		    echo 'ELK_URL=${ELK_URL}' >> .env
 		    echo 'ELK_TOKEN=${ELK_TOKEN}' >> .env
+		    echo 'JSONPATH=${JSONPATH}' >> .env
                 """
             }
         }
