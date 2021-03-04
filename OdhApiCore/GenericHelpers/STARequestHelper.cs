@@ -73,12 +73,13 @@ namespace OdhApiCore.GenericHelpers
                       .OrderByRaw(orderby);
 
                 var data = (await query.GetAsync()).ToList();
+                var result = ResponseHelpers.GetResult(1, 1, (uint)data.Count, null, data, null);
 
                 //Save json
                 string fileName = Path.Combine(jsondir, $"STAAccommodations_{language}.json");
                 using (var writer = File.CreateText(fileName))
                 {
-                    serializer.Serialize(writer, ResponseHelpers.GetResult(1, 1, (uint)data.Count, null, data, null));
+                    serializer.Serialize(writer, result);
                 }
 
                 Console.WriteLine("ODH Accommodations for STA created " + language);
