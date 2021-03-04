@@ -45,5 +45,10 @@ namespace OdhApiCore.Controllers.api
 
             return Ok("json accommodations generated");
         }
+
+        //TODO ADD the Json Generation for
+        //Accobooklist
+        //Locationlists
+
     }
 }
