@@ -26,5 +26,6 @@ services:
       ASPNETCORE_OauthServerConfig__Authority: ${OAUTH_AUTORITY}
       ASPNETCORE_ElasticSearchConfig__ElasticUrl: ${ELK_URL}
       ASPNETCORE_ElasticSearchConfig__ElasticAuthtoken: ${ELK_TOKEN}
+      ASPNETCORE_JsonConfig__Jsondir: ${JSONPATH}
     ports:
       - "60209:80"
