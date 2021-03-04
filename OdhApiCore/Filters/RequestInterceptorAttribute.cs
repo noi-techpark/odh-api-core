@@ -65,8 +65,10 @@ namespace OdhApiCore.Filters
         public async Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
         {     
             var language = (string?)actionarguments["language"];
-            
-            using (StreamReader r = new StreamReader(settings.JsonConfig.Jsondir + "\\STAAccommodations_" + language.ToLower() + ".json"))
+
+            string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAAccommodations_{language}.json");
+
+            using (StreamReader r = new StreamReader(fileName))
             {
                 string json = r.ReadToEndAsync().Result;
 
