@@ -4,17 +4,28 @@
       <action>GetODHActivityPoiList</action>
       <match>
         <parameters>
-          <parameter id=""></parameter>
-          <parameter id=""></parameter>
-          <parameter id=""></parameter>
+          <parameter id="fields">Id,Detail.LANG.Title,ContactInfos.LANG.City</parameter>
+          <parameter id="pagesize">20000</parameter>          
         </parameters>
         <headers>
-          <header id=""></header>
+          <header id="referer">https://www.suedtirolmobil.info/</header>
         </headers>
       </match>
       <language>true</language>
     </ODHActityitPoisSTA>
-    <AccommodationsSTA></AccommodationsSTA>
+    <AccommodationsSTA>
+      <action>GetAccommodations</action>
+      <match>
+        <parameters>
+          <parameter id="fields">Id,AccoDetail.LANG.Name,AccoDetail.LANG.City</parameter>
+          <parameter id="pagesize">10000</parameter>          
+        </parameters>
+        <headers>
+          <header id="referer">https://www.suedtirolmobil.info/</header>
+        </headers>
+      </match>
+      <language>true</language>
+    </AccommodationsSTA>
   </Rules>  
 </RequestInterceptor>
 
