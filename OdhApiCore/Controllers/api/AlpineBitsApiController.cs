@@ -120,9 +120,9 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsInventoryHotelInfoWriter")]
         [HttpPost, Route("AlpineBits/InventoryHotelInfo")]
-        public IActionResult? PostInventoryHotelInfo()
+        public async Task<IActionResult> PostInventoryHotelInfoData()
         {
-            return null; // await PostInventoryHotelInfo(Request);
+            return await PostInventoryHotelInfo(Request);
         }
 
         #endregion
@@ -167,9 +167,9 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsFreeRoomsWriter")]
         [HttpPost, Route("AlpineBits/FreeRooms")]
-        public IActionResult? PostFreeRooms()
+        public async Task<IActionResult> PostFreeRoomsData()
         {
-            return null;
+            return await PostFreeRooms(Request); ;
         }
 
         #endregion
@@ -289,9 +289,8 @@ namespace OdhApiCore.Controllers.api
                     input.MessageType = "InventoryHotelInfoPush";
                     input.RequestDate = DateTime.Now;
                     input.Source = this.User.Identity?.Name.ToLower();
-                    
 
-                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
                     //var query = QueryFactory.Query("alpinebits").AsInsert(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
 
                     return Ok(new GenericResult() { Message = "INSERT AlpineBits InventoryHotelInfoPush succeeded, Request Id:" + id + " username:" + this.User.Identity?.Name });
@@ -321,7 +320,7 @@ namespace OdhApiCore.Controllers.api
                     input.RequestDate = DateTime.Now;
                     input.Source = this.User.Identity?.Name.ToLower();                    
 
-                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
 
                     return Ok(new GenericResult() { Message = "INSERT AlpineBits FreeRoomsPush succeeded, Request Id:" + id + " username:" + this.User.Identity?.Name });
                 }
