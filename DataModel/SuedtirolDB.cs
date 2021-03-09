@@ -232,7 +232,7 @@ namespace DataModel
         string? SubType { get; set; }
         string? PoiType { get; set; }
 
-        public List<string> Categories { get; set; }
+        List<string> Categories { get; set; }
     }
 
     public interface IActivityStatus
@@ -2582,6 +2582,8 @@ namespace DataModel
         public string? SubType { get; set; }
         public string? PoiType { get; set; }
         public string? Language { get; set; }
+
+        public List<string> Categories { get; set; }
     }
 
     public class Ratings : IRatings
