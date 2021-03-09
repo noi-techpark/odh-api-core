@@ -190,7 +190,7 @@ namespace OdhApiCore.Controllers.api
                      .SelectRaw("data")
                      .From("alpinebits")
                      .AlpineBitsWhereExpression(idlist, sourcelist, accoidlist, messagetypelist, null)
-                ;
+                     .OrderByRaw("TO_TIMESTAMP(data ->> 'RequestDate','YYYY-MM-DD T HH24:MI:SS') DESC");
                 
                 var data = await query.GetAsync<JsonRaw?>();
 
