@@ -96,7 +96,7 @@ namespace OdhApiCore.Controllers.api
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity?.Name, "InventoryHotelInfoPush");
             else
-                return await GetSingleAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "InventoryHotelInfoPush", accoid, last);
+                return await GetAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "InventoryHotelInfoPush", accoid, last);
 
         }
 
@@ -110,7 +110,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("AlpineBits/InventoryHotelInfo/{RequestId}")]
         public async Task<IActionResult> GetInventoryHotelInfoSingle(string RequestId)
         {
-            return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "InventoryHotelInfoPush", null, false);
+            return await GetAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "InventoryHotelInfoPush", null, false);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace OdhApiCore.Controllers.api
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity?.Name, "FreeRoomsPush");
             else
-                return await GetSingleAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "FreeRoomsPush", accoid, last);
+                return await GetAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "FreeRoomsPush", accoid, last);
 
         }
 
@@ -157,7 +157,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("AlpineBits/FreeRooms/{RequestId}")]
         public async Task<IActionResult> GetFreeRoomsSingle(string RequestId)
         {
-            return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "FreeRoomsPush", null, false);
+            return await GetAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "FreeRoomsPush", null, false);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace OdhApiCore.Controllers.api
                      .AlpineBitsWhereExpression(idlist, sourcelist, accoidlist, messagetypelist, null)
                 ;
                 
-                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var data = await query.GetAsync<JsonRaw?>();
 
                 return Ok(data);
             }
@@ -202,7 +202,7 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        private async Task<IActionResult> GetSingleAlpineBitsMessagesByIdandSource(string? id, string? source, string? messagetype, string? accoids, bool last)
+        private async Task<IActionResult> GetAlpineBitsMessagesByIdandSource(string? id, string? source, string? messagetype, string? accoids, bool last)
         {
             try
             {
@@ -223,7 +223,7 @@ namespace OdhApiCore.Controllers.api
                      .OrderByRaw("TO_TIMESTAMP(data ->> 'RequestDate','YYYY-MM-DD T HH24:MI:SS') DESC")
                      .Limit(limit);
 
-                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var data = await query.GetAsync<JsonRaw?>();
 
                 return Ok(data);                
             }
