@@ -231,6 +231,8 @@ namespace DataModel
         string? MainType { get; set; }
         string? SubType { get; set; }
         string? PoiType { get; set; }
+
+        public List<string> Categories { get; set; }
     }
 
     public interface IActivityStatus
