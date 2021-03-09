@@ -50,7 +50,7 @@ namespace OdhApiCore.Controllers.api
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity?.Name, "InventoryBasicPush");
             else
-                return await GetSingleAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "InventoryBasicPush", accoid, last);
+                return await GetAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "InventoryBasicPush", accoid, last);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("AlpineBits/InventoryBasic/{RequestId}")]
         public async Task<IActionResult> Get(string RequestId)
         {
-            return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "InventoryBasicPush", null, false);
+            return await GetAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "InventoryBasicPush", null, false);
         }
 
         /// <summary>
