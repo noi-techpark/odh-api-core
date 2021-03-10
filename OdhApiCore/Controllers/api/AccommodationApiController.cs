@@ -351,7 +351,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
-        [HttpGet, Route("api/AccommodationRoom", Name = "AccommodationRoomList")]
+        [HttpGet, Route("AccommodationRoom", Name = "AccommodationRoomList")]
         public async Task<IActionResult> GetAccoRoomInfos(
             string accoid,
             string? idsource = "lts",
@@ -385,7 +385,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]        
-        [HttpGet, Route("api/AccommodationRoom/{id}", Name = "SingleAccommodationRoom")]
+        [HttpGet, Route("AccommodationRoom/{id}", Name = "SingleAccommodationRoom")]
         public async Task<IActionResult> GetAccoRoomInfosById(
             string id,
             string? language = null,
