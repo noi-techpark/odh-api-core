@@ -658,7 +658,7 @@ namespace OdhApiCore.Controllers
                 //}
 
                 var query =
-                    QueryFactory.Query("accomodationrooms")
+                    QueryFactory.Query("accommodationrooms")
                         .Select("data")
                         .Where("data->'A0RID'", id)
                         .When(FilterClosedData, q => q.FilterClosedData());
@@ -688,7 +688,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 var query =
-                    QueryFactory.Query("accomodationrooms")
+                    QueryFactory.Query("accommodationrooms")
                         .Select("data")
                         .Where("id", id)
                         .When(FilterClosedData, q => q.FilterClosedData());

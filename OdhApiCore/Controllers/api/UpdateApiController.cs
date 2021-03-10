@@ -35,7 +35,7 @@ namespace OdhApiCore.Controllers.api
         {
             //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
 
-            return Ok("EBMS Eventshorts updated");
+            return Ok("EBMS Eventshorts \" updated");
         }
      
 
