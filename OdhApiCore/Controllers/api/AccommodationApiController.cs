@@ -617,7 +617,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("accommodations")
                         .Select("data")
-                        .Where("data->'HgvId'", id)
+                        .Where("gen_hgvid", "ILIKE", id)
                         .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
@@ -632,7 +632,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("accommodations")
                         .Select("id")
-                        .Where("data->'HgvId'", id)
+                        .Where("gen_hgvid", "ILIKE", id)
                         .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<string?>();
@@ -660,7 +660,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("accommodationrooms")
                         .Select("data")
-                        .Where("data->'A0RID'", id)
+                        //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE ?", id)
+                        .Where("gen_a0rid", "ILIKE", id)
                         .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.GetAsync<JsonRaw?>();
