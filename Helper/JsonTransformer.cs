@@ -136,6 +136,51 @@ namespace Helper
             return Walk(token);
         }
 
+        //TODO!
+        public static JToken? FilterAccommodationRoomsByCC0License(this JToken? token)
+        {
+            if (token == null)
+                return null;
+            static JObject? TransformObj(JObject obj)
+            {
+                // Get the AccoRoomInfo property
+                var accoroomArr = obj.Property("AccoRoomInfo");
+                if (accoroomArr != null && accoroomArr.Value is JObject metaObj)
+                {
+                    // Get the ClosedData property of an object
+                    var closedDataProp = metaObj.Property("ClosedData");
+                    // If ClosedData property exists and it's value is true,
+                    // which filters away the whole object
+                    if (closedDataProp != null && closedDataProp.Value.Equals(new JValue(true)))
+                    {
+                        return null;
+                    }
+                }
+                return new JObject(obj.Properties().Select(x => Walk(x)));
+            };
+            static JProperty? TransformProp(JProperty prop)
+            {
+                var value = Walk(prop.Value);
+                return value == null ? null : new JProperty(prop.Name, value);
+            }
+            static JToken? Walk(JToken token) =>
+                token switch
+                {
+                    JObject obj =>
+                        TransformObj(obj),
+                    JProperty prop =>
+                        TransformProp(prop),
+                    JArray arr =>
+                        new JArray(
+                            arr.Select(x => Walk(x))
+                               // Filter away empty content
+                               .Where(x => x != null)),
+                    _ => token
+                };
+            return Walk(token);
+        }
+
+
         sealed class DistinctComparer
             : IEqualityComparer<(string name, string path)>
         {
@@ -228,6 +273,7 @@ namespace Helper
             if (language != null) token = FilterByLanguage(token, language);
             if (fields.Length > 0) token = FilterByFields(token, fields, language);
             if (checkCC0) token = FilterImagesByCC0License(token);
+            //if (checkCC0) token = FilterAccommodationRoomsByCC0License(token);
             if (filterClosedData) token = token.FilterClosedData();
             token = token.TransformSelfLink(urlGenerator);
             token = token.FilterMetaInformations();
