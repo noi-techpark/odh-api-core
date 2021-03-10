@@ -8,6 +8,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0.102-alpine3.12-amd64 AS build
 WORKDIR /src
 COPY DataModel/DataModel.csproj DataModel/
 COPY Helper/Helper.csproj Helper/
+COPY EBMS/EBMS.csproj EBMS/
 COPY MSS/MSS.csproj MSS/
 COPY LCS/LCS.csproj LCS/
 COPY SIAG/SIAG.csproj SIAG/
