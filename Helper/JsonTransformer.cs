@@ -78,7 +78,7 @@ namespace Helper
             return Walk(token);
         }
 
-        public static JToken? FilterImagesByHGVSource(this JToken? token)
+        public static JToken? FilterAccoRoomInfoByHGVSource(this JToken? token)
         {
             if (token == null)
                 return null;
@@ -288,7 +288,7 @@ namespace Helper
             // Filter out all data where the LicenseInfo does not contain `CC0`
             if (checkCC0) token = FilterImagesByCC0License(token);
             // Filter out all data where the LicenseInfo contains `hgv` as source.
-            if (checkCC0) token = FilterImagesByHGVSource(token);
+            if (checkCC0) token = FilterAccoRoomInfoByHGVSource(token);
             if (filterClosedData) token = token.FilterClosedData();
             token = token.TransformSelfLink(urlGenerator);
             token = token.FilterMetaInformations();
