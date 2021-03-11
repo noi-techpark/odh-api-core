@@ -1,4 +1,5 @@
-﻿using DataModel;
+﻿using AspNetCore.CacheOutput;
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -62,7 +63,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        //[Authorize]
+        [CacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100, Private = true)]
         [HttpGet, Route("Activity")]
         public async Task<IActionResult> GetActivityList(
             string? language = null,

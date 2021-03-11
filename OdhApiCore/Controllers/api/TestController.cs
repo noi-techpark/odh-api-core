@@ -85,7 +85,7 @@ namespace OdhApiCore.Controllers.api
         #region CacheTestController
 
         // Cache for 100 seconds on the server, inform the client that response is valid for 100 seconds
-        [CacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100)]
+        [CacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100, Private = true)]
         [HttpGet, Route("Cached100")]
         public IEnumerable<string> GetCached100()
         {

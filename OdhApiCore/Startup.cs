@@ -330,8 +330,7 @@ namespace OdhApiCore
                 //FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot")), RequestPath = "/StaticFiles" 
             });
 
-            app.UseCacheOutput();
-
+ 
             app.UseRouting();
 
             //app.UseCookiePolicy();
@@ -343,6 +342,8 @@ namespace OdhApiCore
             app.UseAuthorization();
 
             app.UseResponseCompression();
+
+            app.UseCacheOutput();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
