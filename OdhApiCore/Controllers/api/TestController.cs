@@ -89,7 +89,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Cached100")]
         public IEnumerable<string> GetCached100()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "value1", "value2", DateTime.Now.ToLongTimeString() };
         }
 
         // Cache for 100 seconds on the server, inform the client that response is valid for 100 seconds. Cache for anonymous users only.
@@ -97,7 +97,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Cached100Anonymous")]
         public IEnumerable<string> GetCached100Anonymous()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "value1", "value2", DateTime.Now.ToLongTimeString() };
         }
 
         // Inform the client that response is valid for 50 seconds. Force client to revalidate.
@@ -105,7 +105,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Cached50Revalidate")]
         public IEnumerable<string> GetCached50Revalidate(string hello)
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "value1", "value2", DateTime.Now.ToLongTimeString() };
         }
 
         // Cache for 50 seconds on the server. Ignore querystring parameters when serving cached content.
@@ -113,7 +113,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Cached50WithoutQS")]
         public IEnumerable<string> GetCached50WithoutQS(string hello)
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "value1", "value2", DateTime.Now.ToLongTimeString() };
         }
 
         //TODO SEE if Cache distinguish between Authenticated and not authenticated user
