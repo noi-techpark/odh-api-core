@@ -1013,7 +1013,49 @@ namespace Helper
                  }
                  return q;
              });
-    }
+  
 
-    #endregion
+    //Only Begindate given
+    public static Query EventDateFilterBegin_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        query.When(
+            begin != DateTime.MinValue && end == DateTime.MaxValue,
+            query => query.WhereRaw(
+                "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+            )
+        );
+
+    //Only Enddate given
+    public static Query EventDateFilterEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        query.When(
+            begin == DateTime.MinValue && end != DateTime.MaxValue,
+            query => query.WhereRaw(
+                "((gen_begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+            )
+        );
+
+    //Both Begin and Enddate given
+    public static Query EventDateFilterBeginEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        query.When(
+            begin != DateTime.MinValue && end != DateTime.MaxValue,
+            query => query.WhereRaw(
+                "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+            )
+        );
+
+        //Filter on Generated Field gen_eventtopic OR
+        public static Query EventTopicFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
+        query.Where(q =>
+        {
+            foreach (var item in eventtopiclist)
+            {
+                q = q.OrWhereRaw(
+                    "gen_eventtopic @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
+
+        #endregion
+
+    }
 }

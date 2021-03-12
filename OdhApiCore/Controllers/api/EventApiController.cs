@@ -190,12 +190,11 @@ namespace OdhApiCore.Controllers
                 string sortifseednull = null;
 
                 if (sort != null)
-                {
-                  
+                {                  
                     if (sort.ToLower() == "asc")
-                        sortifseednull = "nextbegindate ASC";
+                        sortifseednull = "gen_nextbegindate ASC";
                     else
-                        sortifseednull = "nextbegindate DESC";
+                        sortifseednull = "gen_nextbegindate DESC";
 
                     //Set seed to null
                     seed = null;
