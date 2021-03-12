@@ -1049,7 +1049,7 @@ namespace Helper
             foreach (var item in eventtopiclist)
             {
                 q = q.OrWhereRaw(
-                    "gen_eventtopic @> array\\[?\\]", item.ToLower()
+                    "gen_eventtopic @> array\\[?\\]", item.ToUpper()
                 );
             }
             return q;
