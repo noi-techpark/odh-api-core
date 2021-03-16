@@ -80,6 +80,18 @@ namespace OdhApiCore
         public string SecretKey { get; private set; }
     }
 
+    public class EBMSConfig
+    {
+        public EBMSConfig(string user, string password)
+        {
+            this.User = user;
+            this.Password = password;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+    }
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -89,6 +101,7 @@ namespace OdhApiCore
         XmlConfig XmlConfig { get; }
         JsonConfig JsonConfig { get; }
         S3ImageresizerConfig S3ImageresizerConfig { get; }
+        EBMSConfig EbmsConfig { get; }
     }
 
     public class Settings : ISettings
@@ -101,6 +114,7 @@ namespace OdhApiCore
         private readonly XmlConfig xmlConfig;
         private readonly JsonConfig jsonConfig;
         private readonly S3ImageresizerConfig s3imageresizerConfig;
+        private readonly EBMSConfig ebmsConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -119,6 +133,8 @@ namespace OdhApiCore
             this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
+            var ebms = this.configuration.GetSection("EBMSConfig");
+            this.ebmsConfig = new EBMSConfig(xml.GetValue<string>("EBMSUser", ""), xml.GetValue<string>("EBMSPassword", ""));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -128,7 +144,7 @@ namespace OdhApiCore
         public SiagConfig SiagConfig => this.siagConfig;
         public XmlConfig XmlConfig => this.xmlConfig;
         public JsonConfig JsonConfig => this.jsonConfig;
-
+        public EBMSConfig EbmsConfig => this.ebmsConfig;
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
     }
 }
