@@ -24,6 +24,8 @@ pipeline {
 	ELK_URL = credentials('odh-tourism-api-test-elk-url')
 	ELK_TOKEN = credentials('odh-tourism-api-test-elk-token')
 	JSONPATH = "./wwwroot/json/"
+	EBMS_USER = credentials('odh-tourism-api-test-ebms-user')
+	EBMS_PASS = credentials('odh-tourism-api-test-ebms-pass')
     }
 
     stages {
@@ -54,6 +56,8 @@ pipeline {
 		    echo 'ELK_URL=${ELK_URL}' >> .env
 		    echo 'ELK_TOKEN=${ELK_TOKEN}' >> .env
 		    echo 'JSONPATH=${JSONPATH}' >> .env
+		    echo 'EBMS_USER=${EBMS_USER}' >> .env
+		    echo 'EBMS_PASS=${EBMS_PASS}' >> .env
                 """
             }
         }
