@@ -252,7 +252,10 @@ namespace OdhApiCore.Controllers
             string? language = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);           
+            if(idsource == "hgv")
+                return await GetSingleByHgvId(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            else
+                return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);           
         }
 
 
@@ -333,8 +336,65 @@ namespace OdhApiCore.Controllers
             return await GetAccoFeatureSingle(id, cancellationToken);
         }
 
+        // ACCO ROOMS
 
-        //SPECIAL GETTER
+        /// <summary>
+        /// GET Accommodation Room Info by AccoID
+        /// </summary>
+        /// <param name="accoid">Accommodation ID</param>
+        /// <param name="idsource">ID Source Filter (possible values:'lts','hgv'), (default:'lts')</param>        
+        /// <param name="getall">Get Rooms from all sources (If an accommodation is bookable on Booking Southtyrol, rooms from this source are returned, setting getall to true returns also LTS Rooms), (default:false)</param>        
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>Collection of AccoRoom Objects</returns>
+        [ProducesResponseType(typeof(IEnumerable<AccoRoom>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,AccoReader")]
+        [HttpGet, Route("AccommodationRoom", Name = "AccommodationRoomList")]
+        public async Task<IActionResult> GetAccoRoomInfos(
+            string accoid,
+            string? idsource = "lts",
+            bool getall = false,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string ?language = null, 
+            CancellationToken cancellationToken = default
+            )
+        {
+            string idtocheck = accoid;
+
+            if (idsource == "hgv")
+            {
+                idtocheck = await GetAccoIdByHgvId(accoid, cancellationToken);
+            }    
+
+            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, cancellationToken);
+        }
+
+        // ACCO ROOMS
+
+        /// <summary>
+        /// GET Accommodation Room Info Single
+        /// </summary>
+        /// <param name="id">AccommodationRoom ID</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <returns>AccommodationRoom Object</returns>
+        [ProducesResponseType(typeof(AccoRoom), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,AccoReader")]        
+        [HttpGet, Route("AccommodationRoom/{id}", Name = "SingleAccommodationRoom")]
+        public async Task<IActionResult> GetAccoRoomInfosById(
+            string id,
+            string? language = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
+        {            
+            return await GetSingleAccommodationRoom(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+        }
 
         //SPECIAL GETTER
 
@@ -507,7 +567,7 @@ namespace OdhApiCore.Controllers
                             searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =
@@ -540,6 +600,96 @@ namespace OdhApiCore.Controllers
             {
                 var query =
                     QueryFactory.Query("accommodations")
+                        .Select("data")
+                        .Where("id", id.ToUpper())
+                        .When(FilterClosedData, q => q.FilterClosedData());
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
+            });
+        }
+
+        private Task<IActionResult> GetSingleByHgvId(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("accommodations")
+                        .Select("data")
+                        .Where("gen_hgvid", "ILIKE", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator);
+            });
+        }
+
+        private async Task<string> GetAccoIdByHgvId(string id, CancellationToken cancellationToken)
+        {
+            
+                var query =
+                    QueryFactory.Query("accommodations")
+                        .Select("id")
+                        .Where("gen_hgvid", "ILIKE", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
+
+                var data = await query.FirstOrDefaultAsync<string?>();
+
+                return data ?? "";
+        }
+
+        private Task<IActionResult> GetAccommodationRooms(
+            string id,
+            string[] fields,
+            string? language,
+            bool all,
+            CancellationToken cancellationToken
+            )
+        {
+            return DoAsyncReturn(async () =>
+            {
+                //TODO FILTER OUT SOURCE HGV
+                //if (!all)
+                //{
+                //    if (sourcecount > 1)
+                //        data = data.Where(x => x.Source == "hgv").ToList();
+                //}
+
+                var query =
+                    QueryFactory.Query("accommodationrooms")
+                        .Select("data")
+                        //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE ?", id)
+                        .Where("gen_a0rid", "ILIKE", id)
+                        .When(FilterClosedData, q => q.FilterClosedData());
+
+                var data = await query.GetAsync<JsonRaw?>();
+
+                var dataTransformed =
+                   data.Select(
+                       raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
+                   );
+
+                return dataTransformed;
+            });
+        }
+
+        /// <summary>
+        /// GET Single Accommodation Room
+        /// </summary>
+        /// <param name="id">ID of Accommodation Room</param>
+        /// <returns>Poi Object</returns>
+        private Task<IActionResult> GetSingleAccommodationRoom(
+            string id,
+            string? language,
+            string[] fields,
+            CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("accommodationrooms")
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());

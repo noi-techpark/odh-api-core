@@ -163,3 +163,5 @@ $RECYCLE.BIN/
 
 .fake
 .ionide
+
+/OdhApiCore/wwwroot/json

@@ -1,3 +1,5 @@
+using AspNetCore.CacheOutput.Extensions;
+using AspNetCore.CacheOutput.InMemory.Extensions;
 using Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -72,6 +75,7 @@ namespace OdhApiCore
             });
             services.AddHttpClient("lcs"); // TODO: put LCS config here
 
+            services.AddInMemoryCacheOutput();
 
             services.AddLogging(options =>
             {
@@ -114,13 +118,26 @@ namespace OdhApiCore
 
             services.AddResponseCompression();
 
-            services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
+            services.AddCors(o =>
             {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
-            }));
-
+                o.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials()
+                            .SetIsOriginAllowed(hostName => true);
+                    //AllowAnyOrigin()
+                    //builder.SetIsOriginAllowed(_ => true) //Hack
+                });
+                o.AddPolicy("DataBrowserCorsPolicy", builder =>
+                {
+                    builder.WithOrigins("https://localhost:6001")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod()
+                                            .AllowCredentials();
+                });
+            });
+            
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
@@ -154,13 +171,12 @@ namespace OdhApiCore
             //  });
 
             //Initialize JWT Authentication
-            services
-                .AddAuthentication(options =>
+            services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(jwtBearerOptions =>
+                    .AddJwtBearer(jwtBearerOptions =>
                 {
                     jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");
                     //jwtBearerOptions.Audience = "account";                
@@ -187,8 +203,7 @@ namespace OdhApiCore
                     //};
                 });
 
-            services
-                .AddMvc(options =>
+            services.AddMvc(options =>
                 {
                     options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
                     options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
@@ -248,7 +263,7 @@ namespace OdhApiCore
                     {
                         Password = new OpenApiOAuthFlow
                         {
-                           TokenUrl = new Uri("https://auth.opendatahub.testingmachine.eu/auth/realms/noi/protocol/openid-connect/token")
+                           TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
                         }                        
                     },
                     BearerFormat = "JWT",
@@ -278,6 +293,7 @@ namespace OdhApiCore
             });
 
             //services.AddHttpContextAccessor();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -311,18 +327,23 @@ namespace OdhApiCore
                 },
                 //FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
                 //RequestPath = new PathString("")
+                //FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot")), RequestPath = "/StaticFiles" 
             });
 
+ 
             app.UseRouting();
 
             //app.UseCookiePolicy();
 
+            //Important! Register Cors Policz before Using Authentication and Authorization
+            app.UseCors("CorsPolicy");
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors("CorsPolicy");
-
             app.UseResponseCompression();
+
+            app.UseCacheOutput();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
@@ -348,9 +369,10 @@ namespace OdhApiCore
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                //endpoints.MapDefaultControllerRoute();
             });
 
-            
+       
             //Not needed at moment
             //app.UseHttpContext();
         }

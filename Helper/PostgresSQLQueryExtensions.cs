@@ -345,7 +345,13 @@ namespace Helper
                 type => type
             );
 
-        public static Query ActivitySubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
+        public static Query ActivityTypeFilterOnTags(this Query query, IReadOnlyCollection<string> activitytypelist) =>
+            query.WhereInJsonb(
+                list: activitytypelist,
+                tag => new { SmgTags = new[] { tag.ToLower() } }
+            );
+
+        public static Query ActivitySubTypeFilterOnTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
             query.WhereInJsonb(
                 list: subtypelist,
                 tag => new { SmgTags = new[] { tag.ToLower() } }
@@ -357,13 +363,13 @@ namespace Helper
                 jsonPath: "Difficulty"
             );
 
-        public static Query PoiTypeFilter(this Query query, IReadOnlyCollection<string> poitypelist) =>
+        public static Query PoiTypeFilterOnTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
             query.WhereInJsonb(
                 poitypelist,
                 poitype => new { SmgTags = new[] { poitype.ToLower() } }
             );
 
-        public static Query PoiSubTypeFilter(this Query query, IReadOnlyCollection<string> subtypelist) =>
+        public static Query PoiSubTypeFilterOnTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
             query.WhereInJsonb(
                 subtypelist,
                 poitype => new { SmgTags = new[] { poitype.ToLower() } }
@@ -406,6 +412,14 @@ namespace Helper
                 list: sourcelist,
                 "Source",
                 id => id.ToUpper()
+            );
+
+        //For Alpinebits
+        public static Query SourceFilterAlpineBits(this Query query, IReadOnlyCollection<string> sourcelist) =>
+           query.WhereInJsonb(
+                list: sourcelist,
+                "Source",
+                id => id.ToLower()
             );
 
         public static Query SyncSourceInterfaceFilter(this Query query, IReadOnlyCollection<string> sourcelist) =>
@@ -459,19 +473,19 @@ namespace Helper
             );
 
         //To change, ODH Type Filtering based on 
-        public static Query ODHActivityPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> typelist) =>
+        public static Query ODHActivityPoiTypeFilterOnTags(this Query query, IReadOnlyCollection<string> typelist) =>
             query.WhereInJsonb(
                 typelist,
                 type => new { SmgTags = new[] { type.ToLower() } }
             );
 
-        public static Query ODHActivityPoiSubTypeFilterTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
+        public static Query ODHActivityPoiSubTypeFilterOnTags(this Query query, IReadOnlyCollection<string> subtypelist) =>
            query.WhereInJsonb(
                subtypelist,
                subtype => new { SmgTags = new[] { subtype.ToLower() } }
            );
 
-        public static Query ODHActivityPoiPoiTypeFilterTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
+        public static Query ODHActivityPoiPoiTypeFilterOnTags(this Query query, IReadOnlyCollection<string> poitypelist) =>
            query.WhereInJsonb(
                poitypelist,
                poitype => new { SmgTags = new[] { poitype.ToLower() } }
@@ -863,16 +877,7 @@ namespace Helper
 
         //}
 
-
-        //public static Query FilterClosedData(this Query query) =>
-        //    query.Where(q =>
-        //        q.WhereRaw(
-        //            "data#>>'\\{_Meta,ClosedData\\}' IS NULL"
-        //        ).OrWhereRaw(
-        //            "data#>>'\\{_Meta,ClosedData\\}' = 'false'"
-        //        )
-        //    );
-
+        //Standard JSON Filter
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(
@@ -890,5 +895,167 @@ namespace Helper
                     "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' = 'false'"
                 )
             );
+
+        #region Generated Columns Basic
+
+        public static Query WhereArrayInListOr(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
+                query.Where(q =>
+                {
+                    foreach (var item in list)
+                    {
+                        q = q.OrWhereRaw(
+                            generatedcolumn + " @> array\\[?\\]", item.ToLower()
+                        );
+                    }
+                    return q;
+                });
+
+        public static Query WhereArrayInListAnd(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
+            query.Where(q => 
+            q.WhereRaw(
+                generatedcolumn + " @> array\\[?\\]", list.Select(x => x.ToLower())
+                )
+            );
+
+
+        #endregion
+
+        #region Generated Clolumns Where Expressions
+
+        //Filter on Generated Field gen_licenseinfo_closeddata
+        public static Query FilterClosedData_GeneratedColumn(this Query query) =>
+            query.Where(q =>
+                q.WhereRaw(
+                    "gen_licenseinfo_closeddata IS NULL"
+                ).OrWhereRaw(
+                    "gen_licenseinfo_closeddata = false"
+                )
+            );
+        
+        //Filter on Generated Field gen_haslanguage AND
+        public static Query HasLanguageFilterAnd_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
+         query.Where(q => q.WhereRaw(
+             "gen_haslanguage @> array\\[?\\]", 
+             languagelist.Select(x => x.ToLower())
+             )
+         );
+
+        //Filter on Generated Field gen_haslanguage AND
+        public static Query HasLanguageFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
+         query.Where(q =>
+         {
+             foreach (var item in languagelist)
+             {
+                 q = q.OrWhereRaw(
+                     "gen_haslanguage @> array\\[?\\]", item.ToLower()
+                 );
+             }
+             return q;
+         });
+
+        //Filter on Generated Field gen_smgtags AND
+        public static Query SmgTagFilterAnd_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
+         query.Where(q => q.WhereRaw(
+             "gen_smgtags @> array\\[?\\]", 
+             list.Select(x => x.ToLower())
+             )
+         );
+
+        //Filter on Generated Field gen_smgtags OR
+        public static Query SmgTagFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
+        query.Where(q =>
+        {
+            foreach (var item in list)
+            {
+                q = q.OrWhereRaw(
+                    "gen_smgtags @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
+        
+        //Filter on Generated Field gen_active 
+        public static Query ActiveFilter_GeneratedColumn(this Query query, bool? active) =>
+            query.When(
+                active != null,
+                query => query.WhereRaw(
+                    "gen_active = ?", 
+                    active ?? false
+                )
+            );
+
+        //Filter on Generated Field gen_odhactive 
+        public static Query OdhActiveFilter_GeneratedColumn(this Query query, bool? odhactive) =>
+            query.When(
+                odhactive != null,
+                query => query.WhereRaw(
+                    "gen_odhactive = ?",
+                    odhactive ?? false
+                )
+            );
+
+        //Filter on Generated Field gen_lastchange 
+        public static Query LastChangedFilter_GeneratedColumn(this Query query, string? updatefrom) =>
+            query.When(
+                updatefrom != null,
+                query => query.WhereRaw(
+                    "to_date(gen_lastchange, 'YYYY-MM-DD') > date(?)",
+                    updatefrom
+                )
+            );
+
+        public static Query SourceFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
+             query.Where(q =>
+             {
+                 foreach (var source in sourcelist)
+                 {
+                     q = q.OrWhere("gen_syncsourceinterface", "ILIKE", source);
+                 }
+                 return q;
+             });
+  
+
+    //Only Begindate given
+    public static Query EventDateFilterBegin_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        query.When(
+            begin != DateTime.MinValue && end == DateTime.MaxValue,
+            query => query.WhereRaw(
+                "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+            )
+        );
+
+    //Only Enddate given
+    public static Query EventDateFilterEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        query.When(
+            begin == DateTime.MinValue && end != DateTime.MaxValue,
+            query => query.WhereRaw(
+                "((gen_begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+            )
+        );
+
+    //Both Begin and Enddate given
+    public static Query EventDateFilterBeginEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        query.When(
+            begin != DateTime.MinValue && end != DateTime.MaxValue,
+            query => query.WhereRaw(
+                "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+            )
+        );
+
+        //Filter on Generated Field gen_eventtopic OR
+        public static Query EventTopicFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
+        query.Where(q =>
+        {
+            foreach (var item in eventtopiclist)
+            {
+                q = q.OrWhereRaw(
+                    "gen_eventtopic @> array\\[?\\]", item.ToUpper()
+                );
+            }
+            return q;
+        });
+
+        #endregion
+
     }
 }

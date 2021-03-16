@@ -181,7 +181,7 @@ namespace OdhApiCore.Controllers
                             searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =

@@ -231,6 +231,8 @@ namespace DataModel
         string? MainType { get; set; }
         string? SubType { get; set; }
         string? PoiType { get; set; }
+
+        List<string> Categories { get; set; }
     }
 
     public interface IActivityStatus
@@ -504,6 +506,8 @@ namespace DataModel
         public ICollection<string> ValidForEntity { get; set; }
 
         public string? MainEntity { get; set; }
+
+        public ICollection<string> Source { get; set; }
     }
 
     #endregion
@@ -2156,6 +2160,8 @@ namespace DataModel
         
         //New
         public Nullable<int> WayNumber { get; set; }
+
+        public string? Number { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
@@ -2576,6 +2582,8 @@ namespace DataModel
         public string? SubType { get; set; }
         public string? PoiType { get; set; }
         public string? Language { get; set; }
+
+        public List<string> Categories { get; set; }
     }
 
     public class Ratings : IRatings
@@ -2885,7 +2893,7 @@ namespace DataModel
 
     public class EventShort
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
         public string? Source { get; set; }
@@ -3124,9 +3132,9 @@ namespace DataModel
     public class LicenseInfo
     {
         //public string DataType { get; set; }
-        public string License { get; set; }
-        public string LicenseHolder { get; set; }
-        public string Author { get; set; }
+        public string? License { get; set; }
+        public string? LicenseHolder { get; set; }
+        public string? Author { get; set; }
         public bool ClosedData { get; set; }
     }
 

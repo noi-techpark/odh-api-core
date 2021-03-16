@@ -1,0 +1,52 @@
+﻿<STA>
+  <ODHActivityPois>
+    <Categories>
+      <Item>Kultur Sehenswürdigkeiten</Item>
+      <Item>Wellness Entspannung</Item>
+      <Item>Essen Trinken</Item>
+    </Categories>
+    <SubCategories>
+      <!--Sommer -->
+      <Item>Radverleih</Item>
+      <Item>Badeseen Freibäder</Item>
+      <!--Winter -->
+      <Item>Skigebiete</Item>
+      <Item>Skischulen Skiverleih</Item>
+      <Item>Weihnachtsmärkte</Item>
+      <Item>Aufstiegsanlagen</Item>
+      <!--Geschäfte und Dienstleister -->
+      <Item>Gesundheit</Item>
+      <Item>Geschäfte</Item>
+    </SubCategories>
+    <PoiCategories>
+      <!--Dienstleister -->
+      <Item>Auto und Motor</Item>
+      <Item>Bausektor, Handwerk</Item>
+      <Item>Kinderbetreuung &amp; Animation</Item>
+      <Item>Werbung und Grafik</Item>
+      <Item>Reinigung</Item>
+      <Item>Tierpflege</Item>
+      <Item>Bank, Bankomat</Item>
+      <Item>Beauty und Wellness</Item>
+      <Item>Friseur</Item>
+      <Item>Kosmetik</Item>
+      <Item>Massage, Heilbäder</Item>
+      <Item>Day Spa, Sauna</Item>
+      <Item>Kneippbäder</Item>
+      <Item>Weitere Beauty und Wellness</Item>
+      <Item>Weitere Dienstleister</Item>
+      <!--Öffentliche einrichtungen -->
+      <Item>Bibliotheken</Item>
+      <Item>Gemeinden</Item>
+      <Item>Polizei, Carabinieri</Item>
+      <Item>Post</Item>
+      <Item>Infobüro</Item>
+      <Item>Infopoint</Item>
+      <Item>Krankenhaus</Item>
+      <!--Nachtleben und Unterhaltung -->
+      <Item>Biergärten</Item>
+      <Item>Cocktailbars</Item>
+      <Item>Diskotheken, Nachtclubs</Item>
+    </PoiCategories>
+  </ODHActivityPois>
+</STA>

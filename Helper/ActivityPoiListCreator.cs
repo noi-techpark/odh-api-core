@@ -1604,6 +1604,12 @@ namespace Helper
 
                             break;
 
+                        case "Andere Gastronomiebetriebe":
+                            SmgPoiPoiTypeFlagAndereGastronomiebetriebe mypoitypeflag28 = (SmgPoiPoiTypeFlagAndereGastronomiebetriebe)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag28.GetFlags().GetDescriptionList());
+
+                            break;
+
                         case "Hütten Almen":
                             SmgPoiPoiTypeFlagHuettenAlmen mypoitypeflag18 = (SmgPoiPoiTypeFlagHuettenAlmen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag18.GetFlags().GetDescriptionList());

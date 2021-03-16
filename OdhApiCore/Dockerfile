@@ -3,10 +3,12 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+#FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0.102-alpine3.12-amd64 AS build
 WORKDIR /src
 COPY DataModel/DataModel.csproj DataModel/
 COPY Helper/Helper.csproj Helper/
+COPY EBMS/EBMS.csproj EBMS/
 COPY MSS/MSS.csproj MSS/
 COPY LCS/LCS.csproj LCS/
 COPY SIAG/SIAG.csproj SIAG/
@@ -29,4 +31,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
 COPY OdhApiCore/xml/Weather.xml xml/
+COPY OdhApiCore/xml/STACategories.xml xml/
+COPY OdhApiCore/xml/BezirkWeather.xml xml/
+COPY OdhApiCore/xml/RequestInterceptor.xml xml/
+
 ENTRYPOINT ["dotnet", "OdhApiCore.dll"]

@@ -680,8 +680,8 @@ namespace Helper
     [Flags]
     public enum SmgPoiSubTypeFlagEssenTrinken
     {
-        [Description("Essen Trinken")]
-        EssenTrinken = 1,
+        [Description("Andere Gastronomiebetriebe")]
+        AndereGastronomiebetriebe = 1,
         [Description("Weinkellereien")]
         Weinkellereien = 1 << 1,
         [Description("Restaurants Gasthäuser")]
@@ -1099,6 +1099,27 @@ namespace Helper
     }
 
     [Flags]
+    public enum SmgPoiPoiTypeFlagAndereGastronomiebetriebe
+    {
+        [Description("Pub Disco")]
+        PubDisco = 1,
+        [Description("Apres Ski")]
+        ApresSki = 1 << 1,
+        [Description("Jausenstation")]
+        Jausenstation = 1 << 2,
+        [Description("Törggele Lokal")]
+        ToerggeleLokal = 1 << 3,
+        [Description("Schnellimbiss")]
+        Schnellimbiss = 1 << 4,
+        [Description("Mensa")]
+        Mensa = 1 << 5,
+        [Description("Eisdiele")]
+        Eisdiele = 1 << 6,
+        [Description("Braugarten")]
+        Braugarten = 1 << 7
+    }
+
+    [Flags]
     public enum SmgPoiPoiTypeFlagRestaurantsGasthauser
     {
         [Description("Restaurants")]
@@ -1111,10 +1132,10 @@ namespace Helper
         Vinotheken = 1 << 3,
         [Description("Bars Cafes Bistros")]
         BarsCafesBistros = 1 << 4,
-        [Description("michelin sternerestaurants")]
-        michelin = 1 << 5,
-        [Description("gault millau südtirol")]
-        gaultmillau = 1 << 6
+        [Description("Gasthaus")]
+        Gasthaus = 1 << 5,
+        [Description("Gasthof")]
+        Gasthof = 1 << 6
     }
 
     [Flags]
@@ -1132,7 +1153,11 @@ namespace Helper
     public enum SmgPoiPoiTypeFlagBauerlicheSchankbetriebe
     {
         [Description("Buschen Hofschänke")]
-        BuschenHofschaenke = 1
+        BuschenHofschaenke = 1,
+        [Description("Buschenschank")]
+        Buschenschank = 1 << 1,
+        [Description("Hofschank")]
+        Hofschank = 1 << 2
     }
 
     [Flags]

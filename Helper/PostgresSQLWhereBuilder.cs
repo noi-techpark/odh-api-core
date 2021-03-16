@@ -111,20 +111,21 @@ namespace Helper
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
-                .AreaFilter(arealist)
-                .ActivityTypeFilter(activitytypelist)
-                .ActivitySubTypeFilter(subtypelist)
+                .AreaFilter(arealist)                
+                .When(activitytypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(activitytypelist))  //.ActivityTypeFilterOnTags(activitytypelist)
+                .When(subtypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(subtypelist)) //.ActivitySubTypeFilterOnTags(subtypelist)
                 .DifficultyFilter(difficultylist)
                 .DistanceFilter(distance, distancemin, distancemax)
                 .DurationFilter(duration, durationmin, durationmax)
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
-                .HighlightFilter(highlight)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .HighlightFilter(highlight)                
+                .ActiveFilter_GeneratedColumn(activefilter) //.ActiveFilter(activefilter)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .LastChangedFilter_GeneratedColumn(lastchange) //.LastChangedFilter(lastchange)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))    //OK GENERATED COLUMNS
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Poi
@@ -152,20 +153,21 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .DistrictFilter(districtlist)
-                .LocFilterMunicipalityFilter(municipalitylist)
-                .LocFilterTvsFilter(tourismvereinlist)
-                .LocFilterRegionFilter(regionlist)
-                .AreaFilter(arealist)
-                .PoiTypeFilter(poitypelist)
-                .PoiSubTypeFilter(subtypelist)
-                .SmgTagFilter(smgtaglist)
+                .DistrictFilter(districtlist)                       //Use generated columns also here?
+                .LocFilterMunicipalityFilter(municipalitylist)      //Use generated columns also here?
+                .LocFilterTvsFilter(tourismvereinlist)              //Use generated columns also here?
+                .LocFilterRegionFilter(regionlist)                  //Use generated columns also here?
+                .AreaFilter(arealist)                               //Use generated columns also here?
+                .When(poitypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(poitypelist))  //OK GENERATED COLUMNS //.PoiTypeFilterOnTags(poitypelist)
+                .When(subtypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(subtypelist))  //OK GENERATED COLUMNS //.PoiSubTypeFilterOnTags(subtypelist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .HighlightFilter(highlight)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .LastChangedFilter_GeneratedColumn(lastchange)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))    //OK GENERATED COLUMNS
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());                 //OK GENERATED COLUMNS   
         }
 
         //Return Where and Parameters for Gastronomy
@@ -201,12 +203,12 @@ namespace Helper
                 .CategoryCodeFilter(categorycodeslist)
                 .CuisineCodeFilter(facilitycodeslist)
                 .DishCodeFilter(dishcodeslist)
-                .SmgTagFilter(smgtaglist)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Activity
@@ -238,18 +240,18 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AreaFilter(arealist)
-                .ODHActivityPoiTypeFilter(typelist)
-                .ODHActivityPoiSubTypeFilter(subtypelist)
-                .ODHActivityPoiPoiTypeFilter(poitypelist)
-                .SourceFilter(sourcelist)
-                .HasLanguageFilter(languagelist)
+                .When(typelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(typelist)) //.ODHActivityPoiTypeFilterOnTags(typelist)
+                .When(subtypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(subtypelist)) //.ODHActivityPoiSubTypeFilterOnTags(subtypelist)
+                .When(poitypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(poitypelist)) //.ODHActivityPoiPoiTypeFilterOnTags(poitypelist)
+                .SourceFilter_GeneratedColumn(sourcelist) //.SourceFilter(sourcelist)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .LastChangedFilter_GeneratedColumn(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Article
@@ -274,14 +276,14 @@ namespace Helper
                 .ODHActivityPoiTypeFilter(typelist)
                 .ODHActivityPoiSubTypeFilter(subtypelist)
                 .ODHActivityPoiPoiTypeFilter(subtypelist)
-                .HasLanguageFilter(languagelist)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Event
@@ -315,21 +317,21 @@ namespace Helper
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
-                .EventTopicFilter(topiclist)
+                .EventTopicFilter_GeneratedColumn(topiclist)
                 .EventTypeFilter(typelist)
                 .EventRancFilter(ranclist)
                 .EventOrgFilter(orglist)
-                .EventDateFilterEnd(begindate, enddate)
-                .EventDateFilterBegin(begindate, enddate)
-                .EventDateFilterBeginEnd(begindate, enddate)
-                .HasLanguageFilter(languagelist)
+                .EventDateFilterEnd_GeneratedColumn(begindate, enddate)
+                .EventDateFilterBegin_GeneratedColumn(begindate, enddate)
+                .EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .SourceFilterMeta(sourcelist)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .LastChangedFilter_GeneratedColumn(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Accommodation
@@ -371,20 +373,20 @@ namespace Helper
                 .AccoApartmentFilter(apartmentfilter)
                 .AccoBoardFilter(boardlist)
                 .AccoBookableFilter(bookable)
-                // FILTERS Available Marketinggroup, LTSFeature, BookingPortal
-                //.HasLanguageFilter(languagelist)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
-                .SmgTagFilter(smgtaglist)
+                         // FILTERS Available Marketinggroup, LTSFeature, BookingPortal
+                         //.HasLanguageFilter(languagelist)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Common
         public static Query CommonWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
-            string? searchfilter, bool? visibleinsearch,
+            string? searchfilter, bool? visibleinsearch, bool? activefilter, bool? odhactivefilter,
             string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
@@ -397,7 +399,9 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
                 .VisibleInSearchFilter(visibleinsearch)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(odhactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Wine
@@ -416,7 +420,7 @@ namespace Helper
                 .LastChangedFilter(lastchange)
                 .CompanyIdFilter(companyid)
                 .WineIdFilter(wineid)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for WebCamInfo
@@ -438,11 +442,11 @@ namespace Helper
             return query
                 .IdUpperFilter(idlist)
                 .SourceFilter(sourcelist)
-                .ActiveFilter(activefilter)
-                .SmgActiveFilter(smgactivefilter)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Measuringpoint
@@ -470,11 +474,11 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AreaFilterMeasuringpoints(arealist)
-                .ActiveFilter(activefilter)                
-                .SmgActiveFilter(smgactivefilter)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Measuringpoint
@@ -499,6 +503,8 @@ namespace Helper
                 .SourceFilter(sourcelist)
                 .EventShortLocationFilter(eventlocationlist)
                 .EventShortWebaddressFilter(webaddresslist)
+                //.ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.EventShortActiveFilter(activefilter)
+                //.OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .EventShortActiveFilter(activefilter)
                 .EventShortDateFilterEnd(start, end, !getbyrooms)
                 .EventShortDateFilterBegin(start, end, !getbyrooms)
@@ -508,7 +514,7 @@ namespace Helper
                 .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Venue
@@ -544,20 +550,21 @@ namespace Helper
                 .VenueLocFilterMunicipalityFilter(municipalitylist)
                 .VenueLocFilterTvsFilter(tourismvereinlist)
                 .VenueLocFilterRegionFilter(regionlist)
-                .VenueActiveFilter(activefilter)
-                .VenueODHActiveFilter(smgactivefilter)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.VenueActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.VenueODHActiveFilter(smgactivefilter)
                 .VenueCategoryFilter(categorylist)
                 .VenueFeatureFilter(featurelist)
                 .VenueSetupTypeFilter(setuptypelist)
                 .VenueRoomCountFilter(roomcount, roomcountmin, roomcountmax)
-                .VenueODHTagFilter(smgtaglist)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.VenueODHTagFilter(smgtaglist)
                 .VenueLastChangedFilter(lastchange)
                 .VenueSourceFilter(sourcelist)
                 .VenueHasLanguageFilter(languagelist)
                 //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
                 //.SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                
-                .When(filterClosedData, q => q.FilterClosedDataVenues());
+                //.When(filterClosedData, q => q.FilterClosedDataVenues());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
 
@@ -576,7 +583,7 @@ namespace Helper
 
             return query
                 .IdIlikeFilter(idlist)
-                .SourceFilter(sourcelist)
+                .SourceFilterAlpineBits(sourcelist)
                 .AlpineBitsMessageFilter(messagetypelist)
                 .AlpineBitsAccommodationIdFilter(accommodationIds);
         }
@@ -595,7 +602,7 @@ namespace Helper
             return query
                 .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
                 .ODHTagValidForEntityFilter(smgtagtypelist)
-                .When(filterClosedData, q => q.FilterClosedData());
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
     }

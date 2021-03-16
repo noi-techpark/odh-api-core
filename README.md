@@ -26,7 +26,8 @@ Extensions active on DB
 * extension cube;
 * extension pg_trgm;
 
-Test Server on https://api.tourism.testingmachine.eu
+Test Server on https://api.tourism.testingmachine.eu  
+Production Server on https://tourism.api.opendatahub.bz.it
 
 ## Getting started:
 
@@ -46,6 +47,9 @@ Clone the repository
 * S3_BUCKET_ACCESSPOINT (S3 Bucket for Image Upload accesspoint)
 * S3_IMAGEUPLOADER_ACCESSKEY (S3 Bucket for Image Upload accesskey)
 * S3_IMAGEUPLOADER_SECRETKEY (S3 Bucket for Image Upload secretkey)
+* OAUTH_AUTORITY (Oauth Server Authority URL)
+* ELK_URL (Serilog Elasticsearch Sink Elastic URL)
+* ELK_TOKEN (Serilog Elasticsearch Access Token)
 
 ### using Docker
 

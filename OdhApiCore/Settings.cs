@@ -54,6 +54,16 @@ namespace OdhApiCore
         public string XmldirWeather { get; private set; }        
     }
 
+    public class JsonConfig
+    {
+        public JsonConfig(string jsondir)
+        {
+            this.Jsondir = jsondir;            
+        }
+
+        public string Jsondir { get; private set; }
+    }
+
     public class S3ImageresizerConfig
     {
         public S3ImageresizerConfig(string url, string bucketaccesspoint, string accesskey, string secretkey)
@@ -70,6 +80,18 @@ namespace OdhApiCore
         public string SecretKey { get; private set; }
     }
 
+    public class EBMSConfig
+    {
+        public EBMSConfig(string user, string password)
+        {
+            this.User = user;
+            this.Password = password;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+    }
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -77,7 +99,9 @@ namespace OdhApiCore
         LcsConfig LcsConfig { get; }
         SiagConfig SiagConfig { get; }
         XmlConfig XmlConfig { get; }
+        JsonConfig JsonConfig { get; }
         S3ImageresizerConfig S3ImageresizerConfig { get; }
+        EBMSConfig EbmsConfig { get; }
     }
 
     public class Settings : ISettings
@@ -88,7 +112,9 @@ namespace OdhApiCore
         private readonly LcsConfig lcsConfig;
         private readonly SiagConfig siagConfig;
         private readonly XmlConfig xmlConfig;
+        private readonly JsonConfig jsonConfig;
         private readonly S3ImageresizerConfig s3imageresizerConfig;
+        private readonly EBMSConfig ebmsConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -103,8 +129,12 @@ namespace OdhApiCore
             this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
             var xml = this.configuration.GetSection("XmlConfig");
             this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
+            var json = this.configuration.GetSection("JsonConfig");
+            this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
+            var ebms = this.configuration.GetSection("EBMSConfig");
+            this.ebmsConfig = new EBMSConfig(xml.GetValue<string>("EBMSUser", ""), xml.GetValue<string>("EBMSPassword", ""));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -113,6 +143,8 @@ namespace OdhApiCore
         public LcsConfig LcsConfig => this.lcsConfig;
         public SiagConfig SiagConfig => this.siagConfig;
         public XmlConfig XmlConfig => this.xmlConfig;
+        public JsonConfig JsonConfig => this.jsonConfig;
+        public EBMSConfig EbmsConfig => this.ebmsConfig;
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
     }
 }

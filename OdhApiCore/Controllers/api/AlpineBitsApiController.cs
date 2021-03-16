@@ -50,7 +50,7 @@ namespace OdhApiCore.Controllers.api
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity?.Name, "InventoryBasicPush");
             else
-                return await GetSingleAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "InventoryBasicPush", accoid, last);
+                return await GetAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "InventoryBasicPush", accoid, last);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("AlpineBits/InventoryBasic/{RequestId}")]
         public async Task<IActionResult> Get(string RequestId)
         {
-            return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "InventoryBasicPush", null, false);
+            return await GetAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "InventoryBasicPush", null, false);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace OdhApiCore.Controllers.api
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity?.Name, "InventoryHotelInfoPush");
             else
-                return await GetSingleAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "InventoryHotelInfoPush", accoid, last);
+                return await GetAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "InventoryHotelInfoPush", accoid, last);
 
         }
 
@@ -110,7 +110,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("AlpineBits/InventoryHotelInfo/{RequestId}")]
         public async Task<IActionResult> GetInventoryHotelInfoSingle(string RequestId)
         {
-            return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "InventoryHotelInfoPush", null, false);
+            return await GetAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "InventoryHotelInfoPush", null, false);
         }
 
         /// <summary>
@@ -120,9 +120,9 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsInventoryHotelInfoWriter")]
         [HttpPost, Route("AlpineBits/InventoryHotelInfo")]
-        public IActionResult? PostInventoryHotelInfo()
+        public async Task<IActionResult> PostInventoryHotelInfoData()
         {
-            return null; // await PostInventoryHotelInfo(Request);
+            return await PostInventoryHotelInfo(Request);
         }
 
         #endregion
@@ -143,7 +143,7 @@ namespace OdhApiCore.Controllers.api
             if (String.IsNullOrEmpty(accoid))
                 return await GetAllAlpineBitsMessagesBySource(this.User.Identity?.Name, "FreeRoomsPush");
             else
-                return await GetSingleAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "FreeRoomsPush", accoid, last);
+                return await GetAlpineBitsMessagesByIdandSource(null, this.User.Identity?.Name, "FreeRoomsPush", accoid, last);
 
         }
 
@@ -157,7 +157,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("AlpineBits/FreeRooms/{RequestId}")]
         public async Task<IActionResult> GetFreeRoomsSingle(string RequestId)
         {
-            return await GetSingleAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "FreeRoomsPush", null, false);
+            return await GetAlpineBitsMessagesByIdandSource(RequestId, this.User.Identity?.Name, "FreeRoomsPush", null, false);
         }
 
         /// <summary>
@@ -167,9 +167,9 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,AlpineBitsWriter,AlpineBitsFreeRoomsWriter")]
         [HttpPost, Route("AlpineBits/FreeRooms")]
-        public IActionResult? PostFreeRooms()
+        public async Task<IActionResult> PostFreeRoomsData()
         {
-            return null;
+            return await PostFreeRooms(Request); ;
         }
 
         #endregion
@@ -190,9 +190,9 @@ namespace OdhApiCore.Controllers.api
                      .SelectRaw("data")
                      .From("alpinebits")
                      .AlpineBitsWhereExpression(idlist, sourcelist, accoidlist, messagetypelist, null)
-                ;
+                     .OrderByRaw("TO_TIMESTAMP(data ->> 'RequestDate','YYYY-MM-DD T HH24:MI:SS') DESC");
                 
-                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var data = await query.GetAsync<JsonRaw?>();
 
                 return Ok(data);
             }
@@ -202,7 +202,7 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        private async Task<IActionResult> GetSingleAlpineBitsMessagesByIdandSource(string? id, string? source, string? messagetype, string? accoids, bool last)
+        private async Task<IActionResult> GetAlpineBitsMessagesByIdandSource(string? id, string? source, string? messagetype, string? accoids, bool last)
         {
             try
             {
@@ -223,7 +223,7 @@ namespace OdhApiCore.Controllers.api
                      .OrderByRaw("TO_TIMESTAMP(data ->> 'RequestDate','YYYY-MM-DD T HH24:MI:SS') DESC")
                      .Limit(limit);
 
-                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var data = await query.GetAsync<JsonRaw?>();
 
                 return Ok(data);                
             }
@@ -259,7 +259,7 @@ namespace OdhApiCore.Controllers.api
 
                     input.MessageType = "InventoryBasicPush";
                     input.RequestDate = DateTime.Now;
-                    input.Source = this.User.Identity?.Name;
+                    input.Source = this.User.Identity?.Name.ToLower();
 
                     var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
                   
@@ -288,9 +288,9 @@ namespace OdhApiCore.Controllers.api
 
                     input.MessageType = "InventoryHotelInfoPush";
                     input.RequestDate = DateTime.Now;
-                    input.Source = this.User.Identity?.Name;
+                    input.Source = this.User.Identity?.Name.ToLower();
 
-                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
                     //var query = QueryFactory.Query("alpinebits").AsInsert(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
 
                     return Ok(new GenericResult() { Message = "INSERT AlpineBits InventoryHotelInfoPush succeeded, Request Id:" + id + " username:" + this.User.Identity?.Name });
@@ -318,9 +318,9 @@ namespace OdhApiCore.Controllers.api
 
                     input.MessageType = "FreeRoomsPush";
                     input.RequestDate = DateTime.Now;
-                    input.Source = this.User.Identity?.Name;
+                    input.Source = this.User.Identity?.Name.ToLower();                    
 
-                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
+                    var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
 
                     return Ok(new GenericResult() { Message = "INSERT AlpineBits FreeRoomsPush succeeded, Request Id:" + id + " username:" + this.User.Identity?.Name });
                 }
