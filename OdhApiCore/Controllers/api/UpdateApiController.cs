@@ -37,7 +37,15 @@ namespace OdhApiCore.Controllers.api
 
             return Ok("EBMS Eventshorts \" updated");
         }
-     
+
+
+        [HttpGet, Route("EBMS/UpdateSingle/{id}")]
+        public async Task<IActionResult> UpdateSingleEBMS(string id, CancellationToken cancellationToken)
+        {
+            //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
+
+            return Ok("EBMS Eventshorts \" updated");
+        }
 
     }
 }
