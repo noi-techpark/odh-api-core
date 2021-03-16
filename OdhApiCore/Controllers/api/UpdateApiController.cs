@@ -54,7 +54,7 @@ namespace OdhApiCore.Controllers.api
             {                
                 var result = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
 
-                IEnumerable<EventShort> currenteventshort = GetAllEventsShort(DateTime.Now).ToList();
+                var currenteventshort = await GetAllEventsShort(DateTime.Now);
 
                 var resultsorted = result.OrderBy(x => x.StartDate);
 
@@ -147,7 +147,7 @@ namespace OdhApiCore.Controllers.api
                         if (neweventshort)
                         {
                             queryresult = await QueryFactory.Query("eventeuracnoi")
-                                .InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                                .InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
                         }
                         else
                         {
@@ -155,7 +155,7 @@ namespace OdhApiCore.Controllers.api
 
                             //TODO CHECK IF THIS WORKS     
                             queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                                .UpdateAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                                .UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
 
                             //queryresult = PostgresSQLHelper.UpdateDataFromTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
                         }
@@ -169,8 +169,8 @@ namespace OdhApiCore.Controllers.api
                     }
                 }
 
-                //if (result.Count > 0)
-                //    DeleteDeletedEvents(result, currenteventshort.ToList());
+                if (result.Count > 0)
+                    await DeleteDeletedEvents(result, currenteventshort.ToList());
 
                 //Constants.tracesource.TraceEvent(TraceEventType.Information, 0, "EventShort Import succeeded");
             }
@@ -208,77 +208,54 @@ namespace OdhApiCore.Controllers.api
                     automatictechnologyfields.Add(toassign);
         }
 
-        //private static void DeleteDeletedEvents(List<EventShort> eventshortfromnow, List<EventShort> eventshortinDB)
-        //{
-        //    //TODO CHECK if Event is in list, if not, DELETE!
-        //    //TODO CHECK IF THIS IS WORKING CORRECTLY
+        private async Task DeleteDeletedEvents(List<EventShort> eventshortfromnow, List<EventShort> eventshortinDB)
+        {
+            //TODO CHECK if Event is in list, if not, DELETE!
+            //TODO CHECK IF THIS IS WORKING CORRECTLY
 
 
-        //    var idsonListinDB = eventshortinDB.Select(x => x.EventId).ToList();
-        //    var idsonService = eventshortfromnow.Select(x => x.EventId).ToList();
+            var idsonListinDB = eventshortinDB.Select(x => x.EventId).ToList();
+            var idsonService = eventshortfromnow.Select(x => x.EventId).ToList();
 
 
-        //    var idstodelete = idsonListinDB.Where(p => !idsonService.Any(p2 => p2 == p));
+            var idstodelete = idsonListinDB.Where(p => !idsonService.Any(p2 => p2 == p));
 
-        //    if (idstodelete.Count() == 0)
-        //    {
-        //        Console.ForegroundColor = ConsoleColor.DarkRed;
-        //        Console.WriteLine("Nothing to delete");
-        //        Constants.tracesource.TraceEvent(TraceEventType.Information, 0, "Nothing to delete");
-        //    }
-        //    else
-        //    {
-        //        foreach (var idtodelete in idstodelete)
-        //        {
-        //            //Set to inactive or delete?
+            if (idstodelete.Count() > 0)           
+            {
+                foreach (var idtodelete in idstodelete)
+                {
+                    //Set to inactive or delete?
 
-        //            var eventshorttodeactivate = eventshortinDB.Where(x => x.EventId == idtodelete).FirstOrDefault();
+                    var eventshorttodeactivate = eventshortinDB.Where(x => x.EventId == idtodelete).FirstOrDefault();
 
-        //            if (eventshorttodeactivate != null)
-        //            {
+                    //TODO CHECK IF IT WORKS
+                    if (eventshorttodeactivate != null)
+                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id.ToLower()).DeleteAsync();                       
+                }
+            }
+        }
 
-        //                using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //                {
-        //                    conn.Open();
+        private async Task<IEnumerable<EventShort>> GetAllEventsShort(DateTime now)
+        {
+            var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
+            string where = "(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND (data @> '{ \"Source\" : \"EBMS\" }')";
 
-        //                    PostgresSQLHelper.DeleteDataFromTable(conn, "eventeuracnoi", eventshorttodeactivate.Id.ToLower());
+            var query =
+                         QueryFactory.Query("eventeuracnoi")
+                             .Select("data")
+                             .WhereRaw(where);
 
-        //                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+            var myevents = await query.GetAsync<JsonRaw>();
 
-        //                    Console.WriteLine("EventShort DELETED not more on service: " + eventshorttodeactivate.Id);
-        //                    Constants.tracesource.TraceEvent(TraceEventType.Information, 0, "EventShort DELETED not more on service: " + eventshorttodeactivate.Id);
+            List<EventShort> myeventshortlist = new List<EventShort>();
 
-        //                }
-        //            }
-        //            else
-        //            {
-        //                Console.ForegroundColor = ConsoleColor.DarkRed;
-
-        //                Console.WriteLine("EventShort already deleted: " + eventshorttodeactivate.Id);
-        //                //Constants.tracesource.TraceEvent(TraceEventType.Information, 0, "EventShort already set to inactive: " + eventshorttodeactivate.Id);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private static IEnumerable<EventShort> GetAllEventsShort(DateTime now)
-        //{
-        //    var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);            
-
-        //    using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //    {
-        //        conn.Open();
-
-        //        string select = "*";
-        //        string orderby = "";
-
-        //        string where = "(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND (data @> '{ \"Source\" : \"EBMS\" }')";
-
-        //        var data = PostgresSQLHelper.SelectFromTableDataAsObject<EventShort>(conn, "eventeuracnoi", select, where, orderby, 0, null);
-
-        //        return data;
-        //    }
-        //}
+            foreach(var myevent in myevents)
+            {
+                myeventshortlist.Add(JsonConvert.DeserializeObject<EventShort>(myevent.Value));
+            }
+            
+            return myeventshortlist;            
+        }
 
     }
 }
