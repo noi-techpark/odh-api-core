@@ -169,8 +169,8 @@ namespace OdhApiCore.Controllers.api
                     }
                 }
 
-                if (result.Count > 0)
-                    DeleteDeletedEvents(result, currenteventshort.ToList());
+                //if (result.Count > 0)
+                //    DeleteDeletedEvents(result, currenteventshort.ToList());
 
                 //Constants.tracesource.TraceEvent(TraceEventType.Information, 0, "EventShort Import succeeded");
             }
