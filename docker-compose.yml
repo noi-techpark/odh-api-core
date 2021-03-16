@@ -27,5 +27,7 @@ services:
       ASPNETCORE_ElasticSearchConfig__ElasticUrl: ${ELK_URL}
       ASPNETCORE_ElasticSearchConfig__ElasticAuthtoken: ${ELK_TOKEN}
       ASPNETCORE_JsonConfig__Jsondir: ${JSONPATH}
+      ASPNETCORE_EBMSConfig__EBMSUser: ${EBMS_USER}
+      ASPNETCORE_EBMSConfig__EBMSPassword: ${EBMS_PASS}    
     ports:
       - "60209:80"
