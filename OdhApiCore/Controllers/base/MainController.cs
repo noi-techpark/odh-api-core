@@ -9,7 +9,7 @@ using ServiceReferenceLCS;
 
 namespace OdhApiCore.Controllers
 {
-   
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
     public class MainController : ControllerBase
     {
