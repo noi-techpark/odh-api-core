@@ -604,7 +604,7 @@ namespace OdhApiCore.Controllers.api
                     var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
                         .UpdateAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
 
-                    return Ok(new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
+                    return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort.Id), Id = eventshort.Id });
                 }
                 else
                 {
@@ -633,9 +633,11 @@ namespace OdhApiCore.Controllers.api
                          QueryFactory.Query("eventeuracnoi")
                              .Select("data")
                              .Where("id", id.ToLower());
-                    
-                    var myeventraw = await query.FirstOrDefaultAsync<JsonRaw>();                    
-                    var myevent = JsonConvert.DeserializeObject<EventShort>(myeventraw.Value);
+
+                    //var myeventraw = await query.FirstOrDefaultAsync<JsonRaw>();                    
+                    //var myevent = JsonConvert.DeserializeObject<EventShort>(myeventraw.Value);
+
+                    var myevent = await query.GetFirstOrDefaultAsObject<EventShort>();
 
                     if (myevent != null)
                     {

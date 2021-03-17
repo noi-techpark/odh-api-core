@@ -34,7 +34,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EBMS/UpdateAll")]
         public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken)
         {
-            //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
+            await ImportEbmsEventsToDB();
 
             return Ok("EBMS Eventshorts \" updated");
         }
@@ -48,7 +48,7 @@ namespace OdhApiCore.Controllers.api
             return Ok("EBMS Eventshorts \" updated");
         }
 
-        private async Task ImportEvmsEventsToDB()
+        private async Task ImportEbmsEventsToDB()
         {
             try
             {                
