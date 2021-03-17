@@ -99,7 +99,7 @@ namespace Helper
                     JsonConvert.SerializeObject(
                         jsonObjectConstructor(value)
                     )
-                );       
+                );
 
         [Obsolete]
         public static Query WhereInJsonb<T>(
@@ -116,7 +116,7 @@ namespace Helper
                         );
                     }
                     return q;
-                });      
+                });
 
         public static Query WhereInJsonb<T>(
             this Query query,
@@ -546,7 +546,7 @@ namespace Helper
                     "((begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
                 )
             );
-      
+
         public static Query VisibleInSearchFilter(this Query query, bool? visibleinsearch) =>
             query.When(
                 visibleinsearch != null,
@@ -586,7 +586,7 @@ namespace Helper
                "AccoTypeId",
                wineid => wineid
            );
-        
+
         public static Query AccoBoardFilter(this Query query, IReadOnlyCollection<string> boardlist) =>
          query.WhereInJsonb(
              boardlist,
@@ -598,7 +598,7 @@ namespace Helper
              badgelist,
              badge => new { BadgeIds = new[] { badge.ToLower() } }
          );
-        
+
         public static Query AccoLTSFeatureFilter(this Query query, IReadOnlyCollection<string> ltsfeaturelist) =>
          query.WhereInJsonb(
              ltsfeaturelist,
@@ -618,7 +618,7 @@ namespace Helper
          );
 
         //THEMEFILTER is AND connected
-        public static Query AccoThemeFilter(this Query query, IReadOnlyCollection<string> themelist) =>                                  
+        public static Query AccoThemeFilter(this Query query, IReadOnlyCollection<string> themelist) =>
             query.WhereAllInJsonb(
              themelist,
              theme => new { ThemeIds = new[] { theme } }
@@ -740,11 +740,11 @@ namespace Helper
                 )
             );
 
-        public static Query ODHTagValidForEntityFilter(this Query query, IReadOnlyCollection<string> smgtagtypelist) =>           
+        public static Query ODHTagValidForEntityFilter(this Query query, IReadOnlyCollection<string> smgtagtypelist) =>
            query.WhereInJsonb(
                smgtagtypelist,
                smgtagtype => new { ValidForEntity = new[] { smgtagtype.ToLower() } }
-           );         
+           );
 
         //AlpineBits
         public static Query AlpineBitsAccommodationIdFilter(this Query query, IReadOnlyCollection<string> accommodationids) =>
@@ -811,7 +811,7 @@ namespace Helper
                    categorylist,
                    tag => new { odhdata = new { VenueCategory = new[] { new { Id = tag.ToUpper() } } } }
                );
-        
+
         public static Query VenueFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
            query.WhereInJsonb(
                    featurelist,
@@ -911,7 +911,7 @@ namespace Helper
                 });
 
         public static Query WhereArrayInListAnd(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
-            query.Where(q => 
+            query.Where(q =>
             q.WhereRaw(
                 generatedcolumn + " @> array\\[?\\]", list.Select(x => x.ToLower())
                 )
@@ -931,11 +931,11 @@ namespace Helper
                     "gen_licenseinfo_closeddata = false"
                 )
             );
-        
+
         //Filter on Generated Field gen_haslanguage AND
         public static Query HasLanguageFilterAnd_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
          query.Where(q => q.WhereRaw(
-             "gen_haslanguage @> array\\[?\\]", 
+             "gen_haslanguage @> array\\[?\\]",
              languagelist.Select(x => x.ToLower())
              )
          );
@@ -956,7 +956,7 @@ namespace Helper
         //Filter on Generated Field gen_smgtags AND
         public static Query SmgTagFilterAnd_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
          query.Where(q => q.WhereRaw(
-             "gen_smgtags @> array\\[?\\]", 
+             "gen_smgtags @> array\\[?\\]",
              list.Select(x => x.ToLower())
              )
          );
@@ -973,13 +973,13 @@ namespace Helper
             }
             return q;
         });
-        
+
         //Filter on Generated Field gen_active 
         public static Query ActiveFilter_GeneratedColumn(this Query query, bool? active) =>
             query.When(
                 active != null,
                 query => query.WhereRaw(
-                    "gen_active = ?", 
+                    "gen_active = ?",
                     active ?? false
                 )
             );
@@ -1013,34 +1013,34 @@ namespace Helper
                  }
                  return q;
              });
-  
 
-    //Only Begindate given
-    public static Query EventDateFilterBegin_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-        query.When(
-            begin != DateTime.MinValue && end == DateTime.MaxValue,
-            query => query.WhereRaw(
-                "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
-            )
-        );
 
-    //Only Enddate given
-    public static Query EventDateFilterEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-        query.When(
-            begin == DateTime.MinValue && end != DateTime.MaxValue,
-            query => query.WhereRaw(
-                "((gen_begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
-            )
-        );
+        //Only Begindate given
+        public static Query EventDateFilterBegin_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin != DateTime.MinValue && end == DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                )
+            );
 
-    //Both Begin and Enddate given
-    public static Query EventDateFilterBeginEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-        query.When(
-            begin != DateTime.MinValue && end != DateTime.MaxValue,
-            query => query.WhereRaw(
-                "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
-            )
-        );
+        //Only Enddate given
+        public static Query EventDateFilterEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin == DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((gen_begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+                )
+            );
+
+        //Both Begin and Enddate given
+        public static Query EventDateFilterBeginEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin != DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+                )
+            );
 
         //Filter on Generated Field gen_eventtopic OR
         public static Query EventTopicFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
@@ -1054,6 +1054,92 @@ namespace Helper
             }
             return q;
         });
+
+
+        //Filter on Generated Field gen_boardids
+        public static Query BoardIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        query.Where(q =>
+        {
+            foreach (var item in boardids)
+            {
+                q = q.OrWhereRaw(
+                    "gen_boardids @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
+
+        //Filter on Generated Field gen_featureids
+        public static Query FeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        query.Where(q =>
+        {
+            foreach (var item in boardids)
+            {
+                q = q.OrWhereRaw(
+                    "gen_featureids @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
+
+        //Filter on Generated Field gen_specialfeatureids
+        public static Query SpecialFeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        query.Where(q =>
+        {
+            foreach (var item in boardids)
+            {
+                q = q.OrWhereRaw(
+                    "gen_specialfeatureids @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
+
+        //Filter on Generated Field gen_badgeids
+        public static Query BadgeIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        query.Where(q =>
+        {
+            foreach (var item in boardids)
+            {
+                q = q.OrWhereRaw(
+                    "gen_badgeids @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
+
+        //Filter on Generated Field gen_themeids
+        public static Query ThemeIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        query.Where(q =>
+        {
+            foreach (var item in boardids)
+            {
+                q = q.OrWhereRaw(
+                    "gen_themeids @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
+
+        //Filter on Generated Field gen_accotype 
+        public static Query AccoType_GeneratedColumn(this Query query, string? accotype) =>
+            query.When(
+                accotype != null,
+                query => query.WhereRaw(
+                    "gen_accotype = ?",
+                    accotype
+                )
+            );
+
+        //Filter on Generated Field gen_accocategory 
+        public static Query AccoCategory_GeneratedColumn(this Query query, bool? accocategory) =>
+            query.When(
+                accocategory != null,
+                query => query.WhereRaw(
+                    "gen_accocategory = ?",
+                    accocategory
+                )
+            );
 
         #endregion
 
