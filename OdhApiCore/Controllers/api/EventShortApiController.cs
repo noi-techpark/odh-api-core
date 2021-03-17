@@ -632,17 +632,16 @@ namespace OdhApiCore.Controllers.api
                     var query =
                          QueryFactory.Query("eventeuracnoi")
                              .Select("data")
-                             .Where("id", id.ToLower())
-                             .When(FilterClosedData, q => q.FilterClosedData());
-
-                    //TO CHECK First select as JsonRaw then convert to eventshort????
-                    var myevent = await query.FirstOrDefaultAsync<EventShort?>();
+                             .Where("id", id.ToLower());
+                    
+                    var myeventraw = await query.FirstOrDefaultAsync<JsonRaw>();                    
+                    var myevent = JsonConvert.DeserializeObject<EventShort>(myeventraw.Value);
 
                     if (myevent != null)
                     {
                         if (myevent.Source != "EBMS")
                         {
-                            if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
+                            if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataDelete", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
                                 throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
 
                             //TODO CHECK IF THIS WORKS     

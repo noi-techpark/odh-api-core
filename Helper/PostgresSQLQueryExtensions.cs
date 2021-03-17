@@ -1,8 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using DataModel;
+using Newtonsoft.Json;
 using SqlKata;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Helper
 {
@@ -1158,6 +1161,16 @@ namespace Helper
                }
                return q;
            });
+
+        #endregion
+
+        #region Query Extension Methods Common used
+
+        public static async Task<T> GetFirstOrDefaultAsObject<T>(this Query query) {
+
+            var rawdata = await query.FirstOrDefaultAsync<JsonRaw>();
+            return JsonConvert.DeserializeObject<T>(rawdata.Value);
+        }
 
         #endregion
 
