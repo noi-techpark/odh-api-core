@@ -1077,33 +1077,33 @@ namespace Helper
             foreach (var item in boardids)
             {
                 q = q.OrWhereRaw(
-                    "gen_boardids @> array\\[?\\]", item.ToLower()
+                    "gen_boardids @> array\\[?\\]", item
                 );
             }
             return q;
         });
 
         //Filter on Generated Field gen_featureids
-        public static Query AccoFeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        public static Query AccoFeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> featureids) =>
         query.Where(q =>
         {
-            foreach (var item in boardids)
+            foreach (var item in featureids)
             {
                 q = q.OrWhereRaw(
-                    "gen_featureids @> array\\[?\\]", item.ToLower()
+                    "gen_featureids @> array\\[?\\]", item
                 );
             }
             return q;
         });
 
         //Filter on Generated Field gen_specialfeatureids
-        public static Query AccoSpecialFeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        public static Query AccoSpecialFeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> specialfeatureids) =>
         query.Where(q =>
         {
-            foreach (var item in boardids)
+            foreach (var item in specialfeatureids)
             {
                 q = q.OrWhereRaw(
-                    "gen_specialfeatureids @> array\\[?\\]", item.ToLower()
+                    "gen_specialfeatureids @> array\\[?\\]", item
                 );
             }
             return q;
@@ -1116,7 +1116,7 @@ namespace Helper
             foreach (var item in boardids)
             {
                 q = q.OrWhereRaw(
-                    "gen_badgeids @> array\\[?\\]", item.ToLower()
+                    "gen_badgeids @> array\\[?\\]", item
                 );
             }
             return q;
@@ -1129,7 +1129,7 @@ namespace Helper
             foreach (var item in boardids)
             {
                 q = q.OrWhereRaw(
-                    "gen_themeids @> array\\[?\\]", item.ToLower()
+                    "gen_themeids @> array\\[?\\]", item
                 );
             }
             return q;
@@ -1142,7 +1142,7 @@ namespace Helper
                 foreach (var item in accotype)
                 {
                     q = q.OrWhereRaw(
-                        "gen_accotype = ?", item.ToLower()
+                        "gen_accotype = ?", item
                     );
                 }
                 return q;
@@ -1155,7 +1155,7 @@ namespace Helper
                foreach (var item in accocategory)
                {
                    q = q.OrWhereRaw(
-                       "gen_accocategory = ?", item.ToLower()
+                       "gen_accocategory = ?", item
                    );
                }
                return q;
