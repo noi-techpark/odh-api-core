@@ -371,7 +371,7 @@ namespace Helper
                 .AccoThemeIdsFilterOr_GeneratedColumn(themelist.Where(x => x.Value == true).Select(x => x.Key).ToList()) // .AccoThemeFilter(themelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
                 .AccoBoardIdsFilterOr_GeneratedColumn(boardlist) //.AccoBoardFilter(boardlist)
                 .AccoApartmentFilter_GeneratedColumn(apartmentfilter) //.AccoApartmentFilter(apartmentfilter)                
-                .AccoIsBookable_GeneratedColumn(bookable)
+                .AccoIsBookableFilter_GeneratedColumn(bookable)
                          // FILTERS Available Marketinggroup, LTSFeature, BookingPortal
                          //.HasLanguageFilter(languagelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
