@@ -1122,24 +1122,30 @@ namespace Helper
         });
 
         //Filter on Generated Field gen_accotype 
-        public static Query AccoType_GeneratedColumn(this Query query, string? accotype) =>
-            query.When(
-                accotype != null,
-                query => query.WhereRaw(
-                    "gen_accotype = ?",
-                    accotype
-                )
-            );
+        public static Query AccoType_GeneratedColumn(this Query query, IReadOnlyCollection<string> accotype) =>
+            query.Where(q =>
+            {
+                foreach (var item in accotype)
+                {
+                    q = q.OrWhereRaw(
+                        "gen_accotype = ?", item.ToLower()
+                    );
+                }
+                return q;
+            });
 
         //Filter on Generated Field gen_accocategory 
-        public static Query AccoCategory_GeneratedColumn(this Query query, bool? accocategory) =>
-            query.When(
-                accocategory != null,
-                query => query.WhereRaw(
-                    "gen_accocategory = ?",
-                    accocategory
-                )
-            );
+        public static Query AccoCategory_GeneratedColumn(this Query query, IReadOnlyCollection<string> accocategory) =>
+           query.Where(q =>
+           {
+               foreach (var item in accocategory)
+               {
+                   q = q.OrWhereRaw(
+                       "gen_accocategory = ?", item.ToLower()
+                   );
+               }
+               return q;
+           });
 
         #endregion
 
