@@ -1012,7 +1012,7 @@ namespace Helper
         //Filter on Generated Field gen_lastchange 
         public static Query LastChangedFilter_GeneratedColumn(this Query query, string? updatefrom) =>
             query.When(
-                updatefrom != null,
+                updatefrom != null && DateTime.TryParse(updatefrom, out DateTime updatefromparsed),
                 query => query.WhereRaw(
                     "to_date(gen_lastchange, 'YYYY-MM-DD') > date(?)",
                     updatefrom
@@ -1166,11 +1166,10 @@ namespace Helper
 
         #region Query Extension Methods Common used
 
-        public static async Task<T> GetFirstOrDefaultAsObject<T>(this Query query) {
+        public static async Task<T?> GetFirstOrDefaultAsObject<T>(this Query query) {
 
             var rawdata = await query.FirstOrDefaultAsync<JsonRaw>();
-            T? t = JsonConvert.DeserializeObject<T>(rawdata.Value) ?? default(T);
-            return t;
+            return rawdata != null ? JsonConvert.DeserializeObject<T>(rawdata.Value) : default(T);            
         }
 
         public static async Task<IEnumerable<T>> GetAllAsObject<T>(this Query query)
