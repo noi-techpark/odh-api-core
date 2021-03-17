@@ -364,7 +364,7 @@ namespace Helper
                 .LocFilterRegionFilter(regionlist)
                 .AccoAltitudeFilter(altitude, altitudemin, altitudemax)
                 .AccoTypeFilter_GeneratedColumn(accotypelist)
-                .AccoCategory_GeneratedColumn(categorylist) //.AccoCategoryFilter(categorylist)
+                .AccoCategoryFilter_GeneratedColumn(categorylist) //.AccoCategoryFilter(categorylist)
                 .AccoSpecialFeatureIdsFilterOr_GeneratedColumn(featurelist.Where(x => x.Value == true).Select(x => x.Key).ToList()) //.AccoFeatureFilter(featurelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
                 .AccoFeatureIdsFilterOr_GeneratedColumn(featureidlist) //.AccoFeatureIdFilter(featureidlist)
                 .AccoBadgeIdsFilterOr_GeneratedColumn(badgelist) //.AccoBadgeFilter(badgelist)
