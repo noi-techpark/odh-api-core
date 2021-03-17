@@ -916,6 +916,18 @@ namespace Helper
                 generatedcolumn + " @> array\\[?\\]", list.Select(x => x.ToLower())
                 )
             );
+        
+        public static Query WhereStringInListOr(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
+           query.Where(q =>
+           {
+               foreach (var item in list)
+               {
+                   q = q.OrWhereRaw(
+                       generatedcolumn + " = ?", item.ToLower()
+                   );
+               }
+               return q;
+           });
 
 
         #endregion
