@@ -1070,9 +1070,8 @@ namespace Helper
             return q;
         });
 
-
         //Filter on Generated Field gen_boardids
-        public static Query BoardIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        public static Query AccoBoardIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
         query.Where(q =>
         {
             foreach (var item in boardids)
@@ -1085,7 +1084,7 @@ namespace Helper
         });
 
         //Filter on Generated Field gen_featureids
-        public static Query FeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        public static Query AccoFeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
         query.Where(q =>
         {
             foreach (var item in boardids)
@@ -1098,7 +1097,7 @@ namespace Helper
         });
 
         //Filter on Generated Field gen_specialfeatureids
-        public static Query SpecialFeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        public static Query AccoSpecialFeatureIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
         query.Where(q =>
         {
             foreach (var item in boardids)
@@ -1111,7 +1110,7 @@ namespace Helper
         });
 
         //Filter on Generated Field gen_badgeids
-        public static Query BadgeIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        public static Query AccoBadgeIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
         query.Where(q =>
         {
             foreach (var item in boardids)
@@ -1124,7 +1123,7 @@ namespace Helper
         });
 
         //Filter on Generated Field gen_themeids
-        public static Query ThemeIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
+        public static Query AccoThemeIdsFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> boardids) =>
         query.Where(q =>
         {
             foreach (var item in boardids)
@@ -1137,7 +1136,7 @@ namespace Helper
         });
 
         //Filter on Generated Field gen_accotype 
-        public static Query AccoType_GeneratedColumn(this Query query, IReadOnlyCollection<string> accotype) =>
+        public static Query AccoTypeFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> accotype) =>
             query.Where(q =>
             {
                 foreach (var item in accotype)
@@ -1150,7 +1149,7 @@ namespace Helper
             });
 
         //Filter on Generated Field gen_accocategory 
-        public static Query AccoCategory_GeneratedColumn(this Query query, IReadOnlyCollection<string> accocategory) =>
+        public static Query AccoCategoryFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> accocategory) =>
            query.Where(q =>
            {
                foreach (var item in accocategory)
@@ -1161,6 +1160,37 @@ namespace Helper
                }
                return q;
            });
+
+        //Filter on Generated Field gen_hasapartment 
+        public static Query AccoApartmentFilter_GeneratedColumn(this Query query, bool? hasapartment) =>
+            query.When(
+                hasapartment != null,
+                query => query.WhereRaw(
+                    "gen_hasapartment = ?",
+                    hasapartment ?? false
+                )
+            );
+
+        //Filter on Generated Field gen_isbookable 
+        public static Query AccoIsBookableFilter_GeneratedColumn(this Query query, bool? isbookable) =>
+            query.When(
+                isbookable != null,
+                query => query.WhereRaw(
+                    "gen_isbookable = ?",
+                    isbookable ?? false
+                )
+            );
+
+        //Filter on Generated Field gen_altitude 
+        public static Query AccoAltitudeFilter_GeneratedColumn(this Query query, bool altitude, int altitudemin, int altitudemax) =>
+           query.When(
+               altitude,
+               query => query.WhereRaw(
+                   "(gen_altitude)::numeric > ? AND (gen_altitude)::numeric < ?",
+                   altitudemin,
+                   altitudemax
+               )
+           );
 
         #endregion
 
