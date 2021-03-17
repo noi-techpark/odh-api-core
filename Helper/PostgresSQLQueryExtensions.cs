@@ -1169,7 +1169,20 @@ namespace Helper
         public static async Task<T> GetFirstOrDefaultAsObject<T>(this Query query) {
 
             var rawdata = await query.FirstOrDefaultAsync<JsonRaw>();
-            return JsonConvert.DeserializeObject<T>(rawdata.Value);
+            T? t = JsonConvert.DeserializeObject<T>(rawdata.Value) ?? default(T);
+            return t;
+        }
+
+        public static async Task<IEnumerable<T>> GetAllAsObject<T>(this Query query)
+        {
+            var rawdatalist = await query.GetAsync<JsonRaw>();
+            List<T> datalist = new List<T>();
+
+            foreach (var rawdata in rawdatalist)
+            {
+                datalist.Add(JsonConvert.DeserializeObject<T>(rawdata.Value));
+            }
+            return datalist;
         }
 
         #endregion

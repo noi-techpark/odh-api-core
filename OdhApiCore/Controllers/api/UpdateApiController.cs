@@ -36,7 +36,7 @@ namespace OdhApiCore.Controllers.api
         {
             var result = await ImportEbmsEventsToDB();
 
-            return Ok("EBMS Eventshorts \" updated");
+            return Ok(String.Format("EBMS Eventshorts update result: {0}", result));
         }
 
 
@@ -71,9 +71,8 @@ namespace OdhApiCore.Controllers.api
                            .Select("data")
                            .Where("id", eventshort.Id);
 
-                    var eventindbraw = await query.FirstOrDefaultAsync<JsonRaw?>();
-                    var eventindb = JsonConvert.DeserializeObject<EventShort>(eventindbraw.Value);
-
+                    var eventindb = await query.GetFirstOrDefaultAsObject<EventShort>();
+                    
                     //currenteventshort.Where(x => x.EventId == eventshort.EventId).FirstOrDefault();
 
                     var changedonDB = DateTime.Now;
@@ -248,23 +247,13 @@ namespace OdhApiCore.Controllers.api
         private async Task<IEnumerable<EventShort>> GetAllEventsShort(DateTime now)
         {
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
-            string where = "(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND (data @> '{ \"Source\" : \"EBMS\" }')";
-
+            
             var query =
                          QueryFactory.Query("eventeuracnoi")
                              .Select("data")
-                             .WhereRaw(where);
+                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = ?)", "EBMS");
 
-            var myevents = await query.GetAsync<JsonRaw>();
-
-            List<EventShort> myeventshortlist = new List<EventShort>();
-
-            foreach(var myevent in myevents)
-            {
-                myeventshortlist.Add(JsonConvert.DeserializeObject<EventShort>(myevent.Value));
-            }
-            
-            return myeventshortlist;            
+            return await query.GetAllAsObject<EventShort>();
         }
 
     }
