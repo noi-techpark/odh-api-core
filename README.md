@@ -26,6 +26,14 @@ Extensions active on DB
 * extension cube;
 * extension pg_trgm;
 
+Custom Functions on DB
+
+* json_array_to_pg_array
+* extract_keys_from_jsonb_object_array
+* text2ts
+
+These custom functions are used for the generated Columns
+
 Test Server on https://api.tourism.testingmachine.eu  
 Production Server on https://tourism.api.opendatahub.bz.it
 
@@ -50,6 +58,8 @@ Clone the repository
 * OAUTH_AUTORITY (Oauth Server Authority URL)
 * ELK_URL (Serilog Elasticsearch Sink Elastic URL)
 * ELK_TOKEN (Serilog Elasticsearch Access Token)
+* EBMS_USER (Optional User to access EBMS interface)
+* EBMS_PASS (Optional Pswd to access EBMS interface)
 
 ### using Docker
 
