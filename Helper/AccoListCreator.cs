@@ -650,23 +650,20 @@ namespace Helper
         public static List<string> CreateAccoTypeListfromFlag(string? accotypefilter)
         {
             List<string> typeids = new List<string>();
-
-            if (!String.IsNullOrEmpty(accotypefilter))
-            {
-                if (accotypefilter != "null")
+            
+            if (!String.IsNullOrEmpty(accotypefilter) && accotypefilter != "null")
+            {                
+                if (int.TryParse(accotypefilter, out var accotypefilterint))
                 {
-                    var accotypefilterint = Convert.ToInt32(accotypefilter);
-
                     AccommodationTypeFlag myaccotypeflag = (AccommodationTypeFlag)accotypefilterint;
 
                     var myflags = myaccotypeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
                         typeids.Add(myflag);
                     }
-                }
+                }                                    
             }
 
             return typeids;
@@ -676,16 +673,13 @@ namespace Helper
         {
             List<string> categoryids = new List<string>();
 
-            if (!String.IsNullOrEmpty(categoryfilter))
-            {
-                if (categoryfilter != "null")
-                {
-                    var accocatfilterint = Convert.ToInt32(categoryfilter);
-
+            if (!String.IsNullOrEmpty(categoryfilter) && categoryfilter != "null")
+            {                
+                if (int.TryParse(categoryfilter, out var accocatfilterint))
+                {                    
                     AccommodationCategoryFlag myaccotypeflag = (AccommodationCategoryFlag)accocatfilterint;
 
                     var myflags = myaccotypeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -701,16 +695,13 @@ namespace Helper
         {
             List<string> themeids = new List<string>();
 
-            if (!String.IsNullOrEmpty(themefilter))
+            if (!String.IsNullOrEmpty(themefilter) && themefilter != "null")
             {
-                if (themefilter != "null")
-                {
-                    var themefilterint = Convert.ToInt32(themefilter);
-
+                if (int.TryParse(themefilter, out var themefilterint))
+                {                    
                     AccoThemeFlag myaccothemeflag = (AccoThemeFlag)themefilterint;
 
                     var myflags = myaccothemeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -744,16 +735,13 @@ namespace Helper
             themeids.Add("Balance", false);
             themeids.Add("Christkindlmarkt", false);
 
-            if (!String.IsNullOrEmpty(themefilter))
+            if (!String.IsNullOrEmpty(themefilter) && themefilter != "null")
             {
-                if (themefilter != "null")
-                {
-                    var themefilterint = Convert.ToInt32(themefilter);
-
+                if (int.TryParse(themefilter, out var themefilterint))
+                {                    
                     AccoThemeFlag myaccothemeflag = (AccoThemeFlag)themefilterint;
 
                     var myflags = myaccothemeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -769,16 +757,13 @@ namespace Helper
         {
             List<string> badgeids = new List<string>();
 
-            if (!String.IsNullOrEmpty(badgefilter))
+            if (!String.IsNullOrEmpty(badgefilter) && badgefilter != "null")
             {
-                if (badgefilter != "null")
-                {
-                    var accobadgefilterint = Convert.ToInt32(badgefilter);
-
+                if (int.TryParse(badgefilter, out var accobadgefilterint))
+                {                    
                     AccoBadgeFlag myaccobadgeflag = (AccoBadgeFlag)accobadgefilterint;
 
                     var myflags = myaccobadgeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -794,16 +779,13 @@ namespace Helper
         {
             List<string> featureids = new List<string>();
 
-            if (!String.IsNullOrEmpty(featurefilter))
+            if (!String.IsNullOrEmpty(featurefilter) && featurefilter != "null")
             {
-                if (featurefilter != "null")
-                {
-                    var accofeatfilterint = Convert.ToInt32(featurefilter);
-
+                if (int.TryParse(featurefilter, out var accofeatfilterint))
+                {                    
                     AccoFeatureFlag myaccofeatflag = (AccoFeatureFlag)accofeatfilterint;
 
                     var myflags = myaccofeatflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -831,16 +813,13 @@ namespace Helper
             featids.Add("Kleine Haustiere", false);
             featids.Add("Gruppenfreundlich", false);
 
-            if (!String.IsNullOrEmpty(featurefilter))
+            if (!String.IsNullOrEmpty(featurefilter) && featurefilter != "null")
             {
-                if (featurefilter != "null")
-                {
-                    var accofeatfilterint = Convert.ToInt32(featurefilter);
-
+                if (int.TryParse(featurefilter, out var accofeatfilterint))
+                {                    
                     AccoFeatureFlag myaccofeatflag = (AccoFeatureFlag)accofeatfilterint;
 
                     var myflags = myaccofeatflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -856,16 +835,13 @@ namespace Helper
         {
             List<string> boardids = new List<string>();
 
-            if (!String.IsNullOrEmpty(boardfilter))
+            if (!String.IsNullOrEmpty(boardfilter) && boardfilter != "null")
             {
-                if (boardfilter != "null")
-                {
-                    var boardfilterint = Convert.ToInt32(boardfilter);
-
+                if (int.TryParse(boardfilter, out var boardfilterint))
+                {                 
                     AccoBoardFlag myaccoboardflag = (AccoBoardFlag)boardfilterint;
 
                     var myflags = myaccoboardflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -881,16 +857,13 @@ namespace Helper
         {
             List<string> boardids = new List<string>();
 
-            if (!String.IsNullOrEmpty(boardfilter))
+            if (!String.IsNullOrEmpty(boardfilter) && boardfilter != "null")
             {
-                if (boardfilter != "null")
-                {
-                    var boardfilterint = Convert.ToInt32(boardfilter);
-
+                if (int.TryParse(boardfilter, out var boardfilterint))
+                {                    
                     PackageBoardFlag myaccoboardflag = (PackageBoardFlag)boardfilterint;
 
                     var myflags = myaccoboardflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -907,36 +880,33 @@ namespace Helper
         {
             Tuple<int, string> boardidhgv = new Tuple<int, string>(0, "");
 
-            if (!String.IsNullOrEmpty(boardfilter))
+            if (!String.IsNullOrEmpty(boardfilter) && boardfilter != "null")
             {
-                if (boardfilter != "null")
+                if (boardfilter.Substring(boardfilter.Length - 1, 1) == ",")
+                    boardfilter = boardfilter.Substring(0, boardfilter.Length - 1);
+
+                switch (boardfilter)
                 {
-
-                    if (boardfilter.Substring(boardfilter.Length - 1, 1) == ",")
-                        boardfilter = boardfilter.Substring(0, boardfilter.Length - 1);
-
-                    switch (boardfilter)
-                    {
-                        case "0":
-                            boardidhgv = Tuple.Create<int, string>(0, "price_ws,price_bb,price_hb,price_fb,price_ai");
-                            break;
-                        case "1":
-                            boardidhgv = Tuple.Create<int, string>(1, "price_ws");
-                            break;
-                        case "2":
-                            boardidhgv = Tuple.Create<int, string>(2, "price_bb");
-                            break;
-                        case "4":
-                            boardidhgv = Tuple.Create<int, string>(3, "price_hb");
-                            break;
-                        case "8":
-                            boardidhgv = Tuple.Create<int, string>(4, "price_fb");
-                            break;
-                        case "16":
-                            boardidhgv = Tuple.Create<int, string>(5, "price_ai");
-                            break;
-                    }
+                    case "0":
+                        boardidhgv = Tuple.Create<int, string>(0, "price_ws,price_bb,price_hb,price_fb,price_ai");
+                        break;
+                    case "1":
+                        boardidhgv = Tuple.Create<int, string>(1, "price_ws");
+                        break;
+                    case "2":
+                        boardidhgv = Tuple.Create<int, string>(2, "price_bb");
+                        break;
+                    case "4":
+                        boardidhgv = Tuple.Create<int, string>(3, "price_hb");
+                        break;
+                    case "8":
+                        boardidhgv = Tuple.Create<int, string>(4, "price_fb");
+                        break;
+                    case "16":
+                        boardidhgv = Tuple.Create<int, string>(5, "price_ai");
+                        break;
                 }
+
             }
             return boardidhgv;
         }
@@ -947,39 +917,35 @@ namespace Helper
         {
             List<string> boardlcs = new List<string>();
 
-            if (!String.IsNullOrEmpty(boardfilter))
+            if (!String.IsNullOrEmpty(boardfilter) && boardfilter != "null")
             {
-                if (boardfilter != "null")
+                if (boardfilter.Substring(boardfilter.Length - 1, 1) == ",")
+                    boardfilter = boardfilter.Substring(0, boardfilter.Length - 1);
+
+                switch (boardfilter)
                 {
-
-                    if (boardfilter.Substring(boardfilter.Length - 1, 1) == ",")
-                        boardfilter = boardfilter.Substring(0, boardfilter.Length - 1);
-
-                    switch (boardfilter)
-                    {
-                        case "0":
-                            boardlcs.Add("1");
-                            boardlcs.Add("3");
-                            boardlcs.Add("10");
-                            boardlcs.Add("12");
-                            boardlcs.Add("14");
-                            break;
-                        case "1":
-                            boardlcs.Add("14");
-                            break;
-                        case "2":
-                            boardlcs.Add("3");
-                            break;
-                        case "4":
-                            boardlcs.Add("12");
-                            break;
-                        case "8":
-                            boardlcs.Add("10");
-                            break;
-                        case "16":
-                            boardlcs.Add("14");
-                            break;
-                    }
+                    case "0":
+                        boardlcs.Add("1");
+                        boardlcs.Add("3");
+                        boardlcs.Add("10");
+                        boardlcs.Add("12");
+                        boardlcs.Add("14");
+                        break;
+                    case "1":
+                        boardlcs.Add("14");
+                        break;
+                    case "2":
+                        boardlcs.Add("3");
+                        break;
+                    case "4":
+                        boardlcs.Add("12");
+                        break;
+                    case "8":
+                        boardlcs.Add("10");
+                        break;
+                    case "16":
+                        boardlcs.Add("14");
+                        break;
                 }
             }
             return boardlcs;
