@@ -378,7 +378,7 @@ namespace Helper
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange)
+                .LastChangedFilter_GeneratedColumn(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
