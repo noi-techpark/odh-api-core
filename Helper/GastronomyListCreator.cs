@@ -414,16 +414,13 @@ namespace Helper
         {
             List<string> ceremonycodeids = new List<string>();
 
-            if (!String.IsNullOrEmpty(capacityceremonyfilter))
+            if (!String.IsNullOrEmpty(capacityceremonyfilter) && capacityceremonyfilter != "null")
             {
-                if (capacityceremonyfilter != "null")
-                {
-                    var ceremonycodefilterint = Convert.ToInt32(capacityceremonyfilter);
-
+                if (int.TryParse(capacityceremonyfilter, out var ceremonycodefilterint))
+                {                    
                     GastroCeremonyFlag myceremonycodeflag = (GastroCeremonyFlag)ceremonycodefilterint;
 
                     var myflags = myceremonycodeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -439,16 +436,13 @@ namespace Helper
         {
             List<string> dishcodeids = new List<string>();
 
-            if (!String.IsNullOrEmpty(dishcodefilter))
+            if (!String.IsNullOrEmpty(dishcodefilter) && dishcodefilter != "null")
             {
-                if (dishcodefilter != "null")
-                {
-                    var dishcodefilterint = Convert.ToInt32(dishcodefilter);
-
+                if (int.TryParse(dishcodefilter, out var dishcodefilterint))
+                {                    
                     GastroDishcodeFlag mydishcodeflag = (GastroDishcodeFlag)dishcodefilterint;
 
                     var myflags = mydishcodeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -464,16 +458,13 @@ namespace Helper
         {
             List<string> categorycodeids = new List<string>();
 
-            if (!String.IsNullOrEmpty(categorycodefilter))
+            if (!String.IsNullOrEmpty(categorycodefilter) && categorycodefilter != "null")
             {
-                if (categorycodefilter != "null")
-                {
-                    var categorycodefilterint = Convert.ToInt32(categorycodefilter);
-
+                if (int.TryParse(categorycodefilter, out var categorycodefilterint))
+                {                    
                     GastroCategoryFlag mycategorycodeflag = (GastroCategoryFlag)categorycodefilterint;
 
                     var myflags = mycategorycodeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -489,16 +480,13 @@ namespace Helper
         {
             List<string> facilitycodeids = new List<string>();
 
-            if (!String.IsNullOrEmpty(facilitycodefilter))
+            if (!String.IsNullOrEmpty(facilitycodefilter) && facilitycodefilter != "null")
             {
-                if (facilitycodefilter != "null")
-                {
-                    var facilitycodefilterint = Convert.ToInt64(facilitycodefilter);
-
+                if (long.TryParse(facilitycodefilter, out var facilitycodefilterint))
+                {                    
                     GastroFacilityFlag myfacilitycodeflag = (GastroFacilityFlag)facilitycodefilterint;
 
                     var myflags = myfacilitycodeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -514,12 +502,10 @@ namespace Helper
         {
             List<string> facilitycodeids = new List<string>();
 
-            if (!String.IsNullOrEmpty(facilitycodefilter))
+            if (!String.IsNullOrEmpty(facilitycodefilter) && facilitycodefilter != "null")
             {
-                if (facilitycodefilter != "null")
-                {
-                    var facilitycodefilterint = Convert.ToInt64(facilitycodefilter);
-
+                if (long.TryParse(facilitycodefilter, out var facilitycodefilterint))
+                {                    
                     GastroCuisineFlag myfacilitycodeflag = (GastroCuisineFlag)facilitycodefilterint;
 
                     var myflags = myfacilitycodeflag.GetFlags().GetDescriptionList();
