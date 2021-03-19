@@ -1028,6 +1028,8 @@ namespace DataModel
         //public string SyncUpdateMode { get; set; }
         //public bool? GrpEvent { get; set; }
         //public string Pdf { get; set; }
+
+        public string Source { get; set; }
     }
 
 
@@ -2368,6 +2370,8 @@ namespace DataModel
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        public Nullable<DateTime> NextBeginDate { get; set; }
     }
 
     public class Topic

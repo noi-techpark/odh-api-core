@@ -451,7 +451,7 @@ namespace DataModel
         }
 
         //Overwrites The Features
-        public new ICollection<Topic> Topics { get; set; }
+        public new ICollection<TopicLinked> Topics { get; set; }
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked LocationInfo { get; set; }
