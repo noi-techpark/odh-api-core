@@ -31,7 +31,9 @@ namespace OdhApiCore.Controllers.api
             this.settings = settings;
         }
 
-        [HttpGet, Route("EBMS/UpdateAll")]
+        #region EBMS exposed
+
+        [HttpGet, Route("EBMS/EventShort/UpdateAll")]
         public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken)
         {
             var result = await ImportEbmsEventsToDB();
@@ -40,13 +42,30 @@ namespace OdhApiCore.Controllers.api
         }
 
 
-        [HttpGet, Route("EBMS/UpdateSingle/{id}")]
+        [HttpGet, Route("EBMS/EventShort/UpdateSingle/{id}")]
         public async Task<IActionResult> UpdateSingleEBMS(string id, CancellationToken cancellationToken)
         {
+            //TODO
             //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
 
             return Ok("EBMS Eventshorts \" updated");
         }
+
+        #endregion
+
+        #region NINJA exposed
+
+        [HttpGet, Route("NINJA/Events/UpdateAll")]
+        public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken)
+        {
+            var result = 0; // await ImportEbmsEventsToDB();
+
+            return Ok(String.Format("Ninja Events update result: {0}", result));
+        }
+
+        #endregion
+
+        #region EBMS Helpers
 
         private async Task<string> ImportEbmsEventsToDB()
         {
@@ -255,6 +274,14 @@ namespace OdhApiCore.Controllers.api
 
             return await query.GetAllAsObject<EventShort>();
         }
+
+        #endregion
+
+        #region NINJA Helpers
+
+
+
+        #endregion
 
     }
 }
