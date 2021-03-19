@@ -284,6 +284,8 @@ namespace OdhApiCore.Controllers.api
 
         #region NINJA Helpers
 
+        //TODO CHECK IF THIS IS WORKING AND REFACTOR
+
         /// <summary>
         /// Save Events to Postgres
         /// </summary>
