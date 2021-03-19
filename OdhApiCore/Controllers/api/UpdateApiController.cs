@@ -34,9 +34,9 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EBMS/UpdateAll")]
         public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken)
         {
-            //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
+            var result = await ImportEbmsEventsToDB();
 
-            return Ok("EBMS Eventshorts \" updated");
+            return Ok(String.Format("EBMS Eventshorts update result: {0}", result));
         }
 
 
@@ -48,7 +48,7 @@ namespace OdhApiCore.Controllers.api
             return Ok("EBMS Eventshorts \" updated");
         }
 
-        private async Task ImportEvmsEventsToDB()
+        private async Task<string> ImportEbmsEventsToDB()
         {
             try
             {                
@@ -57,6 +57,10 @@ namespace OdhApiCore.Controllers.api
                 var currenteventshort = await GetAllEventsShort(DateTime.Now);
 
                 var resultsorted = result.OrderBy(x => x.StartDate);
+
+                var updatecounter = 0;
+                var newcounter = 0;
+                var deletecounter = 0;
 
                 foreach (var eventshort in resultsorted)
                 {
@@ -67,9 +71,8 @@ namespace OdhApiCore.Controllers.api
                            .Select("data")
                            .Where("id", eventshort.Id);
 
-                    var eventindbraw = await query.FirstOrDefaultAsync<JsonRaw?>();
-                    var eventindb = JsonConvert.DeserializeObject<EventShort>(eventindbraw.Value);
-
+                    var eventindb = await query.GetFirstOrDefaultAsObject<EventShort>();
+                    
                     //currenteventshort.Where(x => x.EventId == eventshort.EventId).FirstOrDefault();
 
                     var changedonDB = DateTime.Now;
@@ -148,6 +151,8 @@ namespace OdhApiCore.Controllers.api
                         {
                             queryresult = await QueryFactory.Query("eventeuracnoi")
                                 .InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+
+                            newcounter++;
                         }
                         else
                         {
@@ -157,7 +162,7 @@ namespace OdhApiCore.Controllers.api
                             queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
                                 .UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
 
-                            //queryresult = PostgresSQLHelper.UpdateDataFromTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
+                            updatecounter++;
                         }
 
                         //if (queryresult != "1")
@@ -170,15 +175,13 @@ namespace OdhApiCore.Controllers.api
                 }
 
                 if (result.Count > 0)
-                    await DeleteDeletedEvents(result, currenteventshort.ToList());
+                    deletecounter = await DeleteDeletedEvents(result, currenteventshort.ToList());
 
-                //Constants.tracesource.TraceEvent(TraceEventType.Information, 0, "EventShort Import succeeded");
+                return String.Format("Events Updated {0} New {1} Deleted {2]", updatecounter, newcounter, deletecounter );
             }
             catch (Exception ex)
             {
-                //Console.WriteLine("ERROR on EventShort import:" + ex.Message);
-                //Constants.tracesource.TraceEvent(TraceEventType.Error, 0, "ERROR on EventShort import:" + ex.Message);
-
+                return ex.Message;
             }
         }
 
@@ -208,7 +211,7 @@ namespace OdhApiCore.Controllers.api
                     automatictechnologyfields.Add(toassign);
         }
 
-        private async Task DeleteDeletedEvents(List<EventShort> eventshortfromnow, List<EventShort> eventshortinDB)
+        private async Task<int> DeleteDeletedEvents(List<EventShort> eventshortfromnow, List<EventShort> eventshortinDB)
         {
             //TODO CHECK if Event is in list, if not, DELETE!
             //TODO CHECK IF THIS IS WORKING CORRECTLY
@@ -217,6 +220,7 @@ namespace OdhApiCore.Controllers.api
             var idsonListinDB = eventshortinDB.Select(x => x.EventId).ToList();
             var idsonService = eventshortfromnow.Select(x => x.EventId).ToList();
 
+            var deletecounter = 0;
 
             var idstodelete = idsonListinDB.Where(p => !idsonService.Any(p2 => p2 == p));
 
@@ -230,31 +234,26 @@ namespace OdhApiCore.Controllers.api
 
                     //TODO CHECK IF IT WORKS
                     if (eventshorttodeactivate != null)
-                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id.ToLower()).DeleteAsync();                       
+                    {
+                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id.ToLower()).DeleteAsync();
+                        deletecounter++;
+                    }                        
                 }
             }
+
+            return deletecounter;
         }
 
         private async Task<IEnumerable<EventShort>> GetAllEventsShort(DateTime now)
         {
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
-            string where = "(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND (data @> '{ \"Source\" : \"EBMS\" }')";
-
+            
             var query =
                          QueryFactory.Query("eventeuracnoi")
                              .Select("data")
-                             .WhereRaw(where);
+                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = ?)", "EBMS");
 
-            var myevents = await query.GetAsync<JsonRaw>();
-
-            List<EventShort> myeventshortlist = new List<EventShort>();
-
-            foreach(var myevent in myevents)
-            {
-                myeventshortlist.Add(JsonConvert.DeserializeObject<EventShort>(myevent.Value));
-            }
-            
-            return myeventshortlist;            
+            return await query.GetAllAsObject<EventShort>();
         }
 
     }

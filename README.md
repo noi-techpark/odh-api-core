@@ -26,6 +26,14 @@ Extensions active on DB
 * extension cube;
 * extension pg_trgm;
 
+Custom Functions on DB
+
+* json_array_to_pg_array
+* extract_keys_from_jsonb_object_array
+* text2ts
+
+These custom functions are used for the generated Columns
+
 Test Server on https://api.tourism.testingmachine.eu  
 Production Server on https://tourism.api.opendatahub.bz.it
 
@@ -50,6 +58,8 @@ Clone the repository
 * OAUTH_AUTORITY (Oauth Server Authority URL)
 * ELK_URL (Serilog Elasticsearch Sink Elastic URL)
 * ELK_TOKEN (Serilog Elasticsearch Access Token)
+* EBMS_USER (Optional User to access EBMS interface)
+* EBMS_PASS (Optional Pswd to access EBMS interface)
 
 ### using Docker
 
@@ -63,4 +73,51 @@ go into \odh-api-core\ folder \
 starts the application on 
 https://localhost:5001;
 http://localhost:5000
+
+### Postgres
+
+Activate extensions
+
+```
+CREATE EXTENSION cube;
+```
+```
+CREATE EXTENSION earthdistance;
+```
+```
+CREATE EXTENSION pg_trgm;
+```
+
+Custom functions for Postgres Generated Columns creation
+
+* text2ts
+
+```sql
+CREATE OR REPLACE FUNCTION text2ts(text)
+ RETURNS timestamp without time zone
+ LANGUAGE sql
+ IMMUTABLE
+AS $function$SELECT CASE WHEN $1 ~'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?$' THEN CAST($1 AS timestamp without time zone) END$function$;
+```
+* json_array_to_pg_array
+
+```sql
+CREATE OR REPLACE FUNCTION json_array_to_pg_array(jsonarray jsonb)
+ RETURNS text[]
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$ begin if jsonarray <> 'null' then return (select array(select jsonb_array_elements_text(jsonarray))); else return null; end if; end; $function$;
+```
+
+* extract_keys_from_jsonb_object_array
+
+```sql
+CREATE OR REPLACE FUNCTION extract_keys_from_jsonb_object_array(jsonarray jsonb, key text DEFAULT 'Id'::text)
+ RETURNS text[]
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$ begin if jsonarray <> 'null' then return (select array(select data2::jsonb->> key from (select jsonb_array_elements_text(jsonarray) as data2) as subsel)); else return null; end if; end; $function$;
+```
+
+
 

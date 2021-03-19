@@ -120,7 +120,7 @@ namespace OdhApiCore
         {
             this.configuration = configuration;
             this.connectionString = new Lazy<string>(() =>
-                this.configuration.GetConnectionString("PGConnection"));
+            this.configuration.GetConnectionString("PGConnection"));
             var mss = this.configuration.GetSection("MssConfig");
             this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
             var lcs = this.configuration.GetSection("LcsConfig");
@@ -134,7 +134,7 @@ namespace OdhApiCore
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
             var ebms = this.configuration.GetSection("EBMSConfig");
-            this.ebmsConfig = new EBMSConfig(xml.GetValue<string>("EBMSUser", ""), xml.GetValue<string>("EBMSPassword", ""));
+            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;

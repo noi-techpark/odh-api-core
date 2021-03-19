@@ -363,23 +363,22 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AccoAltitudeFilter(altitude, altitudemin, altitudemax)
-                .AccoTypeFilter(accotypelist)
-                .AccoCategoryFilter(categorylist)
-                .AccoFeatureFilter(featurelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
-                .AccoFeatureIdFilter(featureidlist)
-                .AccoBadgeFilter(badgelist)
-                .AccoThemeFilter(themelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
-                .AccoBoardFilter(boardlist)
-                .AccoApartmentFilter(apartmentfilter)
-                .AccoBoardFilter(boardlist)
-                .AccoBookableFilter(bookable)
+                .AccoTypeFilter_GeneratedColumn(accotypelist)
+                .AccoCategoryFilter_GeneratedColumn(categorylist) //.AccoCategoryFilter(categorylist)
+                .AccoSpecialFeatureIdsFilterOr_GeneratedColumn(featurelist.Where(x => x.Value == true).Select(x => x.Key).ToList()) //.AccoFeatureFilter(featurelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
+                .AccoFeatureIdsFilterOr_GeneratedColumn(featureidlist) //.AccoFeatureIdFilter(featureidlist)
+                .AccoBadgeIdsFilterOr_GeneratedColumn(badgelist) //.AccoBadgeFilter(badgelist)
+                .AccoThemeIdsFilterOr_GeneratedColumn(themelist.Where(x => x.Value == true).Select(x => x.Key).ToList()) // .AccoThemeFilter(themelist.Where(x => x.Value == true).Select(x => x.Key).ToList())
+                .AccoBoardIdsFilterOr_GeneratedColumn(boardlist) //.AccoBoardFilter(boardlist)
+                .AccoApartmentFilter_GeneratedColumn(apartmentfilter) //.AccoApartmentFilter(apartmentfilter)                
+                .AccoIsBookableFilter_GeneratedColumn(bookable)
                          // FILTERS Available Marketinggroup, LTSFeature, BookingPortal
                          //.HasLanguageFilter(languagelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange)
+                .LastChangedFilter_GeneratedColumn(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
@@ -445,7 +444,7 @@ namespace Helper
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
-                .LastChangedFilter(lastchange)
+                .LastChangedFilter_GeneratedColumn(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 

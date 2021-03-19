@@ -604,7 +604,7 @@ namespace OdhApiCore.Controllers.api
                     var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
                         .UpdateAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
 
-                    return Ok(new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
+                    return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort.Id), Id = eventshort.Id });
                 }
                 else
                 {
@@ -632,17 +632,18 @@ namespace OdhApiCore.Controllers.api
                     var query =
                          QueryFactory.Query("eventeuracnoi")
                              .Select("data")
-                             .Where("id", id.ToLower())
-                             .When(FilterClosedData, q => q.FilterClosedData());
+                             .Where("id", id.ToLower());
 
-                    //TO CHECK First select as JsonRaw then convert to eventshort????
-                    var myevent = await query.FirstOrDefaultAsync<EventShort?>();
+                    //var myeventraw = await query.FirstOrDefaultAsync<JsonRaw>();                    
+                    //var myevent = JsonConvert.DeserializeObject<EventShort>(myeventraw.Value);
+
+                    var myevent = await query.GetFirstOrDefaultAsObject<EventShort>();
 
                     if (myevent != null)
                     {
                         if (myevent.Source != "EBMS")
                         {
-                            if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
+                            if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataDelete", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
                                 throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
 
                             //TODO CHECK IF THIS WORKS     
