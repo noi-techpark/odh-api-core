@@ -1028,6 +1028,8 @@ namespace DataModel
         //public string SyncUpdateMode { get; set; }
         //public bool? GrpEvent { get; set; }
         //public string Pdf { get; set; }
+
+        public string Source { get; set; }
     }
 
 

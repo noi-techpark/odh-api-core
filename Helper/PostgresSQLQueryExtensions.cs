@@ -435,8 +435,8 @@ namespace Helper
         public static Query SourceFilterMeta(this Query query, IReadOnlyCollection<string> sourcelist) =>
             query.WhereInJsonb(
                 list: sourcelist,
-                "Meta.Source",
-                id => id.ToUpper()
+                "_Meta.Source",
+                id => id.ToLower()
             );
 
         //not working
