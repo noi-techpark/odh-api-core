@@ -309,7 +309,7 @@ namespace OdhApiCore.Controllers.api
                         //Location Info (by GPS Point)
                         if (eventtosave.Latitude != 0 && eventtosave.Longitude != 0)
                         {
-                            SetLocationInfo(eventtosave);
+                            await SetLocationInfo(eventtosave);
                         }
 
                         eventtosave.Active = true;
@@ -365,32 +365,32 @@ namespace OdhApiCore.Controllers.api
                 myevent.DistrictId = districtlist.Id;
                 myevent.DistrictIds = new List<string>() { districtlist.Id };
 
-                //TODO IN HELPER!
-                //var locinfo = Helper..GetLocationInfoPG.GetTheLocationInfoDistrict(conn, districtlist.Id);
+                //TODO MAYBE IN HELPER!
+                var locinfo = await GetTheLocationInfoDistrict(districtlist.Id);
 
-                //LocationInfoLinked locinfolinked = new LocationInfoLinked();
-                //locinfolinked.DistrictInfo = new DistrictInfoLinked()
-                //{
-                //    Id = locinfo.DistrictInfo.Id,
-                //    Name = locinfo.DistrictInfo.Name
-                //};
-                //locinfolinked.MunicipalityInfo = new MunicipalityInfoLinked()
-                //{
-                //    Id = locinfo.MunicipalityInfo.Id,
-                //    Name = locinfo.MunicipalityInfo.Name
-                //};
-                //locinfolinked.TvInfo = new TvInfoLinked()
-                //{
-                //    Id = locinfo.TvInfo.Id,
-                //    Name = locinfo.TvInfo.Name
-                //};
-                //locinfolinked.RegionInfo = new RegionInfoLinked()
-                //{
-                //    Id = locinfo.RegionInfo.Id,
-                //    Name = locinfo.RegionInfo.Name
-                //};
+                LocationInfoLinked locinfolinked = new LocationInfoLinked();
+                locinfolinked.DistrictInfo = new DistrictInfoLinked()
+                {
+                    Id = locinfo.DistrictInfo.Id,
+                    Name = locinfo.DistrictInfo.Name
+                };
+                locinfolinked.MunicipalityInfo = new MunicipalityInfoLinked()
+                {
+                    Id = locinfo.MunicipalityInfo.Id,
+                    Name = locinfo.MunicipalityInfo.Name
+                };
+                locinfolinked.TvInfo = new TvInfoLinked()
+                {
+                    Id = locinfo.TvInfo.Id,
+                    Name = locinfo.TvInfo.Name
+                };
+                locinfolinked.RegionInfo = new RegionInfoLinked()
+                {
+                    Id = locinfo.RegionInfo.Id,
+                    Name = locinfo.RegionInfo.Name
+                };
 
-                //myevent.LocationInfo = locinfolinked;
+                myevent.LocationInfo = locinfolinked;
             }
         }
 
@@ -439,6 +439,43 @@ namespace OdhApiCore.Controllers.api
 
                 return Tuple.Create("update", queryresult.ToString());
             }                      
+        }
+
+        public async Task<LocationInfo> GetTheLocationInfoDistrict(string districtid)
+        {
+            try
+            {
+                LocationInfo mylocinfo = new LocationInfo();
+
+                var district = await QueryFactory.Query("districts").Select("data").Where("id", districtid.ToUpper()).GetFirstOrDefaultAsObject<District>(); 
+                var districtnames = (from x in district.Detail
+                                     select x).ToDictionary(x => x.Key, x => x.Value.Title);
+
+                var municipality = await QueryFactory.Query("municipalities").Select("data").Where("id", district.MunicipalityId.ToUpper()).GetFirstOrDefaultAsObject<Municipality>(); 
+                var municipalitynames = (from x in municipality.Detail
+                                         select x).ToDictionary(x => x.Key, x => x.Value.Title);
+
+                var tourismverein = await QueryFactory.Query("tvs").Select("data").Where("id", district.TourismvereinId.ToUpper()).GetFirstOrDefaultAsObject<Tourismverein>();
+                var tourismvereinnames = (from x in tourismverein.Detail
+                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
+
+                var region = await QueryFactory.Query("regions").Select("data").Where("id", district.RegionId.ToUpper()).GetFirstOrDefaultAsObject<Region>();
+                var regionnames = (from x in region.Detail
+                                   select x).ToDictionary(x => x.Key, x => x.Value.Title);
+
+                //conn.Close();
+
+                mylocinfo.DistrictInfo = new DistrictInfo() { Id = district.Id, Name = districtnames };
+                mylocinfo.MunicipalityInfo = new MunicipalityInfo() { Id = municipality.Id, Name = municipalitynames };
+                mylocinfo.TvInfo = new TvInfo() { Id = tourismverein.Id, Name = tourismvereinnames };
+                mylocinfo.RegionInfo = new RegionInfo() { Id = region.Id, Name = regionnames };
+
+                return mylocinfo;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
 
