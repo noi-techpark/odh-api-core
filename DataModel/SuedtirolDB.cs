@@ -2370,6 +2370,8 @@ namespace DataModel
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        public Nullable<DateTime> NextBeginDate { get; set; }
     }
 
     public class Topic
