@@ -116,6 +116,7 @@ namespace OdhApiCore.Controllers
         /// <param name="elements">Elements to retrieve</param>
         /// <param name="areafilter">Area ID (multiple IDs possible, separated by ",")</param>
         /// <param name="skiareafilter">Skiarea ID</param>
+        /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <returns>List of Measuringpoint Objects</returns>
         [ProducesResponseType(typeof(IEnumerable<Measuringpoint>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -129,7 +130,7 @@ namespace OdhApiCore.Controllers
             string? language = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
-            string? lastchange = null,
+            string? updatefrom = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -147,7 +148,7 @@ namespace OdhApiCore.Controllers
                 fields: fields ?? Array.Empty<string>(), language: language, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
                     skiareafilter: skiareafilter, active: active,
-                    smgactive: odhactive, seed: seed, lastchange: lastchange,
+                    smgactive: odhactive, seed: seed, lastchange: updatefrom,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                     cancellationToken: cancellationToken);
         }

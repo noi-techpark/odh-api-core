@@ -54,7 +54,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactive">ODH Active (Published) ODHActivityPoi Filter (Refers to field SmgActive) (possible Values: 'true' only published ODHActivityPoi, 'false' only not published ODHActivityPoi, (default:'null')</param>        
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: null)</param>
+        /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
         /// <returns>Collection of ODH Activity Poi Objects</returns>        
         /// <response code="200">List created</response>
@@ -80,7 +80,7 @@ namespace OdhApiCore.Controllers.api
             string? odhtagfilter = null,
             LegacyBool odhactive = null!,
             LegacyBool active = null!,
-            string? lastchange = null,
+            string? updatefrom = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -98,7 +98,7 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: type, subtypefilter: subtype, poitypefilter: poitype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter,
                 sourcefilter: source, locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight?.Value, active: active?.Value,
-                smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
+                smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
                 cancellationToken);
         }
 

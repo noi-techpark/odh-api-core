@@ -1013,9 +1013,10 @@ namespace Helper
         //Filter on Generated Field gen_lastchange 
         public static Query LastChangedFilter_GeneratedColumn(this Query query, string? updatefrom) =>
             query.When(
-                updatefrom != null && DateTime.TryParseExact(updatefrom, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime updatefromparsed),
+                updatefrom != null && DateTime.TryParseExact(updatefrom, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime updatefromparsed),
                 query => query.WhereRaw(
-                    "to_date(gen_lastchange, 'YYYY-MM-DD') > date(?)",
+                    //"to_date(gen_lastchange, 'YYYY-MM-DD') > date(?)",
+                    "gen_lastchange > date(?)",
                     updatefrom
                 )
             );
