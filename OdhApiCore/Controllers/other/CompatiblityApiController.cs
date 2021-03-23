@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using OdhApiCore.Responses;
+using Microsoft.AspNetCore.Routing;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -496,6 +497,26 @@ namespace OdhApiCore.Controllers.api
 
                 return  await query.GetAsync<object>();
             });
+        }
+        
+        [Obsolete("Deprecated, use api/Gastronomy")]        
+        [HttpGet, Route("GastronomyChanged")]
+        public RedirectToActionResult GetAllGastronomyChanged(
+            int pagenumber = 1,
+            int pagesize = 10,
+            string? seed = null,
+            string? updatefrom = null
+            )
+        {
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
+
+            return RedirectToAction("Gastronomy", "v1", new RouteValueDictionary
+                                                                    {
+                                                                        {"pagenumber", pagenumber},
+                                                                        {"pagesize", pagesize},
+                                                                        {"seed", seed},
+                                                                        {"updatefrom", updatefrom}
+                                                                    });            
         }
 
         #endregion
