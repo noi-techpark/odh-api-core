@@ -138,24 +138,10 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
-        /// <summary>
-        /// GET Poi Changed List by Date
-        /// </summary>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
-        /// <param name="pagesize">Elements per Page, (default:10)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
-        /// <returns>Collection of GBLTSPoi Objects</returns>
-        /// <response code="200">List created</response>
-        /// <response code="400">Request Error</response>
-        /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,PoiReader")]
+        [Obsolete("Deprecated, use the Poi Endpoint")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("PoiChanged")]
-        public Task<IActionResult> GetAllPoisChanged(
+        public RedirectToActionResult GetAllPoisChanged(
             uint pagenumber = 1,
             uint pagesize = 10,
             string? seed = null,
@@ -163,54 +149,15 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default
             )
         {
-           updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
-            return DoAsyncReturn(async () =>
-            {
-                PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
-                    QueryFactory, poitype: null, subtypefilter: null, idfilter: null,
-                    locfilter: null, areafilter: null, highlightfilter: null, activefilter: null,
-                    smgactivefilter: null, smgtags: null, lastchange: null, cancellationToken: cancellationToken);
-
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From("pois")
-                        .PoiWhereExpression(
-                            idlist: myactivityhelper.idlist, poitypelist: myactivityhelper.poitypelist,
-                            subtypelist: myactivityhelper.subtypelist, smgtaglist: myactivityhelper.smgtaglist,
-                            districtlist: new List<string>(), municipalitylist: new List<string>(),
-                            tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
-                            arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
-                            activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: null, language: null, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData
-                        )                        
-                        .ApplyOrdering_GeneratedColumns(ref seed, null, null);
-
-                // Get paginated data
-                var data =
-                    await query
-                        .PaginateAsync<JsonRaw>(
-                            page: (int)pagenumber,
-                            perPage: (int)pagesize);
-
-                var dataTransformed =
-                    data.List.Select(
-                        raw => raw.TransformRawData(null, null, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
-                    );
-
-                uint totalpages = (uint)data.TotalPages;
-                uint totalcount = (uint)data.Count;
-
-                return ResponseHelpers.GetResult(
-                    pagenumber,
-                    totalpages,
-                    totalcount,
-                    seed,
-                    dataTransformed,
-                    Url);
-            });
+            return RedirectToAction("Poi", "v1", new RouteValueDictionary
+                                                                    {
+                                                                        {"pagenumber", pagenumber},
+                                                                        {"pagesize", pagesize},
+                                                                        {"seed", seed},
+                                                                        {"updatefrom", updatefrom}
+                                                                    });
         }
 
         #endregion
@@ -322,84 +269,26 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
-    
-        /// <summary>
-        /// GET Activity Changed List by Date
-        /// </summary>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
-        /// <param name="pagesize">Elements per Page, (default:10)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
-        /// <returns>Collection of GBLTSActivity Objects</returns>
-        /// <response code="200">List created</response>
-        /// <response code="400">Request Error</response>
-        /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<GBLTSActivity>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
+
+        [Obsolete("Deprecated, use the Activity Endpoint")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("ActivityChanged")]
-        public Task<IActionResult> GetAllActivityChanged(
+        public RedirectToActionResult GetAllActivityChanged(
             uint pagenumber = 1,
             uint pagesize = 10,
             string? seed = null,
-            string? updatefrom = null,
-            CancellationToken cancellationToken = default
+            string? updatefrom = null
             )
         {
             updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
 
-            return DoAsyncReturn(async () =>
-            {
-                ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    QueryFactory, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, updatefrom,
-                    cancellationToken);
-
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From("activities")
-                        .ActivityWhereExpression(
-                            idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
-                            subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
-                            smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
-                            municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
-                            regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
-                            distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
-                            distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
-                            durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
-                            altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
-                            altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
-                            activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: null, language: null, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData)
-                        .ApplyOrdering_GeneratedColumns(ref seed, null, null);
-
-                // Get paginated data
-                var data =
-                    await query
-                        .PaginateAsync<JsonRaw>(
-                            page: (int)pagenumber,
-                            perPage: (int)pagesize);
-
-                var dataTransformed =
-                    data.List.Select(
-                        raw => raw.TransformRawData(null, null, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator)
-                    );
-
-                uint totalpages = (uint)data.TotalPages;
-                uint totalcount = (uint)data.Count;
-
-                return ResponseHelpers.GetResult(
-                    pagenumber,
-                    totalpages,
-                    totalcount,
-                    seed,
-                    dataTransformed,
-                    Url);
-            });
+            return RedirectToAction("Activity", "v1", new RouteValueDictionary
+                                                                    {
+                                                                        {"pagenumber", pagenumber},
+                                                                        {"pagesize", pagesize},
+                                                                        {"seed", seed},
+                                                                        {"updatefrom", updatefrom}
+                                                                    });
         }
 
         #endregion
@@ -499,7 +388,8 @@ namespace OdhApiCore.Controllers.api
             });
         }
         
-        [Obsolete("Deprecated, use api/Gastronomy")]        
+        [Obsolete("Deprecated, use the Gastronomy Endpoint")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("GastronomyChanged")]
         public RedirectToActionResult GetAllGastronomyChanged(
             int pagenumber = 1,
