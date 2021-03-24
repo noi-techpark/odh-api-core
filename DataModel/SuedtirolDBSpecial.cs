@@ -73,6 +73,12 @@ namespace DataModel
         public string? Name { get; set; }
     }
 
+    public class WebcamInfoReduced
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class ActivityPoiReduced
     {
         public string? Id { get; set; }
