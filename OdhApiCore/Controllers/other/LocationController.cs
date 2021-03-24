@@ -34,7 +34,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="language">Localization Language, (default:'en')</param>
         /// <param name="type">Type ('mta','reg','tvs','mun','fra') Separator ',' : 'null' returns all Location Objects (default)</param>     
-        /// <param name="showall">Show all Data (true = all, false = show only data market as visible)</param>
+        /// <param name="showall">Show all Data (true = all, false = show only data marked as visible)</param>
         /// <param name="locfilter">Locfilter (Separator ',' possible values: mta + MetaREGIONID = (Filter by MetaRegion), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
         /// <returns>Reduced List of Locations Objects</returns>        
         [ProducesResponseType(typeof(IEnumerable<LocHelperclass>), StatusCodes.Status200OK)]
@@ -47,15 +47,6 @@ namespace OdhApiCore.Controllers.api
             bool showall = true,
             string? locfilter = null)
         {
-            //var result = default(List<LocHelperclass>);
-
-            //if (type == "null" && locfilter == "null")
-            //    result = await GetLocationInfoFiltered(language, showall);
-            //else if (type != "null" && locfilter == "null")
-            //    result = await GetLocationInfoFilteredByType(language, type, showall);
-            //else
-            //    result = await ;
-
             return Ok(await GetLocationInfoFiltered(language ?? "en", locfilter, showall, type));            
         } 
 
@@ -115,10 +106,16 @@ namespace OdhApiCore.Controllers.api
             if (allactivedata == true)
                 defaultmunfrafilter = "data->'Active'='true'";
 
-            List<string> locationtypes = new List<string>() { "mta", "reg", "tvs", "mun", "", "fra" };
+            List<string> locationtypes = new List<string>() { "mta", "reg", "tvs", "mun", "fra" };
 
-            if (type != null && type != "null")
-                locationtypes = type.ToLower().Split(',').ToList();
+
+            if (loclist.Count > 0)
+                locationtypes.Clear(); 
+
+            if (type != null)
+                if(type != "null")
+                    locationtypes = type.ToLower().Split(',').ToList();
+
 
             foreach(var locitem in loclist)
             {
