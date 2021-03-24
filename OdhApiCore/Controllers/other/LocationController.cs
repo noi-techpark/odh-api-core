@@ -106,254 +106,253 @@ namespace OdhApiCore.Controllers.api
             if (allactivedata == true)
                 defaultmunfrafilter = "data->'Active'='true'";
 
-            List<string> locationtypes = new List<string>() { "mta", "reg", "tvs", "mun", "fra" };
-
-
-            if (loclist.Count > 0)
-                locationtypes.Clear(); 
+            List<string> locationtypes = new List<string>() { "mta", "reg", "tvs", "mun", "fra" };  
 
             if (type != null)
                 if(type != "null")
                     locationtypes = type.ToLower().Split(',').ToList();
 
-
-            foreach(var locitem in loclist)
+            if(loclist.Count > 0)
             {
-                var loctype = locitem.Item2;
-                var locid = locitem.Item1;
-
-                if (loctype == "mta")
+                foreach (var locitem in loclist)
                 {
-                    var mymetaregion = await QueryFactory.Query()
-                           .Select("data")
-                           .From("metaregions")
-                           .Where("id", locid)
-                           .GetObjectSingleAsync<MetaRegion>();
+                    var loctype = locitem.Item2;
+                    var locid = locitem.Item1;
 
-                    var regionlist = mymetaregion.RegionIds ?? Enumerable.Empty<string>();
-
-                    string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                    var myregionlist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("regions")
-                           .WhereRaw(regionlistwhere)
-                           .GetObjectListAsync<Region>();
-
-                    string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                    var mytvlist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("tvs")
-                           .WhereRaw(tvlistwhere)
-                           .GetObjectListAsync<Tourismverein>();
-
-                    string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                    var mylocalitylist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("municipalities")
-                           .WhereRaw(localitylistwhere)
-                           .GetObjectListAsync<Municipality>();
-
-                    string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                    var myfractionlist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("districts")
-                           .WhereRaw(fractionlistwhere)
-                           .GetObjectListAsync<District>();
-
-                    var mymetaregionlistreduced = new LocHelperclass { typ = "reg", name = mymetaregion.Detail[lang].Title, id = mymetaregion.Id };
-                    var myregionlistreduced = myregionlist.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
-                    var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                    var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-                    var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-
-                    if (locationtypes.Contains("mta"))
-                        mylocationlist.Add(mymetaregionlistreduced);
-                    if (locationtypes.Contains("reg"))
-                        mylocationlist.AddRange(myregionlistreduced);
-                    if (locationtypes.Contains("tvs"))
-                        mylocationlist.AddRange(mylocalitylistreduced);
-                    if (locationtypes.Contains("mun"))
-                        mylocationlist.AddRange(mytvlistreduced);
-                    if (locationtypes.Contains("fra"))
-                        mylocationlist.AddRange(myfractionlistreduced);
-                }
-                if (loctype == "reg")
-                {
-
-                    var myregion = await QueryFactory.Query()
-                           .Select("data")
-                           .From("regions")
-                           .Where("id", locid)
-                           .GetObjectSingleAsync<Region>();
-
-                    string tvlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-                    var mytvlist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("tvs")
-                           .WhereRaw(tvlistwhere)
-                           .GetObjectListAsync<Tourismverein>();
-
-                    string localitylistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-                    var mylocalitylist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("municipalities")
-                           .WhereRaw(localitylistwhere)
-                           .GetObjectListAsync<Municipality>();
-
-                    string fractionlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-                    var myfractionlist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("districts")
-                           .WhereRaw(fractionlistwhere)
-                           .GetObjectListAsync<District>();
-
-                    var myregionlistreduced = new LocHelperclass { typ = "reg", name = myregion.Detail[lang].Title, id = myregion.Id };
-                    var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                    var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-                    var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-
-                    if (locationtypes.Contains("reg"))
-                        mylocationlist.Add(myregionlistreduced);
-                    if (locationtypes.Contains("tvs"))
-                        mylocationlist.AddRange(mylocalitylistreduced);
-                    if (locationtypes.Contains("mun"))
-                        mylocationlist.AddRange(mytvlistreduced);
-                    if (locationtypes.Contains("fra"))
-                        mylocationlist.AddRange(myfractionlistreduced);
-                }
-                if (loctype == "tvs")
-                {
-                    var mytv = await QueryFactory.Query()
-                           .Select("data")
-                           .From("tvs")
-                           .Where("id", locid)
-                           .GetObjectSingleAsync<Tourismverein>();
-
-                    string localitylistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
-                    var mylocalitylist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("municipalities")
-                           .WhereRaw(localitylistwhere)
-                           .GetObjectListAsync<Municipality>();
-
-                    string fractionlistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
-                    var myfractionlist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("districts")
-                           .WhereRaw(fractionlistwhere)
-                           .GetObjectListAsync<District>();
-
-                    var mytvlistreduced = new LocHelperclass { typ = "tvs", name = mytv.Detail[lang].Title, id = mytv.Id };
-                    var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                    var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-
-                    if (locationtypes.Contains("tvs"))
-                        mylocationlist.Add(mytvlistreduced);
-                    if (locationtypes.Contains("mun"))
-                        mylocationlist.AddRange(mylocalitylistreduced);
-                    if (locationtypes.Contains("fra"))
-                        mylocationlist.AddRange(myfractionlistreduced);
-                }
-                if (loctype == "mun")
-                {
-                    var mymun = await QueryFactory.Query()
-                           .Select("data")
-                           .From("municipalities")
-                           .Where("id", locid)
-                           .GetObjectSingleAsync<Municipality>();
-
-                    string fractionlistwhere = "data->>'MunicipalityId' = '" + locid + "' AND " + defaultmunfrafilter;
-                    var myfractionlist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("districts")
-                           .WhereRaw(fractionlistwhere)
-                           .GetObjectListAsync<District>();
-
-                    var mylocalitylistreduced = new LocHelperclass { typ = "mun", name = mymun.Detail[lang].Title, id = mymun.Id };
-                    var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-
-                    if (locationtypes.Contains("mun"))
-                        mylocationlist.Add(mylocalitylistreduced);
-                    if (locationtypes.Contains("fra"))
-                        mylocationlist.AddRange(myfractionlistreduced);
-                }
-                if (loctype == "fra")
-                {
-                    var myfra = await QueryFactory.Query()
-                           .Select("data")
-                           .From("districts")
-                           .Where("id", locid)
-                           .GetObjectSingleAsync<District>();
-
-                    var myfralistreduced = new LocHelperclass { typ = "fra", name = myfra.Detail[lang].Title, id = myfra.Id };
-
-                    if (locationtypes.Contains("fra"))
-                        mylocationlist.Add(myfralistreduced);
-                }
-                else
-                {
-                    if (locationtypes.Contains("mta"))
+                    if (loctype == "mta")
                     {
                         var mymetaregion = await QueryFactory.Query()
-                           .Select("data")
-                           .From("metaregions")
-                           .WhereRaw("data->'Active'='true'")
-                           .GetObjectListAsync<MetaRegion>();
+                               .Select("data")
+                               .From("metaregions")
+                               .Where("id", locid)
+                               .GetObjectSingleAsync<MetaRegion>();
 
-                        var mymetaregionlistreduced = mymetaregion.Select(x => new LocHelperclass { typ = "mta", name = x.Detail[lang].Title, id = x.Id });
-                        mylocationlist.AddRange(mymetaregionlistreduced);
+                        var regionlist = mymetaregion.RegionIds ?? Enumerable.Empty<string>();
+
+                        string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                        var myregionlist = await QueryFactory.Query()
+                               .Select("data")
+                               .From("regions")
+                               .WhereRaw(regionlistwhere)
+                               .GetObjectListAsync<Region>();
+
+                        string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                        var mytvlist = await QueryFactory.Query()
+                               .Select("data")
+                               .From("tvs")
+                               .WhereRaw(tvlistwhere)
+                               .GetObjectListAsync<Tourismverein>();
+
+                        string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                        var mylocalitylist = await QueryFactory.Query()
+                               .Select("data")
+                               .From("municipalities")
+                               .WhereRaw(localitylistwhere)
+                               .GetObjectListAsync<Municipality>();
+
+                        string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                        var myfractionlist = await QueryFactory.Query()
+                               .Select("data")
+                               .From("districts")
+                               .WhereRaw(fractionlistwhere)
+                               .GetObjectListAsync<District>();
+
+                        var mymetaregionlistreduced = new LocHelperclass { typ = "reg", name = mymetaregion.Detail[lang].Title, id = mymetaregion.Id };
+                        var myregionlistreduced = myregionlist.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
+                        var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                        var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                        var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+
+                        if (locationtypes.Contains("mta"))
+                            mylocationlist.Add(mymetaregionlistreduced);
+                        if (locationtypes.Contains("reg"))
+                            mylocationlist.AddRange(myregionlistreduced);
+                        if (locationtypes.Contains("tvs"))
+                            mylocationlist.AddRange(mylocalitylistreduced);
+                        if (locationtypes.Contains("mun"))
+                            mylocationlist.AddRange(mytvlistreduced);
+                        if (locationtypes.Contains("fra"))
+                            mylocationlist.AddRange(myfractionlistreduced);
                     }
-
-                    if (locationtypes.Contains("reg"))
+                    else if (loctype == "reg")
                     {
+
                         var myregion = await QueryFactory.Query()
-                           .Select("data")
-                           .From("regions")
-                           .WhereRaw("data->'Active'='true'")
-                           .GetObjectListAsync<Region>();
+                               .Select("data")
+                               .From("regions")
+                               .Where("id", locid)
+                               .GetObjectSingleAsync<Region>();
 
-                        var myregionlistreduced = myregion.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
-                        mylocationlist.AddRange(myregionlistreduced);
+                        string tvlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
+                        var mytvlist = await QueryFactory.Query()
+                               .Select("data")
+                               .From("tvs")
+                               .WhereRaw(tvlistwhere)
+                               .GetObjectListAsync<Tourismverein>();
+
+                        string localitylistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
+                        var mylocalitylist = await QueryFactory.Query()
+                               .Select("data")
+                               .From("municipalities")
+                               .WhereRaw(localitylistwhere)
+                               .GetObjectListAsync<Municipality>();
+
+                        string fractionlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
+                        var myfractionlist = await QueryFactory.Query()
+                               .Select("data")
+                               .From("districts")
+                               .WhereRaw(fractionlistwhere)
+                               .GetObjectListAsync<District>();
+
+                        var myregionlistreduced = new LocHelperclass { typ = "reg", name = myregion.Detail[lang].Title, id = myregion.Id };
+                        var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                        var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                        var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+
+                        if (locationtypes.Contains("reg"))
+                            mylocationlist.Add(myregionlistreduced);
+                        if (locationtypes.Contains("tvs"))
+                            mylocationlist.AddRange(mylocalitylistreduced);
+                        if (locationtypes.Contains("mun"))
+                            mylocationlist.AddRange(mytvlistreduced);
+                        if (locationtypes.Contains("fra"))
+                            mylocationlist.AddRange(myfractionlistreduced);
                     }
-
-                    if (locationtypes.Contains("tvs"))
+                    else if (loctype == "tvs")
                     {
                         var mytv = await QueryFactory.Query()
-                           .Select("data")
-                           .From("tvs")
-                           .WhereRaw("data->'Active'='true'")
-                           .GetObjectListAsync<Tourismverein>();
+                               .Select("data")
+                               .From("tvs")
+                               .Where("id", locid)
+                               .GetObjectSingleAsync<Tourismverein>();
 
-                        var mytourismvereinlistreduced = mytv.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-                        mylocationlist.AddRange(mytourismvereinlistreduced);
-                    }
-
-                    if (locationtypes.Contains("mun"))
-                    {
+                        string localitylistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
                         var mylocalitylist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("municipalities")
-                           .WhereRaw(defaultmunfrafilter)
-                           .GetObjectListAsync<Municipality>();
+                               .Select("data")
+                               .From("municipalities")
+                               .WhereRaw(localitylistwhere)
+                               .GetObjectListAsync<Municipality>();
 
-                        var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                        mylocationlist.AddRange(mylocalitylistreduced);
-                    }
-
-                    if (locationtypes.Contains("fra"))
-                    {
+                        string fractionlistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
                         var myfractionlist = await QueryFactory.Query()
-                           .Select("data")
-                           .From("districts")
-                           .WhereRaw(defaultmunfrafilter)
-                           .GetObjectListAsync<District>();
+                               .Select("data")
+                               .From("districts")
+                               .WhereRaw(fractionlistwhere)
+                               .GetObjectListAsync<District>();
 
+                        var mytvlistreduced = new LocHelperclass { typ = "tvs", name = mytv.Detail[lang].Title, id = mytv.Id };
+                        var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
                         var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-                        mylocationlist.AddRange(myfractionlistreduced);
+
+                        if (locationtypes.Contains("tvs"))
+                            mylocationlist.Add(mytvlistreduced);
+                        if (locationtypes.Contains("mun"))
+                            mylocationlist.AddRange(mylocalitylistreduced);
+                        if (locationtypes.Contains("fra"))
+                            mylocationlist.AddRange(myfractionlistreduced);
                     }
+                    else if (loctype == "mun")
+                    {
+                        var mymun = await QueryFactory.Query()
+                               .Select("data")
+                               .From("municipalities")
+                               .Where("id", locid)
+                               .GetObjectSingleAsync<Municipality>();
+
+                        string fractionlistwhere = "data->>'MunicipalityId' = '" + locid + "' AND " + defaultmunfrafilter;
+                        var myfractionlist = await QueryFactory.Query()
+                               .Select("data")
+                               .From("districts")
+                               .WhereRaw(fractionlistwhere)
+                               .GetObjectListAsync<District>();
+
+                        var mylocalitylistreduced = new LocHelperclass { typ = "mun", name = mymun.Detail[lang].Title, id = mymun.Id };
+                        var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+
+                        if (locationtypes.Contains("mun"))
+                            mylocationlist.Add(mylocalitylistreduced);
+                        if (locationtypes.Contains("fra"))
+                            mylocationlist.AddRange(myfractionlistreduced);
+                    }
+                    else if (loctype == "fra")
+                    {
+                        var myfra = await QueryFactory.Query()
+                               .Select("data")
+                               .From("districts")
+                               .Where("id", locid)
+                               .GetObjectSingleAsync<District>();
+
+                        var myfralistreduced = new LocHelperclass { typ = "fra", name = myfra.Detail[lang].Title, id = myfra.Id };
+
+                        if (locationtypes.Contains("fra"))
+                            mylocationlist.Add(myfralistreduced);
+                    } 
                 }
             }
-     
+            else
+            {
+                if (locationtypes.Contains("mta"))
+                {
+                    var mymetaregion = await QueryFactory.Query()
+                       .Select("data")
+                       .From("metaregions")
+                       .WhereRaw("data->'Active'='true'")
+                       .GetObjectListAsync<MetaRegion>();
+
+                    var mymetaregionlistreduced = mymetaregion.Select(x => new LocHelperclass { typ = "mta", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(mymetaregionlistreduced);
+                }
+
+                if (locationtypes.Contains("reg"))
+                {
+                    var myregion = await QueryFactory.Query()
+                       .Select("data")
+                       .From("regions")
+                       .WhereRaw("data->'Active'='true'")
+                       .GetObjectListAsync<Region>();
+
+                    var myregionlistreduced = myregion.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(myregionlistreduced);
+                }
+
+                if (locationtypes.Contains("tvs"))
+                {
+                    var mytv = await QueryFactory.Query()
+                       .Select("data")
+                       .From("tvs")
+                       .WhereRaw("data->'Active'='true'")
+                       .GetObjectListAsync<Tourismverein>();
+
+                    var mytourismvereinlistreduced = mytv.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(mytourismvereinlistreduced);
+                }
+
+                if (locationtypes.Contains("mun"))
+                {
+                    var mylocalitylist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("municipalities")
+                       .WhereRaw(defaultmunfrafilter)
+                       .GetObjectListAsync<Municipality>();
+
+                    var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(mylocalitylistreduced);
+                }
+
+                if (locationtypes.Contains("fra"))
+                {
+                    var myfractionlist = await QueryFactory.Query()
+                       .Select("data")
+                       .From("districts")
+                       .WhereRaw(defaultmunfrafilter)
+                       .GetObjectListAsync<District>();
+
+                    var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(myfractionlistreduced);
+                }
+            }
+
+
             return mylocationlist;
         }
 
