@@ -1381,6 +1381,83 @@ namespace OdhApiCore.Controllers.api
 
         #region WebcamInfoController
 
+        /// <summary>
+        /// GET Webcam Reduced List
+        /// </summary>
+        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="source">Source Filter(String, ), (default:'null')</param>        
+        /// <param name="active">Active Webcam Filter (possible Values: 'true' only Active Gastronomies, 'false' only Disabled Gastronomies</param>
+        /// <param name="odhactive">ODH Active (refers to field SmgActive) (Published) Webcam Filter (possible Values: 'true' only published Webcam, 'false' only not published Webcam, (default:'null')</param>        
+        /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
+        /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
+        /// <param name="radius">Radius to Search in KM. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
+        /// <param name="fields">Select fields to display, by Default Title and Id are selected if fields filter is null More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
+        /// <returns>Collection of WebcamInfoReduced Objects</returns>        
+        [ProducesResponseType(typeof(IEnumerable<WebcamInfoReduced>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("WebcamInfoReduced")]
+        public async Task<IActionResult> GetReducedWebcamInfoAsync(
+            string language = "en",
+            string? source = null,
+            string? updatefrom = null,
+            LegacyBool odhactive = null!,
+            LegacyBool active = null!,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            bool suedtirolmobil = false,
+            CancellationToken cancellationToken = default
+      )
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+            return await GetWebcamInfoReduced(fields: fields ?? Array.Empty<string>(), language, source, searchfilter, active?.Value, odhactive?.Value,
+                updatefrom, geosearchresult,  rawfilter, rawsort, cancellationToken);
+
+        }
+
+        private Task<IActionResult> GetWebcamInfoReduced(
+            string[] fields, string? language, string? source,
+            string? searchfilter, bool? active, bool? smgactive,
+            string? lastchange, PGGeoSearchResult geosearchresult,
+            string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                WebcamInfoHelper mywebcaminfohelper = WebcamInfoHelper.Create(
+                    source, null, active, smgactive, lastchange);
+
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Webcamname,{language}\\}}' as \"Name\"";
+                //string orderby = "data#>>'\\{Shortname\\}' ASC";
+
+                //Custom Fields filter
+                if (fields.Length > 0)
+                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From("webcams")
+                         .WebCamInfoWhereExpression(
+                            idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
+                            activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
+                            searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
+                            languagelist: new List<string>(), filterClosedData: FilterClosedData)
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(geosearchresult, rawsort);
+
+                // Get whole data
+                return await query.GetAsync<object>();
+            });
+        }
+
         #endregion
     }
 
