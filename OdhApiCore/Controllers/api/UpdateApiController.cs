@@ -18,6 +18,7 @@ using OdhApiCore.GenericHelpers;
 using EBMS;
 using NINJA;
 using NINJA.Parser;
+using System.Net.Http;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -30,7 +31,7 @@ namespace OdhApiCore.Controllers.api
         public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<AlpineBitsController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
-            this.settings = settings;
+            this.settings = settings;            
         }
 
         #region EBMS exposed
@@ -38,7 +39,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]
         public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken)
         {
-            var result = await ImportEbmsEventsToDB();
+            var result = await ImportEbmsEventsToDB();            
 
             return Ok(String.Format("EBMS Eventshorts update result: {0}", result));
         }
@@ -283,6 +284,8 @@ namespace OdhApiCore.Controllers.api
         #endregion
 
         #region NINJA Helpers
+
+        //TODO CHECK IF THIS IS WORKING AND REFACTOR
 
         /// <summary>
         /// Save Events to Postgres

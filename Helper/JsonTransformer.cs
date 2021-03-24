@@ -284,7 +284,7 @@ namespace Helper
         {
             JToken? token = JToken.Parse(raw.Value);
             if (language != null) token = FilterByLanguage(token, language);
-            if (fields.Length > 0) token = FilterByFields(token, fields, language);
+            if (fields != null && fields.Length > 0) token = FilterByFields(token, fields, language);
             // Filter out all data where the LicenseInfo does not contain `CC0`
             if (checkCC0) token = FilterImagesByCC0License(token);
             // Filter out all data where the LicenseInfo contains `hgv` as source.

@@ -44,7 +44,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=poi'), (default:'null')</param>
         /// <param name="active">Active Pois Filter (possible Values: 'true' only Active Pois, 'false' only Disabled Pois, (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Pois Filter (Refers to field SmgActive) Pois Filter (possible Values: 'true' only published Pois, 'false' only not published Pois, (default:'null')</param>
-        /// <param name="lastchange">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
+        /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
@@ -69,7 +69,7 @@ namespace OdhApiCore.Controllers.api
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
-            string? lastchange = null,
+            string? updatefrom = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -90,7 +90,7 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 activitytype: poitype, subtypefilter: subtype, idfilter: idlist, searchfilter: searchfilter,
                 locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight, active: active, smgactive: odhactive,
-                smgtags: odhtagfilter, seed: seed, lastchange: lastchange, geosearchresult: geosearchresult,
+                smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, geosearchresult: geosearchresult,
                 rawfilter: rawfilter, rawsort: rawsort, cancellationToken: cancellationToken);
         }
 
@@ -412,48 +412,7 @@ namespace OdhApiCore.Controllers.api
         //}
 
         #endregion
-
-        #region Obsolete here for Compatibility reasons
-
-        /// <summary>
-        /// GET Poi Changed List by Date
-        /// </summary>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
-        /// <param name="pagesize">Elements per Page, (default:10)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
-        /// <returns>Collection of GBLTSPoi Objects</returns>
-        /// <response code="200">List created</response>
-        /// <response code="400">Request Error</response>
-        /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<GBLTSPoi>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,PoiReader")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("PoiChanged")]
-        public async Task<IActionResult> GetAllPoisChanged(
-            uint pagenumber = 1,
-            uint pagesize = 10,
-            string? seed = null,
-            string? updatefrom = null,
-            CancellationToken cancellationToken = default
-            )
-        {
-            //TODO
-            //CheckOpenData(User);
-
-            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
-
-            return await GetPoiList(
-                language: null, pagenumber: pagenumber, pagesize: pagesize, poitype: null, subtype: null,
-                idlist: null, areafilter: null, highlight: new LegacyBool(null), locfilter: null,
-                odhtagfilter: null, active: new LegacyBool(null), odhactive: new LegacyBool(null),
-                lastchange: updatefrom, seed: seed, latitude: null, longitude: null, radius: null,
-                fields: null, searchfilter: null, cancellationToken: cancellationToken);
-        }
-
-        #endregion
+      
     }
 
 }

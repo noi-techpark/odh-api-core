@@ -51,7 +51,7 @@ namespace OdhApiCore.Controllers
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=activity'), (default:'null')</param>
         /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
         /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
-        /// <param name="lastchange">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
+        /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
@@ -82,7 +82,7 @@ namespace OdhApiCore.Controllers
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
-            string? lastchange = null,
+            string? updatefrom = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -102,7 +102,7 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
                     distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
                     highlightfilter: highlight, difficultyfilter: difficultyfilter, active: active,
-                    smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: lastchange,
+                    smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken: cancellationToken);
         }
 
@@ -317,45 +317,5 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
-        #region Obsolete here for Compatibility reasons
-
-        /// <summary>
-        /// GET Activity Changed List by Date
-        /// </summary>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
-        /// <param name="pagesize">Elements per Page, (default:10)</param>
-        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="updatefrom">Date from Format (yyyy-MM-dd) (all GBActivityPoi with LastChange >= datefrom are passed), (default: DateTime.Now - 1 Day)</param>
-        /// <returns>Collection of GBLTSActivity Objects</returns>
-        /// <response code="200">List created</response>
-        /// <response code="400">Request Error</response>
-        /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<GBLTSActivity>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet, Route("ActivityChanged")]
-        public async Task<IActionResult> GetAllActivityChanged(
-            uint pagenumber = 1,
-            uint pagesize = 10,
-            string? seed = null,
-            string? updatefrom = null,
-            CancellationToken cancellationToken = default
-            )
-        {
-            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
-
-            return await GetActivityList(
-                language: null, pagenumber: pagenumber, pagesize: pagesize, activitytype: null,
-                subtype: null, idlist: null, locfilter: null, areafilter: null, distancefilter: null,
-                altitudefilter: null, durationfilter: null, highlight: new LegacyBool(null),
-                difficultyfilter: null, odhtagfilter: null, active: new LegacyBool(null),
-                odhactive: new LegacyBool(null), lastchange: updatefrom, seed: seed,
-                latitude: null, longitude: null, radius: null, fields: null, searchfilter: null,
-                cancellationToken: cancellationToken);
-        }
-
-        #endregion
     }
 }
