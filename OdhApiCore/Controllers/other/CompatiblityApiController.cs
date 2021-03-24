@@ -589,6 +589,28 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
+        [Obsolete("Deprecated, use the ODHActivityPoi Endpoint")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet, Route("ODHActivityPoiChanged")]
+        public RedirectToActionResult GetAllODHActivityPoiChanged(
+            uint pagenumber = 1,
+            uint pagesize = 10,
+            string? seed = null,
+            string? updatefrom = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
+
+            return RedirectToAction("ODHActivityPoi", "v1", new RouteValueDictionary
+                                                                    {
+                                                                        {"pagenumber", pagenumber},
+                                                                        {"pagesize", pagesize},
+                                                                        {"seed", seed},
+                                                                        {"updatefrom", updatefrom}
+                                                                    });
+        }
+
         #endregion
 
         #region EventController
@@ -686,6 +708,28 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
+        [Obsolete("Deprecated, use the Event Endpoint")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet, Route("EventChanged")]
+        public RedirectToActionResult GetAllEventChanged(
+            uint pagenumber = 1,
+            uint pagesize = 10,
+            string? seed = null,
+            string? updatefrom = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
+
+            return RedirectToAction("Event", "v1", new RouteValueDictionary
+                                                                    {
+                                                                        {"pagenumber", pagenumber},
+                                                                        {"pagesize", pagesize},
+                                                                        {"seed", seed},
+                                                                        {"updatefrom", updatefrom}
+                                                                    });
+        }
+
         #endregion
 
         #region ArticleController
@@ -758,6 +802,28 @@ namespace OdhApiCore.Controllers.api
                 // Get whole data
                 return await query.GetAsync<object>();
             });
+        }
+
+        [Obsolete("Deprecated, use the Article Endpoint")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet, Route("ArticleChanged")]
+        public RedirectToActionResult GetAllArticleChanged(
+           uint pagenumber = 1,
+           uint pagesize = 10,
+           string? seed = null,
+           string? updatefrom = null,
+           CancellationToken cancellationToken = default
+           )
+        {
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
+
+            return RedirectToAction("Article", "v1", new RouteValueDictionary
+                                                                    {
+                                                                        {"pagenumber", pagenumber},
+                                                                        {"pagesize", pagesize},
+                                                                        {"seed", seed},
+                                                                        {"updatefrom", updatefrom}
+                                                                    });
         }
 
         #endregion
@@ -932,9 +998,29 @@ namespace OdhApiCore.Controllers.api
                 // Get whole data
                 return await query.GetAsync<object>();
             });
-
         }
 
+        [Obsolete("Deprecated, use the Accommodation Endpoint")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet, Route("AccommodationChanged")]
+        public RedirectToActionResult GetAllAccommodationChanged(
+           uint pagenumber = 1,
+           uint pagesize = 10,
+           string? seed = null,
+           string? updatefrom = null,
+           CancellationToken cancellationToken = default
+           )
+        {
+            updatefrom ??= String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(-1));
+
+            return RedirectToAction("Accommodation", "v1", new RouteValueDictionary
+                                                                    {
+                                                                        {"pagenumber", pagenumber},
+                                                                        {"pagesize", pagesize},
+                                                                        {"seed", seed},
+                                                                        {"updatefrom", updatefrom}
+                                                                    });
+        }
 
         #endregion
 
@@ -1020,7 +1106,7 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
-        #region Common
+        #region CommonController
 
         ////Reduced GETTER
 
@@ -1289,7 +1375,11 @@ namespace OdhApiCore.Controllers.api
                 // Get paginated data
                 return await query.GetAsync<object>();
             });
-        }     
+        }
+
+        #endregion
+
+        #region WebcamInfoController
 
         #endregion
     }
