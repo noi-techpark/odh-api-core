@@ -17,6 +17,7 @@ namespace Helper
         private static bool IsLanguageKey(string key) =>
             Languages.Contains(key);
 
+        //Cutting out all not requested Language Dictionary Objects
         public static JToken? FilterByLanguage(this JToken? token, string language)
         {
             if (token == null)
@@ -41,6 +42,7 @@ namespace Helper
             return Walk(token);
         }
 
+        //Cutting out all images where the License is not CC0
         public static JToken? FilterImagesByCC0License(this JToken? token)
         {
             if (token == null)
@@ -77,6 +79,7 @@ namespace Helper
             return Walk(token);
         }
 
+        //Cutting out all Rooms where Source is not HGV
         public static JToken? FilterAccoRoomInfoByHGVSource(this JToken? token)
         {
             if (token == null)
@@ -135,6 +138,45 @@ namespace Helper
             return Walk(token);
         }
 
+        //Cutting out Property TVMember on Accommodations
+        public static JToken? FilterTVMemberInformations(this JToken? token)
+        {
+            if (token == null)
+                return null;
+            
+
+            static JObject TransformTVMemberProp(JObject obj)
+            {
+                // Get the TVMember property of an object which has to be an property
+                var accoTVMember = obj.Property("TVMember");
+                if (accoTVMember is not null && accoTVMember.Value is JProperty)
+                {
+                    //Cut out this property
+
+                    return obj;
+                }
+                else
+                {
+                    return obj;
+                }
+            }                
+            static JProperty? TransformProp(JProperty prop)
+            {
+                var value = Walk(prop.Value);
+                return value == null ? null : new JProperty(prop.Name, value);
+            }
+            static JToken Walk(JToken token) =>
+                token switch
+                {
+                    JObject obj => TransformTVMemberProp(obj),
+                    JProperty prop => TransformProp(prop),
+                    _ => token
+                };
+            return Walk(token);
+        }
+
+
+        //Cutting out Property _Meta
         public static JToken? FilterMetaInformations(this JToken? token)
         {
             if (token == null)
@@ -150,6 +192,7 @@ namespace Helper
             return Walk(token);
         }
 
+        //Cutting out all Properties where Meta Contains the information Closeddata is true
         public static JToken? FilterClosedData(this JToken? token)
         {
             if (token == null)
@@ -193,6 +236,7 @@ namespace Helper
             return Walk(token);
         }
 
+        //Cuts out all fields that are not requested only Id is active by default
         public static JToken? FilterByFields(this JToken? token, string[] fieldsFromQueryString, string? languageParam)
         {
             if (token == null)
@@ -222,6 +266,7 @@ namespace Helper
             return token;
         }
 
+        //Transforms URL of the self link to the right domain
         public static JToken? TransformSelfLink(this JToken? token, Func<string, string> urlGenerator)
         {
             if (token == null)

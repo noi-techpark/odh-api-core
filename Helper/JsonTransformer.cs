@@ -13,7 +13,7 @@ namespace Helper
     {              
         public static JsonRaw? TransformRawData(
             this JsonRaw raw, string? language, string[] fields, bool checkCC0,
-            bool filterClosedData, Func<string, string> urlGenerator)
+            bool filterClosedData, Func<string, string> urlGenerator, List<string> currentroles = null)
         {
             JToken? token = JToken.Parse(raw.Value);
             if (language != null) token = JsonTransformerMethods.FilterByLanguage(token, language);
@@ -23,12 +23,13 @@ namespace Helper
             // Filter out all data where the LicenseInfo contains `hgv` as source.
             if (checkCC0) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
             if (filterClosedData) token = token.FilterClosedData();
+            
             token = token.TransformSelfLink(urlGenerator);
             token = token.FilterMetaInformations();
             return (token == null) ?
                 null :
                 new JsonRaw(token.ToString(Formatting.Indented));
-        }
+        }        
     }    
 
     sealed class DistinctComparer
