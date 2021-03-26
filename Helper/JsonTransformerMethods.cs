@@ -149,16 +149,11 @@ namespace Helper
             {
                 // Get the TVMember property of an object which has to be an property
                 var accoTVMember = obj.Property("TVMember");
-                if (accoTVMember is not null && accoTVMember.Value is JProperty)
-                {
+                if (accoTVMember is not null && accoTVMember.Value is JProperty)               
                     //Cut out this property
-
-                    return obj;
-                }
+                    return new JObject(obj.Properties().Where(x => x.Name != "TVMember"));                
                 else
-                {
-                    return obj;
-                }
+                    return obj;                
             }                
             static JProperty? TransformProp(JProperty prop)
             {
