@@ -139,35 +139,28 @@ namespace Helper
         }
 
         //Cutting out Property TVMember on Accommodations
-        public static JToken? FilterTVMemberInformations(this JToken? token)
+        public static JToken? FilterOutProperties(this JToken? token, List<string> propstocut)
         {
             if (token == null)
                 return null;
             
-
-            static JObject TransformTVMemberProp(JObject obj)
+            static JObject TransformTVMemberProp(JObject obj, List<string> propstocut)
             {
                 // Get the TVMember property of an object which has to be an property
                 var accoTVMember = obj.Property("TVMember");
-                if (accoTVMember is not null && accoTVMember.Value is JProperty)               
+                if (accoTVMember is not null && accoTVMember is JProperty)               
                     //Cut out this property
-                    return new JObject(obj.Properties().Where(x => x.Name != "TVMember"));                
+                    return new JObject(obj.Properties().Where(x => !propstocut.Contains(x.Name)));                
                 else
                     return obj;                
             }                
-            static JProperty? TransformProp(JProperty prop)
-            {
-                var value = Walk(prop.Value);
-                return value == null ? null : new JProperty(prop.Name, value);
-            }
-            static JToken Walk(JToken token) =>
+            static JToken Walk(JToken token, List<string> propstocut) =>
                 token switch
                 {
-                    JObject obj => TransformTVMemberProp(obj),
-                    JProperty prop => TransformProp(prop),
+                    JObject obj => TransformTVMemberProp(obj, propstocut),
                     _ => token
                 };
-            return Walk(token);
+            return Walk(token, propstocut);
         }
 
 

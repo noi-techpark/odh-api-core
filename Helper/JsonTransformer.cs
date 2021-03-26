@@ -22,7 +22,7 @@ namespace Helper
             if (checkCC0) token = JsonTransformerMethods.FilterImagesByCC0License(token);
             // Filter out all data where the LicenseInfo contains `hgv` as source.
             if (checkCC0) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
-            if (checkCC0) token = JsonTransformerMethods.FilterTVMemberInformations(token);
+            if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, new List<string>() { "TVMember" });
             if (filterClosedData) token = token.FilterClosedData();
             
             token = token.TransformSelfLink(urlGenerator);
