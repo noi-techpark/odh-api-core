@@ -22,7 +22,10 @@ namespace Helper
             if (checkCC0) token = JsonTransformerMethods.FilterImagesByCC0License(token);
             // Filter out all data where the LicenseInfo contains `hgv` as source.
             if (checkCC0) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
+            
+            //Filter out all Data 
             if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, new List<string>() { "TVMember","Beds","Units" });
+            
             if (filterClosedData) token = token.FilterClosedData();
             
             token = token.TransformSelfLink(urlGenerator);
@@ -31,6 +34,11 @@ namespace Helper
                 null :
                 new JsonRaw(token.ToString(Formatting.Indented));
         }        
+
+        public static List<string> FilterOutPropertiesByRole(List<string> currentroles)
+        {
+            return new List<string>() { "TVMember", "Beds", "Units" };
+        }
     }    
 
     sealed class DistinctComparer

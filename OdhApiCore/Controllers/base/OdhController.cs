@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Principal;
@@ -44,6 +45,16 @@ namespace OdhApiCore.Controllers
                     $"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
                 };
                 return !roles.Any(User.IsInRole);
+            }
+        }
+        
+        protected IEnumerable<string> UserRolesList
+        {
+            get
+            {
+                var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
+
+                return roleclaims;
             }
         }
 
