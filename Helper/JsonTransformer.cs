@@ -13,7 +13,7 @@ namespace Helper
     {              
         public static JsonRaw? TransformRawData(
             this JsonRaw raw, string? language, string[] fields, bool checkCC0,
-            bool filterClosedData, Func<string, string> urlGenerator, List<string> currentroles = null)
+            bool filterClosedData, Func<string, string> urlGenerator, IEnumerable<string> userroles)
         {
             JToken? token = JToken.Parse(raw.Value);
             if (language != null) token = JsonTransformerMethods.FilterByLanguage(token, language);
@@ -22,9 +22,11 @@ namespace Helper
             if (checkCC0) token = JsonTransformerMethods.FilterImagesByCC0License(token);
             // Filter out all data where the LicenseInfo contains `hgv` as source.
             if (checkCC0) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
-            
+
             //Filter out all Data 
-            if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, new List<string>() { "TVMember","Beds","Units" });
+            var rolefilter = FilterOutPropertiesByRole(userroles);
+            if (rolefilter.Count > 0)
+                if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, rolefilter);
             
             if (filterClosedData) token = token.FilterClosedData();
             
@@ -35,8 +37,11 @@ namespace Helper
                 new JsonRaw(token.ToString(Formatting.Indented));
         }        
 
-        public static List<string> FilterOutPropertiesByRole(List<string> currentroles)
+        public static List<string> FilterOutPropertiesByRole(IEnumerable<string> userroles)
         {
+            if (userroles.Contains("IDM"))
+                return new List<string>() { };                
+
             return new List<string>() { "TVMember", "Beds", "Units" };
         }
     }    

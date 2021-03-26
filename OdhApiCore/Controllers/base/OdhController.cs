@@ -54,7 +54,7 @@ namespace OdhApiCore.Controllers
             {
                 var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
 
-                return roleclaims;
+                return roleclaims ?? new List<string>();
             }
         }
 
