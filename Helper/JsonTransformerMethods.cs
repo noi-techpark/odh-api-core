@@ -147,12 +147,13 @@ namespace Helper
             static JObject TransformTVMemberProp(JObject obj, List<string> propstocut)
             {
                 // Get the TVMember property of an object which has to be an property
-                var accoTVMember = obj.Property("TVMember");
-                if (accoTVMember is not null && accoTVMember is JProperty)               
-                    //Cut out this property
-                    return new JObject(obj.Properties().Where(x => !propstocut.Contains(x.Name)));                
-                else
-                    return obj;                
+                //var accoTVMember = obj.Property("TVMember");
+                //if (accoTVMember is not null && accoTVMember is JProperty)               
+                //    //Cut out this property
+                //    return new JObject(obj.Properties().Where(x => !propstocut.Contains(x.Name)));                
+                //else
+                //    return obj;               
+                return new JObject(obj.Properties().Where(x => !propstocut.Contains(x.Name)));
             }                
             static JToken Walk(JToken token, List<string> propstocut) =>
                 token switch
@@ -160,6 +161,7 @@ namespace Helper
                     JObject obj => TransformTVMemberProp(obj, propstocut),
                     _ => token
                 };
+
             return Walk(token, propstocut);
         }
 
