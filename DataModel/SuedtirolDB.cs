@@ -821,8 +821,9 @@ namespace DataModel
         public bool Active { get; set; }
         public string? HgvId { get; set; }
         public string? Shortname { get; set; }
-        public int Units { get; set; }
-        public int Beds { get; set; }
+
+        //public int Units { get; set; }
+        //public int Beds { get; set; }
         public int? Representation { get; set; }
         public bool HasApartment { get; set; }
         public bool HasRoom { get; set; }
