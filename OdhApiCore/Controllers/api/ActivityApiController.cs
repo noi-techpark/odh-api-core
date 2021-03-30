@@ -95,21 +95,7 @@ namespace OdhApiCore.Controllers
             string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-
-            var referer = HttpContext.Request.Headers.ContainsKey("Referer") ? HttpContext.Request.Headers["Referer"].ToString() : "no referer";            
-
-            using (LogContext.PushProperty("user", User.Identity.Name ?? "anonymous"))
-            using (LogContext.PushProperty("referer", referer))
-            {
-                Logger.LogInformation($"Http Request Information:{Environment.NewLine}" +
-                           $"Schema:{ HttpContext.Request.Scheme} " +
-                           $"Host: {HttpContext.Request.Host} " +
-                           $"Path: {HttpContext.Request.Path} " +
-                           $"QueryString: {HttpContext.Request.QueryString} " +
-                           $"Referer: {HttpContext.Request.Headers["Referer"]} " +
-                           $"User: { (User.Identity != null ? User.Identity.Name : "anonymous")} ");
-            }
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);           
 
             return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,

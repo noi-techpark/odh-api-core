@@ -372,6 +372,35 @@ namespace OdhApiCore
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 //endpoints.MapDefaultControllerRoute();
             });
+
+            //LOG EVERY REQUEST WITH HEADERs
+            app.Use(async (context, next) =>
+            {
+                var referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer";
+                var username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous";
+
+                Log.Information($"Http Request Information:{Environment.NewLine}" +
+                           $"Schema:{ context.Request.Scheme} " +
+                           $"Host: {context.Request.Host} " +
+                           $"Path: {context.Request.Path} " +
+                           $"QueryString: {context.Request.QueryString} " +
+                           $"Referer: { referer } " +
+                           $"User: { username } ");               
+
+                var url = context.Request.Path.Value;
+
+                // Rewrite to index
+                if (url.Contains("/api/"))
+                {
+                    // rewrite and continue processing
+                    var rewrite = url.Replace("/api/", "/v1/");
+                    context.Request.Path = rewrite;
+
+                    //return;
+                }
+
+                await next();
+            });
                    
             //Not needed at moment
             //app.UseHttpContext();
