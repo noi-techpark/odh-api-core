@@ -330,6 +330,7 @@ namespace OdhApiCore
                 //FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot")), RequestPath = "/StaticFiles" 
             });
 
+            //app.UseSerilogRequestLogging(); throwing exception
  
             app.UseRouting();
 
@@ -371,8 +372,7 @@ namespace OdhApiCore
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 //endpoints.MapDefaultControllerRoute();
             });
-
-       
+                   
             //Not needed at moment
             //app.UseHttpContext();
         }

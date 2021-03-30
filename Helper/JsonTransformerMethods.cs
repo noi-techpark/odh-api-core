@@ -144,7 +144,7 @@ namespace Helper
             if (token == null)
                 return null;
             
-            static JObject TransformTVMemberProp(JObject obj, List<string> propstocut)
+            static JObject TransformByPropList(JObject obj, List<string> propstocut)
             {
                 // Get the TVMember property of an object which has to be an property
                 //var accoTVMember = obj.Property("TVMember");
@@ -158,7 +158,7 @@ namespace Helper
             static JToken Walk(JToken token, List<string> propstocut) =>
                 token switch
                 {
-                    JObject obj => TransformTVMemberProp(obj, propstocut),
+                    JObject obj => TransformByPropList(obj, propstocut),
                     _ => token
                 };
 
