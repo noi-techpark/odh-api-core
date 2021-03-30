@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -387,21 +388,31 @@ namespace OdhApiCore
                            $"Referer: { referer } " +
                            $"User: { username } ");               
 
-                var url = context.Request.Path.Value;
+                //var url = context.Request.Path.Value;
 
-                // Rewrite to index
-                if (url.Contains("/api/"))
-                {
-                    // rewrite and continue processing
-                    var rewrite = url.Replace("/api/", "/v1/");
-                    context.Request.Path = rewrite;
-
-                    //return;
-                }
+                //// Rewrite to index
+                //if (url.Contains("/api/"))
+                //{
+                //    // rewrite and continue processing
+                //    var rewrite = url.Replace("/api/", "/v1/");
+                //    context.Request.Path = rewrite;
+                //    //redirect instead of rewrite
+                //    //return;
+                //}
 
                 await next();
             });
-                   
+
+            var options = new RewriteOptions()
+                .AddRedirect("api/(.*)", "v1/$1");
+            //.AddRedirectToHttpsPermanent();
+            //.AddRedirect("redirect-rule/(.*)", "redirected/$1")
+            //.AddRewrite(@"^rewrite-rule/(\d+)/(\d+)", "rewritten?var1=$1&var2=$2",
+            //skipRemainingRules: true)
+
+
+            app.UseRewriter(options);
+
             //Not needed at moment
             //app.UseHttpContext();
         }
