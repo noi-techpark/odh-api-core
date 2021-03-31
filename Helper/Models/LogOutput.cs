@@ -10,6 +10,6 @@ namespace Helper
     {
         public string type { get; set; }
         public string id { get; set; }
-        public T json { get; set; }
+        public T output { get; set; }
     }
 }

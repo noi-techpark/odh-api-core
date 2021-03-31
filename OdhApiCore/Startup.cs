@@ -373,8 +373,7 @@ namespace OdhApiCore
             //LOG EVERY REQUEST WITH HEADERs
             app.Use(async (context, next) =>
             {
-                //var referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer";
-                //var username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous";
+                var querystring = context.Request.QueryString;
 
                 HttpRequestLog httplog = new HttpRequestLog()
                 {
@@ -383,44 +382,27 @@ namespace OdhApiCore
                     querystring = context.Request.QueryString.ToString(),
                     referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer",
                     schema = context.Request.Scheme,
-                    username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous"
+                    username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
                 };
-                LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", json = httplog };
+                LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", output = httplog };
 
                 Log.Information(JsonConvert.SerializeObject(logoutput));
-
-                //Log.Information($"Http Request Information:{Environment.NewLine}" +
-                //           $"Schema:{ context.Request.Scheme} " +
-                //           $"Host: {context.Request.Host} " +
-                //           $"Path: {context.Request.Path} " +
-                //           $"QueryString: {context.Request.QueryString} " +
-                //           $"Referer: { referer } " +
-                //           $"User: { username } ");
-
-                //var url = context.Request.Path.Value;
-
-                //// Rewrite to index
-                //if (url.Contains("/api/"))
-                //{
-                //    // rewrite and continue processing
-                //    var rewrite = url.Replace("/api/", "/v1/");
-                //    context.Request.Path = rewrite;
-                //    //redirect instead of rewrite
-                //    //return;
-                //}
 
                 await next();
             });
 
-            var options = new RewriteOptions()
-                .AddRedirect("api/(.*)", "v1/$1");
+            //REWRITE, REDIRECT RULES
+            //var rwoptions = new RewriteOptions()
+            //    .AddRedirect("api/(.*)", "v1/$1");
             //.AddRedirectToHttpsPermanent();
             //.AddRedirect("redirect-rule/(.*)", "redirected/$1")
             //.AddRewrite(@"^rewrite-rule/(\d+)/(\d+)", "rewritten?var1=$1&var2=$2",
             //skipRemainingRules: true)
 
-
-            app.UseRewriter(options);
+            app.UseRewriter(
+                new RewriteOptions()
+                .AddRedirect("api/(.*)", "v1/$1")
+                );
 
             //Not needed at moment
             //app.UseHttpContext();

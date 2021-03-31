@@ -132,7 +132,7 @@ namespace OdhApiCore.Controllers
             }
             else if(availabilitycheck?.Value == true)
             {
-                //get the passed values
+                //TODO! ONLY ON AUTHENTICATED USER
 
                 var accobooklist = Request.HttpContext.Items["accobooklist"];
                 var accoavailability = Request.HttpContext.Items["mssavailablity"];
