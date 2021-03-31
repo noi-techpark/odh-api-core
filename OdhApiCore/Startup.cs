@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
@@ -367,30 +368,26 @@ namespace OdhApiCore
                 c.OAuthRealm("noi");
             });
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-                //endpoints.MapDefaultControllerRoute();
-            });
+           
 
             //LOG EVERY REQUEST WITH HEADERs
             app.Use(async (context, next) =>
             {
-                var referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer";
-                var username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous";
+                //var referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer";
+                //var username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous";
 
-                HttpRequestLog mylog = new HttpRequestLog()
+                HttpRequestLog httplog = new HttpRequestLog()
                 {
-                    Host = context.Request.Host.ToString(),
-                    Path = context.Request.Path.ToString(),
-                    Querystring = context.Request.QueryString.ToString(),
-                    Referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer",
-                    Schema = context.Request.Scheme,
-                    Username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous"
+                    host = context.Request.Host.ToString(),
+                    path = context.Request.Path.ToString(),
+                    querystring = context.Request.QueryString.ToString(),
+                    referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer",
+                    schema = context.Request.Scheme,
+                    username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous"
                 };
+                LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", json = httplog };
 
-                Log.Information("HttpRequest", mylog);
+                Log.Information("HttpRequest", JsonConvert.SerializeObject(logoutput));
 
                 //Log.Information($"Http Request Information:{Environment.NewLine}" +
                 //           $"Schema:{ context.Request.Scheme} " +
@@ -427,6 +424,13 @@ namespace OdhApiCore
 
             //Not needed at moment
             //app.UseHttpContext();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                //endpoints.MapDefaultControllerRoute();
+            });
         }
     }
 
