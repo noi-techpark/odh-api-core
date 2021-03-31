@@ -377,8 +377,8 @@ namespace OdhApiCore
             //LOG EVERY REQUEST WITH HEADERs
             app.Use(async (context, next) =>
             {
-                //var referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer";
-                //var username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous";
+                var referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer";
+                var username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous";
 
                 HttpRequestLog mylog = new HttpRequestLog()
                 {
@@ -398,7 +398,7 @@ namespace OdhApiCore
                 //           $"Path: {context.Request.Path} " +
                 //           $"QueryString: {context.Request.QueryString} " +
                 //           $"Referer: { referer } " +
-                //           $"User: { username } ");               
+                //           $"User: { username } ");
 
                 //var url = context.Request.Path.Value;
 
