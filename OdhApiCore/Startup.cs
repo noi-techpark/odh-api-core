@@ -377,16 +377,28 @@ namespace OdhApiCore
             //LOG EVERY REQUEST WITH HEADERs
             app.Use(async (context, next) =>
             {
-                var referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer";
-                var username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous";
+                //var referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer";
+                //var username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous";
 
-                Log.Information($"Http Request Information:{Environment.NewLine}" +
-                           $"Schema:{ context.Request.Scheme} " +
-                           $"Host: {context.Request.Host} " +
-                           $"Path: {context.Request.Path} " +
-                           $"QueryString: {context.Request.QueryString} " +
-                           $"Referer: { referer } " +
-                           $"User: { username } ");               
+                HttpRequestLog mylog = new HttpRequestLog()
+                {
+                    Host = context.Request.Host.ToString(),
+                    Path = context.Request.Path.ToString(),
+                    Querystring = context.Request.QueryString.ToString(),
+                    Referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer",
+                    Schema = context.Request.Scheme,
+                    Username = context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous"
+                };
+
+                Log.Information("HttpRequest", mylog);
+
+                //Log.Information($"Http Request Information:{Environment.NewLine}" +
+                //           $"Schema:{ context.Request.Scheme} " +
+                //           $"Host: {context.Request.Host} " +
+                //           $"Path: {context.Request.Path} " +
+                //           $"QueryString: {context.Request.QueryString} " +
+                //           $"Referer: { referer } " +
+                //           $"User: { username } ");               
 
                 //var url = context.Request.Path.Value;
 
