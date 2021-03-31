@@ -373,20 +373,24 @@ namespace OdhApiCore
             //LOG EVERY REQUEST WITH HEADERs
             app.Use(async (context, next) =>
             {
-                var querystring = context.Request.QueryString;
-
-                HttpRequestLog httplog = new HttpRequestLog()
+                //Log only if api is requested!
+                //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
+                if (context.Request.Path.ToString().StartsWith("/v1/", StringComparison.OrdinalIgnoreCase))
                 {
-                    host = context.Request.Host.ToString(),
-                    path = context.Request.Path.ToString(),
-                    querystring = context.Request.QueryString.ToString(),
-                    referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer",
-                    schema = context.Request.Scheme,
-                    username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
-                };
-                LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", output = httplog };
+                    HttpRequestLog httplog = new HttpRequestLog()
+                    {
+                        host = context.Request.Host.ToString(),
+                        path = context.Request.Path.ToString(),
+                        querystring = context.Request.QueryString.ToString(),
+                        referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer",
+                        schema = context.Request.Scheme,
+                        username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
+                    };
+                    LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", output = httplog };
 
-                Log.Information(JsonConvert.SerializeObject(logoutput));
+                    Log.Information(JsonConvert.SerializeObject(logoutput));
+                }
+            
 
                 await next();
             });
@@ -402,6 +406,7 @@ namespace OdhApiCore
             app.UseRewriter(
                 new RewriteOptions()
                 .AddRedirect("api/(.*)", "v1/$1")
+                //.AddRewrite(@"^(?=/api)", "/v1", skipRemainingRules: true)
                 );
 
             //Not needed at moment
