@@ -387,7 +387,7 @@ namespace OdhApiCore
                 };
                 LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", json = httplog };
 
-                Log.Information("HttpRequest", JsonConvert.SerializeObject(logoutput));
+                Log.Information(JsonConvert.SerializeObject(logoutput));
 
                 //Log.Information($"Http Request Information:{Environment.NewLine}" +
                 //           $"Schema:{ context.Request.Scheme} " +
