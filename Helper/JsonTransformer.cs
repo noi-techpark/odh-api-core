@@ -42,7 +42,7 @@ namespace Helper
             if (userroles.Contains("IDM"))
                 return new List<string>() { };                
 
-            return new List<string>() { "TVMember", "Beds", "Units" };
+            return new List<string>() { "TVMember", "Beds", "Units", "RepresentationRestriction" };
         }
     }    
 
