@@ -78,6 +78,7 @@ namespace OdhApiCore
             services.AddHttpClient("lcs"); // TODO: put LCS config here
 
             services.AddInMemoryCacheOutput();
+            services.AddSingleton<CustomCacheKeyGenerator>();
 
             services.AddLogging(options =>
             {
@@ -346,6 +347,7 @@ namespace OdhApiCore
 
             app.UseResponseCompression();
 
+            // Put app.UseCacheOutput() before app.UseMvc()
             app.UseCacheOutput();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
@@ -369,7 +371,6 @@ namespace OdhApiCore
             });
 
            
-
             //LOG EVERY REQUEST WITH HEADERs
             app.Use(async (context, next) =>
             {

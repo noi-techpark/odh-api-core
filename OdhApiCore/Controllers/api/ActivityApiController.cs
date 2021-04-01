@@ -64,7 +64,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [CacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100, Private = true)]
+        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Activity")]
         public async Task<IActionResult> GetActivityList(
             string? language = null,

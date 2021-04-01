@@ -1,4 +1,5 @@
-﻿using DataModel;
+﻿using AspNetCore.CacheOutput;
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -74,6 +75,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
+        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, Private = true)]
         [HttpGet, Route("Accommodation", Name = "AccommodationList")]
         public async Task<IActionResult> GetAccommodations(
             uint pagenumber = 1,
