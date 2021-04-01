@@ -94,7 +94,7 @@ namespace OdhApiCore
                     .MinimumLevel.ControlledBy(levelSwitch)
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                     .Enrich.FromLogContext()
-                    .WriteTo.Console()
+                    .WriteTo.Console(outputTemplate: "{Message}{NewLine}")
                     .WriteTo.Debug()
                     //.WriteTo.Elasticsearch(
                     //    new ElasticsearchSinkOptions() {
