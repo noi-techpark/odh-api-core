@@ -618,31 +618,44 @@ namespace Helper
         //Generiert meine Roominfo de komische Tupleliste
         public static List<Tuple<string, string, List<string>>> BuildMyRoomInfo(string roominfo)
         {
-            //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18                
-            List<Tuple<string, string, List<string>>> myroominfo = new List<Tuple<string, string, List<string>>>();
-
-            var zimmerinfos = roominfo.Split('|');
-            int roomseq = 1;
-
-            foreach (var zimmerinfo in zimmerinfos)
+            if (roominfo != null)
             {
-                List<string> mypersons = new List<string>();
+                //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18                
+                List<Tuple<string, string, List<string>>> myroominfo = new List<Tuple<string, string, List<string>>>();
 
-                var myspittetzimmerinfo = zimmerinfo.Split('-');
+                var zimmerinfos = roominfo.Split('|');
+                int roomseq = 1;
 
-                var mypersoninfo = myspittetzimmerinfo[1].Split(',');
-                foreach (string s in mypersoninfo)
+                foreach (var zimmerinfo in zimmerinfos)
                 {
-                    mypersons.Add(s);
+                    List<string> mypersons = new List<string>();
+
+                    var myspittetzimmerinfo = zimmerinfo.Split('-');
+
+                    var mypersoninfo = myspittetzimmerinfo[1].Split(',');
+                    foreach (string s in mypersoninfo)
+                    {
+                        mypersons.Add(s);
+                    }
+
+                    var myroom = new Tuple<string, string, List<string>>(roomseq.ToString(), myspittetzimmerinfo[0].Substring(0), mypersons);
+
+                    myroominfo.Add(myroom);
+                    roomseq++;
                 }
 
-                var myroom = new Tuple<string, string, List<string>>(roomseq.ToString(), myspittetzimmerinfo[0].Substring(0), mypersons);
+                return myroominfo;
+            }
+            else
+            {
+                //Return standard 2 Person 1 Room
+                List<Tuple<string, string, List<string>>> myroominfostd = new List<Tuple<string, string, List<string>>>();
+                var myroomstd = new Tuple<string, string, List<string>>("1", "0", new List<string>() { 18, 18 });
+                myroominfostd.Add(myroomstd);
 
-                myroominfo.Add(myroom);
-                roomseq++;
+                return myroominfostd;
             }
 
-            return myroominfo;
         }
 
         #region Flags
