@@ -378,12 +378,23 @@ namespace OdhApiCore
                 //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
                 if (context.Request.Path.ToString().StartsWith("/v1/", StringComparison.OrdinalIgnoreCase))
                 {
+                    //TODO IF THE REFERER IS NOT PROVIDED IN THE HEADERS SEARCH IF A QS IS THERE
+                    var referer = "not provided";
+                    if (context.Request.Headers.ContainsKey("Referer"))
+                        referer = context.Request.Headers["Referer"].ToString();
+                    else
+                    {
+                        //Search the QS for Referer
+                        if (context.Request.Query.ContainsKey("Referer"))
+                            referer = context.Request.Query["Referer"].ToString();
+                    }
+
                     HttpRequestLog httplog = new HttpRequestLog()
                     {
                         host = context.Request.Host.ToString(),
                         path = context.Request.Path.ToString(),
                         querystring = context.Request.QueryString.ToString(),
-                        referer = context.Request.Headers.ContainsKey("Referer") ? context.Request.Headers["Referer"].ToString() : "no referer",
+                        referer = referer,
                         schema = context.Request.Scheme,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
                     };
