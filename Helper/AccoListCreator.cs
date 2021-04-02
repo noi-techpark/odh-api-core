@@ -650,7 +650,7 @@ namespace Helper
             {
                 //Return standard 2 Person 1 Room
                 List<Tuple<string, string, List<string>>> myroominfostd = new List<Tuple<string, string, List<string>>>();
-                var myroomstd = new Tuple<string, string, List<string>>("1", "0", new List<string>() { 18, 18 });
+                var myroomstd = new Tuple<string, string, List<string>>("1", "0", new List<string>() { "18", "18" });
                 myroominfostd.Add(myroomstd);
 
                 return myroominfostd;
