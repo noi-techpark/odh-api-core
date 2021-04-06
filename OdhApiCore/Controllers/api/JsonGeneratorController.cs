@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using OdhApiCore.Filters;
 using OdhApiCore.GenericHelpers;
+using AspNetCore.CacheOutput;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -30,6 +31,7 @@ namespace OdhApiCore.Controllers.api
             this.settings = settings;
         }
 
+        [InvalidateCacheOutput(nameof(STAController.GetODHActivityPoiListSTA), typeof(STAController))] // this will invalidate Get in a different controller
         [HttpGet, Route("STA/JsonPoi")]
         public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
         {
@@ -38,6 +40,7 @@ namespace OdhApiCore.Controllers.api
             return Ok("json odhactivitypoi generated");
         }
 
+        [InvalidateCacheOutput(nameof(STAController.GetAccommodationsSTA), typeof(STAController))] // this will invalidate Get in a different controller
         [HttpGet, Route("STA/JsonAccommodation")]
         public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
         {
