@@ -363,8 +363,7 @@ namespace OdhApiCore
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ODH Tourism API V1");
-                c.RoutePrefix = string.Empty;
-                c.OAuthClientId("odh-api-core");
+                c.RoutePrefix = "swagger";
                 c.OAuthClientSecret("");
                 c.OAuthRealm("noi");
             });
