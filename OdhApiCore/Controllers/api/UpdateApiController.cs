@@ -202,7 +202,7 @@ namespace OdhApiCore.Controllers.api
                 if (result.Count > 0)
                     deletecounter = await DeleteDeletedEvents(result, currenteventshort.ToList());
 
-                return String.Format("Events Updated {0} New {1} Deleted {2]", updatecounter, newcounter, deletecounter );
+                return String.Format("Events Updated {0} New {1} Deleted {2]", updatecounter.ToString(), newcounter.ToString(), deletecounter.ToString());
             }
             catch (Exception ex)
             {
@@ -342,7 +342,7 @@ namespace OdhApiCore.Controllers.api
                     }
                 }
 
-                return String.Format("Events Updated {0} New {1} Error {2]", updateimportcounter, newimportcounter, errorimportcounter);
+                return String.Format("Events Updated {0} New {1} Error {2]", updateimportcounter.ToString(), newimportcounter.ToString(), errorimportcounter.ToString());
             }
             catch (Exception ex)
             {

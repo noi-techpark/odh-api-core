@@ -13,6 +13,13 @@ namespace OdhApiCore.Controllers
     [ApiController]
     public class MainController : ControllerBase
     {
+        //[HttpGet, Route("/", Name = "Home")]
+        //public IActionResult GetHome()
+        //{
+        //    //TODO LINK ON V1
+        //    return Ok("Welcome to the Opendatahub Tourism Api");
+        //}
+
         [HttpGet, Route("v1", Name = "TourismApi")]
         public IActionResult Get()
         {

@@ -10,6 +10,16 @@ namespace OdhApiCore
 {
     public class CustomCacheKeyGenerator : DefaultCacheKeyGenerator //ICacheKeyGenerator
     {
+        //public string MakeBaseCacheKey(string controller, string action)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public string MakeCacheKey(ActionExecutingContext context, string mediaType, bool excludeQueryString = false)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
         public override string MakeCacheKey(ActionExecutingContext context, string mediaType, bool excludeQueryString = false)
         {
             var key = base.MakeCacheKey(context, mediaType, excludeQueryString);

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
@@ -76,6 +78,7 @@ namespace OdhApiCore
             services.AddHttpClient("lcs"); // TODO: put LCS config here
 
             services.AddInMemoryCacheOutput();
+            services.AddSingleton<CustomCacheKeyGenerator>();
 
             services.AddLogging(options =>
             {
@@ -92,7 +95,7 @@ namespace OdhApiCore
                     .MinimumLevel.ControlledBy(levelSwitch)
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                     .Enrich.FromLogContext()
-                    .WriteTo.Console()
+                    .WriteTo.Console(outputTemplate: "{Message}{NewLine}")
                     .WriteTo.Debug()
                     //.WriteTo.Elasticsearch(
                     //    new ElasticsearchSinkOptions() {
@@ -298,8 +301,7 @@ namespace OdhApiCore
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            //app.UseForwardedHeaders();
+        {            
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedProto
@@ -330,6 +332,7 @@ namespace OdhApiCore
                 //FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot")), RequestPath = "/StaticFiles" 
             });
 
+            //app.UseSerilogRequestLogging(); throwing exception
  
             app.UseRouting();
 
@@ -343,6 +346,7 @@ namespace OdhApiCore
 
             app.UseResponseCompression();
 
+            // Put app.UseCacheOutput() before app.UseMvc()
             app.UseCacheOutput();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
@@ -358,12 +362,65 @@ namespace OdhApiCore
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                c.RoutePrefix = string.Empty;
-                c.OAuthClientId("odh-api-core");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ODH Tourism API V1");
+                c.RoutePrefix = "swagger";
                 c.OAuthClientSecret("");
                 c.OAuthRealm("noi");
             });
+
+           
+            //LOG EVERY REQUEST WITH HEADERs
+            app.Use(async (context, next) =>
+            {
+                //Log only if api is requested!
+                //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
+                if (context.Request.Path.ToString().StartsWith("/v1/", StringComparison.OrdinalIgnoreCase))
+                {
+                    //TODO IF THE REFERER IS NOT PROVIDED IN THE HEADERS SEARCH IF A QS IS THERE
+                    var referer = "not provided";
+                    if (context.Request.Headers.ContainsKey("Referer"))
+                        referer = context.Request.Headers["Referer"].ToString();
+                    else
+                    {
+                        //Search the QS for Referer
+                        if (context.Request.Query.ContainsKey("Referer"))
+                            referer = context.Request.Query["Referer"].ToString();
+                    }
+
+                    HttpRequestLog httplog = new HttpRequestLog()
+                    {
+                        host = context.Request.Host.ToString(),
+                        path = context.Request.Path.ToString(),
+                        querystring = context.Request.QueryString.ToString(),
+                        referer = referer,
+                        schema = context.Request.Scheme,
+                        username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
+                    };
+                    LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", output = httplog };
+
+                    Log.Information(JsonConvert.SerializeObject(logoutput));
+                }
+            
+
+                await next();
+            });
+
+            //REWRITE, REDIRECT RULES
+            //var rwoptions = new RewriteOptions()
+            //    .AddRedirect("api/(.*)", "v1/$1");
+            //.AddRedirectToHttpsPermanent();
+            //.AddRedirect("redirect-rule/(.*)", "redirected/$1")
+            //.AddRewrite(@"^rewrite-rule/(\d+)/(\d+)", "rewritten?var1=$1&var2=$2",
+            //skipRemainingRules: true)
+
+            app.UseRewriter(
+                new RewriteOptions()
+                .AddRedirect("api/(.*)", "v1/$1")
+                //.AddRewrite(@"^(?=/api)", "/v1", skipRemainingRules: true)
+                );
+
+            //Not needed at moment
+            //app.UseHttpContext();
 
             app.UseEndpoints(endpoints =>
             {
@@ -371,10 +428,6 @@ namespace OdhApiCore
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 //endpoints.MapDefaultControllerRoute();
             });
-
-       
-            //Not needed at moment
-            //app.UseHttpContext();
         }
     }
 
