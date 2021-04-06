@@ -25,7 +25,7 @@ namespace OdhApiCore.GenericHelpers
             var serializer = new JsonSerializer();
             //foreach (var language in languagelist)
             //{
-                string select = $"data->>'Id' as \"Id\"";
+                string select = "id";
                 var seed = Helper.CreateSeed.GetSeed(0);
                 string orderby = $"md5(id || '{seed}')";
 
@@ -47,14 +47,14 @@ namespace OdhApiCore.GenericHelpers
                             filterClosedData: false)
                       .OrderByRaw(orderby);
 
+                //TODO GEAT ONLY STRINGS
                 var data = (await query.GetAsync()).ToList();
-                var result = ResponseHelpers.GetResult(1, 1, (uint)data.Count, null, data, null);
-
+            
                 //Save json
                 string fileName = Path.Combine(jsondir, $"{jsonName}.json");
                 using (var writer = File.CreateText(fileName))
                 {
-                    serializer.Serialize(writer, result);
+                    serializer.Serialize(writer, data);
                 }
                 
             //}
