@@ -1,4 +1,5 @@
-﻿using DataModel;
+﻿using AspNetCore.CacheOutput;
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -55,6 +56,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(JsonResult<GBLTSPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Poi")]
         public async Task<IActionResult> GetPoiList(
             string? language = null,

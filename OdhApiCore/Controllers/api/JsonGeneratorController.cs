@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using OdhApiCore.Filters;
 using OdhApiCore.GenericHelpers;
+using AspNetCore.CacheOutput;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -30,24 +31,41 @@ namespace OdhApiCore.Controllers.api
             this.settings = settings;
         }
 
+        [InvalidateCacheOutput(nameof(STAController.GetODHActivityPoiListSTA), typeof(STAController))] // this will invalidate Get in a different controller
         [HttpGet, Route("STA/JsonPoi")]
         public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
         {
             await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
 
-            return Ok("json odhactivitypoi generated");
+            return Ok("json odhactivitypoi STA generated");
         }
 
+        [InvalidateCacheOutput(nameof(STAController.GetAccommodationsSTA), typeof(STAController))] // this will invalidate Get in a different controller
         [HttpGet, Route("STA/JsonAccommodation")]
         public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
         {
             await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
 
-            return Ok("json accommodations generated");
+            return Ok("json accommodations STA generated");
         }
 
-        //TODO ADD the Json Generation for
-        //Accobooklist
+        [HttpGet, Route("ODH/AccommodationBooklist")]
+        public async Task<IActionResult> ProduceAccoBooklistJson(CancellationToken cancellationToken)
+        {
+            await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosBookable");
+
+            return Ok("json accommodations Booklist generated");
+        }
+
+        [HttpGet, Route("ODH/AccommodationFulllist")]
+        public async Task<IActionResult> ProduceAccoFulllistJson(CancellationToken cancellationToken)
+        {
+            await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosAll");
+
+            return Ok("json accommodations Booklist generated");
+        }
+
+        //TODO ADD the Json Generation for        
         //Locationlists
 
     }
