@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+
+  <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
