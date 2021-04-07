@@ -145,10 +145,8 @@ namespace LCS
 
             //URls
             webcam.Webcamurl = thewebcamde.URL != null ? thewebcamde.URL.InnerText : "";
-
-            //Not on object model
-            //thewebcamde. != null ? webcam.Webcamurl = thewebcamde.URL.InnerText : "";
-            //thewebcamde.URL != null ? webcam.Webcamurl = thewebcamde.URL.InnerText : "";
+            webcam.Streamurl = thewebcamde.StreamURL != null ? thewebcamde.StreamURL.InnerText : "";
+            webcam.Previewurl = thewebcamde.PreviewURL != null ? thewebcamde.PreviewURL.InnerText : "";
 
             //Name
             if (thewebcamde.Name != null)
