@@ -618,7 +618,7 @@ namespace Helper
         //Generiert meine Roominfo de komische Tupleliste
         public static List<Tuple<string, string, List<string>>> BuildMyRoomInfo(string roominfo)
         {
-            if (roominfo != null)
+            if (!String.IsNullOrEmpty(roominfo) && roominfo != "null")
             {
                 //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18                
                 List<Tuple<string, string, List<string>>> myroominfo = new List<Tuple<string, string, List<string>>>();
