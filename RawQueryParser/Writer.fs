@@ -112,6 +112,6 @@ module Filtering =
             failwith "NIN operator not implemented for PostgreSQL"
         | Condition (IsNull property) -> $"{writeRawField property} IS NULL"
         | Condition (IsNotNull property) -> $"{writeRawField property} IS NOT NULL"
-        | Condition (IsEmpty property) -> $"{writeRawField property} @> '[]'"
-        | Condition (IsNotEmpty property) -> $"NOT {writeRawField property} @> '[]'"
+        | Condition (IsEmpty property) -> $"{writeRawField property} @> '\[\]'"
+        | Condition (IsNotEmpty property) -> $"NOT {writeRawField property} @> '\[\]'"
 
