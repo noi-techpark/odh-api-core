@@ -140,8 +140,6 @@ module Filtering =
             pstring "isnotnull" >>. betweenBrackets field |>> (IsNotNull >> Condition)
             pstring "in" >>. (betweenBrackets inParser |>> (In >> Condition))
             pstring "nin" >>. (betweenBrackets inParser |>> (NotIn >> Condition))
-            pstring "isempty" >>. betweenBrackets field |>> (IsEmpty >> Condition)
-            pstring "isnotempty" >>. betweenBrackets field |>> (IsNotEmpty >> Condition)
             condition |>> (Comparison >> Condition)
         ]
 
