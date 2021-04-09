@@ -68,6 +68,7 @@ module Filtering =
         | Boolean x -> box x
         | Number x -> box x
         | String x -> box x
+        | DateTime x -> box x
 
     let writeValue = function
         | Boolean true -> "TRUE"
