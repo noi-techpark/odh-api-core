@@ -49,6 +49,7 @@ Negation isn't supported altough it might be implemented later if needed. I need
 No `between`, `startswith` and other special functions. Altough this may change dependeing of the actual use cases.
 
 > To legitimate the addition of such special functions a production use case has to be satisfied.
+> Prefer composition on the value type level over special operators.
 
 Testing a field if it is NULL or not NULL has special meaning in SQL. You cannot simply query a field for NULL with equality or inequality. You have to use special syntax for that, e.g. `FIELD IS NULL` or `FIELD IS NOT NULL`.    
 Because of this special meaning of NULL there exist `isnull` and `isnotnull` functions.
@@ -120,7 +121,7 @@ Keep in mind that at the end you get a string that gets inserted as a raw string
 
 ## Is it performant?
 
-The query parsing is super performant, but the execution time on the DB is nothing that can be easily predicted.    
+The query parsing is performant, but the execution time on the DB is nothing that can be easily predicted.    
 The execution performance totally depends on the JSON capabilities of PostgreSQL, the query planner and the indizes that are defined on the fields.
 
 > There exist special filters on the endpoints that are optimized for specific production use cases.
