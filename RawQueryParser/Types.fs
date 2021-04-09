@@ -68,6 +68,8 @@ module Filtering =
         | NotIn of field: Field * values: Value list
         | IsNull of Field
         | IsNotNull of Field
+        | IsEmpty of Field
+        | IsNotEmpty of Field
 
     /// A filter statement can be a simple condition or a bunch
     /// of conditions inside an AND or an OR binary statement.
