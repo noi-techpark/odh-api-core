@@ -12773,7 +12773,11 @@ namespace ServiceReferenceLCS
         
         private ServiceReferenceLCS.Common_Owner OwnerField;
         
+        private ServiceReferenceLCS.URL PreviewURLField;
+        
         private string RIDField;
+        
+        private ServiceReferenceLCS.URL StreamURLField;
         
         private ServiceReferenceLCS.URL URLField;
         
@@ -12856,6 +12860,19 @@ namespace ServiceReferenceLCS
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.URL PreviewURL
+        {
+            get
+            {
+                return this.PreviewURLField;
+            }
+            set
+            {
+                this.PreviewURLField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string RID
         {
             get
@@ -12865,6 +12882,19 @@ namespace ServiceReferenceLCS
             set
             {
                 this.RIDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.URL StreamURL
+        {
+            get
+            {
+                return this.StreamURLField;
+            }
+            set
+            {
+                this.StreamURLField = value;
             }
         }
         

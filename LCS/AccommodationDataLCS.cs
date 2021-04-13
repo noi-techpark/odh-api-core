@@ -360,37 +360,47 @@ namespace LCS
 
         public static List<LCSRoomStay> RoomstayTransformer(string roominfo)
         {
-            //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18                
-            List<LCSRoomStay> myroominfo = new List<LCSRoomStay>();
-
-            var zimmerinfos = roominfo.Split('|');
-            int roomseq = 1;
-
-            foreach (var zimmerinfo in zimmerinfos)
+            if (!String.IsNullOrEmpty(roominfo) && roominfo != "null")
             {
-                List<string> mypersons = new List<string>();
+                //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18                
+                List<LCSRoomStay> myroominfo = new List<LCSRoomStay>();
 
-                var myspittetzimmerinfo = zimmerinfo.Split('-');
+                var zimmerinfos = roominfo.Split('|');
+                int roomseq = 1;
 
-                var mypersoninfo = myspittetzimmerinfo[1].Split(',');
-                foreach (string s in mypersoninfo)
+                foreach (var zimmerinfo in zimmerinfos)
                 {
-                    mypersons.Add(s);
+                    List<string> mypersons = new List<string>();
+
+                    var myspittetzimmerinfo = zimmerinfo.Split('-');
+
+                    var mypersoninfo = myspittetzimmerinfo[1].Split(',');
+                    foreach (string s in mypersoninfo)
+                    {
+                        mypersons.Add(s);
+                    }
+
+                    var myroom = new LCSRoomStay();
+                    myroom.Index = roomseq.ToString();
+                    myroom.Guests = mypersons.Count.ToString();
+                    myroom.Type = myspittetzimmerinfo[0].Substring(0);
+                    myroom.Age = mypersons;
+
+                    //var myroom = new Tuple<string, string, List<string>>(roomseq.ToString(), myspittetzimmerinfo[0].Substring(0), mypersons);
+
+                    myroominfo.Add(myroom);
+                    roomseq++;
                 }
 
-                var myroom = new LCSRoomStay();
-                myroom.Index = roomseq.ToString();
-                myroom.Guests = mypersons.Count.ToString();
-                myroom.Type = myspittetzimmerinfo[0].Substring(0);
-                myroom.Age = mypersons;
-
-                //var myroom = new Tuple<string, string, List<string>>(roomseq.ToString(), myspittetzimmerinfo[0].Substring(0), mypersons);
-
-                myroominfo.Add(myroom);
-                roomseq++;
+                return myroominfo;
             }
+            else
+            {
+                List<LCSRoomStay> myroominfostd = new List<LCSRoomStay>();
+                myroominfostd.Add(new LCSRoomStay() { Index = "1", Type = "0", Guests = "2", Age = new List<string>() { "18", "18" } });
 
-            return myroominfo;
+                return myroominfostd;
+            }
         }
     }
 

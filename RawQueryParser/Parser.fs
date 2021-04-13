@@ -102,12 +102,18 @@ module Filtering =
         |>> DateTime
         <?> "datetime"
 
+    let array: Parser<Value> =
+        pstring "[]"
+        >>% Array
+        <?> "array"
+
     let value: Parser<Value> =
         choice [
             boolean
             number
             string
             datetime
+            array
         ]
 
     let call: Parser<Field * Value> =

@@ -42,6 +42,11 @@ let transfomerTests =
                 let actual = transformFilter "eq(Type, 'Wandern')"
                 Expect.equal actual expected ""
             }
+            test "Simple datetime filter" {
+                let expected = "(data#>'\{ImageGallery\}')::jsonb = to_jsonb(array\[\]::varchar\[\])"
+                let actual = transformFilter "eq(ImageGallery, [])"
+                Expect.equal actual expected ""
+            }
             test "Simple AND filter" {
                 let expected = "((data#>'\{Geo,Altitude\}')::float >= 200 AND (data#>'\{Geo,Altitude\}')::float <= 400)"
                 let actual = transformFilter "and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400))"

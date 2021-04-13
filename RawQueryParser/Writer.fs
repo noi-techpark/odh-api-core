@@ -68,6 +68,8 @@ module Filtering =
         | Boolean x -> box x
         | Number x -> box x
         | String x -> box x
+        | DateTime x -> box x
+        | Array -> box [||]
 
     let writeValue = function
         | Boolean true -> "TRUE"
@@ -75,6 +77,7 @@ module Filtering =
         | Number value -> $"{value}"
         | String value -> $"'%s{value}'"
         | DateTime value -> $"""'%s{value.ToString("o")}'::timestamp"""
+        | Array -> "to_jsonb(array\[\]::varchar\[\])"
 
     let writeComparison comparison =
         let field =
@@ -83,6 +86,7 @@ module Filtering =
             | Number _ -> $"({writeRawField comparison.Field})::float"
             | String _ -> writeTextField comparison.Field
             | DateTime _ -> $"({writeTextField comparison.Field})::timestamp"
+            | Array -> $"({writeRawField comparison.Field})::jsonb"
         let operator = writeOperator comparison.Operator
         let value = writeValue comparison.Value
         $"{field} {operator} {value}"

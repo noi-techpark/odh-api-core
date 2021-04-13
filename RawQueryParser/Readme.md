@@ -26,6 +26,7 @@ Usage: `?rawfilter=<filter(s)>`
 eq(<field>, <value>)
 eq(Active, true)                                               // all active entries
 eq(Type, 'Wandern')                                            // all entries of type 'Wandern'
+eq(ImageGallery, [])                                           // all entries where ImageGallery is empty
 isnotnull(Detail.ru.Title)                                     // all entries with a russian title set
 and(ge(GpsInfo.0.Altitude, 200), le(GpsInfo.0.Altitude, 400))  // all entries with an altitude between 200 and 400 meters
 in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries with a specific feature ID
@@ -48,6 +49,7 @@ Negation isn't supported altough it might be implemented later if needed. I need
 No `between`, `startswith` and other special functions. Altough this may change dependeing of the actual use cases.
 
 > To legitimate the addition of such special functions a production use case has to be satisfied.
+> Prefer composition on the value type level over special operators.
 
 Testing a field if it is NULL or not NULL has special meaning in SQL. You cannot simply query a field for NULL with equality or inequality. You have to use special syntax for that, e.g. `FIELD IS NULL` or `FIELD IS NOT NULL`.    
 Because of this special meaning of NULL there exist `isnull` and `isnotnull` functions.
@@ -100,6 +102,7 @@ It is also possible to query arrays:
 - Number: `1`, `1.12` (exponential notation is not allowed) are always interpreted as a floating point number
 - Strings need to be defined in quotes (single or double quotes are both legal, unicode escapes are not allowed) 
   They are special in that they leverage PostgreSQL special capability to represent different data types (e.g. dates) as strings (`#>>`) which allows to filter them by strings.
+- The literal `[]` which denotes an empty JSON array.
 
 No special or magical conversion happens between the data types.    
 E.g. `1` applied to a boolean field doesn't get converterted into a boolean type 'automagically'. It is the underlying DB's responsibility to handle such a type missmatch.
@@ -118,7 +121,7 @@ Keep in mind that at the end you get a string that gets inserted as a raw string
 
 ## Is it performant?
 
-The query parsing is super performant, but the execution time on the DB is nothing that can be easily predicted.    
+The query parsing is performant, but the execution time on the DB is nothing that can be easily predicted.    
 The execution performance totally depends on the JSON capabilities of PostgreSQL, the query planner and the indizes that are defined on the fields.
 
 > There exist special filters on the endpoints that are optimized for specific production use cases.

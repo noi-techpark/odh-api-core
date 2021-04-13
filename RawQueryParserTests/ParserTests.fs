@@ -93,6 +93,14 @@ let parserTests =
                 let actual = run Filtering.statement """eq(LastChange, dt"2010-01-01")"""
                 Expect.equal actual expected ""
             }
+            test "Simple condition with array" {
+                let expected =
+                    Ok (Comp { Field = Field [ IdentifierSegment "ImageGallery" ]
+                               Operator = Filtering.Operator.Eq
+                               Value = Filtering.Array })
+                let actual = run Filtering.statement """eq(ImageGallery, [])"""
+                Expect.equal actual expected ""
+            }
             test "AND condition" {
                 let expected =
                     Ok (
