@@ -106,7 +106,7 @@ namespace OdhApiCore.Filters
 
 
                     var booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
-                    var bokfilterlist = bokfilter.Split(',').ToList(); ;
+                    var bokfilterlist = bokfilter.Split(',').ToList();
 
                     context.HttpContext.Items.Add("accobooklist", booklist);
 

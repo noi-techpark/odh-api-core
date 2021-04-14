@@ -127,7 +127,7 @@ namespace OdhApiCore.Controllers
             {
                 return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
-                    pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
+                    pagesize: pagesize, idfilter: idfilter, idlist: new List<string>(), locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
@@ -137,20 +137,20 @@ namespace OdhApiCore.Controllers
                 //TODO! ONLY ON AUTHENTICATED USER
 
                 var accobooklist = Request.HttpContext.Items["accobooklist"];
-                var accoavailability = Request.HttpContext.Items["mssavailablity"];
+                var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
+                var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
 
-                if(accoavailability != null)
-                {
-                    var availableonlineaccos = ((MssResult?)accoavailability)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper()).Distinct().ToList() ?? new List<string?>();
-
-                    idfilter = string.Join(",", availableonlineaccos);                    
-                }
-
+                var availableonlineaccos = new List<string?>();
+                if (accoavailabilitymss != null)                
+                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper()).Distinct().ToList() ?? new List<string?>());                                                        
+                if (accoavailabilitylcs != null)
+                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper()).Distinct().ToList() ?? new List<string?>());
+                    
                 //TODO SORT ORDER???
 
                 return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
-                    pagesize: pagesize, idfilter: idfilter, locfilter: locfilter, categoryfilter: categoryfilter,
+                    pagesize: pagesize, idfilter: idfilter, idlist: availableonlineaccos, locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
@@ -540,7 +540,7 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize, string? idfilter, string? locfilter,
+        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize, string? idfilter, List<string?> idlist, string? locfilter,
             string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? featureidfilter, string? themefilter, string? badgefilter, string? altitudefilter, 
             bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? searchfilter, 
             PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
@@ -551,6 +551,10 @@ namespace OdhApiCore.Controllers
                     QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                     featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active, 
                     smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, cancellationToken);
+
+                //Fix if idlist from availabilitysearch is added use this instead of idfilter
+                if (idlist.Count > 0)
+                    myhelper.idlist = idlist;
 
                 var query =
                     QueryFactory.Query()
