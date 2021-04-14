@@ -26,6 +26,7 @@ services:
       ASPNETCORE_JsonConfig__Jsondir: ${JSONPATH}
       ASPNETCORE_EBMSConfig__EBMSUser: ${EBMS_USER}
       ASPNETCORE_EBMSConfig__EBMSPassword: ${EBMS_PASS}      
+      ASPNETCORE_DataBrowserConfig__Url: ${DATABROWSER_URL}
     restart: unless-stopped
     ports:
       - "${SERVER_PORT}:80"

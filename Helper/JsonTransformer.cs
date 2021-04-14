@@ -16,7 +16,9 @@ namespace Helper
             bool filterClosedData, Func<string, string> urlGenerator, IEnumerable<string> userroles)
         {
             JToken? token = JToken.Parse(raw.Value);
+            //Filter out not desired langugae fields
             if (language != null) token = JsonTransformerMethods.FilterByLanguage(token, language);
+            //Filter by given fields
             if (fields != null && fields.Length > 0) token = JsonTransformerMethods.FilterByFields(token, fields, language);
             // Filter out all data where the LicenseInfo does not contain `CC0`
             if (checkCC0) token = JsonTransformerMethods.FilterImagesByCC0License(token);
@@ -29,9 +31,10 @@ namespace Helper
                 if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, rolefilter);
             
             if (filterClosedData) token = token.FilterClosedData();
-            
+            //Ensure Self Link is the right url
             token = token.TransformSelfLink(urlGenerator);
-            token = token.FilterMetaInformations();
+            //Filter out meta info
+            //token = token.FilterMetaInformations();
             return (token == null) ?
                 null :
                 new JsonRaw(token.ToString(Formatting.Indented));

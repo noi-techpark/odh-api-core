@@ -26,6 +26,7 @@ pipeline {
 	JSONPATH = "./wwwroot/json/"
 	EBMS_USER = credentials('odh-tourism-api-test-ebms-user')
 	EBMS_PASS = credentials('odh-tourism-api-test-ebms-pass')
+	DATABROWSER_URL = "https://frontend.tourism.testingmachine.eu/"
     }
 
     stages {
@@ -58,6 +59,7 @@ pipeline {
 		    echo 'JSONPATH=${JSONPATH}' >> .env
 		    echo 'EBMS_USER=${EBMS_USER}' >> .env
 		    echo 'EBMS_PASS=${EBMS_PASS}' >> .env
+		    echo 'DATABROWSER_URL=${DATABROWSER_URL}' >> .env		
                 """
             }
         }
