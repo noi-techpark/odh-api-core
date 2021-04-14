@@ -372,9 +372,16 @@ namespace OdhApiCore
             //LOG EVERY REQUEST WITH HEADERs
             app.Use(async (context, next) =>
             {
+                //TODO If Root is requested forward to Databrowser (Compatibility reason)
+                if(String.IsNullOrEmpty(context.Request.Path.Value) || context.Request.Path.Value == "/")
+                {                          
+                    context.Response.Redirect(Configuration.GetSection("DataBrowserConfig").GetValue<string>("Url"));                                     
+                    return;
+                }
+
                 //Log only if api is requested!
                 //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
-                if (context.Request.Path.ToString().StartsWith("/v1/", StringComparison.OrdinalIgnoreCase))
+                if (!String.IsNullOrEmpty(context.Request.Path.Value) && context.Request.Path.Value.StartsWith("/v1/", StringComparison.OrdinalIgnoreCase))
                 {
                     //TODO IF THE REFERER IS NOT PROVIDED IN THE HEADERS SEARCH IF A QS IS THERE
                     var referer = "not provided";
