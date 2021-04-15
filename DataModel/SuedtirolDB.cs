@@ -447,6 +447,9 @@ namespace DataModel
         public IDictionary<string, string> SkiRegionName { get; set; }
 
         public ICollection<string>? AreaId { get; set; }
+        //Compatibility
+        public ICollection<string>? AreaIds { get { return AreaId; } }
+
         public ICollection<Webcam>? Webcam { get; set; }
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
         public LocationInfo? LocationInfo { get; set; }
@@ -2105,6 +2108,9 @@ namespace DataModel
 
         public string? TourismorganizationId { get; set; }
         public ICollection<string>? AreaId { get; set; }
+        //Compatibility
+        public ICollection<string>? AreaIds { get { return AreaId; } }
+
 
         //Distance & Altitude Informationen
         public double AltitudeDifference { get; set; }
