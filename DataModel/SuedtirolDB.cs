@@ -1138,7 +1138,7 @@ namespace DataModel
         public int MinTemp { get; set; }
         public int Maxtemp { get; set; }
 
-        //Fix
+        //Compatibility Reasons
         public int MaxTemp { get { return Maxtemp; } }
     }
 
@@ -2504,8 +2504,17 @@ namespace DataModel
         public bool? Active { get; set; }
         public bool? SmgActive { get; set; }
         public string? Source { get; set; }
+        public ICollection<PublishedonObject> WebcamAssignedOn { get; set; }
+
+        public ICollection<string> AreaIds { get; set; }
     }
 
+    public class PublishedonObject
+    {
+        public string Type { get; set; }
+        public string Id { get; set; }
+        public DateTime LastChange { get; set; }
+    }
 
     public class ImageGallery : IImageGallery
     {
