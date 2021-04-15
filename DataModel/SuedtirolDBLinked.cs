@@ -1140,6 +1140,14 @@ namespace DataModel
                 return (bool)this.SmgActive;
             }
         }
+
+        public ICollection<AreaLink> Areas
+        {
+            get
+            {
+                return this.AreaIds != null ? this.AreaIds.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
+            }
+        }
     }
 
     public class MeasuringpointLinked : Measuringpoint
@@ -1159,6 +1167,14 @@ namespace DataModel
             get
             {
                 return (bool)this.SmgActive;
+            }
+        }
+
+        public ICollection<AreaLink> Areas
+        {
+            get
+            {
+                return this.AreaIds != null ? this.AreaIds.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
             }
         }
 
