@@ -112,7 +112,7 @@ module Filtering =
             |> String.concat " OR "
             |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->
-            failwith "NIN operator not implemented for PostgreSQL"
+            $"NOT {writeStatement jsonSerializer (Condition (In (field, values)))}"
         | Condition (IsNull property) -> $"{writeRawField property} IS NULL"
         | Condition (IsNotNull property) -> $"{writeRawField property} IS NOT NULL"
 
