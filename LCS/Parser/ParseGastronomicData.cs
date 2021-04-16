@@ -503,7 +503,7 @@ namespace LCS
                 //var facilitiesit = thegastrononomyit.Facilities;
                 //foreach (var facility in facilitiesit.Facility)
                 //{
-                //    SuedtirolDB.Facilities myfac = new Facilities();
+                //    Facilities myfac = new Facilities();
                 //    myfac.Id = facility.RID;
                 //    myfac.Shortname = facility.FacilityName.FirstOrDefault().InnerText;
                 //    myfac.Language = "it";
@@ -513,7 +513,7 @@ namespace LCS
                 //var facilitiesen = thegastrononomyen.Facilities;
                 //foreach (var facility in facilitiesen.Facility)
                 //{
-                //    SuedtirolDB.Facilities myfac = new Facilities();
+                //    Facilities myfac = new Facilities();
                 //    myfac.Id = facility.RID;
                 //    myfac.Shortname = facility.FacilityName.FirstOrDefault().InnerText;
                 //    myfac.Language = "en";
@@ -545,7 +545,7 @@ namespace LCS
                 //var categorycodesit = thegastrononomyit.CategoryCodes;
                 //foreach (var catcode in categorycodesit.GastronomicCategory)
                 //{
-                //    SuedtirolDB.CategoryCodes mycatcode = new CategoryCodes();
+                //    CategoryCodes mycatcode = new CategoryCodes();
                 //    mycatcode.Id = catcode.RID;
                 //    mycatcode.Shortname = catcode.CategoryName.FirstOrDefault().InnerText;
                 //    mycatcode.Language = "it";
@@ -556,7 +556,7 @@ namespace LCS
                 //var categorycodesen = thegastrononomyen.CategoryCodes;
                 //foreach (var catcode in categorycodesen.GastronomicCategory)
                 //{
-                //    SuedtirolDB.CategoryCodes mycatcode = new CategoryCodes();
+                //    CategoryCodes mycatcode = new CategoryCodes();
                 //    mycatcode.Id = catcode.RID;
                 //    mycatcode.Shortname = catcode.CategoryName.FirstOrDefault().InnerText;
                 //    mycatcode.Language = "en";
@@ -592,7 +592,7 @@ namespace LCS
                 //var dishratesit = thegastrononomyit.DishRates;
                 //foreach (var dishrate in dishratesit.DishRate)
                 //{
-                //    SuedtirolDB.DishRates mydishrate = new DishRates();
+                //    DishRates mydishrate = new DishRates();
                 //    mydishrate.Id = dishrate.DishCodeRID;
                 //    mydishrate.Shortname = dishrate.DishName != null ? dishrate.DishName.FirstOrDefault().InnerText : "";
                 //    mydishrate.CurrencyCode = dishrate.CurrencyCode;
@@ -606,7 +606,7 @@ namespace LCS
                 //var dishratesen = thegastrononomyen.DishRates;
                 //foreach (var dishrate in dishratesen.DishRate)
                 //{
-                //    SuedtirolDB.DishRates mydishrate = new DishRates();
+                //    DishRates mydishrate = new DishRates();
                 //    mydishrate.Id = dishrate.DishCodeRID;
                 //    mydishrate.Shortname = dishrate.DishName != null ? dishrate.DishName.FirstOrDefault().InnerText : "";
                 //    mydishrate.CurrencyCode = dishrate.CurrencyCode;
@@ -640,7 +640,7 @@ namespace LCS
                 //var capacityceremonyit = thegastrononomyit.CapacityCeremonies;
                 //foreach (var capceremony in capacityceremonyit.CapacityCeremony)
                 //{
-                //    SuedtirolDB.CapacityCeremony mycapcer = new CapacityCeremony();
+                //    CapacityCeremony mycapcer = new CapacityCeremony();
                 //    mycapcer.Id = capceremony.CeremonyCodeRID;
                 //    mycapcer.Shortname = capceremony.CeremonyName != null ? capceremony.CeremonyName.FirstOrDefault().InnerText : "";
                 //    mycapcer.MaxSeatingCapacity = capceremony.MaxSeatingCapacity;
@@ -650,7 +650,7 @@ namespace LCS
                 //var capacityceremonyen = thegastrononomyen.CapacityCeremonies;
                 //foreach (var capceremony in capacityceremonyen.CapacityCeremony)
                 //{
-                //    SuedtirolDB.CapacityCeremony mycapcer = new CapacityCeremony();
+                //    CapacityCeremony mycapcer = new CapacityCeremony();
                 //    mycapcer.Id = capceremony.CeremonyCodeRID;
                 //    mycapcer.Shortname = capceremony.CeremonyName != null ? capceremony.CeremonyName.FirstOrDefault().InnerText : "";
                 //    mycapcer.MaxSeatingCapacity = capceremony.MaxSeatingCapacity;
