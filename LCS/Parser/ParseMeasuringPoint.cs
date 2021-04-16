@@ -15,7 +15,6 @@ namespace LCS
         {
             var measuringpoint = measuringpoints.MeasuringPoints.MeasuringPoint.FirstOrDefault();
 
-
             mymeasuringpoint.Id = measuringpoint.RID;
             mymeasuringpoint.Shortname = measuringpoint.Name.FirstOrDefault().InnerText;
 
@@ -27,7 +26,7 @@ namespace LCS
                 mymeasuringpoint.Latitude = measuringpoint.GeoDatas.GeoData.FirstOrDefault().Positions.Position != null ? Convert.ToDouble(measuringpoint.GeoDatas.GeoData.FirstOrDefault().Positions.Position.FirstOrDefault().Latitude, myculture) : 0;
                 mymeasuringpoint.Longitude = measuringpoint.GeoDatas.GeoData.FirstOrDefault().Positions.Position != null ? Convert.ToDouble(measuringpoint.GeoDatas.GeoData.FirstOrDefault().Positions.Position.FirstOrDefault().Longitude, myculture) : 0;
                 mymeasuringpoint.Altitude = measuringpoint.GeoDatas.GeoData.FirstOrDefault().Positions.Position != null ? Convert.ToDouble(measuringpoint.GeoDatas.GeoData.FirstOrDefault().Positions.Position.FirstOrDefault().Altitude, myculture) : 0;
-                mymeasuringpoint.AltitudeUnitofMeasure = measuringpoint.GeoDatas.GeoData.FirstOrDefault().Positions.Position != null ? measuringpoint.GeoDatas.GeoData.FirstOrDefault().Positions.Position.FirstOrDefault().AltitudeUnitOfMeasureCode.ToString() : "";
+                mymeasuringpoint.AltitudeUnitofMeasure = "m";
                 mymeasuringpoint.Gpstype = "center";
             }
 
