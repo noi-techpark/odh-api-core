@@ -2402,16 +2402,17 @@ namespace DataModel
         public string? MetaTitle { get; set; }
         public string? MetaDesc { get; set; }
 
-
-
         public string? GetThereText { get; set; }
         public string? Language { get; set; }
 
-        //Smg spezifischer Text
-        //public string SmgCustomText { get; set; }  
+        public ICollection<string> Keywords { get; set; }
 
-        //NEU
-        public ICollection<string>? Keywords { get; set; }
+        //New LTS Fields        
+        public string ParkingInfo { get; set; }
+        public string PublicTransportationInfo { get; set; }
+        public string AuthorTip { get; set; }
+        public string SafetyInfo { get; set; }
+        public string EquipmentInfo { get; set; }
     }
 
     //Special Element for Themed Content 
