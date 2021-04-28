@@ -56,7 +56,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EventShort")]
         public async Task<IActionResult> Get(
             uint pagenumber = 1, 
-            PageSize pagesize = 1024, 
+            PageSize pagesize = null!, //1024 should be given as standard
             string? startdate = null, 
             string? enddate = null, 
             string? datetimeformat = null, 
@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers.api
 
 
         /// <summary>
-        /// GET EventShort Single
+         /// GET EventShort Single
         /// </summary>
         /// <param name="id">Id of the Event</param>
         /// <returns>EventShort Object</returns>

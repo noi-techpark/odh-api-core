@@ -80,7 +80,7 @@ namespace OdhApiCore.Controllers
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetFilteredAsync(
-                fields: fields ?? Array.Empty<string>(), language, pagenumber, pagesize.Value,
+                fields: fields ?? Array.Empty<string>(), language, pagenumber, pagesize,
                 source, idlist, searchfilter, active?.Value, odhactive?.Value, 
                 seed, updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                 cancellationToken);
@@ -112,7 +112,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetFilteredAsync(
-            string[] fields, string? language, uint pagenumber, int pagesize, string? source,
+            string[] fields, string? language, uint pagenumber, int? pagesize, string? source,
             string? idfilter, string? searchfilter, bool? active, bool? smgactive,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, CancellationToken cancellationToken)
