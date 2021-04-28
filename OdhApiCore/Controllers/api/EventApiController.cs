@@ -68,7 +68,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetEventList(
             string? language = null,
             uint pagenumber = 1,
-            uint pagesize = 10,
+            PageSize pagesize = null!,
             string? idlist = null,
             string? locfilter = null,
             string? rancfilter = null,
@@ -174,7 +174,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetFiltered(
-        string[] fields, string? language, uint pagenumber, uint pagesize, string? typefilter, string? idfilter,
+        string[] fields, string? language, uint pagenumber, int? pagesize, string? typefilter, string? idfilter,
         string? rancfilter, string? searchfilter, string? locfilter, string? orgfilter, string? topicfilter, string? begindate, string? enddate,
         string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? source, 
         PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)

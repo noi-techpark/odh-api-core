@@ -60,7 +60,7 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> GetArticleList(
             string? language = null,
             uint pagenumber = 1,
-            uint pagesize = 10,
+            PageSize pagesize = null!,
             string? articletype = "255",
             string? articlesubtype = null,
             string? idlist = null,
@@ -149,7 +149,7 @@ namespace OdhApiCore.Controllers.api
 
         #region GETTER
 
-        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize,
+        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize,
             string? type, string? subtypefilter, string? searchfilter, string? idfilter, string? languagefilter, bool? highlightfilter,
             bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, bool? sortbyarticledate, string? rawfilter, string? rawsort, 
             CancellationToken cancellationToken)
