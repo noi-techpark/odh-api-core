@@ -20,6 +20,11 @@ namespace OdhApiCore.Controllers
             return pagesize.Value;
         }
 
+        public static implicit operator PageSize(int value)
+        {
+            return new PageSize(value);
+        }
+
         public static implicit operator PageSize(int? value)
         {
             return new PageSize(value);
