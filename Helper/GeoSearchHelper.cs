@@ -65,7 +65,7 @@ namespace Helper
                 else
                     pggeosearchresult.radius = 150000;
 
-                //Check ob das ganze sinn macht
+                //Check Distance, DistanceCalculator returns to high number
                 //var actualdistance = DistanceCalculator.Distance(pggeosearchresult.latitude, pggeosearchresult.longitude, DistanceCalculator.suedtirolMitteLatitude, DistanceCalculator.suedtirolMitteLongitude, 'K');
                 //if (actualdistance > 200)
                 //    pggeosearchresult.geosearch = false;
