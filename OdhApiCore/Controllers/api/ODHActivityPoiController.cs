@@ -69,7 +69,7 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> GetODHActivityPoiList(
             string? language = null,
             uint pagenumber = 1,
-            uint pagesize = 10,
+            PageSize pagesize = null!,
             string? type = "255",
             string? subtype = null,
             string? poitype = null,
@@ -167,7 +167,7 @@ namespace OdhApiCore.Controllers.api
 
         #region GETTER
 
-        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, uint pagesize,
+        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize,
             string? type, string? subtypefilter, string? poitypefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, CancellationToken cancellationToken)

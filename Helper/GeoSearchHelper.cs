@@ -66,9 +66,9 @@ namespace Helper
                     pggeosearchresult.radius = 150000;
 
                 //Check ob das ganze sinn macht
-                var actualdistance = DistanceCalculator.Distance(pggeosearchresult.latitude, pggeosearchresult.longitude, DistanceCalculator.suedtirolMitteLatitude, DistanceCalculator.suedtirolMitteLongitude, 'K');
-                if (actualdistance > 200)
-                    pggeosearchresult.geosearch = false;
+                //var actualdistance = DistanceCalculator.Distance(pggeosearchresult.latitude, pggeosearchresult.longitude, DistanceCalculator.suedtirolMitteLatitude, DistanceCalculator.suedtirolMitteLongitude, 'K');
+                //if (actualdistance > 200)
+                //    pggeosearchresult.geosearch = false;
 
             }
             else

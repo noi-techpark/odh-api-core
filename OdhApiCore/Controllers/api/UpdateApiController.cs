@@ -39,9 +39,16 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]
         public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken)
         {
-            var result = await ImportEbmsEventsToDB();            
+            var result = await ImportEbmsEventsToDB();
 
-            return Ok(String.Format("EBMS Eventshorts update result: {0}", result));
+            return Ok(new
+            {
+                operation = "Update EBMS",
+                updatetype = "all",
+                message = "EBMS Eventshorts update succeeded",
+                recordsupdated = result,
+                success = true
+            });                
         }
 
 
@@ -51,7 +58,14 @@ namespace OdhApiCore.Controllers.api
             //TODO
             //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
 
-            return Ok("EBMS Eventshorts \" updated");
+            return Ok(new
+            {
+                operation = "Update EBMS",
+                updatetype = "single",
+                message = "EBMS Eventshorts update succeeded",
+                recordsupdated = 1,
+                success = true
+            });
         }
 
         #endregion
@@ -66,7 +80,14 @@ namespace OdhApiCore.Controllers.api
 
             var result = SaveEventsToPG(responseevents.data, responseplaces.data);
 
-            return Ok(String.Format("Ninja Events update result: {0}", result));
+            return Ok(new
+            {
+                operation = "Update Ninja Events",
+                updatetype = "all",
+                message = "Ninja Events update succeeded",
+                recordsupdated = result,
+                success = true
+            });            
         }
 
         #endregion
@@ -202,7 +223,7 @@ namespace OdhApiCore.Controllers.api
                 if (result.Count > 0)
                     deletecounter = await DeleteDeletedEvents(result, currenteventshort.ToList());
 
-                return String.Format("Events Updated {0} New {1} Deleted {2]", updatecounter.ToString(), newcounter.ToString(), deletecounter.ToString());
+                return String.Format("Events Updated {0} New {1} Deleted {2}", updatecounter.ToString(), newcounter.ToString(), deletecounter.ToString());
             }
             catch (Exception ex)
             {

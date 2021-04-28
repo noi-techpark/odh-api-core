@@ -59,20 +59,6 @@ namespace LCS
                 if (theactivityde.ID.StartsWith("SMG-"))
                     hike.SmgId = theactivityde.ID.Replace("SMG-", "");
 
-            //Highlight wird von SMG definiert
-            //hike.Highlight = hike.Highlight;
-            //No net in Servicemodel aktiv 
-            //NEU GEAT IATZ IBER DIE AREA
-            //if (theactivityde.News.Status.FavouriteSpecified)
-
-            //    if (theactivityde.News.Status.Favourite == 2)
-            //        hike.Highlight = Convert.ToBoolean(theactivityde.News.Status.Favourite);
-            //    else
-            //        hike.Highlight = false;
-            //else
-            //    hike.Highlight = false;
-
-
             //SMG ACtive übernehmen  
             hike.Active = true;
             hike.SmgActive = hike.SmgActive;
@@ -174,6 +160,13 @@ namespace LCS
                 hike.WayNumber = theactivityde.WayNumber;
             else
                 hike.WayNumber = null;
+
+            //New Number set this info only if i get it from interface
+            if (!String.IsNullOrEmpty(theactivityde.Number))
+                hike.Number = theactivityde.Number;
+            else
+                hike.Number = null;
+
 
             //LTS Internal
             //if (theactivityde.RightToUseTheWay != null && theactivityde.RightToUseTheWay != 0)
@@ -436,20 +429,50 @@ namespace LCS
                 {
                     foreach (var textelement in mytextitems.TextItem)
                     {
-                        //Allgemeine Beschreibung
+                        //Allgemeine Beschreibung 732512C9492340F4AB30FFB800461BE7
                         if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "732512C9492340F4AB30FFB800461BE7")
                         {
                             mydetailde.BaseText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
                         }
-                        //Anfahrtstext
+                        //Anfahrtsbeschreibung C26C826A239C47BDB773B4E4B3F27547
                         if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C26C826A239C47BDB773B4E4B3F27547")
                         {
                             mydetailde.GetThereText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
                         }
-                        //Wegbeschreibung
+                        //Wegbeschreibung ECEB7021321445648CE37A9A84D64930 
                         if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "ECEB7021321445648CE37A9A84D64930")
                         {
                             mydetailde.AdditionalText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Kurzbeschreibung A143F1FF0A0A4185A907208D643D3BB8 --> Placing in Introtext
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "A143F1FF0A0A4185A907208D643D3BB8")
+                        {
+                            mydetailde.IntroText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Parken AFB5C1F8662949108105DAC81DD8B18F
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "AFB5C1F8662949108105DAC81DD8B18F")
+                        {
+                            mydetailde.ParkingInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Öffentliche Verkehrsmittel C67DBA804FAD4B4EB64A4A758771B723
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C67DBA804FAD4B4EB64A4A758771B723")
+                        {
+                            mydetailde.PublicTransportationInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Tipp des Autors 643EDEE9CE2D44AC932FC714256B6C9C
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "643EDEE9CE2D44AC932FC714256B6C9C")
+                        {
+                            mydetailde.AuthorTip = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Sicherheitshinweise 73EC4F8F7AAC48CE82A23E8EBDCA750E
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E")
+                        {
+                            mydetailde.SafetyInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Ausrüstung 933D29E15E82415DBEDE877C477212D2
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "933D29E15E82415DBEDE877C477212D2")
+                        {
+                            mydetailde.EquipmentInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
                         }
                     }
                 }
@@ -521,6 +544,36 @@ namespace LCS
                         {
                             mydetailit.AdditionalText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
                         }
+                        //Kurzbeschreibung A143F1FF0A0A4185A907208D643D3BB8 --> Placing in Introtext
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "A143F1FF0A0A4185A907208D643D3BB8")
+                        {
+                            mydetailit.IntroText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Parken AFB5C1F8662949108105DAC81DD8B18F
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "AFB5C1F8662949108105DAC81DD8B18F")
+                        {
+                            mydetailit.ParkingInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Öffentliche Verkehrsmittel C67DBA804FAD4B4EB64A4A758771B723
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C67DBA804FAD4B4EB64A4A758771B723")
+                        {
+                            mydetailit.PublicTransportationInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Tipp des Autors 643EDEE9CE2D44AC932FC714256B6C9C
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "643EDEE9CE2D44AC932FC714256B6C9C")
+                        {
+                            mydetailit.AuthorTip = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Sicherheitshinweise 73EC4F8F7AAC48CE82A23E8EBDCA750E
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E")
+                        {
+                            mydetailit.SafetyInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Ausrüstung 933D29E15E82415DBEDE877C477212D2
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "933D29E15E82415DBEDE877C477212D2")
+                        {
+                            mydetailit.EquipmentInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
                     }
                 }
 
@@ -590,6 +643,36 @@ namespace LCS
                         if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "ECEB7021321445648CE37A9A84D64930")
                         {
                             mydetailen.AdditionalText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Kurzbeschreibung A143F1FF0A0A4185A907208D643D3BB8 --> Placing in Introtext
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "A143F1FF0A0A4185A907208D643D3BB8")
+                        {
+                            mydetailen.IntroText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Parken AFB5C1F8662949108105DAC81DD8B18F
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "AFB5C1F8662949108105DAC81DD8B18F")
+                        {
+                            mydetailen.ParkingInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Öffentliche Verkehrsmittel C67DBA804FAD4B4EB64A4A758771B723
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C67DBA804FAD4B4EB64A4A758771B723")
+                        {
+                            mydetailen.PublicTransportationInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Tipp des Autors 643EDEE9CE2D44AC932FC714256B6C9C
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "643EDEE9CE2D44AC932FC714256B6C9C")
+                        {
+                            mydetailen.AuthorTip = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Sicherheitshinweise 73EC4F8F7AAC48CE82A23E8EBDCA750E
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E")
+                        {
+                            mydetailen.SafetyInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                        }
+                        //Ausrüstung 933D29E15E82415DBEDE877C477212D2
+                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "933D29E15E82415DBEDE877C477212D2")
+                        {
+                            mydetailen.EquipmentInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
                         }
                     }
                 }
@@ -889,8 +972,6 @@ namespace LCS
             if (!currenttags.Contains(type))
                 currenttags.Add(type);
 
-
-
             //if (!currenttags.Contains(subtype))
             //    currenttags.Add(subtype);
 
@@ -911,9 +992,10 @@ namespace LCS
             }
 
             //SONDERFALL Tags Wenn es ein Lift ist werden die Level 1 + Level 2 Infos mit reingeschrieben
-            if (activitytype == "LIFT" || activitytype == "SLOPE")
+            if (activitytype == "LIFT" || activitytype == "SLOPE" || activitytype == "SLIDE")
             {
-                currenttags.Add(hike.SubType);
+                if (!currenttags.Contains(hike.SubType))
+                    currenttags.Add(hike.SubType);
 
                 //Lei ban Lift in PoiTyp derzuatian
                 if (activitytype == "LIFT")
@@ -1060,6 +1142,7 @@ namespace LCS
             return maintypedict;
         }
 
+        //
         private static string SubTypeSpecialTranslator(string lang, string maintype, List<string> ltstags)
         {
             string subtypetoreturn = "";

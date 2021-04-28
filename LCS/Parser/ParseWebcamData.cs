@@ -18,9 +18,9 @@ namespace LCS
             List<string> mywebcamlist = new List<string>();
             mywebcamlist.Add(rid);
 
-            var mywebcamrequestde = GetActivityDataLCS.GetWebcamDetailRequest("de", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "SMG", ltsmsgpswd);
-            var mywebcamrequestit = GetActivityDataLCS.GetWebcamDetailRequest("it", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "SMG", ltsmsgpswd);
-            var mywebcamrequesten = GetActivityDataLCS.GetWebcamDetailRequest("en", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "SMG", ltsmsgpswd);
+            var mywebcamrequestde = GetActivityDataLCS.GetWebcamDetailRequest("de", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
+            var mywebcamrequestit = GetActivityDataLCS.GetWebcamDetailRequest("it", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
+            var mywebcamrequesten = GetActivityDataLCS.GetWebcamDetailRequest("en", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
 
             GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
             var myactivityresponsede = myactivitysearch.GetWebcamDetail(mywebcamrequestde);
@@ -163,11 +163,24 @@ namespace LCS
 
             webcam.Source = "LTS";
 
+            List<string> assignedareas = new List<string>();
+
+            if (thewebcamde.Memberships != null && thewebcamde.Memberships.Membership != null)
+            {
+                foreach (var assignedarea in thewebcamde.Memberships.Membership)
+                {
+                    foreach (var assignedarearid in assignedarea.Area)
+                    {
+                        if (!String.IsNullOrEmpty(assignedarearid.RID))
+                            assignedareas.Add(assignedarearid.RID);
+                    }
+                }
+            }
+            webcam.AreaIds = assignedareas;
+
             //hike.HasLanguage = availablelanguages;
 
             return webcam;
         }
-
-
     }
 }

@@ -68,7 +68,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetVenueList(
             string? language = null,
             uint pagenumber = 1,
-            uint pagesize = 10,
+            PageSize pagesize = null!,
             string? categoryfilter = null,
             string? capacityfilter = null,
             string? roomcountfilter = null,
@@ -167,7 +167,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetFiltered(
-          string[] fields, string? language, uint pagenumber, uint pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
+          string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
           string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, 
           PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort,

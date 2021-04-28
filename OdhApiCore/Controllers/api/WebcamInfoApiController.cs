@@ -60,7 +60,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> Get(
             string? language = null,
             uint pagenumber = 1,
-            uint pagesize = 25,
+            PageSize pagesize = null!,
             string? source = null,
             string? idlist = null,
             LegacyBool active = null!,
@@ -112,7 +112,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetFilteredAsync(
-            string[] fields, string? language, uint pagenumber, uint pagesize, string? source,
+            string[] fields, string? language, uint pagenumber, int? pagesize, string? source,
             string? idfilter, string? searchfilter, bool? active, bool? smgactive,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, CancellationToken cancellationToken)

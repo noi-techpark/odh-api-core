@@ -61,7 +61,7 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> GetPoiList(
             string? language = null,
             uint pagenumber = 1,
-            uint pagesize = 10,
+            PageSize pagesize = null!,
             string? poitype = "511",
             string? subtype = null,
             string? idlist = null,
@@ -179,7 +179,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Pois</returns>
         private Task<IActionResult> GetFiltered(
-            string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
+            string[] fields, string? language, uint pagenumber, int? pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active,
             bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort,
             CancellationToken cancellationToken)

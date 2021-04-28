@@ -37,7 +37,13 @@ namespace OdhApiCore.Controllers.api
         {
             await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
 
-            return Ok("json odhactivitypoi STA generated");
+            return Ok(new
+            {
+                operation = "Json Generation",
+                type = "ODHActivityPoi",
+                message = "Generate Json ODHActivityPoi for STA succeeded",                
+                success = true
+            });
         }
 
         [InvalidateCacheOutput(nameof(STAController.GetAccommodationsSTA), typeof(STAController))] // this will invalidate Get in a different controller
@@ -46,7 +52,13 @@ namespace OdhApiCore.Controllers.api
         {
             await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
 
-            return Ok("json accommodations STA generated");
+            return Ok(new
+            {
+                operation = "Json Generation",
+                type = "Accommodation",
+                message = "Generate Json Accommodation for STA succeeded",
+                success = true
+            });
         }
 
         [HttpGet, Route("ODH/AccommodationBooklist")]
@@ -54,7 +66,13 @@ namespace OdhApiCore.Controllers.api
         {
             await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosBookable");
 
-            return Ok("json accommodations Booklist generated");
+            return Ok(new
+            {
+                operation = "Json Generation",
+                type = "AccommodationBooklist",
+                message = "Generate Json AccommodationBooklist succeeded",
+                success = true
+            });
         }
 
         [HttpGet, Route("ODH/AccommodationFulllist")]
@@ -62,7 +80,13 @@ namespace OdhApiCore.Controllers.api
         {
             await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosAll");
 
-            return Ok("json accommodations Booklist generated");
+            return Ok(new
+            {
+                operation = "Json Generation",
+                type = "AccommodationFullist",
+                message = "Generate Json AccommodationFullist succeeded",
+                success = true
+            });
         }
 
         //TODO ADD the Json Generation for        

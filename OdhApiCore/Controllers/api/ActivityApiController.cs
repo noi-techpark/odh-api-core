@@ -69,7 +69,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetActivityList(
             string? language = null,
             uint pagenumber = 1,
-            uint pagesize = 10,
+            PageSize pagesize = null!,
             string? activitytype = "1023",
             string? subtype = null,
             string? idlist = null,
@@ -191,7 +191,7 @@ namespace OdhApiCore.Controllers
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Activities Objects</returns>
         private Task<IActionResult> GetFiltered(
-            string[] fields, string? language, uint pagenumber, uint pagesize, string? activitytype, string? subtypefilter,
+            string[] fields, string? language, uint pagenumber, int? pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, 

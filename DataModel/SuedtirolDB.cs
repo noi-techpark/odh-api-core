@@ -447,6 +447,9 @@ namespace DataModel
         public IDictionary<string, string> SkiRegionName { get; set; }
 
         public ICollection<string>? AreaId { get; set; }
+        //Compatibility
+        public ICollection<string>? AreaIds { get { return AreaId; } }
+
         public ICollection<Webcam>? Webcam { get; set; }
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
         public LocationInfo? LocationInfo { get; set; }
@@ -1138,7 +1141,7 @@ namespace DataModel
         public int MinTemp { get; set; }
         public int Maxtemp { get; set; }
 
-        //Fix
+        //Compatibility Reasons
         public int MaxTemp { get { return Maxtemp; } }
     }
 
@@ -2105,6 +2108,9 @@ namespace DataModel
 
         public string? TourismorganizationId { get; set; }
         public ICollection<string>? AreaId { get; set; }
+        //Compatibility
+        public ICollection<string>? AreaIds { get { return AreaId; } }
+
 
         //Distance & Altitude Informationen
         public double AltitudeDifference { get; set; }
@@ -2310,6 +2316,9 @@ namespace DataModel
             OrganizerInfos = new Dictionary<string, ContactInfos>();
             EventAdditionalInfos = new Dictionary<string, EventAdditionalInfos>();
             EventPrice = new Dictionary<string, EventPrice>();
+            EventPrices = new Dictionary<string, ICollection<EventPrice>>();
+            EventVariants = new Dictionary<string, ICollection<EventVariant>>();
+            Hashtag = new Dictionary<string, ICollection<string>>();
         }
 
         //IIdentifiable
@@ -2339,6 +2348,7 @@ namespace DataModel
         public string? SignOn { get; set; }
         public string? PayMet { get; set; }
         public string? Type { get; set; }
+        public string Pdf { get; set; }
 
         public string? DistrictId { get; set; }
         //???????
@@ -2373,6 +2383,20 @@ namespace DataModel
         public ICollection<string>? HasLanguage { get; set; }
 
         public Nullable<DateTime> NextBeginDate { get; set; }
+
+        //NEW Fields 
+        public string Source { get; set; }
+        public bool? GrpEvent { get; set; }
+        public bool? EventBenefit { get; set; }
+        public EventBooking EventBooking { get; set; }
+        public ICollection<LTSTags> LTSTags { get; set; }
+
+        public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
+        public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
+
+        public IDictionary<string, ICollection<string>> Hashtag { get; set; }
+
+        public EventOperationScheduleOverview EventOperationScheduleOverview { get; set; }
     }
 
     public class Topic
@@ -2396,16 +2420,17 @@ namespace DataModel
         public string? MetaTitle { get; set; }
         public string? MetaDesc { get; set; }
 
-
-
         public string? GetThereText { get; set; }
         public string? Language { get; set; }
 
-        //Smg spezifischer Text
-        //public string SmgCustomText { get; set; }  
+        public ICollection<string> Keywords { get; set; }
 
-        //NEU
-        public ICollection<string>? Keywords { get; set; }
+        //New LTS Fields        
+        public string ParkingInfo { get; set; }
+        public string PublicTransportationInfo { get; set; }
+        public string AuthorTip { get; set; }
+        public string SafetyInfo { get; set; }
+        public string EquipmentInfo { get; set; }
     }
 
     //Special Element for Themed Content 
@@ -2504,8 +2529,17 @@ namespace DataModel
         public bool? Active { get; set; }
         public bool? SmgActive { get; set; }
         public string? Source { get; set; }
+        public ICollection<PublishedonObject> WebcamAssignedOn { get; set; }
+
+        public ICollection<string> AreaIds { get; set; }
     }
 
+    public class PublishedonObject
+    {
+        public string Type { get; set; }
+        public string Id { get; set; }
+        public DateTime LastChange { get; set; }
+    }
 
     public class ImageGallery : IImageGallery
     {
@@ -2715,6 +2749,8 @@ namespace DataModel
         public string? Description { get; set; }
 
         public string? Language { get; set; }
+        public string PriceRID { get; set; }
+        public string VarRID { get; set; }
     }
 
     public class EventPublisher
@@ -2737,6 +2773,97 @@ namespace DataModel
         public TimeSpan Begin { get; set; }
         public TimeSpan End { get; set; }
         public TimeSpan Entrance { get; set; }
+
+        //NEW Properties
+        public Nullable<double> InscriptionTill { get; set; }
+        public Nullable<bool> Active { get; set; }
+        public string DayRID { get; set; }
+
+        public Dictionary<string, EventDateAdditionalInfo> EventDateAdditionalInfo { get; set; }
+        public ICollection<EventDateAdditionalTime> EventDateAdditionalTime { get; set; }
+        public EventDateCalculatedDay EventCalculatedDay { get; set; }
+    }
+
+    public class EventDateAdditionalInfo : ILanguage
+    {
+        public string Description { get; set; }
+        public string Guide { get; set; }
+        public string InscriptionLanguage { get; set; }
+        public string Language { get; set; }
+    }
+
+    //TODO GET MORE INFOS ABOUT THIS
+    public class EventDateAdditionalTime
+    {
+        public string Days { get; set; }
+        public TimeSpan Entrance1 { get; set; }
+        public TimeSpan Begin1 { get; set; }
+        public TimeSpan End1 { get; set; }
+        public TimeSpan Entrance2 { get; set; }
+        public TimeSpan Begin2 { get; set; }
+        public TimeSpan End2 { get; set; }
+    }
+
+    public class EventDateCalculatedDay
+    {
+        public string CDayRID { get; set; }
+        public DateTime Day { get; set; }
+        public TimeSpan Begin { get; set; }
+        public int TicketsAvailable { get; set; }
+        public int MaxSellableTickets { get; set; }
+        public ICollection<EventDateCalculatedDayVariant> EventDateCalculatedDayVariant { get; set; }
+
+        //found in response
+        public Nullable<int> AvailabilityCalculatedValue { get; set; }
+        public Nullable<int> AvailabilityLow { get; set; }
+        public Nullable<double> PriceFrom { get; set; }
+    }
+
+    public class EventDateCalculatedDayVariant
+    {
+        public string VarRID { get; set; }
+        public double Price { get; set; }
+        public Nullable<bool> IsStandardVariant { get; set; }
+        public Nullable<int> TotalSellable { get; set; }
+    }
+
+    public class EventBooking
+    {
+        public EventBooking()
+        {
+            BookingUrl = new Dictionary<string, EventBookingDetail>();
+        }
+
+        public DateTime BookableFrom { get; set; }
+        public DateTime BookableTo { get; set; }
+        public int? AccommodationAssignment { get; set; }
+
+        public Dictionary<string, EventBookingDetail> BookingUrl { get; set; }
+    }
+
+    public class EventBookingDetail
+    {
+        public string Url { get; set; }
+    }
+
+    public class EventVariant
+    {
+        public string VarRID { get; set; }
+        public string ShortDescription { get; set; }
+        public string LongDescription { get; set; }
+        public string Description { get; set; }
+        public string Language { get; set; }
+    }
+
+    public class EventOperationScheduleOverview
+    {
+        public bool Monday { get; set; }
+        public bool Tuesday { get; set; }
+        public bool Wednesday { get; set; }
+        public bool Thursday { get; set; }
+        public bool Friday { get; set; }
+        public bool Saturday { get; set; }
+        public bool Sunday { get; set; }
     }
 
     //Evalanche Spezial

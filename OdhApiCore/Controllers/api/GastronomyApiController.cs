@@ -67,7 +67,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetGastronomyList(
             string? language = null,
             uint pagenumber = 1,
-            uint pagesize = 10,
+            PageSize pagesize = null!,
             string? idlist = null,
             string? locfilter = null,
             string? dishcodefilter = null,
@@ -156,7 +156,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetFiltered(
-            string[] fields, string? language, uint pagenumber, uint pagesize,
+            string[] fields, string? language, uint pagenumber, int? pagesize,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? idfilter, string? searchfilter, string? locfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
