@@ -24,8 +24,6 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
     {
-        // Only for test purposes
-
         public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {

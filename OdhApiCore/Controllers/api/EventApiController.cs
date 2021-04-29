@@ -22,9 +22,7 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class EventController : OdhController
-    {
-        // Only for test purposes
-
+    {      
         public EventController(IWebHostEnvironment env, ISettings settings, ILogger<EventController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
@@ -219,7 +217,9 @@ namespace OdhApiCore.Controllers
                             searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
                             filterClosedData: FilterClosedData)
                          .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, geosearchresult, rawsort, sortifseednull);
+                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
+                         //.ApplyOrdering(ref seed, geosearchresult, rawsort, sortifseednull);
+
                 //.OrderBySeed(ref seed, sortifseednull)
                 //.GeoSearchFilterAndOrderby(geosearchresult);
                 //TODO Use sorting

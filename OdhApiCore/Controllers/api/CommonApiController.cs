@@ -617,7 +617,7 @@ namespace OdhApiCore.Controllers.api
 
         #region GETTER
 
-        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult? geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {               
@@ -628,7 +628,7 @@ namespace OdhApiCore.Controllers.api
                         .CommonWhereExpression(languagelist: new List<string>(), lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
                                                searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
                 // Get paginated data
                 var data =
