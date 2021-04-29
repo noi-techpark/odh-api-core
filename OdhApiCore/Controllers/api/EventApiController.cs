@@ -1,4 +1,5 @@
-﻿using DataModel;
+﻿using AspNetCore.CacheOutput;
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -21,9 +22,7 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class EventController : OdhController
-    {
-        // Only for test purposes
-
+    {      
         public EventController(IWebHostEnvironment env, ISettings settings, ILogger<EventController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
@@ -45,7 +44,7 @@ namespace OdhApiCore.Controllers
         /// <param name="orgfilter">Organization Filter (Filter by Organizer RID)</param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd)</param>
-        /// <param name="sort">Sorting of Events ('desc': Descending, default, 'asc': Ascending)</param>
+        /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
         /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd)</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events, (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field SmgActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events, (default:'null')</param>                
@@ -62,7 +61,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(JsonResult<Event>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
+        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         //[Authorize]
         [HttpGet, Route("Event")]
         public async Task<IActionResult> GetEventList(
@@ -218,7 +217,10 @@ namespace OdhApiCore.Controllers
                             searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
                             filterClosedData: FilterClosedData)
                          .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, geosearchresult, rawsort, sortifseednull);
+                         .OrderByRawIfNotNull(sortifseednull)
+                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
+                         //.ApplyOrdering(ref seed, geosearchresult, rawsort, sortifseednull);
+
                 //.OrderBySeed(ref seed, sortifseednull)
                 //.GeoSearchFilterAndOrderby(geosearchresult);
                 //TODO Use sorting

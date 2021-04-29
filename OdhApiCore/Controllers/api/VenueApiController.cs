@@ -1,4 +1,5 @@
-﻿using DataModel;
+﻿using AspNetCore.CacheOutput;
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -62,6 +63,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(JsonResult<DDVenue>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         //[Authorize(Roles = "DataReader,VenueReader")]
         //[Authorize]
         [HttpGet, Route("Venue")]
@@ -196,7 +198,7 @@ namespace OdhApiCore.Controllers
                             searchfilter: searchfilter, language: language, lastchange: myvenuehelper.lastchange, 
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
                 var data =

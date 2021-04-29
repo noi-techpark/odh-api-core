@@ -50,8 +50,6 @@ namespace EBMS
 
                 var eventarray = JsonConvert.DeserializeObject<List<EBMSEventREST>>(response);
 
-                Console.WriteLine("found events:" + eventarray.Count());
-
                 foreach (var myevent in eventarray)
                 {
                     var eventtosave = new EventShort();
@@ -251,14 +249,10 @@ namespace EBMS
                         ////gehört zu Abstract
                         //eventtosave.Documents = myevent.Documents;
 
-                        myeventshortlist.Add(eventtosave);
-
-                        Console.WriteLine(eventtosave.Id + " added to list");
+                        myeventshortlist.Add(eventtosave);                        
                     }
                 }
-
-                Console.WriteLine("All imported from interface returning");
-
+                
                 return myeventshortlist;
 
             }
