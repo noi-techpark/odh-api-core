@@ -263,7 +263,7 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
                 return await query.GetAsync<object>();
             });
@@ -382,7 +382,7 @@ namespace OdhApiCore.Controllers.api
                             filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
                 return  await query.GetAsync<object>();
             });
@@ -582,7 +582,7 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
                 // Get whole data
                 return await query.GetAsync<object>();
@@ -701,7 +701,7 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
                 // Get whole data
                 return await query.GetAsync<object>();
@@ -891,7 +891,7 @@ namespace OdhApiCore.Controllers.api
                             smgactivefilter: helper.smgactive, searchfilter: null, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
                          .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
                 // Get whole data
                 return await query.GetAsync<object>();
@@ -993,7 +993,7 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
                 // Get whole data
                 return await query.GetAsync<object>();
@@ -1369,8 +1369,9 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .CommonWhereExpression(languagelist: new List<string>(), lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
                                                searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
-                        .OrderByRaw(orderby)
-                        .GeoSearchFilterAndOrderby(geosearchresult);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, null, orderby); 
+                        //.OrderByRaw(orderby)
+                        //.GeoSearchFilterAndOrderby(geosearchresult);
 
                 // Get paginated data
                 return await query.GetAsync<object>();
@@ -1451,7 +1452,7 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
                             languagelist: new List<string>(), filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
                 // Get whole data
                 return await query.GetAsync<object>();
