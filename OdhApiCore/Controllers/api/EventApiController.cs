@@ -44,7 +44,7 @@ namespace OdhApiCore.Controllers
         /// <param name="orgfilter">Organization Filter (Filter by Organizer RID)</param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd)</param>
-        /// <param name="sort">Sorting of Events ('desc': Descending, default, 'asc': Ascending)</param>
+        /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
         /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd)</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events, (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field SmgActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events, (default:'null')</param>                
@@ -217,6 +217,7 @@ namespace OdhApiCore.Controllers
                             searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
                             filterClosedData: FilterClosedData)
                          .ApplyRawFilter(rawfilter)
+                         .OrderByRawIfNotNull(sortifseednull)
                          .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
                          //.ApplyOrdering(ref seed, geosearchresult, rawsort, sortifseednull);
 
