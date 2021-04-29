@@ -80,9 +80,7 @@ namespace OdhApiCore.GenericHelpers
                 using (var writer = File.CreateText(fileName))
                 {
                     serializer.Serialize(writer, result);
-                }
-
-                Console.WriteLine("ODH Accommodations for STA created " + language);
+                }                
             }
         }
 
@@ -128,8 +126,7 @@ namespace OdhApiCore.GenericHelpers
                 {
                     serializer.Serialize(writer, result);
                 }
-                Console.WriteLine("ODH Activities & Pois for STA created " + language);
-
+                
                 //// Create a new file 
                 //using (FileStream fs = System.IO.File.Create(fileName))
                 //{
