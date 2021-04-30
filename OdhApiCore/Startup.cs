@@ -410,9 +410,13 @@ namespace OdhApiCore
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", output = httplog };
 
-                    Log.Information(JsonConvert.SerializeObject(logoutput));
+                    string output = JsonConvert.SerializeObject(logoutput);
+
+                    Console.WriteLine(JsonConvert.SerializeObject(logoutput));
+
+                    //Log.Information(output);
                 }
-            
+
                 await next();
             });
 
