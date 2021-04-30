@@ -403,12 +403,12 @@ namespace OdhApiCore
                     {
                         host = context.Request.Host.ToString(),
                         path = context.Request.Path.ToString(),
-                        querystring = Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
+                        querystring = context.Request.QueryString.ToString().Replace("?","").Replace("&", "-"),  //Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
                         referer = referer,
                         schema = context.Request.Scheme,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
                     };
-                    LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", output = httplog };
+                    LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 
                     string output = JsonConvert.SerializeObject(logoutput);
 
