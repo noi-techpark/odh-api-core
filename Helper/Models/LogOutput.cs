@@ -8,6 +8,7 @@ namespace Helper
 {
     public class LogOutput<T>
     {
+        public string log { get; set; }
         public string type { get; set; }
         public string id { get; set; }
         public T output { get; set; }
