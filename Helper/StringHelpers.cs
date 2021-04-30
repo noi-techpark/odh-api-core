@@ -13,7 +13,7 @@ namespace Helper
             return new String(value.Except(specialCharacters).ToArray());
         }
 
-        public static Dictionary<string, string>? GenerateDictionaryFromQuerystring(string value, char[] specialCharactersToRemove)
+        public static Dictionary<string, string>? GenerateDictionaryFromQuerystring(string value)
         {
             if (String.IsNullOrEmpty(value))
                 return null;
@@ -21,7 +21,7 @@ namespace Helper
             {
                 Dictionary<string, string>? myvaluedict = new Dictionary<string, string>();
 
-                string valuenew = new String(value.Except(specialCharactersToRemove).ToArray());
+                string valuenew = value.Replace("?","");
 
                 var splitted = valuenew.Split('&');
 
