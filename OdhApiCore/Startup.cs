@@ -403,7 +403,7 @@ namespace OdhApiCore
                     {
                         host = context.Request.Host.ToString(),
                         path = context.Request.Path.ToString(),
-                        querystring = context.Request.QueryString.ToString().Replace("?","").Replace("&", "-"),  //Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
+                        urlparams = context.Request.QueryString.ToString(), //context.Request.QueryString.ToString().Replace("?","").Replace("&", "-"),  //Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
                         referer = referer,
                         schema = context.Request.Scheme,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"

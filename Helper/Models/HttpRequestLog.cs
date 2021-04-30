@@ -14,6 +14,6 @@ namespace Helper
         public string path { get; set; }
         public string schema { get; set; }
         //public Dictionary<string,string>? querystring { get; set; }
-        public string querystring { get; set; }
+        public string urlparams { get; set; }
     }
 }
