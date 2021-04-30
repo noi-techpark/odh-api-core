@@ -390,6 +390,7 @@ namespace OdhApiCore
                 {
                     //TODO IF THE REFERER IS NOT PROVIDED IN THE HEADERS SEARCH IF A QS IS THERE
                     var referer = "not provided";
+
                     if (context.Request.Headers.ContainsKey("Referer"))
                         referer = context.Request.Headers["Referer"].ToString();
                     else
@@ -399,11 +400,13 @@ namespace OdhApiCore
                             referer = context.Request.Query["Referer"].ToString();
                     }
 
+                    var urlparameters = context.Request.QueryString.Value != null ? context.Request.QueryString.HasValue ? context.Request.QueryString.Value.Replace("?", "") : "" : "";
+
                     HttpRequestLog httplog = new HttpRequestLog()
                     {
                         host = context.Request.Host.ToString(),
                         path = context.Request.Path.ToString(),
-                        urlparams = context.Request.QueryString.ToString(), //context.Request.QueryString.ToString().Replace("?","").Replace("&", "-"),  //Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
+                        urlparams = urlparameters, //.Replace("&", "-"),  //Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
                         referer = referer,
                         schema = context.Request.Scheme,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
