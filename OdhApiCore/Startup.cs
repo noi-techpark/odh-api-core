@@ -400,6 +400,11 @@ namespace OdhApiCore
                             referer = context.Request.Query["Referer"].ToString();
                     }
 
+                    //User Agent
+                    var useragent = "not provided";
+                    if (context.Request.Headers.ContainsKey("User-Agent"))
+                        useragent = context.Request.Headers["User-Agent"].ToString();
+                   
                     var urlparameters = context.Request.QueryString.Value != null ? context.Request.QueryString.HasValue ? context.Request.QueryString.Value.Replace("?", "") : "" : "";
 
                     HttpRequestLog httplog = new HttpRequestLog()
@@ -409,6 +414,7 @@ namespace OdhApiCore
                         urlparams = urlparameters, //.Replace("&", "-"),  //Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
                         referer = referer,
                         schema = context.Request.Scheme,
+                        useragent = useragent,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };

@@ -15,5 +15,6 @@ namespace Helper
         public string schema { get; set; }
         //public Dictionary<string,string>? querystring { get; set; }
         public string urlparams { get; set; }
+        public string useragent { get; set; }
     }
 }
