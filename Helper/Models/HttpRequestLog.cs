@@ -13,6 +13,6 @@ namespace Helper
         public string host { get; set; }
         public string path { get; set; }
         public string schema { get; set; }
-        public string querystring { get; set; }
+        public Dictionary<string,string>? querystring { get; set; }
     }
 }

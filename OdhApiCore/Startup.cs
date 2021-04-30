@@ -403,7 +403,7 @@ namespace OdhApiCore
                     {
                         host = context.Request.Host.ToString(),
                         path = context.Request.Path.ToString(),
-                        querystring = context.Request.QueryString.ToString(),
+                        querystring = Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString(), new char[] { '?' }),
                         referer = referer,
                         schema = context.Request.Scheme,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
@@ -413,7 +413,6 @@ namespace OdhApiCore
                     Log.Information(JsonConvert.SerializeObject(logoutput));
                 }
             
-
                 await next();
             });
 
@@ -458,4 +457,5 @@ namespace OdhApiCore
             });
         }
     }
+
 }
