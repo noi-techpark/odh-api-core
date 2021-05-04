@@ -63,12 +63,12 @@ let transfomerTests =
                 Expect.equal actual expected ""
             }
             test "NULL" {
-                let expected = "data#>'\{Detail,ru,Title\}' IS NULL"
+                let expected = "data#>>'\{Detail,ru,Title\}' IS NULL"
                 let actual = transformFilter "isnull(Detail.ru.Title)"
                 Expect.equal actual expected ""
             }
             test "NOT NULL" {
-                let expected = "data#>'\{Detail,ru,Title\}' IS NOT NULL"
+                let expected = "data#>>'\{Detail,ru,Title\}' IS NOT NULL"
                 let actual = transformFilter "isnotnull(Detail.ru.Title)"
                 Expect.equal actual expected ""
             }

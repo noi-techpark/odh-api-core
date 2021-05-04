@@ -113,6 +113,6 @@ module Filtering =
             |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->
             $"NOT {writeStatement jsonSerializer (Condition (In (field, values)))}"
-        | Condition (IsNull property) -> $"{writeRawField property} IS NULL"
-        | Condition (IsNotNull property) -> $"{writeRawField property} IS NOT NULL"
+        | Condition (IsNull property) -> $"{writeTextField property} IS NULL"
+        | Condition (IsNotNull property) -> $"{writeTextField property} IS NOT NULL"
 
