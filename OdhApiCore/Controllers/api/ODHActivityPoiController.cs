@@ -141,7 +141,14 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHActivityPoiTypes")]
-        public async Task<IActionResult> GetAllODHActivityPoiTypesList()
+        public async Task<IActionResult> GetAllODHActivityPoiTypesList(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetSmgPoiTypesList();
         }
@@ -157,7 +164,12 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHActivityPoiTypes/{*id}", Name = "SingleODHActivityPoiTypes")]
-        public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(string id)
+        public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetSmgPoiTypesSingle(id);
         }

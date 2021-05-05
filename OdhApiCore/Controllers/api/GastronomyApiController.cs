@@ -132,7 +132,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,GastroReader")]        
         [HttpGet, Route("GastronomyTypes")]
-        public async Task<IActionResult> GetAllGastronomyTypesList(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAllGastronomyTypesList(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetGastronomyTypesListAsync(cancellationToken);
         }
@@ -146,7 +153,12 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,GastroReader")]        
         [HttpGet, Route("GastronomyTypes/{id}", Name = "SingleGastronomyTypes")]
-        public async Task<IActionResult> GetAllGastronomyTypesList(string id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAllGastronomyTypesList(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetGastronomyTypesSingleAsync(id, cancellationToken);
         }

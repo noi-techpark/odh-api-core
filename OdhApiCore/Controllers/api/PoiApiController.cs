@@ -116,9 +116,6 @@ namespace OdhApiCore.Controllers.api
             string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
-            //TODO
-            //CheckOpenData(User);
-
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 

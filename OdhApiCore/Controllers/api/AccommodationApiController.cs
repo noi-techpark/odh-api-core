@@ -275,7 +275,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationTypes")]
-        public async Task<IActionResult> GetAllAccommodationTypesList(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllAccommodationTypesList(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetAccoTypeList(cancellationToken);
         }
@@ -293,7 +300,12 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationTypes/{id}", Name = "SingleAccommodationTypes")]
-        public async Task<IActionResult> GetAllAccommodationTypessingle(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllAccommodationTypessingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetAccoTypeSingle(id, cancellationToken);
         }
@@ -311,7 +323,15 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationFeatures")]
-        public async Task<IActionResult> GetAllAccommodationFeaturesList(string? source = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAllAccommodationFeaturesList(
+            string? source = null,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
             if (!String.IsNullOrEmpty(source) && source == "lts")
                 return await Task.FromResult<IActionResult>(Ok());
@@ -333,7 +353,12 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationFeatures/{id}", Name = "SingleAccommodationFeatures")]
-        public async Task<IActionResult> GetAllAccommodationFeaturesSingle(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllAccommodationFeaturesSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetAccoFeatureSingle(id, cancellationToken);
         }

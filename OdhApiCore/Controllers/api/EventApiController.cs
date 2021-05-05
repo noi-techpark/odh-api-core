@@ -145,7 +145,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("EventTopics")]
-        public async Task<IActionResult> GetAllEventTopicListAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllEventTopicListAsync(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetEventTopicListAsync(cancellationToken);
         }
@@ -163,7 +170,12 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("EventTopics/{id}", Name = "SingleEventTopics")]
-        public async Task<IActionResult> GetAllEventTopicSingleAsync(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllEventTopicSingleAsync(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
             return await GetEventTopicSingleAsync(id, cancellationToken);
         }
