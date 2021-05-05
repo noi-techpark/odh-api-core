@@ -132,9 +132,16 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,GastroReader")]        
         [HttpGet, Route("GastronomyTypes")]
-        public async Task<IActionResult> GetAllGastronomyTypesList(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAllGastronomyTypesList(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetGastronomyTypesListAsync(cancellationToken);
+            return await GetGastronomyTypesListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -146,9 +153,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,GastroReader")]        
         [HttpGet, Route("GastronomyTypes/{id}", Name = "SingleGastronomyTypes")]
-        public async Task<IActionResult> GetAllGastronomyTypesList(string id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAllGastronomyTypesList(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetGastronomyTypesSingleAsync(id, cancellationToken);
+            return await GetGastronomyTypesSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         #endregion
@@ -233,17 +245,26 @@ namespace OdhApiCore.Controllers
         /// GET Gastronomy Types List
         /// </summary>
         /// <returns>Collection of GastronomyTypes Object</returns>
-        private Task<IActionResult> GetGastronomyTypesListAsync(CancellationToken cancellationToken)
+        private Task<IActionResult> GetGastronomyTypesListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("gastronomytypes")
-                        .SelectRaw("data");
+                        .SelectRaw("data")
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 
@@ -251,7 +272,7 @@ namespace OdhApiCore.Controllers
         /// GET Gastronomy Types Single
         /// </summary>
         /// <returns>GastronomyTypes Object</returns>
-        private Task<IActionResult> GetGastronomyTypesSingleAsync(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetGastronomyTypesSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -264,7 +285,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 

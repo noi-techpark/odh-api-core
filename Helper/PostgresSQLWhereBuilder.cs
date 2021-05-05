@@ -32,6 +32,39 @@ namespace Helper
             ).ToArray();
 
 
+        //Public for use in Controllers directly
+        public static string[] TypeDescFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"TypeDesc.{lang}"
+            ).ToArray();
+
+        public static string[] AccoRoomNameFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"AccoRoomDetail.{lang}.Name"
+            ).ToArray();
+
+        //TODO TRANSFORM LANGUAGE to deu,eng,ita
+        public static string[] VenueTitleFieldsToSearchFor(string? language) =>
+           _languagesToSearchFor.Where(lang =>
+               language != null ? lang == language : true
+           ).Select(lang =>
+               $"attributes.name.{TransformLanguagetoDDStandard(lang)}"
+           ).ToArray();
+        
+
+        private static string TransformLanguagetoDDStandard(string language) => language switch
+        {
+            "de" =>  "deu",
+            "it" =>  "ita",
+            "en" =>  "eng",
+            _ => language
+        };
+
+
         //TODO search name example
         //name: {
         //    deu: "Akademie deutsch-italienischer Studien",
@@ -561,7 +594,7 @@ namespace Helper
                 .VenueHasLanguageFilter(languagelist)
                 //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
-                //.SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                
+                .SearchFilter(VenueTitleFieldsToSearchFor(language), searchfilter)                
                 //.When(filterClosedData, q => q.FilterClosedDataVenues());
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }

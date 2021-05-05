@@ -275,9 +275,16 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationTypes")]
-        public async Task<IActionResult> GetAllAccommodationTypesList(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllAccommodationTypesList(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetAccoTypeList(cancellationToken);
+            return await GetAccoTypeList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -293,9 +300,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationTypes/{id}", Name = "SingleAccommodationTypes")]
-        public async Task<IActionResult> GetAllAccommodationTypessingle(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllAccommodationTypessingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetAccoTypeSingle(id, cancellationToken);
+            return await GetAccoTypeSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         /// <summary>
@@ -311,13 +323,21 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationFeatures")]
-        public async Task<IActionResult> GetAllAccommodationFeaturesList(string? source = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAllAccommodationFeaturesList(
+            string? language,
+            string? source = null,            
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
             if (!String.IsNullOrEmpty(source) && source == "lts")
                 return await Task.FromResult<IActionResult>(Ok());
             //return GetFeatureList(cancellationToken); TODO
             else
-                return await GetAccoFeatureList(cancellationToken);
+                return await GetAccoFeatureList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -333,9 +353,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationFeatures/{id}", Name = "SingleAccommodationFeatures")]
-        public async Task<IActionResult> GetAllAccommodationFeaturesSingle(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllAccommodationFeaturesSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetAccoFeatureSingle(id, cancellationToken);
+            return await GetAccoFeatureSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         // ACCO ROOMS
@@ -360,7 +385,10 @@ namespace OdhApiCore.Controllers
             bool getall = false,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
-            string ?language = null, 
+            string ?language = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default
             )
         {
@@ -371,7 +399,7 @@ namespace OdhApiCore.Controllers
                 idtocheck = await GetAccoIdByHgvId(accoid, cancellationToken);
             }    
 
-            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, cancellationToken);
+            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         // ACCO ROOMS
@@ -651,6 +679,9 @@ namespace OdhApiCore.Controllers
             string[] fields,
             string? language,
             bool all,
+            string? searchfilter,
+            string? rawfilter,
+            string? rawsort,
             CancellationToken cancellationToken
             )
         {
@@ -668,13 +699,16 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                         //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE ?", id)
                         .Where("gen_a0rid", "ILIKE", id)
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
                 var dataTransformed =
                    data.Select(
-                       raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                       raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
                    );
 
                 return dataTransformed;
@@ -716,22 +750,30 @@ namespace OdhApiCore.Controllers
 
         #region TYPE AND FEATURE LISTs
 
-        private Task<IActionResult> GetAccoTypeList(CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoTypeList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("accommodationtypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 
-        private Task<IActionResult> GetAccoTypeSingle(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoTypeSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -745,26 +787,34 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
-        private Task<IActionResult> GetAccoFeatureList(CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoFeatureList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("accommodationfeatures")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 
-        private Task<IActionResult> GetAccoFeatureSingle(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoFeatureSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -774,11 +824,10 @@ namespace OdhApiCore.Controllers
                          //.WhereJsonb("Key", "ilike", id)
                          .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
-                //.Where("Key", "ILIKE", id);
-
+                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 

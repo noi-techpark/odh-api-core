@@ -141,9 +141,16 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,VenueReader")]
         [HttpGet, Route("VenueTypes")]
-        public async Task<IActionResult> GetAllVenueTypesListAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllVenueTypesListAsync(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetVenueTypesListAsync(cancellationToken);
+            return await GetVenueTypesListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -159,9 +166,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,VenueReader")]
         [HttpGet, Route("VenueTypes/{id}", Name = "SingleVenueTypes")]
-        public async Task<IActionResult> GetAllVenueTypesSingleAsync(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllVenueTypesSingleAsync(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetVenueTypesSingleAsync(id, cancellationToken);
+            return await GetVenueTypesSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         #endregion
@@ -245,18 +257,26 @@ namespace OdhApiCore.Controllers
 
         #region CUSTOM METHODS
 
-        private Task<IActionResult> GetVenueTypesListAsync(CancellationToken cancellationToken)
+        private Task<IActionResult> GetVenueTypesListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("venuetypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 
@@ -264,7 +284,7 @@ namespace OdhApiCore.Controllers
         /// GET Venue Types Single
         /// </summary>
         /// <returns>VenueTypes Object</returns>
-        private Task<IActionResult> GetVenueTypesSingleAsync(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetVenueTypesSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -278,7 +298,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 

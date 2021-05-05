@@ -141,9 +141,16 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHActivityPoiTypes")]
-        public async Task<IActionResult> GetAllODHActivityPoiTypesList()
+        public async Task<IActionResult> GetAllODHActivityPoiTypesList(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetSmgPoiTypesList();
+            return await GetSmgPoiTypesList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -157,9 +164,14 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHActivityPoiTypes/{*id}", Name = "SingleODHActivityPoiTypes")]
-        public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(string id)
+        public async Task<IActionResult> GetAllODHActivityPoiTypesSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetSmgPoiTypesSingle(id);
+            return await GetSmgPoiTypesSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
 
@@ -241,21 +253,30 @@ namespace OdhApiCore.Controllers.api
 
         #region CUSTOM METODS
 
-        private Task<IActionResult> GetSmgPoiTypesList()
+        private Task<IActionResult> GetSmgPoiTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("smgpoitypes")
-                        .SelectRaw("data");
+                        .SelectRaw("data")
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 
-        private Task<IActionResult> GetSmgPoiTypesSingle(string id)
+        private Task<IActionResult> GetSmgPoiTypesSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -269,7 +290,7 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 

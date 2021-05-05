@@ -141,9 +141,16 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("ActivityTypes")]
-        public async Task<IActionResult> GetAllActivityTypesListAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllActivityTypesListAsync(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null, 
+            CancellationToken cancellationToken = default)
         {
-            return await GetActivityTypesListAsync(cancellationToken);
+            return await GetActivityTypesListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -159,9 +166,14 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("ActivityTypes/{id}", Name = "SingleActivityTypes")]
-        public async Task<IActionResult> GetAllActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllActivityTypesSingleAsync(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetActivityTypesSingleAsync(id, cancellationToken);
+            return await GetActivityTypesSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         #endregion
@@ -277,18 +289,26 @@ namespace OdhApiCore.Controllers
         /// GET Activity Types List
         /// </summary>
         /// <returns>Collection of ActivityTypes Object</returns>
-        private Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
+        private Task<IActionResult> GetActivityTypesListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("activitytypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 
@@ -296,7 +316,7 @@ namespace OdhApiCore.Controllers
         /// GET Activity Types Single
         /// </summary>
         /// <returns>ActivityTypes Object</returns>
-        private Task<IActionResult> GetActivityTypesSingleAsync(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetActivityTypesSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -305,12 +325,11 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                          //.WhereJsonb("Key", "ilike", id)
                          .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                //.Where("Key", "ILIKE", id);
+                        .When(FilterClosedData, q => q.FilterClosedData());                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
