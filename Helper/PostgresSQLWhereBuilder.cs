@@ -47,6 +47,15 @@ namespace Helper
                 $"AccoRoomDetail.{lang}.Name"
             ).ToArray();
 
+        public static string[] VenueTitleFieldsToSearchFor(string? language) =>
+           _languagesToSearchFor.Where(lang =>
+               language != null ? lang == language : true
+           ).Select(lang =>
+               $"attributes.name.{lang}"
+           ).ToArray();
+        
+
+
 
         //TODO search name example
         //name: {
@@ -577,7 +586,7 @@ namespace Helper
                 .VenueHasLanguageFilter(languagelist)
                 //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
-                //.SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                
+                .SearchFilter(VenueTitleFieldsToSearchFor(language), searchfilter)                
                 //.When(filterClosedData, q => q.FilterClosedDataVenues());
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
