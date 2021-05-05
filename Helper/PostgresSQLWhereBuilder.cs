@@ -47,14 +47,22 @@ namespace Helper
                 $"AccoRoomDetail.{lang}.Name"
             ).ToArray();
 
+        //TODO TRANSFORM LANGUAGE to deu,eng,ita
         public static string[] VenueTitleFieldsToSearchFor(string? language) =>
            _languagesToSearchFor.Where(lang =>
                language != null ? lang == language : true
            ).Select(lang =>
-               $"attributes.name.{lang}"
+               $"attributes.name.{TransformLanguagetoDDStandard(lang)}"
            ).ToArray();
         
 
+        public static string TransformLanguagetoDDStandard(string language) => language switch
+        {
+            "de" =>  "deu",
+            "it" =>  "ita",
+            "en" =>  "eng",
+            _ => language
+        };
 
 
         //TODO search name example
