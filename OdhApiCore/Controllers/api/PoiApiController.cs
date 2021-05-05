@@ -135,9 +135,16 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
         [HttpGet, Route("PoiTypes")]
-        public async Task<IActionResult> GetAllPoiTypesList(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllPoiTypesList(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null, 
+            CancellationToken cancellationToken = default)
         {
-            return await GetPoiTypesList(cancellationToken);
+            return await GetPoiTypesList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -153,9 +160,14 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
         [HttpGet, Route("PoiTypes/{id}", Name = "SinglePoiTypes")]
-        public async Task<IActionResult> GetAllPoiTypesSingle(string id, string language, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllPoiTypesSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetPoiTypesSingleAsync(id, cancellationToken);
+            return await GetPoiTypesSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         #endregion
@@ -266,17 +278,26 @@ namespace OdhApiCore.Controllers.api
         /// GET Poi Types List
         /// </summary>
         /// <returns>Collection of PoiTypes Object</returns>
-        private Task<IActionResult> GetPoiTypesList(CancellationToken cancellationToken)
+        private Task<IActionResult> GetPoiTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                      QueryFactory.Query("poitypes")
-                         .SelectRaw("data");
+                        .SelectRaw("data")
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 
@@ -284,7 +305,7 @@ namespace OdhApiCore.Controllers.api
         /// GET Poi Types Single
         /// </summary>
         /// <returns>PoiTypes Object</returns>
-        private Task<IActionResult> GetPoiTypesSingleAsync(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetPoiTypesSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -298,7 +319,7 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
