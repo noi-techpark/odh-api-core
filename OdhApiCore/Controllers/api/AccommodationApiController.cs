@@ -385,7 +385,10 @@ namespace OdhApiCore.Controllers
             bool getall = false,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
-            string ?language = null, 
+            string ?language = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default
             )
         {
@@ -396,7 +399,7 @@ namespace OdhApiCore.Controllers
                 idtocheck = await GetAccoIdByHgvId(accoid, cancellationToken);
             }    
 
-            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, cancellationToken);
+            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         // ACCO ROOMS
@@ -676,6 +679,9 @@ namespace OdhApiCore.Controllers
             string[] fields,
             string? language,
             bool all,
+            string? searchfilter,
+            string? rawfilter,
+            string? rawsort,
             CancellationToken cancellationToken
             )
         {
@@ -693,13 +699,16 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                         //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE ?", id)
                         .Where("gen_a0rid", "ILIKE", id)
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
                 var dataTransformed =
                    data.Select(
-                       raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                       raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
                    );
 
                 return dataTransformed;
@@ -757,7 +766,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 return dataTransformed;
@@ -798,7 +807,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 return dataTransformed;

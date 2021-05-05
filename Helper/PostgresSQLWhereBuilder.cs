@@ -31,11 +31,20 @@ namespace Helper
                 $"AccoDetail.{lang}.Name"
             ).ToArray();
 
+
+        //Public for use in Controllers directly
         public static string[] TypeDescFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"TypeDesc.{lang}"
+            ).ToArray();
+
+        public static string[] AccoRoomNameFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"AccoRoomDetail.{lang}.Name"
             ).ToArray();
 
 
