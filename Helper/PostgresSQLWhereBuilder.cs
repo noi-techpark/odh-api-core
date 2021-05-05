@@ -31,6 +31,13 @@ namespace Helper
                 $"AccoDetail.{lang}.Name"
             ).ToArray();
 
+        public static string[] TypeDescFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"TypeDesc.{lang}"
+            ).ToArray();
+
 
         //TODO search name example
         //name: {

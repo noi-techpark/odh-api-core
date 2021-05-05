@@ -141,9 +141,16 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
         [HttpGet, Route("ActivityTypes")]
-        public async Task<IActionResult> GetAllActivityTypesListAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllActivityTypesListAsync(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null, 
+            CancellationToken cancellationToken = default)
         {
-            return await GetActivityTypesListAsync(cancellationToken);
+            return await GetActivityTypesListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -277,18 +284,26 @@ namespace OdhApiCore.Controllers
         /// GET Activity Types List
         /// </summary>
         /// <returns>Collection of ActivityTypes Object</returns>
-        private Task<IActionResult> GetActivityTypesListAsync(CancellationToken cancellationToken)
+        private Task<IActionResult> GetActivityTypesListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("activitytypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 

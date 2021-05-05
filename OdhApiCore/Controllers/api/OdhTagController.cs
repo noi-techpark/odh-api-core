@@ -61,8 +61,7 @@ namespace OdhApiCore.Controllers
 
             return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort,
-                    cancellationToken);
-           
+                    cancellationToken);           
         }
 
         /// <summary>

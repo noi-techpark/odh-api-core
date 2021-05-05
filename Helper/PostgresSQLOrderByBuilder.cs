@@ -43,6 +43,14 @@ namespace Helper
                 return query;
         }
 
+        public static Query OrderOnlyByRawSortIfNotNull(this Query query, string? rawsort)
+        {
+            if (!string.IsNullOrEmpty(rawsort))
+                return query.OrderByRaw(RawQueryParser.Transformer.TransformSort(rawsort));
+            else
+                return query;
+        }
+
         public static Query ApplyOrdering(this Query query, ref string? seed, PGGeoSearchResult geosearchresult, string? rawsort, string? overwritestandardorder = null) =>
             (geosearchresult, rawsort) switch
             {
