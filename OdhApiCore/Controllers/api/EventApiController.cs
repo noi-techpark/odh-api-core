@@ -154,7 +154,7 @@ namespace OdhApiCore.Controllers
             string? rawsort = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventTopicListAsync(cancellationToken);
+            return await GetEventTopicListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace OdhApiCore.Controllers
             string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventTopicSingleAsync(id, cancellationToken);
+            return await GetEventTopicSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
 
         #endregion
@@ -291,18 +291,26 @@ namespace OdhApiCore.Controllers
         /// GET Event Topics List
         /// </summary>
         /// <returns>Collection of EventTypes Object</returns>
-        private Task<IActionResult> GetEventTopicListAsync(CancellationToken cancellationToken)
+        private Task<IActionResult> GetEventTopicListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("eventtypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                    data.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
             });
         }
 
@@ -310,7 +318,7 @@ namespace OdhApiCore.Controllers
         /// GET Event Topic Single
         /// </summary>
         /// <returns>EventTypes Object</returns>
-        private Task<IActionResult> GetEventTopicSingleAsync(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetEventTopicSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -322,7 +330,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
