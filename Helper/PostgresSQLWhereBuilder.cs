@@ -56,7 +56,7 @@ namespace Helper
            ).ToArray();
         
 
-        public static string TransformLanguagetoDDStandard(string language) => language switch
+        private static string TransformLanguagetoDDStandard(string language) => language switch
         {
             "de" =>  "deu",
             "it" =>  "ita",
