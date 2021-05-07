@@ -340,6 +340,8 @@ namespace OdhApiCore.Controllers.api
             {
                 if (poi != null)
                 {
+                    //TODO save poilinked object???????
+
                     var query = await QueryFactory.Query("pois").InsertAsync(new JsonBData() { id = poi.Id.ToUpper(), data = new JsonRaw(poi) });
 
                     return Ok(new GenericResult() { Message = "INSERT Poi success:" + poi.Id });
