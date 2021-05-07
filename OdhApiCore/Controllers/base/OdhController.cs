@@ -112,5 +112,7 @@ namespace OdhApiCore.Controllers
                     return this.Ok(result);
             });
         }
+
+        //Provide Methods for POST, PUT, DELETE passing DataType etc...
     }
 }
