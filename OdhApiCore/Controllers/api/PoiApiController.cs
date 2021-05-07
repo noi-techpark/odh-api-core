@@ -1,11 +1,13 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
@@ -324,40 +326,32 @@ namespace OdhApiCore.Controllers.api
 
         #region POST PUT DELETE
 
-        ///// <summary>
-        ///// POST Insert new Poi
-        ///// </summary>
-        ///// <param name="poi">Poi Object</param>
-        ///// <returns>HttpResponseMessage</returns>
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
-        //[HttpPost, Route("Poi")]
-        //public HttpResponseMessage Post([FromBody]GBLTSPoi poi)
-        //{
-        //    try
-        //    {
-        //        if (poi != null)
-        //        {
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
+        /// <summary>
+        /// POST Insert new Poi
+        /// </summary>
+        /// <param name="poi">Poi Object</param>
+        /// <returns>HttpResponseMessage</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
+        [HttpPost, Route("Poi")]
+        public async Task<IActionResult> Post([FromBody] LTSPoi poi)
+        {
+            try
+            {
+                if (poi != null)
+                {
+                    var query = await QueryFactory.Query("pois").InsertAsync(new JsonBData() { id = poi.Id.ToUpper(), data = new JsonRaw(poi) });
 
-        //                conn.Open();
-
-        //                PostgresSQLHelper.InsertDataIntoTable(conn, "pois", JsonConvert.SerializeObject(poi), poi.Id.ToUpper());
-
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResult() { Message = "Insert Poi succeeded, Id:" + poi.Id.ToUpper() }, "application/json");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No Poi Data provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
-        //    }
-        //}
+                    return Ok(new GenericResult() { Message = "INSERT Poi success:" + poi.Id });
+                }
+                else
+                    throw new Exception("no Content");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new GenericResult() { Message = ex.Message });
+            }
+        }
 
         ///// <summary>
         ///// PUT Modify existing Poi
@@ -432,7 +426,7 @@ namespace OdhApiCore.Controllers.api
         //}
 
         #endregion
-      
+
     }
 
 }
