@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -600,7 +601,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <returns>Wine Object</returns>        
-        [ProducesResponseType(typeof(SkiArea), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Wine), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("WineAward/{id}", Name ="SingleWineAward")]
@@ -690,6 +691,526 @@ namespace OdhApiCore.Controllers.api
         #endregion
 
         #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new MetaRegion
+        /// </summary>
+        /// <param name="data">MetaRegion Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("MetaRegion")]
+        public Task<IActionResult> Post([FromBody] MetaRegionLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<MetaRegionLinked>(data, "metaregions");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new Region
+        /// </summary>
+        /// <param name="data">Region Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("Region")]
+        public Task<IActionResult> Post([FromBody] RegionLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<RegionLinked>(data, "regions");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new ExperienceArea
+        /// </summary>
+        /// <param name="data">ExperienceArea Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("ExperienceArea")]
+        public Task<IActionResult> Post([FromBody] ExperienceAreaLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new TourismAssociation
+        /// </summary>
+        /// <param name="data">TourismAssociation Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("TourismAssociation")]
+        public Task<IActionResult> Post([FromBody] TourismvereinLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<TourismvereinLinked>(data, "tvs");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new Municipality
+        /// </summary>
+        /// <param name="data">Municipality Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("Municipality")]
+        public Task<IActionResult> Post([FromBody] MunicipalityLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<MunicipalityLinked>(data, "municipalities");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new District
+        /// </summary>
+        /// <param name="data">District Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("District")]
+        public Task<IActionResult> Post([FromBody] DistrictLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<DistrictLinked>(data, "districts");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new Area
+        /// </summary>
+        /// <param name="data">Area Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("Area")]
+        public Task<IActionResult> Post([FromBody] AreaLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<AreaLinked>(data, "areas");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new SkiRegion
+        /// </summary>
+        /// <param name="data">SkiRegion Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("SkiRegion")]
+        public Task<IActionResult> Post([FromBody] SkiRegionLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<SkiRegionLinked>(data, "skiregions");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new SkiArea
+        /// </summary>
+        /// <param name="data">SkiArea Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("SkiArea")]
+        public Task<IActionResult> Post([FromBody] SkiAreaLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<SkiAreaLinked>(data, "skiareas");
+            });
+        }
+
+        /// <summary>
+        /// POST Insert new Wine
+        /// </summary>
+        /// <param name="data">Wine Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
+        [HttpPost, Route("WineAward")]
+        public Task<IActionResult> Post([FromBody] Wine data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
+                return await UpsertData<Wine>(data, "wines");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing MetaRegion
+        /// </summary>
+        /// <param name="id">MetaRegion Id</param>
+        /// <param name="data">MetaRegion Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("MetaRegion/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] MetaRegionLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<MetaRegionLinked>(data, "metaregions");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Region
+        /// </summary>
+        /// <param name="id">Region Id</param>
+        /// <param name="data">Region Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("Region/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] RegionLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<RegionLinked>(data, "regions");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing ExperienceArea
+        /// </summary>
+        /// <param name="id">ExperienceArea Id</param>
+        /// <param name="data">ExperienceArea Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("ExperienceArea/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] ExperienceAreaLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing TourismAssociation
+        /// </summary>
+        /// <param name="id">TourismAssociation Id</param>
+        /// <param name="data">TourismAssociation Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("TourismAssociation/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] TourismvereinLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<TourismvereinLinked>(data, "tvs");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Municipality
+        /// </summary>
+        /// <param name="id">Municipality Id</param>
+        /// <param name="data">Municipality Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("Municipality/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] MunicipalityLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<MunicipalityLinked>(data, "municipalities");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing District
+        /// </summary>
+        /// <param name="id">District Id</param>
+        /// <param name="data">District Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("District/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] DistrictLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<DistrictLinked>(data, "districts");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Area
+        /// </summary>
+        /// <param name="id">Area Id</param>
+        /// <param name="data">Area Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("Area/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] AreaLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<AreaLinked>(data, "areas");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing SkiRegion
+        /// </summary>
+        /// <param name="id">SkiRegion Id</param>
+        /// <param name="data">SkiRegion Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("SkiRegion/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] SkiRegionLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<SkiRegionLinked>(data, "skiregions");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing SkiArea
+        /// </summary>
+        /// <param name="id">SkiArea Id</param>
+        /// <param name="data">SkiArea Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("SkiArea/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] SkiAreaLinked data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<SkiAreaLinked>(data, "skiareas");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing WineAward
+        /// </summary>
+        /// <param name="id">WineAward Id</param>
+        /// <param name="data">WineAward Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
+        [HttpPut, Route("WineAward/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] Wine data)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                data.Id = id.ToUpper();
+                return await UpsertData<Wine>(data, "wines");
+            });
+        }
+
+        /// <summary>
+        /// DELETE MetaRegion by Id
+        /// </summary>
+        /// <param name="id">MetaRegion Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("MetaRegion/{id}")]
+        public Task<IActionResult> DeleteMetaRegion(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "metaregions");
+            });
+        }
+
+        /// <summary>
+        /// DELETE Region by Id
+        /// </summary>
+        /// <param name="id">Region Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("Region/{id}")]
+        public Task<IActionResult> DeleteRegion(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "regions");
+            });
+        }
+
+        /// <summary>
+        /// DELETE ExperienceArea by Id
+        /// </summary>
+        /// <param name="id">ExperienceArea Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("ExperienceArea/{id}")]
+        public Task<IActionResult> DeleteExperienceArea(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "experienceareas");
+            });
+        }
+
+        /// <summary>
+        /// DELETE TourismAssociation by Id
+        /// </summary>
+        /// <param name="id">TourismAssociation Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("TourismAssociation/{id}")]
+        public Task<IActionResult> DeleteTourismAssociation(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "tvs");
+            });
+        }
+
+        /// <summary>
+        /// DELETE Municipality by Id
+        /// </summary>
+        /// <param name="id">Municipality Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("Municipality/{id}")]
+        public Task<IActionResult> DeleteMunicipality(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "municipalities");
+            });
+        }
+
+        /// <summary>
+        /// DELETE District by Id
+        /// </summary>
+        /// <param name="id">District Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("District/{id}")]
+        public Task<IActionResult> DeleteDistrict(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "districts");
+            });
+        }
+
+        /// <summary>
+        /// DELETE Area by Id
+        /// </summary>
+        /// <param name="id">Area Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("Area/{id}")]
+        public Task<IActionResult> DeleteArea(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "areas");
+            });
+        }
+
+        /// <summary>
+        /// DELETE SkiRegion by Id
+        /// </summary>
+        /// <param name="id">SkiRegion Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("SkiRegion/{id}")]
+        public Task<IActionResult> DeleteSkiRegion(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "skiregions");
+            });
+        }
+
+        /// <summary>
+        /// DELETE SkiArea by Id
+        /// </summary>
+        /// <param name="id">SkiArea Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("SkiArea/{id}")]
+        public Task<IActionResult> DeleteSkiArea(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "skiareas");
+            });
+        }
+
+        /// <summary>
+        /// DELETE WineAward by Id
+        /// </summary>
+        /// <param name="id">WineAward Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete")]
+        [HttpDelete, Route("WineAward/{id}")]
+        public Task<IActionResult> DeleteWineAward(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "wines");
+            });
+        }
 
         #endregion
     }

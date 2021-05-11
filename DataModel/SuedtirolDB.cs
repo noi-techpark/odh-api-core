@@ -1952,7 +1952,7 @@ namespace DataModel
     /// </summary>
     #region CommonInfos
 
-    public class Wine
+    public class Wine : IIdentifiable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2481,7 +2481,7 @@ namespace DataModel
         public double Longitude { get; set; }
     }
 
-    public class Webcam : IWebcam, IIdentifiable
+    public class Webcam : IWebcam
     {
         public Webcam()
         {
@@ -2515,7 +2515,7 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
     }
 
-    public class WebcamInfo : Webcam
+    public class WebcamInfo : Webcam, IIdentifiable
     {
         public LicenseInfo LicenseInfo { get; set; }
 

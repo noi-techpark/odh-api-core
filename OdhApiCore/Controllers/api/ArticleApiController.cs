@@ -154,7 +154,7 @@ namespace OdhApiCore.Controllers.api
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             return await GetArticleTypeSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
