@@ -271,7 +271,7 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
-        #region CUSTOM METHODS
+        #region CATEGORIES
 
         /// <summary>
         /// GET Poi Types List

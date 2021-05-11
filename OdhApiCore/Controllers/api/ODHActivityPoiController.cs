@@ -251,7 +251,7 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
-        #region CUSTOM METODS
+        #region CATEGORIES
 
         private Task<IActionResult> GetSmgPoiTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
@@ -294,6 +294,10 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
+
+        #endregion
+
+        #region POST PUT DELETE
 
         #endregion
     }

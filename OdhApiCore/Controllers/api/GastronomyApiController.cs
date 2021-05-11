@@ -239,7 +239,7 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
-        #region CUSTOM METHODS
+        #region CATEGORIES
 
         /// <summary>
         /// GET Gastronomy Types List
@@ -288,6 +288,10 @@ namespace OdhApiCore.Controllers
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
+
+        #endregion
+
+        #region POST PUT DELETE
 
         #endregion
     }
