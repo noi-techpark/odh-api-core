@@ -118,7 +118,7 @@ namespace OdhApiCore.Controllers
 
         //Provide Methods for POST, PUT, DELETE passing DataType etc...
 
-        protected async Task<IActionResult> Upsert<T>(T data, string table) where T : IIdentifiable
+        protected async Task<IActionResult> UpsertData<T>(T data, string table) where T : IIdentifiable
         {
             if (data == null)
                 throw new Exception("No data");
@@ -129,14 +129,46 @@ namespace OdhApiCore.Controllers
                       .Select("data")
                       .Where("id", data.Id);
 
-            if(query == null)
+            string operation = "";
+
+            if (query == null)
+            {
                 await QueryFactory.Query(table)
-                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                   .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                operation = "INSERT";
+            }
             else
+            {
                 await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                operation = "UPDATE";
+            }
+                        
+            return Ok(new GenericResult() { Message = String.Format("{0} success: {1}", operation, data.Id) });
+        }
 
-            return Ok(new GenericResult() { Message = "INSERT success:" + data.Id });
+        protected async Task<IActionResult> DeleteData(string id, string table)
+        {
+            if (String.IsNullOrEmpty(id))
+                throw new Exception("No data");
+
+            //Check if data exists
+            var query =
+                  QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", id);
+            
+            if (query == null)
+            {
+                throw new Exception("No data");
+            }
+            else
+            {
+                await QueryFactory.Query(table).Where("id", id)
+                        .DeleteAsync();                
+            }
+
+            return Ok(new GenericResult() { Message = String.Format("DELETE success: {1}", id) });
         }
     }
 }

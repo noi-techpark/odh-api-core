@@ -326,14 +326,14 @@ namespace OdhApiCore.Controllers.api
 
         #region POST PUT DELETE
 
-        
+
 
 
         /// <summary>
         /// POST Insert new Poi
         /// </summary>
         /// <param name="poi">Poi Object</param>
-        /// <returns>HttpResponseMessage</returns>
+        /// <returns>IActionResult</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
         [HttpPost, Route("Poi")]
@@ -342,7 +342,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 poi.Id = !String.IsNullOrEmpty(poi.Id) ? poi.Id.ToUpper() : "noId";
-                return await Upsert<LTSPoiLinked>(poi, "pois");
+                return await UpsertData<LTSPoiLinked>(poi, "pois");
             });
         }
 
@@ -351,7 +351,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">Poi Id</param>
         /// <param name="poi">Poi Object</param>
-        /// <returns>HttpResponseMessage</returns>
+        /// <returns>IActionResult</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
         [HttpPut, Route("Poi/{id}")]
@@ -360,45 +360,26 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 poi.Id = id.ToUpper();
-                return await Upsert<LTSPoiLinked>(poi, "pois");
+                return await UpsertData<LTSPoiLinked>(poi, "pois");
             });
         }
 
-        ///// <summary>
-        ///// DELETE Poi by Id
-        ///// </summary>
-        ///// <param name="id">Poi Id</param>
-        ///// <returns>HttpResponseMessage</returns>
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
-        //[HttpDelete, Route("Poi/{id}")]
-        //public HttpResponseMessage Delete(string id)
-        //{
-        //    try
-        //    {
-        //        if (id != null)
-        //        {
-
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-
-        //                conn.Open();
-
-        //                PostgresSQLHelper.DeleteDataFromTable(conn, "pois", id.ToUpper());
-
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResult() { Message = "DELETE Poi succeeded, Id:" + id.ToUpper() }, "application/json");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No Poi Id provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
-        //    }
-        //}
+        /// <summary>
+        /// DELETE Poi by Id
+        /// </summary>
+        /// <param name="id">Poi Id</param>
+        /// <returns>IActionResult</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
+        [HttpDelete, Route("Poi/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "pois");
+            });
+        }
 
         #endregion
 
