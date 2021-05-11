@@ -1,6 +1,7 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -125,9 +126,16 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ArticleTypes")]
-        public async Task<IActionResult> GetAllArticleTypesList(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllArticleTypesList(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            CancellationToken cancellationToken = default)
         {
-            return await GetArticleTypesList(cancellationToken);
+            return await GetArticleTypesList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         /// <summary>
@@ -141,11 +149,15 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ArticleTypes/{id}", Name = "SingleArticleTypes")]
-        public async Task<IActionResult> GetAllArticlesTypeTypesSingle(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllArticlesTypeTypesSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken)
         {
-            return await GetArticleTypeSingle(id, cancellationToken);
+            return await GetArticleTypeSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
         }
-
 
         #endregion
 
@@ -221,24 +233,32 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
-        #region CUSTOM METODS
+        #region CATEGORIES
 
-        private Task<IActionResult> GetArticleTypesList(CancellationToken cancellationToken)
+        private Task<IActionResult> GetArticleTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("articletypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return data;
+                var dataTransformed =
+                      data.Select(
+                          raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                      );
+
+                return dataTransformed;
             });
         }
 
-        private Task<IActionResult> GetArticleTypeSingle(string id, CancellationToken cancellationToken)
+        private Task<IActionResult> GetArticleTypeSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -247,12 +267,68 @@ namespace OdhApiCore.Controllers.api
                         .Select("data")
                         //.WhereJsonb("Key", "ilike", id)
                         .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                //.Where("Key", "ILIKE", id);
+                        .When(FilterClosedData, q => q.FilterClosedData());                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data;
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+            });
+        }
+
+
+        #endregion
+
+        #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new Article
+        /// </summary>
+        /// <param name="article">Article Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
+        [HttpPost, Route("Article")]
+        public Task<IActionResult> Post([FromBody] ArticlesLinked article)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                article.Id = !String.IsNullOrEmpty(article.Id) ? article.Id.ToUpper() : "noId";
+                return await UpsertData<ArticlesLinked>(article, "articles");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Article
+        /// </summary>
+        /// <param name="id">Article Id</param>
+        /// <param name="article">Article Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify")]
+        [HttpPut, Route("Article/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] ArticlesLinked article)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                article.Id = id.ToUpper();
+                return await UpsertData<ArticlesLinked>(article, "articles");
+            });
+        }
+
+        /// <summary>
+        /// DELETE Article by Id
+        /// </summary>
+        /// <param name="id">Article Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,ArticleManager,ArticleDelete")]
+        [HttpDelete, Route("Article/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "articles");
             });
         }
 

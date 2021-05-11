@@ -284,7 +284,7 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
-        #region CUSTOM METHODS
+        #region CATEGORIES
 
         /// <summary>
         /// GET Activity Types List
@@ -325,7 +325,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("activitytypes")
                         .Select("data")
                          //.WhereJsonb("Key", "ilike", id)
-                         .Where("id", id.ToLower())
+                        .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
