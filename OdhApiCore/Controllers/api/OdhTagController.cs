@@ -1,6 +1,7 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -128,14 +129,6 @@ namespace OdhApiCore.Controllers
             });
         }      
 
-        /// <summary>
-        /// GET Single SMGTag by ID
-        /// </summary>
-        /// <param name="id">ID of the SMGTag</param>
-        /// <returns>SMGTag Object</returns>
-        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        //[HttpGet, Route("Single/{id}")]
-        //[ApiExplorerSettings(IgnoreApi = true)]
         private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -153,6 +146,59 @@ namespace OdhApiCore.Controllers
         #endregion
 
         #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new ODHTag
+        /// </summary>
+        /// <param name="odhtag">ODHTag Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
+        [HttpPost, Route("ODHTag")]
+        public Task<IActionResult> Post([FromBody] SmgTags odhtag)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                odhtag.Id = !String.IsNullOrEmpty(odhtag.Id) ? odhtag.Id.ToUpper() : "noId";
+                return await UpsertData<SmgTags>(odhtag, "smgtags");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing ODHTag
+        /// </summary>
+        /// <param name="id">ODHTag Id</param>
+        /// <param name="odhtag">ODHTag Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify")]
+        [HttpPut, Route("ODHTag/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] SmgTags odhtag)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                odhtag.Id = id.ToUpper();
+                return await UpsertData<SmgTags>(odhtag, "smgtags");
+            });
+        }
+
+        /// <summary>
+        /// DELETE ODHTag by Id
+        /// </summary>
+        /// <param name="id">ODHTag Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,ODHTagManager,ODHTagDelete")]
+        [HttpDelete, Route("ODHTag/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "smgtags");
+            });
+        }
+
 
         #endregion
     }
