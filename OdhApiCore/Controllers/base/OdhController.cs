@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -96,6 +97,8 @@ namespace OdhApiCore.Controllers
             {
                 if (ex.Message == "Request Error")
                     return this.BadRequest(new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
+                else if (ex.Message == "No data")
+                    return this.StatusCode(StatusCodes.Status404NotFound, new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
                 else
                     return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
             }
@@ -114,5 +117,26 @@ namespace OdhApiCore.Controllers
         }
 
         //Provide Methods for POST, PUT, DELETE passing DataType etc...
+
+        protected async Task<IActionResult> Upsert<T>(T data, string table) where T : IIdentifiable
+        {
+            if (data == null)
+                throw new Exception("No data");
+
+            //Check if data exists
+            var query =
+                  QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", data.Id);
+
+            if(query == null)
+                await QueryFactory.Query(table)
+                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+            else
+                await QueryFactory.Query(table).Where("id", data.Id)
+                        .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+
+            return Ok(new GenericResult() { Message = "INSERT success:" + data.Id });
+        }
     }
 }

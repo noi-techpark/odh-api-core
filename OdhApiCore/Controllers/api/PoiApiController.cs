@@ -326,6 +326,9 @@ namespace OdhApiCore.Controllers.api
 
         #region POST PUT DELETE
 
+        
+
+
         /// <summary>
         /// POST Insert new Poi
         /// </summary>
@@ -334,61 +337,32 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
         [HttpPost, Route("Poi")]
-        public async Task<IActionResult> Post([FromBody] LTSPoi poi)
+        public Task<IActionResult> Post([FromBody] LTSPoiLinked poi)
         {
-            try
+            return DoAsyncReturn(async () =>
             {
-                if (poi != null)
-                {
-                    //TODO save poilinked object???????
-                    var query = await QueryFactory.Query("pois").InsertAsync(new JsonBData() { id = poi.Id.ToUpper(), data = new JsonRaw(poi) });
-
-                    return Ok(new GenericResult() { Message = "INSERT Poi success:" + poi.Id });
-                }
-                else
-                    throw new Exception("no Content");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GenericResult() { Message = ex.Message });
-            }
+                poi.Id = !String.IsNullOrEmpty(poi.Id) ? poi.Id.ToUpper() : "noId";
+                return await Upsert<LTSPoiLinked>(poi, "pois");
+            });
         }
 
-        ///// <summary>
-        ///// PUT Modify existing Poi
-        ///// </summary>
-        ///// <param name="id">Poi Id</param>
-        ///// <param name="poi">Poi Object</param>
-        ///// <returns>HttpResponseMessage</returns>
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
-        //[HttpPut, Route("Poi/{id}")]
-        //public HttpResponseMessage Put(string id, [FromBody]GBLTSPoi poi)
-        //{
-        //    try
-        //    {
-        //        if (poi != null && id != null)
-        //        {
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-
-        //                conn.Open();
-
-        //                PostgresSQLHelper.UpdateDataFromTable(conn, "pois", JsonConvert.SerializeObject(poi), poi.Id.ToUpper());
-
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResult() { Message = "UPDATE Poi succeeded, Id:" + poi.Id.ToUpper() }, "application/json");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No Poi Data provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
-        //    }
-        //}
+        /// <summary>
+        /// PUT Modify existing Poi
+        /// </summary>
+        /// <param name="id">Poi Id</param>
+        /// <param name="poi">Poi Object</param>
+        /// <returns>HttpResponseMessage</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
+        [HttpPut, Route("Poi/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] LTSPoiLinked poi)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                poi.Id = id.ToUpper();
+                return await Upsert<LTSPoiLinked>(poi, "pois");
+            });
+        }
 
         ///// <summary>
         ///// DELETE Poi by Id
