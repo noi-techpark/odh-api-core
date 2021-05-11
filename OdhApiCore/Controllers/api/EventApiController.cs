@@ -1,6 +1,7 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -116,8 +117,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Event Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
-        /// <response code="500">Internal Server Error</response>
-        /// //[Authorize(Roles = "DataReader,ActivityReader")]
+        /// <response code="500">Internal Server Error</response>        
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -142,8 +142,7 @@ namespace OdhApiCore.Controllers
         //[CacheOutputUntilToday(23, 59)]
         [ProducesResponseType(typeof(IEnumerable<EventTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         [HttpGet, Route("EventTopics")]
         public async Task<IActionResult> GetAllEventTopicListAsync(
             string? language,
@@ -167,8 +166,7 @@ namespace OdhApiCore.Controllers
         //[CacheOutputUntilToday(23, 59)]
         [ProducesResponseType(typeof(EventTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,ActivityReader")]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         [HttpGet, Route("EventTopics/{id}", Name = "SingleEventTopics")]
         public async Task<IActionResult> GetAllEventTopicSingleAsync(
             string id,
@@ -337,6 +335,59 @@ namespace OdhApiCore.Controllers
         #endregion
 
         #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new Event
+        /// </summary>
+        /// <param name="odhevent">Event Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
+        [HttpPost, Route("Event")]
+        public Task<IActionResult> Post([FromBody] EventLinked odhevent)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                odhevent.Id = !String.IsNullOrEmpty(odhevent.Id) ? odhevent.Id.ToUpper() : "noId";
+                return await UpsertData<EventLinked>(odhevent, "events");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Event
+        /// </summary>
+        /// <param name="id">Event Id</param>
+        /// <param name="odhevent">Event Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify")]
+        [HttpPut, Route("Event/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] EventLinked odhevent)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                odhevent.Id = id.ToUpper();
+                return await UpsertData<EventLinked>(odhevent, "events");
+            });
+        }
+
+        /// <summary>
+        /// DELETE Event by Id
+        /// </summary>
+        /// <param name="id">Event Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
+        [HttpDelete, Route("Event/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "events");
+            });
+        }
+
 
         #endregion
     }
