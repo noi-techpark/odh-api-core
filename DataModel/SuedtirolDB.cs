@@ -2481,7 +2481,7 @@ namespace DataModel
         public double Longitude { get; set; }
     }
 
-    public class Webcam : IWebcam
+    public class Webcam : IWebcam, IIdentifiable
     {
         public Webcam()
         {
