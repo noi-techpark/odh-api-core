@@ -326,14 +326,11 @@ namespace OdhApiCore.Controllers.api
 
         #region POST PUT DELETE
 
-
-
-
         /// <summary>
         /// POST Insert new Poi
         /// </summary>
         /// <param name="poi">Poi Object</param>
-        /// <returns>IActionResult</returns>
+        /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
         [HttpPost, Route("Poi")]
@@ -351,7 +348,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">Poi Id</param>
         /// <param name="poi">Poi Object</param>
-        /// <returns>IActionResult</returns>
+        /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
         [HttpPut, Route("Poi/{id}")]
@@ -368,7 +365,7 @@ namespace OdhApiCore.Controllers.api
         /// DELETE Poi by Id
         /// </summary>
         /// <param name="id">Poi Id</param>
-        /// <returns>IActionResult</returns>
+        /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
         [HttpDelete, Route("Poi/{id}")]
