@@ -1,6 +1,7 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -38,7 +39,7 @@ namespace OdhApiCore.Controllers
         /// <param name="pagenumber">Pagenumber, (default:1)</param>
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="idlist">IDFilter (Separator ',' List of Activity IDs), (default:'null')</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of Gastronomy IDs), (default:'null')</param>
         /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
         /// <param name="dishcodefilter">Dish Code Filter (BITMASK values: 1 = (Speisen), 2 = (Vorspeise), 4 = (Hauptspeise), 8 = (Nachspeise), 16 = (Tagesgericht), 32 = (Menü), 64 = (Degustationsmenü), 128 = (Kindermenüs), 256 = (Mittagsmenüs)</param>
         /// <param name="ceremonycodefilter">Ceremony Code Filter (BITMASK  values: 1 = (Familienfeiern), 2 = (Hochzeiten), 4 = (Geburtstagsfeiern), 8 = (Firmenessen), 16 = (Weihnachtsessen), 32 = (Sylvestermenü), 64 = (Seminare / Tagungen), 128 = (Versammlungen)</param>
@@ -109,7 +110,7 @@ namespace OdhApiCore.Controllers
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <returns>Gastronomy Object</returns>
-        [ProducesResponseType(typeof(GBLTSActivity), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Gastronomy), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Gastronomy/{id}", Name = "SingleGastronomy")]
@@ -292,6 +293,59 @@ namespace OdhApiCore.Controllers
         #endregion
 
         #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new Gastronomy
+        /// </summary>
+        /// <param name="gastronomy">Gastronomy Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,GastronomyManager,GastronomyCreate")]
+        [HttpPost, Route("Gastronomy")]
+        public Task<IActionResult> Post([FromBody] GastronomyLinked gastronomy)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                gastronomy.Id = !String.IsNullOrEmpty(gastronomy.Id) ? gastronomy.Id.ToUpper() : "noId";
+                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Gastronomy
+        /// </summary>
+        /// <param name="id">Gastronomy Id</param>
+        /// <param name="gastronomy">Gastronomy Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,GastronomyManager,GastronomyModify")]
+        [HttpPut, Route("Gastronomy/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] GastronomyLinked gastronomy)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                gastronomy.Id = id.ToUpper();
+                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies");
+            });
+        }
+
+        /// <summary>
+        /// DELETE Gastronomy by Id
+        /// </summary>
+        /// <param name="id">Gastronomy Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,GastronomyManager,GastronomyDelete")]
+        [HttpDelete, Route("Gastronomy/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "gastronomies");
+            });
+        }
+
 
         #endregion
     }
