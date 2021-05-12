@@ -14,7 +14,7 @@ namespace RAVEN
             return pgmodelgenerator(myobject);
         }
 
-        public static AccommodationLinked GetAccommodationPGObject(Accommodation data)
+        public static AccommodationLinked GetAccommodationPGObject(AccommodationLinked data)
         {
             data.Id = data.Id.ToUpper();
 
@@ -31,7 +31,7 @@ namespace RAVEN
                 detail.Value.Longdesc = longdesc;
             }
 
-            return (AccommodationLinked)data;
+            return data;
         }
     }
 }

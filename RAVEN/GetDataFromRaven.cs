@@ -20,7 +20,7 @@ namespace RAVEN
 
                 using (var handler = new HttpClientHandler { Credentials = wrCache })
                 {
-                    using (var client = new HttpClient())
+                    using (var client = new HttpClient(handler))
                     {
 
                         client.Timeout = TimeSpan.FromSeconds(20);

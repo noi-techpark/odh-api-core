@@ -20,19 +20,22 @@ using NINJA;
 using NINJA.Parser;
 using System.Net.Http;
 using RAVEN;
+using Microsoft.Extensions.Hosting;
 
 namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]    
     [ApiController]
     public class UpdateApiController : OdhController
-    {        
+    {
         private readonly ISettings settings;
+        private readonly IWebHostEnvironment env;
 
         public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<AlpineBitsController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
-            this.settings = settings;            
+            this.env = env;
+            this.settings = settings;
         }
 
         #region EBMS exposed
@@ -62,6 +65,7 @@ namespace OdhApiCore.Controllers.api
             return Ok(new
             {
                 operation = "Update EBMS",
+                id = id,
                 updatetype = "single",
                 message = "EBMS Eventshorts update succeeded",
                 recordsupdated = 1,
@@ -97,11 +101,29 @@ namespace OdhApiCore.Controllers.api
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
         public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
-        {
-            var mydata = await GetDataFromRaven.GetRavenData<Accommodation>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password);
-            var mypgdata = TransformToPGObject.GetPGObject<Accommodation, AccommodationLinked>(mydata, TransformToPGObject.GetAccommodationPGObject);
+        {            
+            var mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password);
+            
+            if(mydata != null)
+            {
+                var mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>(mydata, TransformToPGObject.GetAccommodationPGObject);
 
-            return null;
+                //TODO SAVE TO PG
+
+                return Ok(new
+                {
+                    operation = "Update " + datatype,
+                    id = id,
+                    updatetype = "single",
+                    message = "Data update succeeded",
+                    recordsupdated = 1,
+                    success = true
+                });
+            }
+            else
+            {
+                return BadRequest(new { error = "error on getting data" });
+            }
         }
 
         #endregion
