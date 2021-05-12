@@ -3,13 +3,14 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RAVEN
 {
     public class GetDataFromRaven
     {        
-        public static async Task<T> GetRavenData<T>(string type, string id, string odhravenserviceurl, string username, string password)
+        public static async Task<T> GetRavenData<T>(string type, string id, string odhravenserviceurl, string username, string password, CancellationToken cancellationToken)
         {
             try
             {
@@ -22,7 +23,6 @@ namespace RAVEN
                 {
                     using (var client = new HttpClient(handler))
                     {
-
                         client.Timeout = TimeSpan.FromSeconds(20);
 
                         var myresponse = await client.GetAsync(requesturl);

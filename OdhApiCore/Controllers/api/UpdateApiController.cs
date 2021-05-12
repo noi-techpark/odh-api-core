@@ -101,30 +101,9 @@ namespace OdhApiCore.Controllers.api
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
         public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
-        {            
-            var mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password);
-            
-            if(mydata != null)
-            {
-                var mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>(mydata, TransformToPGObject.GetAccommodationPGObject);
-
-                //TODO SAVE TO PG
-
-                return Ok(new
-                {
-                    operation = "Update " + datatype,
-                    id = id,
-                    updatetype = "single",
-                    message = "Data update succeeded",
-                    recordsupdated = 1,
-                    success = true
-                });
-            }
-            else
-            {
-                return BadRequest(new { error = "error on getting data" });
-            }
-        }
+        {
+            return await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+        }        
 
         #endregion
 
@@ -542,7 +521,48 @@ namespace OdhApiCore.Controllers.api
 
         #region ODHRAVEN Helpers
 
+        private async Task<IActionResult> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
+        {
+            var mytype = TypeDiscriminator(id, datatype);
 
+            var mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+
+            if (mydata != null)
+            {
+                var mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>(mydata, TransformToPGObject.GetAccommodationPGObject);
+
+                //TODO SAVE TO PG
+
+                return Ok(new
+                {
+                    operation = "Update " + datatype,
+                    id = id,
+                    updatetype = "single",
+                    message = "Data update succeeded",
+                    recordsupdated = 1,
+                    success = true
+                });
+            }
+            else
+            {
+                return BadRequest(new { error = "error on getting data" });
+            }
+        }
+
+        private Type TypeDiscriminator(string id, string type)
+        {
+            switch(type)
+            {
+                case "Accommodation":
+                    return typeof(AccommodationLinked);
+                //case "Gastronomy":
+                //    return (typeof(GastronomyLinked), );
+                //case "ODHActivityPoi":
+                //    return typeof(SmgPoiLinked);
+                default:
+                    return null;
+            }
+        }
 
         #endregion
 
