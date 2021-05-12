@@ -92,6 +92,16 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
+        #region ODH RAVEN exposed
+
+        [HttpGet, Route("Raven/{datatype}/Update/{id}")]
+        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
+        {
+            return null;
+        }
+
+        #endregion
+
         #region EBMS Helpers
 
         private async Task<string> ImportEbmsEventsToDB()
@@ -501,6 +511,10 @@ namespace OdhApiCore.Controllers.api
                 return null;
             }
         }
+
+        #endregion
+
+        #region ODHRAVEN Helpers
 
 
 
