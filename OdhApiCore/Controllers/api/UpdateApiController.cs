@@ -98,7 +98,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
         public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
         {
-            var mydata = await GetDataFromRaven.GetRavenData<Accommodation>("Accommodation", "ID", settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password);
+            var mydata = await GetDataFromRaven.GetRavenData<Accommodation>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password);
             var mypgdata = TransformToPGObject.GetPGObject<Accommodation, AccommodationLinked>(mydata, TransformToPGObject.GetAccommodationPGObject);
 
             return null;
