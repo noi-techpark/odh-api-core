@@ -92,6 +92,20 @@ namespace OdhApiCore
         public string Password { get; private set; }
     }
 
+    public class RavenConfig
+    {
+        public RavenConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -102,6 +116,7 @@ namespace OdhApiCore
         JsonConfig JsonConfig { get; }
         S3ImageresizerConfig S3ImageresizerConfig { get; }
         EBMSConfig EbmsConfig { get; }
+        RavenConfig RavenConfig { get; }
     }
 
     public class Settings : ISettings
@@ -115,6 +130,7 @@ namespace OdhApiCore
         private readonly JsonConfig jsonConfig;
         private readonly S3ImageresizerConfig s3imageresizerConfig;
         private readonly EBMSConfig ebmsConfig;
+        private readonly RavenConfig ravenConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -135,6 +151,8 @@ namespace OdhApiCore
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
             var ebms = this.configuration.GetSection("EBMSConfig");
             this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
+            var raven = this.configuration.GetSection("RavenConfig");
+            this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -146,5 +164,6 @@ namespace OdhApiCore
         public JsonConfig JsonConfig => this.jsonConfig;
         public EBMSConfig EbmsConfig => this.ebmsConfig;
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
+        public RavenConfig RavenConfig => this.ravenConfig;
     }
 }

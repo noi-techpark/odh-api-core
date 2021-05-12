@@ -19,6 +19,7 @@ using EBMS;
 using NINJA;
 using NINJA.Parser;
 using System.Net.Http;
+using RAVEN;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -97,6 +98,8 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
         public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
         {
+            GetDataFromRaven.GetRavenData()
+
             return null;
         }
 
