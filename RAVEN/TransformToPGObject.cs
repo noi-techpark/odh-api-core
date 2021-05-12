@@ -99,6 +99,140 @@ namespace RAVEN
             return data;
         }
 
+        public static AccommodationRoomLinked GetAccommodationRoomPGObject(AccommodationRoomLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static LTSActivityLinked GetActivityPGObject(LTSActivityLinked data)
+        {
+           
+
+            return data;
+        }
+
+        public static LTSPoiLinked GetPoiPGObject(LTSPoiLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static ArticlesLinked GetArticlePGObject(ArticlesLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static EventLinked GetEventPGObject(EventLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static GastronomyLinked GetGastronomyPGObject(GastronomyLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static WebcamInfoLinked GetWebcamInfoPGObject(WebcamInfoLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static MeasuringpointLinked GetMeasuringpointPGObject(MeasuringpointLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static DDVenue GetVenuePGObject(DDVenue data)
+        {
+
+
+            return data;
+        }
+
+        public static MetaRegionLinked GetMetaRegionPGObject(MetaRegionLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static RegionLinked GetRegionPGObject(RegionLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static TourismvereinLinked GetTourismAssociationPGObject(TourismvereinLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static MunicipalityLinked GetMunicipalityPGObject(MunicipalityLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static DistrictLinked GetDistrictPGObject(DistrictLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static ExperienceAreaLinked GetExperienceAreaPGObject(ExperienceAreaLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static AreaLinked GetAreaPGObject(AreaLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static SkiAreaLinked GetSkiAreaPGObject(SkiAreaLinked data)
+        {
+
+
+            return data;
+        }
+
+        public static SkiRegion GetSkiRegionPGObject(SkiRegion data)
+        {
+
+
+            return data;
+        }
+
+        public static Wine GetWinePGObject(Wine data)
+        {
+
+
+            return data;
+        }
+
+
         public static Metadata GetMetadata(string id, string type, string source, Nullable<DateTime> lastupdated = null)
         {
             return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source };
