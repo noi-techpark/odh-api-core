@@ -255,7 +255,7 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
-        #region CUSTOM METHODS
+        #region CATEGORIES
 
         private Task<IActionResult> GetVenueTypesListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
@@ -301,6 +301,10 @@ namespace OdhApiCore.Controllers
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
+
+        #endregion
+
+        #region POST PUT DELETE
 
         #endregion
     }

@@ -1,6 +1,7 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -748,7 +749,7 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
-        #region TYPE AND FEATURE LISTs
+        #region CATEGORIES
 
         private Task<IActionResult> GetAccoTypeList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
@@ -830,6 +831,63 @@ namespace OdhApiCore.Controllers
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
+
+        #endregion
+
+        #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new Accommodation
+        /// </summary>
+        /// <param name="accommodation">Accommodation Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationManager,AccommodationCreate")]
+        [HttpPost, Route("Accommodation")]
+        public Task<IActionResult> Post([FromBody] AccommodationLinked accommodation)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                accommodation.Id = !String.IsNullOrEmpty(accommodation.Id) ? accommodation.Id.ToUpper() : "noId";
+                return await UpsertData<AccommodationLinked>(accommodation, "accommodations");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Accommodation
+        /// </summary>
+        /// <param name="id">Accommodation Id</param>
+        /// <param name="accommodation">Accommodation Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationManager,AccommodationModify")]
+        [HttpPut, Route("Accommodation/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] AccommodationLinked accommodation)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                accommodation.Id = id.ToUpper();
+                return await UpsertData<AccommodationLinked>(accommodation, "accommodations");
+            });
+        }
+
+        /// <summary>
+        /// DELETE Accommodation by Id
+        /// </summary>
+        /// <param name="id">Accommodation Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,AccoManager,AccoDelete,AccommodationManager,AccommodationDelete")]
+        [HttpDelete, Route("Accommodation/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "accommodations");
+            });
+        }
+
 
         #endregion
 

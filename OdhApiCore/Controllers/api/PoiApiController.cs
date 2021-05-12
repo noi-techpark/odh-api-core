@@ -1,11 +1,13 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
@@ -269,7 +271,7 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
-        #region CUSTOM METHODS
+        #region CATEGORIES
 
         /// <summary>
         /// GET Poi Types List
@@ -324,115 +326,60 @@ namespace OdhApiCore.Controllers.api
 
         #region POST PUT DELETE
 
-        ///// <summary>
-        ///// POST Insert new Poi
-        ///// </summary>
-        ///// <param name="poi">Poi Object</param>
-        ///// <returns>HttpResponseMessage</returns>
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
-        //[HttpPost, Route("Poi")]
-        //public HttpResponseMessage Post([FromBody]GBLTSPoi poi)
-        //{
-        //    try
-        //    {
-        //        if (poi != null)
-        //        {
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
+        /// <summary>
+        /// POST Insert new Poi
+        /// </summary>
+        /// <param name="poi">Poi Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
+        [HttpPost, Route("Poi")]
+        public Task<IActionResult> Post([FromBody] LTSPoiLinked poi)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                poi.Id = !String.IsNullOrEmpty(poi.Id) ? poi.Id.ToUpper() : "noId";
+                return await UpsertData<LTSPoiLinked>(poi, "pois");
+            });
+        }
 
-        //                conn.Open();
+        /// <summary>
+        /// PUT Modify existing Poi
+        /// </summary>
+        /// <param name="id">Poi Id</param>
+        /// <param name="poi">Poi Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
+        [HttpPut, Route("Poi/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] LTSPoiLinked poi)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                poi.Id = id.ToUpper();
+                return await UpsertData<LTSPoiLinked>(poi, "pois");
+            });
+        }
 
-        //                PostgresSQLHelper.InsertDataIntoTable(conn, "pois", JsonConvert.SerializeObject(poi), poi.Id.ToUpper());
-
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResult() { Message = "Insert Poi succeeded, Id:" + poi.Id.ToUpper() }, "application/json");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No Poi Data provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
-        //    }
-        //}
-
-        ///// <summary>
-        ///// PUT Modify existing Poi
-        ///// </summary>
-        ///// <param name="id">Poi Id</param>
-        ///// <param name="poi">Poi Object</param>
-        ///// <returns>HttpResponseMessage</returns>
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
-        //[HttpPut, Route("Poi/{id}")]
-        //public HttpResponseMessage Put(string id, [FromBody]GBLTSPoi poi)
-        //{
-        //    try
-        //    {
-        //        if (poi != null && id != null)
-        //        {
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-
-        //                conn.Open();
-
-        //                PostgresSQLHelper.UpdateDataFromTable(conn, "pois", JsonConvert.SerializeObject(poi), poi.Id.ToUpper());
-
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResult() { Message = "UPDATE Poi succeeded, Id:" + poi.Id.ToUpper() }, "application/json");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No Poi Data provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
-        //    }
-        //}
-
-        ///// <summary>
-        ///// DELETE Poi by Id
-        ///// </summary>
-        ///// <param name="id">Poi Id</param>
-        ///// <returns>HttpResponseMessage</returns>
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
-        //[HttpDelete, Route("Poi/{id}")]
-        //public HttpResponseMessage Delete(string id)
-        //{
-        //    try
-        //    {
-        //        if (id != null)
-        //        {
-
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-
-        //                conn.Open();
-
-        //                PostgresSQLHelper.DeleteDataFromTable(conn, "pois", id.ToUpper());
-
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResult() { Message = "DELETE Poi succeeded, Id:" + id.ToUpper() }, "application/json");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No Poi Id provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, new GenericResult() { Message = ex.Message }, "application/json");
-        //    }
-        //}
+        /// <summary>
+        /// DELETE Poi by Id
+        /// </summary>
+        /// <param name="id">Poi Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
+        [HttpDelete, Route("Poi/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "pois");
+            });
+        }
 
         #endregion
-      
+
     }
 
 }

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Context;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OdhApiCore.Controllers
 {
@@ -283,7 +284,7 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
-        #region CUSTOM METHODS
+        #region CATEGORIES
 
         /// <summary>
         /// GET Activity Types List
@@ -324,7 +325,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("activitytypes")
                         .Select("data")
                          //.WhereJsonb("Key", "ilike", id)
-                         .Where("id", id.ToLower())
+                        .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
@@ -335,5 +336,61 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
+        #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new Activity
+        /// </summary>
+        /// <param name="activity">Activity Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,ActivityManager,ActivityCreate")]
+        [HttpPost, Route("Activity")]
+        public Task<IActionResult> Post([FromBody] LTSActivityLinked activity)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                activity.Id = !String.IsNullOrEmpty(activity.Id) ? activity.Id.ToUpper() : "noId";
+                return await UpsertData<LTSActivityLinked>(activity, "activities");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Activity
+        /// </summary>
+        /// <param name="id">Activity Id</param>
+        /// <param name="activity">Activity Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,ActivityManager,ActivityModify")]
+        [HttpPut, Route("Activity/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] LTSActivityLinked activity)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                activity.Id = id.ToUpper();
+                return await UpsertData<LTSActivityLinked>(activity, "activities");
+            });
+        }
+
+        /// <summary>
+        /// DELETE Activity by Id
+        /// </summary>
+        /// <param name="id">Activity Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,ActivityManager,ActivityDelete")]
+        [HttpDelete, Route("Activity/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "activities");
+            });
+        }
+
+
+        #endregion
     }
 }

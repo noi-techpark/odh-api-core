@@ -1,6 +1,7 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -177,5 +178,62 @@ namespace OdhApiCore.Controllers
         }
 
         #endregion      
+
+        #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new WebcamInfo
+        /// </summary>
+        /// <param name="webcam">WebcamInfo Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,WebcamManager,WebcamCreate")]
+        [HttpPost, Route("WebcamInfo")]
+        public Task<IActionResult> Post([FromBody] WebcamInfoLinked webcam)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                webcam.Id = !String.IsNullOrEmpty(webcam.Id) ? webcam.Id.ToUpper() : "noId";
+                return await UpsertData<WebcamInfoLinked>(webcam, "webcams");
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing WebcamInfo
+        /// </summary>
+        /// <param name="id">WebcamInfo Id</param>
+        /// <param name="webcam">WebcamInfo Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify")]
+        [HttpPut, Route("WebcamInfo/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                webcam.Id = id.ToUpper();
+                return await UpsertData<WebcamInfoLinked>(webcam, "webcams");
+            });
+        }
+
+        /// <summary>
+        /// DELETE WebcamInfo by Id
+        /// </summary>
+        /// <param name="id">WebcamInfo Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
+        [HttpDelete, Route("WebcamInfo/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = id.ToUpper();
+                return await DeleteData(id, "webcams");
+            });
+        }
+
+
+        #endregion
     }
 }

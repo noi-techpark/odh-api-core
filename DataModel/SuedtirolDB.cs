@@ -1952,7 +1952,7 @@ namespace DataModel
     /// </summary>
     #region CommonInfos
 
-    public class Wine
+    public class Wine : IIdentifiable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2515,7 +2515,7 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
     }
 
-    public class WebcamInfo : Webcam
+    public class WebcamInfo : Webcam, IIdentifiable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
