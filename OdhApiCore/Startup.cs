@@ -307,20 +307,20 @@ namespace OdhApiCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {            
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
-                //ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
-            });
+            //app.UseForwardedHeaders(new ForwardedHeadersOptions
+            //{
+            //    ForwardedHeaders = ForwardedHeaders.XForwardedProto & ForwardedHeaders.XForwardedFor
+            //    //ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+            //});
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
+                app.UseForwardedHeaders();
             }
             else
             {
-                //app.UseExceptionHandler("/Error");
+                app.UseForwardedHeaders();
                 app.UseHsts();
             }
 
