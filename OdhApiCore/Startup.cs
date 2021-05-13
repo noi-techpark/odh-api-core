@@ -296,7 +296,7 @@ namespace OdhApiCore
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.All; //.XForwardedProto;
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto; //.XForwardedProto;
                 //ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
 
@@ -408,6 +408,8 @@ namespace OdhApiCore
                    
                     var urlparameters = context.Request.QueryString.Value != null ? context.Request.QueryString.HasValue ? context.Request.QueryString.Value.Replace("?", "") : "" : "";
 
+                    var remoteip = RemoteIpHelper.GetRequestIP(context, true);
+
                     HttpRequestLog httplog = new HttpRequestLog()
                     {
                         host = context.Request.Host.ToString(),
@@ -417,7 +419,7 @@ namespace OdhApiCore
                         schema = context.Request.Scheme,
                         useragent = useragent,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous",
-                        ipaddress = context.Request.HttpContext.Connection.RemoteIpAddress != null ? context.Request.HttpContext.Connection.RemoteIpAddress.ToString() : ""
+                        ipaddress = remoteip
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 

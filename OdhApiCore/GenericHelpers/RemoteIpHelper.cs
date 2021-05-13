@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OdhApiCore.GenericHelpers
+namespace OdhApiCore
 {
     public static class RemoteIpHelper
     {
@@ -36,7 +36,7 @@ namespace OdhApiCore.GenericHelpers
             return ip;
         }
 
-        public static T GetHeaderValueAs<T>(string headerName, HttpContext context)
+        private static T GetHeaderValueAs<T>(string headerName, HttpContext context)
         {
             StringValues values = new StringValues();
 
@@ -50,7 +50,7 @@ namespace OdhApiCore.GenericHelpers
             return default(T);
         }
 
-        public static List<string> SplitCsv(this string csvList, bool nullOrWhitespaceInputReturnsNull = false)
+        private static List<string> SplitCsv(this string csvList, bool nullOrWhitespaceInputReturnsNull = false)
         {
             if (string.IsNullOrWhiteSpace(csvList))
                 return nullOrWhitespaceInputReturnsNull ? null : new List<string>();
@@ -63,7 +63,7 @@ namespace OdhApiCore.GenericHelpers
                 .ToList();
         }
 
-        public static bool IsNullOrWhitespace(this string s)
+        private static bool IsNullOrWhitespace(this string s)
         {
             return String.IsNullOrWhiteSpace(s);
         }
