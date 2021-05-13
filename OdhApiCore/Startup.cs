@@ -423,8 +423,6 @@ namespace OdhApiCore
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 
-                    string output = JsonConvert.SerializeObject(logoutput);
-
                     Console.WriteLine(JsonConvert.SerializeObject(logoutput));
 
                     //Log.Information(output);
