@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using OdhApiCore.Filters;
 using AspNetCore.CacheOutput;
+using Microsoft.Extensions.Primitives;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -33,9 +34,23 @@ namespace OdhApiCore.Controllers.api
         }
 
         [HttpGet, Route("UrlHelper", Name = "UrlHelperTest")]
-        public string GetUrl(CancellationToken cancellationToken)
+        public object GetUrl(CancellationToken cancellationToken)
         {
-            return Url.Link("UrlHelperTest", new { }); 
+            var url = Url.Link("UrlHelperTest", new { });
+            var remoteurl = RemoteIpHelper.GetRequestIP(this.HttpContext, true);
+
+            var xforwardedfor = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-For", this.HttpContext);
+            var xforwardedproto = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Proto", this.HttpContext);
+            var xforwardedhost = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Host", this.HttpContext);
+
+            return new
+            {
+                URL = url,
+                RemoteURL = remoteurl,
+                ForwardedFor = xforwardedfor,
+                ForwardedProto = xforwardedproto,
+                ForwartedHost = xforwardedhost
+            }; 
         }
 
         //[TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
@@ -125,5 +140,5 @@ namespace OdhApiCore.Controllers.api
         //TODO SEE if Cache distinguish between Authenticated and not authenticated user
 
         #endregion
-    }
+    }    
 }

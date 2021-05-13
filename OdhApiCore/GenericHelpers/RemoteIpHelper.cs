@@ -36,7 +36,7 @@ namespace OdhApiCore
             return ip;
         }
 
-        private static T GetHeaderValueAs<T>(string headerName, HttpContext context)
+        public static T GetHeaderValueAs<T>(string headerName, HttpContext context)
         {
             StringValues values = new StringValues();
 
