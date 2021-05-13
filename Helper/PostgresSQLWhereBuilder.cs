@@ -473,7 +473,7 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .SourceFilter(sourcelist)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
@@ -532,7 +532,7 @@ namespace Helper
 
             return query
                 .IdLowerFilter(idlist)
-                .SourceFilter(sourcelist)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 .EventShortLocationFilter(eventlocationlist)
                 .EventShortWebaddressFilter(webaddresslist)
                 //.ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.EventShortActiveFilter(activefilter)
