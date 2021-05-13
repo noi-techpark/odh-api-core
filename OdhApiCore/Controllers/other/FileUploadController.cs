@@ -35,7 +35,7 @@ namespace OdhApiCore.Controllers.api
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
-        [HttpPost, Route("api/FileUpload/{type}/{directory}")]
+        [HttpPost, Route("v1/FileUpload/{type}/{directory}")]
         public async Task<IActionResult> PostFormData(string type, string directory, IFormCollection form)
         {
             var filenames = new List<string>();
@@ -67,7 +67,7 @@ namespace OdhApiCore.Controllers.api
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataMofify,DataCreate,DataDelete,ODHPoiCreate,ODHPoiModify,ODHPoiManager,ODHPoiUpdate,CommonCreate,CommonModify,CommonManager,CommonDelete,ArticleCreate,ArticleModify,ArticleManager,ArticleDelete")]
-        [HttpDelete, Route("api/FileDelete/{filepath}")]
+        [HttpDelete, Route("v1/FileDelete/{filepath}")]
         public async Task<IActionResult> Delete(string filepath)
         {
             string keyName = filepath.Replace("|", "\\").Replace("$", ".");

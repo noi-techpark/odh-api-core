@@ -243,7 +243,7 @@ namespace OdhApiCore
                     Contact = new OpenApiContact
                     {
                         Name = "Open Data Hub Team",
-                        Email = "info@opendatahub.bz.it",
+                        Email = "help@opendatahub.bz.it",
                         Url = new System.Uri("https://opendatahub.bz.it/"),
                     },
                 });
