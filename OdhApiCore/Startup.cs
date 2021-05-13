@@ -309,7 +309,8 @@ namespace OdhApiCore
         {            
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                //ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
             });
 
             if (env.IsDevelopment())
@@ -415,7 +416,8 @@ namespace OdhApiCore
                         referer = referer,
                         schema = context.Request.Scheme,
                         useragent = useragent,
-                        username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
+                        username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous",
+                        ipaddress = context.Request.HttpContext.Connection.RemoteIpAddress != null ? context.Request.HttpContext.Connection.RemoteIpAddress.ToString() : ""
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 
