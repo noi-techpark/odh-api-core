@@ -39,17 +39,24 @@ namespace OdhApiCore.Controllers.api
             var url = Url.Link("UrlHelperTest", new { });
             var remoteurl = RemoteIpHelper.GetRequestIP(this.HttpContext, true);
 
-            var xforwardedfor = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-For", this.HttpContext);
-            var xforwardedproto = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Proto", this.HttpContext);
-            var xforwardedhost = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Host", this.HttpContext);
+            var xforwardedforheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-For", this.HttpContext);
+            var xforwardedprotoheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Proto", this.HttpContext);
+            var xforwardedhostheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Host", this.HttpContext);
+
+            var xforwardedproto = this.HttpContext.Request.Scheme;
+            var xforwardedhost = this.HttpContext.Request.Host;
+            var xforwardedfor= this.HttpContext.Request.Protocol;
 
             return new
             {
                 URL = url,
                 RemoteURL = remoteurl,
-                ForwardedFor = xforwardedfor,
-                ForwardedProto = xforwardedproto,
-                ForwartedHost = xforwardedhost
+                ForwardedForHeader = xforwardedforheader,
+                ForwardedProtoHeader = xforwardedprotoheader,
+                ForwardedHostHeader = xforwardedhostheader,
+                ForwardedForContext = xforwardedfor,
+                ForwardedProtoContext = xforwardedproto,
+                ForwardedHosContext = xforwardedhost
             }; 
         }
 
