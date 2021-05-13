@@ -246,18 +246,15 @@ namespace OdhApiCore
                         Email = "help@opendatahub.bz.it",
                         Url = new System.Uri("https://opendatahub.bz.it/"),
                     },
-                });
-                //c.IncludeXmlComments(filePath);
+                });                               
                 c.MapType<LegacyBool>(() => new OpenApiSchema
                 {
                     Type = "boolean"
                 });
-
                 c.MapType<PageSize>(() => new OpenApiSchema
                 {
                     Type = "integer"
                 });
-
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -372,6 +369,7 @@ namespace OdhApiCore
                 c.RoutePrefix = "swagger";
                 c.OAuthClientSecret("");
                 c.OAuthRealm("noi");
+                c.EnableDeepLinking();
             });
 
            
