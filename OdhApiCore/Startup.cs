@@ -309,8 +309,8 @@ namespace OdhApiCore
         {            
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                //ForwardedHeaders = ForwardedHeaders.XForwardedProto
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                //ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
             });
 
             if (env.IsDevelopment())
