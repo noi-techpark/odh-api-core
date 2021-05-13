@@ -62,7 +62,10 @@ namespace OdhApiCore.Controllers.api
                 var response = await client.UploadPartAsync(request);
                 filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.Url, filename));
             }
-            return Ok(filenames);
+            if (filenames.Count == 1)
+                return Ok(filenames.FirstOrDefault());
+            else
+                return Ok(filenames);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
