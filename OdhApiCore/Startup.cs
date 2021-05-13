@@ -294,11 +294,11 @@ namespace OdhApiCore
             });
             services.AddSwaggerGenNewtonsoftSupport();
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto; //.XForwardedProto;
-                //ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            });
+            //services.Configure<ForwardedHeadersOptions>(options =>
+            //{
+            //    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto; //.XForwardedProto;
+            //    //ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            //});
 
             //services.AddHttpContextAccessor();
 
@@ -316,11 +316,11 @@ namespace OdhApiCore
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseForwardedHeaders();
+                //app.UseForwardedHeaders();
             }
             else
             {
-                app.UseForwardedHeaders();
+                //app.UseForwardedHeaders();
                 app.UseHsts();
             }
 
