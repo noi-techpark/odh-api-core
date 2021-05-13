@@ -44,8 +44,7 @@ namespace OdhApiCore.Controllers.api
             var xforwardedhostheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Host", this.HttpContext);
 
             var xforwardedproto = this.HttpContext.Request.Scheme;
-            var xforwardedhost = this.HttpContext.Request.Host;
-            var xforwardedfor= this.HttpContext.Request.Protocol;
+            var xforwardedhost = this.HttpContext.Request.Host;            
 
             return new
             {
@@ -53,10 +52,9 @@ namespace OdhApiCore.Controllers.api
                 RemoteURL = remoteurl,
                 ForwardedForHeader = xforwardedforheader,
                 ForwardedProtoHeader = xforwardedprotoheader,
-                ForwardedHostHeader = xforwardedhostheader,
-                ForwardedForContext = xforwardedfor,
+                ForwardedHostHeader = xforwardedhostheader,                
                 ForwardedProtoContext = xforwardedproto,
-                ForwardedHosContext = xforwardedhost
+                ForwardedHostContext = xforwardedhost
             }; 
         }
 
