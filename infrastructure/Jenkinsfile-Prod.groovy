@@ -27,6 +27,9 @@ pipeline {
 	EBMS_USER = credentials('odh-tourism-api-test-ebms-user')
 	EBMS_PASS = credentials('odh-tourism-api-test-ebms-pass')
 	DATABROWSER_URL = "https://tourism.databrowser.opendatahub.bz.it/"
+        RAVEN_SERVICEURL = "https://service.suedtirol.info/api/"
+	RAVEN_USER = credentials('odh-raven-api-user')
+	RAVEN_PSWD = credentials('odh-raven-api-pswd')
     }
 
     stages {
@@ -60,6 +63,9 @@ pipeline {
 		    echo 'EBMS_USER=${EBMS_USER}' >> .env
 		    echo 'EBMS_PASS=${EBMS_PASS}' >> .env
 		    echo 'DATABROWSER_URL=${DATABROWSER_URL}' >> .env
+		    echo 'RAVEN_SERVICEURL=${RAVEN_SERVICEURL}' >> .env
+		    echo 'RAVEN_USER=${RAVEN_USER}' >> .env
+		    echo 'RAVEN_PSWD=${RAVEN_PSWD}' >> .env
                 """
             }
         }
