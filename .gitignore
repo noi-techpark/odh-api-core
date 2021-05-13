@@ -165,3 +165,5 @@ $RECYCLE.BIN/
 .ionide
 
 /OdhApiCore/wwwroot/json
+/OdhApiCoreTests/coverage.json
+/OdhApiCoreTests

@@ -19,19 +19,23 @@ using EBMS;
 using NINJA;
 using NINJA.Parser;
 using System.Net.Http;
+using RAVEN;
+using Microsoft.Extensions.Hosting;
 
 namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]    
     [ApiController]
     public class UpdateApiController : OdhController
-    {        
+    {
         private readonly ISettings settings;
+        private readonly IWebHostEnvironment env;
 
         public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<AlpineBitsController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
-            this.settings = settings;            
+            this.env = env;
+            this.settings = settings;
         }
 
         #region EBMS exposed
@@ -61,6 +65,7 @@ namespace OdhApiCore.Controllers.api
             return Ok(new
             {
                 operation = "Update EBMS",
+                id = id,
                 updatetype = "single",
                 message = "EBMS Eventshorts update succeeded",
                 recordsupdated = 1,
@@ -89,6 +94,16 @@ namespace OdhApiCore.Controllers.api
                 success = true
             });            
         }
+
+        #endregion
+
+        #region ODH RAVEN exposed
+
+        [HttpGet, Route("Raven/{datatype}/Update/{id}")]
+        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
+        {
+            return await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+        }        
 
         #endregion
 
@@ -502,7 +517,52 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
+        #endregion
 
+        #region ODHRAVEN Helpers
+
+        private async Task<IActionResult> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
+        {
+            var mytype = TypeDiscriminator(id, datatype);
+
+            var mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+
+            if (mydata != null)
+            {
+                var mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>(mydata, TransformToPGObject.GetAccommodationPGObject);
+
+                //TODO SAVE TO PG
+
+                return Ok(new
+                {
+                    operation = "Update " + datatype,
+                    id = id,
+                    updatetype = "single",
+                    message = "Data update succeeded",
+                    recordsupdated = 1,
+                    success = true
+                });
+            }
+            else
+            {
+                return BadRequest(new { error = "error on getting data" });
+            }
+        }
+
+        private Type TypeDiscriminator(string id, string type)
+        {
+            switch(type)
+            {
+                case "Accommodation":
+                    return typeof(AccommodationLinked);
+                //case "Gastronomy":
+                //    return (typeof(GastronomyLinked), );
+                //case "ODHActivityPoi":
+                //    return typeof(SmgPoiLinked);
+                default:
+                    return null;
+            }
+        }
 
         #endregion
 

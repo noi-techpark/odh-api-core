@@ -243,7 +243,7 @@ namespace OdhApiCore
                     Contact = new OpenApiContact
                     {
                         Name = "Open Data Hub Team",
-                        Email = "info@opendatahub.bz.it",
+                        Email = "help@opendatahub.bz.it",
                         Url = new System.Uri("https://opendatahub.bz.it/"),
                     },
                 });
@@ -294,11 +294,11 @@ namespace OdhApiCore
             });
             services.AddSwaggerGenNewtonsoftSupport();
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            });
+            //services.Configure<ForwardedHeadersOptions>(options =>
+            //{
+            //    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto; //.XForwardedProto;
+            //    //ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            //});
 
             //services.AddHttpContextAccessor();
 
@@ -307,19 +307,20 @@ namespace OdhApiCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {            
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedProto
-            });
+            //app.UseForwardedHeaders(new ForwardedHeadersOptions
+            //{
+            //    ForwardedHeaders = ForwardedHeaders.XForwardedProto & ForwardedHeaders.XForwardedFor
+            //    //ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+            //});
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
+                //app.UseForwardedHeaders();
             }
             else
             {
-                //app.UseExceptionHandler("/Error");
+                //app.UseForwardedHeaders();
                 app.UseHsts();
             }
 
@@ -407,6 +408,8 @@ namespace OdhApiCore
                    
                     var urlparameters = context.Request.QueryString.Value != null ? context.Request.QueryString.HasValue ? context.Request.QueryString.Value.Replace("?", "") : "" : "";
 
+                    var remoteip = RemoteIpHelper.GetRequestIP(context, true);
+
                     HttpRequestLog httplog = new HttpRequestLog()
                     {
                         host = context.Request.Host.ToString(),
@@ -415,11 +418,10 @@ namespace OdhApiCore
                         referer = referer,
                         schema = context.Request.Scheme,
                         useragent = useragent,
-                        username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous"
+                        username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous",
+                        ipaddress = remoteip
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
-
-                    string output = JsonConvert.SerializeObject(logoutput);
 
                     Console.WriteLine(JsonConvert.SerializeObject(logoutput));
 

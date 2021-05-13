@@ -15,6 +15,7 @@ COPY SIAG/SIAG.csproj SIAG/
 COPY CDB/CDB.csproj CDB/
 COPY SuedtirolWein/SuedtirolWein.csproj SuedtirolWein/
 COPY NINJA/NINJA.csproj NINJA/
+COPY RAVEN/RAVEN.csproj RAVEN/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj
 COPY . .
