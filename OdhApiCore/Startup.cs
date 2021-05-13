@@ -296,7 +296,7 @@ namespace OdhApiCore
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+                options.ForwardedHeaders = ForwardedHeaders.All; //.XForwardedProto;
                 //ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
 
