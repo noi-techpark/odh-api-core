@@ -523,45 +523,44 @@ namespace OdhApiCore.Controllers.api
 
         private async Task<IActionResult> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
         {
-            var mytype = TypeDiscriminator(id, datatype);
-
-            var mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
-
-            if (mydata != null)
+            try
             {
-                var mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>(mydata, TransformToPGObject.GetAccommodationPGObject);
+                var mydata = default(IIdentifiable);
+                var mypgdata = default(IIdentifiable);
 
-                //TODO SAVE TO PG
-
-                return Ok(new
+                switch (datatype.ToLower())
                 {
-                    operation = "Update " + datatype,
-                    id = id,
-                    updatetype = "single",
-                    message = "Data update succeeded",
-                    recordsupdated = 1,
-                    success = true
-                });
+                    case "accommodation":
+                        mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);
+                        //TODO CALL UPDATE METHOD
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+                    default:
+                        return BadRequest(new { error = "no match found" });
+                }
+
+                //return Ok(new
+                //{
+                //    operation = "Update " + datatype,
+                //    id = id,
+                //    updatetype = "single",
+                //    message = "Data update succeeded",
+                //    recordsupdated = 1,
+                //    success = true
+                //});
             }
-            else
+            catch(Exception ex)
             {
-                return BadRequest(new { error = "error on getting data" });
-            }
+                return BadRequest(new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
+            }            
         }
 
-        private Type TypeDiscriminator(string id, string type)
+        private async Task<IActionResult> SaveRavenObjectToPG<T>(T datatosave, string table) where T: IIdentifiable
         {
-            switch(type)
-            {
-                case "Accommodation":
-                    return typeof(AccommodationLinked);
-                //case "Gastronomy":
-                //    return (typeof(GastronomyLinked), );
-                //case "ODHActivityPoi":
-                //    return typeof(SmgPoiLinked);
-                default:
-                    return null;
-            }
+            return await UpsertData<T>(datatosave, table);
         }
 
         #endregion
