@@ -100,6 +100,7 @@ namespace OdhApiCore.Controllers.api
         #region ODH RAVEN exposed
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
+        [Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
         public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
         {
             return await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
@@ -466,14 +467,14 @@ namespace OdhApiCore.Controllers.api
             {
                 eventtosave.FirstImport = DateTime.Now;
 
-                var queryresult = await QueryFactory.Query("events")
+                var queryresult = await QueryFactory.Query(tablename)
                                .InsertAsync(new JsonBData() { id = idtocheck, data = new JsonRaw(eventtosave) });
 
                 return Tuple.Create("insert", queryresult.ToString());
             }
             else
             {
-                var queryresult = await QueryFactory.Query("events").Where("id", idtocheck)
+                var queryresult = await QueryFactory.Query(tablename).Where("id", idtocheck)
                                 .UpdateAsync(new JsonBData() { id = idtocheck, data = new JsonRaw(eventtosave) });
 
                 return Tuple.Create("update", queryresult.ToString());
@@ -523,48 +524,79 @@ namespace OdhApiCore.Controllers.api
 
         private async Task<IActionResult> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
         {
-            var mytype = TypeDiscriminator(id, datatype);
-
-            var mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
-
-            if (mydata != null)
+            try
             {
-                var mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>(mydata, TransformToPGObject.GetAccommodationPGObject);
+                var mydata = default(IIdentifiable);
+                var mypgdata = default(IIdentifiable);
 
-                //TODO SAVE TO PG
-
-                return Ok(new
+                switch (datatype.ToLower())
                 {
-                    operation = "Update " + datatype,
-                    id = id,
-                    updatetype = "single",
-                    message = "Data update succeeded",
-                    recordsupdated = 1,
-                    success = true
-                });
+                    case "accommodation":
+                        mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);
+                        //TODO CALL UPDATE METHOD ALSO FOR ROOMS
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+
+                    case "gastronomy":
+                        mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<GastronomyLinked, GastronomyLinked>((GastronomyLinked)mydata, TransformToPGObject.GetGastronomyPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
+
+                    case "activity":
+                        mydata = await GetDataFromRaven.GetRavenData<LTSActivityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<LTSActivityLinked, LTSActivityLinked>((LTSActivityLinked)mydata, TransformToPGObject.GetActivityPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinked)mypgdata, "activities");
+
+                    case "poi":
+                        mydata = await GetDataFromRaven.GetRavenData<LTSPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<LTSPoiLinked, LTSPoiLinked>((LTSPoiLinked)mydata, TransformToPGObject.GetPoiPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
+
+                    case "event":
+                        mydata = await GetDataFromRaven.GetRavenData<EventLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<EventLinked, EventLinked>((EventLinked)mydata, TransformToPGObject.GetEventPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+
+                    case "webcam":
+                        mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<WebcamInfoLinked, WebcamInfoLinked>((WebcamInfoLinked)mydata, TransformToPGObject.GetWebcamInfoPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+
+                    default:
+                        return BadRequest(new { error = "no match found" });
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return BadRequest(new { error = "error on getting data" });
-            }
+                return BadRequest(new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
+            }            
         }
 
-        private Type TypeDiscriminator(string id, string type)
+        private async Task<IActionResult> SaveRavenObjectToPG<T>(T datatosave, string table) where T: IIdentifiable
         {
-            switch(type)
-            {
-                case "Accommodation":
-                    return typeof(AccommodationLinked);
-                //case "Gastronomy":
-                //    return (typeof(GastronomyLinked), );
-                //case "ODHActivityPoi":
-                //    return typeof(SmgPoiLinked);
-                default:
-                    return null;
-            }
+            return await UpsertData<T>(datatosave, table);
         }
 
         #endregion
 
     }
+
 }

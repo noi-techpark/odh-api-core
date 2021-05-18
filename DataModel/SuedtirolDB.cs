@@ -414,6 +414,8 @@ namespace DataModel
         public string? GID { get; set; }
         public string? LtsID { get; set; }
         public string? AreaType { get; set; }
+
+        public Nullable<DateTime> LastChange { get; set; }
     }
 
     public class GeneralGroup : BaseInfos
@@ -2532,6 +2534,8 @@ namespace DataModel
         public ICollection<PublishedonObject> WebcamAssignedOn { get; set; }
 
         public ICollection<string> AreaIds { get; set; }
+
+        public ICollection<string> SmgTags { get; set; }
     }
 
     public class PublishedonObject

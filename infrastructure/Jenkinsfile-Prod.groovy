@@ -26,7 +26,7 @@ pipeline {
 	JSONPATH = "./wwwroot/json/"
 	EBMS_USER = credentials('odh-tourism-api-test-ebms-user')
 	EBMS_PASS = credentials('odh-tourism-api-test-ebms-pass')
-	DATABROWSER_URL = "https://tourism.databrowser.opendatahub.bz.it/"
+	DATABROWSER_URL = "https://databrowser.opendatahub.bz.it/"
         RAVEN_SERVICEURL = "https://service.suedtirol.info/api/"
 	RAVEN_USER = credentials('odh-raven-api-user')
 	RAVEN_PSWD = credentials('odh-raven-api-pswd')
