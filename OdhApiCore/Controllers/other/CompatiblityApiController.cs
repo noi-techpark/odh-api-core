@@ -517,7 +517,7 @@ namespace OdhApiCore.Controllers.api
             string? areafilter = null,
             LegacyBool highlight = null!,
             string? source = null,
-            string odhtagfilter = null!,
+            string? odhtagfilter = null,
             LegacyBool odhactive = null!,
             LegacyBool active = null!,
             string? latitude = null,
