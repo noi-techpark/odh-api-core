@@ -100,6 +100,7 @@ namespace OdhApiCore.Controllers.api
         #region ODH RAVEN exposed
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
+        [Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
         public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
         {
             return await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
@@ -541,16 +542,6 @@ namespace OdhApiCore.Controllers.api
                     default:
                         return BadRequest(new { error = "no match found" });
                 }
-
-                //return Ok(new
-                //{
-                //    operation = "Update " + datatype,
-                //    id = id,
-                //    updatetype = "single",
-                //    message = "Data update succeeded",
-                //    recordsupdated = 1,
-                //    success = true
-                //});
             }
             catch(Exception ex)
             {
