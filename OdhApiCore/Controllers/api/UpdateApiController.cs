@@ -535,10 +535,35 @@ namespace OdhApiCore.Controllers.api
                         mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
                             mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);
-                        //TODO CALL UPDATE METHOD
+                        //TODO CALL UPDATE METHOD ALSO FOR ROOMS
                         else
                             throw new Exception("No data found!");
                         return await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+
+                    case "gastronomy":
+                        mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype,id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<GastronomyLinked, GastronomyLinked>((GastronomyLinked)mydata, TransformToPGObject.GetGastronomyPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
+
+                    case "activity":
+                        mydata = await GetDataFromRaven.GetRavenData<LTSActivityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<LTSActivityLinked, LTSActivityLinked>((LTSActivityLinked)mydata, TransformToPGObject.GetActivityPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinked)mypgdata, "activities");
+
+                    case "poi":
+                        mydata = await GetDataFromRaven.GetRavenData<LTSPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<LTSPoiLinked, LTSPoiLinked>((LTSPoiLinked)mydata, TransformToPGObject.GetPoiPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
+
                     default:
                         return BadRequest(new { error = "no match found" });
                 }
@@ -557,4 +582,5 @@ namespace OdhApiCore.Controllers.api
         #endregion
 
     }
+
 }
