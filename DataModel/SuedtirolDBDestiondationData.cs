@@ -7,6 +7,7 @@ namespace DataModel
 {
     public class DDVenue
     {
+        public Metadata _Meta { get; set; }
         public string type { get; set; }
         //public string id { get; set; }
         [JsonProperty("id")]

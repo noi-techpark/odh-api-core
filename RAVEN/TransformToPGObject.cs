@@ -487,20 +487,12 @@ namespace RAVEN
             if (data.SmgTags != null && data.SmgTags.Count > 0)
                 data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
 
-            SkiRegionLinked data2 = new SkiRegionLinked();
+            data._Meta = GetMetadata(data.Id, "skiregion", "idm", data.LastChange);
 
-            CopyClassHelper.CopyPropertyValues(data, data2);
-
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Inserting skiregion " + counter);
-
-            data2._Meta = GetMetadata(data2.Id, "skiregion", "idm", data.LastChange);
-
-            return data2;
+            return data;
         }
 
-        public static Wine GetWinePGObject(Wine data)
+        public static WineLinked GetWinePGObject(WineLinked data)
         {
             data.Id = data.Id.ToUpper();
             data._Meta = GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
@@ -508,7 +500,7 @@ namespace RAVEN
             return data;
         }
 
-        public static ODHTags GetODHTagPGObject(ODHTags data)
+        public static SmgTags GetODHTagPGObject(SmgTags data)
         {
             data.Id = data.Id.ToLower();
             data.MainEntity = data.MainEntity.ToLower();

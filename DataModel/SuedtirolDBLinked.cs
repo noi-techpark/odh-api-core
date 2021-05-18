@@ -242,6 +242,12 @@ namespace DataModel
         public string Self { get; set; }
     }
 
+    public class CompanyLink
+    {
+        public string Id { get; set; }
+        public string Self { get; set; }
+    }
+
     public class GastronomyLinked : Gastronomy
     {
         public Metadata _Meta { get; set; }

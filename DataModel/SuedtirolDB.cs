@@ -414,6 +414,8 @@ namespace DataModel
         public string? GID { get; set; }
         public string? LtsID { get; set; }
         public string? AreaType { get; set; }
+
+        public Nullable<DateTime> LastChange { get; set; }
     }
 
     public class GeneralGroup : BaseInfos

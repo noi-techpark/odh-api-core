@@ -467,14 +467,14 @@ namespace OdhApiCore.Controllers.api
             {
                 eventtosave.FirstImport = DateTime.Now;
 
-                var queryresult = await QueryFactory.Query("events")
+                var queryresult = await QueryFactory.Query(tablename)
                                .InsertAsync(new JsonBData() { id = idtocheck, data = new JsonRaw(eventtosave) });
 
                 return Tuple.Create("insert", queryresult.ToString());
             }
             else
             {
-                var queryresult = await QueryFactory.Query("events").Where("id", idtocheck)
+                var queryresult = await QueryFactory.Query(tablename).Where("id", idtocheck)
                                 .UpdateAsync(new JsonBData() { id = idtocheck, data = new JsonRaw(eventtosave) });
 
                 return Tuple.Create("update", queryresult.ToString());
@@ -541,7 +541,7 @@ namespace OdhApiCore.Controllers.api
                         return await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
 
                     case "gastronomy":
-                        mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype,id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken
+                        mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
                             mypgdata = TransformToPGObject.GetPGObject<GastronomyLinked, GastronomyLinked>((GastronomyLinked)mydata, TransformToPGObject.GetGastronomyPGObject);
                         else
@@ -549,7 +549,7 @@ namespace OdhApiCore.Controllers.api
                         return await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
 
                     case "activity":
-                        mydata = await GetDataFromRaven.GetRavenData<LTSActivityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken
+                        mydata = await GetDataFromRaven.GetRavenData<LTSActivityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
                             mypgdata = TransformToPGObject.GetPGObject<LTSActivityLinked, LTSActivityLinked>((LTSActivityLinked)mydata, TransformToPGObject.GetActivityPGObject);
                         else
@@ -557,12 +557,28 @@ namespace OdhApiCore.Controllers.api
                         return await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinked)mypgdata, "activities");
 
                     case "poi":
-                        mydata = await GetDataFromRaven.GetRavenData<LTSPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken
+                        mydata = await GetDataFromRaven.GetRavenData<LTSPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
                             mypgdata = TransformToPGObject.GetPGObject<LTSPoiLinked, LTSPoiLinked>((LTSPoiLinked)mydata, TransformToPGObject.GetPoiPGObject);
                         else
                             throw new Exception("No data found!");
                         return await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
+
+                    case "event":
+                        mydata = await GetDataFromRaven.GetRavenData<EventLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<EventLinked, EventLinked>((EventLinked)mydata, TransformToPGObject.GetEventPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+
+                    case "webcam":
+                        mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<WebcamInfoLinked, WebcamInfoLinked>((WebcamInfoLinked)mydata, TransformToPGObject.GetWebcamInfoPGObject);
+                        else
+                            throw new Exception("No data found!");
+                        return await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
 
                     default:
                         return BadRequest(new { error = "no match found" });
