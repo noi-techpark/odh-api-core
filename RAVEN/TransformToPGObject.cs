@@ -101,7 +101,27 @@ namespace RAVEN
 
         public static AccommodationRoomLinked GetAccommodationRoomPGObject(AccommodationRoomLinked data)
         {
+            data.Id = data.Id.ToUpper();
+            data.A0RID = data.A0RID.ToUpper();
+            if (!String.IsNullOrEmpty(data.LTSId))
+                data.LTSId = data.LTSId.ToUpper();
 
+            //fix if source is null
+            string datasource = data.Source;
+
+            if (datasource == null)
+            {
+                if (data.Id.Contains("hgv"))
+                    datasource = "hgv";
+                else
+                    datasource = "lts";
+            }
+            else
+            {
+                datasource = datasource.ToLower();
+            }
+
+            data._Meta = GetMetadata(data.Id, "accommodationroom", datasource, data.LastChange);
 
             return data;
         }
@@ -290,7 +310,25 @@ namespace RAVEN
 
         public static ArticlesLinked GetArticlePGObject(ArticlesLinked data)
         {
+            data.Id = data.Id.ToUpper();
 
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            data._Meta = GetMetadata(data.Id, "article", "idm", data.LastChange);
+
+            return data;
+        }
+
+        public static PackageLinked GetArticlePGObject(PackageLinked data)
+        {
+            data.Id = data.Id.ToUpper();
+            data.HotelId = data.HotelId.Select(x => x.ToUpper()).ToList();
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();            
+
+            data._Meta = GetMetadata(data.Id, "package", "hgv", data.LastUpdate);
 
             return data;
         }
@@ -310,7 +348,14 @@ namespace RAVEN
 
         public static GastronomyLinked GetGastronomyPGObject(GastronomyLinked data)
         {
+            data.Id = data.Id.ToUpper();
+            if (!String.IsNullOrEmpty(data.AccommodationId))
+                data.AccommodationId = data.AccommodationId.ToUpper();
 
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+            
+            data._Meta = GetMetadata(data.Id, "ltsgastronomy", "lts", data.LastChange);
 
             return data;
         }
