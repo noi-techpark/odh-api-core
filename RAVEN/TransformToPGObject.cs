@@ -362,56 +362,91 @@ namespace RAVEN
 
         public static WebcamInfoLinked GetWebcamInfoPGObject(WebcamInfoLinked data)
         {
+            data.Id = data.Id.ToUpper();
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
 
+            if (data.Active == null)
+                data.Active = false;
+
+            if (data.SmgActive == null)
+                data.SmgActive = false;
+
+            string sourcemeta = data.Source.ToLower();
+            if (sourcemeta == "content")
+                sourcemeta = "idm";
+
+            data._Meta = GetMetadata(data.Id, "webcam", sourcemeta, data.LastChange);
 
             return data;
         }
 
         public static MeasuringpointLinked GetMeasuringpointPGObject(MeasuringpointLinked data)
         {
-
+            data.Id = data.Id.ToUpper();            
+            data._Meta = GetMetadata(data.Id, "measuringpoint", "lts", data.LastChange);
 
             return data;
         }
 
         public static DDVenue GetVenuePGObject(DDVenue data)
         {
+            data.Id = data.Id.ToUpper();
 
+            data._Meta = GetMetadata(data.Id, "venue", "lts", data.meta.lastUpdate);
+            data.odhdata.ODHActive = data.attributes.categories.Contains("lts/visi_unpublishedOnODH") ? false : true;
+
+            data.links.self = ODHConstant.ApplicationURL + "Venue/" + data.Id;
 
             return data;
         }
 
         public static MetaRegionLinked GetMetaRegionPGObject(MetaRegionLinked data)
         {
-
+            data.Id = data.Id.ToUpper();
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList(); 
+            data._Meta = GetMetadata(data.Id, "metaregion", "idm", data.LastChange);
 
             return data;
         }
 
         public static RegionLinked GetRegionPGObject(RegionLinked data)
         {
-
+            data.Id = data.Id.ToUpper();
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList(); 
+            data._Meta = GetMetadata(data.Id, "region", "idm", data.LastChange);
 
             return data;
         }
 
         public static TourismvereinLinked GetTourismAssociationPGObject(TourismvereinLinked data)
         {
-
+            data.Id = data.Id.ToUpper();
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList(); 
+            data._Meta = GetMetadata(data.Id, "tourismassociation", "idm", data.LastChange);
 
             return data;
         }
 
         public static MunicipalityLinked GetMunicipalityPGObject(MunicipalityLinked data)
         {
-
+            data.Id = data.Id.ToUpper();
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList(); 
+            data._Meta = GetMetadata(data.Id, "municipality", "idm", data.LastChange);
 
             return data;
         }
 
         public static DistrictLinked GetDistrictPGObject(DistrictLinked data)
         {
-
+            data.Id = data.Id.ToUpper();
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+            data._Meta = GetMetadata(data.Id, "district", "idm", data.LastChange);
 
             return data;
         }
@@ -419,6 +454,8 @@ namespace RAVEN
         public static ExperienceAreaLinked GetExperienceAreaPGObject(ExperienceAreaLinked data)
         {
             data.Id = data.Id.ToUpper();
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
             data._Meta = GetMetadata(data.Id, "experiencearea", "idm", data.LastChange);
 
             return data;
@@ -426,32 +463,65 @@ namespace RAVEN
 
         public static AreaLinked GetAreaPGObject(AreaLinked data)
         {
-
+            data.Id = data.Id.ToUpper();            
+            data._Meta = GetMetadata(data.Id, "area", "lts", data.LastChange);
 
             return data;
         }
 
         public static SkiAreaLinked GetSkiAreaPGObject(SkiAreaLinked data)
         {
-
+            data.Id = data.Id.ToUpper();
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+            
+            data._Meta = GetMetadata(data.Id, "skiarea", "idm", data.LastChange);
 
             return data;
         }
 
-        public static SkiRegion GetSkiRegionPGObject(SkiRegion data)
+        public static SkiRegionLinked GetSkiRegionPGObject(SkiRegionLinked data)
         {
+            data.Id = data.Id.ToUpper();
+            
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            SkiRegionLinked data2 = new SkiRegionLinked();
+
+            CopyClassHelper.CopyPropertyValues(data, data2);
 
 
-            return data;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Inserting skiregion " + counter);
+
+            data2._Meta = GetMetadata(data2.Id, "skiregion", "idm", data.LastChange);
+
+            return data2;
         }
 
         public static Wine GetWinePGObject(Wine data)
         {
-
+            data.Id = data.Id.ToUpper();
+            data._Meta = GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
 
             return data;
         }
 
+        public static ODHTags GetODHTagPGObject(ODHTags data)
+        {
+            data.Id = data.Id.ToLower();
+            data.MainEntity = data.MainEntity.ToLower();
+            List<string> validforentitynew = new List<string>();
+            foreach (var validforentity in data.ValidForEntity)
+            {
+                validforentitynew.Add(validforentity.ToLower());
+            }
+
+            data.ValidForEntity = validforentitynew;
+
+            return data;
+        }
 
         public static Metadata GetMetadata(string id, string type, string source, Nullable<DateTime> lastupdated = null)
         {

@@ -1100,7 +1100,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeUriString(this.Id));
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "SkiRegion/" + Uri.EscapeUriString(this.Id));
             }
         }
 
@@ -1148,6 +1148,14 @@ namespace DataModel
                 return this.AreaIds != null ? this.AreaIds.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
             }
         }
+
+        public ICollection<ODHTags> ODHTags
+        {
+            get
+            {
+                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+            }
+        }
     }
 
     public class MeasuringpointLinked : Measuringpoint
@@ -1180,6 +1188,35 @@ namespace DataModel
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked LocationInfo { get; set; }
+    }
+
+    public class WineLinked : Wine
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "WineAward/" + this.Id;
+            }
+        }
+
+        public bool OdhActive
+        {
+            get
+            {
+                return (bool)this.SmgActive;
+            }
+        }
+
+        public CompanyLink Company
+        {
+            get
+            {
+                return String.IsNullOrEmpty(this.CompanyId) ? null : new CompanyLink() { Id = this.CompanyId, Self = ODHConstant.ApplicationURL + "ODHActivityPoi/" + this.CompanyId };
+            }
+        }
     }
 
 

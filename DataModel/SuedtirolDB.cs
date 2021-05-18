@@ -2532,6 +2532,8 @@ namespace DataModel
         public ICollection<PublishedonObject> WebcamAssignedOn { get; set; }
 
         public ICollection<string> AreaIds { get; set; }
+
+        public ICollection<string> SmgTags { get; set; }
     }
 
     public class PublishedonObject
