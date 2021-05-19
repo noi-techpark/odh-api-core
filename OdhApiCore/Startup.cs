@@ -93,7 +93,7 @@ namespace OdhApiCore
                 };
                 var loggerConfiguration = new LoggerConfiguration()
                     .MinimumLevel.ControlledBy(levelSwitch)
-                    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                     .Enrich.FromLogContext()
                     .WriteTo.Console(outputTemplate: "{Message}{NewLine}")
                     .WriteTo.Debug()
