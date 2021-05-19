@@ -385,7 +385,7 @@ namespace OdhApiCore
 
                 await next();
 
-                //Log only if api is requested! with Statuscode
+                //Log only if api is requested! with Statuscode thereofre after await next();
                 //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
                 if (!String.IsNullOrEmpty(context.Request.Path.Value) && context.Request.Path.Value.StartsWith("/v1", StringComparison.OrdinalIgnoreCase))
                 {
