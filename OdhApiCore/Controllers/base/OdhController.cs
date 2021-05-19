@@ -37,6 +37,7 @@ namespace OdhApiCore.Controllers
 
         protected bool FilterCC0License => FilterClosedData;
 
+        //TODO EXTEND THIS ALSO TO ODHActivityPoiReader etc...
         protected bool FilterClosedData
         {
             get

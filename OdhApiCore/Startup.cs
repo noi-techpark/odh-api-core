@@ -93,7 +93,7 @@ namespace OdhApiCore
                 };
                 var loggerConfiguration = new LoggerConfiguration()
                     .MinimumLevel.ControlledBy(levelSwitch)
-                    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                     .Enrich.FromLogContext()
                     .WriteTo.Console(outputTemplate: "{Message}{NewLine}")
                     .WriteTo.Debug()
@@ -383,7 +383,9 @@ namespace OdhApiCore
                     return;
                 }
 
-                //Log only if api is requested!
+                await next();
+
+                //Log only if api is requested! with Statuscode thereofre after await next();
                 //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
                 if (!String.IsNullOrEmpty(context.Request.Path.Value) && context.Request.Path.Value.StartsWith("/v1", StringComparison.OrdinalIgnoreCase))
                 {
@@ -417,7 +419,8 @@ namespace OdhApiCore
                         schema = context.Request.Scheme,
                         useragent = useragent,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous",
-                        ipaddress = remoteip
+                        ipaddress = remoteip,
+                        statuscode = context.Response.StatusCode
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 
@@ -425,8 +428,14 @@ namespace OdhApiCore
 
                     //Log.Information(output);
                 }
-
-                await next();
+               
+           
+                //if (context.Response.StatusCode == 404)
+                //{
+                //    //TODO
+                //    //context.Request.Path = "/Home";
+                //    //await next();
+                //}
             });
 
             //REWRITE, REDIRECT RULES
