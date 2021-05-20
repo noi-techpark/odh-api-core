@@ -13,34 +13,51 @@ namespace STA
     {
         public const string csvurl = "c:\\temp\\210208.sudtirolmobil.Verkaufsstellen.csv";
 
-        public static async Task<IEnumerable<STAVendingPoint>> ImportCSVFromSTA()
+        public static async Task<ParseResult<STAVendingPoint>> ImportCSVFromSTA()
         {
-            //FORM DOCS
-            //https://joshclose.github.io/CsvHelper/getting-started/
-
-            //CSVReader Config
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            try
             {
-                Delimiter = ";",
-                NewLine = Environment.NewLine,
-            };
-            var records = default(IEnumerable<STAVendingPoint>);
-            var result = default(List<STAVendingPoint>);
+                //FORM DOCS
+                //https://joshclose.github.io/CsvHelper/getting-started/
 
-            using (var reader = new StreamReader(csvurl))
-            using (var csv = new CsvReader(reader, config))
+                //CSVReader Config
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    Delimiter = ";",
+                    NewLine = Environment.NewLine,
+                };
+                var records = default(IEnumerable<STAVendingPoint>);
+
+                using (var reader = new StreamReader(csvurl))
+                using (var csv = new CsvReader(reader, config))
+                {
+                    //csv.Configuration.Delimiter = ";";
+                    csv.Read();
+                    csv.ReadHeader();
+                    records = csv.GetRecords<STAVendingPoint>();
+
+                    ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
+                    myresult.Success = true;
+                    myresult.Error = false;
+                    myresult.records = records.ToList();
+
+                    return myresult;
+                }
+            }
+            catch(Exception ex)
             {
-                //csv.Configuration.Delimiter = ";";
-                csv.Read();
-                csv.ReadHeader();
-                records = csv.GetRecords<STAVendingPoint>();
-
-                //Reading all
-                result = records.ToList();
-            }            
-
-            return result;
+                return new ParseResult<STAVendingPoint>() { Error = true, Success = false, ErrorMessage = ex.Message, records = null };
+            }
         }
 
+    }
+
+    public class ParseResult<T>
+    {
+        public bool Success { get; set; }
+        public bool Error { get; set; }
+        public string ErrorMessage { get; set; }
+
+        public IEnumerable<T> records { get; set; }
     }
 }
