@@ -81,8 +81,7 @@ namespace OdhApiCore.Controllers.api
 
         [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
         [HttpGet, Route("v1/STA/ImportVendingPoints")]
-        public async Task<IActionResult> ImportVendingPointsFromSTA(
-           string language,
+        public async Task<IActionResult> ImportVendingPointsFromSTA(           
            CancellationToken cancellationToken)
         {
             try
