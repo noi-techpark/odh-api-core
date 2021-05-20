@@ -17,5 +17,6 @@ namespace Helper
         public string urlparams { get; set; }
         public string useragent { get; set; }
         public string ipaddress { get; set; }
+        public int? statuscode { get; set; }
     }
 }
