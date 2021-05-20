@@ -54,6 +54,7 @@
     <ProjectReference Include="..\NINJA\NINJA.csproj" />
     <ProjectReference Include="..\RAVEN\RAVEN.csproj" />
     <ProjectReference Include="..\SIAG\SIAG.csproj" />
+    <ProjectReference Include="..\STA\STA.csproj" />
   </ItemGroup>
 
 </Project>
