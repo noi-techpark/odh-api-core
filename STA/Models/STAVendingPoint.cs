@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace STA
 {
-    public class ParseSTAPois
+    public class STAVendingPoint
     {
     }
 }
