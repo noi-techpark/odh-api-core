@@ -378,8 +378,22 @@ namespace OdhApiCore
             {
                 //TODO If Root is requested forward to Databrowser (Compatibility reason)
                 if(String.IsNullOrEmpty(context.Request.Path.Value) || context.Request.Path.Value == "/")
-                {                          
-                    context.Response.Redirect(Configuration.GetSection("DataBrowserConfig").GetValue<string>("Url"));                                     
+                {  
+                    if(context.Request.Host.ToString().Equals("tourism.opendatahub.bz.it"))
+                    {
+                        context.Response.Redirect(Configuration.GetSection("DataBrowserConfig").GetValue<string>("Url"));
+                        return;
+                    }
+                    else
+                    {
+                        context.Response.Redirect("/swagger");
+                        return;
+                    }
+                }
+
+                else if (context.Request.Path.Value == "/api")
+                {
+                    context.Response.Redirect("/v1");
                     return;
                 }
 
