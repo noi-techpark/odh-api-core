@@ -397,6 +397,12 @@ namespace OdhApiCore
                     return;
                 }
 
+                else if(context.Request.Path.Value.StartsWith("/swagger/ui/index"))
+                {
+                    context.Response.Redirect("/swagger");
+                    return;
+                }
+
                 await next();
 
                 //Log only if api is requested! with Statuscode thereofre after await next();

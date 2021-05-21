@@ -86,7 +86,13 @@ namespace STA
 
             //End Properties Parsing
 
+            //DETAIL Parsing
 
+            //End DETAIL Parsing
+
+            //Address Parsing
+
+            //END Address Parsing
 
 
             return new SmgPoiLinked();
