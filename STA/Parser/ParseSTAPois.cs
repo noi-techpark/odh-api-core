@@ -57,32 +57,57 @@ namespace STA
             //END GPsData
 
             //Properties Parsing
+            List<PoiProperty> mypoipropertylist = new List<PoiProperty>();
+
             bool haswebsite = false;
             bool.TryParse(vendingpoint.Website, out haswebsite);
+            PoiProperty pPhasWebsite = new PoiProperty() { Name = "haswebsite", Value = haswebsite.ToString() };
+            mypoipropertylist.Add(pPhasWebsite);
 
             bool suedtirolpassdienste = false;
             bool.TryParse(vendingpoint.SuedtirolPassDienste, out suedtirolpassdienste);
+            PoiProperty pPsuedtirolpassdienste = new PoiProperty() { Name = "suedtirolpass_services", Value = suedtirolpassdienste.ToString() };
+            mypoipropertylist.Add(pPsuedtirolpassdienste);
 
             bool suedtirolpassplus65 = false;
             bool.TryParse(vendingpoint.SuedtirolPass65PlusBeantragung, out suedtirolpassplus65);
+            PoiProperty pPsuedtirolpassover65 = new PoiProperty() { Name = "suedtirolpass_over65_apply", Value = suedtirolpassplus65.ToString() };
+            mypoipropertylist.Add(pPsuedtirolpassover65);
 
             bool duplikat = false;
             bool.TryParse(vendingpoint.Duplikat, out duplikat);
+            PoiProperty pPduplicate = new PoiProperty() { Name = "duplicate", Value = duplikat.ToString() };
+            mypoipropertylist.Add(pPduplicate);
 
             bool wertkarte = false;
             bool.TryParse(vendingpoint.Wertkarte, out wertkarte);
+            PoiProperty pPHwertkarte = new PoiProperty() { Name = "chargecard", Value = wertkarte.ToString() };
+            mypoipropertylist.Add(pPHwertkarte);
 
             bool stadtfahrkarte = false;
             bool.TryParse(vendingpoint.StadtfahrkarteoCitybus, out stadtfahrkarte);
+            PoiProperty pPstadtfahrkartecitybus = new PoiProperty() { Name = "city_card_bus", Value = stadtfahrkarte.ToString() };
+            mypoipropertylist.Add(pPstadtfahrkartecitybus);
 
             bool mobilcard = false;
             bool.TryParse(vendingpoint.Mobilcard, out mobilcard);
+            PoiProperty pPmobilcard = new PoiProperty() { Name = "mobilecard", Value = mobilcard.ToString() };
+            mypoipropertylist.Add(pPmobilcard);
 
             bool bikemobilCard = false;
-            bool.TryParse(vendingpoint.bikemobilCard, out bikemobilCard);
+            bool.TryParse(vendingpoint.bikemobilCard, out bikemobilCard); 
+            PoiProperty pPbikemobilcard = new PoiProperty() { Name = "bike_mobilecard", Value = bikemobilCard.ToString() };
+            mypoipropertylist.Add(pPbikemobilcard);
 
             bool museummobilcard = false;
             bool.TryParse(vendingpoint.MuseumobilCard, out museummobilcard);
+            PoiProperty pPmobilecard = new PoiProperty() { Name = "museum_mobilecard", Value = museummobilcard.ToString() }; 
+            mypoipropertylist.Add(pPmobilecard);
+
+            mypoi.PoiProperty.TryAddOrUpdate("de", mypoipropertylist);
+            mypoi.PoiProperty.TryAddOrUpdate("it", mypoipropertylist);
+            mypoi.PoiProperty.TryAddOrUpdate("en", mypoipropertylist);
+            mypoi.PoiProperty.TryAddOrUpdate("ld", mypoipropertylist);
 
             //End Properties Parsing
 
@@ -145,10 +170,23 @@ namespace STA
 
             //END Address Parsing
 
+            //TODO
             //OpeningTimes Parsing
 
             //END Openingtimes Parsing
 
+            //TODO
+            //Categorization            
+            //METADATA GENERATION
+            //LICENSEINFO
+            //ODH Tags Categorization
+
+            mypoi.SyncSourceInterface = "sta";
+            mypoi.SyncUpdateMode = "Full";
+            mypoi.Source = "STA";
+
+            mypoi.Active = true;
+            mypoi.SmgActive = true;
 
             return new SmgPoiLinked();
         }
