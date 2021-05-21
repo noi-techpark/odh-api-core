@@ -88,11 +88,66 @@ namespace STA
 
             //DETAIL Parsing
 
+            Detail detailde = new Detail();
+            detailde.Language = "de";
+            detailde.Title = vendingpoint.Salepoint_Name_STA_DE;
+            mypoi.Detail.TryAddOrUpdate("de", detailde);
+       
+            Detail detailit = new Detail();
+            detailit.Language = "it";
+            detailit.Title = vendingpoint.Salepoint_Name_STA_IT;
+            mypoi.Detail.TryAddOrUpdate("it", detailit);
+
+            Detail detailen = new Detail();
+            detailen.Language = "en";
+            detailen.Title = vendingpoint.Salepoint_Name_STA_EN;
+            mypoi.Detail.TryAddOrUpdate("en", detailen);
+
+            Detail detaillad = new Detail();
+            detaillad.Language = "ld"; //ISO 639-3
+            detaillad.Title = vendingpoint.Salepoint_Name_STA_LAD;
+            mypoi.Detail.TryAddOrUpdate("ld", detaillad);
+
             //End DETAIL Parsing
 
             //Address Parsing
+            ContactInfos contactInfosde = new ContactInfos();
+            contactInfosde.CompanyName = vendingpoint.Salepoint_Name_STA_DE;
+            contactInfosde.ZipCode = vendingpoint.CAP;
+            contactInfosde.Address = vendingpoint.Adresse_DE;
+            contactInfosde.City = vendingpoint.Stadt;
+            contactInfosde.Language = "de";
+            mypoi.ContactInfos.TryAddOrUpdate("de", contactInfosde);
+
+            ContactInfos contactInfosit = new ContactInfos();
+            contactInfosit.CompanyName = vendingpoint.Salepoint_Name_STA_IT;
+            contactInfosit.ZipCode = vendingpoint.CAP;
+            contactInfosit.Address = vendingpoint.Adresse_IT_EN_LAD;
+            contactInfosit.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfosit.Language = "it";
+            mypoi.ContactInfos.TryAddOrUpdate("it", contactInfosit);
+
+            ContactInfos contactInfosen = new ContactInfos();
+            contactInfosen.CompanyName = vendingpoint.Salepoint_Name_STA_EN;
+            contactInfosen.ZipCode = vendingpoint.CAP;
+            contactInfosen.Address = vendingpoint.Adresse_IT_EN_LAD;
+            contactInfosen.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfosen.Language = "en";
+            mypoi.ContactInfos.TryAddOrUpdate("en", contactInfosen);
+
+            ContactInfos contactInfoslad = new ContactInfos();
+            contactInfoslad.CompanyName = vendingpoint.Salepoint_Name_STA_LAD;
+            contactInfoslad.ZipCode = vendingpoint.CAP;
+            contactInfoslad.Address = vendingpoint.Adresse_IT_EN_LAD;
+            contactInfoslad.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfoslad.Language = "ld";
+            mypoi.ContactInfos.TryAddOrUpdate("ld", contactInfoslad);
 
             //END Address Parsing
+
+            //OpeningTimes Parsing
+
+            //END Openingtimes Parsing
 
 
             return new SmgPoiLinked();
