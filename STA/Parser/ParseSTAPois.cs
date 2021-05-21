@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataModel;
+using Helper;
 
 namespace STA
 {
@@ -27,6 +28,34 @@ namespace STA
             //Lat
             //Long
             //Angebot von Leistungen(von AW bis BD)
+
+            var mypoi = new SmgPoiLinked();            
+
+            //ID
+            var id = "salespoint_sta_" + vendingpoint.STA_ID;
+            mypoi.Id = id;
+
+            //GPSData
+
+            double gpslat = !String.IsNullOrEmpty(vendingpoint.latitude) ? Convert.ToDouble(vendingpoint.latitude) : 0;
+            double gpslong = !String.IsNullOrEmpty(vendingpoint.longitude) ? Convert.ToDouble(vendingpoint.longitude) : 0;
+
+            if (gpslat != 0 && gpslong != 0)
+            {
+                GpsInfo gpsinfo = new GpsInfo();
+                gpsinfo.Gpstype = "position";
+                gpsinfo.Latitude = gpslat;
+                gpsinfo.Longitude = gpslong;
+
+                mypoi.GpsPoints.TryAddOrUpdate(gpsinfo.Gpstype, gpsinfo);
+
+                if (mypoi.GpsInfo == null)
+                    mypoi.GpsInfo = new List<GpsInfo>();
+                mypoi.GpsInfo.Add(gpsinfo);
+            }
+
+            //END GPsData
+
 
             return new SmgPoiLinked();
         }
