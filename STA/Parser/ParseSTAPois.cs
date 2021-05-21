@@ -56,6 +56,44 @@ namespace STA
 
             //END GPsData
 
+            //Properties Parsing
+            bool haswebsite = false;
+            bool.TryParse(vendingpoint.Website, out haswebsite);
+
+            bool suedtirolpassdienste = false;
+            bool.TryParse(vendingpoint.SuedtirolPassDienste, out suedtirolpassdienste);
+
+            bool suedtirolpassplus65 = false;
+            bool.TryParse(vendingpoint.SuedtirolPass65PlusBeantragung, out suedtirolpassplus65);
+
+            bool duplikat = false;
+            bool.TryParse(vendingpoint.Duplikat, out duplikat);
+
+            bool wertkarte = false;
+            bool.TryParse(vendingpoint.Wertkarte, out wertkarte);
+
+            bool stadtfahrkarte = false;
+            bool.TryParse(vendingpoint.StadtfahrkarteoCitybus, out stadtfahrkarte);
+
+            bool mobilcard = false;
+            bool.TryParse(vendingpoint.Mobilcard, out mobilcard);
+
+            bool bikemobilCard = false;
+            bool.TryParse(vendingpoint.bikemobilCard, out bikemobilCard);
+
+            bool museummobilcard = false;
+            bool.TryParse(vendingpoint.MuseumobilCard, out museummobilcard);
+
+            //End Properties Parsing
+
+            //DETAIL Parsing
+
+            //End DETAIL Parsing
+
+            //Address Parsing
+
+            //END Address Parsing
+
 
             return new SmgPoiLinked();
         }
