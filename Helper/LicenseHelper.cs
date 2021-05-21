@@ -123,7 +123,7 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
 
-            List<string> allowedsources = new List<string>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common" };
+            List<string> allowedsources = new List<string>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common","sta" };
 
             if (data.Active)
             {
@@ -142,6 +142,8 @@ namespace Helper
                         licenseholder = "https://stiftung.arch.bz.it";
                     if (data.Source == "Suedtirol Wein")
                         licenseholder = "https://www.suedtirolwein.com";
+                    if (data.Source == "STA")
+                        licenseholder = "https://www.sta.bz.it/";
 
                 }
             }
