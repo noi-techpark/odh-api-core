@@ -26,10 +26,10 @@ Usage: `?rawfilter=<filter(s)>`
 eq(<field>, <value>)
 eq(Active, true)                                               // all active entries
 eq(Type, 'Wandern')                                            // all entries of type 'Wandern'
-eq(ImageGallery, [])                                           // all entries where ImageGallery is empty
+eq(ODHTags, [])                                                // all entries where Array ODHTags is empty
 isnotnull(Detail.ru.Title)                                     // all entries with a russian title set
 and(ge(GpsInfo.0.Altitude, 200), le(GpsInfo.0.Altitude, 400))  // all entries with an altitude between 200 and 400 meters
-in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries with a specific feature ID
+in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries in an Array with a specific feature ID
 ```
 
 > `<field>` is described [here](#Supported-value-types:)   
