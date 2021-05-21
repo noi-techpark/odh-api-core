@@ -79,7 +79,6 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
         [HttpGet, Route("v1/STA/ImportVendingPoints")]
         public async Task<IActionResult> ImportVendingPointsFromSTA(           
            CancellationToken cancellationToken)
@@ -95,6 +94,43 @@ namespace OdhApiCore.Controllers.api
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost, Route("v1/STA/ImportVendingPoints")]
+        public async Task<IActionResult> SendVendingPointsFromSTA(
+           CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await PostVendingPointsFromSTA(Request);                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new GenericResult() { Message = ex.Message });
+            }
+        }
+
+        private static async Task<string> ReadStringDataManual(HttpRequest request)
+        {
+            using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8))
+            {
+                return await reader.ReadToEndAsync();
+            }
+        }
+
+        private async Task<IActionResult> PostVendingPointsFromSTA(HttpRequest request)
+        {
+            string jsonContent = await ReadStringDataManual(request);
+
+            if (!string.IsNullOrEmpty(jsonContent))
+            {
+                await STA.GetDataFromSTA.ImportCSVFromSTA();
+
+                return new OkObjectResult("import from posted csv succeeded");
+            }
+            else
+                throw new Exception("no Content");
+        }
+
 
     }
 }
