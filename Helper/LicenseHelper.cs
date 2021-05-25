@@ -187,6 +187,11 @@ namespace Helper
                 licensetype = ""; //licensetype = "CC0";
             }
 
+            if(data.Source == "Content")
+            {
+                licenseholder = @"https://www.idm-suedtirol.com";
+            }
+
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 

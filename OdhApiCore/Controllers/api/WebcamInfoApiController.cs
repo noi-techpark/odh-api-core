@@ -192,6 +192,12 @@ namespace OdhApiCore.Controllers
         [HttpPost, Route("WebcamInfo")]
         public Task<IActionResult> Post([FromBody] WebcamInfoLinked webcam)
         {
+            //TODO IGNORE Fields
+            //AreaIds, LicenseInfo, SmgTags, WebcamAssignedOn, Meta
+
+            webcam.LicenseInfo = LicenseHelper.GetLicenseforWebcam(webcam);
+            webcam._Meta = MetadataHelper.GetMetadataforWebcam(webcam);
+
             return DoAsyncReturn(async () =>
             {
                 webcam.Id = !String.IsNullOrEmpty(webcam.Id) ? webcam.Id.ToUpper() : "noId";
@@ -211,6 +217,9 @@ namespace OdhApiCore.Controllers
         [HttpPut, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
         {
+            webcam.LicenseInfo = LicenseHelper.GetLicenseforWebcam(webcam);
+            webcam._Meta = MetadataHelper.GetMetadataforWebcam(webcam);
+
             return DoAsyncReturn(async () =>
             {
                 webcam.Id = id.ToUpper();
