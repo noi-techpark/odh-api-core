@@ -568,6 +568,15 @@ namespace OdhApiCore.Controllers.api
 
                         return await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
 
+                    case "odhactivitypoi":
+                        mydata = await GetDataFromRaven.GetRavenData<SmgPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<SmgPoiLinked, SmgPoiLinked>((SmgPoiLinked)mydata, TransformToPGObject.GetODHActivityPoiPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<SmgPoiLinked>((SmgPoiLinked)mypgdata, "smgpois");
+
                     case "event":
                         mydata = await GetDataFromRaven.GetRavenData<EventLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
@@ -585,6 +594,87 @@ namespace OdhApiCore.Controllers.api
                             throw new Exception("No data found!");
 
                         return await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+
+                    case "metaregion":
+                        mydata = await GetDataFromRaven.GetRavenData<MetaRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<MetaRegionLinked, MetaRegionLinked>((MetaRegionLinked)mydata, TransformToPGObject.GetMetaRegionPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions");
+
+                    case "region":
+                        mydata = await GetDataFromRaven.GetRavenData<RegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<RegionLinked, RegionLinked>((RegionLinked)mydata, TransformToPGObject.GetRegionPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions");
+
+                    case "tv":
+                        mydata = await GetDataFromRaven.GetRavenData<TourismvereinLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<TourismvereinLinked, TourismvereinLinked>((TourismvereinLinked)mydata, TransformToPGObject.GetTourismAssociationPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs");
+
+                    case "municipality":
+                        mydata = await GetDataFromRaven.GetRavenData<MunicipalityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<MunicipalityLinked, MunicipalityLinked>((MunicipalityLinked)mydata, TransformToPGObject.GetMunicipalityPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities");
+
+                    case "district":
+                        mydata = await GetDataFromRaven.GetRavenData<DistrictLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<DistrictLinked, DistrictLinked>((DistrictLinked)mydata, TransformToPGObject.GetDistrictPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts");
+
+                    case "experiencearea":
+                        mydata = await GetDataFromRaven.GetRavenData<ExperienceAreaLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<ExperienceAreaLinked, ExperienceAreaLinked>((ExperienceAreaLinked)mydata, TransformToPGObject.GetExperienceAreaPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas");
+
+                    case "skiarea":
+                        mydata = await GetDataFromRaven.GetRavenData<SkiAreaLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<SkiAreaLinked, SkiAreaLinked>((SkiAreaLinked)mydata, TransformToPGObject.GetSkiAreaPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "skiareas");
+
+                    case "skiregion":
+                        mydata = await GetDataFromRaven.GetRavenData<SkiRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<SkiRegionLinked, SkiRegionLinked>((SkiRegionLinked)mydata, TransformToPGObject.GetSkiRegionPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");
+
+                    case "odhtag":
+                        mydata = await GetDataFromRaven.GetRavenData<SmgTags>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<SmgTags, SmgTags>((SmgTags)mydata, TransformToPGObject.GetODHTagPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<SmgTags>((SmgTags)mypgdata, "smgtags");
 
                     default:
                         return BadRequest(new { error = "no match found" });
