@@ -13,7 +13,7 @@ namespace STA
     {
         public const string csvurl = "c:\\temp\\210208.sudtirolmobil.Verkaufsstellen.csv";
 
-        public static async Task<ParseResult<STAVendingPoint>> ImportCSVFromSTA()
+        public static async Task<ParseResult<STAVendingPoint>> ImportCSVFromSTA(string? csvcontent)
         {
             try
             {
@@ -28,26 +28,58 @@ namespace STA
                 };
                 var records = default(IEnumerable<STAVendingPoint>);
 
-                using (var reader = new StreamReader(csvurl))
-                using (var csv = new CsvReader(reader, config))
+                //Import from File
+                if (csvcontent == null)
                 {
-                    //csv.Configuration.Delimiter = ";";
-                    csv.Read();
-                    csv.ReadHeader();
-                    records = csv.GetRecords<STAVendingPoint>();
+                    using (var reader = new StreamReader(csvurl))
+                    using (var csv = new CsvReader(reader, config))
+                    {
+                        //csv.Configuration.Delimiter = ";";
+                        csv.Read();
+                        csv.ReadHeader();
+                        records = csv.GetRecords<STAVendingPoint>();
 
-                    ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
-                    myresult.Success = true;
-                    myresult.Error = false;
-                    myresult.records = records.ToList();
+                        ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
+                        myresult.Success = true;
+                        myresult.Error = false;
+                        myresult.records = records.ToList();
 
-                    return myresult;
+                        return myresult;
+                    }
+                }
+                else
+                {
+                    using (var reader = new StreamReader(GenerateStreamFromString(csvcontent)))
+                    using (var csv = new CsvReader(reader, config))
+                    {
+                        //csv.Configuration.Delimiter = ";";
+                        csv.Read();
+                        csv.ReadHeader();
+                        records = csv.GetRecords<STAVendingPoint>();
+
+                        ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
+                        myresult.Success = true;
+                        myresult.Error = false;
+                        myresult.records = records.ToList();
+
+                        return myresult;
+                    }
                 }
             }
             catch(Exception ex)
             {
                 return new ParseResult<STAVendingPoint>() { Error = true, Success = false, ErrorMessage = ex.Message, records = null };
             }
+        }
+
+        public static Stream GenerateStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
 
     }

@@ -126,37 +126,43 @@ namespace OdhApiCore.Controllers.api
 
             if (!string.IsNullOrEmpty(jsonContent))
             {
-                var vendingpoints = await STA.GetDataFromSTA.ImportCSVFromSTA();
-
-                if (vendingpoints.Success)
-                {
-                    //Import Each STA Vendingpoi to ODH
-                    foreach (var vendingpoint in vendingpoints.records)
-                    {
-                        //Parse to ODHActivityPoi
-                        var odhactivitypoi = STA.ParseSTAPois.ParseSTAVendingPointToODHActivityPoi(vendingpoint);
-
-                        //TODO SET ATTRIBUTES
-                        //MetaData
-                        odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<SmgPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
-                        //License
-                        odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
-
-                        //Save to PG
-                        //Check if data exists
-                        await UpsertData<ODHActivityPoi>(odhactivitypoi, "smgpois");
-                    }
-
-                    return new OkObjectResult("import from posted csv succeeded");
-                }
-                else if (vendingpoints.Error)
-                    throw new Exception(vendingpoints.ErrorMessage);          
-                else
-                    throw new Exception("no data to import");
+                return await ImportVendingPointsFromCSV(jsonContent);
             }
             else
                 throw new Exception("no Content");
         }
+
+        private async Task<IActionResult> ImportVendingPointsFromCSV(string csvcontent)
+        {
+            var vendingpoints = await STA.GetDataFromSTA.ImportCSVFromSTA();
+
+            if (vendingpoints.Success)
+            {
+                //Import Each STA Vendingpoi to ODH
+                foreach (var vendingpoint in vendingpoints.records)
+                {
+                    //Parse to ODHActivityPoi
+                    var odhactivitypoi = STA.ParseSTAPois.ParseSTAVendingPointToODHActivityPoi(vendingpoint);
+
+                    //TODO SET ATTRIBUTES
+                    //MetaData
+                    odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<SmgPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
+                                                                                                                                                        //License
+                    odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
+
+                    //Save to PG
+                    //Check if data exists
+                    await UpsertData<ODHActivityPoi>(odhactivitypoi, "smgpois");
+                }
+
+                return new OkObjectResult("import from posted csv succeeded");
+            }
+            else if (vendingpoints.Error)
+                throw new Exception(vendingpoints.ErrorMessage);
+            else
+                throw new Exception("no data to import");
+        }
+
 
         #endregion
     }
