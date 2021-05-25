@@ -31,7 +31,7 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         private readonly IWebHostEnvironment env;
 
-        public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<AlpineBitsController> logger, QueryFactory queryFactory)
+        public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<UpdateApiController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
             this.env = env;

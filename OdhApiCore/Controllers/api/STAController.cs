@@ -21,12 +21,13 @@ namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
-    public class STAController : ControllerBase
+    public class STAController : OdhController
     {
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
 
-        public STAController(IWebHostEnvironment env, ISettings settings)           
+        public STAController(IWebHostEnvironment env, ISettings settings, ILogger<STAController> logger, QueryFactory queryFactory)
+         : base(env, settings, logger, queryFactory)
         {
             this.env = env;
             this.settings = settings;
@@ -123,9 +124,33 @@ namespace OdhApiCore.Controllers.api
 
             if (!string.IsNullOrEmpty(jsonContent))
             {
-                await STA.GetDataFromSTA.ImportCSVFromSTA();
+                var vendingpoints = await STA.GetDataFromSTA.ImportCSVFromSTA();
 
-                return new OkObjectResult("import from posted csv succeeded");
+                if (vendingpoints.Success)
+                {
+                    //Import Each STA Vendingpoi to ODH
+                    foreach (var vendingpoint in vendingpoints.records)
+                    {
+                        //Parse to ODHActivityPoi
+                        var odhactivitypoi = STA.ParseSTAPois.ParseSTAVendingPointToODHActivityPoi(vendingpoint);
+
+                        //TODO SET ATTRIBUTES
+                        //MetaData
+                        odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<SmgPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
+                        //License
+                        odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
+
+                        //Save to PG
+                        //Check if data exists
+                        await UpsertData<ODHActivityPoi>(odhactivitypoi, "smgpois");
+                    }
+
+                    return new OkObjectResult("import from posted csv succeeded");
+                }
+                else if (vendingpoints.Error)
+                    throw new Exception(vendingpoints.ErrorMessage);          
+                else
+                    throw new Exception("no data to import");
             }
             else
                 throw new Exception("no Content");
