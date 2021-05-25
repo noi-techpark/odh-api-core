@@ -226,6 +226,8 @@ namespace OdhApiCore.Controllers
         [HttpDelete, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Delete(string id)
         {
+            //TODO Invalidate Cache after each Operation!!
+
             return DoAsyncReturn(async () =>
             {
                 id = id.ToUpper();

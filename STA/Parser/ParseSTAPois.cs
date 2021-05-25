@@ -158,11 +158,16 @@ namespace STA
             //END Openingtimes Parsing
 
             //TODO
-            //Categorization            
-            //METADATA GENERATION
+            //Categorization                        
 
-            //LICENSEINFO
-            //ODH Tags Categorization
+            //ODH Tags 
+            mypoi.SmgTags = new List<string>();
+            mypoi.SmgTags.Add("mobilität");
+            mypoi.SmgTags.Add("sellingpoint");
+
+            //ODH Categorizations
+
+
 
             mypoi.SyncSourceInterface = "sta";
             mypoi.SyncUpdateMode = "Full";
@@ -171,7 +176,7 @@ namespace STA
             mypoi.Active = true;
             mypoi.SmgActive = true;
 
-            return new SmgPoiLinked();
+            return mypoi;
         }
     }
 }
