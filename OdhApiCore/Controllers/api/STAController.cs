@@ -34,7 +34,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
-        [HttpGet, Route("v1/STA/ODHActivityPoi")]
+        [HttpGet, Route("STA/ODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiListSTA(
             string language,
             CancellationToken cancellationToken)
@@ -57,7 +57,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
-        [HttpGet, Route("v1/STA/Accommodation")]
+        [HttpGet, Route("STA/Accommodation")]
         public async Task<IActionResult> GetAccommodationsSTA(
            string language,
            CancellationToken cancellationToken)
@@ -80,7 +80,7 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        [HttpGet, Route("v1/STA/ImportVendingPoints")]
+        [HttpGet, Route("STA/ImportVendingPoints")]
         public async Task<IActionResult> ImportVendingPointsFromSTA(           
            CancellationToken cancellationToken)
         {
@@ -96,7 +96,7 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        [HttpPost, Route("v1/STA/ImportVendingPoints")]
+        [HttpPost, Route("STA/ImportVendingPoints")]
         public async Task<IActionResult> SendVendingPointsFromSTA(
            CancellationToken cancellationToken)
         {
@@ -109,6 +109,8 @@ namespace OdhApiCore.Controllers.api
                 return BadRequest(new GenericResult() { Message = ex.Message });
             }
         }
+
+        #region HELPERS
 
         private static async Task<string> ReadStringDataManual(HttpRequest request)
         {
@@ -156,6 +158,6 @@ namespace OdhApiCore.Controllers.api
                 throw new Exception("no Content");
         }
 
-
+        #endregion
     }
 }
