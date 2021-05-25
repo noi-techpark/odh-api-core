@@ -16,6 +16,7 @@ using SqlKata.Execution;
 using OdhApiCore.Filters;
 using AspNetCore.CacheOutput;
 using System.IO;
+using OdhApiCore.GenericHelpers;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -32,6 +33,8 @@ namespace OdhApiCore.Controllers.api
             this.env = env;
             this.settings = settings;
         }
+
+        #region GETTER
 
         [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
         [HttpGet, Route("STA/ODHActivityPoi")]
@@ -80,9 +83,46 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
+        #endregion       
+
+        #region GENERATEJSON
+
+        [InvalidateCacheOutput(nameof(GetODHActivityPoiListSTA), typeof(STAController))] // this will invalidate Get in a different controller
+        [HttpGet, Route("STA/JsonPoi")]
+        public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
+        {
+            await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
+
+            return Ok(new
+            {
+                operation = "Json Generation",
+                type = "ODHActivityPoi",
+                message = "Generate Json ODHActivityPoi for STA succeeded",
+                success = true
+            });
+        }
+
+        [InvalidateCacheOutput(nameof(GetAccommodationsSTA), typeof(STAController))] // this will invalidate Get in a different controller
+        [HttpGet, Route("STA/JsonAccommodation")]
+        public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
+        {
+            await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
+
+            return Ok(new
+            {
+                operation = "Json Generation",
+                type = "Accommodation",
+                message = "Generate Json Accommodation for STA succeeded",
+                success = true
+            });
+        }
+
+        #endregion
+
+        #region IMPORTER
+
         [HttpGet, Route("STA/ImportVendingPoints")]
-        public async Task<IActionResult> ImportVendingPointsFromSTA(           
-           CancellationToken cancellationToken)
+        public async Task<IActionResult> ImportVendingPointsFromSTA(CancellationToken cancellationToken)
         {
             try
             {
@@ -95,18 +135,19 @@ namespace OdhApiCore.Controllers.api
         }
 
         [HttpPost, Route("STA/ImportVendingPoints")]
-        public async Task<IActionResult> SendVendingPointsFromSTA(
-           CancellationToken cancellationToken)
+        public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
         {
             try
             {
-                return await PostVendingPointsFromSTA(Request);                
+                return await PostVendingPointsFromSTA(Request);
             }
             catch (Exception ex)
             {
                 return BadRequest(new GenericResult() { Message = ex.Message });
             }
         }
+
+        #endregion
 
         #region HELPERS
 
@@ -160,7 +201,6 @@ namespace OdhApiCore.Controllers.api
             else
                 throw new Exception("no data to import");
         }
-
 
         #endregion
     }

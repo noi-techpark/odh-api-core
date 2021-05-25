@@ -30,37 +30,7 @@ namespace OdhApiCore.Controllers.api
         {
             this.settings = settings;
         }
-
-        [InvalidateCacheOutput(nameof(STAController.GetODHActivityPoiListSTA), typeof(STAController))] // this will invalidate Get in a different controller
-        [HttpGet, Route("STA/JsonPoi")]
-        public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
-        {
-            await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
-
-            return Ok(new
-            {
-                operation = "Json Generation",
-                type = "ODHActivityPoi",
-                message = "Generate Json ODHActivityPoi for STA succeeded",                
-                success = true
-            });
-        }
-
-        [InvalidateCacheOutput(nameof(STAController.GetAccommodationsSTA), typeof(STAController))] // this will invalidate Get in a different controller
-        [HttpGet, Route("STA/JsonAccommodation")]
-        public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
-        {
-            await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
-
-            return Ok(new
-            {
-                operation = "Json Generation",
-                type = "Accommodation",
-                message = "Generate Json Accommodation for STA succeeded",
-                success = true
-            });
-        }
-
+     
         [HttpGet, Route("ODH/AccommodationBooklist")]
         public async Task<IActionResult> ProduceAccoBooklistJson(CancellationToken cancellationToken)
         {
