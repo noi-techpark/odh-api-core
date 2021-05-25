@@ -58,50 +58,32 @@ namespace STA
 
             //Properties Parsing
             List<PoiProperty> mypoipropertylist = new List<PoiProperty>();
-
-            bool haswebsite = false;
-            bool.TryParse(vendingpoint.Website, out haswebsite);
-            PoiProperty pPhasWebsite = new PoiProperty() { Name = "haswebsite", Value = haswebsite.ToString() };
+            
+            PoiProperty pPhasWebsite = new PoiProperty() { Name = "haswebsite", Value = vendingpoint.Website };
             mypoipropertylist.Add(pPhasWebsite);
 
-            bool suedtirolpassdienste = false;
-            bool.TryParse(vendingpoint.SuedtirolPassDienste, out suedtirolpassdienste);
-            PoiProperty pPsuedtirolpassdienste = new PoiProperty() { Name = "suedtirolpass_services", Value = suedtirolpassdienste.ToString() };
+            PoiProperty pPsuedtirolpassdienste = new PoiProperty() { Name = "suedtirolpass_services", Value = vendingpoint.SuedtirolPassDienste };
             mypoipropertylist.Add(pPsuedtirolpassdienste);
-
-            bool suedtirolpassplus65 = false;
-            bool.TryParse(vendingpoint.SuedtirolPass65PlusBeantragung, out suedtirolpassplus65);
-            PoiProperty pPsuedtirolpassover65 = new PoiProperty() { Name = "suedtirolpass_over65_apply", Value = suedtirolpassplus65.ToString() };
+            
+            PoiProperty pPsuedtirolpassover65 = new PoiProperty() { Name = "suedtirolpass_over65_apply", Value = vendingpoint.SuedtirolPass65PlusBeantragung };
             mypoipropertylist.Add(pPsuedtirolpassover65);
-
-            bool duplikat = false;
-            bool.TryParse(vendingpoint.Duplikat, out duplikat);
-            PoiProperty pPduplicate = new PoiProperty() { Name = "duplicate", Value = duplikat.ToString() };
+            
+            PoiProperty pPduplicate = new PoiProperty() { Name = "duplicate", Value = vendingpoint.Duplikat };
             mypoipropertylist.Add(pPduplicate);
-
-            bool wertkarte = false;
-            bool.TryParse(vendingpoint.Wertkarte, out wertkarte);
-            PoiProperty pPHwertkarte = new PoiProperty() { Name = "chargecard", Value = wertkarte.ToString() };
+            
+            PoiProperty pPHwertkarte = new PoiProperty() { Name = "chargecard", Value = vendingpoint.Wertkarte };
             mypoipropertylist.Add(pPHwertkarte);
-
-            bool stadtfahrkarte = false;
-            bool.TryParse(vendingpoint.StadtfahrkarteoCitybus, out stadtfahrkarte);
-            PoiProperty pPstadtfahrkartecitybus = new PoiProperty() { Name = "city_card_bus", Value = stadtfahrkarte.ToString() };
+            
+            PoiProperty pPstadtfahrkartecitybus = new PoiProperty() { Name = "city_card_bus", Value = vendingpoint.StadtfahrkarteoCitybus };
             mypoipropertylist.Add(pPstadtfahrkartecitybus);
-
-            bool mobilcard = false;
-            bool.TryParse(vendingpoint.Mobilcard, out mobilcard);
-            PoiProperty pPmobilcard = new PoiProperty() { Name = "mobilecard", Value = mobilcard.ToString() };
+            
+            PoiProperty pPmobilcard = new PoiProperty() { Name = "mobilecard", Value = vendingpoint.Mobilcard };
             mypoipropertylist.Add(pPmobilcard);
-
-            bool bikemobilCard = false;
-            bool.TryParse(vendingpoint.bikemobilCard, out bikemobilCard); 
-            PoiProperty pPbikemobilcard = new PoiProperty() { Name = "bike_mobilecard", Value = bikemobilCard.ToString() };
+            
+            PoiProperty pPbikemobilcard = new PoiProperty() { Name = "bike_mobilecard", Value = vendingpoint.bikemobilCard };
             mypoipropertylist.Add(pPbikemobilcard);
 
-            bool museummobilcard = false;
-            bool.TryParse(vendingpoint.MuseumobilCard, out museummobilcard);
-            PoiProperty pPmobilecard = new PoiProperty() { Name = "museum_mobilecard", Value = museummobilcard.ToString() }; 
+            PoiProperty pPmobilecard = new PoiProperty() { Name = "museum_mobilecard", Value = vendingpoint.MuseumobilCard }; 
             mypoipropertylist.Add(pPmobilecard);
 
             mypoi.PoiProperty.TryAddOrUpdate("de", mypoipropertylist);
