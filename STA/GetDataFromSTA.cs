@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace STA
@@ -82,6 +83,10 @@ namespace STA
             return stream;
         }
 
+        public static MemoryStream GenerateMemoryStreamFromString(string value)
+        {
+            return new MemoryStream(Encoding.UTF8.GetBytes(value ?? ""));
+        }
     }
 
     public class ParseResult<T>

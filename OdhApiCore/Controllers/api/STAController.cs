@@ -86,9 +86,7 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {
-                await STA.GetDataFromSTA.ImportCSVFromSTA();
-                
-                return new OkObjectResult("test succeeded");                
+                return await ImportVendingPointsFromCSV(null);
             }
             catch (Exception ex)
             {
@@ -134,7 +132,7 @@ namespace OdhApiCore.Controllers.api
 
         private async Task<IActionResult> ImportVendingPointsFromCSV(string csvcontent)
         {
-            var vendingpoints = await STA.GetDataFromSTA.ImportCSVFromSTA();
+            var vendingpoints = await STA.GetDataFromSTA.ImportCSVFromSTA(csvcontent);
 
             if (vendingpoints.Success)
             {
