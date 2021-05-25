@@ -160,5 +160,13 @@ namespace Helper
         {
            return GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
         }
+
+        //TODO
+        //public static Metadata GetMetadataforSmgTag(SmgTags data)
+        //{
+        //    var source = data.Source.FirstOrDefault().ToLower();
+
+        //    return GetMetadata(data.Id, "odhtag", source, data.LastChange);
+        //}
     }
 }
