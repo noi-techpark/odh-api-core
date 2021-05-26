@@ -54,6 +54,7 @@ pipeline {
 		    echo 'SIAG_PSWD=${SIAG_PSWD}' >> .env
 		    echo 'XMLDIR=${XMLDIR}' >> .env
 		    echo 'IMG_URL=${IMG_URL}' >> .env
+		    echo 'DOC_URL=${DOC_URL}' >> .env
 		    echo 'S3_BUCKET_ACCESSPOINT=${S3_BUCKET_ACCESSPOINT}' >> .env
 		    echo 'S3_IMAGEUPLOADER_ACCESSKEY=${S3_IMAGEUPLOADER_ACCESSKEY}' >> .env
 		    echo 'S3_IMAGEUPLOADER_SECRETKEY=${S3_IMAGEUPLOADER_SECRETKEY}' >> .env
