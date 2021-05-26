@@ -34,18 +34,23 @@ namespace Helper
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
+            var tzinfo = TZConvert.GetTimeZoneInfo("W. Europe Standard Time");
+
             // Unix timestamp is seconds past epoch
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
+
+            return TimeZoneInfo.ConvertTimeFromUtc(dtDateTime, tzinfo);
         }
 
         public static DateTime UnixTimeStampToDateTimeMilliseconds(double unixTimeStamp)
         {
+            var tzinfo = TZConvert.GetTimeZoneInfo("W. Europe Standard Time");
+
             // Unix timestamp is seconds past epoch
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
+            dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToUniversalTime();
+            return TimeZoneInfo.ConvertTimeFromUtc(dtDateTime, tzinfo);
         }
 
 
