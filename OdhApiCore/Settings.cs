@@ -66,15 +66,17 @@ namespace OdhApiCore
 
     public class S3ImageresizerConfig
     {
-        public S3ImageresizerConfig(string url, string bucketaccesspoint, string accesskey, string secretkey)
+        public S3ImageresizerConfig(string url, string docurl, string bucketaccesspoint, string accesskey, string secretkey)
         {
             this.Url = url;
+            this.DocUrl = docurl;
             this.BucketAccessPoint = bucketaccesspoint;
             this.AccessKey = accesskey;
             this.SecretKey = secretkey;
         }
 
         public string Url { get; private set; }
+        public string DocUrl { get; private set; }
         public string BucketAccessPoint { get; private set; }
         public string AccessKey { get; private set; }
         public string SecretKey { get; private set; }
@@ -148,7 +150,7 @@ namespace OdhApiCore
             var json = this.configuration.GetSection("JsonConfig");
             this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
-            this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
+            this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("DocUrl", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
             var ebms = this.configuration.GetSection("EBMSConfig");
             this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
             var raven = this.configuration.GetSection("RavenConfig");

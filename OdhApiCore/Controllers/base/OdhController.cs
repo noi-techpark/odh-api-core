@@ -169,7 +169,7 @@ namespace OdhApiCore.Controllers
                         .DeleteAsync();                
             }
 
-            return Ok(new GenericResult() { Message = String.Format("DELETE success: {1}", id) });
+            return Ok(new GenericResult() { Message = String.Format("DELETE success: {0}", id) });
         }
     }
 }

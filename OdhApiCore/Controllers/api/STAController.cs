@@ -16,24 +16,28 @@ using SqlKata.Execution;
 using OdhApiCore.Filters;
 using AspNetCore.CacheOutput;
 using System.IO;
+using OdhApiCore.GenericHelpers;
 
 namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
-    public class STAController : ControllerBase
+    public class STAController : OdhController
     {
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
 
-        public STAController(IWebHostEnvironment env, ISettings settings)           
+        public STAController(IWebHostEnvironment env, ISettings settings, ILogger<STAController> logger, QueryFactory queryFactory)
+         : base(env, settings, logger, queryFactory)
         {
             this.env = env;
             this.settings = settings;
         }
 
+        #region GETTER
+
         [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
-        [HttpGet, Route("v1/STA/ODHActivityPoi")]
+        [HttpGet, Route("STA/ODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiListSTA(
             string language,
             CancellationToken cancellationToken)
@@ -56,7 +60,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
-        [HttpGet, Route("v1/STA/Accommodation")]
+        [HttpGet, Route("STA/Accommodation")]
         public async Task<IActionResult> GetAccommodationsSTA(
            string language,
            CancellationToken cancellationToken)
@@ -79,15 +83,50 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        [HttpGet, Route("v1/STA/ImportVendingPoints")]
-        public async Task<IActionResult> ImportVendingPointsFromSTA(           
-           CancellationToken cancellationToken)
+        #endregion       
+
+        #region GENERATEJSON
+
+        [InvalidateCacheOutput(nameof(GetODHActivityPoiListSTA), typeof(STAController))] // this will invalidate Get in a different controller
+        [HttpGet, Route("STA/JsonPoi")]
+        public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
+        {
+            await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
+
+            return Ok(new
+            {
+                operation = "Json Generation",
+                type = "ODHActivityPoi",
+                message = "Generate Json ODHActivityPoi for STA succeeded",
+                success = true
+            });
+        }
+
+        [InvalidateCacheOutput(nameof(GetAccommodationsSTA), typeof(STAController))] // this will invalidate Get in a different controller
+        [HttpGet, Route("STA/JsonAccommodation")]
+        public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
+        {
+            await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
+
+            return Ok(new
+            {
+                operation = "Json Generation",
+                type = "Accommodation",
+                message = "Generate Json Accommodation for STA succeeded",
+                success = true
+            });
+        }
+
+        #endregion
+
+        #region IMPORTER
+
+        [HttpGet, Route("STA/ImportVendingPoints")]
+        public async Task<IActionResult> ImportVendingPointsFromSTA(CancellationToken cancellationToken)
         {
             try
             {
-                await STA.GetDataFromSTA.ImportCSVFromSTA();
-                
-                return new OkObjectResult("test succeeded");                
+                return await ImportVendingPointsFromCSV(null);
             }
             catch (Exception ex)
             {
@@ -95,19 +134,22 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        [HttpPost, Route("v1/STA/ImportVendingPoints")]
-        public async Task<IActionResult> SendVendingPointsFromSTA(
-           CancellationToken cancellationToken)
+        [HttpPost, Route("STA/ImportVendingPoints")]
+        public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
         {
             try
             {
-                return await PostVendingPointsFromSTA(Request);                
+                return await PostVendingPointsFromSTA(Request);
             }
             catch (Exception ex)
             {
                 return BadRequest(new GenericResult() { Message = ex.Message });
             }
         }
+
+        #endregion
+
+        #region HELPERS
 
         private static async Task<string> ReadStringDataManual(HttpRequest request)
         {
@@ -123,14 +165,43 @@ namespace OdhApiCore.Controllers.api
 
             if (!string.IsNullOrEmpty(jsonContent))
             {
-                await STA.GetDataFromSTA.ImportCSVFromSTA();
-
-                return new OkObjectResult("import from posted csv succeeded");
+                return await ImportVendingPointsFromCSV(jsonContent);
             }
             else
                 throw new Exception("no Content");
         }
 
+        private async Task<IActionResult> ImportVendingPointsFromCSV(string csvcontent)
+        {
+            var vendingpoints = await STA.GetDataFromSTA.ImportCSVFromSTA(csvcontent);
 
+            if (vendingpoints.Success)
+            {
+                //Import Each STA Vendingpoi to ODH
+                foreach (var vendingpoint in vendingpoints.records)
+                {
+                    //Parse to ODHActivityPoi
+                    var odhactivitypoi = STA.ParseSTAPois.ParseSTAVendingPointToODHActivityPoi(vendingpoint);
+
+                    //TODO SET ATTRIBUTES
+                    //MetaData
+                    odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<SmgPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
+                                                                                                                                                        //License
+                    odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
+
+                    //Save to PG
+                    //Check if data exists
+                    await UpsertData<ODHActivityPoi>(odhactivitypoi, "smgpois");
+                }
+
+                return new OkObjectResult("import from posted csv succeeded");
+            }
+            else if (vendingpoints.Error)
+                throw new Exception(vendingpoints.ErrorMessage);
+            else
+                throw new Exception("no data to import");
+        }
+
+        #endregion
     }
 }

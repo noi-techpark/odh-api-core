@@ -57,45 +57,126 @@ namespace STA
             //END GPsData
 
             //Properties Parsing
-            bool haswebsite = false;
-            bool.TryParse(vendingpoint.Website, out haswebsite);
+            List<PoiProperty> mypoipropertylist = new List<PoiProperty>();
+            
+            PoiProperty pPhasWebsite = new PoiProperty() { Name = "haswebsite", Value = vendingpoint.Website };
+            mypoipropertylist.Add(pPhasWebsite);
 
-            bool suedtirolpassdienste = false;
-            bool.TryParse(vendingpoint.SuedtirolPassDienste, out suedtirolpassdienste);
+            PoiProperty pPsuedtirolpassdienste = new PoiProperty() { Name = "suedtirolpass_services", Value = vendingpoint.SuedtirolPassDienste };
+            mypoipropertylist.Add(pPsuedtirolpassdienste);
+            
+            PoiProperty pPsuedtirolpassover65 = new PoiProperty() { Name = "suedtirolpass_over65_apply", Value = vendingpoint.SuedtirolPass65PlusBeantragung };
+            mypoipropertylist.Add(pPsuedtirolpassover65);
+            
+            PoiProperty pPduplicate = new PoiProperty() { Name = "duplicate", Value = vendingpoint.Duplikat };
+            mypoipropertylist.Add(pPduplicate);
+            
+            PoiProperty pPHwertkarte = new PoiProperty() { Name = "chargecard", Value = vendingpoint.Wertkarte };
+            mypoipropertylist.Add(pPHwertkarte);
+            
+            PoiProperty pPstadtfahrkartecitybus = new PoiProperty() { Name = "city_card_bus", Value = vendingpoint.StadtfahrkarteoCitybus };
+            mypoipropertylist.Add(pPstadtfahrkartecitybus);
+            
+            PoiProperty pPmobilcard = new PoiProperty() { Name = "mobilecard", Value = vendingpoint.Mobilcard };
+            mypoipropertylist.Add(pPmobilcard);
+            
+            PoiProperty pPbikemobilcard = new PoiProperty() { Name = "bike_mobilecard", Value = vendingpoint.bikemobilCard };
+            mypoipropertylist.Add(pPbikemobilcard);
 
-            bool suedtirolpassplus65 = false;
-            bool.TryParse(vendingpoint.SuedtirolPass65PlusBeantragung, out suedtirolpassplus65);
+            PoiProperty pPmobilecard = new PoiProperty() { Name = "museum_mobilecard", Value = vendingpoint.MuseumobilCard }; 
+            mypoipropertylist.Add(pPmobilecard);
 
-            bool duplikat = false;
-            bool.TryParse(vendingpoint.Duplikat, out duplikat);
-
-            bool wertkarte = false;
-            bool.TryParse(vendingpoint.Wertkarte, out wertkarte);
-
-            bool stadtfahrkarte = false;
-            bool.TryParse(vendingpoint.StadtfahrkarteoCitybus, out stadtfahrkarte);
-
-            bool mobilcard = false;
-            bool.TryParse(vendingpoint.Mobilcard, out mobilcard);
-
-            bool bikemobilCard = false;
-            bool.TryParse(vendingpoint.bikemobilCard, out bikemobilCard);
-
-            bool museummobilcard = false;
-            bool.TryParse(vendingpoint.MuseumobilCard, out museummobilcard);
+            mypoi.PoiProperty.TryAddOrUpdate("de", mypoipropertylist);
+            mypoi.PoiProperty.TryAddOrUpdate("it", mypoipropertylist);
+            mypoi.PoiProperty.TryAddOrUpdate("en", mypoipropertylist);
+            mypoi.PoiProperty.TryAddOrUpdate("ld", mypoipropertylist);
 
             //End Properties Parsing
 
             //DETAIL Parsing
 
+            Detail detailde = new Detail();
+            detailde.Language = "de";
+            detailde.Title = vendingpoint.Salepoint_Name_STA_DE;
+            mypoi.Detail.TryAddOrUpdate("de", detailde);
+       
+            Detail detailit = new Detail();
+            detailit.Language = "it";
+            detailit.Title = vendingpoint.Salepoint_Name_STA_IT;
+            mypoi.Detail.TryAddOrUpdate("it", detailit);
+
+            Detail detailen = new Detail();
+            detailen.Language = "en";
+            detailen.Title = vendingpoint.Salepoint_Name_STA_EN;
+            mypoi.Detail.TryAddOrUpdate("en", detailen);
+
+            Detail detaillad = new Detail();
+            detaillad.Language = "ld"; //ISO 639-3
+            detaillad.Title = vendingpoint.Salepoint_Name_STA_LAD;
+            mypoi.Detail.TryAddOrUpdate("ld", detaillad);
+
             //End DETAIL Parsing
 
             //Address Parsing
+            ContactInfos contactInfosde = new ContactInfos();
+            contactInfosde.CompanyName = vendingpoint.Salepoint_Name_STA_DE;
+            contactInfosde.ZipCode = vendingpoint.CAP;
+            contactInfosde.Address = vendingpoint.Adresse_DE;
+            contactInfosde.City = vendingpoint.Stadt;
+            contactInfosde.Language = "de";
+            mypoi.ContactInfos.TryAddOrUpdate("de", contactInfosde);
+
+            ContactInfos contactInfosit = new ContactInfos();
+            contactInfosit.CompanyName = vendingpoint.Salepoint_Name_STA_IT;
+            contactInfosit.ZipCode = vendingpoint.CAP;
+            contactInfosit.Address = vendingpoint.Adresse_IT_EN_LAD;
+            contactInfosit.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfosit.Language = "it";
+            mypoi.ContactInfos.TryAddOrUpdate("it", contactInfosit);
+
+            ContactInfos contactInfosen = new ContactInfos();
+            contactInfosen.CompanyName = vendingpoint.Salepoint_Name_STA_EN;
+            contactInfosen.ZipCode = vendingpoint.CAP;
+            contactInfosen.Address = vendingpoint.Adresse_IT_EN_LAD;
+            contactInfosen.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfosen.Language = "en";
+            mypoi.ContactInfos.TryAddOrUpdate("en", contactInfosen);
+
+            ContactInfos contactInfoslad = new ContactInfos();
+            contactInfoslad.CompanyName = vendingpoint.Salepoint_Name_STA_LAD;
+            contactInfoslad.ZipCode = vendingpoint.CAP;
+            contactInfoslad.Address = vendingpoint.Adresse_IT_EN_LAD;
+            contactInfoslad.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfoslad.Language = "ld";
+            mypoi.ContactInfos.TryAddOrUpdate("ld", contactInfoslad);
 
             //END Address Parsing
 
+            //TODO
+            //OpeningTimes Parsing
 
-            return new SmgPoiLinked();
+            //END Openingtimes Parsing
+
+            //TODO
+            //Categorization                        
+
+            //ODH Tags 
+            mypoi.SmgTags = new List<string>();
+            mypoi.SmgTags.Add("mobilität");
+            mypoi.SmgTags.Add("sellingpoint");
+
+            //ODH Categorizations
+
+
+
+            mypoi.SyncSourceInterface = "sta";
+            mypoi.SyncUpdateMode = "Full";
+            mypoi.Source = "STA";
+
+            mypoi.Active = true;
+            mypoi.SmgActive = true;
+
+            return mypoi;
         }
     }
 }

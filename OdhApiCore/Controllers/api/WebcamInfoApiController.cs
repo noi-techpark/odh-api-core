@@ -188,9 +188,16 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,WebcamManager,WebcamCreate")]
+        [InvalidateCacheOutput(nameof(Get), typeof(WebcamInfoController))]
         [HttpPost, Route("WebcamInfo")]
         public Task<IActionResult> Post([FromBody] WebcamInfoLinked webcam)
         {
+            //TODO IGNORE Fields
+            //AreaIds, LicenseInfo, SmgTags, WebcamAssignedOn, Meta
+
+            webcam.LicenseInfo = LicenseHelper.GetLicenseforWebcam(webcam);
+            webcam._Meta = MetadataHelper.GetMetadataforWebcam(webcam);
+
             return DoAsyncReturn(async () =>
             {
                 webcam.Id = !String.IsNullOrEmpty(webcam.Id) ? webcam.Id.ToUpper() : "noId";
@@ -206,9 +213,13 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify")]
+        [InvalidateCacheOutput(nameof(Get), typeof(WebcamInfoController))]
         [HttpPut, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
         {
+            webcam.LicenseInfo = LicenseHelper.GetLicenseforWebcam(webcam);
+            webcam._Meta = MetadataHelper.GetMetadataforWebcam(webcam);
+
             return DoAsyncReturn(async () =>
             {
                 webcam.Id = id.ToUpper();
@@ -223,9 +234,12 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
+        [InvalidateCacheOutput(nameof(Get), typeof(WebcamInfoController))]
         [HttpDelete, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Delete(string id)
         {
+            //TODO Invalidate Cache after each Operation!!
+
             return DoAsyncReturn(async () =>
             {
                 id = id.ToUpper();

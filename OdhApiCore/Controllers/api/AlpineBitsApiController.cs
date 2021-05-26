@@ -30,8 +30,6 @@ namespace OdhApiCore.Controllers.api
 
         #region SwaggerExposed API
 
-
-
         #endregion
 
         #region InventoryBasicPush

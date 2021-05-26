@@ -53,20 +53,59 @@ namespace OdhApiCore.Controllers.api
             foreach (var file in form.Files)
             {
                 var filename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                var request = new UploadPartRequest
+                var request = new PutObjectRequest //UploadPartRequest
                 {
                     BucketName = bucketName,
                     Key = filename,
-                    InputStream = file.OpenReadStream()
+                    InputStream = file.OpenReadStream(),
+                    ContentType = file.ContentType
                 };
-                var response = await client.UploadPartAsync(request);
-                filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.Url, filename));
+                var response = await client.PutObjectAsync(request); //UploadPartAsync(request);
+                filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename));
             }
             if (filenames.Count == 1)
                 return Ok(filenames.FirstOrDefault());
             else
                 return Ok(filenames);
         }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
+        [HttpPost, Route("v1/FileUpload/Doc")]
+        public async Task<IActionResult> PostFormDataPDF(IFormCollection form)
+        {
+            var filenames = new List<string>();
+
+            // read from settings
+            var keyid = settings.S3ImageresizerConfig.AccessKey;
+            var key = settings.S3ImageresizerConfig.SecretKey;
+            var bucketName = settings.S3ImageresizerConfig.BucketAccessPoint;
+
+            var creds = new BasicAWSCredentials(keyid, key);
+            var config = new AmazonS3Config();
+            config.RegionEndpoint = RegionEndpoint.EUWest1;
+            var client = new AmazonS3Client(creds, config);
+
+            foreach (var file in form.Files)
+            {
+                var filename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                var request = new PutObjectRequest
+                {
+                    BucketName = bucketName,
+                    Key = filename,
+                    InputStream = file.OpenReadStream(),
+                    ContentType = file.ContentType
+                };
+                var response = await client.PutObjectAsync(request);
+
+                filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename));
+            }
+            if (filenames.Count == 1)
+                return Ok(filenames.FirstOrDefault());
+            else
+                return Ok(filenames);
+        }
+
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataMofify,DataCreate,DataDelete,ODHPoiCreate,ODHPoiModify,ODHPoiManager,ODHPoiUpdate,CommonCreate,CommonModify,CommonManager,CommonDelete,ArticleCreate,ArticleModify,ArticleManager,ArticleDelete")]

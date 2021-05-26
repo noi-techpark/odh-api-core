@@ -167,3 +167,9 @@ $RECYCLE.BIN/
 /OdhApiCore/wwwroot/json
 /OdhApiCoreTests/coverage.json
 /OdhApiCoreTests
+/OdhApiCore/STAAccommodations_de.json
+/OdhApiCore/STAAccommodations_en.json
+/OdhApiCore/STAAccommodations_it.json
+/OdhApiCore/STAOdhActivitiesPois_de.json
+/OdhApiCore/STAOdhActivitiesPois_en.json
+/OdhApiCore/STAOdhActivitiesPois_it.json

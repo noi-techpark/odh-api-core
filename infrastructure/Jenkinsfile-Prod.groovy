@@ -17,6 +17,7 @@ pipeline {
 	SIAG_PSWD = credentials('odh-tourism-api-test-siag-pswd')
 	XMLDIR = credentials('odh-tourism-api-test-xmldir')
 	IMG_URL = "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl="
+	DOC_URL = "https://tourism.images.opendatahub.bz.it/api/File/GetFile/"
 	S3_BUCKET_ACCESSPOINT = credentials('odh-tourism-api-test-bucket-accesspoint')
 	S3_IMAGEUPLOADER_ACCESSKEY = credentials('odh-tourism-api-test-s3-imageuploader-accesskey')
 	S3_IMAGEUPLOADER_SECRETKEY = credentials('odh-tourism-api-test-s3-imageuploader-secretkey')
@@ -53,6 +54,7 @@ pipeline {
 		    echo 'SIAG_PSWD=${SIAG_PSWD}' >> .env
 		    echo 'XMLDIR=${XMLDIR}' >> .env
 		    echo 'IMG_URL=${IMG_URL}' >> .env
+		    echo 'DOC_URL=${DOC_URL}' >> .env
 		    echo 'S3_BUCKET_ACCESSPOINT=${S3_BUCKET_ACCESSPOINT}' >> .env
 		    echo 'S3_IMAGEUPLOADER_ACCESSKEY=${S3_IMAGEUPLOADER_ACCESSKEY}' >> .env
 		    echo 'S3_IMAGEUPLOADER_SECRETKEY=${S3_IMAGEUPLOADER_SECRETKEY}' >> .env

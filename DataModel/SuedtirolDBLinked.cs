@@ -1129,7 +1129,7 @@ namespace DataModel
 
     public class WebcamInfoLinked : WebcamInfo
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {

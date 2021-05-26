@@ -2519,7 +2519,7 @@ namespace DataModel
 
     public class WebcamInfo : Webcam, IIdentifiable
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         //NEW Webcam Properties
         public string? Id { get; set; }
@@ -2531,11 +2531,11 @@ namespace DataModel
         public bool? Active { get; set; }
         public bool? SmgActive { get; set; }
         public string? Source { get; set; }
-        public ICollection<PublishedonObject> WebcamAssignedOn { get; set; }
+        public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 
-        public ICollection<string> AreaIds { get; set; }
+        public ICollection<string>? AreaIds { get; set; }
 
-        public ICollection<string> SmgTags { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
     }
 
     public class PublishedonObject

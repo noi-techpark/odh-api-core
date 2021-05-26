@@ -39,6 +39,25 @@ namespace Helper
                 else
                     return null;
             }
+        }        
+    }
+
+    public static class StringExtensions
+    {
+        public static bool ConvertStringToBoolean(this string returnValue)
+        {
+            if (returnValue == "1")
+            {
+                return true;
+            }
+            else if (returnValue == "0")
+            {
+                return false;
+            }
+            else
+            {
+                throw new FormatException("The string is not a recognized as a valid boolean value.");
+            }
         }
     }
 }
