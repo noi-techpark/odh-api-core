@@ -95,7 +95,7 @@ namespace OdhApiCore.Controllers.api
                     InputStream = file.OpenReadStream()
                 };
                 var response = await client.UploadPartAsync(request);
-                filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.Url, filename));
+                filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename));
             }
             if (filenames.Count == 1)
                 return Ok(filenames.FirstOrDefault());
