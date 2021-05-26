@@ -8,15 +8,28 @@ namespace Helper
     {
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
         {
-            return (TimeZoneInfo.ConvertTimeToUtc(dateTime) -
+            var tzinfo = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
+            return (TimeZoneInfo.ConvertTimeToUtc(dateTime, tzinfo) -
                    new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalSeconds;
         }
 
         public static double DateTimeToUnixTimestampMilliseconds(DateTime dateTime)
         {
-            return (TimeZoneInfo.ConvertTimeToUtc(dateTime) -
+            var tzinfo = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
+            return (TimeZoneInfo.ConvertTimeToUtc(dateTime, tzinfo) -
                    new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;
         }
+
+        ////TEST without conversion to UTC simply convert to UTC what is passed
+        //public static double DateTimeToUnixTimestampMillisecondsWithoutUTCConvert(DateTime dateTime)
+        //{
+        //    return (dateTime -
+        //           new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;        
+        //}
+
+        //TODO UnixTimeStampToDateTime
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
@@ -33,5 +46,8 @@ namespace Helper
             dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToLocalTime();
             return dtDateTime;
         }
+
+
+
     }
 }
