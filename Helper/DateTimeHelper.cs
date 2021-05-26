@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TimeZoneConverter;
 
 namespace Helper
 {
@@ -8,7 +9,7 @@ namespace Helper
     {
         public static double DateTimeToUnixTimestamp(DateTime dateTime)
         {
-            var tzinfo = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+            var tzinfo = TZConvert.GetTimeZoneInfo("W. Europe Standard Time");
 
             return (TimeZoneInfo.ConvertTimeToUtc(dateTime, tzinfo) -
                    new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalSeconds;
@@ -16,7 +17,7 @@ namespace Helper
 
         public static double DateTimeToUnixTimestampMilliseconds(DateTime dateTime)
         {
-            var tzinfo = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+            var tzinfo = TZConvert.GetTimeZoneInfo("W. Europe Standard Time");
 
             return (TimeZoneInfo.ConvertTimeToUtc(dateTime, tzinfo) -
                    new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;
