@@ -17,6 +17,7 @@ services:
       ASPNETCORE_XmlConfig__Xmldir: ${XMLDIR}
       ASPNETCORE_XmlConfig__XmldirWeather: ${XMLDIR}
       ASPNETCORE_S3ImageresizerConfig__Url: ${IMG_URL}
+      ASPNETCORE_S3ImageresizerConfig__DocUrl: ${DOC_URL}
       ASPNETCORE_S3ImageresizerConfig__BucketAccessPoint: ${S3_BUCKET_ACCESSPOINT}
       ASPNETCORE_S3ImageresizerConfig__AccessKey: ${S3_IMAGEUPLOADER_ACCESSKEY}
       ASPNETCORE_S3ImageresizerConfig__SecretKey: ${S3_IMAGEUPLOADER_SECRETKEY}
