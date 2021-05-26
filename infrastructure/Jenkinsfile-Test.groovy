@@ -17,6 +17,7 @@ pipeline {
 	SIAG_PSWD = credentials('odh-tourism-api-test-siag-pswd')
 	XMLDIR = credentials('odh-tourism-api-test-xmldir')
 	IMG_URL = "https://images.tourism.testingmachine.eu/api/Image/GetImage?imageurl="
+	DOC_URL = "https://images.tourism.testingmachine.eu/api/File/GetFile/"
 	S3_BUCKET_ACCESSPOINT = credentials('odh-tourism-api-test-bucket-accesspoint')
 	S3_IMAGEUPLOADER_ACCESSKEY = credentials('odh-tourism-api-test-s3-imageuploader-accesskey')
 	S3_IMAGEUPLOADER_SECRETKEY = credentials('odh-tourism-api-test-s3-imageuploader-secretkey')
