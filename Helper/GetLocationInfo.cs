@@ -11,6 +11,20 @@ namespace Helper
 {
     public class GetLocationInfo
     {        
+        public static async Task<IEnumerable<District>> GetNearestDistrict(QueryFactory QueryFactory, PGGeoSearchResult geosearchresult, int limitto)
+        {
+            var districtquery = QueryFactory.Query("districts")
+                        .Select("data")
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, null)
+                        .Limit(limitto); 
+            
+            var data =
+                await districtquery
+                    .GetAllAsObject<District>();
+
+            return data;
+        }
+
         public static async Task<LocationInfoLinked> GetTheLocationInfoDistrict(QueryFactory QueryFactory, string districtid)
         {
             LocationInfoLinked mylocinfo = new LocationInfoLinked();
@@ -337,5 +351,5 @@ namespace Helper
         //    }
         //    return mylocinfo;
         //}
-    }
+    }    
 }
