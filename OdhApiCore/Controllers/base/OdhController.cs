@@ -134,13 +134,13 @@ namespace OdhApiCore.Controllers
 
             if (query == null)
             {
-                await QueryFactory.Query(table)
+                var insertresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
             }
             else
             {
-                await QueryFactory.Query(table).Where("id", data.Id)
+                var updateresult await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "UPDATE";
             }

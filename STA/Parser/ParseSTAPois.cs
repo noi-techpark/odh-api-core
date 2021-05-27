@@ -179,6 +179,9 @@ namespace STA
             mypoi.Active = true;
             mypoi.SmgActive = true;
 
+            mypoi.LastChange = DateTime.Now;
+            //Firstimport?
+
             return mypoi;
         }
     }
