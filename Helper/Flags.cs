@@ -720,7 +720,9 @@ namespace Helper
         [Description("E-Bike Ladestation")]
         EBikeLadestation = 1 << 11,
         [Description("Fahrradbox")]
-        Fahrradbox = 1 << 12
+        Fahrradbox = 1 << 12,        
+        [Description("Verkaufstellen Ticket Oeffentliche Verkehrsmittel")]
+        VerkaufstellenTicketOeffentlicheVerkehrsmittel = 1 << 13,
     }
 
     [Flags]

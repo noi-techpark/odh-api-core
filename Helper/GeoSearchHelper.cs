@@ -82,6 +82,30 @@ namespace Helper
             return pggeosearchresult;
         }
 
+        public static PGGeoSearchResult GetPGGeoSearchResult(double? latitude, double? longitude, int radius)
+        {
+            if (latitude == null && longitude == null)
+                return new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 };
+
+            PGGeoSearchResult pggeosearchresult = new PGGeoSearchResult
+            {
+                geosearch = false
+            };
+
+
+            pggeosearchresult.geosearch = true;
+            pggeosearchresult.latitude = latitude.Value;
+            pggeosearchresult.longitude = longitude.Value;
+
+            if (radius > 0)
+                pggeosearchresult.radius = radius;
+            else
+                pggeosearchresult.radius = 150000;
+
+            return pggeosearchresult;
+        }
+
+
         public static RavenGeoSearchResult GetRavenGeoSearchResult(string latitude, string longitude, string radius)
         {
             if (latitude == null && longitude == null)

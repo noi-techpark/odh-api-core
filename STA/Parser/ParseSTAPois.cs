@@ -163,10 +163,13 @@ namespace STA
             //ODH Tags 
             mypoi.SmgTags = new List<string>();
             mypoi.SmgTags.Add("mobilität");
-            mypoi.SmgTags.Add("sellingpoint");
+            mypoi.SmgTags.Add("verkaufstellen ticket oeffentliche verkehrsmittel");
+
+            mypoi.Type = "Mobilität";
+            mypoi.SubType = "Verkaufstellen Ticket Oeffentliche Verkehrsmittel";
 
             //ODH Categorizations
-
+            //TODO LOAD Categorizations 
 
 
             mypoi.SyncSourceInterface = "sta";
@@ -175,6 +178,10 @@ namespace STA
 
             mypoi.Active = true;
             mypoi.SmgActive = true;
+
+            mypoi.HasLanguage = new List<string>() { "de","it","en","ld" };
+
+            mypoi.Shortname = mypoi.Detail["de"].Title;
 
             return mypoi;
         }

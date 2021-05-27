@@ -119,28 +119,34 @@ namespace OdhApiCore.Controllers
 
         //Provide Methods for POST, PUT, DELETE passing DataType etc...
 
-        protected async Task<IActionResult> UpsertData<T>(T data, string table) where T : IIdentifiable
+        protected async Task<IActionResult> UpsertData<T>(T data, string table) where T : IIdentifiable, IImportDateassigneable
         {
             if (data == null)
                 throw new Exception("No data");
 
             //Check if data exists
-            var query =
-                  QueryFactory.Query(table)
+            var query = QueryFactory.Query(table)
                       .Select("data")
                       .Where("id", data.Id);
 
+            var queryresult = await query.GetAsync<T>();
+
             string operation = "";
 
-            if (query == null)
+            if (queryresult == null || queryresult.Count() == 0)
             {
-                await QueryFactory.Query(table)
+                data.FirstImport = DateTime.Now;
+                data.LastChange = DateTime.Now;
+
+                var insertresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
             }
             else
             {
-                await QueryFactory.Query(table).Where("id", data.Id)
+                data.LastChange = DateTime.Now;
+
+                var updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "UPDATE";
             }

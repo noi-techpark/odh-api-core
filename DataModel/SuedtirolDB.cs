@@ -15,6 +15,12 @@ namespace DataModel
     {
         string? Id { get; set; }
         string? Shortname { get; set; }
+    }    
+
+    public interface IImportDateassigneable
+    {
+        DateTime? FirstImport { get; set; }
+        DateTime? LastChange { get; set; }
     }
 
     public interface IActivateable
@@ -394,7 +400,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class Area : IIdentifiable, IActivateable
+    public class Area : IIdentifiable, IActivateable, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -415,7 +421,8 @@ namespace DataModel
         public string? LtsID { get; set; }
         public string? AreaType { get; set; }
 
-        public Nullable<DateTime> LastChange { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
     }
 
     public class GeneralGroup : BaseInfos
@@ -496,7 +503,7 @@ namespace DataModel
         public ICollection<Webcam>? Webcam { get; set; }
     }
 
-    public class SmgTags : IIdentifiable
+    public class SmgTags : IIdentifiable, IImportDateassigneable
     {
         public SmgTags()
         {
@@ -513,6 +520,10 @@ namespace DataModel
         public string? MainEntity { get; set; }
 
         public ICollection<string> Source { get; set; }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
     }
 
     #endregion
@@ -812,7 +823,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage
+    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -840,8 +851,8 @@ namespace DataModel
         public bool TVMember { get; set; }
         public string? TourismVereinId { get; set; }
         public string? MainLanguage { get; set; }
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
@@ -1954,7 +1965,7 @@ namespace DataModel
     /// </summary>
     #region CommonInfos
 
-    public class Wine : IIdentifiable
+    public class Wine : IIdentifiable, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -1983,8 +1994,8 @@ namespace DataModel
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public ICollection<string>? Awards { get; set; }
 
-        public DateTime LastChange { get; set; }
-        public DateTime FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
 
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
@@ -2028,7 +2039,7 @@ namespace DataModel
     }
 
     //BaseInfos für Districts / Regions / Municipalities
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2061,11 +2072,12 @@ namespace DataModel
 
         public ICollection<string>? HasLanguage { get; set; }
 
-        public DateTime LastChange { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
-    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage
+    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2101,8 +2113,8 @@ namespace DataModel
         public string? PoiType { get; set; }
 
         //NEU SMG Infos
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
 
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
@@ -2176,7 +2188,7 @@ namespace DataModel
     }
 
     //Erweiterte Baseinfos für ARticles
-    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive
+    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2200,8 +2212,8 @@ namespace DataModel
         //public string SubType2 { get; set; }
 
         //NEU SMG Infos
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
 
         public Nullable<DateTime> ArticleDate { get; set; }
@@ -2235,7 +2247,7 @@ namespace DataModel
     }
 
     //Erweiterte Baseinfos für Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2257,8 +2269,8 @@ namespace DataModel
         //public string RegionId { get; set; }       
         //public string TourismorganizationId { get; set; }        
 
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
 
         //GPS Info
         public string? Gpstype { get; set; }
@@ -2307,7 +2319,7 @@ namespace DataModel
     }
 
     //Erweiterte BaseInfo für Events
-    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive
+    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2332,8 +2344,8 @@ namespace DataModel
         public Nullable<DateTime> DateEnd { get; set; }
 
         //Infos on the Data
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
 
 
         //GPS Info
@@ -2517,7 +2529,7 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable
+    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable
     {
         public LicenseInfo? LicenseInfo { get; set; }
 

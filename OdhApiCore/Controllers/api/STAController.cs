@@ -183,11 +183,27 @@ namespace OdhApiCore.Controllers.api
                     //Parse to ODHActivityPoi
                     var odhactivitypoi = STA.ParseSTAPois.ParseSTAVendingPointToODHActivityPoi(vendingpoint);
 
-                    //TODO SET ATTRIBUTES
                     //MetaData
                     odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<SmgPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
-                                                                                                                                                        //License
+                    //LicenseInfo                                                                                                                                    //License
                     odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
+
+                    if(odhactivitypoi.GpsPoints.ContainsKey("position"))
+                    {
+                        //Get Nearest District
+                        var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(odhactivitypoi.GpsPoints["position"].Latitude, odhactivitypoi.GpsPoints["position"].Longitude, 10000);
+                        var nearestdistrict = await GetLocationInfo.GetNearestDistrict(QueryFactory, geosearchresult, 1);
+
+                        if (nearestdistrict != null)
+                        {
+                            //Get LocationInfo Object
+                            var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault().Id);
+
+                            if (locationinfo != null)
+                                odhactivitypoi.LocationInfo = locationinfo;
+                        }
+                    }
+                    
 
                     //Save to PG
                     //Check if data exists
