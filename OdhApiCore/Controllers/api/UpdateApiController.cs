@@ -45,7 +45,7 @@ namespace OdhApiCore.Controllers.api
         {
             var result = await ImportEbmsEventsToDB();
 
-            return Ok(new
+            return Ok(new UpdateResult
             {
                 operation = "Update EBMS",
                 updatetype = "all",
@@ -62,13 +62,13 @@ namespace OdhApiCore.Controllers.api
             //TODO
             //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
 
-            return Ok(new
+            return Ok(new UpdateResult
             {
                 operation = "Update EBMS",
                 id = id,
                 updatetype = "single",
                 message = "EBMS Eventshorts update succeeded",
-                recordsupdated = 1,
+                recordsupdated = "1",
                 success = true
             });
         }
@@ -80,12 +80,12 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("NINJA/Events/UpdateAll")]
         public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken)
         {
-            var responseevents = GetNinjaData.GetNinjaEvent().GetAwaiter().GetResult();
-            var responseplaces = GetNinjaData.GetNinjaPlaces().GetAwaiter().GetResult();
+            var responseevents = await GetNinjaData.GetNinjaEvent();
+            var responseplaces = await GetNinjaData.GetNinjaPlaces();
 
-            var result = SaveEventsToPG(responseevents.data, responseplaces.data);
+            var result = await SaveEventsToPG(responseevents.data, responseplaces.data);
 
-            return Ok(new
+            return Ok(new UpdateResult
             {
                 operation = "Update Ninja Events",
                 updatetype = "all",
@@ -379,7 +379,7 @@ namespace OdhApiCore.Controllers.api
                     }
                 }
 
-                return String.Format("Events Updated {0} New {1} Error {2]", updateimportcounter.ToString(), newimportcounter.ToString(), errorimportcounter.ToString());
+                return String.Format("Events Updated {0} New {1} Error {2}", updateimportcounter.ToString(), newimportcounter.ToString(), errorimportcounter.ToString());
             }
             catch (Exception ex)
             {
@@ -461,7 +461,7 @@ namespace OdhApiCore.Controllers.api
                    .Select("data")
                    .Where("id", idtocheck);
 
-            var eventindb = await query.GetFirstOrDefaultAsObject<Event>();
+            var eventindb = await query.GetAsync<JsonRaw>();
             
             if (eventindb == null)
             {
@@ -693,6 +693,17 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
 
+    }
+
+    public class UpdateResult
+    {
+        public string operation { get; set; }
+        public string updatetype { get; set; }
+        public string message { get; set; }
+        public bool success { get; set; }
+        public string recordsupdated { get; set; }
+
+        public string? id { get; set; }
     }
 
 }

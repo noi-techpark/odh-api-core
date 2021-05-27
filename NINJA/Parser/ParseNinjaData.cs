@@ -55,6 +55,8 @@ namespace NINJA.Parser
             Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "event" };
             myevent._Meta = metainfo;
 
+            myevent.Source = source;
+
             LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
             myevent.LicenseInfo = licenseInfo;
 
