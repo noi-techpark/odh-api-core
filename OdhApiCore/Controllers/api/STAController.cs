@@ -188,15 +188,22 @@ namespace OdhApiCore.Controllers.api
                     //LicenseInfo                                                                                                                                    //License
                     odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
 
-                    //Get Nearest District
-                    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(odhactivitypoi.GpsPoints["position"].Latitude, odhactivitypoi.GpsPoints["position"].Longitude, 10000);
-                    var nearestdistrict = await GetLocationInfo.GetNearestDistrict(QueryFactory, geosearchresult, 1);
+                    if(odhactivitypoi.GpsPoints.ContainsKey("position"))
+                    {
+                        //Get Nearest District
+                        var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(odhactivitypoi.GpsPoints["position"].Latitude, odhactivitypoi.GpsPoints["position"].Longitude, 10000);
+                        var nearestdistrict = await GetLocationInfo.GetNearestDistrict(QueryFactory, geosearchresult, 1);
 
-                    //Get LocationInfo Object
-                    var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault().Id);
+                        if (nearestdistrict != null)
+                        {
+                            //Get LocationInfo Object
+                            var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault().Id);
 
-                    if (locationinfo != null)
-                        odhactivitypoi.LocationInfo = locationinfo;
+                            if (locationinfo != null)
+                                odhactivitypoi.LocationInfo = locationinfo;
+                        }
+                    }
+                    
 
                     //Save to PG
                     //Check if data exists
