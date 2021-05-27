@@ -361,21 +361,21 @@ namespace OdhApiCore.Controllers.api
                             idtocheck = idtocheck.Substring(0, 50);
 
                         var result = await InsertEventInPG(eventtosave, idtocheck);
-
-                        switch(result.Item1)
+                                                
+                        if(result.Item1 == "insert")
                         {
-                            case "insert":
-                                if(result.Item2 ==  "1")
-                                    newimportcounter++;
-                                break;
-                            case "udpate":
-                                if (result.Item2 == "1")
-                                    updateimportcounter++;
-                                break;
-                            case "error":
-                                errorimportcounter++;
-                                break;
-                        }                        
+                            if (result.Item2 == "1")
+                                newimportcounter++;
+                        }
+                        if (result.Item1 == "update")
+                        {
+                            if (result.Item2 == "1")
+                                updateimportcounter++;
+                        }
+                        else
+                        {
+                            errorimportcounter++;
+                        }                                   
                     }
                 }
 
