@@ -140,7 +140,7 @@ namespace OdhApiCore.Controllers
             }
             else
             {
-                var updateresult await QueryFactory.Query(table).Where("id", data.Id)
+                var updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "UPDATE";
             }
