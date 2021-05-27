@@ -110,11 +110,14 @@ namespace NINJA.Parser
 
             //Add Type info
             myevent.Topics = GetTopicRid(ninjaevent.event_type_key);
-            myevent.TopicRIDs = myevent.Topics.Select(x => x.TopicRID).ToList();
+            myevent.TopicRIDs = myevent.Topics.Select(x => x.TopicRID).ToList();            
 
+            Console.WriteLine("Parsing: " + ninjaevent.begin_date + " " + ninjaevent.begin_time);
+
+            CultureInfo myculture = new CultureInfo("it-IT");
             //Date Info
-            myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-            myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+            myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", myculture);
+            myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", myculture);
 
             myevent.NextBeginDate = myevent.DateBegin;
 
@@ -140,7 +143,7 @@ namespace NINJA.Parser
             //Gps Info
             myevent.Latitude = place != null ? place.scoordinate.y : 0;
             myevent.Longitude = place != null ? place.scoordinate.x : 0;
-            myevent.Gpstype = "position";
+            myevent.Gpstype = "position";            
 
             IDictionary<string, string> floor = new Dictionary<string, string>();
             floor.Add(new KeyValuePair<string, string>("de", "Stock"));
