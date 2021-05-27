@@ -183,11 +183,13 @@ namespace OdhApiCore.Controllers.api
                     //Parse to ODHActivityPoi
                     var odhactivitypoi = STA.ParseSTAPois.ParseSTAVendingPointToODHActivityPoi(vendingpoint);
 
-                    //TODO SET ATTRIBUTES
                     //MetaData
                     odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<SmgPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
-                                                                                                                                                        //License
+                    //LicenseInfo                                                                                                                                    //License
                     odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
+
+                    //Set LocationInfo Object
+
 
                     //Save to PG
                     //Check if data exists
