@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,9 +37,16 @@ namespace STA
             mypoi.Id = id;
 
             //GPSData
+            var commaCulture = new CultureInfo("en")
+            {
+                NumberFormat =
+                {
+                    NumberDecimalSeparator = ","
+                }
+            };
 
-            double gpslat = !String.IsNullOrEmpty(vendingpoint.latitude) ? Convert.ToDouble(vendingpoint.latitude) : 0;
-            double gpslong = !String.IsNullOrEmpty(vendingpoint.longitude) ? Convert.ToDouble(vendingpoint.longitude) : 0;
+            double gpslat = !String.IsNullOrEmpty(vendingpoint.latitude) ? Convert.ToDouble(vendingpoint.latitude, commaCulture) : 0;
+            double gpslong = !String.IsNullOrEmpty(vendingpoint.longitude) ? Convert.ToDouble(vendingpoint.longitude, commaCulture) : 0;
 
             if (gpslat != 0 && gpslong != 0)
             {
