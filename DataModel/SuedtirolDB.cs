@@ -19,8 +19,8 @@ namespace DataModel
 
     public interface IImportDateassigneable
     {
-        DateTime FirstImport { get; set; }
-        DateTime LastChange { get; set; }
+        DateTime? FirstImport { get; set; }
+        DateTime? LastChange { get; set; }
     }
 
     public interface IActivateable
@@ -421,8 +421,8 @@ namespace DataModel
         public string? LtsID { get; set; }
         public string? AreaType { get; set; }
 
-        public DateTime LastChange { get; set; }
-        public DateTime FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
     }
 
     public class GeneralGroup : BaseInfos
@@ -521,8 +521,8 @@ namespace DataModel
 
         public ICollection<string> Source { get; set; }
 
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
 
     }
 
@@ -851,8 +851,8 @@ namespace DataModel
         public bool TVMember { get; set; }
         public string? TourismVereinId { get; set; }
         public string? MainLanguage { get; set; }
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
@@ -1994,8 +1994,8 @@ namespace DataModel
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public ICollection<string>? Awards { get; set; }
 
-        public DateTime LastChange { get; set; }
-        public DateTime FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
 
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
@@ -2072,8 +2072,8 @@ namespace DataModel
 
         public ICollection<string>? HasLanguage { get; set; }
 
-        public DateTime LastChange { get; set; }
-        public DateTime FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
@@ -2113,8 +2113,8 @@ namespace DataModel
         public string? PoiType { get; set; }
 
         //NEU SMG Infos
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
 
         //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
@@ -2212,8 +2212,8 @@ namespace DataModel
         //public string SubType2 { get; set; }
 
         //NEU SMG Infos
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
 
         public Nullable<DateTime> ArticleDate { get; set; }
@@ -2269,8 +2269,8 @@ namespace DataModel
         //public string RegionId { get; set; }       
         //public string TourismorganizationId { get; set; }        
 
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
 
         //GPS Info
         public string? Gpstype { get; set; }
@@ -2344,8 +2344,8 @@ namespace DataModel
         public Nullable<DateTime> DateEnd { get; set; }
 
         //Infos on the Data
-        public DateTime FirstImport { get; set; }
-        public DateTime LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
 
 
         //GPS Info
@@ -2537,8 +2537,8 @@ namespace DataModel
         public string? Id { get; set; }
         public string? Streamurl { get; set; }
         public string? Previewurl { get; set; }
-        public DateTime LastChange { get; set; }
-        public DateTime FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? FirstImport { get; set; }
         public string? Shortname { get; set; }
         public bool? Active { get; set; }
         public bool? SmgActive { get; set; }
