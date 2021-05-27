@@ -194,7 +194,7 @@ namespace OdhApiCore.Controllers.api
                         var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(odhactivitypoi.GpsPoints["position"].Latitude, odhactivitypoi.GpsPoints["position"].Longitude, 10000);
                         var nearestdistrict = await GetLocationInfo.GetNearestDistrict(QueryFactory, geosearchresult, 1);
 
-                        if (nearestdistrict != null)
+                        if (nearestdistrict != null && nearestdistrict.Count() > 0)
                         {
                             //Get LocationInfo Object
                             var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault().Id);
