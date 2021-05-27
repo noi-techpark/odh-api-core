@@ -179,10 +179,9 @@ namespace STA
             mypoi.Active = true;
             mypoi.SmgActive = true;
 
-            mypoi.HasLanguage = new List<string>() { "de","it","en","ld" };            
+            mypoi.HasLanguage = new List<string>() { "de","it","en","ld" };
 
-            mypoi.LastChange = DateTime.Now;
-            //Firstimport?
+            mypoi.Shortname = mypoi.Detail["de"].Title;
 
             return mypoi;
         }
