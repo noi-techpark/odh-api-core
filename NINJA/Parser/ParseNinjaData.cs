@@ -121,8 +121,8 @@ namespace NINJA.Parser
 
             CultureInfo myculture = new CultureInfo("en-GB");
 
-            myevent.DateBegin = Convert.ToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time, myculture);
-            myevent.DateEnd = Convert.ToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time, myculture);
+            myevent.DateBegin = Convert.ToDateTime(ninjaevent.begin_date + "T" + ninjaevent.begin_time + ":00", myculture);
+            myevent.DateEnd = Convert.ToDateTime(ninjaevent.end_date + "T" + ninjaevent.end_time + ":00", myculture);
 
             myevent.NextBeginDate = myevent.DateBegin;
 
