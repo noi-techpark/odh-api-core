@@ -131,9 +131,9 @@ namespace NINJA.Parser
                 new EventDate()
                 {
                     Begin = TimeSpan.Parse(ninjaevent.begin_time),
-                    From = DateTime.ParseExact(ninjaevent.begin_date, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture),
+                    From = DateTime.ParseExact(ninjaevent.begin_date, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     End = TimeSpan.Parse(ninjaevent.end_time),
-                    To = DateTime.ParseExact(ninjaevent.end_date, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture),
+                    To = DateTime.ParseExact(ninjaevent.end_date, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     Ticket = ticket,
                     MaxPersons = ninjaevent.number_of_seats != null ? ninjaevent.number_of_seats.Value : 0
                 }

@@ -63,7 +63,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestDateTimeConversion1")]
         public IActionResult GetDatetimeConversion1()
         {
-            var date = Convert.ToDateTime("31/12/2020 18:00");
+            DateTime.ParseExact("31/12/2020 18:00", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
 
             return Ok(date);
         }
