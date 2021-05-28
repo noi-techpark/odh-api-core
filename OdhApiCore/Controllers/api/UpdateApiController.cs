@@ -367,7 +367,7 @@ namespace OdhApiCore.Controllers.api
                             if (result.Item2 == "1")
                                 newimportcounter++;
                         }
-                        if (result.Item1 == "update")
+                        else if (result.Item1 == "update")
                         {
                             if (result.Item2 == "1")
                                 updateimportcounter++;
