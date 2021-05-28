@@ -463,7 +463,7 @@ namespace OdhApiCore.Controllers.api
 
             var eventindb = await query.GetAsync<JsonRaw>();
             
-            if (eventindb == null)
+            if (eventindb.Count() == 0)
             {
                 eventtosave.FirstImport = DateTime.Now;
 
