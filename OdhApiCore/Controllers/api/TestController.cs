@@ -59,6 +59,7 @@ namespace OdhApiCore.Controllers.api
             }; 
         }
 
+        //Not working
         [HttpGet, Route("TestDateTimeConversion1")]
         public IActionResult GetDatetimeConversion1()
         {
@@ -67,6 +68,7 @@ namespace OdhApiCore.Controllers.api
             return Ok(date);
         }
 
+        //WORKS
         [HttpGet, Route("TestDateTimeConversion2")]
         public IActionResult GetDatetimeConversiont2()
         {
@@ -80,11 +82,12 @@ namespace OdhApiCore.Controllers.api
         public IActionResult GetDatetimeConversiont3()
         {
             var myculture = new CultureInfo("en-GB");
-            var date = Convert.ToDateTime("31/12/2020 18:00", myculture);
+            var date = Convert.ToDateTime("31/12/2020 18:00:00", myculture);
 
             return Ok(date);
         }
 
+        //Not working
         [HttpGet, Route("TestDateTimeConversion4")]
         public IActionResult GetDatetimeConversiont4()
         {
@@ -94,6 +97,7 @@ namespace OdhApiCore.Controllers.api
             return Ok(date);
         }
 
+        //Not working
         [HttpGet, Route("TestDateTimeConversion5")]
         public IActionResult GetDatetimeConversiont5()
         {
@@ -103,6 +107,7 @@ namespace OdhApiCore.Controllers.api
             return Ok(date);
         }
 
+        //Not working
         [HttpGet, Route("TestDateTimeConversion6")]
         public IActionResult GetDatetimeConversiont6()
         {            

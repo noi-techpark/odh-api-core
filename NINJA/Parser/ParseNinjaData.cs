@@ -114,15 +114,15 @@ namespace NINJA.Parser
 
             //Console.WriteLine("Parsing: " + ninjaevent.begin_date + " " + ninjaevent.begin_time);
 
-            //CultureInfo myculture = new CultureInfo("it-IT");
-            ////Date Info
-            //myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", myculture);
-            //myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", myculture);            
+             //Date Info
+            myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+            myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
 
-            CultureInfo myculture = new CultureInfo("en-GB");
-
-            myevent.DateBegin = Convert.ToDateTime(ninjaevent.begin_date + "T" + ninjaevent.begin_time + ":00", myculture);
-            myevent.DateEnd = Convert.ToDateTime(ninjaevent.end_date + "T" + ninjaevent.end_time + ":00", myculture);
+            //CultureInfo myculture = new CultureInfo("en-GB");
+            //string begindate = ninjaevent.begin_date + " " + ninjaevent.begin_time + ":00";
+            //string enddate = ninjaevent.end_date + " " + ninjaevent.end_time + ":00";
+            //myevent.DateBegin = Convert.ToDateTime(begindate, myculture);
+            //myevent.DateEnd = Convert.ToDateTime(enddate, myculture);
 
             myevent.NextBeginDate = myevent.DateBegin;
 
@@ -131,9 +131,9 @@ namespace NINJA.Parser
                 new EventDate()
                 {
                     Begin = TimeSpan.Parse(ninjaevent.begin_time),
-                    From = DateTime.Parse(ninjaevent.begin_date),
+                    From = DateTime.ParseExact(ninjaevent.begin_date, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture),
                     End = TimeSpan.Parse(ninjaevent.end_time),
-                    To = DateTime.Parse(ninjaevent.end_date),
+                    To = DateTime.ParseExact(ninjaevent.end_date, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture),
                     Ticket = ticket,
                     MaxPersons = ninjaevent.number_of_seats != null ? ninjaevent.number_of_seats.Value : 0
                 }
