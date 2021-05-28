@@ -16,6 +16,7 @@ using SqlKata.Execution;
 using OdhApiCore.Filters;
 using AspNetCore.CacheOutput;
 using Microsoft.Extensions.Primitives;
+using System.Globalization;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -57,6 +58,64 @@ namespace OdhApiCore.Controllers.api
                 ForwardedHostContext = xforwardedhost
             }; 
         }
+
+        //Not working
+        [HttpGet, Route("TestDateTimeConversion1")]
+        public IActionResult GetDatetimeConversion1()
+        {
+            var date = DateTime.ParseExact("31/12/2020 18:00", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
+            return Ok(date);
+        }
+
+        //WORKS
+        [HttpGet, Route("TestDateTimeConversion2")]
+        public IActionResult GetDatetimeConversiont2()
+        {
+            var myculture = new CultureInfo("en-GB");
+            var date = Convert.ToDateTime("31/12/2020 18:00", myculture);
+
+            return Ok(date);
+        }
+
+        [HttpGet, Route("TestDateTimeConversion3")]
+        public IActionResult GetDatetimeConversiont3()
+        {
+            var myculture = new CultureInfo("en-GB");
+            var date = Convert.ToDateTime("31/12/2020 18:00:00", myculture);
+
+            return Ok(date);
+        }
+
+        //Not working
+        [HttpGet, Route("TestDateTimeConversion4")]
+        public IActionResult GetDatetimeConversiont4()
+        {
+            var myculture = new CultureInfo("en-GB");
+            var date = Convert.ToDateTime("31/12/2020T18:00", myculture);
+
+            return Ok(date);
+        }
+
+        //Not working
+        [HttpGet, Route("TestDateTimeConversion5")]
+        public IActionResult GetDatetimeConversiont5()
+        {
+            var myculture = new CultureInfo("en-GB");
+            var date = Convert.ToDateTime("31/12/2020T18:00:00", myculture);
+
+            return Ok(date);
+        }
+
+        //Not working
+        [HttpGet, Route("TestDateTimeConversion6")]
+        public IActionResult GetDatetimeConversiont6()
+        {            
+            var date = Convert.ToDateTime("31/12/2020T18:00:00");
+
+            return Ok(date);
+        }
+
 
         //[TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
         //[HttpGet, Route("TestObject")]

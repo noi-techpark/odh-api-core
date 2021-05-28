@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using DataModel;
@@ -111,9 +112,17 @@ namespace NINJA.Parser
             myevent.Topics = GetTopicRid(ninjaevent.event_type_key);
             myevent.TopicRIDs = myevent.Topics.Select(x => x.TopicRID).ToList();
 
-            //Date Info
-            myevent.DateBegin = DateTime.Parse(ninjaevent.begin_date + " " + ninjaevent.begin_time);
-            myevent.DateEnd = DateTime.Parse(ninjaevent.end_date + " " + ninjaevent.end_time);
+            //Console.WriteLine("Parsing: " + ninjaevent.begin_date + " " + ninjaevent.begin_time);
+
+             //Date Info
+            myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+            myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
+            //CultureInfo myculture = new CultureInfo("en-GB");
+            //string begindate = ninjaevent.begin_date + " " + ninjaevent.begin_time + ":00";
+            //string enddate = ninjaevent.end_date + " " + ninjaevent.end_time + ":00";
+            //myevent.DateBegin = Convert.ToDateTime(begindate, myculture);
+            //myevent.DateEnd = Convert.ToDateTime(enddate, myculture);
 
             myevent.NextBeginDate = myevent.DateBegin;
 
@@ -122,9 +131,9 @@ namespace NINJA.Parser
                 new EventDate()
                 {
                     Begin = TimeSpan.Parse(ninjaevent.begin_time),
-                    From = DateTime.Parse(ninjaevent.begin_date),
+                    From = DateTime.ParseExact(ninjaevent.begin_date, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     End = TimeSpan.Parse(ninjaevent.end_time),
-                    To = DateTime.Parse(ninjaevent.end_date),
+                    To = DateTime.ParseExact(ninjaevent.end_date, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     Ticket = ticket,
                     MaxPersons = ninjaevent.number_of_seats != null ? ninjaevent.number_of_seats.Value : 0
                 }
@@ -139,7 +148,7 @@ namespace NINJA.Parser
             //Gps Info
             myevent.Latitude = place != null ? place.scoordinate.y : 0;
             myevent.Longitude = place != null ? place.scoordinate.x : 0;
-            myevent.Gpstype = "position";
+            myevent.Gpstype = "position";            
 
             IDictionary<string, string> floor = new Dictionary<string, string>();
             floor.Add(new KeyValuePair<string, string>("de", "Stock"));

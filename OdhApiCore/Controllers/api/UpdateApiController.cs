@@ -367,7 +367,7 @@ namespace OdhApiCore.Controllers.api
                             if (result.Item2 == "1")
                                 newimportcounter++;
                         }
-                        if (result.Item1 == "update")
+                        else if (result.Item1 == "update")
                         {
                             if (result.Item2 == "1")
                                 updateimportcounter++;
@@ -463,7 +463,7 @@ namespace OdhApiCore.Controllers.api
 
             var eventindb = await query.GetAsync<JsonRaw>();
             
-            if (eventindb == null)
+            if (eventindb.Count() == 0)
             {
                 eventtosave.FirstImport = DateTime.Now;
 

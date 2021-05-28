@@ -1046,7 +1046,7 @@ namespace DataModel
         //public bool? GrpEvent { get; set; }
         //public string Pdf { get; set; }
 
-        public string Source { get; set; }
+        //public string Source { get; set; }
     }
 
 
