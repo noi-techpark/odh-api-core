@@ -186,13 +186,41 @@ namespace OdhApiCore.Controllers
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Weather/SnowReport")]
         public async Task<ActionResult<SnowReportBaseData>> GetSnowReportBase(
-            string skiareaid,
+            string? skiareaid,
             string? lang = "de",             
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetSnowReportBaseData(lang ?? "de", skiareaid, cancellationToken);
+                if(!String.IsNullOrEmpty(skiareaid))
+                {
+                    var snowreport = await GetSnowReportBaseData(lang ?? "de", skiareaid, cancellationToken);
+
+                    return Ok(snowreport);
+                }
+                else
+                {                    
+                    //Get all skiareaids
+                    var query = QueryFactory.Query()
+                        .Select("id")
+                        .From("skiareas")
+                        .Where("gen_active", true);
+
+                    var skiareaids = await query.GetAsync<string>();
+
+                    List<SnowReportBaseData> snowreportbasedatalist = new List<SnowReportBaseData>();
+
+                    //Fall 1 Getter auf ALL
+                    foreach (var myskiareaid in skiareaids)
+                    {
+                        var result = await GetSnowReportBaseData(lang, myskiareaid, cancellationToken);
+
+                        if (result != null)
+                            snowreportbasedatalist.Add(result);
+                    }
+
+                    return Ok(snowreportbasedatalist);
+                }
             }
             catch (Exception ex)
             {
@@ -390,7 +418,7 @@ namespace OdhApiCore.Controllers
         #region SnowReport
 
         /// GET Snowreport Data by SkiareaID LIVE
-         private async Task<ActionResult<SnowReportBaseData>> GetSnowReportBaseData(
+         private async Task<SnowReportBaseData> GetSnowReportBaseData(
              string lang, 
              string skiareaid,
              CancellationToken cancellationToken)
@@ -412,11 +440,11 @@ namespace OdhApiCore.Controllers
             //var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
 
             if (skiarearaw == null)
-                return BadRequest("skiarea not found!");
+                throw new Exception("skiarea not found!");
 
             var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
 
-            return Ok(mysnowreport);
+            return mysnowreport;
         }
       
         #endregion
