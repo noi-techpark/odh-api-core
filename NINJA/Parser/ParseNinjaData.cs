@@ -119,8 +119,10 @@ namespace NINJA.Parser
             //myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", myculture);
             //myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", myculture);            
 
-            myevent.DateBegin = Convert.ToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time, CultureInfo.InvariantCulture);
-            myevent.DateEnd = Convert.ToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time, CultureInfo.InvariantCulture);
+            CultureInfo myculture = new CultureInfo("en-GB");
+
+            myevent.DateBegin = Convert.ToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time, myculture);
+            myevent.DateEnd = Convert.ToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time, myculture);
 
             myevent.NextBeginDate = myevent.DateBegin;
 
