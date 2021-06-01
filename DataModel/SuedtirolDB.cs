@@ -2715,7 +2715,7 @@ namespace DataModel
         public string? CurrencyCode { get; set; }
         //public string Language { get; set; }
     }
-
+    
     public class OperationSchedule : IOperationSchedules
     {
         public OperationSchedule()
@@ -2723,13 +2723,15 @@ namespace DataModel
             OperationscheduleName = new Dictionary<string, string>();
         }
 
+        //Name
         public IDictionary<string, string> OperationscheduleName { get; set; }
+        //Begin Date
         public DateTime Start { get; set; }
+        //End Date
         public DateTime Stop { get; set; }
+        //Type: 1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider)
         public string? Type { get; set; }
-        //deprecated
-        //public bool? ClosedonPublicHolidays { get; set; }
-
+        
         public ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
     }
 

@@ -209,6 +209,19 @@ namespace STA
             if (!String.IsNullOrEmpty(vendingpoint.Wochentags_Beginn) || !String.IsNullOrEmpty(vendingpoint.Samstag_Beginn) || !String.IsNullOrEmpty(vendingpoint.Sonntag_Beginn))
             {
                 OperationSchedule myoperationschedule = new OperationSchedule();
+                myoperationschedule.OperationscheduleName = new Dictionary<string, string>()
+                {
+                    { "de", "Öffnungszeiten" },
+                    { "it", "orario d'apertura" },
+                    { "en", "Opening time" }
+                };
+                myoperationschedule.Start = new DateTime(2021, 1, 1);
+                myoperationschedule.Stop = new DateTime(2021, 12, 31);
+                //myoperationschedule.Ty
+
+                ////Try Parsing Columns
+                //TimeSpan beginweekday = new TimeSpan
+
 
                 return myoperationschedule;
             }
