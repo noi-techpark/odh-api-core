@@ -276,6 +276,200 @@ namespace STA
                 TimeSpan endsunday = default(TimeSpan);
                 TimeSpan.TryParseExact(vendingpoint.Sonntag_Ende, "HH:mm:ss", CultureInfo.InvariantCulture, out endsunday);
 
+                myoperationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
+
+                //Add openingtime for Weekday, Saturday and Sunday
+
+                if (beginweekday!= TimeSpan.Zero && endweekday != TimeSpan.Zero)
+                {                
+                    //If no pause
+                    if (beginweekdaynoon == TimeSpan.Zero || endweekdaynoon == TimeSpan.Zero)
+                    {
+                        OperationScheduleTime myoptime = new OperationScheduleTime();
+                        myoptime.Monday = true;
+                        myoptime.Tuesday = true;
+                        myoptime.Wednesday = true;
+                        myoptime.Thuresday = true;
+                        myoptime.Thursday = true;
+                        myoptime.Friday = true;
+                        myoptime.Saturday = false;
+                        myoptime.Sunday = false;
+
+                        myoptime.Timecode = 1;
+                        myoptime.State = 2;
+
+                        myoptime.Start = beginweekday;
+                        myoptime.End = endweekday;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime);
+                    }
+                    else
+                    {
+                        OperationScheduleTime myoptime1 = new OperationScheduleTime();
+                        myoptime1.Monday = true;
+                        myoptime1.Tuesday = true;
+                        myoptime1.Wednesday = true;
+                        myoptime1.Thuresday = true;
+                        myoptime1.Thursday = true;
+                        myoptime1.Friday = true;
+                        myoptime1.Saturday = false;
+                        myoptime1.Sunday = false;
+
+                        myoptime1.Timecode = 1;
+                        myoptime1.State = 2;
+
+                        myoptime1.Start = beginweekday;
+                        myoptime1.End = endweekdaynoon;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime1);
+
+                        OperationScheduleTime myoptime2 = new OperationScheduleTime();
+                        myoptime2.Monday = true;
+                        myoptime2.Tuesday = true;
+                        myoptime2.Wednesday = true;
+                        myoptime2.Thuresday = true;
+                        myoptime2.Thursday = true;
+                        myoptime2.Friday = true;
+                        myoptime2.Saturday = false;
+                        myoptime2.Sunday = false;
+
+                        myoptime2.Timecode = 1;
+                        myoptime2.State = 2;
+
+                        myoptime2.Start = beginweekdaynoon;
+                        myoptime2.End = endweekday;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime2);
+                    }
+                }
+                //SATURDAY
+                if (beginsaturday != TimeSpan.Zero && endsaturday != TimeSpan.Zero)
+                {
+                    //If no pause
+                    if (beginsaturdaynoon == TimeSpan.Zero || endsaturdaynoon == TimeSpan.Zero)
+                    {
+                        OperationScheduleTime myoptime = new OperationScheduleTime();
+                        myoptime.Monday = false;
+                        myoptime.Tuesday = false;
+                        myoptime.Wednesday = false;
+                        myoptime.Thuresday = false;
+                        myoptime.Thursday = false;
+                        myoptime.Friday = false;
+                        myoptime.Saturday = true;
+                        myoptime.Sunday = false;
+
+                        myoptime.Timecode = 1;
+                        myoptime.State = 2;
+
+                        myoptime.Start = beginsaturday;
+                        myoptime.End = endsaturday;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime);
+                    }
+                    else
+                    {
+                        OperationScheduleTime myoptime1 = new OperationScheduleTime();
+                        myoptime1.Monday = false;
+                        myoptime1.Tuesday = false;
+                        myoptime1.Wednesday = false;
+                        myoptime1.Thuresday = false;
+                        myoptime1.Thursday = false;
+                        myoptime1.Friday = false;
+                        myoptime1.Saturday = true;
+                        myoptime1.Sunday = false;
+
+                        myoptime1.Timecode = 1;
+                        myoptime1.State = 2;
+
+                        myoptime1.Start = beginsaturday;
+                        myoptime1.End = endsaturdaynoon;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime1);
+
+                        OperationScheduleTime myoptime2 = new OperationScheduleTime();
+                        myoptime2.Monday = false;
+                        myoptime2.Tuesday = false;
+                        myoptime2.Wednesday = false;
+                        myoptime2.Thuresday = false;
+                        myoptime2.Thursday = false;
+                        myoptime2.Friday = false;
+                        myoptime2.Saturday = true;
+                        myoptime2.Sunday = false;
+
+                        myoptime2.Timecode = 1;
+                        myoptime2.State = 2;
+
+                        myoptime2.Start = beginsaturdaynoon;
+                        myoptime2.End = endsaturday;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime2);
+                    }
+                }
+
+                if (beginsunday != TimeSpan.Zero && endsunday != TimeSpan.Zero)
+                {
+                    //If no pause
+                    if (beginsaturdaynoon == TimeSpan.Zero || endsaturdaynoon == TimeSpan.Zero)
+                    {
+                        OperationScheduleTime myoptime = new OperationScheduleTime();
+                        myoptime.Monday = false;
+                        myoptime.Tuesday = false;
+                        myoptime.Wednesday = false;
+                        myoptime.Thuresday = false;
+                        myoptime.Thursday = false;
+                        myoptime.Friday = false;
+                        myoptime.Saturday = true;
+                        myoptime.Sunday = false;
+
+                        myoptime.Timecode = 1;
+                        myoptime.State = 2;
+
+                        myoptime.Start = beginsunday;
+                        myoptime.End = endsunday;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime);
+                    }
+                    else
+                    {
+                        OperationScheduleTime myoptime1 = new OperationScheduleTime();
+                        myoptime1.Monday = false;
+                        myoptime1.Tuesday = false;
+                        myoptime1.Wednesday = false;
+                        myoptime1.Thuresday = false;
+                        myoptime1.Thursday = false;
+                        myoptime1.Friday = false;
+                        myoptime1.Saturday = false;
+                        myoptime1.Sunday = true;
+
+                        myoptime1.Timecode = 1;
+                        myoptime1.State = 2;
+
+                        myoptime1.Start = beginsunday;
+                        myoptime1.End = endsundaynoon;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime1);
+
+                        OperationScheduleTime myoptime2 = new OperationScheduleTime();
+                        myoptime2.Monday = false;
+                        myoptime2.Tuesday = false;
+                        myoptime2.Wednesday = false;
+                        myoptime2.Thuresday = false;
+                        myoptime2.Thursday = false;
+                        myoptime2.Friday = false;
+                        myoptime2.Saturday = false;
+                        myoptime2.Sunday = true;
+
+                        myoptime2.Timecode = 1;
+                        myoptime2.State = 2;
+
+                        myoptime2.Start = beginsundaynoon;
+                        myoptime2.End = endsunday;
+
+                        myoperationschedule.OperationScheduleTime.Add(myoptime2);
+                    }
+                }
+
+                //Exceptions, Closed on a certain day?
 
 
 
