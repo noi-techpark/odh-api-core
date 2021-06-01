@@ -217,7 +217,7 @@ namespace STA
                 };
                 myoperationschedule.Start = new DateTime(2021, 1, 1);
                 myoperationschedule.Stop = new DateTime(2021, 12, 31);
-                //myoperationschedule.Ty
+                //myoperationschedule
 
                 ////Try Parsing Columns
                 //TimeSpan beginweekday = new TimeSpan

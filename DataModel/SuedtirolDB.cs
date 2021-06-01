@@ -2722,14 +2722,13 @@ namespace DataModel
         {
             OperationscheduleName = new Dictionary<string, string>();
         }
-
-        //Name
-        public IDictionary<string, string> OperationscheduleName { get; set; }
-        //Begin Date
-        public DateTime Start { get; set; }
-        //End Date
+        
+        public IDictionary<string, string> OperationscheduleName { get; set; }        
+        public DateTime Start { get; set; }        
         public DateTime Stop { get; set; }
-        //Type: 1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider)
+        /// <summary>
+        /// Type: 1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider)
+        /// </summary>        
         public string? Type { get; set; }
         
         public ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
@@ -2746,7 +2745,14 @@ namespace DataModel
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
+        /// <summary>
+        /// //1 = closed, 2 = open, 0 = undefined
+        /// </summary>
         public int State { get; set; }
+
+        /// <summary>
+        /// 1 = General Opening Time, 2 = time range for warm meals, 3 = time range for pizza, 4 = time range for snack’s
+        /// </summary>
         public int Timecode { get; set; }
     }
 
