@@ -106,21 +106,37 @@ namespace STA
             Detail detailde = new Detail();
             detailde.Language = "de";
             detailde.Title = vendingpoint.Salepoint_Name_STA_DE;
+
+            if (!String.IsNullOrEmpty(vendingpoint.Zusatzinfo_DE))
+                detailde.AdditionalText = vendingpoint.Zusatzinfo_DE;
+
             mypoi.Detail.TryAddOrUpdate("de", detailde);
        
             Detail detailit = new Detail();
             detailit.Language = "it";
             detailit.Title = vendingpoint.Salepoint_Name_STA_IT;
+
+            if (!String.IsNullOrEmpty(vendingpoint.Zusatzinfo_IT))
+                detailde.AdditionalText = vendingpoint.Zusatzinfo_IT;
+
             mypoi.Detail.TryAddOrUpdate("it", detailit);
 
             Detail detailen = new Detail();
             detailen.Language = "en";
             detailen.Title = vendingpoint.Salepoint_Name_STA_EN;
+
+            if (!String.IsNullOrEmpty(vendingpoint.Zusatzinfo_EN))
+                detailde.AdditionalText = vendingpoint.Zusatzinfo_EN;
+
             mypoi.Detail.TryAddOrUpdate("en", detailen);
 
             Detail detaillad = new Detail();
             detaillad.Language = "ld"; //ISO 639-3
             detaillad.Title = vendingpoint.Salepoint_Name_STA_LAD;
+
+            if (!String.IsNullOrEmpty(vendingpoint.Zusatzinfo_LAD))
+                detailde.AdditionalText = vendingpoint.Zusatzinfo_LAD;
+
             mypoi.Detail.TryAddOrUpdate("ld", detaillad);
 
             //End DETAIL Parsing
@@ -222,6 +238,45 @@ namespace STA
                 ////Try Parsing Columns
                 TimeSpan beginweekday = default(TimeSpan);
                 TimeSpan.TryParseExact(vendingpoint.Wochentags_Beginn, "HH:mm:ss", CultureInfo.InvariantCulture, out beginweekday);
+
+                TimeSpan endweekdaynoon = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Pause_Start, "HH:mm:ss", CultureInfo.InvariantCulture, out endweekdaynoon);
+
+                TimeSpan beginweekdaynoon = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Pause_Ende, "HH:mm:ss", CultureInfo.InvariantCulture, out beginweekdaynoon);
+
+                TimeSpan endweekday = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Wochentags_Ende, "HH:mm:ss", CultureInfo.InvariantCulture, out endweekday);
+
+                //Saturday
+
+                TimeSpan beginsaturday = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Samstag_Beginn, "HH:mm:ss", CultureInfo.InvariantCulture, out beginsaturday);
+
+                TimeSpan endsaturdaynoon = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Pause_Samstag_Beginn, "HH:mm:ss", CultureInfo.InvariantCulture, out endsaturdaynoon);
+
+                TimeSpan beginsaturdaynoon = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Pause_Samstag_Ende, "HH:mm:ss", CultureInfo.InvariantCulture, out beginsaturdaynoon);
+
+                TimeSpan endsaturday = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Samstag_Ende, "HH:mm:ss", CultureInfo.InvariantCulture, out endsaturday);
+
+                //Sunday
+
+                TimeSpan beginsunday = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Sonntag_Beginn, "HH:mm:ss", CultureInfo.InvariantCulture, out beginsunday);
+
+                TimeSpan endsundaynoon = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Pause_Sonntag_Beginn, "HH:mm:ss", CultureInfo.InvariantCulture, out endsundaynoon);
+
+                TimeSpan beginsundaynoon = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Pause_Sonntag_Ende, "HH:mm:ss", CultureInfo.InvariantCulture, out beginsundaynoon);
+
+                TimeSpan endsunday = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Sonntag_Ende, "HH:mm:ss", CultureInfo.InvariantCulture, out endsunday);
+
+
 
 
                 return myoperationschedule;
