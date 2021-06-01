@@ -163,6 +163,16 @@ namespace STA
             //TODO
             //OpeningTimes Parsing
 
+            //Standard open all year? Make use of DB with Festive days and add them as closed?
+            var operationschedule = ParseOperationScheduleFromCSV(vendingpoint);
+
+            if(operationschedule != null)
+            {
+                mypoi.OperationSchedule = new List<OperationSchedule>();
+
+                mypoi.OperationSchedule.Add(operationschedule);
+            }
+
             //END Openingtimes Parsing
 
             //TODO
@@ -192,6 +202,18 @@ namespace STA
             mypoi.Shortname = mypoi.Detail["de"].Title;
 
             return mypoi;
+        }
+
+        private static OperationSchedule ParseOperationScheduleFromCSV(STAVendingPoint vendingpoint)
+        {
+            if (!String.IsNullOrEmpty(vendingpoint.Wochentags_Beginn) || !String.IsNullOrEmpty(vendingpoint.Samstag_Beginn) || !String.IsNullOrEmpty(vendingpoint.Sonntag_Beginn))
+            {
+                OperationSchedule myoperationschedule = new OperationSchedule();
+
+                return myoperationschedule;
+            }
+            else
+                return null;
         }
     }
 }
