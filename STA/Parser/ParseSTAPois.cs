@@ -217,10 +217,11 @@ namespace STA
                 };
                 myoperationschedule.Start = new DateTime(2021, 1, 1);
                 myoperationschedule.Stop = new DateTime(2021, 12, 31);
-                //myoperationschedule
+                myoperationschedule.Type = "2";
 
                 ////Try Parsing Columns
-                //TimeSpan beginweekday = new TimeSpan
+                TimeSpan beginweekday = default(TimeSpan);
+                TimeSpan.TryParseExact(vendingpoint.Wochentags_Beginn, "HH:mm:ss", CultureInfo.InvariantCulture, out beginweekday);
 
 
                 return myoperationschedule;
