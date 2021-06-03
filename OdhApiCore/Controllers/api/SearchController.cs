@@ -69,8 +69,7 @@ namespace OdhApiCore.Controllers
             var myentitytypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             if (myentitytypelist.Count() == 0)
-                myentitytypelist = new string[] { "accommodation", "odhactivitypoi", "event" };
-
+                myentitytypelist = ODHTypeHelper.GetAllSearchableODHTypes(false);                
 
             var searchresult = new List<JsonRaw>();
             var searchresultpertype = new Dictionary<string, uint>();
