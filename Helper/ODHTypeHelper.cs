@@ -75,6 +75,38 @@ namespace Helper
             };
         }
 
+        public static string TranslateTable2Type(string odhtype)
+        {
+            return odhtype switch
+            {
+                "accommodations" => "accommodation",
+                "accommodationrooms" => "accommodationroom",
+                "activities" => "ltsactivity",
+                "pois" => "ltspoi",
+                "gastronomies" => "ltsgastronomy",
+                "events" => "event",
+                "smgpois" => "odhactivitypoi",
+                "packages" => "package",
+                "measuringpoints" => "measuringpoint",
+                "webcams" => "webcam",
+                "articles" => "article",
+                "venues" => "venue",
+                "eventeuracnoi" => "eventshort",
+                "experienceareas" => "experiencearea",
+                "metaregions" => "metaregion",
+                "regions" => "region",
+                "tvs" => "tourismassociation",
+                "municipalities" => "municipality",
+                "districts" => "district",
+                "skiareas" => "skiarea",
+                "skiregions" => "skiregion",
+                "areas" => "area",
+                "wines" => "wineaward",
+                _ => throw new Exception("not known odh type")
+            };
+        }
+
+
         public static Func<string, string[]> TranslateTypeToSearchField(string odhtype)
         {
             return odhtype switch
