@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -72,6 +73,7 @@ namespace OdhApiCore.Controllers
 
 
             var searchresult = new List<JsonRaw>();
+            var searchresultpertype = new Dictionary<string, uint>();
 
             return DoAsyncReturn(async () =>
             {                 
@@ -85,10 +87,18 @@ namespace OdhApiCore.Controllers
                     var result = await SearchTroughEntity(Type2SearchFunction.TranslateTypeToSearchField(entitytype), Type2Table.TranslateTypeToTable(entitytype), language, customfields, searchfilter, rawfilter, rawsort, limitto, cancellationToken);
 
                     if (result != null)
+                    {
                         searchresult.AddRange(result);
+                        searchresultpertype.Add(entitytype, (uint)result.Count());
+                    }                        
                 }
 
-                return searchresult;
+                return new SearchResult<JsonRaw>
+                {
+                    Items = searchresult,
+                    totalResults = (uint)searchresult.Count,
+                    resultsPerOdhtype = searchresultpertype
+                };                    
             });
         }
 

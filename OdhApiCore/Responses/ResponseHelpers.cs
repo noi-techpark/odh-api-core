@@ -57,6 +57,13 @@ namespace OdhApiCore.Responses
         public IEnumerable<T> Items => items;
     }
 
+    public class SearchResult<T> : IResponse<T>
+    {
+       public uint totalResults { get; set; }
+       public Dictionary<string, uint> resultsPerOdhtype { get; set; }
+       public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
+    }    
+
     public static class ResponseHelpers
     {
         private static (string? previouspage, string? nextpage) GetPreviousAndNextPage(uint pagenumber, uint totalpages, IUrlHelper? url, string? seed)
