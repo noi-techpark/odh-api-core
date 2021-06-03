@@ -569,13 +569,13 @@ namespace OdhApiCore.Controllers.api
                         return await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
 
                     case "odhactivitypoi":
-                        mydata = await GetDataFromRaven.GetRavenData<SmgPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        mydata = await GetDataFromRaven.GetRavenData<ODHActivityPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
-                            mypgdata = TransformToPGObject.GetPGObject<SmgPoiLinked, SmgPoiLinked>((SmgPoiLinked)mydata, TransformToPGObject.GetODHActivityPoiPGObject);
+                            mypgdata = TransformToPGObject.GetPGObject<ODHActivityPoiLinked, ODHActivityPoiLinked>((ODHActivityPoiLinked)mydata, TransformToPGObject.GetODHActivityPoiPGObject);
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<SmgPoiLinked>((SmgPoiLinked)mypgdata, "smgpois");
+                        return await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
 
                     case "event":
                         mydata = await GetDataFromRaven.GetRavenData<EventLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);

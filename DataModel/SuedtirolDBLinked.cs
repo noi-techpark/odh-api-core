@@ -496,7 +496,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class SmgPoiLinked : ODHActivityPoi
+    public class ODHActivityPoiLinked : ODHActivityPoi
     {
         public Metadata _Meta { get; set; }
 

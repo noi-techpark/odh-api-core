@@ -11,7 +11,7 @@ namespace STA
 {
     public class ParseSTAPois
     {
-        public static SmgPoiLinked ParseSTAVendingPointToODHActivityPoi(STAVendingPoint vendingpoint)
+        public static ODHActivityPoiLinked ParseSTAVendingPointToODHActivityPoi(STAVendingPoint vendingpoint)
         {
             //Integrate this data
             //Website
@@ -30,7 +30,7 @@ namespace STA
             //Long
             //Angebot von Leistungen(von AW bis BD)
 
-            var mypoi = new SmgPoiLinked();            
+            var mypoi = new ODHActivityPoiLinked();            
 
             //ID
             var id = "salespoint_sta_" + vendingpoint.STA_ID;

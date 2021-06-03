@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -71,6 +72,37 @@ namespace Helper
                 "skiregion" => "skiregions",
                 "area" => "areas",
                 "wineaward" => "wines",
+                _ => throw new Exception("not known odh type")
+            };
+        }
+
+        public static string TranslateType2Table<T>(T odhtype)
+        {
+            return odhtype switch
+            {
+                Accommodation or AccommodationLinked => "accommodations",
+                AccoRoom or AccommodationRoomLinked => "accommodationrooms",
+                GBLTSActivity or LTSActivityLinked => "activities",
+                GBLTSPoi or LTSPoiLinked => "pois",
+                Gastronomy or GastronomyLinked => "gastronomies",
+                Event or EventLinked => "events",
+                ODHActivityPoi or ODHActivityPoiLinked => "smgpois",
+                Package or PackageLinked => "packages",
+                Measuringpoint or MeasuringpointLinked => "measuringpoints",
+                WebcamInfo or WebcamInfoLinked => "webcams",
+                Article or ArticlesLinked => "articles",
+                DDVenue => "venues",
+                EventShort => "eventeuracnoi",
+                ExperienceArea or ExperienceAreaLinked => "experienceareas",
+                MetaRegion or MetaRegionLinked => "metaregions",
+                Region or RegionLinked => "regions",
+                Tourismverein or TourismvereinLinked => "tvs",
+                Municipality or MunicipalityLinked => "municipalities",
+                District or DistrictLinked => "districts",
+                SkiArea or SkiAreaLinked => "skiareas",
+                SkiRegion or SkiRegionLinked => "skiregions",
+                Area or AreaLinked => "areas",
+                Wine or WineLinked => "wines",
                 _ => throw new Exception("not known odh type")
             };
         }
