@@ -470,7 +470,7 @@ namespace STA
                 }
 
                 //Exceptions, Closed on a certain day?
-
+                //How tho handle exceptions like 
 
 
                 return myoperationschedule;

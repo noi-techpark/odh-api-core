@@ -32,7 +32,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET ODHTag List
         /// </summary>
-        /// <param name="validforentity">Filter on Tags valid on Entitys (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="validforentity">Filter on Tags valid on Entities (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>
         /// <param name="language"></param>
         /// <returns>Collection of ODHTag Objects</returns>        
         /// <response code="200">List created</response>
