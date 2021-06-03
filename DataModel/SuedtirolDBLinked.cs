@@ -1251,6 +1251,20 @@ namespace DataModel
         }
     }
 
+    //TODO ADD Linked + Meta 
+    //EventTopics
+    //ActivityTypes
+    //PoiTypes
+    //AccommodationTypes
+    //ODHActivityPoiTypes
+    //ODHTag
+    //AccommodationFeatures
+    //ArticleTypes
+    //EventShort
+    //GastronomyTypes
+    //VenueTypes
+    //Location??
+
 
 
     #endregion
