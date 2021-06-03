@@ -16,7 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
-{    
+{
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class SearchController : OdhController
@@ -31,7 +31,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Search over all Entities
         /// </summary>
-        /// <param name="validforentity">Restrict search to Entities (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="validforentity">Restrict search to Entities (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..)</param>
         /// <param name="language"></param>
         /// <returns>Collection of ODHTag Objects</returns>        
         /// <response code="200">List created</response>
@@ -41,20 +41,20 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
-        [HttpGet, Route("ODHTag")]
+        [HttpGet, Route("SearchOverAll")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetODHTagsAsync(
+        public async Task<IActionResult> GetSearchAsync(
+            string searchfilter,
             string? language = null,
             string? validforentity = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
-            string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
             CancellationToken cancellationToken = default)
-        {            
-            return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(), 
-                  searchfilter, rawfilter, rawsort, cancellationToken);           
+        {
+            return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(),
+                  searchfilter, rawfilter, rawsort, cancellationToken);
         }
 
         #endregion
@@ -68,26 +68,39 @@ namespace OdhApiCore.Controllers
 
             return DoAsyncReturn(async () =>
             {
+                var searchresult = new List<JsonRaw>();
+
                 //if (String.IsNullOrEmpty(rawsort))
                 //    rawsort = "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'";
 
                 if (fields == Array.Empty<string>())
                     fields = new string[] { "Id", "Detail.de.Title", "_Meta.Type" };
 
-                    var query =
-                    QueryFactory.Query()
-                    .SelectRaw("data")
-                    .From("smgpois")
-                    .SearchFilter(PostgresSQLWhereBuilder.TitleFieldsToSearchFor(language), searchfilter)                    
-                    .When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
-                    .ApplyRawFilter(rawfilter)
-                    .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'");
+                var result = await SearchTroughEntity(PostgresSQLWhereBuilder.TitleFieldsToSearchFor,  "odhactivitypois", language, fields, searchfilter, rawfilter, rawsort, cancellationToken);
+
+                if (result != null)
+                    searchresult.AddRange(result);
+
+                return result;
+            });
+        }
+
+        private async Task<IEnumerable<JsonRaw?>> SearchTroughEntity(Func<string, string[]> fieldsearchfunc, string table, string? language, string[] fields,
+            string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+        {
+            var query =
+                QueryFactory.Query()
+                .SelectRaw("data")
+                .From(table)
+                .SearchFilter(fieldsearchfunc(language), searchfilter)
+                .When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
+                .ApplyRawFilter(rawfilter)
+                .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'");
 
 
-                var data = await query.GetAsync<JsonRaw>();
+            var data = await query.GetAsync<JsonRaw>();
 
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList));
-            });            
+            return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList));
         }
 
         #endregion
