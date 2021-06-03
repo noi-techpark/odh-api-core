@@ -163,7 +163,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(Measuringpoint), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Weather/Measuringpoint/{id}", Name = "SingleMeasuringpoint")]
+        [HttpGet, Route("Weather/Measuringpoint/{id}", Name = "SingleWeather")]
         public async Task<IActionResult> GetMeasuringPoint(
             string id,
             string? language = null,

@@ -69,6 +69,13 @@ namespace OdhApiCore.Controllers
                     var chunks = self.Split('/', 2);
                     if (chunks.Length < 2)
                         return self;
+
+                    //Hack if there is another / in the route
+                    if(chunks[1].Split('/').Count() > 1)
+                    {
+                        chunks[1] = chunks[1].Split('/')[1];
+                    }    
+
                     var (controller, id) = (chunks[0], chunks[1]);
                     return Url.Link($"Single{controller}", new { id })!;
                 };
