@@ -6,39 +6,45 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
-    public class Type2Table
+    public class ODHTypeHelper
     {
-        public static string[] GetAllSearchableODHTypes()
+    
+        public static string[] GetAllSearchableODHTypes(bool getall)
         {
-            return new string[]
+            var odhtypes = new List<string>();
+
+            odhtypes.Add("accommodation");
+            odhtypes.Add("odhactivitypoi");
+            odhtypes.Add("event");
+            odhtypes.Add("region");
+            odhtypes.Add("skiarea");
+            odhtypes.Add("tourismassociation");
+            odhtypes.Add("webcam");
+            odhtypes.Add("venue");
+
+            if (getall)
             {
-                "accommodation",
-                "accommodationroom",
-                "ltsactivity",
-                "ltspoi",
-                "ltsgastronomy",
-                "event",
-                "odhactivitypoi",
-                "package",
-                "measuringpoint",
-                "webcam",
-                "article",
-                "venue",
-                "eventshort",
-                "experiencearea",
-                "metaregion",
-                "region",
-                "tourismassociation",
-                "municipality",
-                "district",
-                "skiarea",
-                "skiregion",
-                "area",
-                "wineaward"
-            };
+                odhtypes.Add("accommodationroom");
+                odhtypes.Add("package");
+                odhtypes.Add("ltsactivity");
+                odhtypes.Add("ltspoi");
+                odhtypes.Add("ltsgastronomy");
+                odhtypes.Add("measuringpoint");
+                odhtypes.Add("article");
+                odhtypes.Add("municipality");
+                odhtypes.Add("district");
+                odhtypes.Add("skiregion");
+                odhtypes.Add("eventshort");
+                odhtypes.Add("experiencearea");
+                odhtypes.Add("metaregion");
+                odhtypes.Add("area");
+                odhtypes.Add("wineaward");
+            }
+
+            return odhtypes.ToArray();
         }
 
-        public static string TranslateTypeToTable(string odhtype)
+        public static string TranslateType2Table(string odhtype)
         {
             return odhtype switch
             {
@@ -68,11 +74,6 @@ namespace Helper
                 _ => throw new Exception("not known odh type")
             };
         }
-
-    }
-
-    public class Type2SearchFunction
-    {
 
         public static Func<string, string[]> TranslateTypeToSearchField(string odhtype)
         {
