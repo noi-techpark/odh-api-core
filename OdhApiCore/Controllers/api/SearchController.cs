@@ -31,7 +31,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Search over all Entities
         /// </summary>
-        /// <param name="validforentity">Restrict search to Entities (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="odhtype">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article .. etc..)</param>
         /// <param name="language"></param>
         /// <returns>Collection of ODHTag Objects</returns>        
         /// <response code="200">List created</response>
@@ -46,15 +46,16 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetSearchAsync(
             string searchfilter,
             string? language = null,
-            string? validforentity = null,
+            string? odhtype = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? rawfilter = null,
             string? rawsort = null,
+            int? limitto = 5,
             CancellationToken cancellationToken = default)
         {
-            return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(),
-                  searchfilter, rawfilter, rawsort, cancellationToken);
+            return await Get(language, odhtype, fields: fields ?? Array.Empty<string>(),
+                  searchfilter, rawfilter, rawsort, limitto, cancellationToken);
         }
 
         #endregion
@@ -62,31 +63,35 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(string? language, string? validforentity, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, CancellationToken cancellationToken)
         {
             var myentitytypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            if (myentitytypelist.Count() == 0)
+                myentitytypelist = new string[] { "accommodation", "odhactivitypoi", "event" };
+
+            if (fields == Array.Empty<string>())
+                fields = new string[] { "Id", "Detail.de.Title", "_Meta.Type" };
+
 
             return DoAsyncReturn(async () =>
             {
                 var searchresult = new List<JsonRaw>();
 
-                //if (String.IsNullOrEmpty(rawsort))
-                //    rawsort = "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'";
+                foreach(var entitytype in myentitytypelist)
+                {
+                    var result = await SearchTroughEntity(Type2SearchFunction.TranslateTypeToSearchField(entitytype), Type2Table.TranslateTypeToTable(entitytype), language, fields, searchfilter, rawfilter, rawsort, limitto, cancellationToken);
 
-                if (fields == Array.Empty<string>())
-                    fields = new string[] { "Id", "Detail.de.Title", "_Meta.Type" };
+                    if (result != null)
+                        searchresult.AddRange(result);
+                }
 
-                var result = await SearchTroughEntity(PostgresSQLWhereBuilder.TitleFieldsToSearchFor,  "odhactivitypois", language, fields, searchfilter, rawfilter, rawsort, cancellationToken);
-
-                if (result != null)
-                    searchresult.AddRange(result);
-
-                return result;
+                return searchresult;
             });
         }
 
         private async Task<IEnumerable<JsonRaw?>> SearchTroughEntity(Func<string, string[]> fieldsearchfunc, string table, string? language, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, CancellationToken cancellationToken)
         {
             var query =
                 QueryFactory.Query()
@@ -95,7 +100,8 @@ namespace OdhApiCore.Controllers
                 .SearchFilter(fieldsearchfunc(language), searchfilter)
                 .When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
                 .ApplyRawFilter(rawfilter)
-                .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'");
+                .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
+                .Limit(limitto.Value);
 
 
             var data = await query.GetAsync<JsonRaw>();

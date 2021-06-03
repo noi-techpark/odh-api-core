@@ -35,9 +35,32 @@ namespace Helper
                 "skiregion" => "skiregions",
                 "area" => "areas",
                 "wineaward" => "wines",
-                _ => odhtype
+                _ => throw new Exception("not known odh type")
             };
         }
 
+    }
+
+    public class Type2SearchFunction
+    {
+
+        public static Func<string, string[]> TranslateTypeToSearchField(string odhtype)
+        {
+            return odhtype switch
+            {
+                "accommodation" => PostgresSQLWhereBuilder.AccoTitleFieldsToSearchFor,
+                "accommodationroom" => PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor,
+                "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
+                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
+                => PostgresSQLWhereBuilder.AccoTitleFieldsToSearchFor,
+                //"measuringpoint" => PostgresSQLWhereBuilder.,
+                "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
+                "venue" => PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor,
+                //"eventshort" => "eventeuracnoi",           
+                //"area" => "areas",
+                //"wineaward" => "wines",
+                _ => throw new Exception("not known odh type")
+            };
+        }
     }
 }

@@ -53,8 +53,7 @@ namespace Helper
                language != null ? lang == language : true
            ).Select(lang =>
                $"attributes.name.{TransformLanguagetoDDStandard(lang)}"
-           ).ToArray();
-        
+           ).ToArray();     
 
         private static string TransformLanguagetoDDStandard(string language) => language switch
         {
