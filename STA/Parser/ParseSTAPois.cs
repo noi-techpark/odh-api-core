@@ -217,6 +217,8 @@ namespace STA
 
             mypoi.Shortname = mypoi.Detail["de"].Title;
 
+            mypoi.LastChange = DateTime.Now;
+
             return mypoi;
         }
 
