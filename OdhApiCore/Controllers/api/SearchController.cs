@@ -77,10 +77,12 @@ namespace OdhApiCore.Controllers
             {                 
                 foreach (var entitytype in myentitytypelist)
                 {
-                    if (fields == Array.Empty<string>())
-                        fields = new string[] { "Id", Type2SearchFunction.TranslateTypeToTitleField(entitytype, language), "_Meta.Type" };
+                    var customfields = fields;
 
-                    var result = await SearchTroughEntity(Type2SearchFunction.TranslateTypeToSearchField(entitytype), Type2Table.TranslateTypeToTable(entitytype), language, fields, searchfilter, rawfilter, rawsort, limitto, cancellationToken);
+                    if (fields == Array.Empty<string>())
+                        customfields = new string[] { "Id", Type2SearchFunction.TranslateTypeToTitleField(entitytype, language), "_Meta.Type" };
+
+                    var result = await SearchTroughEntity(Type2SearchFunction.TranslateTypeToSearchField(entitytype), Type2Table.TranslateTypeToTable(entitytype), language, customfields, searchfilter, rawfilter, rawsort, limitto, cancellationToken);
 
                     if (result != null)
                         searchresult.AddRange(result);
