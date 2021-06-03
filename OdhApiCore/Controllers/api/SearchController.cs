@@ -49,10 +49,12 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             CancellationToken cancellationToken = default)
         {            
             return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(), 
-                  searchfilter, cancellationToken);           
+                  searchfilter, rawfilter, rawsort, cancellationToken);           
         }
 
         #endregion
@@ -60,36 +62,32 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(string? language, string? validforentity, string[] fields,
-            string? searchfilter, CancellationToken cancellationToken)
+            string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             var myentitytypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            //return DoAsyncReturn(async () =>
-            //{
-            //    //if (String.IsNullOrEmpty(rawsort))
-            //    //    rawsort = "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'";
+            return DoAsyncReturn(async () =>
+            {
+                //if (String.IsNullOrEmpty(rawsort))
+                //    rawsort = "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'";
 
-            //    var query =
-            //        QueryFactory.Query()
-            //        .SelectRaw("data")
-            //        .From("smgtags")
-            //        .ODHTagWhereExpression(
-            //            languagelist: new List<string>(),
-            //            smgtagtypelist: mysmgtagtypelist,
-            //            searchfilter: searchfilter,
-            //            language: language,
-            //            filterClosedData: FilterClosedData
-            //            )
-            //        .ApplyRawFilter(rawfilter)
-            //        .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
+                if (fields == Array.Empty<string>())
+                    fields = new string[] { "Id", "Detail.de.Title", "_Meta.Type" };
+
+                    var query =
+                    QueryFactory.Query()
+                    .SelectRaw("data")
+                    .From("smgpois")
+                    .SearchFilter(PostgresSQLWhereBuilder.TitleFieldsToSearchFor(language), searchfilter)                    
+                    .When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
+                    .ApplyRawFilter(rawfilter)
+                    .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'");
 
 
-            //    var data = await query.GetAsync<JsonRaw>();
+                var data = await query.GetAsync<JsonRaw>();
 
-            //    return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList));
-            //});
-
-            return null;
+                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList));
+            });            
         }
 
         #endregion

@@ -17,14 +17,14 @@ namespace Helper
         /// If provided only the fields with the
         /// specified language get returned
         /// </param>
-        private static string[] TitleFieldsToSearchFor(string? language) =>
+        public static string[] TitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"Detail.{lang}.Title"
             ).ToArray();
 
-        private static string[] AccoTitleFieldsToSearchFor(string? language) =>
+        public static string[] AccoTitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
@@ -78,14 +78,14 @@ namespace Helper
         //     $"odhdata.Detail.{lang}.Name"
         // ).ToArray();
 
-        private static string[] TagNameFieldsToSearchFor(string? language) =>
+        public static string[] TagNameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"TagName.{lang}"
             ).ToArray();
 
-        private static string[] WebcamnameFieldsToSearchFor(string? language) =>
+        public static string[] WebcamnameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
