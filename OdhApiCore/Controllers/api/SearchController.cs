@@ -32,7 +32,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Search over all Entities
         /// </summary>
-        /// <param name="odhtype">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article .. etc..)</param>
+        /// <param name="odhtype">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
         /// <param name="language"></param>
         /// <returns>Collection of ODHTag Objects</returns>        
         /// <response code="200">List created</response>
@@ -42,7 +42,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
-        [HttpGet, Route("SearchOverAll")]
+        [HttpGet, Route("Search")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetSearchAsync(
             string searchfilter,

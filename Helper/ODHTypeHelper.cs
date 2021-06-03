@@ -78,6 +78,7 @@ namespace Helper
                 SkiRegion or SkiRegionLinked => "skiregion",
                 Area or AreaLinked => "area",
                 Wine or WineLinked => "wineaward",
+                SmgTags or ODHTagLinked => "odhtag",
                 _ => throw new Exception("not known odh type")
             };
         }

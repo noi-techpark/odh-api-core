@@ -1225,6 +1225,33 @@ namespace DataModel
         }
     }
 
+    public class EventShortLinked : EventShort
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "EventShort/" + this.Id;
+            }
+        }
+    }
+
+    public class ODHTagLinked : SmgTags
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
+            }
+        }
+    }
+
+
 
     #endregion
 
