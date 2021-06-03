@@ -55,7 +55,7 @@ namespace Helper
                $"attributes.name.{TransformLanguagetoDDStandard(lang)}"
            ).ToArray();     
 
-        private static string TransformLanguagetoDDStandard(string language) => language switch
+        public static string TransformLanguagetoDDStandard(string language) => language switch
         {
             "de" =>  "deu",
             "it" =>  "ita",

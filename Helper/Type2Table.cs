@@ -8,6 +8,36 @@ namespace Helper
 {
     public class Type2Table
     {
+        public static string[] GetAllSearchableODHTypes()
+        {
+            return new string[]
+            {
+                "accommodation",
+                "accommodationroom",
+                "ltsactivity",
+                "ltspoi",
+                "ltsgastronomy",
+                "event",
+                "odhactivitypoi",
+                "package",
+                "measuringpoint",
+                "webcam",
+                "article",
+                "venue",
+                "eventshort",
+                "experiencearea",
+                "metaregion",
+                "region",
+                "tourismassociation",
+                "municipality",
+                "district",
+                "skiarea",
+                "skiregion",
+                "area",
+                "wineaward"
+            };
+        }
+
         public static string TranslateTypeToTable(string odhtype)
         {
             return odhtype switch
@@ -56,6 +86,25 @@ namespace Helper
                 //"measuringpoint" => PostgresSQLWhereBuilder.,
                 "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
                 "venue" => PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor,
+                //"eventshort" => "eventeuracnoi",           
+                //"area" => "areas",
+                //"wineaward" => "wines",
+                _ => throw new Exception("not known odh type")
+            };
+        }
+
+        public static string TranslateTypeToTitleField(string odhtype, string language)
+        {
+            return odhtype switch
+            {
+                "accommodation" => $"AccoDetail.{language}.Name",
+                "accommodationroom" => $"AccoRoomDetail.{language}.Name",
+                "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
+                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
+                => $"Detail.{language}.Title",
+                //"measuringpoint" => PostgresSQLWhereBuilder.,
+                "webcam" => $"Webcamname.{language}",
+                "venue" => $"attributes.name.{PostgresSQLWhereBuilder.TransformLanguagetoDDStandard(language)}",
                 //"eventshort" => "eventeuracnoi",           
                 //"area" => "areas",
                 //"wineaward" => "wines",

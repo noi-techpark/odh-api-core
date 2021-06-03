@@ -45,7 +45,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetSearchAsync(
             string searchfilter,
-            string? language = null,
+            string? language = "en",
             string? odhtype = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -70,16 +70,16 @@ namespace OdhApiCore.Controllers
             if (myentitytypelist.Count() == 0)
                 myentitytypelist = new string[] { "accommodation", "odhactivitypoi", "event" };
 
-            if (fields == Array.Empty<string>())
-                fields = new string[] { "Id", "Detail.de.Title", "_Meta.Type" };
 
+            var searchresult = new List<JsonRaw>();
 
             return DoAsyncReturn(async () =>
-            {
-                var searchresult = new List<JsonRaw>();
-
-                foreach(var entitytype in myentitytypelist)
+            {                 
+                foreach (var entitytype in myentitytypelist)
                 {
+                    if (fields == Array.Empty<string>())
+                        fields = new string[] { "Id", Type2SearchFunction.TranslateTypeToTitleField(entitytype, language), "_Meta.Type" };
+
                     var result = await SearchTroughEntity(Type2SearchFunction.TranslateTypeToSearchField(entitytype), Type2Table.TranslateTypeToTable(entitytype), language, fields, searchfilter, rawfilter, rawsort, limitto, cancellationToken);
 
                     if (result != null)
