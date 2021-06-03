@@ -82,7 +82,7 @@ namespace Helper
                 "accommodationroom" => PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor,
                 "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
                 or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
-                => PostgresSQLWhereBuilder.AccoTitleFieldsToSearchFor,
+                => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
                 //"measuringpoint" => PostgresSQLWhereBuilder.,
                 "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
                 "venue" => PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor,
