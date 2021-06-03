@@ -82,7 +82,7 @@ namespace OdhApiCore.Controllers
                     var customfields = fields;
 
                     if (fields == Array.Empty<string>())
-                        customfields = new string[] { "Id", Type2SearchFunction.TranslateTypeToTitleField(entitytype, language), "_Meta.Type" };
+                        customfields = new string[] { "Id", Type2SearchFunction.TranslateTypeToTitleField(entitytype, language), "_Meta.Type", "Self" };
 
                     var result = await SearchTroughEntity(Type2SearchFunction.TranslateTypeToSearchField(entitytype), Type2Table.TranslateTypeToTable(entitytype), language, customfields, searchfilter, rawfilter, rawsort, limitto, cancellationToken);
 
@@ -97,7 +97,7 @@ namespace OdhApiCore.Controllers
                 {
                     Items = searchresult,
                     totalResults = (uint)searchresult.Count,
-                    resultsPerOdhtype = searchresultpertype
+                    detailedResults = searchresultpertype
                 };                    
             });
         }

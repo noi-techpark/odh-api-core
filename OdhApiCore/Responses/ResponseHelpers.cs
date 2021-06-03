@@ -60,7 +60,7 @@ namespace OdhApiCore.Responses
     public class SearchResult<T> : IResponse<T>
     {
        public uint totalResults { get; set; }
-       public Dictionary<string, uint> resultsPerOdhtype { get; set; }
+       public Dictionary<string, uint> detailedResults { get; set; }
        public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
     }    
 
