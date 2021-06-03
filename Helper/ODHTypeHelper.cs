@@ -45,7 +45,49 @@ namespace Helper
             return odhtypes.ToArray();
         }
 
-        public static string TranslateType2Table(string odhtype)
+        /// <summary>
+        /// Translates a ODH Type to the Type as String
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="odhtype"></param>
+        /// <returns></returns>
+        public static string TranslateType2TypeString<T>(T odhtype)
+        {
+            return odhtype switch
+            {
+                Accommodation or AccommodationLinked => "accommodation",
+                AccoRoom or AccommodationRoomLinked => "accommodationroom",
+                GBLTSActivity or LTSActivityLinked => "ltsactivity",
+                GBLTSPoi or LTSPoiLinked => "ltspoi",
+                Gastronomy or GastronomyLinked => "ltsgastronomy",
+                Event or EventLinked => "event",
+                ODHActivityPoi or ODHActivityPoiLinked => "odhactivitypoi",
+                Package or PackageLinked => "package",
+                Measuringpoint or MeasuringpointLinked => "measuringpoint",
+                WebcamInfo or WebcamInfoLinked => "webcam",
+                Article or ArticlesLinked => "article",
+                DDVenue => "venue",
+                EventShort => "eventshort",
+                ExperienceArea or ExperienceAreaLinked => "experiencearea",
+                MetaRegion or MetaRegionLinked => "metaregion",
+                Region or RegionLinked => "region",
+                Tourismverein or TourismvereinLinked => "tourismassociation",
+                Municipality or MunicipalityLinked => "municipality",
+                District or DistrictLinked => "district",
+                SkiArea or SkiAreaLinked => "skiarea",
+                SkiRegion or SkiRegionLinked => "skiregion",
+                Area or AreaLinked => "area",
+                Wine or WineLinked => "wineaward",
+                _ => throw new Exception("not known odh type")
+            };
+        }
+
+        /// <summary>
+        /// Translates Type as String to PG Table Name
+        /// </summary>
+        /// <param name="odhtype"></param>
+        /// <returns></returns>
+        public static string TranslateTypeString2Table(string odhtype)
         {
             return odhtype switch
             {
@@ -76,6 +118,12 @@ namespace Helper
             };
         }
 
+        /// <summary>
+        /// Translates Type to PG Table Name
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="odhtype"></param>
+        /// <returns></returns>
         public static string TranslateType2Table<T>(T odhtype)
         {
             return odhtype switch
@@ -107,7 +155,12 @@ namespace Helper
             };
         }
 
-        public static string TranslateTable2Type(string odhtype)
+        /// <summary>
+        /// Translates Table Name to Type as String
+        /// </summary>
+        /// <param name="odhtype"></param>
+        /// <returns></returns>
+        public static string TranslateTable2TypeString(string odhtype)
         {
             return odhtype switch
             {

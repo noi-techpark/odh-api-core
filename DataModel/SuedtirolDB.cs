@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace DataModel
@@ -3051,7 +3052,7 @@ namespace DataModel
 
     #region EBMS
 
-    public class EventShort
+    public class EventShort : IIdentifiable
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -3169,6 +3170,9 @@ namespace DataModel
         public List<DocumentPDF>? EventDocument { get; set; }
 
         public bool? ExternalOrganizer { get; set; }
+
+        [JsonIgnore]
+        public string Shortname { get; set; }
     }
 
     public class RoomBooked
