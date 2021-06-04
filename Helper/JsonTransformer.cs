@@ -33,6 +33,9 @@ namespace Helper
             if (filterClosedData) token = token.FilterClosedData();
             //Ensure Self Link is the right url
             token = token.TransformSelfLink(urlGenerator);
+
+            JsonTransformerMethods.FilterOutNullProperties(token);
+
             //Filter out meta info
             //token = token.FilterMetaInformations();
             return (token == null) ?

@@ -173,7 +173,7 @@ namespace Helper
 
             static JObject RemoveNullProps(JObject obj)
             {        
-                return new JObject(obj.Properties().Where(x => x != null));
+                return new JObject(obj.Properties().Where(x => x.Value != null));
             }
             static JToken Walk(JToken token) =>
                 token switch
