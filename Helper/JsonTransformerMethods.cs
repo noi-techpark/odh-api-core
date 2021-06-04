@@ -174,13 +174,14 @@ namespace Helper
             static JObject RemoveNullProps(JObject obj)
             {        
                 return new JObject(
-                    obj.Properties().Where(x => !x.Value.IsNullOrEmpty())
+                    obj.Properties().Where(x => !x.Value.IsNullOrEmpty(true, true))
                     );
             }
             static JToken Walk(JToken token) =>
                 token switch
                 {
                     JObject obj => RemoveNullProps(obj),
+                    //JProperty prop => new JProperty(prop.Name, Walk(prop.Value)),
                     _ => token
                 };
 
@@ -327,15 +328,24 @@ namespace Helper
 
     public static class JsonExtensions
     {
-        public static bool IsNullOrEmpty(this JToken token)
+        public static bool IsNullOrEmpty(this JToken token, bool filteremptyarrays, bool filteremptyobjects)
         {
-            bool result = (token == null) ||
-                   (token.Type == JTokenType.Array && !token.HasValues) ||
-                   (token.Type == JTokenType.Object && !token.HasValues) ||
-                   (token.Type == JTokenType.String && token.ToString() == String.Empty) ||
-                   //(token.Type == JTokenType.Null && String.IsNullOrEmpty(token.ToString())) ||
-                   (token.Type == JTokenType.Null);
+            bool result = false;
 
+            result = (token == null) || 
+                (token.Type == JTokenType.String && token.ToString() == String.Empty) || 
+                (token.Type == JTokenType.Null);
+
+            if (filteremptyarrays)
+                result = result || (token == null) ||
+                    (token.Type == JTokenType.Array && !token.HasValues);   //filter out empty array   
+
+            if (filteremptyobjects)
+                result = result || (token == null) ||
+                   (token.Type == JTokenType.Object && !token.HasValues); //filter out empty object
+                   
+                   //(token.Type == JTokenType.Undefined) || //not sure if needed
+                
             return result;
         }
     }
