@@ -34,7 +34,7 @@ namespace Helper
             //Ensure Self Link is the right url
             token = token.TransformSelfLink(urlGenerator);
 
-            JsonTransformerMethods.FilterOutNullProperties(token);
+            token = JsonTransformerMethods.FilterOutNullProperties(token);
 
             //Filter out meta info
             //token = token.FilterMetaInformations();
