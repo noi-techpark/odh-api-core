@@ -138,7 +138,7 @@ namespace Helper
             return Walk(token);
         }
 
-        //Cutting out Property TVMember on Accommodations
+        //Cutting out Property passed by List
         public static JToken? FilterOutProperties(this JToken? token, List<string> propstocut)
         {
             if (token == null)
@@ -165,7 +165,7 @@ namespace Helper
             return Walk(token, propstocut);
         }
 
-        //Cutting out Property TVMember on Accommodations
+        //Cutting out all properties with null
         public static JToken? FilterOutNullProperties(this JToken? token)
         {
             if (token == null)
@@ -173,7 +173,9 @@ namespace Helper
 
             static JObject RemoveNullProps(JObject obj)
             {        
-                return new JObject(obj.Properties().Where(x => x.Value != null));
+                return new JObject(
+                    obj.Properties().Where(x => !x.Value.IsNullOrEmpty())
+                    );
             }
             static JToken Walk(JToken token) =>
                 token switch
@@ -184,7 +186,6 @@ namespace Helper
 
             return Walk(token);
         }
-
 
         //Cutting out Property _Meta
         public static JToken? FilterMetaInformations(this JToken? token)
@@ -322,5 +323,17 @@ namespace Helper
             return Walk(token, urlGenerator);
         }
 
+    }
+
+    public static class JsonExtensions
+    {
+        public static bool IsNullOrEmpty(this JToken token)
+        {
+            return (token == null) ||
+                   (token.Type == JTokenType.Array && !token.HasValues) ||
+                   (token.Type == JTokenType.Object && !token.HasValues) ||
+                   (token.Type == JTokenType.String && token.ToString() == String.Empty) ||
+                   (token.Type == JTokenType.Null);
+        }
     }
 }
