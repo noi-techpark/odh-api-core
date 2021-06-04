@@ -165,6 +165,26 @@ namespace Helper
             return Walk(token, propstocut);
         }
 
+        //Cutting out Property TVMember on Accommodations
+        public static JToken? FilterOutNullProperties(this JToken? token)
+        {
+            if (token == null)
+                return null;
+
+            static JObject RemoveNullProps(JObject obj)
+            {        
+                return new JObject(obj.Properties().Where(x => x != null));
+            }
+            static JToken Walk(JToken token) =>
+                token switch
+                {
+                    JObject obj => RemoveNullProps(obj),
+                    _ => token
+                };
+
+            return Walk(token);
+        }
+
 
         //Cutting out Property _Meta
         public static JToken? FilterMetaInformations(this JToken? token)
