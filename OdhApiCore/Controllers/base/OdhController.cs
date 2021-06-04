@@ -70,7 +70,7 @@ namespace OdhApiCore.Controllers
                     if (chunks.Length < 2)
                         return self;
 
-                    //Hack if there is another / in the route
+                    //Hack if there is another / in the route to check if it is not generating side effects
                     if(chunks[1].Split('/').Count() > 1)
                     {
                         chunks[1] = chunks[1].Split('/')[1];

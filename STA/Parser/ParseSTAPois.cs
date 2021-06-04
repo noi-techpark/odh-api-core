@@ -471,8 +471,42 @@ namespace STA
                     }
                 }
 
-                //Exceptions, Closed on a certain day?
-                //How tho handle exceptions like 
+                //Exceptions, Closed on a certain day
+                if(!String.IsNullOrEmpty(vendingpoint.Zusatzinfo_EN))
+                {
+                    if(vendingpoint.Zusatzinfo_EN.EndsWith("closed"))
+                    {
+                        //Find out the day
+                        var myday = vendingpoint.Zusatzinfo_EN.Replace(" closed", "");
+
+                        var validdays = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+                        if (validdays.Contains(myday))
+                        {
+                            //Add closed Schedule
+                            OperationScheduleTime myoptimeclosed = new OperationScheduleTime();
+                            myoptimeclosed.Monday = myday == "Monday" ? true : false;
+                            myoptimeclosed.Tuesday = myday == "Tuesday" ? true : false; 
+                            myoptimeclosed.Wednesday = myday == "Wednesday" ? true : false;
+                            myoptimeclosed.Thuresday = myday == "Thursday" ? true : false;
+                            myoptimeclosed.Thursday = myday == "Thursday" ? true : false;
+                            myoptimeclosed.Friday = myday == "Friday" ? true : false;
+                            myoptimeclosed.Saturday = myday == "Saturday" ? true : false;
+                            myoptimeclosed.Sunday = myday == "Sunday" ? true : false;
+
+                            myoptimeclosed.Timecode = 1;
+                            myoptimeclosed.State = 1;
+
+                            myoptimeclosed.Start = new TimeSpan(0, 0, 1);
+                            myoptimeclosed.End = new TimeSpan(23, 59, 59);
+
+                            myoperationschedule.OperationScheduleTime.Add(myoptimeclosed);
+                        }
+                        
+                    }
+                }
+
+
 
 
                 return myoperationschedule;
