@@ -333,6 +333,7 @@ namespace Helper
                    (token.Type == JTokenType.Array && !token.HasValues) ||
                    (token.Type == JTokenType.Object && !token.HasValues) ||
                    (token.Type == JTokenType.String && token.ToString() == String.Empty) ||
+                   (token.Type == JTokenType.Null && String.IsNullOrEmpty(token.ToString())) ||
                    (token.Type == JTokenType.Null);
         }
     }
