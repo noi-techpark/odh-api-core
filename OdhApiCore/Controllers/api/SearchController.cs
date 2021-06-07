@@ -53,10 +53,11 @@ namespace OdhApiCore.Controllers
             string? rawfilter = null,
             string? rawsort = null,
             int? limitto = 5,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             return await Get(language, odhtype, fields: fields ?? Array.Empty<string>(),
-                  term, rawfilter, rawsort, limitto, cancellationToken);
+                  term, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
         }
 
         //TODO EXTEND THE FILTER with the possibility to add fields for search
@@ -66,7 +67,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(string? language, string? validforentity, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, CancellationToken cancellationToken)
+            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var myentitytypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -85,7 +86,7 @@ namespace OdhApiCore.Controllers
                     if (fields == Array.Empty<string>())
                         customfields = new string[] { "Id", ODHTypeHelper.TranslateTypeToTitleField(entitytype, language), "_Meta.Type", "Self" };
 
-                    var result = await SearchTroughEntity(ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, rawfilter, rawsort, limitto, cancellationToken);
+                    var result = await SearchTroughEntity(ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
 
                     if (result != null)
                     {
@@ -104,7 +105,7 @@ namespace OdhApiCore.Controllers
         }
 
         private async Task<IEnumerable<JsonRaw?>> SearchTroughEntity(Func<string, string[]> fieldsearchfunc, string table, string? language, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, CancellationToken cancellationToken)
+            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var query =
                 QueryFactory.Query()
@@ -119,7 +120,7 @@ namespace OdhApiCore.Controllers
 
             var data = await query.GetAsync<JsonRaw>();
 
-            return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList));
+            return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList));
         }
 
         #endregion
