@@ -99,7 +99,7 @@ namespace OdhApiCoreTests.Helper
         //}
 
         [Fact]
-        public void FilterNullProperties()
+        public void FilterNullPropertiesTest()
         {
             var actual = @"{ field1: null, field2: 42 }";
             var expected = @"{ field2: 42 }";
