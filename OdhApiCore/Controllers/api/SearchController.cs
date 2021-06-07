@@ -42,10 +42,10 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
-        [HttpGet, Route("Search")]
+        [HttpGet, Route("Filter")]   //Filter
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetSearchAsync(
-            string searchfilter,
+            string term, 
             string? language = "en",
             string? odhtype = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
@@ -56,8 +56,10 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             return await Get(language, odhtype, fields: fields ?? Array.Empty<string>(),
-                  searchfilter, rawfilter, rawsort, limitto, cancellationToken);
+                  term, rawfilter, rawsort, limitto, cancellationToken);
         }
+
+        //TODO EXTEND THE FILTER with the possibility to add fields for search
 
         #endregion
 
