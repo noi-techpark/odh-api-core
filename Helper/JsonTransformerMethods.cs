@@ -183,6 +183,7 @@ namespace Helper
                 token switch
                 {
                     JObject obj => RemoveNullProps(obj),
+                    JArray objs => new JArray(objs.Select(FilterOutNullProperties)),
                     //JProperty prop => new JProperty(prop.Name, Walk(prop.Value)),
                     _ => token
                 };
