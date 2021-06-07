@@ -97,5 +97,16 @@ namespace OdhApiCoreTests.Helper
         //    var expectedToken = JToken.Parse(expected);
         //    Assert.Equal(expectedToken, transformedToken);
         //}
+
+        [Fact]
+        public void FilterNullProperties()
+        {
+            var actual = @"{ field1: null, field2: 42 }";
+            var expected = @"{ field2: 42 }";
+            var token = JToken.Parse(actual);
+            var transformedToken = token.FilterOutNullProperties();
+            var expectedToken = JToken.Parse(expected);
+            Assert.Equal(expectedToken, transformedToken);
+        }
     }
 }
