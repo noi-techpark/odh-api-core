@@ -50,7 +50,7 @@ namespace OdhApiCore.Controllers
         public async Task<ActionResult<Weather>> GetWeather(
             string? language = "en", 
             string? locfilter = null,
-            bool extended = false,
+            bool extended = true,
             CancellationToken cancellationToken = default)
         {
             try
