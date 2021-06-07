@@ -496,7 +496,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class SmgPoiLinked : ODHActivityPoi
+    public class ODHActivityPoiLinked : ODHActivityPoi
     {
         public Metadata _Meta { get; set; }
 
@@ -1224,6 +1224,47 @@ namespace DataModel
             }
         }
     }
+
+    public class EventShortLinked : EventShort
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "EventShort/" + this.Id;
+            }
+        }
+    }
+
+    public class ODHTagLinked : SmgTags
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
+            }
+        }
+    }
+
+    //TODO ADD Linked + Meta 
+    //EventTopics
+    //ActivityTypes
+    //PoiTypes
+    //AccommodationTypes
+    //ODHActivityPoiTypes
+    //ODHTag
+    //AccommodationFeatures
+    //ArticleTypes
+    //EventShort
+    //GastronomyTypes
+    //VenueTypes
+    //Location??
+
 
 
     #endregion

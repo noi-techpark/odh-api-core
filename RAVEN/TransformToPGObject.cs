@@ -37,7 +37,7 @@ namespace RAVEN
             return data;
         }
 
-        public static SmgPoiLinked GetODHActivityPoiPGObject(SmgPoiLinked data)
+        public static ODHActivityPoiLinked GetODHActivityPoiPGObject(ODHActivityPoiLinked data)
         {
             data.Id = data.Id.ToLower();
 
@@ -94,7 +94,7 @@ namespace RAVEN
             //if (sourcemeta == "common" || sourcemeta == "magnolia" || sourcemeta == "content")
             //    sourcemeta = "idm";
 
-            data._Meta = MetadataHelper.GetMetadataobject<SmgPoiLinked>(data, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
+            data._Meta = MetadataHelper.GetMetadataobject<ODHActivityPoiLinked>(data, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
 
 
             return data;

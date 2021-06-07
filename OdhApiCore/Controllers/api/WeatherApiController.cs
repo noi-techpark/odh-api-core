@@ -50,7 +50,7 @@ namespace OdhApiCore.Controllers
         public async Task<ActionResult<Weather>> GetWeather(
             string? language = "en", 
             string? locfilter = null,
-            bool extended = false,
+            bool extended = true,
             CancellationToken cancellationToken = default)
         {
             try
@@ -163,7 +163,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(Measuringpoint), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Weather/Measuringpoint/{id}")]
+        [HttpGet, Route("Weather/Measuringpoint/{id}", Name = "SingleWeather")]
         public async Task<IActionResult> GetMeasuringPoint(
             string id,
             string? language = null,

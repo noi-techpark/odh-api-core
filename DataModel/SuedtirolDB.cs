@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace DataModel
@@ -2715,21 +2716,22 @@ namespace DataModel
         public string? CurrencyCode { get; set; }
         //public string Language { get; set; }
     }
-
+    
     public class OperationSchedule : IOperationSchedules
     {
         public OperationSchedule()
         {
             OperationscheduleName = new Dictionary<string, string>();
         }
-
-        public IDictionary<string, string> OperationscheduleName { get; set; }
-        public DateTime Start { get; set; }
+        
+        public IDictionary<string, string> OperationscheduleName { get; set; }        
+        public DateTime Start { get; set; }        
         public DateTime Stop { get; set; }
+        /// <summary>
+        /// Type: 1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider)
+        /// </summary>        
         public string? Type { get; set; }
-        //deprecated
-        //public bool? ClosedonPublicHolidays { get; set; }
-
+        
         public ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
     }
 
@@ -2740,11 +2742,22 @@ namespace DataModel
         public bool Monday { get; set; }
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
+        /// <summary>
+        /// Here for compatibility reasons
+        /// </summary>
         public bool Thuresday { get; set; }
+        public bool Thursday { get; set; }
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
+        /// <summary>
+        /// //1 = closed, 2 = open, 0 = undefined
+        /// </summary>
         public int State { get; set; }
+
+        /// <summary>
+        /// 1 = General Opening Time, 2 = time range for warm meals, 3 = time range for pizza, 4 = time range for snack’s
+        /// </summary>
         public int Timecode { get; set; }
     }
 
@@ -3039,7 +3052,7 @@ namespace DataModel
 
     #region EBMS
 
-    public class EventShort
+    public class EventShort : IIdentifiable
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -3157,6 +3170,9 @@ namespace DataModel
         public List<DocumentPDF>? EventDocument { get; set; }
 
         public bool? ExternalOrganizer { get; set; }
+
+        [JsonIgnore]
+        public string Shortname { get; set; }
     }
 
     public class RoomBooked

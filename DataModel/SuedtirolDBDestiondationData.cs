@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DataModel
 {
-    public class DDVenue
+    public class DDVenue : IIdentifiable
     {
         public Metadata _Meta { get; set; }
         public string type { get; set; }
@@ -20,6 +20,9 @@ namespace DataModel
 
         //Additional ODH Data for Venues
         public ODHData odhdata { get; set; }
+
+        [JsonIgnore]
+        public string Shortname { get; set; }
     }
 
     public class ODHData
