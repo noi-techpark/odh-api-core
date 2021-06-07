@@ -93,6 +93,7 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -104,7 +105,7 @@ namespace OdhApiCore.Controllers
                     begindate: begindate, enddate: enddate, sort: sort, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
                     langfilter: langfilter, source: source,
-                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
+                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
 
@@ -126,10 +127,11 @@ namespace OdhApiCore.Controllers
             string id,
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            string[]? fields = null, 
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -151,9 +153,10 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventTopicListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
+            return await GetEventTopicListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -173,9 +176,10 @@ namespace OdhApiCore.Controllers
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventTopicSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetEventTopicSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         #endregion
@@ -186,7 +190,7 @@ namespace OdhApiCore.Controllers
         string[] fields, string? language, uint pagenumber, int? pagesize, string? typefilter, string? idfilter,
         string? rancfilter, string? searchfilter, string? locfilter, string? orgfilter, string? topicfilter, string? begindate, string? enddate,
         string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? source, 
-        PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+        PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -265,7 +269,7 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">ID of the Event</param>
         /// <returns>Event Object</returns>
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -289,7 +293,7 @@ namespace OdhApiCore.Controllers
         /// GET Event Topics List
         /// </summary>
         /// <returns>Collection of EventTypes Object</returns>
-        private Task<IActionResult> GetEventTopicListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+        private Task<IActionResult> GetEventTopicListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -316,7 +320,7 @@ namespace OdhApiCore.Controllers
         /// GET Event Topic Single
         /// </summary>
         /// <returns>EventTypes Object</returns>
-        private Task<IActionResult> GetEventTopicSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetEventTopicSingleAsync(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
