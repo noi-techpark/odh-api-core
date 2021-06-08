@@ -172,15 +172,18 @@ namespace Helper
                 return null;
 
             static JObject RemoveNullProps(JObject obj)
-            {        
+            {
                 return new JObject(
-                    obj.Properties().Where(x => !x.Value.IsNullOrEmpty(true, true))
+                    obj.Properties()
+                        .Where(x => !x.Value.IsNullOrEmpty(true, true))
+                        .Select(x => new JProperty(x.Name, FilterOutNullProperties(x.Value)))
                     );
             }
             static JToken Walk(JToken token) =>
                 token switch
                 {
                     JObject obj => RemoveNullProps(obj),
+                    JArray objs => new JArray(objs.Select(FilterOutNullProperties)),
                     //JProperty prop => new JProperty(prop.Name, Walk(prop.Value)),
                     _ => token
                 };

@@ -53,6 +53,7 @@ namespace OdhApiCore.Controllers
             string? rawfilter = null,
             string? rawsort = null,
             string? localizationlanguage = null,  //TODO ignore this in swagger
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             //Compatibility
@@ -61,7 +62,7 @@ namespace OdhApiCore.Controllers
 
 
             return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(), 
-                  searchfilter, rawfilter, rawsort,
+                  searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
         }
 
@@ -84,13 +85,14 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? localizationlanguage = null,   //TODO ignore this in swagger
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             //Compatibility
             if (String.IsNullOrEmpty(language) && !String.IsNullOrEmpty(localizationlanguage))
                 language = localizationlanguage;
 
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         #endregion
@@ -98,7 +100,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(string? language, string? smgtagtype, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort,
+            string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
             var mysmgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -125,11 +127,11 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.GetAsync<JsonRaw>();
 
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList));
+                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList));
             });
         }      
 
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -139,7 +141,7 @@ namespace OdhApiCore.Controllers
                     .When(FilterClosedData, q => q.FilterClosedData())
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 

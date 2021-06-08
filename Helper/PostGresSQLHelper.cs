@@ -279,7 +279,6 @@ namespace Helper
 
         #endregion
 
-
         public static uint PGPagingHelper(uint totalcount, uint pagesize)
         {
             uint totalpages;

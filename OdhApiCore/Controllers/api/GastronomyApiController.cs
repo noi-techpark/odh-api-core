@@ -89,6 +89,7 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -99,7 +100,7 @@ namespace OdhApiCore.Controllers
                     facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter, ceremonycodefilter: ceremonycodefilter, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
-                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
+                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
 
@@ -119,9 +120,10 @@ namespace OdhApiCore.Controllers
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -140,9 +142,10 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetGastronomyTypesListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
+            return await GetGastronomyTypesListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -159,9 +162,10 @@ namespace OdhApiCore.Controllers
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetGastronomyTypesSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetGastronomyTypesSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         #endregion
@@ -173,7 +177,7 @@ namespace OdhApiCore.Controllers
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? idfilter, string? searchfilter, string? locfilter, bool? active, bool? smgactive,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
-            string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+            string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -207,7 +211,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -223,7 +227,7 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -234,7 +238,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
@@ -246,7 +250,7 @@ namespace OdhApiCore.Controllers
         /// GET Gastronomy Types List
         /// </summary>
         /// <returns>Collection of GastronomyTypes Object</returns>
-        private Task<IActionResult> GetGastronomyTypesListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+        private Task<IActionResult> GetGastronomyTypesListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -262,7 +266,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 return dataTransformed;
@@ -273,7 +277,7 @@ namespace OdhApiCore.Controllers
         /// GET Gastronomy Types Single
         /// </summary>
         /// <returns>GastronomyTypes Object</returns>
-        private Task<IActionResult> GetGastronomyTypesSingleAsync(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetGastronomyTypesSingleAsync(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -286,7 +290,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 

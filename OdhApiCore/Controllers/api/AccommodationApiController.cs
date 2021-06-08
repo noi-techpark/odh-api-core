@@ -113,6 +113,7 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             
@@ -131,7 +132,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, idlist: new List<string>(), locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
-                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
             else if(availabilitycheck?.Value == true)
             {
@@ -154,7 +155,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, idlist: availableonlineaccos, locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
-                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
 
             //Fall 3 Available MSS
@@ -253,12 +254,13 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             if(idsource == "hgv")
-                return await GetSingleByHgvId(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+                return await GetSingleByHgvId(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
             else
-                return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);           
+                return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);           
         }
 
 
@@ -283,9 +285,10 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAccoTypeList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
+            return await GetAccoTypeList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -306,9 +309,10 @@ namespace OdhApiCore.Controllers
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAccoTypeSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetAccoTypeSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -332,13 +336,14 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             if (!String.IsNullOrEmpty(source) && source == "lts")
                 return await Task.FromResult<IActionResult>(Ok());
             //return GetFeatureList(cancellationToken); TODO
             else
-                return await GetAccoFeatureList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, cancellationToken);
+                return await GetAccoFeatureList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -359,9 +364,10 @@ namespace OdhApiCore.Controllers
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetAccoFeatureSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetAccoFeatureSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
         }
 
         // ACCO ROOMS
@@ -390,6 +396,7 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default
             )
         {
@@ -400,7 +407,7 @@ namespace OdhApiCore.Controllers
                 idtocheck = await GetAccoIdByHgvId(accoid, cancellationToken);
             }    
 
-            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, searchfilter, rawfilter, rawsort, cancellationToken);
+            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         // ACCO ROOMS
@@ -422,9 +429,10 @@ namespace OdhApiCore.Controllers
             string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {            
-            return await GetSingleAccommodationRoom(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetSingleAccommodationRoom(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
         }
 
         //SPECIAL GETTER
@@ -572,7 +580,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, List<string?> idlist, string? locfilter,
             string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? featureidfilter, string? themefilter, string? badgefilter, string? altitudefilter, 
             bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? searchfilter, 
-            PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+            PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -613,7 +621,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -629,7 +637,7 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -641,11 +649,11 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
-        private Task<IActionResult> GetSingleByHgvId(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingleByHgvId(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -657,7 +665,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
@@ -683,6 +691,7 @@ namespace OdhApiCore.Controllers
             string? searchfilter,
             string? rawfilter,
             string? rawsort,
+            bool removenullvalues,
             CancellationToken cancellationToken
             )
         {
@@ -709,7 +718,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                    data.Select(
-                       raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                       raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                    );
 
                 return dataTransformed;
@@ -725,6 +734,7 @@ namespace OdhApiCore.Controllers
             string id,
             string? language,
             string[] fields,
+            bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -737,7 +747,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
@@ -751,7 +761,7 @@ namespace OdhApiCore.Controllers
 
         #region CATEGORIES
 
-        private Task<IActionResult> GetAccoTypeList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoTypeList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -767,14 +777,14 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 return dataTransformed;
             });
         }
 
-        private Task<IActionResult> GetAccoTypeSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoTypeSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -788,11 +798,11 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
-        private Task<IActionResult> GetAccoFeatureList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoFeatureList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -808,14 +818,14 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 return dataTransformed;
             });
         }
 
-        private Task<IActionResult> GetAccoFeatureSingle(string id, string? language, string[] fields, CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoFeatureSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -828,7 +838,7 @@ namespace OdhApiCore.Controllers
                 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 

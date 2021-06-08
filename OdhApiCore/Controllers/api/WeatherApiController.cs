@@ -142,6 +142,7 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -152,7 +153,7 @@ namespace OdhApiCore.Controllers
                     skiareafilter: skiareafilter, active: active,
                     smgactive: odhactive, seed: seed, lastchange: updatefrom,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
-                    cancellationToken: cancellationToken);
+                    removenullvalues: removenullvalues, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -169,9 +170,10 @@ namespace OdhApiCore.Controllers
             string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetMeasuringPointSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetMeasuringPointSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -353,6 +355,7 @@ namespace OdhApiCore.Controllers
             PGGeoSearchResult geosearchresult,
             string? rawfilter,
             string? rawsort,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             return DoAsyncReturn(async () =>
@@ -384,7 +387,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 return dataTransformed;
@@ -395,7 +398,8 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetMeasuringPointSingle(
             string id, 
             string? language, 
-            string[] fields, 
+            string[] fields,
+            bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -408,7 +412,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
 
         }

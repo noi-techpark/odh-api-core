@@ -73,6 +73,7 @@ namespace OdhApiCore.Controllers.api
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default
             )
         {
@@ -82,7 +83,7 @@ namespace OdhApiCore.Controllers.api
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, active: onlyactive.Value,
                    sortorder: sortorder, seed: seed, lastchange: lastchange,
-                   rawfilter: rawfilter, rawsort: rawsort, cancellationToken: cancellationToken);
+                   rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, cancellationToken: cancellationToken);
         }
 
 
@@ -106,9 +107,10 @@ namespace OdhApiCore.Controllers.api
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventShortSingle(id, language, fields: fields ?? Array.Empty<string>(), cancellationToken);
+            return await GetEventShortSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -157,7 +159,7 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
             string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, string? sortorder, string? seed,
-            string? lastchange, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
+            string? lastchange, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -191,7 +193,7 @@ namespace OdhApiCore.Controllers.api
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -208,7 +210,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         private Task<IActionResult> GetEventShortSingle(
-            string id, string? language, string[] fields, CancellationToken cancellationToken)
+            string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -220,7 +222,7 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
             });
         }
 
