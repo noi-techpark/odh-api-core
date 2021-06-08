@@ -82,7 +82,7 @@ namespace Helper
             string whereexpression = "data @> '{ \"ImageGallery\" : [ { \"License\" : \"CC0\" } ] }') as result1 where result1 ->> 'License' like 'CC0'";
 
             var subquery = QueryFactory.Query()
-                .SelectRaw("jsonb_array_elements(data -> 'ImageGallery')")
+                .SelectRaw("jsonb_array_elements(data -> 'ImageGallery') as result1")
                 .From(tablename)
                 .WhereInJsonb(
                     new List<string>() { "CC0" },
@@ -90,7 +90,7 @@ namespace Helper
 
             var query = QueryFactory.Query()
                 .Select(subquery, "result1")
-                .From(subquery)
+                .From(subquery, "subsel")
                 .WhereRaw("result1 ->> 'License' like 'CC0'");
                
 
