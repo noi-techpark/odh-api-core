@@ -32,30 +32,38 @@ namespace Helper
 
         public static async Task<long> GetTotalCountCC0(QueryFactory QueryFactory, string tablename)
         {
-            string whereexpression = "data @> '{\"LicenseInfo\": { \"License\": \"CC0\" } }'";
+            //string whereexpression = "data @> '{\"LicenseInfo\": { \"License\": \"CC0\" } }'";
 
             var query = QueryFactory.Query()
                 .SelectRaw("id")
                 .From(tablename)
-                .WhereRaw(whereexpression);
+                .WhereInJsonb(
+                    new List<string>() { "CC0" },
+                    tag => new { LicenseInfo = new[] { new { License = tag } } });
 
             return await query.CountAsync<long>();
         }
 
         public static async Task<long> GetAllDataWithCC0Image(QueryFactory QueryFactory, string tablename)
         {
-            string whereexpression = "data @> '{\"ImageGallery\": [{ \"License\": \"CC0\" }] }'";
-          
+            //string whereexpression = "data @> {\"ImageGallery\": [{ \"License\": \"CC0\" }] }";
+         
             var query = QueryFactory.Query()
                 .SelectRaw("id")
                 .From(tablename)
-                .WhereRaw(whereexpression);
+                .WhereInJsonb(
+                    new List<string>() { "CC0" },
+                    tag => new { ImageGallery = new[] { new { License = tag } } });
 
             return await query.CountAsync<long>();
         }
 
         public static async Task<long> GetAllImagesWithCC0License(QueryFactory QueryFactory, string tablename)
         {
+
+            //select count(result1) from(select jsonb_array_elements(data-> 'ImageGallery') as result1 from accommodations where
+            //data @> '{ "ImageGallery": [{ "License": "CC0" }] }') as subsel where result1 ->> 'License' like 'CC0'
+
             string selectexpression = "Count(*) from (select jsonb_array_elements(data -> 'ImageGallery') as result1";
             string whereexpression = "data @> '{ \"ImageGallery\" : [ { \"License\" : \"CC0\" } ] }') as result1 where result1 ->> 'License' like 'CC0'";
 
