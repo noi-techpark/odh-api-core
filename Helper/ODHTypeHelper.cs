@@ -221,9 +221,28 @@ namespace Helper
                 "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
                 or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
                 => $"Detail.{language}.Title",
-                //"measuringpoint" => PostgresSQLWhereBuilder.,
+                "measuringpoint" => $"Shortname",
                 "webcam" => $"Webcamname.{language}",
                 "venue" => $"attributes.name.{PostgresSQLWhereBuilder.TransformLanguagetoDDStandard(language)}",
+                //"eventshort" => "eventeuracnoi",           
+                //"area" => "areas",
+                //"wineaward" => "wines",
+                _ => throw new Exception("not known odh type")
+            };
+        }
+
+        public static string TranslateTypeToBaseTextField(string odhtype, string language)
+        {
+            return odhtype switch
+            {
+                "accommodation" => $"AccoDetail.{language}.Longdesc",
+                "accommodationroom" => $"AccoRoomDetail.{language}.Longdesc",
+                "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
+                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
+                => $"Detail.{language}.BaseText",
+                "measuringpoint" => "notextfield",
+                "webcam" => "notextfield",
+                "venue" => "notextfield",
                 //"eventshort" => "eventeuracnoi",           
                 //"area" => "areas",
                 //"wineaward" => "wines",

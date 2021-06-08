@@ -48,6 +48,9 @@ namespace OdhApiCore.Controllers
             string term, 
             string? language = "en",
             string? odhtype = null,
+            bool searchbasetext = false,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? filteronfields = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? rawfilter = null,
@@ -55,8 +58,11 @@ namespace OdhApiCore.Controllers
             int? limitto = 5,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
-        {
-            return await Get(language, odhtype, fields: fields ?? Array.Empty<string>(),
+        { 
+            var fieldstodisplay = fields ?? Array.Empty<string>();
+            var fieldstosearchon = filteronfields ?? Array.Empty<string>();
+
+            return await Get(language, odhtype, fields: fieldstodisplay,
                   term, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
         }
 
