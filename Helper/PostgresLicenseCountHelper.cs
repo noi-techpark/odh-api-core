@@ -96,5 +96,23 @@ namespace Helper
 
             return await query.CountAsync<long>();
         }
+
+        public static async Task<long> GetAllImagesWithNONCC0License(QueryFactory QueryFactory, string tablename)
+        {
+            var subquery = QueryFactory.Query()
+                .SelectRaw("jsonb_array_elements(data -> 'ImageGallery') as result1")
+                .From(tablename)
+                .WhereInJsonb(
+                    new List<string>() { "CC0" },
+                    tag => new { ImageGallery = new[] { new { License = tag } } });
+
+            var query = QueryFactory.Query()
+                .Select(subquery, "result1")
+                .From(subquery, "subsel")
+                .WhereRaw("result1 ->> 'License' not like 'CC0'");
+
+
+            return await query.CountAsync<long>();
+        }
     }
 }

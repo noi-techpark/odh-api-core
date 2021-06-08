@@ -85,6 +85,16 @@ namespace OdhApiCore.Controllers.other
             result.SkiAreaCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "skiareas");
             result.ODHActivityPoiCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "smgpois");
 
+            result.AccoNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "accommodations");
+            result.GastroNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "gastronomies");
+            result.EventNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "events");
+            result.PoiNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "pois");
+            result.ActivityNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "activities");
+            result.RegionNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "regions");
+            result.TVNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "tvs");
+            result.SkiAreaNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "skiareas");
+            result.ODHActivityPoiNONCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithNONCC0License(QueryFactory, "smgpois");
+
             return Ok(result);
         }
     }
@@ -131,5 +141,15 @@ namespace OdhApiCore.Controllers.other
         public long TVCC0ImagesCount { get; set; }
         public long SkiAreaCC0ImagesCount { get; set; }
         public long ODHActivityPoiCC0ImagesCount { get; set; }
+
+        public long AccoNONCC0ImagesCount { get; set; }
+        public long GastroNONCC0ImagesCount { get; set; }
+        public long EventNONCC0ImagesCount { get; set; }
+        public long PoiNONCC0ImagesCount { get; set; }
+        public long ActivityNONCC0ImagesCount { get; set; }
+        public long RegionNONCC0ImagesCount { get; set; }
+        public long TVNONCC0ImagesCount { get; set; }
+        public long SkiAreaNONCC0ImagesCount { get; set; }
+        public long ODHActivityPoiNONCC0ImagesCount { get; set; }
     }
 }
