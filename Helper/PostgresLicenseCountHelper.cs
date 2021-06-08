@@ -102,9 +102,7 @@ namespace Helper
             var subquery = QueryFactory.Query()
                 .SelectRaw("jsonb_array_elements(data -> 'ImageGallery') as result1")
                 .From(tablename)
-                .WhereInJsonb(
-                    new List<string>() { "CC0" },
-                    tag => new { ImageGallery = new[] { new { License = tag } } });
+                .WhereRaw("data -> 'ImageGallery' is not null");
 
             var query = QueryFactory.Query()
                 .Select(subquery, "result1")
