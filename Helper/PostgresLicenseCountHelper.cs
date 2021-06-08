@@ -48,12 +48,22 @@ namespace Helper
         {
             //string whereexpression = "data @> {\"ImageGallery\": [{ \"License\": \"CC0\" }] }";
          
+            //Works but obsolete
+            //var query = QueryFactory.Query()
+            //    .SelectRaw("id")
+            //    .From(tablename)
+            //    .WhereInJsonb(
+            //        new List<string>() { "CC0" },
+            //        tag => new { ImageGallery = new[] { new { License = tag } } });
+
+            //always returning 0
             var query = QueryFactory.Query()
                 .SelectRaw("id")
                 .From(tablename)
                 .WhereInJsonb(
                     new List<string>() { "CC0" },
-                    tag => new { ImageGallery = new[] { new { License = tag } } });
+                    "ImageGallery->>License",
+                    tag => tag);
 
             return await query.CountAsync<long>();
         }
@@ -63,6 +73,10 @@ namespace Helper
 
             //select count(result1) from(select jsonb_array_elements(data-> 'ImageGallery') as result1 from accommodations where
             //data @> '{ "ImageGallery": [{ "License": "CC0" }] }') as subsel where result1 ->> 'License' like 'CC0'
+
+            //var query = new Query().From("Users")
+            //    .Select("Id")
+            //    .Select(q => q.From("Visits").Where("UserId", 10).Count(), "VisitsCount");
 
             string selectexpression = "Count(*) from (select jsonb_array_elements(data -> 'ImageGallery') as result1";
             string whereexpression = "data @> '{ \"ImageGallery\" : [ { \"License\" : \"CC0\" } ] }') as result1 where result1 ->> 'License' like 'CC0'";
