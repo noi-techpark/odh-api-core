@@ -62,8 +62,9 @@ namespace OdhApiCore.Controllers
             var fieldstodisplay = fields ?? Array.Empty<string>();
             var fieldstosearchon = filteronfields ?? Array.Empty<string>();
 
-            return await Get(language, odhtype, fields: fieldstodisplay,
-                  term, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
+            return await Get(language: language, validforentity: odhtype, fields: fieldstodisplay,
+                  searchfilter: term, searchontext: searchbasetext, searchfields: fieldstosearchon,
+                  rawfilter: rawfilter, rawsort: rawsort, limitto: limitto, removenullvalues: removenullvalues, cancellationToken);
         }
 
         //TODO EXTEND THE FILTER with the possibility to add fields for search
@@ -73,7 +74,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(string? language, string? validforentity, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
+            string? searchfilter, bool searchontext, string[] searchfields, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var myentitytypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -92,6 +93,7 @@ namespace OdhApiCore.Controllers
                     if (fields == Array.Empty<string>())
                         customfields = new string[] { "Id", ODHTypeHelper.TranslateTypeToTitleField(entitytype, language), "_Meta.Type", "Self" };
 
+                
                     var result = await SearchTroughEntity(ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
 
                     if (result != null)
