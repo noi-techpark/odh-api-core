@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using AspNetCore.CacheOutput;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ namespace OdhApiCore.Controllers.other
         [ProducesResponseType(typeof(LicenseCountResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 36000, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("LicenseCount")]
         public async Task<IActionResult> GetLicenseCount(
             CancellationToken cancellationToken = default)
