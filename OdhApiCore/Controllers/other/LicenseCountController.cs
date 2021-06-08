@@ -65,25 +65,25 @@ namespace OdhApiCore.Controllers.other
             result.SkiAreaTotaldata = await Helper.PostgresLicenseCountHelper.GetTotalCount(QueryFactory, "skiareas");
             result.ODHActivityPoiTotaldata = await Helper.PostgresLicenseCountHelper.GetTotalCount(QueryFactory, "smgpois");
 
-            result.AccoLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "accommodations");
-            result.GastroLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "gastronomies");
-            result.EventLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "events");
-            result.PoiLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "pois");
-            result.ActivityLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "activities");
-            result.RegionLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "regions");
-            result.TVLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "tvs");
-            result.SkiAreaLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "skiareas");
-            result.ODHActivityPoiLicenses = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "smgpois");
+            result.AccoWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "accommodations");
+            result.GastroWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "gastronomies");
+            result.EventWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "events");
+            result.PoiWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "pois");
+            result.ActivityWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "activities");
+            result.RegionWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "regions");
+            result.TVWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "tvs");
+            result.SkiAreaWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "skiareas");
+            result.ODHActivityPoiWithCC0Image = await Helper.PostgresLicenseCountHelper.GetAllDataWithCC0Image(QueryFactory, "smgpois");
 
-            result.AccoImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "accommodations");
-            result.GastroImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "gastronomies");
-            result.EventImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "events");
-            result.PoiImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "pois");
-            result.ActivityImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "activities");
-            result.RegionImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "regions");
-            result.TVImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "tvs");
-            result.SkiAreaImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "skiareas");
-            result.ODHActivityPoiImagesopenCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "smgpois");
+            result.AccoCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "accommodations");
+            result.GastroCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "gastronomies");
+            result.EventCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "events");
+            result.PoiCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "pois");
+            result.ActivityCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "activities");
+            result.RegionCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "regions");
+            result.TVCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "tvs");
+            result.SkiAreaCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "skiareas");
+            result.ODHActivityPoiCC0ImagesCount = await Helper.PostgresLicenseCountHelper.GetAllImagesWithCC0License(QueryFactory, "smgpois");
 
             return Ok(result);
         }
@@ -91,16 +91,7 @@ namespace OdhApiCore.Controllers.other
 
     public class LicenseCountResult
     {
-        public long AccoLicenses { get; set; }
-        public long GastroLicenses { get; set; }
-        public long EventLicenses { get; set; }
-        public long PoiLicenses { get; set; }
-        public long ActivityLicenses { get; set; }
-        public long RegionLicenses { get; set; }
-        public long TVLicenses { get; set; }
-        public long SkiAreaLicenses { get; set; }
-        public long ODHActivityPoiLicenses { get; set; }
-
+    
         public long AccoTotaldata { get; set; }
         public long GastroTotaldata { get; set; }
         public long EventTotaldata { get; set; }
@@ -121,14 +112,24 @@ namespace OdhApiCore.Controllers.other
         public long SkiAreaTotaldataopen { get; set; }
         public long ODHActivityPoiTotaldataopen { get; set; }
 
-        public long AccoImagesopenCount { get; set; }
-        public long GastroImagesopenCount { get; set; }
-        public long EventImagesopenCount { get; set; }
-        public long PoiImagesopenCount { get; set; }
-        public long ActivityImagesopenCount { get; set; }
-        public long RegionImagesopenCount { get; set; }
-        public long TVImagesopenCount { get; set; }
-        public long SkiAreaImagesopenCount { get; set; }
-        public long ODHActivityPoiImagesopenCount { get; set; }
+        public long AccoWithCC0Image { get; set; }
+        public long GastroWithCC0Image { get; set; }
+        public long EventWithCC0Image { get; set; }
+        public long PoiWithCC0Image { get; set; }
+        public long ActivityWithCC0Image { get; set; }
+        public long RegionWithCC0Image { get; set; }
+        public long TVWithCC0Image { get; set; }
+        public long SkiAreaWithCC0Image { get; set; }
+        public long ODHActivityPoiWithCC0Image { get; set; }
+
+        public long AccoCC0ImagesCount { get; set; }
+        public long GastroCC0ImagesCount { get; set; }
+        public long EventCC0ImagesCount { get; set; }
+        public long PoiCC0ImagesCount { get; set; }
+        public long ActivityCC0ImagesCount { get; set; }
+        public long RegionCC0ImagesCount { get; set; }
+        public long TVCC0ImagesCount { get; set; }
+        public long SkiAreaCC0ImagesCount { get; set; }
+        public long ODHActivityPoiCC0ImagesCount { get; set; }
     }
 }
