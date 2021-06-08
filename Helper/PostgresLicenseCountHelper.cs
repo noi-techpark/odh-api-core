@@ -81,15 +81,18 @@ namespace Helper
             string selectexpression = "Count(*) from (select jsonb_array_elements(data -> 'ImageGallery') as result1";
             string whereexpression = "data @> '{ \"ImageGallery\" : [ { \"License\" : \"CC0\" } ] }') as result1 where result1 ->> 'License' like 'CC0'";
 
-            var query = QueryFactory.Query()
-                .SelectRaw("jsonb_array_elements(data -> 'ImageGallery') as result1")
+            var subquery = QueryFactory.Query()
+                .SelectRaw("jsonb_array_elements(data -> 'ImageGallery')")
                 .From(tablename)
                 .WhereInJsonb(
                     new List<string>() { "CC0" },
-                    tag => new { ImageGallery = new[] { new { License = tag } } })
-                .SelectRaw("count(result1)")
-                .WhereRaw("result1 ->> 'License' like 'CC0'")
-            .
+                    tag => new { ImageGallery = new[] { new { License = tag } } });
+
+            var query = QueryFactory.Query()
+                .Select(subquery, "result1")
+                .From(subquery)
+                .WhereRaw("result1 ->> 'License' like 'CC0'");
+               
 
             return await query.CountAsync<long>();
         }
