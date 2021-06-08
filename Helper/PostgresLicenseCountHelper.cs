@@ -10,6 +10,26 @@ namespace Helper
 {
     public class PostgresLicenseCountHelper
     {
+        public static async Task<long> GetTotalCount(QueryFactory QueryFactory, string tablename)
+        {
+            var query = QueryFactory.Query()
+                .SelectRaw("id")
+                .From(tablename);
+
+            return await query.CountAsync<long>();
+        }
+
+        public static async Task<long> GetTotalCountOpendata(QueryFactory QueryFactory, string tablename)
+        {
+            var query = QueryFactory.Query()
+                .SelectRaw("id")
+                .From(tablename)
+                .WhereRaw("gen_licenseinfo_closeddata IS NULL")
+                .OrWhereRaw("gen_licenseinfo_closeddata = false")
+
+            return await query.CountAsync<long>();
+        }
+
         public static async Task<long> GetAllLicenses(QueryFactory QueryFactory, string tablename)
         {
             List<PGParameters> parameters = new List<PGParameters>();
@@ -23,11 +43,21 @@ namespace Helper
                 .WhereRaw(whereexpression);
 
             return await query.CountAsync<long>();
+        }
 
-            //Group by not working
-            //var accocount = PostgresSQLHelper.CountDataFromTableParametrized(conn, tablename, whereexpression, parameters);
+        public static async Task<long> GetAllLicenses(QueryFactory QueryFactory, string tablename)
+        {
+            List<PGParameters> parameters = new List<PGParameters>();
 
-            //return accocount;
+            string whereexpression = "data @> '{\"ImageGallery\": [{ \"License\": \"CC0\" }] }'";
+            //parameters.Add(new PGParameters() { Name = "gallerylicense", Type = NpgsqlTypes.NpgsqlDbType.Jsonb, Value = "{\"ImageGallery\": [{ \"License\": \"CC0\" }] }" });
+
+            var query = QueryFactory.Query()
+                .SelectRaw("id")
+                .From(tablename)
+                .WhereRaw(whereexpression);
+
+            return await query.CountAsync<long>();
         }
 
         public static async Task<long> GetAllImagesWithLicenseCount(QueryFactory QueryFactory, string tablename)
