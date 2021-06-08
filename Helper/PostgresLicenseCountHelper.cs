@@ -47,23 +47,23 @@ namespace Helper
         public static async Task<long> GetAllDataWithCC0Image(QueryFactory QueryFactory, string tablename)
         {
             //string whereexpression = "data @> {\"ImageGallery\": [{ \"License\": \"CC0\" }] }";
-         
-            //Works but obsolete
-            //var query = QueryFactory.Query()
-            //    .SelectRaw("id")
-            //    .From(tablename)
-            //    .WhereInJsonb(
-            //        new List<string>() { "CC0" },
-            //        tag => new { ImageGallery = new[] { new { License = tag } } });
 
-            //always returning 0
+            //Works but obsolete
             var query = QueryFactory.Query()
                 .SelectRaw("id")
                 .From(tablename)
                 .WhereInJsonb(
                     new List<string>() { "CC0" },
-                    "ImageGallery->>License",
-                    tag => tag);
+                    tag => new { ImageGallery = new[] { new { License = tag } } });
+
+            //always returning 0
+            //var query = QueryFactory.Query()
+            //    .SelectRaw("id")
+            //    .From(tablename)
+            //    .WhereInJsonb(
+            //        new List<string>() { "CC0" },
+            //        "ImageGallery->>License",
+            //        tag => tag);
 
             return await query.CountAsync<long>();
         }
@@ -82,9 +82,14 @@ namespace Helper
             string whereexpression = "data @> '{ \"ImageGallery\" : [ { \"License\" : \"CC0\" } ] }') as result1 where result1 ->> 'License' like 'CC0'";
 
             var query = QueryFactory.Query()
-                .SelectRaw(selectexpression)
+                .SelectRaw("jsonb_array_elements(data -> 'ImageGallery') as result1")
                 .From(tablename)
-                .WhereRaw(whereexpression);
+                .WhereInJsonb(
+                    new List<string>() { "CC0" },
+                    tag => new { ImageGallery = new[] { new { License = tag } } })
+                .SelectRaw("count(result1)")
+                .WhereRaw("result1 ->> 'License' like 'CC0'")
+            .
 
             return await query.CountAsync<long>();
         }
