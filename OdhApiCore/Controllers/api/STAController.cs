@@ -208,7 +208,6 @@ namespace OdhApiCore.Controllers.api
                     //Adding TypeInfo Additional
                     odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi.SubType, new List<string>() { "de","it","en" });
 
-
                     //Save to PG
                     //Check if data exists
                     await UpsertData<ODHActivityPoi>(odhactivitypoi, "smgpois");
