@@ -121,6 +121,7 @@ namespace OdhApiCore.Controllers.api
 
         #region IMPORTER
 
+
         [HttpGet, Route("STA/ImportVendingPoints")]
         public async Task<IActionResult> ImportVendingPointsFromSTA(CancellationToken cancellationToken)
         {
@@ -203,7 +204,10 @@ namespace OdhApiCore.Controllers.api
                                 odhactivitypoi.LocationInfo = locationinfo;
                         }
                     }
-                    
+
+                    //Adding TypeInfo Additional
+                    odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi.SubType, new List<string>() { "de","it","en" });
+
 
                     //Save to PG
                     //Check if data exists

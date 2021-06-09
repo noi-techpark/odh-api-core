@@ -25,7 +25,8 @@ namespace STA
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     Delimiter = ";",
-                    NewLine = Environment.NewLine,
+                    //NewLine = "\r\n" Environment.NewLine,
+                    //MissingFieldFound = null  //Hack for server?
                 };
                 var records = default(IEnumerable<STAVendingPoint>);
 

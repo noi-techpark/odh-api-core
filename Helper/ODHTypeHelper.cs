@@ -192,7 +192,6 @@ namespace Helper
             };
         }
 
-
         public static Func<string, string[]> TranslateTypeToSearchField(string odhtype)
         {
             return odhtype switch
@@ -211,6 +210,27 @@ namespace Helper
                 _ => throw new Exception("not known odh type")
             };
         }
+
+        //public static Func<string, string[]> TranslateTypeToSearchField(string odhtype, bool searchontext = false)
+        //{
+        //    return odhtype switch
+        //    {
+        //        "accommodation" => !searchontext ? PostgresSQLWhereBuilder.AccoTitleFieldsToSearchFor : AddToStringArray(PostgresSQLWhereBuilder.AccoTitleFieldsToSearchFor, "en"),
+        //        "accommodationroom" => PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor,
+        //        "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
+        //        or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
+        //        => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
+        //        //"measuringpoint" => PostgresSQLWhereBuilder.,
+        //        "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
+        //        "venue" => PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor,
+        //        //"eventshort" => "eventeuracnoi",           
+        //        //"area" => "areas",
+        //        //"wineaward" => "wines",
+        //        _ => throw new Exception("not known odh type")
+        //    };
+        //}
+
+        
 
         public static string TranslateTypeToTitleField(string odhtype, string language)
         {

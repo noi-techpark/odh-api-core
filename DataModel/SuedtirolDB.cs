@@ -3171,8 +3171,7 @@ namespace DataModel
 
         public bool? ExternalOrganizer { get; set; }
 
-        [JsonIgnore]
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
     }
 
     public class RoomBooked

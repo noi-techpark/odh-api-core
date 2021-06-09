@@ -42,6 +42,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
+        [HttpGet, Route("Find")]
         [HttpGet, Route("Filter")]   //Filter
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetSearchAsync(
@@ -63,7 +64,7 @@ namespace OdhApiCore.Controllers
             var fieldstosearchon = filteronfields ?? Array.Empty<string>();
 
             return await Get(language: language, validforentity: odhtype, fields: fieldstodisplay,
-                  searchfilter: term, searchontext: searchbasetext, searchfields: fieldstosearchon,
+                  searchfilter: term, searchontext: searchbasetext, passedfieldstosearchon: fieldstosearchon,
                   rawfilter: rawfilter, rawsort: rawsort, limitto: limitto, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -74,7 +75,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(string? language, string? validforentity, string[] fields,
-            string? searchfilter, bool searchontext, string[] searchfields, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
+            string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var myentitytypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -92,9 +93,8 @@ namespace OdhApiCore.Controllers
 
                     if (fields == Array.Empty<string>())
                         customfields = new string[] { "Id", ODHTypeHelper.TranslateTypeToTitleField(entitytype, language), "_Meta.Type", "Self" };
-
                 
-                    var result = await SearchTroughEntity(ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
+                    var result = await SearchTroughEntity(entitytype, ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, searchontext, passedfieldstosearchon, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
 
                     if (result != null)
                     {
@@ -112,14 +112,29 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private async Task<IEnumerable<JsonRaw?>> SearchTroughEntity(Func<string, string[]> fieldsearchfunc, string table, string? language, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
+        private async Task<IEnumerable<JsonRaw?>> SearchTroughEntity(string entitytype, Func<string, string[]> fieldsearchfunc, string table, string? language, string[] fields,
+            string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
+            var searchonfields = fieldsearchfunc(language);
+
+            //Add Textfields to search on if searchontext = true
+            if(searchontext)
+            {
+                var textsearchfields = ODHTypeHelper.TranslateTypeToBaseTextField(entitytype, language);
+                searchonfields.AddToStringArray(textsearchfields);
+            }
+
+            //Add selected Fields to search on
+            if (passedfieldstosearchon.Length > 0)
+            {
+                searchonfields.AddToStringArray(passedfieldstosearchon);
+            }
+
             var query =
                 QueryFactory.Query()
                 .SelectRaw("data")
                 .From(table)
-                .SearchFilter(fieldsearchfunc(language), searchfilter)
+                .SearchFilter(searchonfields, searchfilter)
                 .When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")

@@ -59,5 +59,18 @@ namespace Helper
                 throw new FormatException("The string is not a recognized as a valid boolean value.");
             }
         }
+
+        public static void AddToStringArray(this string[] strarr, string value)
+        {
+            strarr.Append(value);            
+        }
+
+        public static void AddToStringArray(this string[] strarr, string[] values)
+        {
+            foreach(var value in values)
+            {
+                strarr.Append(value);
+            }            
+        }
     }
 }
