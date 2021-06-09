@@ -206,10 +206,7 @@ namespace OdhApiCore.Controllers.api
                     }
 
                     //Adding TypeInfo Additional
-                    AdditionalPoiInfos additionalpoiinfode = new AdditionalPoiInfos();
-
-                    mypoi.AdditionalPoiInfos.Add("de")
-
+                    odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi.SubType, new List<string>() { "de","it","en" });
 
 
                     //Save to PG
