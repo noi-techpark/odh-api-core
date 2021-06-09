@@ -33,7 +33,7 @@ namespace OdhApiCore.Controllers.other
         [ProducesResponseType(typeof(LicenseCountResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 36000, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
+        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 36000)]
         [HttpGet, Route("LicenseCount")]
         public async Task<IActionResult> GetLicenseCount(
             CancellationToken cancellationToken = default)
