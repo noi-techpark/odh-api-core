@@ -121,6 +121,7 @@ namespace OdhApiCore.Controllers.api
 
         #region IMPORTER
 
+
         [HttpGet, Route("STA/ImportVendingPoints")]
         public async Task<IActionResult> ImportVendingPointsFromSTA(CancellationToken cancellationToken)
         {

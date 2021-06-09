@@ -93,7 +93,7 @@ namespace OdhApiCore.Controllers
                     if (fields == Array.Empty<string>())
                         customfields = new string[] { "Id", ODHTypeHelper.TranslateTypeToTitleField(entitytype, language), "_Meta.Type", "Self" };
                 
-                    var result = await SearchTroughEntity(entitytype, ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, searchontext, searchfields, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
+                    var result = await SearchTroughEntity(entitytype, ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, searchontext, passedfieldstosearchon, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
 
                     if (result != null)
                     {
