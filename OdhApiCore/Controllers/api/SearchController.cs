@@ -92,9 +92,8 @@ namespace OdhApiCore.Controllers
 
                     if (fields == Array.Empty<string>())
                         customfields = new string[] { "Id", ODHTypeHelper.TranslateTypeToTitleField(entitytype, language), "_Meta.Type", "Self" };
-
                 
-                    var result = await SearchTroughEntity(ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
+                    var result = await SearchTroughEntity(ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, searchontext, searchfields, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
 
                     if (result != null)
                     {
@@ -113,7 +112,7 @@ namespace OdhApiCore.Controllers
         }
 
         private async Task<IEnumerable<JsonRaw?>> SearchTroughEntity(Func<string, string[]> fieldsearchfunc, string table, string? language, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
+            string? searchfilter, bool searchontext, string[] searchfields, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var query =
                 QueryFactory.Query()

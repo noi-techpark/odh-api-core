@@ -107,7 +107,7 @@ namespace Helper
             var query = QueryFactory.Query()
                 .Select(subquery, "result1")
                 .From(subquery, "subsel")
-                .WhereRaw("result1 ->> 'License' not like 'CC0'");
+                .WhereRaw("result1 ->> 'License' not like 'CC0' OR result1 ->> 'License' is null");
 
 
             return await query.CountAsync<long>();
