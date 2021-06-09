@@ -93,7 +93,7 @@ namespace Helper
                     )
                 );
 
-        [Obsolete]
+        //[Obsolete]
         public static Query OrWhereJsonb<T>(
             this Query query,
             T value,
@@ -105,7 +105,8 @@ namespace Helper
                     )
                 );
 
-        [Obsolete]
+        //[Obsolete]
+        //https://github.com/sqlkata/querybuilder/issues/356
         public static Query WhereInJsonb<T>(
             this Query query,
             IReadOnlyCollection<T> list,
