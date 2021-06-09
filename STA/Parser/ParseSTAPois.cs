@@ -64,34 +64,36 @@ namespace STA
 
             //END GPsData
 
+            //TODO
+
             //Properties Parsing
             List<PoiProperty> mypoipropertylist = new List<PoiProperty>();
             
-            PoiProperty pPhasWebsite = new PoiProperty() { Name = "haswebsite", Value = vendingpoint.Website };
+            PoiProperty pPhasWebsite = new PoiProperty() { Name = "haswebsite", Value = vendingpoint.Website == "1" ? "True" : "False" };
             mypoipropertylist.Add(pPhasWebsite);
 
-            PoiProperty pPsuedtirolpassdienste = new PoiProperty() { Name = "suedtirolpass_services", Value = vendingpoint.SuedtirolPassDienste };
+            PoiProperty pPsuedtirolpassdienste = new PoiProperty() { Name = "suedtirolpass_services", Value = vendingpoint.SuedtirolPassDienste == "1" ? "True" : "False" };
             mypoipropertylist.Add(pPsuedtirolpassdienste);
             
-            PoiProperty pPsuedtirolpassover65 = new PoiProperty() { Name = "suedtirolpass_over65_apply", Value = vendingpoint.SuedtirolPass65PlusBeantragung };
+            PoiProperty pPsuedtirolpassover65 = new PoiProperty() { Name = "suedtirolpass_over65_apply", Value = vendingpoint.SuedtirolPass65PlusBeantragung == "1" ? "True" : "False" };
             mypoipropertylist.Add(pPsuedtirolpassover65);
             
-            PoiProperty pPduplicate = new PoiProperty() { Name = "duplicate", Value = vendingpoint.Duplikat };
+            PoiProperty pPduplicate = new PoiProperty() { Name = "duplicate", Value = vendingpoint.Duplikat == "1" ? "True" : "False" };
             mypoipropertylist.Add(pPduplicate);
             
-            PoiProperty pPHwertkarte = new PoiProperty() { Name = "chargecard", Value = vendingpoint.Wertkarte };
+            PoiProperty pPHwertkarte = new PoiProperty() { Name = "chargecard", Value = vendingpoint.Wertkarte == "1" ? "True" : "False" };
             mypoipropertylist.Add(pPHwertkarte);
             
-            PoiProperty pPstadtfahrkartecitybus = new PoiProperty() { Name = "city_card_bus", Value = vendingpoint.StadtfahrkarteoCitybus };
+            PoiProperty pPstadtfahrkartecitybus = new PoiProperty() { Name = "city_card_bus", Value = vendingpoint.StadtfahrkarteoCitybus == "1" ? "True" : "False" };
             mypoipropertylist.Add(pPstadtfahrkartecitybus);
             
-            PoiProperty pPmobilcard = new PoiProperty() { Name = "mobilecard", Value = vendingpoint.Mobilcard };
+            PoiProperty pPmobilcard = new PoiProperty() { Name = "mobilecard", Value = vendingpoint.Mobilcard == "1" ? "True" : "False" };
             mypoipropertylist.Add(pPmobilcard);
             
-            PoiProperty pPbikemobilcard = new PoiProperty() { Name = "bike_mobilecard", Value = vendingpoint.bikemobilCard };
+            PoiProperty pPbikemobilcard = new PoiProperty() { Name = "bike_mobilecard", Value = vendingpoint.bikemobilCard == "1" ? "True" : "False" };
             mypoipropertylist.Add(pPbikemobilcard);
 
-            PoiProperty pPmobilecard = new PoiProperty() { Name = "museum_mobilecard", Value = vendingpoint.MuseumobilCard }; 
+            PoiProperty pPmobilecard = new PoiProperty() { Name = "museum_mobilecard", Value = vendingpoint.MuseumobilCard == "1" ? "True" : "False" }; 
             mypoipropertylist.Add(pPmobilecard);
 
             mypoi.PoiProperty.TryAddOrUpdate("de", mypoipropertylist);
