@@ -70,6 +70,9 @@ namespace EBMS
                     eventtosave.EventDescriptionIT = myevent.EventDescriptionAlt2 ?? "";
                     //Beschreibung EN
                     eventtosave.EventDescriptionEN = myevent.EventDescriptionAlt3 ?? "";
+
+                    eventtosave.Shortname = eventtosave.EventDescription;
+
                     //Hauptsaal/ort
                     eventtosave.AnchorVenue = myevent.AnchorVenue;
                     //Hauptsaal/ort soll für die Ausgabe verwendet werden
