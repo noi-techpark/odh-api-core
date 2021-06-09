@@ -204,7 +204,13 @@ namespace OdhApiCore.Controllers.api
                                 odhactivitypoi.LocationInfo = locationinfo;
                         }
                     }
-                    
+
+                    //Adding TypeInfo Additional
+                    AdditionalPoiInfos additionalpoiinfode = new AdditionalPoiInfos();
+
+                    mypoi.AdditionalPoiInfos.Add("de")
+
+
 
                     //Save to PG
                     //Check if data exists

@@ -201,13 +201,11 @@ namespace STA
             mypoi.SmgTags.Add("mobilität");
             mypoi.SmgTags.Add("verkaufstellen ticket oeffentliche verkehrsmittel");
 
-            mypoi.Type = "Mobilität";
-            mypoi.SubType = "Verkaufstellen Ticket Oeffentliche Verkehrsmittel";
-
             //ODH Categorizations
             //TODO LOAD Categorizations 
-
-
+            mypoi.Type = "Mobilität";
+            mypoi.SubType = "Verkaufstellen Ticket Oeffentliche Verkehrsmittel";
+          
             mypoi.SyncSourceInterface = "sta";
             mypoi.SyncUpdateMode = "Full";
             mypoi.Source = "STA";
