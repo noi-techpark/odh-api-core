@@ -230,11 +230,7 @@ namespace Helper
         //    };
         //}
 
-        private static string[] AddToStringArray(string[] strarr, string value)
-        {
-            strarr.Append(value);
-            return strarr;
-        }
+        
 
         public static string TranslateTypeToTitleField(string odhtype, string language)
         {
