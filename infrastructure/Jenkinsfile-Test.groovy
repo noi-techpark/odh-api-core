@@ -96,6 +96,7 @@ pipeline {
             steps {
                 sh """
                     curl "${API_URL}STA/JsonPoi"
+		    curl "${API_URL}STA/JsonAccommodation"
                 """
             }
         }
