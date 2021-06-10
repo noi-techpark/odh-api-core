@@ -1003,7 +1003,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                string select = $"data#>'\\{{Id\\}}' as \"Id\", data#>>'\\{{EventDescription{language.ToUpper()}\\}}' as \"Name\"";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{EventDescription{language.ToUpper()}\\}}' as \"Name\"";
 
                 string orderby = $"data#>>'\\{{EventDescription{language.ToUpper()}\\}}' {sortorder}";
 
