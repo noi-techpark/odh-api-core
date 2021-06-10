@@ -24,17 +24,17 @@ namespace Helper
                          //.WhereRaw("data->>'Key' LIKE ?", subtype);
             var subtypedata =
                 await subtypequery
-                    .GetFirstOrDefaultAsObject<SuedtirolType>();
+                    .GetFirstOrDefaultAsObject<SmgPoiTypes>();
 
             if (subtypedata != null)
             {
                 var maintypequery = QueryFactory.Query("smgpoitypes")
                             .Select("data")
-                            .Where("id", subtypedata.TypeParent.ToLower());
+                            .Where("id", subtypedata.Parent.ToLower());
                 //.WhereRaw("data->>'Key' LIKE ?",  subtypedata.TypeParent);
                 var maintypedata =
                     await maintypequery
-                        .GetFirstOrDefaultAsObject<SuedtirolType>();
+                        .GetFirstOrDefaultAsObject<SmgPoiTypes>();
 
                 var validtags = await ODHTagHelper.GetSmgTagsValidforTranslations(QueryFactory, new List<string>(), new List<string>() { maintypedata.Key, subtypedata.Key });
 
@@ -42,8 +42,8 @@ namespace Helper
                 {
                     AdditionalPoiInfos mypoiinfo = new AdditionalPoiInfos();
                     mypoiinfo.Language = lang;
-                    mypoiinfo.MainType = maintypedata.TypeNames[lang];
-                    mypoiinfo.SubType = subtypedata.TypeNames[lang];
+                    mypoiinfo.MainType = maintypedata.TypeDesc[lang];
+                    mypoiinfo.SubType = subtypedata.TypeDesc[lang];
                     mypoiinfo.Categories = validtags.Select(x => x.TagName[lang]).ToList();
 
                     myadditionalpoinfosdict.Add(lang, mypoiinfo);
