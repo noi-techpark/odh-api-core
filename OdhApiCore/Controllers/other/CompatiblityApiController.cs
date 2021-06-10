@@ -562,7 +562,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string select = $"data#>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
