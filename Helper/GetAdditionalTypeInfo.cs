@@ -62,14 +62,14 @@ namespace Helper
             {
                 List<SmgTags> validtags = new List<SmgTags>();
 
-                var validtagquery = QueryFactory.Query("suedtiroltypes")
+                var validtagquery = QueryFactory.Query("smgtags")
                         .Select("data")
                         .When(validforentity.Count > 0, q => q.WhereInJsonb(
                             validforentity,
                             tag => new { ValidForEntity = new[] { tag } }
                         ))
                         .When(idlist != null, w => w.WhereIn("id", idlist))
-                        .WhereRaw("data->'DisplayAsCategory' = true");                        
+                        .WhereRaw("data->>'DisplayAsCategory' = ?", "true");                        
 
                 var validtagdata =
                     await validtagquery
