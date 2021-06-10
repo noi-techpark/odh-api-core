@@ -562,7 +562,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string select = $"data#>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
@@ -1003,7 +1003,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                string select = $"data#>'\\{{Id\\}}' as \"Id\", data#>>'\\{{EventDescription{language.ToUpper()}\\}}' as \"Name\"";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{EventDescription{language.ToUpper()}\\}}' as \"Name\"";
 
                 string orderby = $"data#>>'\\{{EventDescription{language.ToUpper()}\\}}' {sortorder}";
 

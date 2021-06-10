@@ -121,13 +121,13 @@ namespace OdhApiCore.Controllers
             if(searchontext)
             {
                 var textsearchfields = ODHTypeHelper.TranslateTypeToBaseTextField(entitytype, language);
-                searchonfields.AddToStringArray(textsearchfields);
+                searchonfields = searchonfields.AddToStringArray(textsearchfields);
             }
 
             //Add selected Fields to search on
             if (passedfieldstosearchon.Length > 0)
             {
-                searchonfields.AddToStringArray(passedfieldstosearchon);
+                searchonfields = searchonfields.AddToStringArray(passedfieldstosearchon);
             }
 
             var query =

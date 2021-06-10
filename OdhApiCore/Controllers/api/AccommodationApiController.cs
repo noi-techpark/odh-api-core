@@ -68,6 +68,9 @@ namespace OdhApiCore.Controllers
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
+        /// <param name="rawfilter">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="rawsort">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>Collection of Accommodation Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>

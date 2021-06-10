@@ -60,17 +60,24 @@ namespace Helper
             }
         }
 
-        public static void AddToStringArray(this string[] strarr, string value)
+        public static string[] AddToStringArray(this string[] strarr, string value)
         {
-            strarr.Append(value);            
+            var strlist = strarr.ToList();
+            strlist.Add(value);
+
+            return strlist.ToArray();            
         }
 
-        public static void AddToStringArray(this string[] strarr, string[] values)
+        public static string[] AddToStringArray(this string[] strarr, string[] values)
         {
-            foreach(var value in values)
+            var strlist = strarr.ToList();
+           
+            foreach (var value in values)
             {
-                strarr.Append(value);
-            }            
+                strlist.Add(value);
+            }
+
+            return strlist.ToArray();
         }
     }
 }
