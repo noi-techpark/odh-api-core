@@ -31,6 +31,7 @@ pipeline {
 	RAVEN_SERVICEURL = "https://service.suedtirol.info/api/"
 	RAVEN_USER = credentials('odh-raven-api-user')
 	RAVEN_PSWD = credentials('odh-raven-api-pswd')
+	API_URL = "https://api.tourism.testingmachine.eu/v1/"
     }
 
     stages {
@@ -68,6 +69,7 @@ pipeline {
 		    echo 'RAVEN_SERVICEURL=${RAVEN_SERVICEURL}' >> .env
 		    echo 'RAVEN_USER=${RAVEN_USER}' >> .env
 		    echo 'RAVEN_PSWD=${RAVEN_PSWD}' >> .env
+		    echo 'API_URL=${API_URL}' >> .env
                 """
             }
         }
@@ -88,6 +90,14 @@ pipeline {
                         (cd infrastructure/ansible && ansible-playbook --limit=test deploy.yml --extra-vars "release_name=${BUILD_NUMBER}")
                     """
                 }
+            }
+        }
+	stage('Generate') {
+            steps {
+                sh """
+                    curl "${API_URL}STA/JsonPoi"
+		    curl "${API_URL}STA/JsonAccommodation"
+                """
             }
         }
     }

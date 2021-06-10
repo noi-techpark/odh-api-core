@@ -66,9 +66,9 @@ namespace Helper
                         .Select("data")
                         .When(validforentity.Count > 0, q => q.WhereInJsonb(
                             validforentity,
-                            tag => new { ValidForEntity = new[] { tag } }
+                            tag => new { ValidForEntity = new[] { tag.ToLower() } }
                         ))
-                        .When(idlist != null, w => w.WhereIn("id", idlist))
+                        .When(idlist != null, w => w.WhereIn("id", idlist.Select(x => x.ToLower())))
                         .WhereRaw("data->>'DisplayAsCategory' = ?", "true");                        
 
                 var validtagdata =
