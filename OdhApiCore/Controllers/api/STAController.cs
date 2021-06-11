@@ -121,20 +121,21 @@ namespace OdhApiCore.Controllers.api
 
         #region IMPORTER
 
+        //[Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
+        //[HttpGet, Route("STA/ImportVendingPoints")]
+        //public async Task<IActionResult> ImportVendingPointsFromSTA(CancellationToken cancellationToken)
+        //{
+        //    try
+        //    {
+        //        return await ImportVendingPointsFromCSV(null);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
-        [HttpGet, Route("STA/ImportVendingPoints")]
-        public async Task<IActionResult> ImportVendingPointsFromSTA(CancellationToken cancellationToken)
-        {
-            try
-            {
-                return await ImportVendingPointsFromCSV(null);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
+        [Authorize(Roles = "DataWriter,STAPoiImport")]
         [HttpPost, Route("STA/ImportVendingPoints")]
         public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
         {
