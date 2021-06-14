@@ -479,7 +479,8 @@ namespace STA
                         //Find out the day
                         var myday = vendingpoint.Zusatzinfo_EN.Replace(" closed", "");
 
-                        var validdays = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                        //var validdays = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                        var validdays = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" }; //Excluding Saturday and Sunday because they can set separately
 
                         if (validdays.Contains(myday))
                         {
