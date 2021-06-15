@@ -30,10 +30,18 @@ namespace OdhApiCore.Controllers
         #region SWAGGER Exposed API
 
         /// <summary>
-        /// GET Search over all Entities
+        /// GET Search over all Entities <a href="https://github.com/noi-techpark/odh-docs/wiki/Search-over-all-Entities-in-ODH-Tourism-api" target="_blank">Wiki</a>
         /// </summary>
         /// <param name="odhtype">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
-        /// <param name="language"></param>
+        /// <param name="term">Term to Search for</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="limitto">Limit search to n items per entity (default 5)</param>
+        /// <param name="searchbasetext">Search also trough base text (true/false) default: false, caution can slow down the search significantly</param>
+        /// <param name="filteronfields">Search also on this fields, syntax analog to the fields filter</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
+        /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false</param>
         /// <returns>Collection of ODHTag Objects</returns>        
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
