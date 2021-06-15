@@ -30,10 +30,10 @@ namespace OdhApiCore.Controllers
         #region SWAGGER Exposed API
 
         /// <summary>
-        /// GET Search over all Entities <a href="https://github.com/noi-techpark/odh-docs/wiki/Search-over-all-Entities-in-ODH-Tourism-api" target="_blank">Wiki</a>
+        /// GET Search over all Entities 
         /// </summary>
         /// <param name="odhtype">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
-        /// <param name="term">Term to Search for</param>
+        /// <param name="term">Term to Search for <a href="https://github.com/noi-techpark/odh-docs/wiki/Search-over-all-Entities-in-ODH-Tourism-api" target="_blank">Wiki</a></param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="limitto">Limit search to n items per entity (default 5)</param>
         /// <param name="searchbasetext">Search also trough base text (true/false) default: false, caution can slow down the search significantly</param>
