@@ -304,7 +304,7 @@ namespace Helper
             );
 
             return query
-                .IdLowerFilter(idlist)
+                .IdUpperFilter(idlist)
                 .ODHActivityPoiTypeFilter(typelist)
                 .ODHActivityPoiSubTypeFilter(subtypelist)
                 .ODHActivityPoiPoiTypeFilter(subtypelist)
