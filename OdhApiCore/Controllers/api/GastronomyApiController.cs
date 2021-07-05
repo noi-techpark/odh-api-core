@@ -53,7 +53,8 @@ namespace OdhApiCore.Controllers
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
-        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -84,6 +85,7 @@ namespace OdhApiCore.Controllers
             LegacyBool odhactive = null!,
             string? updatefrom = null,
             string? seed = null,
+            string? langfilter = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -101,8 +103,8 @@ namespace OdhApiCore.Controllers
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
                     pagesize: pagesize, dishcodefilter: dishcodefilter, categorycodefilter: categorycodefilter,
                     facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter, ceremonycodefilter: ceremonycodefilter, idfilter: idlist,
-                    searchfilter: searchfilter, locfilter: locfilter, active: active,
-                    smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
+                    searchfilter: searchfilter, locfilter: locfilter, active: active,smgactive: odhactive, langfilter: langfilter,
+                    smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
@@ -111,7 +113,7 @@ namespace OdhApiCore.Controllers
         /// GET Gastronomy Single 
         /// </summary>
         /// <param name="id">ID of the Gastronomy</param>
-        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false</param>
         /// <returns>Gastronomy Object</returns>
@@ -133,7 +135,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Gastronomy Types List
         /// </summary>
-        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -162,7 +164,7 @@ namespace OdhApiCore.Controllers
         /// GET Gastronomy Types Single
         /// </summary>
         /// <param name="id">ID of the Gastronomy Type</param>
-        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false</param>
         /// <returns>GastronomyTypes Object</returns>                
@@ -189,7 +191,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, int? pagesize,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
-            string? idfilter, string? searchfilter, string? locfilter, bool? active, bool? smgactive,
+            string? idfilter, string? searchfilter, string? locfilter, bool? active, bool? smgactive, string? langfilter,
             string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
@@ -198,7 +200,7 @@ namespace OdhApiCore.Controllers
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, categorycodefilter,
                     dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
-                    active, smgactive, smgtags, lastchange, cancellationToken);
+                    active, smgactive, smgtags, lastchange, langfilter, cancellationToken);
 
                 var query =
                     QueryFactory.Query()
@@ -211,7 +213,7 @@ namespace OdhApiCore.Controllers
                             municipalitylist: mygastronomyhelper.municipalitylist, tourismvereinlist: mygastronomyhelper.tourismvereinlist,
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange, languagelist: new List<string>(),
+                            searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange, languagelist: mygastronomyhelper.languagelist,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
