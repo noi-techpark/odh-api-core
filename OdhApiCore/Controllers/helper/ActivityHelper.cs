@@ -19,6 +19,7 @@ namespace OdhApiCore.Controllers
         public List<string> difficultylist;
         public List<string> tourismvereinlist;
         public List<string> regionlist;
+        public List<string> languagelist;
         public bool distance;
         public int distancemin;
         public int distancemax;
@@ -37,7 +38,7 @@ namespace OdhApiCore.Controllers
             QueryFactory queryFactory, string? activitytype, string? subtypefilter,
             string? idfilter, string? locfilter, string? areafilter, string? distancefilter,
             string? altitudefilter, string? durationfilter, bool? highlightfilter, string? difficultyfilter,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? langfilter,
             CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
@@ -53,14 +54,14 @@ namespace OdhApiCore.Controllers
                 activitytype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter, locfilter: locfilter,
                 arealist: arealist, distancefilter: distancefilter, altitudefilter: altitudefilter,
                 durationfilter: durationfilter, highlightfilter: highlightfilter, difficultyfilter: difficultyfilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange,
+                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, languagefilter: langfilter,
                 tourismusvereinids: tourismusvereinids);
         }
 
         private ActivityHelper(
             string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist,
             string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
-            string? difficultyfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            string? difficultyfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? languagefilter,
             IEnumerable<string>? tourismusvereinids)
         {
             activitytypelist = new List<string>();
@@ -117,6 +118,8 @@ namespace OdhApiCore.Controllers
             duration = durationfilter != null;
             if (duration)
                 (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
+
+            languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
             //highlight
             highlight = highlightfilter;
