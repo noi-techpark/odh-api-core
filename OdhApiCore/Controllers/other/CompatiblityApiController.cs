@@ -109,8 +109,8 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
-                    QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, null, cancellationToken);
+                    QueryFactory, poitype: poitype, subtypefilter: subtypefilter, idfilter: null, locfilter: locfilter, areafilter: areafilter,
+                    highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: null, langfilter: language, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 
@@ -236,7 +236,7 @@ namespace OdhApiCore.Controllers.api
                     locfilter: locfilter, areafilter: areafilter, distancefilter: distancefilter,
                     altitudefilter: altitudefilter, durationfilter: durationfilter, highlightfilter: highlightfilter,
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
-                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
+                    smgtags: smgtags, lastchange: null, langfilter: language, cancellationToken: cancellationToken);
                 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
 
@@ -359,7 +359,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, idfilter: null, locfilter: locfilter, categorycodefilter: categorycodefilter,
                     dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter,
                     cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
-                    lastchange: null, cancellationToken);
+                    lastchange: null, langfilter: language, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
 
