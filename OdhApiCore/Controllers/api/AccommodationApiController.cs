@@ -236,6 +236,7 @@ namespace OdhApiCore.Controllers
         /// <param name="availabilitychecklanguage">Language of the Availability Response (possible values: 'de','it','en'), (default:'de')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>Accommodation Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>

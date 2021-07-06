@@ -240,6 +240,7 @@ namespace Helper
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter(lastchange)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
@@ -404,8 +405,8 @@ namespace Helper
                 .AccoBoardIdsFilterOr_GeneratedColumn(boardlist) //.AccoBoardFilter(boardlist)
                 .AccoApartmentFilter_GeneratedColumn(apartmentfilter) //.AccoApartmentFilter(apartmentfilter)                
                 .AccoIsBookableFilter_GeneratedColumn(bookable)
-                         // FILTERS Available Marketinggroup, LTSFeature, BookingPortal
-                         //.HasLanguageFilter(languagelist)
+               // FILTERS Available Marketinggroup, LTSFeature, BookingPortal
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)

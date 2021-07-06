@@ -54,8 +54,12 @@ namespace OdhApiCore.Controllers
         /// <param name="radius">Radius to Search in KM. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
+        /// <param name="rawfilter">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="rawsort">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>Collection of DDVenue Objects</returns>    
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -102,7 +106,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idlist, categoryfilter: categoryfilter, capacityfilter: capacityfilter,
                     searchfilter: searchfilter, locfilter: locfilter, roomcountfilter: roomcountfilter,
                     featurefilter: featurefilter, setuptypefilter: setuptypefilter, sourcefilter: source,
-                    active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
+                    active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
@@ -111,6 +115,9 @@ namespace OdhApiCore.Controllers
         /// GET Venue Single
         /// </summary>
         /// <param name="id">ID of the Venue</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>DDVenue Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
@@ -134,6 +141,12 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Venue Types List
         /// </summary>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
+        /// <param name="rawfilter">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="rawsort">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>Collection of VenueTypes Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -160,6 +173,10 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Venue Types Single
         /// </summary>
+        /// <param name="id">ID of the VenueType</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>VenueTypes Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -188,7 +205,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(
           string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
-          string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, 
+          string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter,
           PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues,
           CancellationToken cancellationToken)
         {
@@ -196,7 +213,7 @@ namespace OdhApiCore.Controllers
             {
                 VenueHelper myvenuehelper = await VenueHelper.CreateAsync(
                     QueryFactory, idfilter, categoryfilter, featurefilter, setuptypefilter, locfilter, capacityfilter, roomcountfilter,
-                    language, sourcefilter, active, smgactive, smgtags, lastchange,
+                    langfilter, sourcefilter, active, smgactive, smgtags, lastchange,
                     cancellationToken);
 
                 var query =
@@ -204,7 +221,7 @@ namespace OdhApiCore.Controllers
                         .SelectRaw("data")
                         .From("venues")
                         .VenueWhereExpression(
-                            languagelist: new List<string>(), idlist: myvenuehelper.idlist, categorylist: myvenuehelper.categorylist,
+                            languagelist: myvenuehelper.languagelist, idlist: myvenuehelper.idlist, categorylist: myvenuehelper.categorylist,
                             featurelist: myvenuehelper.featurelist, setuptypelist: myvenuehelper.setuptypelist,
                             smgtaglist: myvenuehelper.odhtaglist, districtlist: myvenuehelper.districtlist,
                             municipalitylist: myvenuehelper.municipalitylist, tourismvereinlist: myvenuehelper.tourismvereinlist,
@@ -212,7 +229,7 @@ namespace OdhApiCore.Controllers
                             capacity: myvenuehelper.capacity, capacitymin: myvenuehelper.capacitymin, capacitymax: myvenuehelper.capacitymax,
                             roomcount: myvenuehelper.roomcount, roomcountmin: myvenuehelper.roomcountmin, roomcountmax: myvenuehelper.roomcountmax,
                             activefilter: myvenuehelper.active, smgactivefilter: myvenuehelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myvenuehelper.lastchange, 
+                            searchfilter: searchfilter, language: language, lastchange: myvenuehelper.lastchange,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
