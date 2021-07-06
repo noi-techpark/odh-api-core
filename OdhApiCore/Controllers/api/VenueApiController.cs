@@ -87,6 +87,7 @@ namespace OdhApiCore.Controllers
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
             string? updatefrom = null,
+            string? langfilter = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
