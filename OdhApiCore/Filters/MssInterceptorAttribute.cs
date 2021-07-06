@@ -70,6 +70,8 @@ namespace OdhApiCore.Filters
 
 
                     string language = actionarguments.ContainsKey("language") ? (string)actionarguments["language"] : "de";
+                    string? langfilter = actionarguments.ContainsKey("langfilter") ? (string)actionarguments["langfilter"] : null;
+
                     string boardfilter = actionarguments.ContainsKey("boardfilter") ? (string)actionarguments["boardfilter"] : "0";
                     string arrival = actionarguments.ContainsKey("arrival") ? (string)actionarguments["arrival"] : String.Format("{0:yyyy-MM-dd}", DateTime.Now);
                     string departure = actionarguments.ContainsKey("departure") ? (string)actionarguments["departure"] : String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
@@ -82,7 +84,7 @@ namespace OdhApiCore.Filters
                     AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                        QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                        featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
-                       smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, (CancellationToken)context.ActionArguments["cancellationToken"]);
+                       smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, langfilter: langfilter, (CancellationToken)context.ActionArguments["cancellationToken"]);
 
                     var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 

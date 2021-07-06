@@ -895,7 +895,7 @@ namespace OdhApiCore.Controllers.api
                 AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                     QueryFactory, idfilter: null, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                     featurefilter: featurefilter, featureidfilter: featureridfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: null, smgtags: smgtagfilter, activefilter: active,
-                    smgactivefilter: smgactive, bookablefilter: null, lastchange: null, cancellationToken);
+                    smgactivefilter: smgactive, bookablefilter: null, lastchange: null, langfilter: language, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{AccoDetail,{language},Name\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
