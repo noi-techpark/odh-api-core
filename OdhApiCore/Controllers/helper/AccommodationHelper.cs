@@ -25,6 +25,7 @@ namespace OdhApiCore.Controllers
         public List<string> municipalitylist;
         public List<string> tourismvereinlist;
         public List<string> regionlist;
+        public List<string> languagelist;
         public bool? bookable;
         public bool? apartment;
         public bool altitude;
@@ -38,7 +39,7 @@ namespace OdhApiCore.Controllers
             QueryFactory queryFactory, string? idfilter, string? locfilter, string? boardfilter, 
             string? categoryfilter, string? typefilter, string? featurefilter, string? featureidfilter,
             string? badgefilter, string? themefilter, string? altitudefilter, string? smgtags,
-            bool? activefilter, bool? smgactivefilter, bool? bookablefilter, string? lastchange,
+            bool? activefilter, bool? smgactivefilter, bool? bookablefilter, string? lastchange, string? langfilter,
             CancellationToken cancellationToken)
         {
             IEnumerable<string>? tourismusvereinids = null;
@@ -51,14 +52,14 @@ namespace OdhApiCore.Controllers
             return new AccommodationHelper(
                 idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                 featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, bookablefilter: bookablefilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange,
+                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, langfilter,
                 tourismusvereinids: tourismusvereinids);
         }
 
         private AccommodationHelper(
             string? idfilter, string? locfilter, string? boardfilter, string? categoryfilter, string? typefilter,
             string? featurefilter, string? featureidfilter, string? badgefilter, string? themefilter, string? altitudefilter, bool? bookablefilter,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? languagefilter,
             IEnumerable<string>? tourismusvereinids)
         {
 
@@ -101,6 +102,8 @@ namespace OdhApiCore.Controllers
             altitude = altitudefilter != null;
             if (altitude)
                 (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
+
+            languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
             bookable = bookablefilter;
 
