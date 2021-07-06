@@ -591,7 +591,7 @@ namespace Helper
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.VenueODHTagFilter(smgtaglist)
                 .VenueLastChangedFilter(lastchange)
                 .VenueSourceFilter(sourcelist)
-                .VenueHasLanguageFilter(languagelist)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.VenueHasLanguageFilter(languagelist)
                 //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
                 .SearchFilter(VenueTitleFieldsToSearchFor(language), searchfilter)                
