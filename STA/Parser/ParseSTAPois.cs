@@ -149,6 +149,7 @@ namespace STA
             contactInfosde.ZipCode = vendingpoint.CAP;
             contactInfosde.Address = vendingpoint.Adresse_DE;
             contactInfosde.City = vendingpoint.Stadt;
+            contactInfosde.Phonenumber = vendingpoint.Tel;
             contactInfosde.Language = "de";
             mypoi.ContactInfos.TryAddOrUpdate("de", contactInfosde);
 
@@ -157,6 +158,7 @@ namespace STA
             contactInfosit.ZipCode = vendingpoint.CAP;
             contactInfosit.Address = vendingpoint.Adresse_IT_EN_LAD;
             contactInfosit.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfosit.Phonenumber = vendingpoint.Tel;
             contactInfosit.Language = "it";
             mypoi.ContactInfos.TryAddOrUpdate("it", contactInfosit);
 
@@ -165,6 +167,7 @@ namespace STA
             contactInfosen.ZipCode = vendingpoint.CAP;
             contactInfosen.Address = vendingpoint.Adresse_IT_EN_LAD;
             contactInfosen.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfosen.Phonenumber = vendingpoint.Tel;
             contactInfosen.Language = "en";
             mypoi.ContactInfos.TryAddOrUpdate("en", contactInfosen);
 
@@ -173,6 +176,7 @@ namespace STA
             contactInfoslad.ZipCode = vendingpoint.CAP;
             contactInfoslad.Address = vendingpoint.Adresse_IT_EN_LAD;
             contactInfoslad.City = vendingpoint.cittaIT_EN_LAD;
+            contactInfoslad.Phonenumber = vendingpoint.Tel;
             contactInfoslad.Language = "ld";
             mypoi.ContactInfos.TryAddOrUpdate("ld", contactInfoslad);
 
