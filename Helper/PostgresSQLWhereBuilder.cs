@@ -509,7 +509,7 @@ namespace Helper
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
-                .LastChangedFilter(lastchange)
+                .LastChangedFilter_GeneratedColumn(lastchange)             //.LastChangedFilter(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
@@ -545,7 +545,7 @@ namespace Helper
                 .EventShortDateFilterBeginByRoom(start, end, getbyrooms)
                 .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
-                .LastChangedFilter(lastchange)
+                .LastChangedFilter_GeneratedColumn(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
@@ -589,7 +589,7 @@ namespace Helper
                 .VenueSetupTypeFilter(setuptypelist)
                 .VenueRoomCountFilter(roomcount, roomcountmin, roomcountmax)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.VenueODHTagFilter(smgtaglist)
-                .VenueLastChangedFilter(lastchange)
+                .LastChangedFilter_GeneratedColumn(lastchange)  //.VenueLastChangedFilter(lastchange)
                 .VenueSourceFilter(sourcelist)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.VenueHasLanguageFilter(languagelist)
                 //TODO

@@ -269,7 +269,6 @@ namespace OdhApiCore.Controllers
                 return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);           
         }
 
-
         //ACCO TYPES
 
         /// <summary>
@@ -385,7 +384,13 @@ namespace OdhApiCore.Controllers
         /// <param name="idsource">ID Source Filter (possible values:'lts','hgv'), (default:'lts')</param>        
         /// <param name="getall">Get Rooms from all sources (If an accommodation is bookable on Booking Southtyrol, rooms from this source are returned, setting getall to true returns also LTS Rooms), (default:false)</param>        
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
+        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
+        /// <param name="rawfilter">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="rawsort">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>Collection of AccoRoom Objects</returns>
         [ProducesResponseType(typeof(IEnumerable<AccoRoom>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -398,7 +403,9 @@ namespace OdhApiCore.Controllers
             bool getall = false,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
-            string ?language = null,
+            string? language = null,
+            string? langfilter = null,
+            string? updatefrom = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -413,7 +420,7 @@ namespace OdhApiCore.Controllers
                 idtocheck = await GetAccoIdByHgvId(accoid, cancellationToken);
             }    
 
-            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
+            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, updatefrom, langfilter, searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         // ACCO ROOMS
@@ -694,6 +701,7 @@ namespace OdhApiCore.Controllers
             string[] fields,
             string? language,
             bool all,
+            string? updatefrom, string? langfilter,
             string? searchfilter,
             string? rawfilter,
             string? rawsort,
@@ -703,12 +711,8 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
-                //TODO FILTER OUT SOURCE HGV
-                //if (!all)
-                //{
-                //    if (sourcecount > 1)
-                //        data = data.Where(x => x.Source == "hgv").ToList();
-                //}
+               var languagelist = Helper.CommonListCreator.CreateIdList(langfilter);
+
 
                 var query =
                     QueryFactory.Query("accommodationrooms")
@@ -716,6 +720,8 @@ namespace OdhApiCore.Controllers
                         //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE ?", id)
                         .Where("gen_a0rid", "ILIKE", id)
                         .When(FilterClosedData, q => q.FilterClosedData())
+                        .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))
+                        .When(!String.IsNullOrEmpty(updatefrom), q => q.LastChangedFilter_GeneratedColumn(updatefrom))
                         .SearchFilter(PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
