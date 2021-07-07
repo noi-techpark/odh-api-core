@@ -50,6 +50,7 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
+            string? langfilter = null,
             string? seed = null,
             string? searchfilter = null,
             string? rawfilter = null,
@@ -116,6 +117,7 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
+            string? langfilter = null, 
             string? seed = null,
             string? searchfilter = null,
             string? rawfilter = null,
@@ -178,6 +180,7 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
+            string? langfilter = null,
             string? seed = null,
             string? searchfilter = null,
             string? rawfilter = null,
@@ -239,6 +242,7 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
+            string? langfilter = null,
             string? seed = null,
             string? searchfilter = null,
             string? rawfilter = null,
@@ -304,6 +308,7 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
+            string? langfilter = null,
             string? seed = null,
             string? searchfilter = null,
             string? rawfilter = null,
@@ -369,6 +374,7 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
+            string? langfilter = null,
             string? seed = null,
             string? searchfilter = null,
             string? rawfilter = null,
@@ -426,6 +432,7 @@ namespace OdhApiCore.Controllers.api
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
+            string? langfilter = null,
             string? seed = null,
             string? searchfilter = null,
             string? rawfilter = null,
