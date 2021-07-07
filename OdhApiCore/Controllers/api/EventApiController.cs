@@ -43,7 +43,7 @@ namespace OdhApiCore.Controllers
         /// <param name="typefilter">Typefilter (Type of Event: not used yet)</param>
         /// <param name="topicfilter">Topic ID Filter (Filter by Topic ID) BITMASK</param>
         /// <param name="orgfilter">Organization Filter (Filter by Organizer RID)</param>
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=event'), (default:'null')</param>        
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd)</param>
         /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
         /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd)</param>
