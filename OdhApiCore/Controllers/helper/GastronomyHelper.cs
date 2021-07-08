@@ -22,6 +22,7 @@ namespace OdhApiCore.Controllers
         public List<string> municipalitylist;
         public List<string> tourismvereinlist;
         public List<string> regionlist;
+        public List<string> languagelist;
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
@@ -29,7 +30,7 @@ namespace OdhApiCore.Controllers
         public static async Task<GastronomyHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? locfilter, string? categorycodefilter, string? dishcodefilter,
             string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? langfilter,
             CancellationToken cancellationToken)
         {
             IEnumerable<string>? tourismusvereinids = null;
@@ -42,7 +43,7 @@ namespace OdhApiCore.Controllers
             return new GastronomyHelper(
                 idfilter: idfilter, locfilter: locfilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter,
                 categorycodefilter: categorycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange,
+                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, languagefilter: langfilter,
                 tourismusvereinids: tourismusvereinids);
         }
 
@@ -50,7 +51,7 @@ namespace OdhApiCore.Controllers
             string? idfilter, string? locfilter, string? dishcodefilter,
             string? ceremonycodefilter, string? categorycodefilter, string? facilitycodefilter,
             string? cuisinecodefilter, bool? activefilter, bool? smgactivefilter, string? smgtags,
-            string? lastchange, IEnumerable<string>? tourismusvereinids)
+            string? lastchange, string? languagefilter, IEnumerable<string>? tourismusvereinids)
         {
             idlist = CommonListCreator.CreateIdList(idfilter?.ToUpper());
 
@@ -62,6 +63,9 @@ namespace OdhApiCore.Controllers
             facilitycodesids = GastronomyListCreator.CreateGastroFacilityCodeListfromFlag(facilitycodefilter);
             cuisinecodesids = GastronomyListCreator.CreateGastroCusineCodeListfromFlag(cuisinecodefilter);
             facilitycodesids.AddRange(cuisinecodesids);
+
+            languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
+
 
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();

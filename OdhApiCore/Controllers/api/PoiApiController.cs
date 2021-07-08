@@ -44,14 +44,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), 'null' = No Filter), (default:'null')</param>
         /// <param name="areafilter">AreaFilter (Alternate Locfilter, can be combined with locfilter) (Separator ',' possible values: reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), skr + SKIREGIONID = (Filter by Skiregion), ska + SKIAREAID = (Filter by Skiarea), are + AREAID = (Filter by LTS Area), 'null' = No Filter), (default:'null')</param>
         /// <param name="highlight">Highlight Filter (Show only Highlights possible values: 'true' : show only Highlight Pois, 'null' Filter disabled), (default:'null')</param>
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=poi'), (default:'null')</param>
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=poi'), (default:'null')</param>
         /// <param name="active">Active Pois Filter (possible Values: 'true' only Active Pois, 'false' only Disabled Pois, (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Pois Filter (Refers to field SmgActive) Pois Filter (possible Values: 'true' only published Pois, 'false' only not published Pois, (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        /// <param name="language">Language Selector. Only Content in the selected Language is shown by the json Response. Filters also the data by HasLanguage field, where available.</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -80,6 +81,7 @@ namespace OdhApiCore.Controllers.api
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
             string? updatefrom = null,
+            string? langfilter = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
@@ -101,7 +103,7 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 activitytype: poitype, subtypefilter: subtype, idfilter: idlist, searchfilter: searchfilter,
                 locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight, active: active, smgactive: odhactive,
-                smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, geosearchresult: geosearchresult,
+                smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter, geosearchresult: geosearchresult,
                 rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken: cancellationToken);
         }
 
@@ -109,7 +111,7 @@ namespace OdhApiCore.Controllers.api
         /// GET Poi Single
         /// </summary>
         /// <param name="id">ID of the Poi</param>
-        /// <param name="language">Language Selector. Only Content in the selected Language is shown by the json Response. Filters also the data by HasLanguage field, where available.</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false</param>
         /// <returns>GBLTSPoi Object</returns>
@@ -135,7 +137,7 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Poi Types List
         /// </summary>
-        /// <param name="language">Language Selector. Only Content in the selected Language is shown by the json Response. Filters also the data by HasLanguage field, where available.</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -168,9 +170,9 @@ namespace OdhApiCore.Controllers.api
         /// GET Poi Types Single
         /// </summary>
         /// <param name="id">ID of the Poi Type</param>
-        /// <param name="language">Language Selector. Only Content in the selected Language is shown by the json Response. Filters also the data by HasLanguage field, where available.</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false</param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false</param>
         /// <returns>PoiType Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -214,7 +216,7 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, int? pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active,
-            bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues,
+            bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
 
@@ -223,7 +225,7 @@ namespace OdhApiCore.Controllers.api
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
                     QueryFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
-                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, cancellationToken: cancellationToken);
+                    smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, langfilter: langfilter, cancellationToken: cancellationToken);
 
                 var query =
                     QueryFactory.Query()
@@ -236,7 +238,7 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: myactivityhelper.tourismvereinlist, regionlist: myactivityhelper.regionlist,
                             arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: new List<string>(),
+                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: myactivityhelper.languagelist,
                             filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)

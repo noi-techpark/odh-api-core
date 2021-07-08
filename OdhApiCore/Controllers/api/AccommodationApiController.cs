@@ -52,7 +52,7 @@ namespace OdhApiCore.Controllers
         /// <param name="badgefilter">BadgeFilter (BITMASK values: 1 = (Belvita Wellness Hotel), 2 = (Familyhotel), 4 = (Bikehotel), 8 = (Red Rooster Farm), 16 = (Barrier free certificated), 32 = (Vitalpina Hiking Hotel), 64 = (Private Rooms in South Tyrol), 128 = (Vinum Hotels), 'null' = No Filter), (default:'null')</param>        
         /// <param name="idfilter">IDFilter (Separator ',' List of Accommodation IDs, 'null' = No Filter), (default:'null')</param>
         /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter), (default:'null')</param>        
-        /// <param name="odhtagfilter">ODHTag Filter (refers to Array SmgTags) (String, Separator ',' more ODHTags possible, 'null' = No Filter, available ODHTags reference to 'api/ODHTag?validforentity=accommodation'), (default:'null')</param>
+        /// <param name="odhtagfilter">ODHTag Filter (refers to Array SmgTags) (String, Separator ',' more ODHTags possible, 'null' = No Filter, available ODHTags reference to 'v1/ODHTag?validforentity=accommodation'), (default:'null')</param>
         /// <param name="odhactive">ODHActive Filter (refers to field SmgActive) (possible Values: 'null' Displays all Accommodations, 'true' only ODH Active Accommodations, 'false' only ODH Disabled Accommodations, (default:'null')</param>       
         /// <param name="active">TIC Active Filter (possible Values: 'null' Displays all Accommodations, 'true' only TIC Active Accommodations, 'false' only TIC Disabled Accommodations, (default:'null')</param>       
         /// <param name="availabilitycheck">Availability Check enabled/disabled (possible Values: 'true', 'false), (default Value: 'false') NOT AVAILABLE AS OPEN DATA</param>
@@ -65,7 +65,8 @@ namespace OdhApiCore.Controllers
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
         /// <param name="rawfilter">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
@@ -110,6 +111,7 @@ namespace OdhApiCore.Controllers
             string? longitude = null,
             string? radius = null,            
             string? language = null,
+            string? langfilter = null,
             string? updatefrom = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -135,7 +137,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, idlist: new List<string>(), locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
-                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
             else if(availabilitycheck?.Value == true)
             {
@@ -158,7 +160,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, idlist: availableonlineaccos, locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
-                    seed: seed, updatefrom: updatefrom, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
 
             //Fall 3 Available MSS
@@ -234,6 +236,7 @@ namespace OdhApiCore.Controllers
         /// <param name="availabilitychecklanguage">Language of the Availability Response (possible values: 'de','it','en'), (default:'de')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>Accommodation Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
@@ -265,7 +268,6 @@ namespace OdhApiCore.Controllers
             else
                 return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);           
         }
-
 
         //ACCO TYPES
 
@@ -382,7 +384,13 @@ namespace OdhApiCore.Controllers
         /// <param name="idsource">ID Source Filter (possible values:'lts','hgv'), (default:'lts')</param>        
         /// <param name="getall">Get Rooms from all sources (If an accommodation is bookable on Booking Southtyrol, rooms from this source are returned, setting getall to true returns also LTS Rooms), (default:false)</param>        
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
-        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
+        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
+        /// <param name="rawfilter">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="rawsort">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
+        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
         /// <returns>Collection of AccoRoom Objects</returns>
         [ProducesResponseType(typeof(IEnumerable<AccoRoom>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -395,7 +403,9 @@ namespace OdhApiCore.Controllers
             bool getall = false,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
-            string ?language = null,
+            string? language = null,
+            string? langfilter = null,
+            string? updatefrom = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -410,7 +420,7 @@ namespace OdhApiCore.Controllers
                 idtocheck = await GetAccoIdByHgvId(accoid, cancellationToken);
             }    
 
-            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
+            return await GetAccommodationRooms(idtocheck, fields: fields ?? Array.Empty<string>(), language, getall, updatefrom, langfilter, searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         // ACCO ROOMS
@@ -582,7 +592,7 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, List<string?> idlist, string? locfilter,
             string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? featureidfilter, string? themefilter, string? badgefilter, string? altitudefilter, 
-            bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? searchfilter, 
+            bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? langfilter, string? searchfilter, 
             PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -590,7 +600,7 @@ namespace OdhApiCore.Controllers
                 AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                     QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                     featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active, 
-                    smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, cancellationToken);
+                    smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, langfilter: langfilter, cancellationToken);
 
                 //Fix if idlist from availabilitysearch is added use this instead of idfilter
                 if (idlist.Count > 0)
@@ -610,7 +620,7 @@ namespace OdhApiCore.Controllers
                             apartmentfilter: myhelper.apartment, bookable: myhelper.bookable, altitude: myhelper.altitude,
                             altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
                             activefilter: myhelper.active, smgactivefilter: myhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
+                            searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: myhelper.languagelist,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
@@ -691,6 +701,7 @@ namespace OdhApiCore.Controllers
             string[] fields,
             string? language,
             bool all,
+            string? updatefrom, string? langfilter,
             string? searchfilter,
             string? rawfilter,
             string? rawsort,
@@ -700,12 +711,7 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
-                //TODO FILTER OUT SOURCE HGV
-                //if (!all)
-                //{
-                //    if (sourcecount > 1)
-                //        data = data.Where(x => x.Source == "hgv").ToList();
-                //}
+                var languagelist = Helper.CommonListCreator.CreateIdList(langfilter);
 
                 var query =
                     QueryFactory.Query("accommodationrooms")
@@ -713,6 +719,8 @@ namespace OdhApiCore.Controllers
                         //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE ?", id)
                         .Where("gen_a0rid", "ILIKE", id)
                         .When(FilterClosedData, q => q.FilterClosedData())
+                        .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))
+                        .When(!String.IsNullOrEmpty(updatefrom), q => q.LastChangedFilter_GeneratedColumn(updatefrom))
                         .SearchFilter(PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);

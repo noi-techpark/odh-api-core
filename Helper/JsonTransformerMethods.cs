@@ -53,7 +53,7 @@ namespace Helper
                 var licenseProp = obj.Property("License");
                 // If License property exists and it's value isn't CC0 return null,
                 // which filters away the whole object
-                return licenseProp != null && (licenseProp.Value == null || !licenseProp.Value.Equals(new JValue("CC0"))) ?
+                return licenseProp != null && (licenseProp.Value == null || (!licenseProp.Value.Equals(new JValue("CC0")) && !licenseProp.Path.StartsWith("LicenseInfo"))) ?
                     null :
                     new JObject(obj.Properties().Select(x => Walk(x)).Where(x => x != null));
             };

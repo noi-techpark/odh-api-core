@@ -42,7 +42,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), 'null' = No Filter), (default:'null')</param>
         /// <param name="areafilter">AreaFilter (Alternate Locfilter, can be combined with locfilter) (Separator ',' possible values: reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), skr + SKIREGIONID = (Filter by Skiregion), ska + SKIAREAID = (Filter by Skiarea), are + AREAID = (Filter by LTS Area), 'null' = No Filter), (default:'null')</param>
         /// <param name="highlight">Hightlight Filter (possible values: 'false' = only Pois with Highlight false, 'true' = only Pois with Highlight true), (default:'null')</param>
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=poi'), (default:'null')</param>        
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=poi'), (default:'null')</param>        
         /// <param name="active">Active Pois Filter (possible Values: 'true' only Active Pois, 'false' only Disabled Pois</param>
         /// <param name="odhactive">ODH Active (Published) Pois Filter (Refers to field SmgActive) Pois Filter (possible Values: 'true' only published Pois, 'false' only not published Pois, (default:'null')</param>        
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
@@ -109,8 +109,8 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
-                    QueryFactory, poitype, subtypefilter, null, locfilter, areafilter,
-                    highlightfilter, active, smgactive, smgtags, null, cancellationToken);
+                    QueryFactory, poitype: poitype, subtypefilter: subtypefilter, idfilter: null, locfilter: locfilter, areafilter: areafilter,
+                    highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: null, langfilter: language, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 
@@ -236,7 +236,7 @@ namespace OdhApiCore.Controllers.api
                     locfilter: locfilter, areafilter: areafilter, distancefilter: distancefilter,
                     altitudefilter: altitudefilter, durationfilter: durationfilter, highlightfilter: highlightfilter,
                     difficultyfilter: difficultyfilter, activefilter: active, smgactivefilter: smgactive,
-                    smgtags: smgtags, lastchange: null, cancellationToken: cancellationToken);
+                    smgtags: smgtags, lastchange: null, langfilter: language, cancellationToken: cancellationToken);
                 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
 
@@ -305,7 +305,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="categorycodefilter">Category Code Filter (BITMASK  values: 1 = (Restaurant), 2 = (Bar / Café / Bistro), 4 = (Pub / Disco), 8 = (Apres Ski), 16 = (Jausenstation), 32 = (Pizzeria), 64 = (Bäuerlicher Schankbetrieb), 128 = (Buschenschank), 256 = (Hofschank), 512 = (Törggele Lokale), 1024 = (Schnellimbiss), 2048 = (Mensa), 4096 = (Vinothek /Weinhaus / Taverne), 8192 = (Eisdiele), 16348 = (Gasthaus), 32768 = (Gasthof), 65536 = (Braugarten), 131072 = (Schutzhütte), 262144 = (Alm), 524288 = (Skihütte)</param>
         /// <param name="facilitycodefilter">Facility Code Filter (BITMASK  values: 1 = (American Express), 2 = (Diners Club), 4 = (Eurocard / Mastercard), 8 = (Visa), 16 = (Hunde erlaubt), 32 = (Geeignet für Busse), 64 = (Garten), 128 = (Garagen), 256 = (Bierbar), 512 = (Kinderspielplatz), 1024 = (Spielzimmer), 2048 = (Spielplatz), 4096 = (Parkplätze), 8192 = (Raucherräume), 16348 = (Terrasse), 32768 = (Behindertengerecht), 65536 = (Biergarten), 131072 = (Aussichtsterrasse), 262144 = (Wintergarten), 524288 = (Gault Millau Südtirol), 1048576 = (Guida Espresso), 2097152 = (Gambero Rosso), 4194304 = (Feinschmecker), 8388608 = (Aral Schlemmer Atlas), 16777216 = (Varta Führer), 33554432 = (Bertelsmann), 67108864 = (Preis für Südtiroler Weinkultur), 134217728 = (Michelin), 268435456 = (Roter Hahn), 536870912 = (Tafelspitz))</param>       
         /// <param name="cuisinecodefilter">Cuisine Code Filter (BITMASK  values: 1 = (Vegetarische Küche), 2 = (Glutenfreie Küche), 4 = (Laktosefreie Kost), 8 = (Warme Küche), 16 = (Südtiroler Spezialitäten), 32 = (Gourmet Küche), 64 = (Italienische Küche), 128 = (Internationale Küche), 256 = (Pizza), 512 = (Fischspezialitäten), 1024 = (Asiatische Küche), 2048 = (Wildspezialitäten), 4096 = (Produkte eigener Erzeugung), 8192 = (Diätküche), 16348 = (Grillspezialitäten), 32768 = (Ladinische Küche), 65536 = (Kleine Karte), 131072 = (Fischwochen), 262144 = (Spargelwochen), 524288 = (Lammwochen), 1048576 = (Wildwochen), 2097152 = (Vorspeisewochen), 4194304 = (Nudelwochen), 8388608 = (Kräuterwochen), 16777216 = (Kindermenüs), 33554432 = (Mittagsmenüs))</param>       
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=gastronomy'), (default:'null')</param>        
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=gastronomy'), (default:'null')</param>        
         /// <param name="active">Active Gastronomies Filter (possible Values: 'true' only Active Gastronomies, 'false' only Disabled Gastronomies</param>
         /// <param name="odhactive">ODH Active (Published) Gastronomies Filter (Refers to field SmgActive) Gastronomies Filter (possible Values: 'true' only published Gastronomies, 'false' only not published Gastronomies, (default:'null')</param>        
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
@@ -359,7 +359,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, idfilter: null, locfilter: locfilter, categorycodefilter: categorycodefilter,
                     dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter,
                     cuisinecodefilter: cuisinecodefilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtagfilter,
-                    lastchange: null, cancellationToken);
+                    lastchange: null, langfilter: language, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
 
@@ -499,7 +499,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=smgpoi'), (default:'null')</param>        
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=smgpoi'), (default:'null')</param>        
         /// <param name="active">Active ODHActivityPoi Filter (possible Values: 'true' only active ODHActivityPoi, 'false' only not active ODHActivityPoi, (default:'null')</param>        
         /// <param name="odhactive">ODH Active (Published) ODHActivityPoi Filter (Refers to field SmgActive) (possible Values: 'true' only published ODHActivityPoi, 'false' only not published ODHActivityPoi, (default:'null')</param>        
         /// <returns>Collection of ActivityPoiReduced Objects</returns>        
@@ -624,7 +624,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="typefilter">Typefilter (Type of Event: not used yet)</param>
         /// <param name="topicfilter">Topic ID Filter (Filter by Topic ID) BITMASK</param>
         /// <param name="orgfilter">Organization Filter (Filter by Organizer RID)</param>
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=event'), (default:'null')</param>        
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events, (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field SmgActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events, (default:'null')</param>                
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd)</param>
@@ -740,7 +740,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="language">Localization Language, (default:'en')</param>
         /// <param name="articletype">Type of the Article ('null' = Filter disabled, possible values: BITMASK values: 1 = basearticle, 2 = book article, 4 = contentarticle, 8 = eventarticle, 16 = pressarticle, 32 = recipe, 64 = touroperator , 128 = b2b), (also possible for compatibily reasons: basisartikel, buchtippartikel, contentartikel, veranstaltungsartikel, presseartikel, rezeptartikel, reiseveranstalter, b2bartikel ) (default:'255' == ALL), REFERENCE TO: GET /api/ArticleTypes</param>
         /// <param name="articlesubtype">Sub Type of the Article (depends on the Maintype of the Article 'null' = Filter disabled)</param>
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'api/ODHTag?validforentity=article'), (default:'null')</param>                
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=article'), (default:'null')</param>                
         /// <param name="active">Active Articles Filter (possible Values: 'true' only Active Articles, 'false' only Disabled Articles</param>
         /// <param name="odhactive">ODH Active (Published) Activities Filter (Refers to field SmgActive) Article Filter (possible Values: 'true' only published Article, 'false' only not published Articles, (default:'null')</param>        
         /// <returns>Collection of Article Objects</returns>        
@@ -842,7 +842,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="themefilter">Themefilter (BITMASK values: 1 = (Gourmet), 2 = (At altitude), 4 = (Regional wellness offerings), 8 = (on the wheels), 16 = (With family), 32 = (Hiking), 64 = (In the vineyards), 128 = (Urban vibe), 256 = (At the ski resort), 512 = (Mediterranean), 1024 = (In the Dolomites), 2048 = (Alpine), 4096 = (Small and charming), 8192 = (Huts and mountain inns), 16384 = (Rural way of life), 32768 = (Balance), 65536 = (Christmas markets), 'null' = No Filter), (default:'null')</param>
         /// <param name="badgefilter">BadgeFilter (BITMASK values: 1 = (Belvita Wellness Hotel), 2 = (Familyhotel), 4 = (Bikehotel), 8 = (Red Rooster Farm), 16 = (Barrier free certificated), 32 = (Vitalpina Hiking Hotel), 64 = (Private Rooms in South Tyrol), 128 = (Vinum Hotels), 'null' = No Filter), (default:'null')</param>        
         /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter), (default:'null')</param>        
-        /// <param name="odhtagfilter">ODHTag Filter (refers to Array SmgTags) (String, Separator ',' more ODHTags possible, 'null' = No Filter, available ODHTags reference to 'api/ODHTag?validforentity=accommodation'), (default:'null')</param>
+        /// <param name="odhtagfilter">ODHTag Filter (refers to Array SmgTags) (String, Separator ',' more ODHTags possible, 'null' = No Filter, available ODHTags reference to 'v1/ODHTag?validforentity=accommodation'), (default:'null')</param>
         /// <param name="odhactive">ODHActive Filter (refers to field SmgActive) (possible Values: 'null' Displays all Accommodations, 'true' only ODH Active Accommodations, 'false' only ODH Disabled Accommodations, (default:'null')</param>       
         /// <param name="active">TIC Active Filter (possible Values: 'null' Displays all Accommodations, 'true' only TIC Active Accommodations, 'false' only TIC Disabled Accommodations, (default:'null')</param>       
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
@@ -895,7 +895,7 @@ namespace OdhApiCore.Controllers.api
                 AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                     QueryFactory, idfilter: null, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                     featurefilter: featurefilter, featureidfilter: featureridfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: null, smgtags: smgtagfilter, activefilter: active,
-                    smgactivefilter: smgactive, bookablefilter: null, lastchange: null, cancellationToken);
+                    smgactivefilter: smgactive, bookablefilter: null, lastchange: null, langfilter: language, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{AccoDetail,{language},Name\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
@@ -1064,7 +1064,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("metaregions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1097,7 +1097,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("experienceareas", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1129,7 +1129,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("regions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1161,7 +1161,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("tvs", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1194,7 +1194,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("municipalities", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1227,7 +1227,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("districts", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1259,7 +1259,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("skiregions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1291,7 +1291,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("skiareas", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1311,8 +1311,8 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query()
                         .SelectRaw(select)
                         .From(tablename)
-                        .CommonWhereExpression(languagelist: new List<string>(), lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                        .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist , visibleinsearch: commonhelper.visibleinsearch, smgtaglist: commonhelper.smgtaglist, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
+                                               searchfilter: searchfilter, language: language, lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort, orderby); 
                         //.OrderByRaw(orderby)

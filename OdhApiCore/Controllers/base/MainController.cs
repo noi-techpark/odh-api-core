@@ -28,7 +28,8 @@ namespace OdhApiCore.Controllers
         {
             List<TourismData> tourismdatalist = new List<TourismData>();
 
-            tourismdatalist.Add(new TourismData(url) { ApiIdentifier = "ODHActivityPoi", Description = "Activities Pois and Gastronomies of South Tyrol from various Data Sources (LTS, Suedtirol Wein, Siag, IDM...)", Id = "it.bz.opendatahub.odhactivitypoi", OdhType="odhactivitypoi", SwaggerUrl = "ODHActivityPoi", License = "CC0/Proprietary" }); ;
+            tourismdatalist.Add(new TourismData(url) { ApiIdentifier = "Find", Description = "Search through opendatahub datasets", Id = "it.bz.opendatahub.find", OdhType = "", SwaggerUrl = "https://tourism.opendatahub.bz.it/swagger/index.html#/Search", License = "CC0/Proprietary" });
+            tourismdatalist.Add(new TourismData(url) { ApiIdentifier = "ODHActivityPoi", Description = "Activities Pois and Gastronomies of South Tyrol from various Data Sources (LTS, Suedtirol Wein, Siag, IDM...)", Id = "it.bz.opendatahub.odhactivitypoi", OdhType="odhactivitypoi", SwaggerUrl = "ODHActivityPoi", License = "CC0/Proprietary" });
             tourismdatalist.Add(new TourismData(url) { ApiIdentifier = "Activity", Description = "Activities of South Tyrol from Source LTS", Id = "it.bz.opendatahub.ltsactivity", OdhType = "ltsactivity", SwaggerUrl = "Activity", License = "CC0" });
             tourismdatalist.Add(new TourismData(url) { ApiIdentifier = "Accommodation", Description = "Accommodations of South Tyrol from Source LTS and HGV", Id = "it.bz.opendatahub.accommodation", OdhType = "accommodation", SwaggerUrl = "Accommodation", License = "CC0" });
             tourismdatalist.Add(new TourismData(url) { ApiIdentifier = "Article", Description = "Various Articles about South Tyrol by IDM (Recipes, Press Articles ...)", Id = "it.bz.opendatahub.article", OdhType = "article", SwaggerUrl = "Article", License = "CC0/Proprietary" });

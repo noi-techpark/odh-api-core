@@ -17,6 +17,7 @@ namespace OdhApiCore.Controllers.api
         public List<string> smgtaglist;
         public List<string> tourismvereinlist;
         public List<string> regionlist;
+        public List<string> languagelist;
         public bool? highlight;
         public bool? active;
         public bool? smgactive;
@@ -25,7 +26,7 @@ namespace OdhApiCore.Controllers.api
         public static async Task<PoiHelper> CreateAsync(
             QueryFactory queryFactory, string? poitype, string? subtypefilter, string? idfilter, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, CancellationToken cancellationToken)
+            string? smgtags, string? lastchange, string? langfilter, CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 
@@ -37,12 +38,12 @@ namespace OdhApiCore.Controllers.api
             }
 
             return new PoiHelper(
-                poitype, subtypefilter, idfilter, locfilter, arealist, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange, tourismusvereinids);
+                poitype, subtypefilter, idfilter, locfilter, arealist, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange, langfilter, tourismusvereinids);
         }
 
         private PoiHelper(
             string? poitype, string? subtypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist,
-            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
+            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? languagefilter, IEnumerable<string>? tourismusvereinids)
         {
             poitypelist = new List<string>();
             if (poitype != null)
@@ -66,6 +67,7 @@ namespace OdhApiCore.Controllers.api
 
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
+            languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
             this.arealist = arealist.ToList();
 
