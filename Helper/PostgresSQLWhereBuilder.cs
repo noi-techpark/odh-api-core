@@ -417,22 +417,24 @@ namespace Helper
 
         //Return Where and Parameters for Common
         public static Query CommonWhereExpression(
-            this Query query, IReadOnlyCollection<string> languagelist,
-            string? searchfilter, bool? visibleinsearch, bool? activefilter, bool? odhactivefilter,
-            string? language, string? lastchange, bool filterClosedData)
+            this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> languagelist,
+            bool? visibleinsearch, IReadOnlyCollection<string> smgtaglist, bool? activefilter, bool? odhactivefilter,
+            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
-                searchfilter, language, lastchange
+                idlist, languagelist, searchfilter, language, lastchange, activefilter, odhactivefilter, lastchange
             );
 
             return query
+                .IdUpperFilter(idlist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .VisibleInSearchFilter(visibleinsearch)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(odhactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }

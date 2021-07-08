@@ -837,8 +837,9 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query()
                         .SelectRaw("data")
                         .From(tablename)
-                        .CommonWhereExpression(languagelist: commonhelper.languagelist, lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                        .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
+                                               activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, searchfilter: searchfilter, language: language, 
+                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 

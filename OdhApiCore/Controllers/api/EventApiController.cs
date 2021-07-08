@@ -214,7 +214,6 @@ namespace OdhApiCore.Controllers
                     active, smgactive, smgtags, lastchange, langfilter, source,
                     cancellationToken);
 
-
                 string sortifseednull = null;
 
                 if (sort != null)
