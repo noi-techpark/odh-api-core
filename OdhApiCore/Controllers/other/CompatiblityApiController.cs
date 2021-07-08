@@ -1064,7 +1064,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("metaregions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1097,7 +1097,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("experienceareas", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1129,7 +1129,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("regions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1161,7 +1161,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("tvs", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1194,7 +1194,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("municipalities", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1227,7 +1227,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("districts", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1259,7 +1259,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("skiregions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1291,7 +1291,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, null, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, cancellationToken);
 
             return await GetCommonReduced("skiareas", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
         }
@@ -1311,8 +1311,8 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query()
                         .SelectRaw(select)
                         .From(tablename)
-                        .CommonWhereExpression(languagelist: new List<string>(), lastchange: commonhelper.lastchange, visibleinsearch: commonhelper.visibleinsearch, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                        .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist , visibleinsearch: commonhelper.visibleinsearch, smgtaglist: commonhelper.smgtaglist, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
+                                               searchfilter: searchfilter, language: language, lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort, orderby); 
                         //.OrderByRaw(orderby)
