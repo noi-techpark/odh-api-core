@@ -111,7 +111,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Experiencearea List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
@@ -134,6 +137,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ExperienceArea")]
         public async Task<IActionResult> GetExperienceAreas(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             bool? visibleinsearch = null,
             string? latitude = null,
             string? longitude = null,
@@ -184,7 +191,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Region List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
@@ -206,6 +216,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Region")]
         public async Task<IActionResult> GetRegions(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -255,6 +269,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET TourismAssociation List
         /// </summary>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
@@ -276,6 +294,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("TourismAssociation")]
         public async Task<IActionResult> GetTourismverein(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -326,7 +348,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Municipality List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
@@ -349,6 +374,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Municipality")]
         public async Task<IActionResult> GetMunicipality(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             bool? visibleinsearch,
             string? latitude = null,
             string? longitude = null,
@@ -400,7 +429,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET District List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="visibleinsearch">Filter only Elements flagged with visibleinsearch: (possible values: 'true','false'), (default:'false')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
@@ -423,6 +455,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("District")]
         public async Task<IActionResult> GetDistrict(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             bool? visibleinsearch,
             string? latitude = null,
             string? longitude = null,
@@ -474,7 +510,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Area List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
@@ -493,6 +532,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Area")]
         public async Task<IActionResult> GetAreas(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
@@ -539,7 +582,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET SkiRegion List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
@@ -561,6 +607,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("SkiRegion")]
         public async Task<IActionResult> GetSkiRegion(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
@@ -606,7 +656,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET SkiArea List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="latitude">GeoFilter Latitude Format: '46.624975', 'null' = disabled, (default:'null')</param>
         /// <param name="longitude">GeoFilter Longitude Format: '11.369909', 'null' = disabled, (default:'null')</param>
         /// <param name="radius">Radius to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null')</param>
@@ -628,6 +681,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("SkiArea")]
         public async Task<IActionResult> GetSkiArea(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
@@ -681,7 +738,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Wine Awards List
         /// </summary>
-        /// <param name="elements">Elements to retrieve (0 = Get All)</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
+        /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
+        /// <param name="active">Active Activities Filter (possible Values: 'true' only Active Activities, 'false' only Disabled Activities</param>
+        /// <param name="odhactive"> odhactive (Published) Activities Filter (possible Values: 'true' only published Activities, 'false' only not published Activities, (default:'null')</param>
         /// <param name="companyid">Company Id</param>
         /// <param name="wineid">WineId</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
@@ -701,6 +761,10 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("WineAward")]
         public async Task<IActionResult> GetWineAwardsList(
+            string? idlist = null,
+            string? odhtagfilter = null,
+            LegacyBool active = null!,
+            LegacyBool odhactive = null!,
             string? wineid = null,
             string? companyid = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
