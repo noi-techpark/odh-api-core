@@ -76,7 +76,7 @@ namespace OdhApiCore.Controllers.api
         {                        
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idlist, languagefilter: langfilter, null, active?.Value, odhactive?.Value, odhtagfilter, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, active?.Value, odhactive?.Value, odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await CommonGetListHelper(tablename: "metaregions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult:  geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -238,7 +238,8 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+                activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await CommonGetListHelper(tablename: "regions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -317,7 +318,8 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+                activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await CommonGetListHelper(tablename: "tvs", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -378,11 +380,11 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Municipality")]
         public async Task<IActionResult> GetMunicipality(
+            bool? visibleinsearch = null,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
-            LegacyBool odhactive = null!,
-            bool? visibleinsearch,
+            LegacyBool odhactive = null!,            
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -399,7 +401,8 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, 
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await CommonGetListHelper(tablename: "municipalities", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -464,7 +467,7 @@ namespace OdhApiCore.Controllers.api
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
-            bool? visibleinsearch,
+            bool? visibleinsearch = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -481,7 +484,8 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, visibleinsearch, null, null, null, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, 
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await CommonGetListHelper(tablename: "districts", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -554,7 +558,8 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await CommonGetListHelper(tablename: "areas", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: null, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -630,7 +635,8 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await CommonGetListHelper(tablename: "skiregions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: null, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -710,7 +716,8 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, null, null, null, null, null, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await CommonGetListHelper(tablename: "skiareas", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -780,6 +787,7 @@ namespace OdhApiCore.Controllers.api
             string[]? fields = null,
             string? language = null,
             string? langfilter = null,
+            string? updatefrom = null,
             string? seed = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -788,7 +796,8 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default
             )
         {
-            WineHelper commonhelper = await WineHelper.CreateAsync(QueryFactory, null, companyid, wineid, null, null, null, null, null, null, cancellationToken);
+            WineHelper commonhelper = await WineHelper.CreateAsync(QueryFactory, idfilter: idlist, companyid, wineid, languagefilter: langfilter, null, 
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
             return await WineGetListHelper(tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
