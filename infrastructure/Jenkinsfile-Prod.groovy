@@ -40,7 +40,7 @@ pipeline {
                 sh """
                     rm -f .env
                     cp .env.example .env
-                    echo 'COMPOSE_PROJECT_NAME=${DOCKER_PROJECT_NAME}' >> .env
+                    echo 'COMPOSE_PROJECT_NAME=${DOCKER_PROJECT_NAME}' > .env
                     echo 'DOCKER_IMAGE=${DOCKER_IMAGE}' >> .env
                     echo 'DOCKER_TAG=${DOCKER_TAG}' >> .env
    		    echo 'SERVER_PORT=${SERVER_PORT}' >> .env
