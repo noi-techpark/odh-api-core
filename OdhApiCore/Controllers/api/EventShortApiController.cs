@@ -142,7 +142,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpGet, Route("EventShort/GetbyRoomBooked")]
-        public async Task<ActionResult<IEnumerable<EventShortByRoom>>> GetbyRoomBooked(
+        public async Task<IActionResult> GetbyRoomBooked(
             string? startdate = null, 
             string? enddate = null, 
             string? datetimeformat = null, 
@@ -251,7 +251,7 @@ namespace OdhApiCore.Controllers.api
 
         #region CUSTOM METODS 
 
-        private async Task<ActionResult<IEnumerable<EventShortByRoom>>> GetEventShortListbyRoomBooked(
+        private async Task<IActionResult> GetEventShortListbyRoomBooked(
             string? startdate, string? enddate, string? datetimeformat, string? sourcefilter, string? eventlocationfilter, 
             bool? active, string? idfilter, string? webaddressfilter, string? lastchange, string? language, string? sortorder, 
             string? searchfilter, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
@@ -278,7 +278,16 @@ namespace OdhApiCore.Controllers.api
 
             var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x)).ToList();
 
-            return Ok(TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter));
+            var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter);
+
+            IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
+
+            var dataTransformed =
+                    resultraw.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+            
+            return Ok(dataTransformed);
         }
 
         private IEnumerable<EventShortByRoom> TransformEventShortToRoom(IEnumerable<EventShort> eventsshort, DateTime start, DateTime end, string? onlyactive)
