@@ -114,6 +114,7 @@ namespace OdhApiCore.Controllers
                 return new SearchResult<JsonRaw>
                 {
                     Items = searchresult,
+                    searchTerm = searchfilter,
                     totalResults = (uint)searchresult.Count,
                     detailedResults = searchresultpertype
                 };                    
