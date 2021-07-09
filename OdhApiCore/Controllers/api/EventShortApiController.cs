@@ -151,16 +151,18 @@ namespace OdhApiCore.Controllers.api
             LegacyBool onlyactive = null!, 
             string? eventids = null, 
             string? webaddress = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            string? language = null,
+            string? langfilter = null,
             string? lastchange = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,            
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, eventids, webaddress, null, null, null, null, null, rawfilter, rawsort, removenullvalues, cancellationToken);
+            return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, eventids, webaddress, lastchange, language, null, searchfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
