@@ -48,6 +48,14 @@ namespace OdhApiCore.Controllers.api
         /// <param name="eventids">comma separated list of event ids</param>
         /// <param name="sortorder">ASC or DESC by StartDate</param>
         /// <param name="webaddress">Searches the webaddress</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
+        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
+        /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
+        /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false</param>
         /// <returns>Result Object with EventShort List</returns>
         [ProducesResponseType(typeof(Result<EventShort>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,6 +75,8 @@ namespace OdhApiCore.Controllers.api
             string? webaddress = null,
             string? sortorder = "ASC",
             string? seed = null,
+            string? language = null,
+            string? langfilter = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? lastchange = null,
@@ -88,9 +98,12 @@ namespace OdhApiCore.Controllers.api
 
 
         /// <summary>
-         /// GET EventShort Single
+        /// GET EventShort Single
         /// </summary>
         /// <param name="id">Id of the Event</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false</param>
         /// <returns>EventShort Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
@@ -137,9 +150,17 @@ namespace OdhApiCore.Controllers.api
             string? eventlocation = null,
             LegacyBool onlyactive = null!, 
             string? eventids = null, 
-            string? webaddress = null)
+            string? webaddress = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? lastchange = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
         {
-            return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, eventids, webaddress, null, null, null, null);
+            return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, eventids, webaddress, null, null, null, null, null, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
@@ -232,7 +253,8 @@ namespace OdhApiCore.Controllers.api
 
         private async Task<ActionResult<IEnumerable<EventShortByRoom>>> GetEventShortListbyRoomBooked(
             string? startdate, string? enddate, string? datetimeformat, string? sourcefilter, string? eventlocationfilter, 
-            bool? active, string? idfilter, string? webaddressfilter, string? lastchange, string? language, string? sortorder, string? searchfilter)
+            bool? active, string? idfilter, string? webaddressfilter, string? lastchange, string? language, string? sortorder, 
+            string? searchfilter, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
 
             EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
@@ -247,14 +269,14 @@ namespace OdhApiCore.Controllers.api
                        eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
                        start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
                        searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
-                       filterClosedData: FilterClosedData, getbyrooms: false);
+                       filterClosedData: FilterClosedData, getbyrooms: false)
+                   .ApplyRawFilter(rawfilter);
 
             var data =
                     await query
                             .GetAsync<string>();
 
             var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x)).ToList();
-
 
             return Ok(TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter));
         }
