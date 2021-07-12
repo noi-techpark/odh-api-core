@@ -43,7 +43,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="enddate">Format (yyyy-MM-dd HH:mm) default or Unix Timestamp</param>
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
-        /// <param name="eventlocation">Event Location, (possible values, 'NOI' or 'EC')</param>
+        /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>
         /// <param name="onlyactive">'true' if only Events marked as Active by Eurac should be displayed</param>
         /// <param name="eventids">comma separated list of event ids</param>
         /// <param name="sortorder">ASC or DESC by StartDate</param>
@@ -133,8 +133,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="enddate">Format (yyyy-MM-dd HH:mm) default or Unix Timestamp</param>
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
-        /// <param name="eventlocation">Event Location, (possible values, 'NOI' or 'EC')</param>
-        /// <param name="onlyactive">'true' if only Events marked as Active by Eurac should be displayed</param>
+        /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>    /// <param name="onlyactive">'true' if only Events marked as Active by Eurac should be displayed</param>
         /// <param name="eventids">comma separated list of event ids</param>
         /// <returns>List of EventShortByRoom Objects</returns>
         [ProducesResponseType(typeof(IEnumerable<EventShortByRoom>), StatusCodes.Status200OK)]
