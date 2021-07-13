@@ -114,7 +114,8 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {                
-                var result = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
+                var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
+                var result = resulttuple.Select(x => x.Item1).ToList();
 
                 var currenteventshort = await GetAllEventsShort(DateTime.Now);
 
@@ -213,6 +214,7 @@ namespace OdhApiCore.Controllers.api
                         {
                             queryresult = await QueryFactory.Query("eventeuracnoi")
                                 .InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+
 
                             newcounter++;
                         }

@@ -9,4 +9,11 @@ namespace DataModel
         public string id { get; set; }
         public JsonRaw data { get; set; }
     }
+
+    public class JsonBDataRaw
+    {
+        public string id { get; set; }
+        public JsonRaw data { get; set; }
+        public string raw { get; set; }
+    }
 }
