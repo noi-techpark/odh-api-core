@@ -59,7 +59,7 @@ namespace OdhApiCore.Controllers
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
         /// <param name="rawfilter">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
         /// <param name="rawsort">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
-        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>Collection of DDVenue Objects</returns>    
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -118,7 +118,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">ID of the Venue</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>DDVenue Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
@@ -147,7 +147,7 @@ namespace OdhApiCore.Controllers
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)</param>
         /// <param name="rawfilter">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
         /// <param name="rawsort">Documentation on https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api</param>
-        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>Collection of VenueTypes Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -177,7 +177,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">ID of the VenueType</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname. Select also Dictionary fields, example Detail.de.Title, or Elements of Arrays example ImageGallery[0].ImageUrl. (default:'null' all fields are displayed)</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        /// <param name="removenullvalues">Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom'>Opendatahub Wiki</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>VenueTypes Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
