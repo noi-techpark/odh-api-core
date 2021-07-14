@@ -536,12 +536,28 @@ namespace OdhApiCore.Controllers.api
                     case "accommodation":
                         mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
-                            mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);                                                    
-                        //TODO CALL UPDATE METHOD ALSO FOR ROOMS
+                            mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);                                                                            
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+                        await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+
+                        //UPDATE ACCOMMODATIONROOMS
+                        var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "?accoid=");
+
+                        if (myroomdatalist != null)
+                        {
+                            foreach(var myroomdata in myroomdatalist)
+                            {
+                                var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
+
+                                await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms");
+                            }                            
+                        }                                                    
+                        else
+                            throw new Exception("No data found!");
+
+                        return Ok(new GenericResult() { Message = String.Format("{0} success: {1}", "accommodations", id) });
 
                     case "gastronomy":
                         mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);

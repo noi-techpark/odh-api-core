@@ -10,11 +10,13 @@ namespace RAVEN
 {
     public class GetDataFromRaven
     {        
-        public static async Task<T> GetRavenData<T>(string type, string id, string odhravenserviceurl, string username, string password, CancellationToken cancellationToken)
+        public static async Task<T> GetRavenData<T>(string type, string id, string odhravenserviceurl, string username, string password, CancellationToken cancellationToken, string overwriterequesturl = null)
         {
             try
             {
                 var requesturl = odhravenserviceurl + type + "/" + id;
+                if (!String.IsNullOrEmpty(overwriterequesturl))
+                    requesturl = odhravenserviceurl + type + overwriterequesturl + id; 
 
                 CredentialCache wrCache = new CredentialCache();
                 wrCache.Add(new Uri(requesturl), "Basic", new NetworkCredential(username, password));

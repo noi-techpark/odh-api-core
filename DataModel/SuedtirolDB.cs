@@ -952,7 +952,7 @@ namespace DataModel
         public int TrustYouState { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage
+    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
