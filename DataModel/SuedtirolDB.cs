@@ -18,6 +18,16 @@ namespace DataModel
         string? Shortname { get; set; }
     }    
 
+    public interface IMetaData
+    {
+        Metadata _Meta { get; set; }
+    }
+
+    public interface ILicenseInfo
+    {
+        LicenseInfo LicenseInfo { get; set; }
+    }
+
     public interface IImportDateassigneable
     {
         DateTime? FirstImport { get; set; }
