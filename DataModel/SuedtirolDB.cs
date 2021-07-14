@@ -990,6 +990,7 @@ namespace DataModel
         public Nullable<int> RoomtypeInt { get; set; }
 
         public Nullable<DateTime> LastChange { get; set; }
+        public Nullable<DateTime> FirstImport { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
