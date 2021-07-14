@@ -695,13 +695,22 @@ namespace OdhApiCore.Controllers.api
                         return await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles");
 
                     case "odhtag":
-                        mydata = await GetDataFromRaven.GetRavenData<SmgTags>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        mydata = await GetDataFromRaven.GetRavenData<ODHTagLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
-                            mypgdata = TransformToPGObject.GetPGObject<SmgTags, SmgTags>((SmgTags)mydata, TransformToPGObject.GetODHTagPGObject);
+                            mypgdata = TransformToPGObject.GetPGObject<ODHTagLinked, ODHTagLinked>((ODHTagLinked)mydata, TransformToPGObject.GetODHTagPGObject);
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<SmgTags>((SmgTags)mypgdata, "smgtags");
+                        return await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags");
+
+                    case "measuringpoint":
+                        mydata = await GetDataFromRaven.GetRavenData<MeasuringpointLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<MeasuringpointLinked, MeasuringpointLinked>((MeasuringpointLinked)mydata, TransformToPGObject.GetMeasuringpointPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints");
 
                     default:
                         return BadRequest(new { error = "no match found" });
@@ -713,9 +722,9 @@ namespace OdhApiCore.Controllers.api
             }            
         }
 
-        private async Task<IActionResult> SaveRavenObjectToPG<T>(T datatosave, string table) where T: IIdentifiable, IImportDateassigneable
+        private async Task<IActionResult> SaveRavenObjectToPG<T>(T datatosave, string table) where T: IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
         {
-            
+            datatosave._Meta.LastUpdate = datatosave.LastChange;
 
             return await UpsertData<T>(datatosave, table);
         }

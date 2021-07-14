@@ -78,6 +78,16 @@ namespace Helper
             return GetMetadata(data, sourcemeta, data.LastChange);
         }
 
+        public static Metadata GetMetadataforOdhTag(SmgTags data)
+        {
+            string sourcemeta = "idm";
+
+            if (data.Source.Contains("LTSCategory"))
+                sourcemeta = "lts";
+
+            return GetMetadata(data, sourcemeta, data.LastChange);
+        }
+
         public static Metadata GetMetadataforPackage(Package data)
         {
             return GetMetadata(data, "hgv", data.LastUpdate);

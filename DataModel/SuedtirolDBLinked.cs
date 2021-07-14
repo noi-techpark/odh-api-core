@@ -248,7 +248,7 @@ namespace DataModel
         public string Self { get; set; }
     }
 
-    public class GastronomyLinked : Gastronomy
+    public class GastronomyLinked : Gastronomy, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -287,7 +287,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class AccommodationLinked : Accommodation
+    public class AccommodationLinked : Accommodation, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -374,7 +374,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class AccommodationRoomLinked : AccoRoom
+    public class AccommodationRoomLinked : AccoRoom, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -398,7 +398,7 @@ namespace DataModel
         public int EventDateCounter { get; set; }
     }
 
-    public class EventLinked : Event
+    public class EventLinked : Event, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -499,7 +499,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class ODHActivityPoiLinked : ODHActivityPoi
+    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -557,7 +557,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class LTSPoiLinked : GBLTSPoi
+    public class LTSPoiLinked : GBLTSPoi, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -612,7 +612,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class LTSActivityLinked : GBLTSActivity
+    public class LTSActivityLinked : GBLTSActivity, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -667,7 +667,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class ArticlesLinked : ArticleBaseInfos
+    public class ArticlesLinked : ArticleBaseInfos, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -709,7 +709,7 @@ namespace DataModel
         }
     }
 
-    public class DistrictLinked : District
+    public class DistrictLinked : District, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -762,7 +762,7 @@ namespace DataModel
         }
     }
 
-    public class MunicipalityLinked : Municipality
+    public class MunicipalityLinked : Municipality, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -807,7 +807,7 @@ namespace DataModel
         }
     }
 
-    public class TourismvereinLinked : Tourismverein
+    public class TourismvereinLinked : Tourismverein, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -852,7 +852,7 @@ namespace DataModel
         }
     }
 
-    public class RegionLinked : Region
+    public class RegionLinked : Region, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -889,7 +889,7 @@ namespace DataModel
         }
     }
 
-    public class MetaRegionLinked : MetaRegion
+    public class MetaRegionLinked : MetaRegion, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -942,7 +942,7 @@ namespace DataModel
         }
     }
 
-    public class ExperienceAreaLinked : ExperienceArea
+    public class ExperienceAreaLinked : ExperienceArea, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -987,7 +987,7 @@ namespace DataModel
         }
     }
 
-    public class AreaLinked : Area
+    public class AreaLinked : Area, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -1040,7 +1040,7 @@ namespace DataModel
         }
     }
 
-    public class SkiAreaLinked : SkiArea
+    public class SkiAreaLinked : SkiArea, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -1101,7 +1101,7 @@ namespace DataModel
         }
     }
 
-    public class SkiRegionLinked : SkiRegion
+    public class SkiRegionLinked : SkiRegion, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -1130,7 +1130,7 @@ namespace DataModel
         }
     }
 
-    public class WebcamInfoLinked : WebcamInfo
+    public class WebcamInfoLinked : WebcamInfo, IMetaData
     {
         public Metadata? _Meta { get; set; }
 
@@ -1167,7 +1167,7 @@ namespace DataModel
         }
     }
 
-    public class MeasuringpointLinked : Measuringpoint
+    public class MeasuringpointLinked : Measuringpoint, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -1199,7 +1199,7 @@ namespace DataModel
         public new LocationInfoLinked LocationInfo { get; set; }
     }
 
-    public class WineLinked : Wine
+    public class WineLinked : Wine, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -1228,7 +1228,7 @@ namespace DataModel
         }
     }
 
-    public class EventShortLinked : EventShort
+    public class EventShortLinked : EventShort, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -1241,9 +1241,9 @@ namespace DataModel
         }
     }
 
-    public class ODHTagLinked : SmgTags
+    public class ODHTagLinked : SmgTags, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata _Meta { get; set; }        
 
         public string Self
         {
