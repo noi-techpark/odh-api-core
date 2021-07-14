@@ -385,6 +385,9 @@ namespace DataModel
                 return Uri.EscapeUriString(ODHConstant.ApplicationURL + "AccommodationRoom/" + Uri.EscapeUriString(this.Id));
             }
         }
+
+        //Overwrites The Features
+        public new ICollection<AccoFeatureLinked>? Features { get; set; }       
     }
 
     public class EventPG : Event
