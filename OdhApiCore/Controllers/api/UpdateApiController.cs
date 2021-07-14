@@ -667,7 +667,16 @@ namespace OdhApiCore.Controllers.api
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");
+                        return await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");                  
+
+                    case "article":
+                        mydata = await GetDataFromRaven.GetRavenData<ArticlesLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<ArticlesLinked, ArticlesLinked>((ArticlesLinked)mydata, TransformToPGObject.GetArticlePGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles");
 
                     case "odhtag":
                         mydata = await GetDataFromRaven.GetRavenData<SmgTags>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
