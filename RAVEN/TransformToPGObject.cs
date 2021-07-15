@@ -508,7 +508,7 @@ namespace RAVEN
             return data;
         }
 
-        public static SmgTags GetODHTagPGObject(SmgTags data)
+        public static ODHTagLinked GetODHTagPGObject(ODHTagLinked data)
         {
             data.Id = data.Id.ToLower();
             data.MainEntity = data.MainEntity.ToLower();
@@ -519,6 +519,8 @@ namespace RAVEN
             }
 
             data.ValidForEntity = validforentitynew;
+
+            data._Meta = MetadataHelper.GetMetadataobject<ODHTagLinked>(data, MetadataHelper.GetMetadataforOdhTag);  //GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
 
             return data;
         }

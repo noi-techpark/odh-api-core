@@ -100,7 +100,7 @@ namespace OdhApiCore.Controllers.api
         #region ODH RAVEN exposed
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
-        [Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
         public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
         {
             return await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
@@ -114,7 +114,8 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {                
-                var result = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
+                var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
+                var result = resulttuple.Select(x => x.Item1).ToList();
 
                 var currenteventshort = await GetAllEventsShort(DateTime.Now);
 
@@ -213,6 +214,7 @@ namespace OdhApiCore.Controllers.api
                         {
                             queryresult = await QueryFactory.Query("eventeuracnoi")
                                 .InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+
 
                             newcounter++;
                         }
@@ -534,12 +536,28 @@ namespace OdhApiCore.Controllers.api
                     case "accommodation":
                         mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
-                            mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);                                                    
-                        //TODO CALL UPDATE METHOD ALSO FOR ROOMS
+                            mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);                                                                            
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+                        await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+
+                        //UPDATE ACCOMMODATIONROOMS
+                        var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "?accoid=");
+
+                        if (myroomdatalist != null)
+                        {
+                            foreach(var myroomdata in myroomdatalist)
+                            {
+                                var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
+
+                                await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms");
+                            }                            
+                        }                                                    
+                        else
+                            throw new Exception("No data found!");
+
+                        return Ok(new GenericResult() { Message = String.Format("{0} success: {1}", "accommodations", id) });
 
                     case "gastronomy":
                         mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -665,16 +683,34 @@ namespace OdhApiCore.Controllers.api
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");
+                        return await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");                  
 
-                    case "odhtag":
-                        mydata = await GetDataFromRaven.GetRavenData<SmgTags>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    case "article":
+                        mydata = await GetDataFromRaven.GetRavenData<ArticlesLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                         if (mydata != null)
-                            mypgdata = TransformToPGObject.GetPGObject<SmgTags, SmgTags>((SmgTags)mydata, TransformToPGObject.GetODHTagPGObject);
+                            mypgdata = TransformToPGObject.GetPGObject<ArticlesLinked, ArticlesLinked>((ArticlesLinked)mydata, TransformToPGObject.GetArticlePGObject);
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<SmgTags>((SmgTags)mypgdata, "smgtags");
+                        return await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles");
+
+                    case "odhtag":
+                        mydata = await GetDataFromRaven.GetRavenData<ODHTagLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<ODHTagLinked, ODHTagLinked>((ODHTagLinked)mydata, TransformToPGObject.GetODHTagPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags");
+
+                    case "measuringpoint":
+                        mydata = await GetDataFromRaven.GetRavenData<MeasuringpointLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<MeasuringpointLinked, MeasuringpointLinked>((MeasuringpointLinked)mydata, TransformToPGObject.GetMeasuringpointPGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints");
 
                     default:
                         return BadRequest(new { error = "no match found" });
@@ -686,8 +722,10 @@ namespace OdhApiCore.Controllers.api
             }            
         }
 
-        private async Task<IActionResult> SaveRavenObjectToPG<T>(T datatosave, string table) where T: IIdentifiable, IImportDateassigneable
+        private async Task<IActionResult> SaveRavenObjectToPG<T>(T datatosave, string table) where T: IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
         {
+            datatosave._Meta.LastUpdate = datatosave.LastChange;
+
             return await UpsertData<T>(datatosave, table);
         }
 

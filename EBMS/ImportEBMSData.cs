@@ -38,11 +38,11 @@ namespace EBMS
             }
         }
 
-        public static List<EventShort> GetEbmsEvents(string user, string pass)
+        public static List<Tuple<EventShort, EBMSEventREST>> GetEbmsEvents(string user, string pass)
         {
             try
             {
-                List<EventShort> myeventshortlist = new List<EventShort>();
+                List<Tuple<EventShort, EBMSEventREST>> myeventshortlist = new List<Tuple<EventShort, EBMSEventREST>>();
 
                 System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
@@ -252,7 +252,7 @@ namespace EBMS
                         ////gehört zu Abstract
                         //eventtosave.Documents = myevent.Documents;
 
-                        myeventshortlist.Add(eventtosave);                        
+                        myeventshortlist.Add(Tuple.Create(eventtosave, myevent));                        
                     }
                 }
                 
