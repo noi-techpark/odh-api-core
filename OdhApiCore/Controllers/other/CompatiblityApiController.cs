@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using OdhApiCore.Responses;
 using Microsoft.AspNetCore.Routing;
+using Newtonsoft.Json;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -562,12 +563,14 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
+                //TODO Remove when Id is selected twice
+
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
                     QueryFactory.Query()
@@ -585,7 +588,21 @@ namespace OdhApiCore.Controllers.api
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
                 // Get whole data
-                return await query.GetAsync<object>();
+                var data = await query.GetAsync<object>();
+
+
+                //var data = await query.GetAsync() as IEnumerable<IDictionary<string, object>>;
+                //var data = await query.GetAsync<IDictionary<string, object>>();
+                //List<dynamic> result = new List<dynamic>();
+
+               //foreach(KeyValuePair<string,object> record in data)
+               // {
+                  
+
+               //     //result.Add(JsonConvert.SerializeObject(record));
+               // }
+              
+                return data;
             });
         }
 
@@ -1413,4 +1430,33 @@ namespace OdhApiCore.Controllers.api
         public string? Id { get; set; }
         public string? Name { get; set; }
     }
+
+    //public static class ObjectExtensions
+    //{
+    //    public static T ToObject<T>(this IDictionary<string, object> source)
+    //        where T : class, new()
+    //    {
+    //        var someObject = new T();
+    //        var someObjectType = someObject.GetType();
+
+    //        foreach (var item in source)
+    //        {
+    //            someObjectType
+    //                     .GetProperty(item.Key)
+    //                     .SetValue(someObject, item.Value, null);
+    //        }
+
+    //        return someObject;
+    //    }
+
+    //    public static IDictionary<string, object> AsDictionary(this object source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)
+    //    {
+    //        return source.GetType().GetProperties(bindingAttr).ToDictionary
+    //        (
+    //            propInfo => propInfo.Name,
+    //            propInfo => propInfo.GetValue(source, null)
+    //        );
+
+    //    }
+    //}
 }
