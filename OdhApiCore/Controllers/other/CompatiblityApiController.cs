@@ -13,8 +13,9 @@ using System;
 using System.Linq;
 using OdhApiCore.Responses;
 using Microsoft.AspNetCore.Routing;
-using Newtonsoft.Json;
 using System.Dynamic;
+using Dapper;
+using Newtonsoft.Json.Linq;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -560,59 +561,59 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-            ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
-                QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
-                language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
+                ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
+                    QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
+                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-            string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
-            //string orderby = "data#>>'\\{Shortname\\}' ASC";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", to_json(data#>'\\{{Detail,{language},Title\\}}') as \"Name\"";
+                //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
-            //Custom Fields filter Removes a twice selected Id Field
-            if (fields.Length > 0)
-                select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                //Custom Fields filter Removes a twice selected Id Field
+                if (fields.Length > 0)
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
-            var query =
-                QueryFactory.Query()
-                    .SelectRaw(select)
-                    .From("smgpois")
-                    .ODHActivityPoiWhereExpression(
-                        idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, poitypelist: helper.poitypelist,
-                        smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
-                        tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
-                        arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
-                        smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,
-                        searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
-                    )
-                    .ApplyRawFilter(rawfilter)
-                    .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
+                var query =
+                    (XQuery)QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From("smgpois")
+                        .ODHActivityPoiWhereExpression(
+                            idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, poitypelist: helper.poitypelist,
+                            smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
+                            tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
+                            arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
+                            smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,
+                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
+                        )
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
-            // Get whole data
-            var data = await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
 
-            //var data = await query.GetAsync() as IEnumerable<IDictionary<string, object>>;
-            //var data = await query.GetAsync<IDictionary<string, object>>();
-            //ONLY TO TRY 
-            List<dynamic> result = new List<dynamic>();
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
 
-                foreach (var record in data)
+                var data = new List<Dictionary<string, object>>();
+
+                var names =
+                    Enumerable.Range(0, reader.FieldCount)
+                              .Select(i =>
+                                (i, reader.GetName(i)));
+
+                while (reader.Read())
                 {
-                    var recorddict = (IDictionary<string, object>)record;
-                    var Heading = ((IDictionary<string, object>)record).Keys.ToArray();
-
-                    dynamic myobject = new ExpandoObject();
-                    IDictionary<string, object> myUnderlyingObject = myobject;
-
-                   
-                    foreach (var hd in Heading)
+                    var dict = new Dictionary<string, object>();
+                    foreach (var (i, name) in names)
                     {
-                        myUnderlyingObject.Add(hd, recorddict[hd]);
+                        var value = reader.GetString(i);
+                        try
+                        {
+                            dict.Add(name, JValue.Parse(value));
+                        }
+                        catch
+                        {
+                            dict.Add(name, value);
+                        }
                     }
-
-                    //var test = JsonConvert.SerializeObject(record);
-                    //var myobject = JsonConvert.SerializeObject(DictionaryToObject(record));
-
-                    //var testobj = JsonConvert.DeserializeObject<object>(myobject);
-                    result.Add(myobject);
+                    data.Add(dict);
                 }
 
                 return data;
