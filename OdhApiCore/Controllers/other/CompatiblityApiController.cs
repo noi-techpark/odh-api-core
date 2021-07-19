@@ -596,15 +596,23 @@ namespace OdhApiCore.Controllers.api
                 var names =
                     Enumerable.Range(0, reader.FieldCount)
                               .Select(i =>
-                                (i, reader.GetName(i)));
+                                (i, reader.GetName(i), reader.GetDataTypeName(i)));
+
+                static bool IsJson(string typeName) =>
+                    typeName switch
+                    {
+                        "json" => true,
+                        "jsonb" => true,
+                        _ => false
+                    };
 
                 while (reader.Read())
                 {
                     var dict = new Dictionary<string, object>();
-                    foreach (var (i, name) in names)
+                    foreach (var (i, name, typeName) in names)
                     {
                         var value = reader.GetString(i);
-                        dict.Add(name, i == 0 ? value : new JRaw(value));
+                        dict.Add(name, IsJson(typeName) ? new JRaw(value) : value);
                     }
                     data.Add(dict);
                 }
