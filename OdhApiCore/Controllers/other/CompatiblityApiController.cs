@@ -137,8 +137,11 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
 
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -269,7 +272,11 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -388,7 +395,11 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -479,7 +490,11 @@ namespace OdhApiCore.Controllers.api
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
 
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -710,8 +725,11 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
-                // Get whole data
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -806,8 +824,11 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort);
 
-                // Get whole data
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -930,8 +951,11 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
-                // Get whole data
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -1034,8 +1058,11 @@ namespace OdhApiCore.Controllers.api
                        .ApplyRawFilter(rawfilter)
                        .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, orderby);
 
-                // Get whole data
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -1325,8 +1352,11 @@ namespace OdhApiCore.Controllers.api
                 //.OrderByRaw(orderby)
                 //.GeoSearchFilterAndOrderby(geosearchresult);
 
-                // Get paginated data
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
@@ -1406,8 +1436,11 @@ namespace OdhApiCore.Controllers.api
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
-                // Get whole data
-                return await query.GetAsync<object>();
+                var compiled = query.Compiler.Compile(query);
+
+                var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
+
+                return reader.ReadAndParseTOJson();
             });
         }
 
