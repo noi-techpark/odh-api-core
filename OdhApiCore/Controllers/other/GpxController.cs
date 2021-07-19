@@ -14,7 +14,7 @@ namespace OdhApiCore.Controllers.other
     {
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
-        [HttpGet, Route("api/Activity/Gpx/{tvid}/{gpxid}")]
+        [HttpGet, Route("v1/Activity/Gpx/{tvid}/{gpxid}")]
         public async Task<IActionResult> GetActivityGpx(string tvid, string gpxid)
 
         {
@@ -29,7 +29,7 @@ namespace OdhApiCore.Controllers.other
 
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
-        [HttpGet, Route("api/Activity/GpxByUrl/{gpxurl}")]
+        [HttpGet, Route("v1/Activity/GpxByUrl/{gpxurl}")]
         public async Task<IActionResult> GetActivityGpxURL(string gpxurl)
         {
             HttpClient myclient = new HttpClient();
@@ -43,7 +43,7 @@ namespace OdhApiCore.Controllers.other
 
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
-        [HttpGet, Route("api/Poi/Gpx/{tvid}/{gpxid}")]
+        [HttpGet, Route("v1/Poi/Gpx/{tvid}/{gpxid}")]
         public async Task<IActionResult> GetPoiGpx(string gpxid, string tvid)
         {
             HttpClient myclient = new HttpClient();
@@ -57,7 +57,7 @@ namespace OdhApiCore.Controllers.other
 
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
-        [HttpGet, Route("api/SmgPoiGpx/{gpxid}")]
+        [HttpGet, Route("v1/SmgPoiGpx/{gpxid}")]
         public async Task<IActionResult> GetSmgPoiGpx(string gpxid)
         {
             if (String.IsNullOrEmpty(gpxid))
