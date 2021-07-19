@@ -120,11 +120,11 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
-                        .SelectRaw(select)
+                        (XQuery)QueryFactory.Query()
+                         .SelectRaw(select)
                         .From("pois")
                         .PoiWhereExpression(
                             idlist: mypoihelper.idlist, poitypelist: mypoihelper.poitypelist, subtypelist: mypoihelper.subtypelist,
@@ -246,10 +246,10 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
+                        (XQuery)QueryFactory.Query()
                         .SelectRaw(select)
                         .From("activities")
                         .ActivityWhereExpression(
@@ -369,11 +369,11 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
-                        .SelectRaw(select)
+                  (XQuery)QueryFactory.Query()
+                     .SelectRaw(select)
                         .From("gastronomies")
                         .GastronomyWhereExpression(
                            idlist: mygastronomyhelper.idlist, dishcodeslist: mygastronomyhelper.dishcodesids, ceremonycodeslist: mygastronomyhelper.ceremonycodesids,
@@ -463,11 +463,11 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
-                        .SelectRaw(select)
+                      (XQuery)QueryFactory.Query()
+                      .SelectRaw(select)
                        .From("smgtags")
                         .ODHTagWhereExpression(
                             languagelist: new List<string>(),
@@ -566,7 +566,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
                     language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
 
-                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>'\\{{Detail,{language},Title\\}}' as \"Name\"";
+                string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
 
                 //Custom Fields filter Removes a twice selected Id Field
@@ -591,32 +591,6 @@ namespace OdhApiCore.Controllers.api
                 var compiled = query.Compiler.Compile(query);
 
                 var reader = await query.Connection.ExecuteReaderAsync(compiled.Sql, compiled.NamedBindings);
-
-                //var data = new List<Dictionary<string, object>>();
-
-                //var names =
-                //    Enumerable.Range(0, reader.FieldCount)
-                //              .Select(i =>
-                //                (i, reader.GetName(i), reader.GetDataTypeName(i)));
-
-                //static bool IsJson(string typeName) =>
-                //    typeName switch
-                //    {
-                //        "json" => true,
-                //        "jsonb" => true,
-                //        _ => false
-                //    };
-
-                //while (reader.Read())
-                //{
-                //    var dict = new Dictionary<string, object>();
-                //    foreach (var (i, name, typeName) in names)
-                //    {
-                //        var value = reader.GetString(i);
-                //        dict.Add(name, IsJson(typeName) ? new JRaw(value) : value);
-                //    }
-                //    data.Add(dict);
-                //}
 
                 return reader.ReadAndParseTOJson();
             });
@@ -719,10 +693,10 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
+                    (XQuery)QueryFactory.Query()
                         .SelectRaw(select)
                         .From("events")
                         .EventWhereExpression(
@@ -818,10 +792,10 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
+                    (XQuery)QueryFactory.Query()
                         .SelectRaw(select)
                         .From("articles")
                         .ArticleWhereExpression(
@@ -935,10 +909,10 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
+                    (XQuery)QueryFactory.Query()
                         .SelectRaw(select)
                         .From("accommodations")
                         .AccommodationWhereExpression(
@@ -1042,13 +1016,13 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
                     sourcefilter, eventlocationfilter, active, null, webaddressfilter, lastchange, sortorder);
 
                 var query =
-                   QueryFactory.Query()
+                   (XQuery)QueryFactory.Query()
                        .SelectRaw(select)
                        .From("eventeuracnoi")
                        .EventShortWhereExpression(
@@ -1338,10 +1312,10 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
+                    (XQuery)QueryFactory.Query()
                         .SelectRaw(select)
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, smgtaglist: commonhelper.smgtaglist, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
@@ -1418,10 +1392,10 @@ namespace OdhApiCore.Controllers.api
 
                 //Custom Fields filter
                 if (fields.Length > 0)
-                    select += string.Join("", fields.Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
-                    QueryFactory.Query()
+                    (XQuery)QueryFactory.Query()
                         .SelectRaw(select)
                         .From("webcams")
                          .WebCamInfoWhereExpression(
