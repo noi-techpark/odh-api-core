@@ -604,14 +604,7 @@ namespace OdhApiCore.Controllers.api
                     foreach (var (i, name) in names)
                     {
                         var value = reader.GetString(i);
-                        try
-                        {
-                            dict.Add(name, JValue.Parse(value));
-                        }
-                        catch
-                        {
-                            dict.Add(name, value);
-                        }
+                        dict.Add(name, i == 0 ? value : new JRaw(value));
                     }
                     data.Add(dict);
                 }
