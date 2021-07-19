@@ -321,6 +321,7 @@ namespace OdhApiCore
                 app.UseHsts();
             }
 
+            app.UseResponseCompression();
             //app.UseHttpsRedirection();
 
             app.UseStaticFiles(new StaticFileOptions()
@@ -346,8 +347,6 @@ namespace OdhApiCore
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseResponseCompression();
 
             // Put app.UseCacheOutput() before app.UseMvc()
             app.UseCacheOutput();
