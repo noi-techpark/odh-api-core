@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -119,7 +120,12 @@ namespace OdhApiCore
                 Log.Logger = loggerConfiguration;
             });
 
-            services.AddResponseCompression();
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+            services.AddResponseCompression( options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+            });
 
             services.AddCors(o =>
             {
@@ -321,6 +327,7 @@ namespace OdhApiCore
                 app.UseHsts();
             }
 
+            app.UseResponseCompression();
             //app.UseHttpsRedirection();
 
             app.UseStaticFiles(new StaticFileOptions()
@@ -346,8 +353,6 @@ namespace OdhApiCore
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseResponseCompression();
 
             // Put app.UseCacheOutput() before app.UseMvc()
             app.UseCacheOutput();
