@@ -114,18 +114,19 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {                
-                var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
-                var result = resulttuple.Select(x => x.Item1).ToList();
+                var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);                
+                var resulttuplesorted = resulttuple.OrderBy(x => x.Item1.StartDate);
 
                 var currenteventshort = await GetAllEventsShort(DateTime.Now);
 
-                var resultsorted = result.OrderBy(x => x.StartDate);
+                //var result = resulttuple.Select(x => x.Item1).ToList();
+                //var resultsorted = result.OrderBy(x => x.StartDate);
 
                 var updatecounter = 0;
                 var newcounter = 0;
                 var deletecounter = 0;
 
-                foreach (var eventshort in resultsorted)
+                foreach (var (eventshort, eventebms) in resulttuplesorted)
                 {
                     bool neweventshort = false;
 
@@ -213,8 +214,8 @@ namespace OdhApiCore.Controllers.api
                         if (neweventshort)
                         {
                             queryresult = await QueryFactory.Query("eventeuracnoi")
-                                .InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-
+                                //.InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                                .InsertAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
 
                             newcounter++;
                         }
@@ -224,7 +225,8 @@ namespace OdhApiCore.Controllers.api
 
                             //TODO CHECK IF THIS WORKS     
                             queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                                .UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                                //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                                .UpdateAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
 
                             updatecounter++;
                         }
@@ -238,8 +240,8 @@ namespace OdhApiCore.Controllers.api
                     }
                 }
 
-                if (result.Count > 0)
-                    deletecounter = await DeleteDeletedEvents(result, currenteventshort.ToList());
+                if (resulttuple.Select(x => x.Item1).Count() > 0)
+                    deletecounter = await DeleteDeletedEvents(resulttuple.Select(x => x.Item1), currenteventshort.ToList());
 
                 return String.Format("Events Updated {0} New {1} Deleted {2}", updatecounter.ToString(), newcounter.ToString(), deletecounter.ToString());
             }
