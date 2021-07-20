@@ -36,14 +36,6 @@ namespace OdhApiCore.Controllers.other
         [HttpGet, Route("v1/Poi/Gpx/{tvid}/{gpxid}")]
         public Task GetPoiGpx(string gpxid, string tvid)
         {
-            //HttpClient myclient = new HttpClient();
-
-            //Uri requesturi = new Uri("https://lcs.lts.it/downloads/gpx/" + tvid + "/" + gpxid + ".Gpx");
-
-            //var response = await myclient.GetAsync(requesturi);
-
-            //return Ok(response);
-
             var url = "https://lcs.lts.it/downloads/gpx/" + tvid + "/" + gpxid + ".Gpx";
 
             return this.HttpProxyAsync(url);
