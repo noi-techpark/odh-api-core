@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AspNetCore.Proxy;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,16 +16,11 @@ namespace OdhApiCore.Controllers.other
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
         [HttpGet, Route("v1/Activity/Gpx/{tvid}/{gpxid}")]
-        public async Task<IActionResult> GetActivityGpx(string tvid, string gpxid)
-
+        public Task GetActivityGpx(string tvid, string gpxid)
         {
-            HttpClient myclient = new HttpClient();
+            var url = "https://lcs.lts.it/downloads/gpx/" + tvid + "/" + gpxid;
 
-            Uri requesturi = new Uri("https://lcs.lts.it/downloads/gpx/" + tvid + "/" + gpxid);
-
-            var result = await myclient.GetAsync(requesturi);
-
-            return Ok(result);
+            return this.HttpProxyAsync(url);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
