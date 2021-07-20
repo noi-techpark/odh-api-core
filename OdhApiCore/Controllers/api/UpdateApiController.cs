@@ -241,7 +241,7 @@ namespace OdhApiCore.Controllers.api
                 }
 
                 if (resulttuple.Select(x => x.Item1).Count() > 0)
-                    deletecounter = await DeleteDeletedEvents(resulttuple.Select(x => x.Item1), currenteventshort.ToList());
+                    deletecounter = await DeleteDeletedEvents(resulttuple.Select(x => x.Item1).ToList(), currenteventshort.ToList());
 
                 return String.Format("Events Updated {0} New {1} Deleted {2}", updatecounter.ToString(), newcounter.ToString(), deletecounter.ToString());
             }
