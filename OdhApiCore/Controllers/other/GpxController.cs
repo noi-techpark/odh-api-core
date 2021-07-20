@@ -26,29 +26,27 @@ namespace OdhApiCore.Controllers.other
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
         [HttpGet, Route("v1/Activity/GpxByUrl/{gpxurl}")]
-        public async Task<IActionResult> GetActivityGpxURL(string gpxurl)
-        {
-            HttpClient myclient = new HttpClient();
-
-            Uri requesturi = new Uri(gpxurl);
-
-            var response = await myclient.GetAsync(requesturi);
-
-            return Ok(response);
+        public Task GetActivityGpxURL(string gpxurl)
+        {            
+            return this.HttpProxyAsync(gpxurl);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
         [HttpGet, Route("v1/Poi/Gpx/{tvid}/{gpxid}")]
-        public async Task<IActionResult> GetPoiGpx(string gpxid, string tvid)
+        public Task GetPoiGpx(string gpxid, string tvid)
         {
-            HttpClient myclient = new HttpClient();
+            //HttpClient myclient = new HttpClient();
 
-            Uri requesturi = new Uri("https://lcs.lts.it/downloads/gpx/" + tvid + "/" + gpxid + ".Gpx");
+            //Uri requesturi = new Uri("https://lcs.lts.it/downloads/gpx/" + tvid + "/" + gpxid + ".Gpx");
 
-            var response = await myclient.GetAsync(requesturi);
+            //var response = await myclient.GetAsync(requesturi);
 
-            return Ok(response);
+            //return Ok(response);
+
+            var url = "https://lcs.lts.it/downloads/gpx/" + tvid + "/" + gpxid + ".Gpx";
+
+            return this.HttpProxyAsync(url);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
