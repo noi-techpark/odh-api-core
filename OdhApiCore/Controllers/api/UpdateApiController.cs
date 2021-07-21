@@ -714,6 +714,15 @@ namespace OdhApiCore.Controllers.api
 
                         return await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints");
 
+                    case "venue":
+                        mydata = await GetDataFromRaven.GetRavenData<DDVenue>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<DDVenue, DDVenue>((DDVenue)mydata, TransformToPGObject.GetVenuePGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venue");
+
                     default:
                         return BadRequest(new { error = "no match found" });
                 }
