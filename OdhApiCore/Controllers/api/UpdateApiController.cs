@@ -214,8 +214,8 @@ namespace OdhApiCore.Controllers.api
                         if (neweventshort)
                         {
                             queryresult = await QueryFactory.Query("eventeuracnoi")
-                                //.InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                                .InsertAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
+                                .InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                                //.InsertAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
 
                             newcounter++;
                         }
@@ -225,8 +225,8 @@ namespace OdhApiCore.Controllers.api
 
                             //TODO CHECK IF THIS WORKS     
                             queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                                //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                                .UpdateAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
+                                .UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                                //.UpdateAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
 
                             updatecounter++;
                         }
@@ -741,7 +741,6 @@ namespace OdhApiCore.Controllers.api
         }
 
         #endregion
-
     }
 
     public class UpdateResult
