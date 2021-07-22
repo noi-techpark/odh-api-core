@@ -40,12 +40,12 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Accommodation List
         /// </summary>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
+        /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page (If availabilitycheck set, pagesize has no effect all Accommodations are returned), (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="categoryfilter">Categoryfilter BITMASK values: 1 = (not categorized), 2 = (1star), 4 = (1flower), 8 = (1sun), 14 = (1star/1flower/1sun), 16 = (2stars), 32 = (2flowers), 64 = (2suns), 112 = (2stars/2flowers/2suns), 128 = (3stars), 256 = (3flowers), 512 = (3suns), 1024 = (3sstars), 1920 = (3stars/3flowers/3suns/3sstars), 2048 = (4stars), 4096 = (4flowers), 8192 = (4suns), 16384 = (4sstars), 30720 = (4stars/4flowers/4suns/4sstars), 32768 = (5stars), 65536 = (5flowers), 131072 = (5suns), 229376 = (5stars/5flowers/5suns), 'null' = (No Filter), (default:'null')</param>
         /// <param name="typefilter">Typefilter BITMASK values: 1 = (HotelPension), 2 = (BedBreakfast), 4 = (Farm), 8 = (Camping), 16 = (Youth), 32 = (Mountain), 64 = (Apartment), 128 = (Not defined),'null' = (No Filter), (default:'null')</param>
-        /// <param name="boardfilter">Boardfilter BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = (No Filter), (default:'0')</param>
+        /// <param name="boardfilter">Boardfilter BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = (No Filter), (default:'null')</param>
         /// <param name="featurefilter">FeatureFilter BITMASK values: 1 = (Group-friendly), 2 = (Meeting rooms), 4 = (Swimming pool), 8 = (Sauna), 16 = (Garage), 32 = (Pick-up service), 64 = (WLAN), 128 = (Barrier-free), 256 = (Special menus for allergy sufferers), 512 = (Pets welcome), 'null' = (No Filter), (default:'null')</param>
         /// <param name="featureidfilter">Feature Id Filter, LIST filter over ALL Features available. Separator ',' List of Feature IDs, 'null' = (No Filter), (default:'null')</param>
         /// <param name="themefilter">Themefilter BITMASK values: 1 = (Gourmet), 2 = (At altitude), 4 = (Regional wellness offerings), 8 = (on the wheels), 16 = (With family), 32 = (Hiking), 64 = (In the vineyards), 128 = (Urban vibe), 256 = (At the ski resort), 512 = (Mediterranean), 1024 = (In the Dolomites), 2048 = (Alpine), 4096 = (Small and charming), 8192 = (Huts and mountain inns), 16384 = (Rural way of life), 32768 = (Balance), 65536 = (Christmas markets), 'null' = (No Filter), (default:'null')</param>
@@ -53,8 +53,8 @@ namespace OdhApiCore.Controllers
         /// <param name="idfilter">IDFilter LIST Separator ',' List of Accommodation IDs, 'null' = (No Filter), (default:'null')</param>
         /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
         /// <param name="odhtagfilter">ODHTag Filter LIST (refers to Array SmgTags) (String, Separator ',' more ODHTags possible, 'null' = No Filter, available ODHTags reference to 'v1/ODHTag?validforentity=accommodation'), (default:'null')</param>
-        /// <param name="odhactive">ODHActive Filter BOOLEAN (refers to field SmgActive) (possible Values: 'null' Displays all Accommodations, 'true' only ODH Active Accommodations, 'false' only ODH Disabled Accommodations, (default:'null')</param>       
-        /// <param name="active">TIC Active Filter BOOLEAN (possible Values: 'null' Displays all Accommodations, 'true' only TIC Active Accommodations, 'false' only TIC Disabled Accommodations, (default:'null')</param>       
+        /// <param name="odhactive">ODHActive Filter BOOLEAN (refers to field SmgActive) (possible Values: 'null' Displays all Accommodations, 'true' only ODH Active Accommodations, 'false' only ODH Disabled Accommodations), (default:'null')</param>       
+        /// <param name="active">TIC Active Filter BOOLEAN (possible Values: 'null' Displays all Accommodations, 'true' only TIC Active Accommodations, 'false' only TIC Disabled Accommodations), (default:'null')</param>       
         /// <param name="altitudefilter">Altitude Range Filter SPECIAL (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
         /// <param name="availabilitycheck">Availability Check BOOLEAN (possible Values: 'true', 'false), (default Value: 'false') NOT AVAILABLE AS OPEN DATA, IF Availabilty Check is true certain filters are Required</param>
         /// <param name="arrival">Arrival DATE (yyyy-MM-dd) REQUIRED ON Availabilitycheck = true, (default:'Today's date')</param>
@@ -62,7 +62,7 @@ namespace OdhApiCore.Controllers
         /// <param name="roominfo">Roominfo Filter REQUIRED ON Availabilitycheck = true (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>
         /// <param name="bokfilter">Booking Channels Filter REQUIRED ON Availabilitycheck = true (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check)), (default:'hgv')</param>
         /// <param name="source">Source for MSS availability check, (default:'sinfo')</param>
-        /// <param name="availabilitychecklanguage">Language of the Availability Response (possible values: 'de','it','en'), (default:'en')</param>
+        /// <param name="availabilitychecklanguage">Language of the Availability Response (possible values: 'de','it','en')</param>
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
@@ -229,13 +229,13 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">ID of the Accommodation</param>
         /// <param name="idsource">ID Source Filter (possible values:'lts','hgv'), (default:'lts')</param>        
-        /// <param name="boardfilter">Boardfilter BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = (No Filter), (default:'0')</param>
+        /// <param name="boardfilter">Boardfilter BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = (No Filter), (default:'null')</param>
         /// <param name="availabilitycheck">Availability Check enabled/disabled (possible Values: 'true', 'false), (default Value: 'false') NOT AVAILABLE AS OPEN DATA</param>
         /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED, (default:'Today')</param>
         /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED, (default:'Tomorrow')</param>
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="source">Source for MSS availability check, (default:'sinfo')</param>
         /// <param name="bokfilter">Booking Channels Filter REQUIRED (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check)), (default:'hgv')</param>
-        /// <param name="availabilitychecklanguage">Language of the Availability Response (possible values: 'de','it','en'), (default:'de')</param>
+        /// <param name="availabilitychecklanguage">Language of the Availability Response (possible values: 'de','it','en')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
@@ -486,7 +486,7 @@ namespace OdhApiCore.Controllers
         /// <param name="withoutlcsids">Search over all Accommodations on LTS (No Ids have to be provided as Post Data) (default: false)</param>        
         /// <param name="idfilter">Posted Accommodation IDs (Separated by ,)</param>
         /// <returns>Result Object with Collection of Accommodation Objects</returns>
-        //[ApiExplorerSettings(IgnoreApi = true)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -557,6 +557,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<MssResponseShort>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [HttpPost, Route("AvailabilityCheck")]
         public IActionResult? PostAvailableMSSResponseonlyAccommodations(
