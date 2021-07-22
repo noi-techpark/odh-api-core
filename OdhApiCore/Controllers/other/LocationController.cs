@@ -32,10 +32,10 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Location List (Use in locfilter)
         /// </summary>
-        /// <param name="language">Localization Language, (default:'en')</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language ('null' all languages are displayed)</param>
         /// <param name="type">Type ('mta','reg','tvs','mun','fra') Separator ',' : 'null' returns all Location Objects (default)</param>     
         /// <param name="showall">Show all Data (true = all, false = show only data marked as visible)</param>
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: mta + MetaREGIONID = (Filter by MetaRegion), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction)), (default:'null')</param>
+        /// <param name="locfilter">Locfilter (Separator ',') possible values: mta + MetaREGIONID = (Filter by MetaRegion), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), (default:'null')</param>
         /// <returns>Reduced List of Locations Objects</returns>        
         [ProducesResponseType(typeof(IEnumerable<LocHelperclass>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,8 +53,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Skiarea List (Use in locfilter as "ska")
         /// </summary>
-        /// <param name="language">Localization Language, (default:'en')</param>
-        /// <param name="locfilter">Locfilter (Separator ',' possible values: mta + MetaREGIONID = (Filter by MetaRegion), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), (default:'null')</param>
+        /// <param name="language">Localization Language</param>
+        /// <param name="locfilter">Locfilter (Separator ',') possible values: mta + MetaREGIONID = (Filter by MetaRegion), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), (default:'null')</param>
         /// <returns>Reduced List of Locations Objects</returns>        
         [ProducesResponseType(typeof(IEnumerable<LocHelperclass>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
