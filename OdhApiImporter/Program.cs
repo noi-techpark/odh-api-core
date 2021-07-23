@@ -14,8 +14,8 @@ namespace OdhApiImporter
         {
             var host = CreateHostBuilder(args).Build();
 
-            var monitorLoop = host.Services.GetRequiredService<MonitorLoop>();
-            monitorLoop.StartMonitorLoop();
+            //var monitorLoop = host.Services.GetRequiredService<MonitorLoop>();
+            //monitorLoop.StartMonitorLoop();
 
             await host.RunAsync();
         }
@@ -23,16 +23,16 @@ namespace OdhApiImporter
         private static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             //services.AddHostedService<Worker>();
-            services.AddSingleton<MonitorLoop>();
-            services.AddHostedService<QueuedHostedService>();
-            services.AddSingleton<IBackgroundTaskQueue>(_ =>
-            {
-                if (!int.TryParse(context.Configuration["QueueCapacity"], out var queueCapacity))
-                {
-                    queueCapacity = 100;
-                }
-                return new DefaultBackgroundTaskQueue(queueCapacity);
-            });
+            //services.AddSingleton<MonitorLoop>();
+            //services.AddHostedService<QueuedHostedService>();
+            //services.AddSingleton<IBackgroundTaskQueue>(_ =>
+            //{
+            //    if (!int.TryParse(context.Configuration["QueueCapacity"], out var queueCapacity))
+            //    {
+            //        queueCapacity = 100;
+            //    }
+            //    return new DefaultBackgroundTaskQueue(queueCapacity);
+            //});
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
