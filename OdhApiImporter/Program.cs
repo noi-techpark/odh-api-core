@@ -22,6 +22,7 @@ namespace OdhApiImporter
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSystemd()
                 .ConfigureServices(ConfigureServices)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
