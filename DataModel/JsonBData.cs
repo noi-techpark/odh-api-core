@@ -16,4 +16,13 @@ namespace DataModel
         public JsonRaw data { get; set; }
         public string raw { get; set; }
     }
+
+    public class RawData
+    {
+        public int id { get; set; }
+        public string type { get; set; }
+        public string source { get; set; }
+        public string sourceid { get; set; }
+        public DateTime timestamp {get;set;}
+    }
 }

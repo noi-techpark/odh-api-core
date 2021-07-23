@@ -25,5 +25,12 @@ namespace Helper
             return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value));
         }
 
+        ////Insert also data in Raw table
+        //public static async Task<int> InsertInTableAndRawtableAsync(this QueryFactory queryfactory, string table, JsonBDataRaw jsonbraw, CancellationToken cancellationToken = default)
+        //{
+        //    await queryfactory.Query(table).InsertAsync(jsonbraw);
+        //    return await queryfactory.Query(table).InsertAsync(jsonbraw);
+        //}
+
     }
 }
