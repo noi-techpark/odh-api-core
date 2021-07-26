@@ -38,7 +38,8 @@ namespace OdhApiCore.Controllers.api
         /// GET EventShort List
         /// </summary>
         /// <param name="pagenumber">Pagenumber (Integer)</param>
-        /// <param name="pagesize">Pagesize (Integer)</param>
+        /// <param name="pagesize">Pagesize (Integer), (default: 'null')</param>
+        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="startdate">Format (yyyy-MM-dd HH:mm) default or Unix Timestamp</param>
         /// <param name="enddate">Format (yyyy-MM-dd HH:mm) default or Unix Timestamp</param>
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
@@ -52,7 +53,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
-        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
+        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
@@ -88,7 +89,7 @@ namespace OdhApiCore.Controllers.api
             )
         {
             return await GetEventShortList(
-               fields: fields ?? Array.Empty<string>(), language: "", pagenumber: pagenumber, pagesize: pagesize,
+               fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, active: onlyactive.Value,
@@ -135,8 +136,11 @@ namespace OdhApiCore.Controllers.api
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
         /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>    /// <param name="onlyactive">'true' if only Events marked as Active by Eurac should be displayed</param>
         /// <param name="eventids">comma separated list of event ids</param>
+        /// <param name="webaddress">Filter by WebAddress Field</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
+        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
@@ -169,6 +173,11 @@ namespace OdhApiCore.Controllers.api
             return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, eventids, webaddress, lastchange, language, null, searchfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
+        /// <summary>
+        /// GET NOI Room Mapping
+        /// </summary>
+        /// <returns></returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

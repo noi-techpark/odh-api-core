@@ -24,8 +24,6 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class WebcamInfoController : OdhController
     {
-        // Only for test purposes
-
         public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<WebcamInfoController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
@@ -36,16 +34,16 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Webcam List
         /// </summary>
-        /// <param name="pagenumber">Pagenumber, (default:1)</param>
-        /// <param name="pagesize">Elements per Page (max 1024), (default:10)</param>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, not provided disables Random Sorting, (default:'null') </param>
         /// <param name="idlist">IDFilter (Separator ',' List of Gastronomy IDs), (default:'null')</param>
-        /// <param name="source">Source Filter(String), (default:'null')</param>        
-        /// <param name="active">Active Webcam Filter (possible Values: 'true' only Active Gastronomies, 'false' only Disabled Webcams), (default:'null')</param>
-        /// <param name="odhactive">ODH Active (refers to field SmgActive) (Published) Webcam Filter (possible Values: 'true' only published Webcam, 'false' only not published Webcam), (default:'null')</param>        
-        /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
-        /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
-        /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
+        /// <param name="source">Source Filter (Separator ',' available sources 'lts','content'), (default:'null')</param>        
+        /// <param name="active">Active Webcam Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
+        /// <param name="odhactive">ODH Active (Published) Webcam Filter (possible Values: 'true' only published data, 'false' only not published data), (default:'null')</param>        
+        /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>

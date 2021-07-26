@@ -395,7 +395,10 @@ namespace RAVEN
         {
             data.Id = data.Id.ToUpper();
 
-            //data._Meta = GetMetadata(data.Id, "venue", "lts", data.meta.lastUpdate);
+            data.LastChange = data.meta.lastUpdate;
+            data.Shortname = data.attributes.name.Keys.Count > 0 ? data.attributes.name.FirstOrDefault().Value : "";
+            data.LicenseInfo = data.odhdata.LicenseInfo;
+
             data.odhdata.ODHActive = data.attributes.categories.Contains("lts/visi_unpublishedOnODH") ? false : true;
             data.links.self = ODHConstant.ApplicationURL + "Venue/" + data.Id;
 
