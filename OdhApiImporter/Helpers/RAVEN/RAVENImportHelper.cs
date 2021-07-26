@@ -228,70 +228,7 @@ namespace OdhApiImporter.Helpers.RAVEN
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            return await UpsertData<T>(datatosave, table);
-        }
-
-        #endregion
-
-        #region PG Helpers
-
-        private async Task<string> UpsertData<T>(T data, string table) where T : IIdentifiable, IImportDateassigneable
-        {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data), "no data");
-
-            //Check if data exists
-            var query = QueryFactory.Query(table)
-                      .Select("data")
-                      .Where("id", data.Id);
-
-            var queryresult = await query.GetAsync<T>();
-
-            string operation = "";
-
-            if (queryresult == null || queryresult.Count() == 0)
-            {
-                data.FirstImport = DateTime.Now;
-                data.LastChange = DateTime.Now;
-
-                var insertresult = await QueryFactory.Query(table)
-                   .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
-                operation = "INSERT";
-            }
-            else
-            {
-                data.LastChange = DateTime.Now;
-
-                var updateresult = await QueryFactory.Query(table).Where("id", data.Id)
-                        .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
-                operation = "UPDATE";
-            }
-
-            return String.Format("{0} success: {1}", operation, data.Id);
-        }
-
-        private async Task<string> DeleteData(string id, string table)
-        {
-            if (string.IsNullOrEmpty(id))
-                throw new ArgumentException(nameof(id), "No data");
-
-            //Check if data exists
-            var query =
-                  QueryFactory.Query(table)
-                      .Select("data")
-                      .Where("id", id);
-
-            if (query == null)
-            {
-                throw new ArgumentNullException(nameof(query), "No data");
-            }
-            else
-            {
-                await QueryFactory.Query(table).Where("id", id)
-                        .DeleteAsync();
-            }
-
-            return String.Format("DELETE success: {0}", id);
+            return await QueryFactory.UpsertData<T>(datatosave, table);
         }
 
         #endregion

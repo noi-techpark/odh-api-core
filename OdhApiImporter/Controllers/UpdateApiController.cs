@@ -26,6 +26,7 @@ using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers.EBMS;
 using OdhApiImporter.Helpers.NINJA;
 using OdhApiImporter.Helpers.RAVEN;
+using OdhApiImporter.Models;
 
 namespace OdhApiImporter.Controllers
 {
@@ -78,7 +79,6 @@ namespace OdhApiImporter.Controllers
                 });
             }
         }
-
 
         [HttpGet, Route("EBMS/EventShort/UpdateSingle/{id}")]
         public IActionResult UpdateSingleEBMS(string id, CancellationToken cancellationToken)
@@ -184,17 +184,5 @@ namespace OdhApiImporter.Controllers
         }
 
         #endregion
-    }
-
-    public class UpdateResult
-    {
-        public string operation { get; set; }
-        public string updatetype { get; set; }
-        public string message { get; set; }
-        public bool success { get; set; }
-        public string recordsupdated { get; set; }
-
-        public string id { get; set; }
-
     }
 }
