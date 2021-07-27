@@ -16,4 +16,16 @@ namespace DataModel
         public JsonRaw data { get; set; }
         public string raw { get; set; }
     }
+
+    public class JsonBRawDataStore
+    {
+        public string id { get; set; }
+        public string type { get; set; }
+        public string datasource { get; set; }
+        public string sourceinterface { get; set; }
+        public string sourceid { get; set; }
+        public DateTime importdate { get; set; }
+
+        public string raw { get; set; }
+    }
 }
