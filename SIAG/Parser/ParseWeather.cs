@@ -22,6 +22,7 @@ namespace SIAG
                 myweather.date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
                 myweather.evolution = weatherresponse.Root.Element("evolution") != null ? weatherresponse.Root.Element("evolution").Value : null;
                 myweather.evolutiontitle = weatherresponse.Root.Element("evolutionTitle") != null ? weatherresponse.Root.Element("evolutionTitle").Value : null;
+                myweather.language = lang;
 
                 var mydayforecasts = weatherresponse.Root.Elements("dayForecast");
                 var mountaintoday = weatherresponse.Root.Element("mountainToday");
@@ -461,6 +462,7 @@ namespace SIAG
                 myweather.date = Convert.ToDateTime(siagweather.date.ToShortDateString() + " " + siagweather.hour);
                 myweather.evolution = siagweather.evolution;
                 myweather.evolutiontitle = siagweather.evolutionTitle;
+                myweather.language = lang;
           
                 //Forecast info
                 foreach (var forecast in siagweather.dayForecasts)
