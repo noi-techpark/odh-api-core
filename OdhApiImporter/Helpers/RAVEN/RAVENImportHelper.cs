@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OdhApiImporter.Helpers.RAVEN
+namespace OdhApiImporter.Helpers
 {
     public class RAVENImportHelper
     {

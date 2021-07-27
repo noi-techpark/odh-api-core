@@ -23,9 +23,7 @@ using NINJA.Parser;
 using System.Net.Http;
 using RAVEN;
 using Microsoft.Extensions.Hosting;
-using OdhApiImporter.Helpers.EBMS;
-using OdhApiImporter.Helpers.NINJA;
-using OdhApiImporter.Helpers.RAVEN;
+using OdhApiImporter.Helpers;
 using OdhApiImporter.Models;
 
 namespace OdhApiImporter.Controllers
@@ -181,6 +179,40 @@ namespace OdhApiImporter.Controllers
                     success = false
                 });
             } 
+        }
+
+        #endregion
+
+        #region SIAG Exposed
+
+        [HttpGet, Route("Siag/Weather/Import")]
+        public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken)
+        {
+            try
+            {
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                var result = await siagimporthelper.SaveWeatherToHistoryTable();
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "all",
+                    message = "Import Weather data succeeded",
+                    recordsupdated = result,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "all",
+                    message = "Import Weather data failed: " + ex.Message,
+                    recordsupdated = "0",
+                    success = false
+                });
+            }
         }
 
         #endregion

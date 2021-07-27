@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OdhApiImporter.Helpers.NINJA
+namespace OdhApiImporter.Helpers
 {
     public class NINJAImportHelper
     {
