@@ -17,12 +17,20 @@ namespace SIAG
         //public const string source = "siag";
         public const string source = "opendata";
 
-        public static async Task<Weather> GetCurrentWeatherAsync(string lang, string xmldir, string siaguser, string siagpswd, bool json = false)
+        #region Weather general
+ 
+        //Gets SIAG Weather Data (RAW DATA)
+        public static async Task<string> GetSiagWeatherData(string lang, string siaguser, string siagpswd, bool json)
         {
-            //Request mochn
+            //Request on Siag Service
             HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source, json);
-            //Content auslesen und XDocument Parsen
-            var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
+            //Reading Content and returning
+            return await weatherresponse.Content.ReadAsStringAsync();
+        }
+
+        //Parses to ODH Format
+        public static async Task<Weather> ParseSiagWeatherDataToODHWeather(string lang, string xmldir, string weatherresponsetask, bool json)
+        {
             var weatherinfo = XDocument.Load(xmldir + "Weather.xml");
 
             if (json)
@@ -33,6 +41,8 @@ namespace SIAG
             XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
             return ParseWeather.ParsemyWeatherResponse(lang, weatherinfo, myweatherresponse, source);
         }
+
+        #endregion
 
         public static async Task<Weather> GetCurrentStationWeatherAsync(string lang, string stationid, string stationidtype, string xmldir, string siaguser, string siagpswd)
         {

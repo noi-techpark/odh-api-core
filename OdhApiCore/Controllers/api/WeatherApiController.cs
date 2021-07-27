@@ -256,7 +256,9 @@ namespace OdhApiCore.Controllers
 
             if(String.IsNullOrEmpty(locfilter))
             {
-                weatherresult = await SIAG.GetWeatherData.GetCurrentWeatherAsync(language, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password, extended);
+                //Get Weather General from Siag and Parse it to ODH Format
+                var weatherresponsetask = await SIAG.GetWeatherData.GetSiagWeatherData(language, settings.SiagConfig.Username, settings.SiagConfig.Password, extended);
+                weatherresult = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather(language, settings.XmlConfig.XmldirWeather, weatherresponsetask, extended);                
             }
             else
             {
