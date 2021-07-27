@@ -19,7 +19,7 @@ namespace DataModel
 
     public class RawDataStore
     {
-        public Int64? id { get; set; }
+        //public Int64? id { get; set; }
         public string type { get; set; }
         public string datasource { get; set; }
         public string sourceinterface { get; set; }

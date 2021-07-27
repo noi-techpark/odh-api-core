@@ -23,8 +23,8 @@ namespace OdhApiImporter.Helpers
         public async Task<string> SaveWeatherToHistoryTable()
         {
             var weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true);
-            var weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true);
-            var weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true);
+            var weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("it", settings.SiagConfig.Username, settings.SiagConfig.Password, true);
+            var weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("en", settings.SiagConfig.Username, settings.SiagConfig.Password, true);
 
             //Save all Responses to rawdata table
 
@@ -42,15 +42,25 @@ namespace OdhApiImporter.Helpers
             rawData.raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren });
             
 
-            var insertresult = await QueryFactory.Query("rawdata")
-                  .InsertAsync(rawData);
+            var insertresultraw = await QueryFactory.Query("rawdata")
+                  .InsertGetIdAsync<int>(rawData);
 
-            return insertresult.ToString();
-
-            //TODO
+            var rawdataid = insertresultraw.ToString();
+            
             //Save parsed Response to measurement history table
-            //weatherresult = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather(language, settings.XmlConfig.XmldirWeather, weatherresponsetask, extended);
+            var odhweatherresultde = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("de", settings.XmlConfig.XmldirWeather, weatherresponsetaskde, true);
+            var odhweatherresultit = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("it", settings.XmlConfig.XmldirWeather, weatherresponsetaskit, true);
+            var odhweatherresulten = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("en", settings.XmlConfig.XmldirWeather, weatherresponsetasken, true);
 
+            //Insert into Measuringhistorytable
+            var insertresultde = await QueryFactory.Query("weatherdatahistory")
+                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_de", data = new JsonRaw(odhweatherresultde), raw = weatherresponsetaskde });
+            var insertresultit = await QueryFactory.Query("weatherdatahistory")
+                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_it", data = new JsonRaw(odhweatherresultit), raw = weatherresponsetaskit });
+            var insertresulten = await QueryFactory.Query("weatherdatahistory")
+                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_en", data = new JsonRaw(odhweatherresulten), raw = weatherresponsetasken });
+
+            return null;
         }
     }
 }
