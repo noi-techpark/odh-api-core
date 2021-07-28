@@ -1479,8 +1479,9 @@ namespace OdhApiCore.Controllers.api
                 var dict = new Dictionary<string, object>();
                 foreach (var (i, name, typeName) in names)
                 {
-                    var value = reader.GetString(i);
-                    dict.Add(name, IsJson(typeName) ? new JRaw(value) : value);
+                    var value = reader.GetValue(i);
+                    //var value = reader.GetString(i);
+                    dict.Add(name, IsJson(typeName) ? new JRaw(value.ToString()) : value);
                 }
                 data.Add(dict);
             }
