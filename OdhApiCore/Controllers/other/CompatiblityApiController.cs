@@ -1457,6 +1457,11 @@ namespace OdhApiCore.Controllers.api
 
     public static class CompatibilityHelpers
     {
+        public static bool ObjectIsNullOrEmpty(this object obj)
+        {
+            return obj == null || obj.ToString() == String.Empty;
+        }
+
         public static List<Dictionary<string, object>> ReadAndParseTOJson(this IDataReader? reader)
         {
             var data = new List<Dictionary<string, object>>();
@@ -1479,8 +1484,9 @@ namespace OdhApiCore.Controllers.api
                 var dict = new Dictionary<string, object>();
                 foreach (var (i, name, typeName) in names)
                 {
-                    var value = reader.GetString(i);
-                    dict.Add(name, IsJson(typeName) ? new JRaw(value) : value);
+                    var value = reader.GetValue(i);
+                    //var value = reader.GetString(i);
+                    dict.Add(name, IsJson(typeName) ? value.ObjectIsNullOrEmpty() ? null : new JRaw(value) : value);
                 }
                 data.Add(dict);
             }
