@@ -19,13 +19,13 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh "docker-compose -f O OdhApiCore/docker-compose.yml build"
+                sh "docker-compose -f O OdhApiImporter/docker-compose.yml build"
             }
         }
     }
     post { 
         always { 
-            sh 'docker-compose -f OdhApiCore/docker-compose.yml down || true'
+            sh 'docker-compose -f OdhApiImporter/docker-compose.yml down || true'
         }
     }
 }

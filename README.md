@@ -63,12 +63,13 @@ Clone the repository
 
 ### using Docker
 
-`docker-compose up` starts the appliaction on http://localhost:60209/
+go into \OdhApiCore\ folder \
+`docker-compose up` starts the odh-api appliaction on http://localhost:60209/
 
 ### using .Net Core CLI
 
 Install .Net Core SDK 5\
-go into \odh-api-core\ folder \
+go into \OdhApiCore\ folder \
 `dotnet run`
 starts the application on 
 https://localhost:5001;

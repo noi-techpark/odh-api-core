@@ -3,10 +3,10 @@ pipeline {
 
     environment {
 	ASPNETCORE_ENVIRONMENT = "Development"
-    DOCKER_PROJECT_NAME = "odh-tourism-api"
-    DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api'
+    DOCKER_PROJECT_NAME = "odh-tourism-importer"
+    DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-importer'
     DOCKER_TAG = "test-$BUILD_NUMBER"
-	SERVER_PORT = "1011"        
+	SERVER_PORT = "1023"        
     PG_CONNECTION = credentials('odh-tourism-api-test2-pg-connection')
 	MSS_USER = credentials('odh-tourism-api-test-mss-user')
 	MSS_PSWD = credentials('odh-tourism-api-test-mss-pswd')
@@ -77,8 +77,8 @@ pipeline {
             steps {
                 sh '''
                     aws ecr get-login --region eu-west-1 --no-include-email | bash
-                    docker-compose --no-ansi -f OdhApiCore/docker-compose.yml build --pull
-                    docker-compose --no-ansi -f OdhApiCore/docker-compose.yml push
+                    docker-compose --no-ansi -f OdhApiImporter/docker-compose.yml build --pull
+                    docker-compose --no-ansi -f OdhApiImporter/docker-compose.yml push
                 '''
             }
         }
@@ -90,14 +90,6 @@ pipeline {
                         (cd infrastructure/ansible && ansible-playbook --limit=test deploy.yml --extra-vars "release_name=${BUILD_NUMBER}")
                     """
                 }
-            }
-        }
-	stage('Generate') {
-            steps {
-                sh """
-                    curl "${API_URL}STA/JsonPoi"
-		    curl "${API_URL}STA/JsonAccommodation"
-                """
             }
         }
     }
