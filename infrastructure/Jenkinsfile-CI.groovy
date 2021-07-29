@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh "docker-compose -f O OdhApiCore/docker-compose.yml build"
+                sh "docker-compose -f OdhApiCore/docker-compose.yml build"
             }
         }
     }
