@@ -17,12 +17,16 @@ namespace DataModel
         public string raw { get; set; }
     }
 
-    public class RawData
+    public class RawDataStore
     {
-        public int id { get; set; }
+        //public Int64? id { get; set; }
         public string type { get; set; }
-        public string source { get; set; }
+        public string datasource { get; set; }
+        public string sourceinterface { get; set; }
         public string sourceid { get; set; }
-        public DateTime timestamp {get;set;}
+        public DateTime importdate { get; set; }
+
+        public string raw { get; set; }
     }
 }
+
