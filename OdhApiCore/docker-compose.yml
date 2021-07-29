@@ -4,8 +4,8 @@ services:
   api:
     image: ${DOCKER_IMAGE:-odh-tourism-api}:${DOCKER_TAG:-latest}
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: OdhApiCore/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80
