@@ -1082,6 +1082,7 @@ namespace DataModel
         public DateTime date { get; set; }
         public string? evolutiontitle { get; set; }
         public string? evolution { get; set; }
+        public string? language { get; set; }
 
         public ICollection<Conditions> Conditions { get; set; }
         public ICollection<Forecast> Forecast { get; set; }

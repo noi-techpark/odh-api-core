@@ -1,0 +1,34 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${DOCKER_IMAGE:-odh-tourism-importer}:${DOCKER_TAG:-latest}
+    build:
+      context: ../
+      dockerfile: OdhApiImporter/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
+      ASPNETCORE_MssConfig__Username: ${MSS_USER}
+      ASPNETCORE_MssConfig__Password: ${MSS_PSWD}
+      ASPNETCORE_LcsConfig__Username: ${LCS_USER}
+      ASPNETCORE_LcsConfig__Password: ${LCS_PSWD}
+      ASPNETCORE_LcsConfig__MessagePassword: ${LCS_MSGPSWD}
+      ASPNETCORE_SiagConfig__Username: ${SIAG_USER}
+      ASPNETCORE_SiagConfig__Password: ${SIAG_PSWD}
+      ASPNETCORE_XmlConfig__XmldirWeather: ${XMLDIR}
+      ASPNETCORE_Xmldir__Xmldir: ${XMLDIR}
+      ASPNETCORE_S3ImageresizerConfig__Url: ${IMG_URL}
+      ASPNETCORE_S3ImageresizerConfig__BucketAccessPoint: ${S3_BUCKET_ACCESSPOINT}
+      ASPNETCORE_S3ImageresizerConfig__AccessKey: ${S3_IMAGEUPLOADER_ACCESSKEY}
+      ASPNETCORE_S3ImageresizerConfig__SecretKey: ${S3_IMAGEUPLOADER_SECRETKEY}
+      ASPNETCORE_OauthServerConfig__Authority: ${OAUTH_AUTORITY}
+      ASPNETCORE_ElasticSearchConfig__ElasticUrl: ${ELK_URL}
+      ASPNETCORE_ElasticSearchConfig__ElasticAuthtoken: ${ELK_TOKEN}
+      ASPNETCORE_JsonConfig__Jsondir: ${JSONPATH}
+      ASPNETCORE_EBMSConfig__EBMSUser: ${EBMS_USER}
+      ASPNETCORE_EBMSConfig__EBMSPassword: ${EBMS_PASS}
+      ASPNETCORE_DataBrowserConfig__Url: ${DATABROWSER_URL}
+    ports:
+      - "60210:80"

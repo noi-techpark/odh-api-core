@@ -77,8 +77,8 @@ pipeline {
             steps {
                 sh '''
                     aws ecr get-login --region eu-west-1 --no-include-email | bash
-                    docker-compose --no-ansi -f docker-compose.yml build --pull
-                    docker-compose --no-ansi -f docker-compose.yml push
+                    docker-compose --no-ansi -f OdhApiCore/docker-compose.yml build --pull
+                    docker-compose --no-ansi -f OdhApiCore/docker-compose.yml push
                 '''
             }
         }

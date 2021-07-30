@@ -676,7 +676,7 @@ namespace OdhApiCore.Controllers.api
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "skiareas");
+                        return await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas");
 
                     case "skiregion":
                         mydata = await GetDataFromRaven.GetRavenData<SkiRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -721,7 +721,16 @@ namespace OdhApiCore.Controllers.api
                         else
                             throw new Exception("No data found!");
 
-                        return await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venue");
+                        return await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venues");
+
+                    case "wine":
+                        mydata = await GetDataFromRaven.GetRavenData<WineLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                        if (mydata != null)
+                            mypgdata = TransformToPGObject.GetPGObject<WineLinked, WineLinked>((WineLinked)mydata, TransformToPGObject.GetWinePGObject);
+                        else
+                            throw new Exception("No data found!");
+
+                        return await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines");
 
                     default:
                         return BadRequest(new { error = "no match found" });
