@@ -6,17 +6,17 @@ EXPOSE 443
 #FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-alpine3.12-amd64 AS build
 WORKDIR /src
-#COPY DataModel/DataModel.csproj DataModel/
-#COPY Helper/Helper.csproj Helper/
-#COPY EBMS/EBMS.csproj EBMS/
-#COPY MSS/MSS.csproj MSS/
-#COPY LCS/LCS.csproj LCS/
-#COPY SIAG/SIAG.csproj SIAG/
-#COPY CDB/CDB.csproj CDB/
-#COPY SuedtirolWein/SuedtirolWein.csproj SuedtirolWein/
-#COPY NINJA/NINJA.csproj NINJA/
-#COPY RAVEN/RAVEN.csproj RAVEN/
-#COPY STA/STA.csproj STA/
+COPY DataModel/DataModel.csproj DataModel/
+COPY Helper/Helper.csproj Helper/
+COPY EBMS/EBMS.csproj EBMS/
+COPY MSS/MSS.csproj MSS/
+COPY LCS/LCS.csproj LCS/
+COPY SIAG/SIAG.csproj SIAG/
+COPY CDB/CDB.csproj CDB/
+COPY SuedtirolWein/SuedtirolWein.csproj SuedtirolWein/
+COPY NINJA/NINJA.csproj NINJA/
+COPY RAVEN/RAVEN.csproj RAVEN/
+COPY STA/STA.csproj STA/
 COPY OdhApiImporter/OdhApiImporter.csproj OdhApiImporter/
 RUN dotnet restore OdhApiImporter/OdhApiImporter.csproj
 COPY . OdhApiImporter/
