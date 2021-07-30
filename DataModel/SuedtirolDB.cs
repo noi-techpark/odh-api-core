@@ -2525,6 +2525,12 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
 
         ////NEW Webcam Properties
+        public string Streamurl { get; set; }
+        public string Previewurl { get; set; }
+
+        public string Source { get; set; }
+
+        ////NEW Webcam Properties
         //public string Streamurl { get; set; }
         //public string Previewurl { get; set; }
         //public DateTime? LastChange { get; set; }
