@@ -3,11 +3,11 @@ pipeline {
 
     environment {
 	ASPNETCORE_ENVIRONMENT = "Development"
-    DOCKER_PROJECT_NAME = "odh-tourism-api"
-    DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api'
-    DOCKER_TAG = "test-$BUILD_NUMBER"
+        DOCKER_PROJECT_NAME = "odh-tourism-api"
+        DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-api'
+        DOCKER_TAG = "test-$BUILD_NUMBER"
 	SERVER_PORT = "1011"        
-    PG_CONNECTION = credentials('odh-tourism-api-test2-pg-connection')
+        PG_CONNECTION = credentials('odh-tourism-api-test2-pg-connection')
 	MSS_USER = credentials('odh-tourism-api-test-mss-user')
 	MSS_PSWD = credentials('odh-tourism-api-test-mss-pswd')
 	LCS_USER = credentials('odh-tourism-api-test-lcs-user')
@@ -44,32 +44,32 @@ pipeline {
                     echo 'DOCKER_IMAGE=${DOCKER_IMAGE}' >> .env
                     echo 'DOCKER_TAG=${DOCKER_TAG}' >> .env
                     echo 'SERVER_PORT=${SERVER_PORT}' >> .env         
-		            echo 'ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}' >> .env         
+		    echo 'ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}' >> .env         
                     echo 'PG_CONNECTION=${PG_CONNECTION}' >> .env
-		            echo 'MSS_USER=${MSS_USER}' >> .env
-		            echo 'MSS_PSWD=${MSS_PSWD}' >> .env
-		            echo 'LCS_USER=${LCS_USER}' >> .env
-		            echo 'LCS_PSWD=${LCS_PSWD}' >> .env
-		            echo 'LCS_MSGPSWD=${LCS_MSGPSWD}' >> .env
-		            echo 'SIAG_USER=${SIAG_USER}' >> .env
-		            echo 'SIAG_PSWD=${SIAG_PSWD}' >> .env
-		            echo 'XMLDIR=${XMLDIR}' >> .env
-		            echo 'IMG_URL=${IMG_URL}' >> .env
-		            echo 'DOC_URL=${DOC_URL}' >> .env
-		            echo 'S3_BUCKET_ACCESSPOINT=${S3_BUCKET_ACCESSPOINT}' >> .env
-		            echo 'S3_IMAGEUPLOADER_ACCESSKEY=${S3_IMAGEUPLOADER_ACCESSKEY}' >> .env
-		            echo 'S3_IMAGEUPLOADER_SECRETKEY=${S3_IMAGEUPLOADER_SECRETKEY}' >> .env
-		            echo 'OAUTH_AUTORITY=${OAUTH_AUTORITY}' >> .env
-		            echo 'ELK_URL=${ELK_URL}' >> .env
-		            echo 'ELK_TOKEN=${ELK_TOKEN}' >> .env
-		            echo 'JSONPATH=${JSONPATH}' >> .env
-		            echo 'EBMS_USER=${EBMS_USER}' >> .env
-		            echo 'EBMS_PASS=${EBMS_PASS}' >> .env
-		            echo 'DATABROWSER_URL=${DATABROWSER_URL}' >> .env		
-		            echo 'RAVEN_SERVICEURL=${RAVEN_SERVICEURL}' >> .env
-		            echo 'RAVEN_USER=${RAVEN_USER}' >> .env
-		            echo 'RAVEN_PSWD=${RAVEN_PSWD}' >> .env
-		            echo 'API_URL=${API_URL}' >> .env
+		    echo 'MSS_USER=${MSS_USER}' >> .env
+		    echo 'MSS_PSWD=${MSS_PSWD}' >> .env
+		    echo 'LCS_USER=${LCS_USER}' >> .env
+		    echo 'LCS_PSWD=${LCS_PSWD}' >> .env
+		    echo 'LCS_MSGPSWD=${LCS_MSGPSWD}' >> .env
+		    echo 'SIAG_USER=${SIAG_USER}' >> .env
+		    echo 'SIAG_PSWD=${SIAG_PSWD}' >> .env
+		    echo 'XMLDIR=${XMLDIR}' >> .env
+		    echo 'IMG_URL=${IMG_URL}' >> .env
+		    echo 'DOC_URL=${DOC_URL}' >> .env
+		    echo 'S3_BUCKET_ACCESSPOINT=${S3_BUCKET_ACCESSPOINT}' >> .env
+		    echo 'S3_IMAGEUPLOADER_ACCESSKEY=${S3_IMAGEUPLOADER_ACCESSKEY}' >> .env
+		    echo 'S3_IMAGEUPLOADER_SECRETKEY=${S3_IMAGEUPLOADER_SECRETKEY}' >> .env
+		    echo 'OAUTH_AUTORITY=${OAUTH_AUTORITY}' >> .env
+		    echo 'ELK_URL=${ELK_URL}' >> .env
+		    echo 'ELK_TOKEN=${ELK_TOKEN}' >> .env
+		    echo 'JSONPATH=${JSONPATH}' >> .env
+		    echo 'EBMS_USER=${EBMS_USER}' >> .env
+		    echo 'EBMS_PASS=${EBMS_PASS}' >> .env
+		    echo 'DATABROWSER_URL=${DATABROWSER_URL}' >> .env		
+		    echo 'RAVEN_SERVICEURL=${RAVEN_SERVICEURL}' >> .env
+		    echo 'RAVEN_USER=${RAVEN_USER}' >> .env
+		    echo 'RAVEN_PSWD=${RAVEN_PSWD}' >> .env
+		    echo 'API_URL=${API_URL}' >> .env
                 """
             }
         }
