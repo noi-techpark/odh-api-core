@@ -20,7 +20,7 @@ COPY RAVEN/RAVEN.csproj RAVEN/
 COPY STA/STA.csproj STA/
 COPY OdhApiImporter/OdhApiImporter.csproj OdhApiImporter/
 RUN dotnet restore OdhApiImporter/OdhApiImporter.csproj
-COPY . OdhApiImporter/
+COPY . .
 WORKDIR /src/OdhApiImporter
 RUN dotnet build OdhApiImporter.csproj -c Release -o /app
 
