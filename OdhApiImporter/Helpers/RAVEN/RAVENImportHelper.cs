@@ -217,7 +217,17 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venue");
+                    return await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venues");
+
+
+                case "wine":
+                    mydata = await GetDataFromRaven.GetRavenData<WineLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    if (mydata != null)
+                        mypgdata = TransformToPGObject.GetPGObject<WineLinked, WineLinked>((WineLinked)mydata, TransformToPGObject.GetWinePGObject);
+                    else
+                        throw new Exception("No data found!");
+
+                    return await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines");
 
                 default:
                     throw new Exception("no match found");
