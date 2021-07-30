@@ -7,6 +7,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-alpine3.12-amd64 AS build
 WORKDIR /src
 COPY DataModel/DataModel.csproj DataModel/
+COPY RawQueryParser/RawQueryParser.fsproj RawQueryParser/
 COPY Helper/Helper.csproj Helper/
 COPY EBMS/EBMS.csproj EBMS/
 COPY MSS/MSS.csproj MSS/
