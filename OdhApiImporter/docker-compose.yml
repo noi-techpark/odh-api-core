@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  api:
+  importer:
     image: ${DOCKER_IMAGE:-odh-tourism-importer}:${DOCKER_TAG:-latest}
     build:
       context: ../
