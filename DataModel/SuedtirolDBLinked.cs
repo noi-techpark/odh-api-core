@@ -1099,6 +1099,9 @@ namespace DataModel
                 return this.RegionIds != null ? this.RegionIds.Select(x => new RegionLink() { Id = x, Self = ODHConstant.ApplicationURL + "Region/" + x }).ToList() : new List<RegionLink>();
             }
         }
+
+        //Overwrites The LocationInfo
+        public new LocationInfoLinked LocationInfo { get; set; }
     }
 
     public class SkiRegionLinked : SkiRegion, IMetaData

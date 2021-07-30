@@ -240,7 +240,7 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("articles")
                         .Select("data")
-                        .Where("id", id)
+                        .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
