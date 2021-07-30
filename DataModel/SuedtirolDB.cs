@@ -536,6 +536,10 @@ namespace DataModel
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+
+        //IDM Mapping
+        public IDictionary<string, string> IDMCategoryMapping { get; set; }
+        public Nullable<bool> DisplayAsCategory { get; set; }
     }
 
     #endregion
