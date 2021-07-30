@@ -260,7 +260,7 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("smgpois")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id.ToLower());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

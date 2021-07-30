@@ -250,7 +250,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("gastronomies")
                         .Select("data")
-                        .Where("id", id);
+                        .Where("id", id.ToUpper());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
