@@ -536,6 +536,10 @@ namespace DataModel
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+
+        //IDM Mapping
+        public IDictionary<string, string> IDMCategoryMapping { get; set; }
+        public Nullable<bool> DisplayAsCategory { get; set; }
     }
 
     #endregion
@@ -2519,6 +2523,12 @@ namespace DataModel
         public GpsInfo? GpsInfo { get; set; }
         //Neu
         public Nullable<int> ListPosition { get; set; }
+
+        ////NEW Webcam Properties
+        public string Streamurl { get; set; }
+        public string Previewurl { get; set; }
+
+        public string Source { get; set; }
 
         ////NEW Webcam Properties
         //public string Streamurl { get; set; }

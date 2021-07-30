@@ -6,7 +6,7 @@ pipeline {
         DOCKER_PROJECT_NAME = "odh-tourism-importer"
         DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-importer'
         DOCKER_TAG = "test-$BUILD_NUMBER"
-	SERVER_PORT = "1023"        
+	SERVER_PORT = "1029"        
         PG_CONNECTION = credentials('odh-tourism-api-test2-pg-connection')
 	MSS_USER = credentials('odh-tourism-api-test-mss-user')
 	MSS_PSWD = credentials('odh-tourism-api-test-mss-pswd')
@@ -87,7 +87,7 @@ pipeline {
                sshagent(['jenkins-ssh-key']) {
                     sh """
                         (cd infrastructure/ansible && ansible-galaxy install -f -r requirements.yml)
-                        (cd infrastructure/ansible && ansible-playbook --limit=test deploy.yml --extra-vars "release_name=${BUILD_NUMBER}")
+                        (cd infrastructure/ansible && ansible-playbook --limit=test deploy-importer.yml --extra-vars "release_name=${BUILD_NUMBER}")
                     """
                 }
             }
