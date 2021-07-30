@@ -107,14 +107,14 @@ namespace OdhApiCore.Controllers.api
             return Ok(date);
         }
 
-        //Not working
-        [HttpGet, Route("TestDateTimeConversion6")]
-        public IActionResult GetDatetimeConversiont6()
-        {            
-            var date = Convert.ToDateTime("31/12/2020T18:00:00");
+        ////Not working
+        //[HttpGet, Route("TestDateTimeConversion6")]
+        //public IActionResult GetDatetimeConversiont6()
+        //{            
+        //    var date = Convert.ToDateTime("31/12/2020T18:00:00");
 
-            return Ok(date);
-        }
+        //    return Ok(date);
+        //}
 
 
         //[TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
