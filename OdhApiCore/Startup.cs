@@ -433,6 +433,7 @@ namespace OdhApiCore
                    
                     var urlparameters = context.Request.QueryString.Value != null ? context.Request.QueryString.HasValue ? context.Request.QueryString.Value.Replace("?", "") : "" : "";
 
+                    //To check
                     var remoteip = RemoteIpHelper.GetRequestIP(context, true);
 
                     HttpRequestLog httplog = new HttpRequestLog()
