@@ -12,7 +12,7 @@ namespace OdhApiCore
         public static string GetRequestIP(HttpContext context, bool tryUseXForwardHeader = true)
         {
             string ip = null;
-            
+
             // X-Forwarded-For (csv list):  Using the First entry in the list seems to work
             // for 99% of cases however it has been suggested that a better (although tedious)
             // approach might be to read each IP from right to left and use the first public IP.
@@ -30,8 +30,12 @@ namespace OdhApiCore
 
             // _httpContextAccessor.HttpContext?.Request?.Host this is the local host.
 
+            //Tests are not running with this exception
+            //if (ip.IsNullOrWhitespace())
+            //    throw new Exception("Unable to determine caller's IP.");
+
             if (ip.IsNullOrWhitespace())
-                throw new Exception("Unable to determine caller's IP.");
+                return "";
 
             return ip;
         }

@@ -165,8 +165,6 @@ $RECYCLE.BIN/
 .ionide
 
 /OdhApiCore/wwwroot/json
-/OdhApiCoreTests/coverage.json
-/OdhApiCoreTests
 /OdhApiCore/STAAccommodations_de.json
 /OdhApiCore/STAAccommodations_en.json
 /OdhApiCore/STAAccommodations_it.json
