@@ -3,9 +3,11 @@
     "OdhApiImporter": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
+      "launchUrl": "",
       "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:7001;http://localhost:7000"
     }
   }
 }
