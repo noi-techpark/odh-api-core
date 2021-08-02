@@ -454,14 +454,6 @@ namespace OdhApiCore
 
                     //Log.Information(output);
                 }
-               
-           
-                //if (context.Response.StatusCode == 404)
-                //{
-                //    //TODO
-                //    //context.Request.Path = "/Home";
-                //    //await next();
-                //}
             });
 
             //REWRITE, REDIRECT RULES
