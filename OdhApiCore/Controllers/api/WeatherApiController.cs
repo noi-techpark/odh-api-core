@@ -79,7 +79,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetWeatherHistory(
             uint pagenumber = 1,
             PageSize pagesize = null!, 
-            string? language = "en",
+            string? language = null,
             string? idlist = null,
             string? locfilter = null,
             string? datefrom = null,
@@ -100,7 +100,7 @@ namespace OdhApiCore.Controllers
             try
             {                
                 return await GetWeatherHistoryList(
-                    pagenumber: pagenumber, pagesize: pagesize, language: language ?? "en", 
+                    pagenumber: pagenumber, pagesize: pagesize, language: language, 
                     idfilter: idlist, locfilter: locfilter, datefrom: datefrom, dateto: dateto,
                     lastchange: lastchange, searchfilter: searchfilter, seed: seed,
                     fields: fields ?? Array.Empty<string>(), null, rawfilter, rawsort, removenullvalues, cancellationToken);
@@ -426,13 +426,14 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
-                        .From("weatherhistory")
+                        .From("weatherdatahistory")
                         .WeatherHistoryWhereExpression(
                             languagelist: myweatherhelper.languagelist, idlist: myweatherhelper.idlist, sourcelist: new List<string>(), begindate: myweatherhelper.datefrom,
                             enddate: myweatherhelper.dateto, searchfilter: searchfilter, language: language, lastchange: myweatherhelper.lastchange,
-                            filterClosedData: FilterClosedData)
+                            filterClosedData: false)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//
 
 
                 var data =
@@ -443,7 +444,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
                 return dataTransformed;
