@@ -66,6 +66,9 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Suedtirol Weather HISTORY
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
+        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="language">Language</param>
         /// <param name="datefilter">DateFilter Format dd/MM/yyyy</param>
         /// <returns>Weather Object</returns>
@@ -74,8 +77,17 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("WeatherHistory")]
         public async Task<ActionResult<Weather>> GetWeatherHistory(
+            uint pagenumber = 1,
+            PageSize pagesize = null!, 
             string? language = "en",
-            string? datefilter = null,            
+            string? datefrom = null,
+            string? dateto = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             try
