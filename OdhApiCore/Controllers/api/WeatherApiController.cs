@@ -64,6 +64,32 @@ namespace OdhApiCore.Controllers
         }
 
         /// <summary>
+        /// GET Suedtirol Weather HISTORY
+        /// </summary>
+        /// <param name="language">Language</param>
+        /// <param name="datefilter">DateFilter Format dd/MM/yyyy</param>
+        /// <returns>Weather Object</returns>
+        [ProducesResponseType(typeof(Weather), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("WeatherHistory")]
+        public async Task<ActionResult<Weather>> GetWeatherHistory(
+            string? language = "en",
+            string? datefilter = null,            
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return null;
+                //return await Get(language ?? "en", locfilter, extended, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// GET District Weather LIVE
         /// </summary>
         /// <param name="language">Language</param>
