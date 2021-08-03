@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers
 {
     /// <summary>
-    /// WebcamInfo Api (data provided by LTS ActivityData) SOME DATA Available as OPENDATA
+    /// Weather Api (data provided by SIAG, LTS) SOME DATA Available as OPENDATA
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
