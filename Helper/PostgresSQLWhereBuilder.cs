@@ -484,6 +484,31 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
+        public static Query WeatherHistoryWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
+             DateTime? begindate, DateTime? enddate, string? searchfilter,
+            string? language, string? lastchange, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, sourcelist,
+                begindate,
+                enddate, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .SourceFilter_GeneratedColumn(sourcelist)
+                //.ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                //.OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter_GeneratedColumn(lastchange)
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+        }
+
         //Return Where and Parameters for Measuringpoint
         public static Query MeasuringpointWhereExpression(
             this Query query, 
@@ -516,7 +541,7 @@ namespace Helper
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
-        //Return Where and Parameters for Measuringpoint
+        //Return Where and Parameters for Eventshort
         public static Query EventShortWhereExpression(
             this Query query, 
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,

@@ -76,24 +76,31 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("WeatherHistory")]
-        public async Task<ActionResult<Weather>> GetWeatherHistory(
+        public async Task<IActionResult> GetWeatherHistory(
             uint pagenumber = 1,
             PageSize pagesize = null!, 
             string? language = "en",
+            string? idlist = null,
+            string? locfilter = null,
             string? datefrom = null,
             string? dateto = null,
+            string? seed = null,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
+            string? lastchange = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
             try
-            {
-                return null;
-                //return await Get(language ?? "en", locfilter, extended, cancellationToken);
+            {                
+                return await GetWeatherHistoryList(pagenumber, pagesize, language ?? "en", idlist, locfilter, datefrom, dateto, lastchange, searchfilter, seed,
+                    fields ?? Array.Empty<string>(), null, rawfilter, rawsort, removenullvalues, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -389,6 +396,55 @@ namespace OdhApiCore.Controllers
         {
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
             return Ok(weatherresult);
+        }
+
+        /// GET Suedtirol Weather from History Table
+        private Task<IActionResult> GetWeatherHistoryList(
+           uint pagenumber, int? pagesize, 
+           string? language,
+           string? idfilter,
+           string? locfilter,
+           string? datefrom,
+           string? dateto,
+           string? lastchange,
+           string? searchfilter,
+           string? seed,
+           string[] fields,
+           PGGeoSearchResult geosearchresult,
+           string? rawfilter,
+           string? rawsort,
+           bool removenullvalues = false,
+           CancellationToken cancellationToken = default)
+        {
+            return DoAsyncReturn(async () =>
+            {                
+                WeatherHelper myweatherhelper = await WeatherHelper.CreateAsync(QueryFactory, idfilter, locfilter, language, datefrom, dateto, lastchange, cancellationToken);
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From("weatherhistory")
+                        .WeatherHistoryWhereExpression(
+                            languagelist: myweatherhelper.languagelist, idlist: myweatherhelper.idlist, sourcelist: new List<string>(), begindate: myweatherhelper.datefrom,
+                            enddate: myweatherhelper.dateto, searchfilter: searchfilter, language: language, lastchange: myweatherhelper.lastchange,
+                            filterClosedData: FilterClosedData)
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
+
+
+                var data =
+                        await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: (int)pagesize);
+
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
+            });
         }
 
         #endregion
