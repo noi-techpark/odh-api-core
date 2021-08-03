@@ -53,14 +53,31 @@ namespace OdhApiImporter.Helpers
             var odhweatherresulten = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("en", settings.XmlConfig.XmldirWeather, weatherresponsetasken, true);
 
             //Insert into Measuringhistorytable
-            var insertresultde = await QueryFactory.Query("weatherdatahistory")
-                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_de", data = new JsonRaw(odhweatherresultde), raw = weatherresponsetaskde });
-            var insertresultit = await QueryFactory.Query("weatherdatahistory")
-                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_it", data = new JsonRaw(odhweatherresultit), raw = weatherresponsetaskit });
-            var insertresulten = await QueryFactory.Query("weatherdatahistory")
-                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_en", data = new JsonRaw(odhweatherresulten), raw = weatherresponsetasken });
+            //var insertresultde = await QueryFactory.Query("weatherdatahistory")
+            //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_de", data = new JsonRaw(odhweatherresultde), raw = weatherresponsetaskde });
+            //var insertresultit = await QueryFactory.Query("weatherdatahistory")
+            //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_it", data = new JsonRaw(odhweatherresultit), raw = weatherresponsetaskit });
+            //var insertresulten = await QueryFactory.Query("weatherdatahistory")
+            //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_en", data = new JsonRaw(odhweatherresulten), raw = weatherresponsetasken });
 
-            return null;
+            var myweatherhistory = new WeatherHistory();
+            myweatherhistory.Weather.Add("de", odhweatherresultde);
+            myweatherhistory.Weather.Add("it", odhweatherresultit);
+            myweatherhistory.Weather.Add("en", odhweatherresulten);
+
+            var insertresult = await QueryFactory.Query("weatherdatahistory")
+                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren }) });            
+
+            return String.Format("id: {0}, datetime: {1}", rawdataid, DateTime.Now.ToShortDateString());
         }
+    }
+
+    public class WeatherHistory
+    {
+        public WeatherHistory()
+        {
+            Weather = new Dictionary<string, Weather>();
+        }
+        public IDictionary<string, Weather> Weather { get; set; }
     }
 }
