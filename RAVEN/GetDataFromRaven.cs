@@ -16,7 +16,7 @@ namespace RAVEN
             {
                 var requesturl = odhravenserviceurl + type + "/" + id;
                 if (!String.IsNullOrEmpty(overwriterequesturl))
-                    requesturl = odhravenserviceurl + type + overwriterequesturl + id; 
+                    requesturl = odhravenserviceurl + overwriterequesturl + id; 
 
                 CredentialCache wrCache = new CredentialCache();
                 wrCache.Add(new Uri(requesturl), "Basic", new NetworkCredential(username, password));
