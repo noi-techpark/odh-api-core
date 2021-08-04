@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers
 {
     /// <summary>
-    /// WebcamInfo Api (data provided by LTS ActivityData) SOME DATA Available as OPENDATA
+    /// Weather Api (data provided by SIAG, LTS) SOME DATA Available as OPENDATA
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
@@ -56,6 +56,54 @@ namespace OdhApiCore.Controllers
             try
             {
                 return await Get(language ?? "en", locfilter, extended, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// GET Suedtirol Weather HISTORY
+        /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
+        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
+        /// <param name="language">Language</param>
+        /// <param name="datefilter">DateFilter Format dd/MM/yyyy</param>
+        /// <returns>Weather Object</returns>
+        [ProducesResponseType(typeof(Weather), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("WeatherHistory")]
+        public async Task<IActionResult> GetWeatherHistory(
+            uint pagenumber = 1,
+            PageSize pagesize = null!, 
+            string? language = null,
+            string? idlist = null,
+            string? locfilter = null,
+            string? datefrom = null,
+            string? dateto = null,
+            string? seed = null,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? lastchange = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {                
+                return await GetWeatherHistoryList(
+                    pagenumber: pagenumber, pagesize: pagesize, language: language, 
+                    idfilter: idlist, locfilter: locfilter, datefrom: datefrom, dateto: dateto,
+                    lastchange: lastchange, searchfilter: searchfilter, seed: seed,
+                    fields: fields ?? Array.Empty<string>(), null, rawfilter, rawsort, removenullvalues, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -351,6 +399,56 @@ namespace OdhApiCore.Controllers
         {
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
             return Ok(weatherresult);
+        }
+
+        /// GET Suedtirol Weather from History Table
+        private Task<IActionResult> GetWeatherHistoryList(
+           uint pagenumber, int? pagesize, 
+           string? language,
+           string? idfilter,
+           string? locfilter,
+           string? datefrom,
+           string? dateto,
+           string? lastchange,
+           string? searchfilter,
+           string? seed,
+           string[] fields,
+           PGGeoSearchResult geosearchresult,
+           string? rawfilter,
+           string? rawsort,
+           bool removenullvalues = false,
+           CancellationToken cancellationToken = default)
+        {
+            return DoAsyncReturn(async () =>
+            {                
+                WeatherHelper myweatherhelper = await WeatherHelper.CreateAsync(QueryFactory, idfilter, locfilter, language, datefrom, dateto, lastchange, cancellationToken);
+
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From("weatherdatahistory")
+                        .WeatherHistoryWhereExpression(
+                            languagelist: myweatherhelper.languagelist, idlist: myweatherhelper.idlist, sourcelist: new List<string>(), begindate: myweatherhelper.datefrom,
+                            enddate: myweatherhelper.dateto, searchfilter: searchfilter, language: language, lastchange: myweatherhelper.lastchange,
+                            filterClosedData: false)
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, geosearchresult, rawsort);
+                //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//
+
+
+                var data =
+                        await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: (int)pagesize);
+
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                    );
+
+                return dataTransformed;
+            });
         }
 
         #endregion

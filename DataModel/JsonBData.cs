@@ -14,7 +14,7 @@ namespace DataModel
     {
         public string id { get; set; }
         public JsonRaw data { get; set; }
-        public string raw { get; set; }
+        public Int32 rawdataid { get; set; }
     }
 
     public class RawDataStore

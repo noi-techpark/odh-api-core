@@ -1,0 +1,236 @@
+﻿<BezirkWeather>
+  <Bezirk ID="1" Name="Etschtal/Überetsch/Unterland">
+    <TVList>
+      <!-- Bozen -->
+      <TV ID="5228229451CA11D18F1400A02427D15E"></TV>
+      <!-- Aldein -->
+      <TV ID="5228228D51CA11D18F1400A02427D15E"></TV>
+      <!-- Truden -->
+      <TV ID="522822F251CA11D18F1400A02427D15E"></TV>
+      <!-- Castelfeder -->
+      <TV ID="522822C851CA11D18F1400A02427D15E"></TV>
+      <!-- Leifers -->
+      <TV ID="522822B351CA11D18F1400A02427D15E"></TV>
+      <!-- Unterland -->
+      <TV ID="522822A351CA11D18F1400A02427D15E"></TV>
+      <!-- Tramin -->
+      <TV ID="522822EE51CA11D18F1400A02427D15E"></TV>
+      <!-- Kaltern -->
+      <TV ID="5228229951CA11D18F1400A02427D15E"></TV>
+      <!-- Andrian -->
+      <TV ID="5228228E51CA11D18F1400A02427D15E"></TV>
+      <!-- Terlan -->
+      <TV ID="522822ED51CA11D18F1400A02427D15E"></TV>
+      <!-- Mölten ?? -->
+      <TV ID="522822BD51CA11D18F1400A02427D15E"></TV>
+      <!-- Jenesien -->
+      <TV ID="522822DB51CA11D18F1400A02427D15E"></TV>
+      <!-- Eppan -->
+      <TV ID="5228229051CA11D18F1400A02427D15E"></TV>
+    </TVList>
+    <RegionList>
+      <!-- Südtirols Süden -->
+      <Region ID="D2633A1CC24E11D18F1B006097B8970B"></Region>      
+    </RegionList>
+  </Bezirk>
+  <Bezirk ID="2" Name="Burggrafenamt">
+    <TVList>
+      <!-- Naturns -->
+      <TV ID="522822C451CA11D18F1400A02427D15E"></TV>
+      <!-- Partschins -->
+      <TV ID="522822CA51CA11D18F1400A02427D15E"></TV>
+      <!-- Passeier -->
+      <TV ID="522822DC51CA11D18F1400A02427D15E"></TV>
+      <!-- Marling -->
+      <TV ID="522822BB51CA11D18F1400A02427D15E"></TV>
+      <!-- Algund -->
+      <TV ID="522822B151CA11D18F1400A02427D15E"></TV>
+      <!-- Lana Burgstall -->
+      <TV ID="522822B451CA11D18F1400A02427D15E"></TV>
+      <!-- Nals -->
+      <TV ID="522822C351CA11D18F1400A02427D15E"></TV>
+      <!-- Hafling -->
+      <TV ID="5228229151CA11D18F1400A02427D15E"></TV>
+      <!-- Ulten -->
+      <TV ID="522822F551CA11D18F1400A02427D15E"></TV>
+      <!-- Deutschnonsberg -->
+      <TV ID="522822B651CA11D18F1400A02427D15E"></TV>
+      <!-- Dorf Tirol -->
+      <TV ID="522822F151CA11D18F1400A02427D15E"></TV>      
+      <!-- Tisens Prissian -->
+      <TV ID="522822EF51CA11D18F1400A02427D15E"></TV>
+      <!-- Meran -->
+      <TV ID="522822BE51CA11D18F1400A02427D15E"></TV>
+      <!-- Schenna -->
+      <TV ID="522822E351CA11D18F1400A02427D15E"></TV>      
+    </TVList>
+    <RegionList>
+      <!-- Meraner Land -->
+      <Region ID="D2633A20C24E11D18F1B006097B8970B"></Region>     
+    </RegionList>
+  </Bezirk>
+  <Bezirk ID="3" Name="Vinschgau">
+    <TVList>
+      <!-- Prad -->
+      <TV ID="93FC0A599C214E4585C720C50FE34949"></TV>
+      <!-- Schlanders Laas -->
+      <TV ID="522822E951CA11D18F1400A02427D15E"></TV>
+      <!-- Mals -->
+      <TV ID="522822B951CA11D18F1400A02427D15E"></TV>
+      <!-- Kastelbell Tschars -->
+      <TV ID="5228229B51CA11D18F1400A02427D15E"></TV>
+      <!-- Reschenpass -->
+      <TV ID="522822A651CA11D18F1400A02427D15E"></TV>
+      <!-- Latsch -->
+      <TV ID="522822B051CA11D18F1400A02427D15E"></TV>
+      <!-- Ortlergebiet -->
+      <TV ID="522822EB51CA11D18F1400A02427D15E"></TV>
+      <!-- Schnals -->
+      <TV ID="522822E751CA11D18F1400A02427D15E"></TV>
+    </TVList>
+    <RegionList>
+      <Region ID="D2633A24C24E11D18F1B006097B8970B"></Region>
+    </RegionList>
+  </Bezirk>
+  <Bezirk ID="4" Name="Eisacktal und Sarntal">
+    <TVList>
+      <!-- Lajen -->
+      <TV ID="522822B251CA11D18F1400A02427D15E"></TV>
+      <!-- Klausen -->
+      <TV ID="522822A151CA11D18F1400A02427D15E"></TV>
+      <!-- Brixen -->
+      <TV ID="5228229751CA11D18F1400A02427D15E"></TV>
+      <!-- Natz Schabs -->
+      <TV ID="522822C551CA11D18F1400A02427D15E"></TV>
+      <!-- Villnöss -->
+      <TV ID="522822AC51CA11D18F1400A02427D15E"></TV>
+      <!-- Rodeneck -->
+      <TV ID="522822D851CA11D18F1400A02427D15E"></TV>
+      <!-- Ritten -->
+      <TV ID="522822D451CA11D18F1400A02427D15E"></TV>
+      <!-- Sarntal -->
+      <TV ID="522822E251CA11D18F1400A02427D15E"></TV>      
+    </TVList>
+    <RegionList>
+      <!-- Eisacktal -->
+      <Region ID="D2633A1DC24E11D18F1B006097B8970B"></Region>
+	  <!--Villnöss-->
+      <Region ID="D2633AAAA345F18F1A006096B4770A"></Region>
+    </RegionList>
+  </Bezirk>
+  <Bezirk ID="5" Name="Wipptal">
+    <TVList>
+      <!-- STerzing -->
+      <TV ID="522822FF51CA11D18F1400A02427D15E"></TV>
+      <!-- Gossensass -->
+      <TV ID="5228229651CA11D18F1400A02427D15E"></TV>
+      <!-- Ratschings -->
+      <TV ID="522822D151CA11D18F1400A02427D15E"></TV>      
+    </TVList>
+    <RegionList>      
+    </RegionList>
+  </Bezirk>
+  <Bezirk ID="6" Name="Pustertal/Dolomiten">
+    <TVList>
+      <!-- Gitschberg Jochtal ? -->
+      <TV ID="522822D751CA11D18F1400A02427D15E"></TV>
+      <!-- Lüsen -->
+      <TV ID="522822B751CA11D18F1400A02427D15E"></TV>
+      <!-- Niederdorf -->
+      <TV ID="522822FD51CA11D18F1400A02427D15E"></TV>
+      <!-- Bruneck -->
+      <TV ID="5228229851CA11D18F1400A02427D15E"></TV>
+      <!-- Sand in Taufers -->
+      <TV ID="5228229A51CA11D18F1400A02427D15E"></TV>
+      <!-- Kiens -->
+      <TV ID="522822A051CA11D18F1400A02427D15E"></TV>
+      <!-- Antholz -->
+      <TV ID="522822D351CA11D18F1400A02427D15E"></TV>
+      <!-- Ahrntal -->
+      <TV ID="522822F751CA11D18F1400A02427D15E"></TV>
+      <!-- Gsieser Tal -->
+      <TV ID="522822F951CA11D18F1400A02427D15E"></TV>
+      <!-- Terenten -->
+      <TV ID="522822EC51CA11D18F1400A02427D15E"></TV>
+      <!-- Olang -->
+      <TV ID="522822F651CA11D18F1400A02427D15E"></TV>
+    </TVList>
+    <RegionList>
+      <!-- Kronplatz -->
+      <Region ID="D2633A1BC24E11D18F1B006097B8970B"></Region>
+      <!-- Hochpustertal -->
+      <Region ID="D2633A1FC24E11D18F1B006097B8970B"></Region>      
+    </RegionList>
+  </Bezirk>
+  <Bezirk ID="7" Name="Ladinien-Dolomiten">
+    <TVList>
+      <!-- Wolkenstein -->
+      <TV ID="522822E651CA11D18F1400A02427D15E"></TV>
+      <!-- St. Ulrich -->
+      <TV ID="522822C951CA11D18F1400A02427D15E"></TV>
+      <!-- ST. Christina -->
+      <TV ID="522822E151CA11D18F1400A02427D15E"></TV>
+      <!-- La Val -->
+      <TV ID="5228230151CA11D18F1400A02427D15E"></TV>
+      <!-- La Villa -->
+      <TV ID="5228229251CA11D18F1400A02427D15E"></TV>
+      <!-- St. Martin in Thurn -->
+      <TV ID="522822DE51CA11D18F1400A02427D15E"></TV>
+      <!-- ST. Vigil im Enneberg -->
+      <TV ID="522822BA51CA11D18F1400A02427D15E"></TV>
+      <!-- Sexten -->
+      <TV ID="522822E851CA11D18F1400A02427D15E"></TV>
+      <!-- Innichen -->
+      <TV ID="522822DA51CA11D18F1400A02427D15E"></TV>
+      <!-- Toblach -->
+      <TV ID="522822A751CA11D18F1400A02427D15E"></TV>
+      <!-- Corvara -->
+      <TV ID="522822A551CA11D18F1400A02427D15E"></TV>
+      <!-- Pragser Tal -->
+      <TV ID="5228229551CA11D18F1400A02427D15E"></TV>
+      <!-- Seiser Alm ?? -->
+      <TV ID="5228229E51CA11D18F1400A02427D15E"></TV>
+      <!-- Völs ?? -->
+      <TV ID="522822AA51CA11D18F1400A02427D15E"></TV>
+      <!-- Seis ?? -->
+      <TV ID="5228229C51CA11D18F1400A02427D15E"></TV>
+      <!-- Kastelruth ?? -->
+      <TV ID="5228229D51CA11D18F1400A02427D15E"></TV>
+      <!-- Steinegg -->
+      <TV ID="522822A251CA11D18F1400A02427D15E"></TV>
+      <!-- Welschnofen -->
+      <TV ID="522822C651CA11D18F1400A02427D15E"></TV>
+      <!-- Deutschnofen -->
+      <TV ID="522822C751CA11D18F1400A02427D15E"></TV>
+      <!-- Tiers -->
+      <TV ID="522822F051CA11D18F1400A02427D15E"></TV>
+    </TVList>
+    <RegionList>
+      <!-- Gröden -->
+      <Region ID="D2633A1EC24E11D18F1B006097B8970B"></Region>
+      <!-- Alta Badia -->      
+      <Region ID="D2633A26C24E11D18F1B006097B8970B"></Region>
+      <!-- Seiser Alm -->
+      <Region ID="D2633A27C24E11D18F1B006097B8970B"></Region>
+      <!-- Eggental -->
+      <Region ID="D2633A21C24E11D18F1B006097B8970B"></Region>
+    </RegionList>
+  </Bezirk>
+</BezirkWeather>
+
+<!--https://wetter.ws.siag.it/Agriculture_V1.svc/web/getLastBulletin?lang=<sprache>
+  &dist=<id bezirk="">
+
+    <sprache>
+      de = deutsch
+      it = italiano
+      en = english
+
+      <id bezirk="">
+1 = Etschtal/Überetsch/Unterland
+2 = Burggrafenamt
+3 = Vinschgau
+4 = Eisacktal und Sarntal 
+5 = Wipptal
+6 = Pustertal/Dolomiten
+7 = Ladinien-Dolomiten-->

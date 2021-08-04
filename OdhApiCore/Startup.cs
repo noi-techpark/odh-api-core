@@ -433,6 +433,7 @@ namespace OdhApiCore
                    
                     var urlparameters = context.Request.QueryString.Value != null ? context.Request.QueryString.HasValue ? context.Request.QueryString.Value.Replace("?", "") : "" : "";
 
+                    //To check
                     var remoteip = RemoteIpHelper.GetRequestIP(context, true);
 
                     HttpRequestLog httplog = new HttpRequestLog()
@@ -453,14 +454,6 @@ namespace OdhApiCore
 
                     //Log.Information(output);
                 }
-               
-           
-                //if (context.Response.StatusCode == 404)
-                //{
-                //    //TODO
-                //    //context.Request.Path = "/Home";
-                //    //await next();
-                //}
             });
 
             //REWRITE, REDIRECT RULES

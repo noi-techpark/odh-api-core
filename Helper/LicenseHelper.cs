@@ -280,5 +280,14 @@ namespace Helper
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
+
+        public static LicenseInfo GetLicenseforWeather()
+        {
+            var isopendata = true;
+            var licensetype = "";
+            var licenseholder = "https://provinz.bz.it/wetter";
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
     }
 }

@@ -201,8 +201,6 @@ namespace SIAG.Parser
                 webadresseIT = webadresseDE;
             }
 
-
-
             contactinfoit.Url = webadresseIT;
             contactinfoit.CompanyName = bezeichnungIT;
             contactinfoit.ZipCode = plz;
@@ -218,7 +216,6 @@ namespace SIAG.Parser
             contactinfoen.Email = emailIT;
             contactinfoen.Faxnumber = fax;
             contactinfoen.Phonenumber = tel;
-            //contactinfoen.Url = wwwIT;
             contactinfoen.Url = webadresseIT;
             contactinfoen.CompanyName = bezeichnungEN;
             contactinfoen.ZipCode = plz;
@@ -311,8 +308,6 @@ namespace SIAG.Parser
             mypropertyopeningen.Value = openingEN;
             poipropertylisten.Add(mypropertyopeningen);
 
-
-
             //Eintritt
             PoiProperty mypropertyeintrittde = new PoiProperty();
             //mypropertyeintrittde.Name = "Eintritt";
@@ -404,7 +399,6 @@ namespace SIAG.Parser
             mypropertytraegeren.Value = String.Join(", ", museumtraegerlistEN.ToArray());
             poipropertylisten.Add(mypropertytraegeren);
 
-
             mymuseum.PoiProperty.TryAddOrUpdate("de", poipropertylistde);
             mymuseum.PoiProperty.TryAddOrUpdate("it", poipropertylistit);
             mymuseum.PoiProperty.TryAddOrUpdate("en", poipropertylisten);
@@ -419,7 +413,6 @@ namespace SIAG.Parser
 
             //Services
             mymuseum.PoiServices = museumservicelistDE.ToList();
-
 
             //ImageGallery
             var smgimages = default(ICollection<ImageGallery>);
@@ -437,7 +430,6 @@ namespace SIAG.Parser
                 mymuseum.ImageGallery.Clear();
 
             mymuseum.ImageGallery = imagelistfull.ToList();
-
 
             mymuseum.LastChange = DateTime.Now;
             List<string> smgtaglist = new List<string>();
@@ -457,7 +449,6 @@ namespace SIAG.Parser
             }
 
             mymuseum.SmgTags = smgtaglist.ToList();
-
 
             Tuple<string, ODHActivityPoi> mytuple = new Tuple<string, ODHActivityPoi>(gemeindeid, mymuseum);
 
