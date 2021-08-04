@@ -41,7 +41,6 @@ namespace OdhApiImporter.Helpers
             rawData.sourceinterface = "http://daten.buergernetz.bz.it/services/weather/bulletin";
             rawData.raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren });
             
-
             var insertresultraw = await QueryFactory.Query("rawdata")
                   .InsertGetIdAsync<int>(rawData);
             
@@ -63,6 +62,10 @@ namespace OdhApiImporter.Helpers
             myweatherhistory.Weather.Add("it", odhweatherresultit);
             myweatherhistory.Weather.Add("en", odhweatherresulten);
             myweatherhistory.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
+            myweatherhistory.FirstImport = DateTime.Now;
+            myweatherhistory.HasLanguage = new List<string>() { "de", "it", "en" };
+            myweatherhistory.LastChange = odhweatherresultde.date;
+            myweatherhistory.Shortname = odhweatherresultde.evolutiontitle;
 
             var insertresult = await QueryFactory.Query("weatherdatahistory")
                   .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });            
@@ -71,13 +74,5 @@ namespace OdhApiImporter.Helpers
         }
     }
 
-    public class WeatherHistory
-    {
-        public WeatherHistory()
-        {
-            Weather = new Dictionary<string, Weather>();
-        }
-        public IDictionary<string, Weather> Weather { get; set; }
-        public LicenseInfo LicenseInfo { get; set; }
-    }
+
 }

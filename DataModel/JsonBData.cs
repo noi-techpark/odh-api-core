@@ -24,6 +24,7 @@ namespace DataModel
         public string datasource { get; set; }
         public string sourceinterface { get; set; }
         public string sourceid { get; set; }
+        public string sourceurl { get; set; }
         public DateTime importdate { get; set; }
 
         public string raw { get; set; }
