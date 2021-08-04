@@ -269,6 +269,7 @@ namespace SIAG
 
             myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("Id").Value);
             myweather.date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
+            myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
 
             var today = weatherresponse.Root.Element("today");
             var tomorrow = weatherresponse.Root.Element("tomorrow");
@@ -374,6 +375,7 @@ namespace SIAG
 
             myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("district").Element("Id").Value);
             myweather.DistrictName = weatherresponse.Root.Element("district").Element("name").Value;
+            myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
 
             myweather.date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
 
@@ -465,7 +467,8 @@ namespace SIAG
                 myweather.evolution = siagweather.evolution;
                 myweather.evolutiontitle = siagweather.evolutionTitle;
                 myweather.language = lang;
-          
+                myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
+
                 //Forecast info
                 foreach (var forecast in siagweather.dayForecasts)
                 {
