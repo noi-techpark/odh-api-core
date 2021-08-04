@@ -165,9 +165,9 @@ namespace OdhApiImporter.Helpers
                             datasource = "ninja",
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(ninjaevent.Value),
-                            sourceinterface = "",
+                            sourceinterface = "culture",
                             sourceid = ninjaevent.Key,
-                            sourceurl = "https://eurac.edu",
+                            sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
                             type = "eventeuracnoi"
                         });
         }
