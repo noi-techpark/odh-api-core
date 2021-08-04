@@ -44,8 +44,6 @@ namespace OdhApiImporter.Helpers
 
             var insertresultraw = await QueryFactory.Query("rawdata")
                   .InsertGetIdAsync<int>(rawData);
-
-            var rawdataid = insertresultraw.ToString();
             
             //Save parsed Response to measurement history table
             var odhweatherresultde = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("de", settings.XmlConfig.XmldirWeather, weatherresponsetaskde, true);
@@ -67,9 +65,9 @@ namespace OdhApiImporter.Helpers
             myweatherhistory.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
 
             var insertresult = await QueryFactory.Query("weatherdatahistory")
-                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren }) });            
+                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });            
 
-            return String.Format("id: {0}, datetime: {1}", rawdataid, DateTime.Now.ToShortDateString());
+            return String.Format("id: {0}, rawdataid: {1}, datetime: {2}", odhweatherresultde.Id.ToString(), insertresultraw.ToString(), DateTime.Now.ToShortDateString());
         }
     }
 

@@ -6,6 +6,7 @@ using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
@@ -23,7 +24,7 @@ namespace OdhApiImporter.Helpers
 
         #region EBMS Helpers
 
-        public async Task<string> ImportEbmsEventsToDB()
+        public async Task<string> ImportEbmsEventsToDB(CancellationToken cancellationToken)
         {
             var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
             var resulttuplesorted = resulttuple.OrderBy(x => x.Item1.StartDate);
@@ -121,12 +122,22 @@ namespace OdhApiImporter.Helpers
                     //Setting LicenseInfo
                     eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
 
+                    var rawid = await QueryFactory.InsertInRawtableAndGetIdAsync(
+                        new RawDataStore() {
+                            datasource = "ebms",
+                            importdate = DateTime.Now,
+                            raw = JsonConvert.SerializeObject(eventebms),
+                            sourceinterface = "ebms",
+                            sourceid = eventebms.EventId.ToString(),
+                            type = "eventeuracnoi"
+                        }, cancellationToken);
+
 
                     if (neweventshort)
                     {
                         queryresult = await QueryFactory.Query("eventeuracnoi")
                             //.InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                            .InsertAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
+                            .InsertAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), rawdataid = rawid });
 
                         newcounter++;
                     }
@@ -137,7 +148,7 @@ namespace OdhApiImporter.Helpers
                         //TODO CHECK IF THIS WORKS     
                         queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
                             //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                            .UpdateAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
+                            .UpdateAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), rawdataid = rawid });
 
                         updatecounter++;
                     }

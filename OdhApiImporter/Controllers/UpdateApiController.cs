@@ -54,7 +54,7 @@ namespace OdhApiImporter.Controllers
             {
                 EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(settings, QueryFactory);
 
-                var result = await ebmsimporthelper.ImportEbmsEventsToDB();
+                var result = await ebmsimporthelper.ImportEbmsEventsToDB(cancellationToken);
 
                 return Ok(new UpdateResult
                 {
