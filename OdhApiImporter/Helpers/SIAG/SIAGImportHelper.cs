@@ -36,9 +36,9 @@ namespace OdhApiImporter.Helpers
             rawData.importdate = DateTime.Now;
             rawData.type = "weather";
             rawData.sourceid = siagweatherde.id.ToString();
-            //rawData.id = 0;
             rawData.datasource = "siag";
-            rawData.sourceinterface = "http://daten.buergernetz.bz.it/services/weather/bulletin";
+            rawData.sourceinterface = "weatherbulletin";
+            rawData.sourceurl = "http://daten.buergernetz.bz.it/services/weather/bulletin";
             rawData.raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren });
             
             var insertresultraw = await QueryFactory.Query("rawdata")
