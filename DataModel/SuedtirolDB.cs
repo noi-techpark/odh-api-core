@@ -1255,6 +1255,22 @@ namespace DataModel
         public string? imageUrl { get; set; }
     }
 
+    public class WeatherHistory
+    {
+        public WeatherHistory()
+        {
+            Weather = new Dictionary<string, Weather>();
+        }
+        public IDictionary<string, Weather> Weather { get; set; }
+        public LicenseInfo LicenseInfo { get; set; }
+
+        public List<string> HasLanguage { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        public string? Shortname { get; set; }
+    }
+
     #endregion
 
     #region Articles    
@@ -2931,8 +2947,6 @@ namespace DataModel
 
     }
 
-    //Reduced Location Informations (Können in die Dokumente mit aufgenommen werden)
-
     public class LocationInfo : ILocationInfoAware
     {
         public RegionInfo? RegionInfo { get; set; }
@@ -2971,49 +2985,6 @@ namespace DataModel
         public string? Id { get; set; }
         public IDictionary<string, string>? Name { get; set; }
     }
-
-    //Localized LocationInfo
-
-    public class LocationInfoLocalized
-    {
-        public RegionInfoLocalized? RegionInfo { get; set; }
-        public TvInfoLocalized? TvInfo { get; set; }
-        public MunicipalityInfoLocalized? MunicipalityInfo { get; set; }
-        public DistrictInfoLocalized? DistrictInfo { get; set; }
-        public AreaInfoLocalized? AreaInfo { get; set; }
-    }
-
-    public class RegionInfoLocalized
-    {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-    }
-
-    public class TvInfoLocalized
-    {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-    }
-
-    public class MunicipalityInfoLocalized
-    {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-    }
-
-    public class DistrictInfoLocalized
-    {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-    }
-
-    public class AreaInfoLocalized
-    {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-    }
-
-    //Ende Reduced Location Informations
 
     #endregion
 

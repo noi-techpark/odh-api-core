@@ -1,11 +1,13 @@
 ﻿using DataModel;
 using Helper;
+using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
@@ -61,7 +63,7 @@ namespace OdhApiImporter.Helpers
                         if (idtocheck.Length > 50)
                             idtocheck = idtocheck.Substring(0, 50);
 
-                        var result = await InsertEventInPG(eventtosave, idtocheck);
+                        var result = await InsertEventInPG(eventtosave, idtocheck, kvp);
 
                         if (result.Item1 == "insert")
                         {
@@ -135,7 +137,7 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<Tuple<string, string>> InsertEventInPG(EventLinked eventtosave, string idtocheck)
+        private async Task<Tuple<string, string>> InsertEventInPG(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)
         {
             try
             {
@@ -145,7 +147,9 @@ namespace OdhApiImporter.Helpers
                 //Set LicenseInfo
                 eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(eventtosave, Helper.LicenseHelper.GetLicenseforEvent);
 
-                return await InsertInDB(eventtosave, idtocheck, "events");
+                var rawdatid = await InsertInRawDataDB(ninjaevent);
+
+                return await InsertInDB(eventtosave, idtocheck, "events", rawdatid);
             }
             catch (Exception ex)
             {
@@ -153,7 +157,22 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<Tuple<string, string>> InsertInDB(EventLinked eventtosave, string idtocheck, string tablename)
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, NinjaEvent> ninjaevent)
+        {
+            return await QueryFactory.InsertInRawtableAndGetIdAsync(
+                        new RawDataStore()
+                        {
+                            datasource = "ninja",
+                            importdate = DateTime.Now,
+                            raw = JsonConvert.SerializeObject(ninjaevent.Value),
+                            sourceinterface = "culture",
+                            sourceid = ninjaevent.Key,
+                            sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
+                            type = "eventeuracnoi"
+                        });
+        }
+
+        private async Task<Tuple<string, string>> InsertInDB(EventLinked eventtosave, string idtocheck, string tablename, int rawdataid)
         {
             //Check if data exists on PG
 
@@ -169,14 +188,14 @@ namespace OdhApiImporter.Helpers
                 eventtosave.FirstImport = DateTime.Now;
 
                 var queryresult = await QueryFactory.Query(tablename)
-                               .InsertAsync(new JsonBData() { id = idtocheck, data = new JsonRaw(eventtosave) });
+                               .InsertAsync(new JsonBDataRaw() { id = idtocheck, data = new JsonRaw(eventtosave), rawdataid = rawdataid });
 
                 return Tuple.Create("insert", queryresult.ToString());
             }
             else
             {
                 var queryresult = await QueryFactory.Query(tablename).Where("id", idtocheck)
-                                .UpdateAsync(new JsonBData() { id = idtocheck, data = new JsonRaw(eventtosave) });
+                                .UpdateAsync(new JsonBDataRaw() { id = idtocheck, data = new JsonRaw(eventtosave), rawdataid = rawdataid });
 
                 return Tuple.Create("update", queryresult.ToString());
             }

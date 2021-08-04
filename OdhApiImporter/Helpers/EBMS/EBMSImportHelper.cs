@@ -60,10 +60,10 @@ namespace OdhApiImporter.Helpers
                 var eventTextEN = "";
                 var videourl = "";
                 Nullable<bool> activeweb = null;
-                List<string> technologyfields = null;
-                List<string> customtagging = null;
+                List<string>? technologyfields = null;
+                List<string>? customtagging = null;
                 var webadress = "";
-                List<DocumentPDF> eventdocument = new List<DocumentPDF>();
+                List<DocumentPDF>? eventdocument = new List<DocumentPDF>();
                 bool? soldout = false;
                 bool? externalorganizer = false;
 
@@ -109,7 +109,7 @@ namespace OdhApiImporter.Helpers
                     eventshort.ExternalOrganizer = externalorganizer;
 
                     //New If CompanyName is Noi - blablabla assign TechnologyField automatically and Write to Display5 if not empty "NOI"
-                    if (eventshort.CompanyName.StartsWith("NOI - "))
+                    if (!String.IsNullOrEmpty(eventshort.CompanyName) && eventshort.CompanyName.StartsWith("NOI - "))
                     {
                         if (String.IsNullOrEmpty(eventshort.Display5))
                             eventshort.Display5 = "NOI";
@@ -124,11 +124,12 @@ namespace OdhApiImporter.Helpers
 
                     var rawid = await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore() {
-                            datasource = "ebms",
+                            datasource = "eurac",
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(eventebms),
                             sourceinterface = "ebms",
                             sourceid = eventebms.EventId.ToString(),
+                            sourceurl = "https://eurac.edu",
                             type = "eventeuracnoi"
                         }, cancellationToken);
 
@@ -168,7 +169,7 @@ namespace OdhApiImporter.Helpers
             return String.Format("Events Updated {0} New {1} Deleted {2}", updatecounter.ToString(), newcounter.ToString(), deletecounter.ToString());
         }
 
-        private static List<string> AssignTechnologyfieldsautomatically(string companyname, List<string> technologyfields)
+        private static List<string>? AssignTechnologyfieldsautomatically(string companyname, List<string>? technologyfields)
         {
             if (technologyfields == null)
                 technologyfields = new List<string>();
