@@ -64,7 +64,7 @@ namespace OdhApiImporter.Helpers
             myweatherhistory.Weather.Add("de", odhweatherresultde);
             myweatherhistory.Weather.Add("it", odhweatherresultit);
             myweatherhistory.Weather.Add("en", odhweatherresulten);
-            myweatherhistory.LicenseInfo = new LicenseInfo() { License = "", ClosedData = false, LicenseHolder = "https://provinz.bz.it/wetter" };
+            myweatherhistory.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
 
             var insertresult = await QueryFactory.Query("weatherdatahistory")
                   .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren }) });            

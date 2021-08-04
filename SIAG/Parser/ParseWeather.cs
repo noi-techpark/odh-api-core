@@ -24,6 +24,8 @@ namespace SIAG
                 myweather.evolutiontitle = weatherresponse.Root.Element("evolutionTitle") != null ? weatherresponse.Root.Element("evolutionTitle").Value : null;
                 myweather.language = lang;
 
+                myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
+
                 var mydayforecasts = weatherresponse.Root.Elements("dayForecast");
                 var mountaintoday = weatherresponse.Root.Element("mountainToday");
                 var mountaintomorrow = weatherresponse.Root.Element("mountainTomorrow");

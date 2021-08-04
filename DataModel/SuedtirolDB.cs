@@ -1092,6 +1092,8 @@ namespace DataModel
         public ICollection<Forecast> Forecast { get; set; }
         public ICollection<Mountain> Mountain { get; set; }
         public ICollection<Stationdata> Stationdata { get; set; }
+
+        public LicenseInfo LicenseInfo { get; set; }
     }
 
     public class Conditions
@@ -1191,6 +1193,7 @@ namespace DataModel
 
         public ICollection<BezirksForecast> BezirksForecast { get; set; }
 
+        public LicenseInfo LicenseInfo { get; set; }
     }
 
     public class BezirksForecast
