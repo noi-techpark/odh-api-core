@@ -48,9 +48,9 @@ namespace Helper
         public static List<string> FilterOutPropertiesByRole(IEnumerable<string> userroles)
         {
             if (userroles.Contains("IDM"))
-                return new List<string>() { };                
+                return new List<string>() { };                            
 
-            return new List<string>() { "TVMember", "Beds", "Units", "RepresentationRestriction" };
+            return new List<string>() { "TVMember", "Beds", "Units", "RepresentationRestriction", "TrustYouID", "TrustYouScore", "TrustYouState", "TrustYouResults", "TrustYouActive" };
         }
     }    
 
