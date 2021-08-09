@@ -144,11 +144,6 @@ namespace DataModel
 
     public class LocationInfoLinked : LocationInfo
     {
-        public RegionInfoLinked RegionInfo { get; set; }
-        public TvInfoLinked TvInfo { get; set; }
-        public MunicipalityInfoLinked MunicipalityInfo { get; set; }
-        public DistrictInfoLinked DistrictInfo { get; set; }
-        public AreaInfoLinked AreaInfo { get; set; }
     }
 
     public class ODHTags
