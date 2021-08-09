@@ -149,11 +149,11 @@ namespace OdhApiCore.Controllers
                 var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
                 var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
 
-                var availableonlineaccos = new List<string?>();
+                var availableonlineaccos = new List<string>();
                 if (accoavailabilitymss != null)                
-                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper()).Distinct().ToList() ?? new List<string?>());                                                        
+                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());                                                        
                 if (accoavailabilitylcs != null)
-                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper()).Distinct().ToList() ?? new List<string?>());
+                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
                     
                 //TODO SORT ORDER???
 
@@ -613,7 +613,7 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, List<string?> idlist, string? locfilter,
+        private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, List<string> idlist, string? locfilter,
             string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? featureidfilter, string? themefilter, string? badgefilter, string? altitudefilter, 
             bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? seed, string? updatefrom, string? langfilter, string? searchfilter, 
             PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
@@ -653,7 +653,7 @@ namespace OdhApiCore.Controllers
                     await query
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
-                            perPage: (int)pagesize);
+                            perPage: pagesize ?? 25);
 
                 var dataTransformed =
                     data.List.Select(

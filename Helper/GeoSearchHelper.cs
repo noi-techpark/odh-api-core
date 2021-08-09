@@ -223,7 +223,7 @@ namespace Helper
 
     public class PGGeoSearchResult
     {
-        public bool geosearch { get; set; }
+        public bool geosearch { get; set; } = false;
         public double latitude { get; set; }
         public double longitude { get; set; }
         public int radius { get; set; }

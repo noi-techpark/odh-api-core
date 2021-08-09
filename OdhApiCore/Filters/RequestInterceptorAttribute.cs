@@ -38,7 +38,7 @@ namespace OdhApiCore.Filters
 
                 //actionarguments["availabilitycheck"]).Value;
 
-                await GetReturnObject(context, actionid, actionarguments, httpheaders);                
+                await GetReturnObject(context, actionid ?? "", actionarguments, httpheaders);                
             }
             else
             {
@@ -62,7 +62,7 @@ namespace OdhApiCore.Filters
                 return false;
         }
 
-        public async Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
+        public Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
         {     
             var language = (string?)actionarguments["language"];
 
@@ -79,7 +79,7 @@ namespace OdhApiCore.Filters
                 context.Result = new OkObjectResult(new JsonRaw(json));
             }
 
-            return;
+            return Task.CompletedTask;
         }
     }
 }

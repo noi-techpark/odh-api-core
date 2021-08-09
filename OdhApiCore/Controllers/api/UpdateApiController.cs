@@ -57,7 +57,7 @@ namespace OdhApiCore.Controllers.api
 
 
         [HttpGet, Route("EBMS/EventShort/UpdateSingle/{id}")]
-        public async Task<IActionResult> UpdateSingleEBMS(string id, CancellationToken cancellationToken)
+        public IActionResult UpdateSingleEBMS(string id, CancellationToken cancellationToken)
         {
             //TODO
             //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
@@ -148,10 +148,10 @@ namespace OdhApiCore.Controllers.api
                     var eventTextEN = "";
                     var videourl = "";
                     Nullable<bool> activeweb = null;
-                    List<string> technologyfields = null;
-                    List<string> customtagging = null;
+                    List<string>? technologyfields = null;
+                    List<string>? customtagging = null;
                     var webadress = "";
-                    List<DocumentPDF> eventdocument = new List<DocumentPDF>();
+                    List<DocumentPDF>? eventdocument = new List<DocumentPDF>();
                     bool? soldout = false;
                     bool? externalorganizer = false;
 
@@ -169,8 +169,8 @@ namespace OdhApiCore.Controllers.api
                         webadress = eventindb.WebAddress;
                         externalorganizer = eventindb.ExternalOrganizer;
 
-                        eventdocument = eventindb.EventDocument;
-                        soldout = eventindb.SoldOut;
+                        eventdocument = eventindb?.EventDocument;
+                        soldout = eventindb?.SoldOut;
                     }
                     else
                     {
@@ -197,24 +197,24 @@ namespace OdhApiCore.Controllers.api
                         eventshort.ExternalOrganizer = externalorganizer;
 
                         //New If CompanyName is Noi - blablabla assign TechnologyField automatically and Write to Display5 if not empty "NOI"
-                        if (eventshort.CompanyName.StartsWith("NOI - "))
+                        if (eventshort.CompanyName?.StartsWith("NOI - ") ?? false)
                         {
                             if (String.IsNullOrEmpty(eventshort.Display5))
                                 eventshort.Display5 = "NOI";
 
-                            eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
+                            eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort?.TechnologyFields ?? new List<string>());
                         }
 
                         int queryresult = 0;
 
                         //Setting LicenseInfo
-                        eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
+                        eventshort!.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
 
 
                         if (neweventshort)
                         {
                             queryresult = await QueryFactory.Query("eventeuracnoi")
-                                .InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                                .InsertAsync(new JsonBData() { id = eventshort.Id?.ToLower(), data = new JsonRaw(eventshort) });
                                 //.InsertAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
 
                             newcounter++;
@@ -225,7 +225,7 @@ namespace OdhApiCore.Controllers.api
 
                             //TODO CHECK IF THIS WORKS     
                             queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                                .UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                                .UpdateAsync(new JsonBData() { id = eventshort?.Id?.ToLower(), data = eventshort != null ? new JsonRaw(eventshort) : null });
                                 //.UpdateAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), raw = JsonConvert.SerializeObject(eventebms) });
 
                             updatecounter++;
@@ -265,7 +265,7 @@ namespace OdhApiCore.Controllers.api
             AssignTechnologyFields(companyname, "Green", "Green", technologyfields);
 
             if (technologyfields.Count == 0)
-                return null;
+                return new List<string>();
             else
                 return technologyfields;
         }
@@ -301,7 +301,7 @@ namespace OdhApiCore.Controllers.api
                     //TODO CHECK IF IT WORKS
                     if (eventshorttodeactivate != null)
                     {
-                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id.ToLower()).DeleteAsync();
+                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
                         deletecounter++;
                     }                        
                 }
@@ -415,23 +415,23 @@ namespace OdhApiCore.Controllers.api
                 LocationInfoLinked locinfolinked = new LocationInfoLinked();
                 locinfolinked.DistrictInfo = new DistrictInfoLinked()
                 {
-                    Id = locinfo.DistrictInfo.Id,
-                    Name = locinfo.DistrictInfo.Name
+                    Id = locinfo?.DistrictInfo?.Id,
+                    Name = locinfo?.DistrictInfo?.Name
                 };
                 locinfolinked.MunicipalityInfo = new MunicipalityInfoLinked()
                 {
-                    Id = locinfo.MunicipalityInfo.Id,
-                    Name = locinfo.MunicipalityInfo.Name
+                    Id = locinfo?.MunicipalityInfo?.Id,
+                    Name = locinfo?.MunicipalityInfo?.Name
                 };
                 locinfolinked.TvInfo = new TvInfoLinked()
                 {
-                    Id = locinfo.TvInfo.Id,
-                    Name = locinfo.TvInfo.Name
+                    Id = locinfo?.TvInfo?.Id,
+                    Name = locinfo?.TvInfo?.Name
                 };
                 locinfolinked.RegionInfo = new RegionInfoLinked()
                 {
-                    Id = locinfo.RegionInfo.Id,
-                    Name = locinfo.RegionInfo.Name
+                    Id = locinfo?.RegionInfo?.Id,
+                    Name = locinfo?.RegionInfo?.Name
                 };
 
                 myevent.LocationInfo = locinfolinked;
@@ -443,7 +443,7 @@ namespace OdhApiCore.Controllers.api
             try
             {
                 idtocheck = idtocheck.ToUpper();
-                eventtosave.Id = eventtosave.Id.ToUpper();
+                eventtosave.Id = eventtosave.Id?.ToUpper();
 
                 //Set LicenseInfo
                 eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(eventtosave, Helper.LicenseHelper.GetLicenseforEvent);
@@ -485,38 +485,38 @@ namespace OdhApiCore.Controllers.api
             }                      
         }
 
-        public async Task<LocationInfo> GetTheLocationInfoDistrict(string districtid)
+        public async Task<LocationInfo?> GetTheLocationInfoDistrict(string districtid)
         {
             try
             {
                 LocationInfo mylocinfo = new LocationInfo();
 
                 var district = await QueryFactory.Query("districts").Select("data").Where("id", districtid.ToUpper()).GetFirstOrDefaultAsObject<District>(); 
-                var districtnames = (from x in district.Detail
+                var districtnames = (from x in district?.Detail
                                      select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
-                var municipality = await QueryFactory.Query("municipalities").Select("data").Where("id", district.MunicipalityId.ToUpper()).GetFirstOrDefaultAsObject<Municipality>(); 
-                var municipalitynames = (from x in municipality.Detail
+                var municipality = await QueryFactory.Query("municipalities").Select("data").Where("id", district?.MunicipalityId?.ToUpper()).GetFirstOrDefaultAsObject<Municipality>(); 
+                var municipalitynames = (from x in municipality?.Detail
                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
-                var tourismverein = await QueryFactory.Query("tvs").Select("data").Where("id", district.TourismvereinId.ToUpper()).GetFirstOrDefaultAsObject<Tourismverein>();
-                var tourismvereinnames = (from x in tourismverein.Detail
+                var tourismverein = await QueryFactory.Query("tvs").Select("data").Where("id", district?.TourismvereinId?.ToUpper()).GetFirstOrDefaultAsObject<Tourismverein>();
+                var tourismvereinnames = (from x in tourismverein?.Detail
                                           select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
-                var region = await QueryFactory.Query("regions").Select("data").Where("id", district.RegionId.ToUpper()).GetFirstOrDefaultAsObject<Region>();
-                var regionnames = (from x in region.Detail
+                var region = await QueryFactory.Query("regions").Select("data").Where("id", district?.RegionId?.ToUpper()).GetFirstOrDefaultAsObject<Region>();
+                var regionnames = (from x in region?.Detail
                                    select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
                 //conn.Close();
 
-                mylocinfo.DistrictInfo = new DistrictInfo() { Id = district.Id, Name = districtnames };
-                mylocinfo.MunicipalityInfo = new MunicipalityInfo() { Id = municipality.Id, Name = municipalitynames };
-                mylocinfo.TvInfo = new TvInfo() { Id = tourismverein.Id, Name = tourismvereinnames };
-                mylocinfo.RegionInfo = new RegionInfo() { Id = region.Id, Name = regionnames };
+                mylocinfo.DistrictInfo = new DistrictInfo() { Id = district?.Id, Name = districtnames };
+                mylocinfo.MunicipalityInfo = new MunicipalityInfo() { Id = municipality?.Id, Name = municipalitynames };
+                mylocinfo.TvInfo = new TvInfo() { Id = tourismverein?.Id, Name = tourismvereinnames };
+                mylocinfo.RegionInfo = new RegionInfo() { Id = region?.Id, Name = regionnames };
 
                 return mylocinfo;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return null;
             }
@@ -754,11 +754,11 @@ namespace OdhApiCore.Controllers.api
 
     public class UpdateResult
     {
-        public string operation { get; set; }
-        public string updatetype { get; set; }
-        public string message { get; set; }
+        public string? operation { get; set; }
+        public string? updatetype { get; set; }
+        public string? message { get; set; }
         public bool success { get; set; }
-        public string recordsupdated { get; set; }
+        public string? recordsupdated { get; set; }
 
         public string? id { get; set; }
     }

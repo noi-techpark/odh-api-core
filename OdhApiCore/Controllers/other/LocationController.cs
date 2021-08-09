@@ -450,7 +450,7 @@ namespace OdhApiCore.Controllers.api
                               .Select("data")
                               .From("skiareas")
                               .WhereInJsonb(
-                                 mymetaregion.RegionIds.ToList() ?? new List<string>(),
+                                 mymetaregion.RegionIds?.ToList() ?? new List<string>(),
                                 regid => new { RegionIds = new[] { regid.ToUpper() } }
                                );
 

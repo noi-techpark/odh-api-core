@@ -16,7 +16,7 @@ namespace Helper
         //public Dictionary<string,string>? querystring { get; set; }
         public string urlparams { get; init; }
         public string useragent { get; init; }
-        public string ipaddress { get; init; }
+        public string? ipaddress { get; init; }
         public int? statuscode { get; init; }
     }
 }

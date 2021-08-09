@@ -25,8 +25,11 @@ namespace Helper
             return data;
         }
 
-        public static async Task<LocationInfoLinked> GetTheLocationInfoDistrict(QueryFactory QueryFactory, string districtid)
+        public static async Task<LocationInfoLinked> GetTheLocationInfoDistrict(QueryFactory QueryFactory, string? districtid)
         {
+            if (districtid == null)
+                return new LocationInfoLinked();
+
             LocationInfoLinked mylocinfo = new LocationInfoLinked();
 
             //Wenn nicht District nicht definiert ist oder Livinallongo/Arabba/Gebiet Pieve - Digonera - Pordoijoch - nicht südtirol ;)

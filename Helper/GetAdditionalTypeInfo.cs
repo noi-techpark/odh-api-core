@@ -10,7 +10,7 @@ namespace Helper
 {
     public class GetAdditionalTypeInfo
     {
-        public static async Task<Dictionary<string, AdditionalPoiInfos>> GetAdditionalTypeInfoForPoi(QueryFactory QueryFactory, string subtype, List<string>? languages)
+        public static async Task<Dictionary<string, AdditionalPoiInfos>> GetAdditionalTypeInfoForPoi(QueryFactory QueryFactory, string? subtype, List<string>? languages)
         {
             if(languages == null)
                 languages = new List<string>() { "de","it","en"};
@@ -20,7 +20,7 @@ namespace Helper
             //Get SuedtirolType Subtype
             var subtypequery = QueryFactory.Query("smgpoitypes")
                         .Select("data")
-                        .Where("id", subtype.ToLower());
+                        .Where("id", subtype?.ToLower());
                          //.WhereRaw("data->>'Key' LIKE ?", subtype);
             var subtypedata =
                 await subtypequery

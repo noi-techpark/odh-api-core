@@ -84,7 +84,7 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetPoiReduced(
-                language.ToLower(), poitype, subtype, locfilter, areafilter,
+                language?.ToLower(), poitype, subtype, locfilter, areafilter,
                 highlight, active, odhactive, odhtagfilter,
                 fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
                 geosearchresult, cancellationToken);
@@ -223,7 +223,7 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetActivityReduced(
-                language.ToLower(), activitytype, subtype, locfilter, areafilter, distancefilter, altitudefilter, durationfilter,
+                language?.ToLower(), activitytype, subtype, locfilter, areafilter, distancefilter, altitudefilter, durationfilter,
                 highlight, difficultyfilter, active, odhactive, odhtagfilter,
                 fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
                 geosearchresult, cancellationToken);
@@ -351,7 +351,7 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             return await GetGastronomyReduced(
-                language.ToLower(), locfilter, dishcodefilter, ceremonycodefilter, categorycodefilter, facilitycodefilter,
+                language?.ToLower(), locfilter, dishcodefilter, ceremonycodefilter, categorycodefilter, facilitycodefilter,
                 cuisinecodefilter, active?.Value, odhactive?.Value, odhtagfilter,
                 fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
                 geosearchresult, cancellationToken);
@@ -452,7 +452,7 @@ namespace OdhApiCore.Controllers.api
             if (!String.IsNullOrEmpty(localizationlanguage))
                 language = localizationlanguage;
 
-            return await GetODHTagReduced(language.ToLower(), validforentity, searchfilter,
+            return await GetODHTagReduced(language?.ToLower(), validforentity, searchfilter,
                 fields: fields ?? Array.Empty<string>(), rawfilter,
                 rawsort, cancellationToken);
         }
@@ -1462,9 +1462,9 @@ namespace OdhApiCore.Controllers.api
             return obj == null || obj.ToString() == String.Empty;
         }
 
-        public static List<Dictionary<string, object>> ReadAndParseTOJson(this IDataReader? reader)
+        public static List<Dictionary<string, object?>> ReadAndParseTOJson(this IDataReader reader)
         {
-            var data = new List<Dictionary<string, object>>();
+            var data = new List<Dictionary<string, object?>>();
 
             var names =
                     Enumerable.Range(0, reader.FieldCount)
@@ -1481,7 +1481,7 @@ namespace OdhApiCore.Controllers.api
 
             while (reader.Read())
             {
-                var dict = new Dictionary<string, object>();
+                var dict = new Dictionary<string, object?>();
                 foreach (var (i, name, typeName) in names)
                 {
                     var value = reader.GetValue(i);
