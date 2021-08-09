@@ -68,7 +68,7 @@ namespace SIAG
 
                 return xresponse;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

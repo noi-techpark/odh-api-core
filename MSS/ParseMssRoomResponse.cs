@@ -26,7 +26,7 @@ namespace MSS
 
                 return myroomlist;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -218,7 +218,7 @@ namespace MSS
 
                 return myaccorooms;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

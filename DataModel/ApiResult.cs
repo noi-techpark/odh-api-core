@@ -11,7 +11,7 @@ namespace DataModel
 
     public class GenericResultExtended : GenericResult
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         //public object Data { get; set; }
     }
 

@@ -225,7 +225,7 @@ namespace OdhApiCore.Controllers.api
                     await query
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
-                            perPage: (int)pagesize);
+                            perPage: pagesize ?? 25);
 
                 var dataTransformed =
                     data.List.Select(
@@ -650,9 +650,9 @@ namespace OdhApiCore.Controllers.api
 
                     //TODO CHECK IF THIS WORKS     
                     var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
-                        .UpdateAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                        .UpdateAsync(new JsonBData() { id = eventshort.Id ?? "", data = eventshort != null ? new JsonRaw(eventshort) : null });
 
-                    return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort.Id), Id = eventshort.Id });
+                    return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort?.Id), Id = eventshort?.Id });
                 }
                 else
                 {

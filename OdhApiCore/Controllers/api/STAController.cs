@@ -199,7 +199,7 @@ namespace OdhApiCore.Controllers.api
                         if (nearestdistrict != null && nearestdistrict.Count() > 0)
                         {
                             //Get LocationInfo Object
-                            var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault().Id);
+                            var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault()?.Id);
 
                             if (locationinfo != null)
                                 odhactivitypoi.LocationInfo = locationinfo;
@@ -207,11 +207,11 @@ namespace OdhApiCore.Controllers.api
                     }
 
                     //Adding TypeInfo Additional
-                    odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi.SubType, new List<string>() { "de","it","en" });
+                    odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi?.SubType, new List<string>() { "de","it","en" });
 
                     //Save to PG
                     //Check if data exists
-                    await UpsertData<ODHActivityPoi>(odhactivitypoi, "smgpois");
+                    await UpsertData<ODHActivityPoi>(odhactivitypoi!, "smgpois");
                 }
 
                 return new OkObjectResult("import from posted csv succeeded");

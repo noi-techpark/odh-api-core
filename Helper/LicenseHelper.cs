@@ -121,18 +121,18 @@ namespace Helper
         {
             var isopendata = false;
             var licensetype = "Closed";
-            var licenseholder = @"https://www.lts.it";
+            string licenseholder = @"https://www.lts.it";
 
-            List<string> allowedsources = new List<string>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common","sta" };
+            List<string?> allowedsources = new List<string?>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common","sta" };
 
             if (data.Active)
             {
-                if (allowedsources.Contains(data.SyncSourceInterface.ToLower()))
+                if (allowedsources.Contains(data.SyncSourceInterface?.ToLower()))
                 {
                     isopendata = true;
                     licensetype = "CC0";
 
-                    licenseholder = data.Source;
+                    licenseholder = data.Source ?? "";
 
                     if (data.Source == "Content" || data.Source == "Magnolia" || data.Source == "Common")
                         licenseholder = @"https://www.idm-suedtirol.com";

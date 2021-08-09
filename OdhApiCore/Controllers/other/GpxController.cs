@@ -44,7 +44,7 @@ namespace OdhApiCore.Controllers.other
         [ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
         [HttpGet, Route("v1/SmgPoiGpx/{gpxid}")]
-        public async Task<IActionResult> GetSmgPoiGpx(string gpxid)
+        public IActionResult GetSmgPoiGpx(string gpxid)
         {
             if (String.IsNullOrEmpty(gpxid))
                 return BadRequest();

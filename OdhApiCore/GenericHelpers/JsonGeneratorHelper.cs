@@ -60,8 +60,8 @@ namespace OdhApiCore.GenericHelpers
         }
     }
 
-    public class AccoBooklist
+    public struct AccoBooklist
     {
-        public string Id { get; set; }
+        public string Id { get; init; }
     }
 }

@@ -257,7 +257,7 @@ namespace OdhApiCore.Controllers.api
 
                     input.MessageType = "InventoryBasicPush";
                     input.RequestDate = DateTime.Now;
-                    input.Source = this.User.Identity?.Name.ToLower();
+                    input.Source = this.User.Identity?.Name?.ToLower();
 
                     var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
                   
@@ -286,7 +286,7 @@ namespace OdhApiCore.Controllers.api
 
                     input.MessageType = "InventoryHotelInfoPush";
                     input.RequestDate = DateTime.Now;
-                    input.Source = this.User.Identity?.Name.ToLower();
+                    input.Source = this.User.Identity?.Name?.ToLower();
 
                     var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
                     //var query = QueryFactory.Query("alpinebits").AsInsert(new JsonBData() { id = id, data = JsonConvert.SerializeObject(input) });
@@ -316,7 +316,7 @@ namespace OdhApiCore.Controllers.api
 
                     input.MessageType = "FreeRoomsPush";
                     input.RequestDate = DateTime.Now;
-                    input.Source = this.User.Identity?.Name.ToLower();                    
+                    input.Source = this.User.Identity?.Name?.ToLower();                    
 
                     var query = await QueryFactory.Query("alpinebits").InsertAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
 
