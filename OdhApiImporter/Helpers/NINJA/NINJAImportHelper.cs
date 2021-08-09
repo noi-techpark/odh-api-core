@@ -103,38 +103,40 @@ namespace OdhApiImporter.Helpers
 
             var districtlist = await query.GetFirstOrDefaultAsObject<District>();
 
-            if (districtlist != null)
+            if (districtlist == null)
+                return;
+
+            myevent.DistrictId = districtlist.Id;
+            myevent.DistrictIds = new List<string>() { districtlist.Id };
+
+            //TODO MAYBE IN HELPER!
+            var locinfo = await GetTheLocationInfoDistrict(districtlist.Id);
+
+            LocationInfoLinked locinfolinked = new LocationInfoLinked
             {
-                myevent.DistrictId = districtlist.Id;
-                myevent.DistrictIds = new List<string>() { districtlist.Id };
+                DistrictInfo = new DistrictInfoLinked
+                {
+                    Id = locinfo.DistrictInfo?.Id,
+                    Name = locinfo.DistrictInfo?.Name
+                },
+                MunicipalityInfo = new MunicipalityInfoLinked
+                {
+                    Id = locinfo.MunicipalityInfo?.Id,
+                    Name = locinfo.MunicipalityInfo?.Name
+                },
+                TvInfo = new TvInfoLinked
+                {
+                    Id = locinfo.TvInfo?.Id,
+                    Name = locinfo.TvInfo?.Name
+                },
+                RegionInfo = new RegionInfoLinked
+                {
+                    Id = locinfo.RegionInfo?.Id,
+                    Name = locinfo.RegionInfo?.Name
+                }
+            };
 
-                //TODO MAYBE IN HELPER!
-                var locinfo = await GetTheLocationInfoDistrict(districtlist.Id);
-
-                LocationInfoLinked locinfolinked = new LocationInfoLinked();
-                locinfolinked.DistrictInfo = new DistrictInfoLinked()
-                {
-                    Id = locinfo.DistrictInfo.Id,
-                    Name = locinfo.DistrictInfo.Name
-                };
-                locinfolinked.MunicipalityInfo = new MunicipalityInfoLinked()
-                {
-                    Id = locinfo.MunicipalityInfo.Id,
-                    Name = locinfo.MunicipalityInfo.Name
-                };
-                locinfolinked.TvInfo = new TvInfoLinked()
-                {
-                    Id = locinfo.TvInfo.Id,
-                    Name = locinfo.TvInfo.Name
-                };
-                locinfolinked.RegionInfo = new RegionInfoLinked()
-                {
-                    Id = locinfo.RegionInfo.Id,
-                    Name = locinfo.RegionInfo.Name
-                };
-
-                myevent.LocationInfo = locinfolinked;
-            }
+            myevent.LocationInfo = locinfolinked;
         }
 
         private async Task<Tuple<string, string>> InsertEventInPG(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)

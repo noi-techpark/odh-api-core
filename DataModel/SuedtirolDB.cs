@@ -2083,7 +2083,7 @@ namespace DataModel
             ContactInfos = new Dictionary<string, ContactInfos>();
         }
 
-        public string? Id { get; set; }
+        public string Id { get; set; }
         public bool Active { get; set; }
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
