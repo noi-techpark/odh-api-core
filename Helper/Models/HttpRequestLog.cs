@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
-    public class HttpRequestLog
+    public struct HttpRequestLog
     {
-        public string username { get; set; }
-        public string referer { get; set; }
-        public string host { get; set; }
-        public string path { get; set; }
-        public string schema { get; set; }
+        public string username { get; init; }
+        public string referer { get; init; }
+        public string host { get; init; }
+        public string path { get; init; }
+        public string schema { get; init; }
         //public Dictionary<string,string>? querystring { get; set; }
-        public string urlparams { get; set; }
-        public string useragent { get; set; }
-        public string ipaddress { get; set; }
-        public int? statuscode { get; set; }
+        public string urlparams { get; init; }
+        public string useragent { get; init; }
+        public string ipaddress { get; init; }
+        public int? statuscode { get; init; }
     }
 }

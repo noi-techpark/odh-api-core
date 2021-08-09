@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
-    public class LogOutput<T>
+    public struct LogOutput<T>
     {
-        public string log { get; set; }
-        public string type { get; set; }
-        public string id { get; set; }
-        public T output { get; set; }
+        public string log { get; init; }
+        public string type { get; init; }
+        public string id { get; init; }
+        public T output { get; init; }
     }
 }

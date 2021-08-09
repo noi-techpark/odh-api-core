@@ -56,7 +56,7 @@ namespace Helper
 
     public class ODHTagHelper
     {
-        public static async Task<IEnumerable<SmgTags>> GetSmgTagsValidforTranslations(QueryFactory QueryFactory, List<string> validforentity, List<string> idlist = null)
+        public static async Task<IEnumerable<SmgTags>> GetSmgTagsValidforTranslations(QueryFactory QueryFactory, List<string> validforentity, List<string>? idlist = null)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace Helper
                             validforentity,
                             tag => new { ValidForEntity = new[] { tag.ToLower() } }
                         ))
-                        .When(idlist != null, w => w.WhereIn("id", idlist.Select(x => x.ToLower())))
+                        .When(idlist != null, w => w.WhereIn("id", idlist?.Select(x => x.ToLower()) ?? Enumerable.Empty<string>()))
                         .WhereRaw("data->>'DisplayAsCategory' = ?", "true");                        
 
                 var validtagdata =
