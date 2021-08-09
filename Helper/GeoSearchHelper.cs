@@ -94,8 +94,8 @@ namespace Helper
 
 
             pggeosearchresult.geosearch = true;
-            pggeosearchresult.latitude = latitude.Value;
-            pggeosearchresult.longitude = longitude.Value;
+            pggeosearchresult.latitude = latitude ?? 0;
+            pggeosearchresult.longitude = longitude ?? 0;
 
             if (radius > 0)
                 pggeosearchresult.radius = radius;
