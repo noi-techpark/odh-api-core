@@ -115,13 +115,13 @@ namespace OdhApiCore
         public Field2HideConfig(string entity, string fields, string validforroles)
         {
             this.Entity = entity;
-            this.ValidForRoles = validforroles.Split(',').ToList();
-            this.Fields = fields.Split(',').ToList();
+            this.ValidForRoles = validforroles != null ? validforroles.Split(',').ToList() : null;
+            this.Fields = fields != null ? fields.Split(',').ToList() : null;
         }
 
         public string Entity { get; private set; }
-        public List<string> Fields { get; private set; }
-        public List<string> ValidForRoles { get; private set; }
+        public List<string>? Fields { get; private set; }
+        public List<string>? ValidForRoles { get; private set; }
     }
 
     public interface ISettings
