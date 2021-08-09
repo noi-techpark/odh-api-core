@@ -37,39 +37,39 @@ namespace Helper
                         .Where("id", districtid.ToUpper());
                 var district = await districtquery.GetFirstOrDefaultAsObject<District>();
 
-                var districtnames = (from x in district.Detail
+                var districtnames = (from x in district?.Detail
                                      select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
                 var munquery = QueryFactory.Query("municipalities")
                         .Select("data")
-                        .Where("id", district.MunicipalityId.ToUpper());
+                        .Where("id", district?.MunicipalityId?.ToUpper());
                 var municipality = await munquery.GetFirstOrDefaultAsObject<Municipality>();
                 
-                var municipalitynames = (from x in municipality.Detail
+                var municipalitynames = (from x in municipality?.Detail
                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
                 var tvquery = QueryFactory.Query("tvs")
                         .Select("data")
-                        .Where("id", district.TourismvereinId.ToUpper());
+                        .Where("id", district?.TourismvereinId?.ToUpper());
                 var tourismverein = await tvquery.GetFirstOrDefaultAsObject<Tourismverein>();
                 
-                var tourismvereinnames = (from x in tourismverein.Detail
+                var tourismvereinnames = (from x in tourismverein?.Detail
                                           select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
                 var regquery = QueryFactory.Query("regions")
                         .Select("data")
-                        .Where("id", district.RegionId.ToUpper());
+                        .Where("id", district?.RegionId?.ToUpper());
                 var region = await regquery.GetFirstOrDefaultAsObject<Region>();
                 
-                var regionnames = (from x in region.Detail
+                var regionnames = (from x in region?.Detail
                                    select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
                 //conn.Close();
 
-                mylocinfo.DistrictInfo = new DistrictInfoLinked() { Id = district.Id, Name = districtnames };
-                mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality.Id, Name = municipalitynames };
-                mylocinfo.TvInfo = new TvInfoLinked() { Id = tourismverein.Id, Name = tourismvereinnames };
-                mylocinfo.RegionInfo = new RegionInfoLinked() { Id = region.Id, Name = regionnames };
+                mylocinfo.DistrictInfo = new DistrictInfoLinked() { Id = district?.Id, Name = districtnames };
+                mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality?.Id, Name = municipalitynames };
+                mylocinfo.TvInfo = new TvInfoLinked() { Id = tourismverein?.Id, Name = tourismvereinnames };
+                mylocinfo.RegionInfo = new RegionInfoLinked() { Id = region?.Id, Name = regionnames };
             }
             return mylocinfo;
         }

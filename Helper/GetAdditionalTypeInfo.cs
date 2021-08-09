@@ -30,21 +30,23 @@ namespace Helper
             {
                 var maintypequery = QueryFactory.Query("smgpoitypes")
                             .Select("data")
-                            .Where("id", subtypedata.Parent.ToLower());
+                            .Where("id", subtypedata.Parent?.ToLower());
                 //.WhereRaw("data->>'Key' LIKE ?",  subtypedata.TypeParent);
                 var maintypedata =
                     await maintypequery
                         .GetFirstOrDefaultAsObject<SmgPoiTypes>();
 
-                var validtags = await ODHTagHelper.GetSmgTagsValidforTranslations(QueryFactory, new List<string>(), new List<string>() { maintypedata.Key, subtypedata.Key });
+                var validtags = await ODHTagHelper.GetSmgTagsValidforTranslations(QueryFactory, new List<string>(), new List<string>() { maintypedata?.Key ?? "", subtypedata.Key });
 
                 foreach (var lang in languages)
                 {
-                    AdditionalPoiInfos mypoiinfo = new AdditionalPoiInfos();
-                    mypoiinfo.Language = lang;
-                    mypoiinfo.MainType = maintypedata.TypeDesc[lang];
-                    mypoiinfo.SubType = subtypedata.TypeDesc[lang];
-                    mypoiinfo.Categories = validtags.Select(x => x.TagName[lang]).ToList();
+                    AdditionalPoiInfos mypoiinfo = new AdditionalPoiInfos
+                    {
+                        Language = lang,
+                        MainType = maintypedata?.TypeDesc?[lang],
+                        SubType = subtypedata?.TypeDesc?[lang],
+                        Categories = validtags.Select(x => x.TagName[lang]).ToList()
+                    };
 
                     myadditionalpoinfosdict.Add(lang, mypoiinfo);
                 }
@@ -77,7 +79,7 @@ namespace Helper
 
                 return validtagdata;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new List<SmgTags>();
             }

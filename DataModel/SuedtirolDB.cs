@@ -14,7 +14,7 @@ namespace DataModel
     //Id (LTSRID) und Shortname
     public interface IIdentifiable
     {
-        string? Id { get; set; }
+        string Id { get; set; }
         string? Shortname { get; set; }
     }    
 
@@ -976,7 +976,7 @@ namespace DataModel
             AccoRoomDetail = new Dictionary<string, AccoRoomDetail>();
         }
 
-        public string? Id { get; set; }
+        public string Id { get; set; }
         public string? Shortname { get; set; }
 
         public string? A0RID { get; set; }
@@ -1696,7 +1696,7 @@ namespace DataModel
         public long Bitmask { get; set; }
         public string? Type { get; set; }
         public string? Parent { get; set; }
-        public string? Key { get; set; }
+        public string Key { get; set; }
 
         public IDictionary<string, string>? TypeDesc { get; set; }
     }
@@ -2956,25 +2956,25 @@ namespace DataModel
     public class RegionInfo
     {
         public string? Id { get; set; }
-        public IDictionary<string, string>? Name { get; set; }
+        public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class TvInfo
     {
         public string? Id { get; set; }
-        public IDictionary<string, string>? Name { get; set; }
+        public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class MunicipalityInfo
     {
         public string? Id { get; set; }
-        public IDictionary<string, string>? Name { get; set; }
+        public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class DistrictInfo
     {
         public string? Id { get; set; }
-        public IDictionary<string, string>? Name { get; set; }
+        public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class AreaInfo
