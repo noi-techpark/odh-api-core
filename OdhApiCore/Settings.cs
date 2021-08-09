@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OdhApiCore
 {
@@ -108,6 +110,20 @@ namespace OdhApiCore
         public string ServiceUrl { get; private set; }
     }
 
+    public class Field2HideConfig
+    {
+        public Field2HideConfig(string entity, string fields, string validforroles)
+        {
+            this.Entity = entity;
+            this.ValidForRoles = validforroles.Split(',').ToList();
+            this.Fields = fields.Split(',').ToList();
+        }
+
+        public string Entity { get; private set; }
+        public List<string> Fields { get; private set; }
+        public List<string> ValidForRoles { get; private set; }
+    }
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -119,6 +135,8 @@ namespace OdhApiCore
         S3ImageresizerConfig S3ImageresizerConfig { get; }
         EBMSConfig EbmsConfig { get; }
         RavenConfig RavenConfig { get; }
+
+        Field2HideConfig Field2HideConfig { get; }
     }
 
     public class Settings : ISettings
@@ -133,6 +151,7 @@ namespace OdhApiCore
         private readonly S3ImageresizerConfig s3imageresizerConfig;
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
+        private readonly Field2HideConfig field2hideConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -155,6 +174,9 @@ namespace OdhApiCore
             this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
             var raven = this.configuration.GetSection("RavenConfig");
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
+            var field2hide = this.configuration.GetSection("Field2HideConfig");
+            this.field2hideConfig = new Field2HideConfig(field2hide.GetValue<string>("Entity", ""), field2hide.GetValue<string>("Fields", ""), field2hide.GetValue<string>("ValidForRoles", ""));
+
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -167,5 +189,6 @@ namespace OdhApiCore
         public EBMSConfig EbmsConfig => this.ebmsConfig;
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
+        public Field2HideConfig Field2HideConfig => this.field2hideConfig;
     }
 }
