@@ -37,7 +37,7 @@ namespace RAVEN
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return default(T);
             }                        

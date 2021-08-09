@@ -257,7 +257,7 @@ namespace SIAG
 
                 return myweather;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -691,7 +691,7 @@ namespace SIAG
 
                 return myweather;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

@@ -25,7 +25,7 @@ namespace MSS
 
                 return mypackageslist;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -44,7 +44,7 @@ namespace MSS
 
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -221,7 +221,7 @@ namespace MSS
 
                 return myparsedpackage;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -577,7 +577,7 @@ namespace MSS
 
                 return myparsedresponselist;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
