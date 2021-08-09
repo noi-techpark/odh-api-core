@@ -29,17 +29,17 @@ namespace SIAG
         }
 
         //Parses to ODH Format
-        public static async Task<Weather> ParseSiagWeatherDataToODHWeather(string lang, string xmldir, string weatherresponsetask, bool json)
+        public static Task<Weather> ParseSiagWeatherDataToODHWeather(string lang, string xmldir, string weatherresponsetask, bool json)
         {
             var weatherinfo = XDocument.Load(xmldir + "Weather.xml");
 
             if (json)
             {
-                return ParseWeather.ParsemyWeatherJsonResponse(lang, weatherinfo, weatherresponsetask);
+                return Task.FromResult(ParseWeather.ParsemyWeatherJsonResponse(lang, weatherinfo, weatherresponsetask));
             }
 
             XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
-            return ParseWeather.ParsemyWeatherResponse(lang, weatherinfo, myweatherresponse, source);
+            return Task.FromResult(ParseWeather.ParsemyWeatherResponse(lang, weatherinfo, myweatherresponse, source));
         }
 
         #endregion
