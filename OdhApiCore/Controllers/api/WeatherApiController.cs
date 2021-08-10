@@ -447,7 +447,18 @@ namespace OdhApiCore.Controllers
                         raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
                     );
 
-                return dataTransformed;
+                //return dataTransformed;
+
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
+
+                return ResponseHelpers.GetResult(
+                    pagenumber,
+                    totalpages,
+                    totalcount,
+                    seed,
+                    dataTransformed,
+                    Url);
             });
         }
 
