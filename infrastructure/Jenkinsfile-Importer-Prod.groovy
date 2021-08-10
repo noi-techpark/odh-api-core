@@ -3,11 +3,11 @@ pipeline {
 
     environment {
 	      ASPNETCORE_ENVIRONMENT = "Production"
-        DOCKER_PROJECT_NAME = "odh-tourism-importer"
-        DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-importer'
-        DOCKER_TAG = "test-$BUILD_NUMBER"
+              DOCKER_PROJECT_NAME = "odh-tourism-importer"
+              DOCKER_IMAGE = '755952719952.dkr.ecr.eu-west-1.amazonaws.com/odh-tourism-importer'
+              DOCKER_TAG = "test-$BUILD_NUMBER"
 	      SERVER_PORT = "1029"        
-        PG_CONNECTION = credentials('odh-tourism-api-test2-pg-connection')
+              PG_CONNECTION = credentials('odh-tourism-api-prod-pg-connection')
 	      MSS_USER = credentials('odh-tourism-api-test-mss-user')
 	      MSS_PSWD = credentials('odh-tourism-api-test-mss-pswd')
 	      LCS_USER = credentials('odh-tourism-api-test-lcs-user')
