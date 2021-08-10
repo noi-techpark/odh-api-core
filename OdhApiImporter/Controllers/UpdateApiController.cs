@@ -45,6 +45,23 @@ namespace OdhApiImporter.Controllers
             this.QueryFactory = queryFactory;
         }
 
+        #region TEST
+
+        [HttpGet, Route("TestWS")]
+        public IActionResult TestWS(CancellationToken cancellationToken)
+        {
+            return Ok(new UpdateResult
+            {
+                operation = "Test WS",
+                updatetype = "",
+                message = "Workerservice is online",
+                recordsupdated = "0",
+                success = true
+            });
+        }
+
+        #endregion
+
         #region EBMS exposed
 
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]

@@ -521,7 +521,7 @@ namespace STA
                 return myoperationschedule;
             }
             else
-                return null;
+                return new OperationSchedule();
         }
     }
 }

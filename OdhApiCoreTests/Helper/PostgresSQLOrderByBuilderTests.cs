@@ -9,7 +9,7 @@ namespace OdhApiCoreTests.Helper
         [InlineData("100", "10")]
         [InlineData("42", "42")]
         [InlineData("83", "8")]
-        public void BuildSeedOrderBy_WithSeed(string seed, string resultSeed)
+        public void BuildSeedOrderBy_WithSeed(string? seed, string resultSeed)
         {
             string orderby = "";
             PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, ref seed, "");
@@ -30,7 +30,7 @@ namespace OdhApiCoreTests.Helper
         public void BuildSeedOrderBy_WithInvalidSeed()
         {
             string orderby = "";
-            string invalidseed = "invalidnumber";
+            string? invalidseed = "invalidnumber";
 
             PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, ref invalidseed, "orderbyclause");
             // CHECK: Is this the correct behavior?

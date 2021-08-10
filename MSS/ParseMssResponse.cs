@@ -157,7 +157,7 @@ namespace MSS
 
                 //return myparsedresponselist;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -182,7 +182,7 @@ namespace MSS
 
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -205,7 +205,7 @@ namespace MSS
 
                 return ResponseParser(myresult, servicecode, myroompersons, resultid, source, lang, version);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -760,7 +760,7 @@ namespace MSS
 
                 return myparsedresponselist;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

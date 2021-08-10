@@ -9,9 +9,9 @@ namespace OdhApiCore
 {
     public static class RemoteIpHelper
     {
-        public static string GetRequestIP(HttpContext context, bool tryUseXForwardHeader = true)
+        public static string? GetRequestIP(HttpContext context, bool tryUseXForwardHeader = true)
         {
-            string ip = null;
+            string? ip = null;
 
             // X-Forwarded-For (csv list):  Using the First entry in the list seems to work
             // for 99% of cases however it has been suggested that a better (although tedious)
@@ -19,13 +19,13 @@ namespace OdhApiCore
             // http://stackoverflow.com/a/43554000/538763
             //
             if (tryUseXForwardHeader)
-                ip = GetHeaderValueAs<string>("X-Forwarded-For", context).SplitCsv().FirstOrDefault();
+                ip = GetHeaderValueAs<string>("X-Forwarded-For", context)?.SplitCsv()?.FirstOrDefault();
 
             // RemoteIpAddress is always null in DNX RC1 Update1 (bug).
             if (ip.IsNullOrWhitespace() && context?.Connection?.RemoteIpAddress != null)
                 ip = context.Connection.RemoteIpAddress.ToString();
 
-            if (ip.IsNullOrWhitespace())
+            if (ip.IsNullOrWhitespace() && context != null)
                 ip = GetHeaderValueAs<string>("REMOTE_ADDR", context);
 
             // _httpContextAccessor.HttpContext?.Request?.Host this is the local host.
@@ -40,7 +40,7 @@ namespace OdhApiCore
             return ip;
         }
 
-        public static T GetHeaderValueAs<T>(string headerName, HttpContext context)
+        public static T? GetHeaderValueAs<T>(string headerName, HttpContext context)
         {
             StringValues values = new StringValues();
 
@@ -54,7 +54,7 @@ namespace OdhApiCore
             return default(T);
         }
 
-        private static List<string> SplitCsv(this string csvList, bool nullOrWhitespaceInputReturnsNull = false)
+        private static List<string>? SplitCsv(this string csvList, bool nullOrWhitespaceInputReturnsNull = false)
         {
             if (string.IsNullOrWhiteSpace(csvList))
                 return nullOrWhitespaceInputReturnsNull ? null : new List<string>();
@@ -67,7 +67,7 @@ namespace OdhApiCore
                 .ToList();
         }
 
-        private static bool IsNullOrWhitespace(this string s)
+        private static bool IsNullOrWhitespace(this string? s)
         {
             return String.IsNullOrWhiteSpace(s);
         }

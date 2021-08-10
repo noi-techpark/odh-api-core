@@ -45,7 +45,7 @@ namespace MSS
                 return myparsedresponse;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -85,7 +85,7 @@ namespace MSS
                 return myparsedresponse;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -127,7 +127,7 @@ namespace MSS
                 return myparsedresponse;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -167,7 +167,7 @@ namespace MSS
                 return myparsedresponse;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

@@ -267,7 +267,7 @@ namespace OdhApiCore.Controllers
                     await query
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
-                            perPage: (int)pagesize);
+                            perPage: pagesize ?? 25);
 
                 var dataTransformed =
                     data.List.Select(

@@ -14,7 +14,7 @@ namespace DataModel
     //Id (LTSRID) und Shortname
     public interface IIdentifiable
     {
-        string? Id { get; set; }
+        string Id { get; set; }
         string? Shortname { get; set; }
     }    
 
@@ -540,17 +540,26 @@ namespace DataModel
         //IDM Mapping
         public IDictionary<string, string> IDMCategoryMapping { get; set; }
         public Nullable<bool> DisplayAsCategory { get; set; }
+
+        public LTSTaggingInfo LTSTaggingInfo { get; set; }
     }
 
-    #endregion
+    public class LTSTaggingInfo
+    {
+        //NEW LTS RID
+        public string LTSTaggingTypeId { get; set; }
+        public string LTSTaggingTypeParentId { get; set; }
+    }
+
+#endregion
 
 
-    /// <summary>
-    /// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
-    /// </summary>
-    #region Marketinggroup
+/// <summary>
+/// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
+/// </summary>
+#region Marketinggroup
 
-    public class Marketinggroup : IIdentifiable
+public class Marketinggroup : IIdentifiable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -976,7 +985,7 @@ namespace DataModel
             AccoRoomDetail = new Dictionary<string, AccoRoomDetail>();
         }
 
-        public string? Id { get; set; }
+        public string Id { get; set; }
         public string? Shortname { get; set; }
 
         public string? A0RID { get; set; }
@@ -1696,7 +1705,7 @@ namespace DataModel
         public long Bitmask { get; set; }
         public string? Type { get; set; }
         public string? Parent { get; set; }
-        public string? Key { get; set; }
+        public string Key { get; set; }
 
         public IDictionary<string, string>? TypeDesc { get; set; }
     }
@@ -2083,7 +2092,7 @@ namespace DataModel
             ContactInfos = new Dictionary<string, ContactInfos>();
         }
 
-        public string? Id { get; set; }
+        public string Id { get; set; }
         public bool Active { get; set; }
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
@@ -2575,14 +2584,11 @@ namespace DataModel
 
         //NEW Webcam Properties
         public string? Id { get; set; }
-        public string? Streamurl { get; set; }
-        public string? Previewurl { get; set; }
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
         public string? Shortname { get; set; }
         public bool? Active { get; set; }
         public bool? SmgActive { get; set; }
-        public string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 
         public ICollection<string>? AreaIds { get; set; }
@@ -2959,25 +2965,25 @@ namespace DataModel
     public class RegionInfo
     {
         public string? Id { get; set; }
-        public IDictionary<string, string>? Name { get; set; }
+        public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class TvInfo
     {
         public string? Id { get; set; }
-        public IDictionary<string, string>? Name { get; set; }
+        public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class MunicipalityInfo
     {
         public string? Id { get; set; }
-        public IDictionary<string, string>? Name { get; set; }
+        public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class DistrictInfo
     {
         public string? Id { get; set; }
-        public IDictionary<string, string>? Name { get; set; }
+        public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class AreaInfo

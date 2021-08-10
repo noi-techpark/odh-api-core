@@ -103,7 +103,7 @@ namespace OdhApiCore.Controllers
                     pagenumber: pagenumber, pagesize: pagesize, language: language, 
                     idfilter: idlist, locfilter: locfilter, datefrom: datefrom, dateto: dateto,
                     lastchange: lastchange, searchfilter: searchfilter, seed: seed,
-                    fields: fields ?? Array.Empty<string>(), null, rawfilter, rawsort, removenullvalues, cancellationToken);
+                    fields: fields ?? Array.Empty<string>(), new PGGeoSearchResult(), rawfilter, rawsort, removenullvalues, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -253,14 +253,14 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Weather/SnowReport")]
         public async Task<ActionResult<SnowReportBaseData>> GetSnowReportBase(
             string? skiareaid,
-            string? lang = "de",             
+            string lang = "de",             
             CancellationToken cancellationToken = default)
         {
             try
             {
                 if(!String.IsNullOrEmpty(skiareaid))
                 {
-                    var snowreport = await GetSnowReportBaseData(lang ?? "de", skiareaid, cancellationToken);
+                    var snowreport = await GetSnowReportBaseData(lang, skiareaid, cancellationToken);
 
                     return Ok(snowreport);
                 }
@@ -440,7 +440,7 @@ namespace OdhApiCore.Controllers
                         await query
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
-                            perPage: (int)pagesize);
+                            perPage: pagesize ?? 25);
 
                 var dataTransformed =
                     data.List.Select(

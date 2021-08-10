@@ -155,9 +155,9 @@ namespace OdhApiCore.GenericHelpers
 
             var staconfig = XDocument.Load(xmldir + "STACategories.xml");
 
-            categories.AddRange(staconfig.Root.Element("ODHActivityPois").Element("Categories").Elements("Item").Select(x => x.Value).ToList());
-            categories.AddRange(staconfig.Root.Element("ODHActivityPois").Element("SubCategories").Elements("Item").Select(x => x.Value).ToList());
-            categories.AddRange(staconfig.Root.Element("ODHActivityPois").Element("PoiCategories").Elements("Item").Select(x => x.Value).ToList());
+            categories.AddRange(staconfig.Root?.Element("ODHActivityPois")?.Element("Categories")?.Elements("Item")?.Select(x => x.Value)?.ToList() ?? new List<string>());
+            categories.AddRange(staconfig.Root?.Element("ODHActivityPois")?.Element("SubCategories")?.Elements("Item")?.Select(x => x.Value)?.ToList() ?? new List<string>());
+            categories.AddRange(staconfig.Root?.Element("ODHActivityPois")?.Element("PoiCategories")?.Elements("Item")?.Select(x => x.Value)?.ToList() ?? new List<string>());
 
             return categories;
         }

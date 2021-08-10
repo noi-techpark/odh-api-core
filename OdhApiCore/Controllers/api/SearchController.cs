@@ -71,7 +71,7 @@ namespace OdhApiCore.Controllers
             var fieldstodisplay = fields ?? Array.Empty<string>();
             var fieldstosearchon = filteronfields ?? Array.Empty<string>();
 
-            return await Get(language: language, validforentity: odhtype, fields: fieldstodisplay,
+            return await Get(language: language ?? "en", validforentity: odhtype, fields: fieldstodisplay,
                   searchfilter: term, searchontext: searchbasetext, passedfieldstosearchon: fieldstosearchon,
                   rawfilter: rawfilter, rawsort: rawsort, limitto: limitto, removenullvalues: removenullvalues, cancellationToken);
         }
@@ -82,7 +82,7 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> Get(string? language, string? validforentity, string[] fields,
+        private Task<IActionResult> Get(string language, string? validforentity, string[] fields,
             string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var myentitytypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -121,7 +121,7 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private async Task<IEnumerable<JsonRaw?>> SearchTroughEntity(string entitytype, Func<string, string[]> fieldsearchfunc, string table, string? language, string[] fields,
+        private async Task<IEnumerable<JsonRaw>> SearchTroughEntity(string entitytype, Func<string, string[]> fieldsearchfunc, string table, string language, string[] fields,
             string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var searchonfields = fieldsearchfunc(language);
@@ -147,12 +147,14 @@ namespace OdhApiCore.Controllers
                 .When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
-                .Limit(limitto.Value);
+                .Limit(limitto ?? int.MaxValue);
 
 
             var data = await query.GetAsync<JsonRaw>();
 
-            return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList));
+            return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList))
+                    .Where(json => json != null)
+                    .Select(json => json!);
         }
 
         #endregion

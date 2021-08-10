@@ -138,7 +138,7 @@ namespace OdhApiImporter.Helpers
                     {
                         queryresult = await QueryFactory.Query("eventeuracnoi")
                             //.InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                            .InsertAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), rawdataid = rawid });
+                            .InsertAsync(new JsonBDataRaw() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort), rawdataid = rawid });
 
                         newcounter++;
                     }
@@ -149,7 +149,7 @@ namespace OdhApiImporter.Helpers
                         //TODO CHECK IF THIS WORKS     
                         queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
                             //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                            .UpdateAsync(new JsonBDataRaw() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort), rawdataid = rawid });
+                            .UpdateAsync(new JsonBDataRaw() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort), rawdataid = rawid });
 
                         updatecounter++;
                     }
@@ -219,7 +219,7 @@ namespace OdhApiImporter.Helpers
                     //TODO CHECK IF IT WORKS
                     if (eventshorttodeactivate != null)
                     {
-                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id.ToLower()).DeleteAsync();
+                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
                         deletecounter++;
                     }
                 }

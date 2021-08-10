@@ -14,7 +14,7 @@ namespace STA
     {
         public const string csvurl = "c:\\temp\\210208.sudtirolmobil.Verkaufsstellen.csv";
 
-        public static async Task<ParseResult<STAVendingPoint>> ImportCSVFromSTA(string? csvcontent)
+        public static Task<ParseResult<STAVendingPoint>> ImportCSVFromSTA(string? csvcontent)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace STA
                         myresult.Error = false;
                         myresult.records = records.ToList();
 
-                        return myresult;
+                        return Task.FromResult(myresult);
                     }
                 }
                 else
@@ -64,13 +64,13 @@ namespace STA
                         myresult.Error = false;
                         myresult.records = records.ToList();
 
-                        return myresult;
+                        return Task.FromResult(myresult);
                     }
                 }
             }
             catch(Exception ex)
             {
-                return new ParseResult<STAVendingPoint>() { Error = true, Success = false, ErrorMessage = ex.Message, records = null };
+                return Task.FromResult(new ParseResult<STAVendingPoint>() { Error = true, Success = false, ErrorMessage = ex.Message, records = Enumerable.Empty<STAVendingPoint>() });
             }
         }
 
@@ -94,8 +94,8 @@ namespace STA
     {
         public bool Success { get; set; }
         public bool Error { get; set; }
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; } = "";
 
-        public IEnumerable<T> records { get; set; }
+        public IEnumerable<T> records { get; set; } = Enumerable.Empty<T>();
     }
 }

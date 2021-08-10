@@ -29,7 +29,7 @@ namespace Helper
         public static Metadata GetMetadataforAccommodationRoom(AccoRoom data)
         {
             //fix if source is null
-            string datasource = data.Source;
+            string? datasource = data.Source;
 
             if (datasource == null)
             {
@@ -70,12 +70,12 @@ namespace Helper
 
         public static Metadata GetMetadataforOdhActivityPoi(SmgPoi data)
         {
-            string sourcemeta = data.Source.ToLower();
+            string? sourcemeta = data.Source?.ToLower();
 
             if (sourcemeta == "common" || sourcemeta == "magnolia" || sourcemeta == "content")
                 sourcemeta = "idm";
 
-            return GetMetadata(data, sourcemeta, data.LastChange);
+            return GetMetadata(data, sourcemeta ?? "", data.LastChange);
         }
 
         public static Metadata GetMetadataforOdhTag(SmgTags data)
