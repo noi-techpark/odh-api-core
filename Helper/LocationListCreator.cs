@@ -71,7 +71,7 @@ namespace Helper
         }
 
         private static string[] FromJsonArray(string jsonArray) =>
-            Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(jsonArray);
+            Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(jsonArray) ?? new string[] { };
 
         public static async Task<IEnumerable<string>> GetAreaforSkiRegionPGAsync(this Query query, string skiregId, CancellationToken cancellationToken)
         {

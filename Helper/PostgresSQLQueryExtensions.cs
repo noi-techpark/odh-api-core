@@ -1215,7 +1215,9 @@ namespace Helper
 
             foreach (var rawdata in rawdatalist)
             {
-                datalist.Add(JsonConvert.DeserializeObject<T>(rawdata.Value));
+                var value = JsonConvert.DeserializeObject<T>(rawdata.Value);
+                if (value != null)
+                    datalist.Add(value);
             }
             return datalist;
         }

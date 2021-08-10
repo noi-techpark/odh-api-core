@@ -35,7 +35,7 @@ namespace OdhApiImporter.Helpers
             RawDataStore rawData = new RawDataStore();
             rawData.importdate = DateTime.Now;
             rawData.type = "weather";
-            rawData.sourceid = siagweatherde.id.ToString();
+            rawData.sourceid = siagweatherde?.id.ToString() ?? "";
             rawData.datasource = "siag";
             rawData.sourceinterface = "weatherbulletin";
             rawData.sourceurl = "http://daten.buergernetz.bz.it/services/weather/bulletin";

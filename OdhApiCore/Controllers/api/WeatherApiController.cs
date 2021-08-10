@@ -550,6 +550,10 @@ namespace OdhApiCore.Controllers
                        .Where("id", skiareaid);                       
             
             var skiarearaw = await query.FirstOrDefaultAsync<JsonRaw>();
+
+            if (skiarearaw == null)
+                throw new Exception("skiarea not found!");
+
             var skiarea = JsonConvert.DeserializeObject<SkiArea>(skiarearaw.Value);
 
             //Schoffts net afn SkiArea object zu bringen kriag do ollm a laars object
@@ -559,10 +563,7 @@ namespace OdhApiCore.Controllers
             //var skiareastring = await query.FirstOrDefaultAsync<string>();
             //var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
 
-            if (skiarearaw == null)
-                throw new Exception("skiarea not found!");
-
-            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
+            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea!, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
 
             return mysnowreport;
         }
