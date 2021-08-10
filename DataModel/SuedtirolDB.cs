@@ -540,17 +540,26 @@ namespace DataModel
         //IDM Mapping
         public IDictionary<string, string> IDMCategoryMapping { get; set; }
         public Nullable<bool> DisplayAsCategory { get; set; }
+
+        public LTSTaggingInfo LTSTaggingInfo { get; set; }
     }
 
-    #endregion
+    public class LTSTaggingInfo
+    {
+        //NEW LTS RID
+        public string LTSTaggingTypeId { get; set; }
+        public string LTSTaggingTypeParentId { get; set; }
+    }
+
+#endregion
 
 
-    /// <summary>
-    /// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
-    /// </summary>
-    #region Marketinggroup
+/// <summary>
+/// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
+/// </summary>
+#region Marketinggroup
 
-    public class Marketinggroup : IIdentifiable
+public class Marketinggroup : IIdentifiable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
