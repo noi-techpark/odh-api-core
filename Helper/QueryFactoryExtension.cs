@@ -13,16 +13,16 @@ namespace Helper
 {
     public static class QueryFactoryExtension
     {
-        public static async Task<T> GetObjectSingleAsync<T>(this Query query, CancellationToken cancellationToken = default)
+        public static async Task<T> GetObjectSingleAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         {
             var result = await query.FirstOrDefaultAsync<JsonRaw>();
-            return JsonConvert.DeserializeObject<T>(result.Value);
+            return JsonConvert.DeserializeObject<T>(result.Value) ?? default!;
         }
 
-        public static async Task<IEnumerable<T>> GetObjectListAsync<T>(this Query query, CancellationToken cancellationToken = default)
+        public static async Task<IEnumerable<T>> GetObjectListAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         {
             var result = await query.GetAsync<JsonRaw>();            
-            return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value));
+            return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value)!) ?? default!;
         }
 
         //Insert also data in Raw table

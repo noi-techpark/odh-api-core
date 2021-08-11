@@ -2584,11 +2584,14 @@ public class Marketinggroup : IIdentifiable
 
         //NEW Webcam Properties
         public string? Id { get; set; }
+        public new string? Streamurl { get; set; }
+        public new string? Previewurl { get; set; }
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
         public string? Shortname { get; set; }
         public bool? Active { get; set; }
         public bool? SmgActive { get; set; }
+        public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 
         public ICollection<string>? AreaIds { get; set; }
