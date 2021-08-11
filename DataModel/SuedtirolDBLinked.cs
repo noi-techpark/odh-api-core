@@ -546,10 +546,10 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + Uri.EscapeUriString(this.Type), Type = "Type" });
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + Uri.EscapeUriString(this.SubType), Type = "SubType" });
+                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = Uri.EscapeUriString(ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.Type), Type = "Type" });
+                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = Uri.EscapeUriString(ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.SubType), Type = "SubType" });
                 if (!String.IsNullOrEmpty(this.PoiType))
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + Uri.EscapeUriString(this.PoiType), Type = "PoiType" });
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = Uri.EscapeUriString(ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.PoiType), Type = "PoiType" });
 
                 return returnlist;
             }
