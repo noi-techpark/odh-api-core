@@ -637,7 +637,7 @@ public class Marketinggroup : IIdentifiable
     /// </summary>
     public class LTSPoi : PoiBaseInfos, ILicenseInfo
     {
-        public List<LTSTags>? LTSTags { get; set; }
+        
     }
 
     //For PG Activities & Pois
@@ -659,9 +659,7 @@ public class Marketinggroup : IIdentifiable
             GpsPoints = new Dictionary<string, GpsInfo>();
         }
 
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
-
-        public List<LTSTags>? LTSTags { get; set; }
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }        
     }
 
     //End for PG
@@ -2228,6 +2226,8 @@ public class Marketinggroup : IIdentifiable
         public Nullable<int> WayNumber { get; set; }
 
         public string? Number { get; set; }
+
+        public List<LTSTags>? LTSTags { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
@@ -2701,14 +2701,15 @@ public class Marketinggroup : IIdentifiable
 
     public class LTSTags
     {
-        public LTSTags()
-        {
-            TagName = new Dictionary<string, string>();
-        }
+        //public LTSTags()
+        //{
+        //    TagName = new Dictionary<string, string>();
+        //}
 
         public string? Id { get; set; }
+        public string? Shortname { get; set; }
         public int Level { get; set; }
-        public IDictionary<string, string> TagName { get; set; }
+        //public IDictionary<string, string> TagName { get; set; }
     }
 
     public class AdditionalArticleInfos : ILanguage
@@ -2790,11 +2791,9 @@ public class Marketinggroup : IIdentifiable
         public bool Monday { get; set; }
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
-        /// <summary>
-        /// Here for compatibility reasons
-        /// </summary>
+        // Here for compatibility reasons        
         public bool Thuresday { get; set; }
-        public bool Thursday { get; set; }
+        public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }

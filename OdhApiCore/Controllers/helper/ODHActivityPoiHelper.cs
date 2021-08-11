@@ -138,7 +138,9 @@ namespace OdhApiCore.Controllers.api
                     if (!sourcelistnew.Contains("none"))
                         sourcelistnew.Add("none");
                     if (!sourcelistnew.Contains("magnolia"))
-                        sourcelistnew.Add("magnolia");  
+                        sourcelistnew.Add("magnolia");
+                    if (!sourcelistnew.Contains("common"))
+                        sourcelistnew.Add("common");                    
                 }
                 else if(source == "lts")
                 {
