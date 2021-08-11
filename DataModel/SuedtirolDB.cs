@@ -791,6 +791,8 @@ public class Marketinggroup : IIdentifiable
                             return "Common/WineAward/" + this.Id;
                         case "accommodation":
                             return "Accommodation/" + this.Id;
+                        case "acco":
+                            return "Accommodation/" + this.Id;
                         default:
                             return "ODHActivityPoi/" + this.Id;
                     }
