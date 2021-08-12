@@ -547,8 +547,8 @@ namespace DataModel
     public class LTSTaggingInfo
     {
         //NEW LTS RID
-        public string LTSTaggingTypeId { get; set; }
-        public string LTSTaggingTypeParentId { get; set; }
+        public string LTSRID { get; set; }
+        public string ParentLTSRID { get; set; }
     }
 
 #endregion
@@ -2706,7 +2706,7 @@ public class Marketinggroup : IIdentifiable
         //}
 
         public string? Id { get; set; }
-        public string? Shortname { get; set; }
+        public string? LTSRID { get; set; }
         public int Level { get; set; }
         //public IDictionary<string, string> TagName { get; set; }
     }

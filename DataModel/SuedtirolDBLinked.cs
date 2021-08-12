@@ -157,7 +157,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Shortname) ? null : ODHConstant.ApplicationURL + "ODHTag/" + this.Shortname;
+                return String.IsNullOrEmpty(this.Id) ? null : ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
             }
         }
     }
