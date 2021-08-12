@@ -151,6 +151,17 @@ namespace DataModel
         public new AreaInfoLinked AreaInfo { get; set; }
     }
 
+    public class LTSTagsLinked : LTSTags
+    {
+        public string Self
+        {
+            get
+            {
+                return String.IsNullOrEmpty(this.Id) ? null : ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
+            }
+        }
+    }
+
     public class ODHTags
     {
         public string Id { get; set; }
@@ -464,6 +475,9 @@ namespace DataModel
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked LocationInfo { get; set; }
+
+        //Overwrites LTSTags
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class PackageLinked : Package
@@ -532,10 +546,10 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + Uri.EscapeUriString(this.Type), Type = "Type" });
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + Uri.EscapeUriString(this.SubType), Type = "SubType" });
+                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.Type, Type = "Type" });
+                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.SubType, Type = "SubType" });
                 if (!String.IsNullOrEmpty(this.PoiType))
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + Uri.EscapeUriString(this.PoiType), Type = "PoiType" });
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self =ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.PoiType, Type = "PoiType" });
 
                 return returnlist;
             }
@@ -553,8 +567,12 @@ namespace DataModel
         public new ICollection<DishRatesLinked> DishRates { get; set; }
         public new ICollection<CapacityCeremonyLinked> CapacityCeremony { get; set; }
         public new ICollection<FacilitiesLinked> Facilities { get; set; }
+
         //Overwrites The LocationInfo
         public new LocationInfoLinked LocationInfo { get; set; }
+
+        //Overwrites LTSTags
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class LTSPoiLinked : GBLTSPoi, IMetaData
@@ -610,6 +628,9 @@ namespace DataModel
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked LocationInfo { get; set; }
+
+        //Overwrites LTSTags
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class LTSActivityLinked : GBLTSActivity, IMetaData
@@ -665,6 +686,9 @@ namespace DataModel
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked LocationInfo { get; set; }
+
+        //Overwrites LTSTags
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class ArticlesLinked : ArticleBaseInfos, IMetaData

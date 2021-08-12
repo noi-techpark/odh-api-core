@@ -89,8 +89,10 @@ namespace OdhApiCore.Controllers.api
 
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
-            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
+            var sourcelisttemp = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
+
+            sourcelist = ExtendSourceFilterODHActivityPois(sourcelisttemp);
 
             this.arealist = arealist.ToList();
 
@@ -122,5 +124,46 @@ namespace OdhApiCore.Controllers.api
 
             this.lastchange = lastchange;
         }
+
+        private List<string> ExtendSourceFilterODHActivityPois(List<string> sourcelist)
+        {
+            List<string> sourcelistnew = new List<string>();
+
+            foreach(var source in sourcelist)
+            {
+                sourcelistnew.Add(source);
+
+                if (source == "idm")
+                {
+                    if (!sourcelistnew.Contains("none"))
+                        sourcelistnew.Add("none");
+                    if (!sourcelistnew.Contains("magnolia"))
+                        sourcelistnew.Add("magnolia");
+                    if (!sourcelistnew.Contains("common"))
+                        sourcelistnew.Add("common");                    
+                }
+                else if(source == "lts")
+                {
+                    if (!sourcelistnew.Contains("activitydata"))
+                        sourcelistnew.Add("activitydata");
+                    if (!sourcelistnew.Contains("poidata"))
+                        sourcelistnew.Add("poidata");
+                    if (!sourcelistnew.Contains("beacondata"))
+                        sourcelistnew.Add("beacondata");
+                    if (!sourcelistnew.Contains("gastronomicdata"))
+                        sourcelistnew.Add("gastronomicdata");
+                    if (!sourcelistnew.Contains("beacondata"))
+                        sourcelistnew.Add("beacondata");
+                }
+                else if(source == "siag")
+                {
+                    if (!sourcelistnew.Contains("museumdata"))
+                        sourcelistnew.Add("museumdata");
+                }
+            }
+
+            return sourcelistnew;
+        }
     }
+    
 }

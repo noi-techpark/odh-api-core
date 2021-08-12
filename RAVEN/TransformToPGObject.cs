@@ -162,7 +162,7 @@ namespace RAVEN
             data2.LastChange = data.LastChange;
             data2.LiftAvailable = data.LiftAvailable;
             data2.LocationInfo = data.LocationInfo;
-            data2.LTSTags = new List<LTSTags>();
+            data2.LTSTags = data.LTSTags;
             data2.OperationSchedule = data.OperationSchedule;
             data2.OutdooractiveID = data.OutdooractiveID;
             data2.PoiType = data.PoiType;

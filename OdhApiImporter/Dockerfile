@@ -30,9 +30,9 @@ RUN dotnet publish OdhApiImporter.csproj -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-#COPY OdhApiImporter/xml/Weather.xml xml/
-#COPY OdhApiImporter/xml/STACategories.xml xml/
-#COPY OdhApiImporter/xml/BezirkWeather.xml xml/
+COPY OdhApiImporter/xml/Weather.xml xml/
+COPY OdhApiImporter/xml/STACategories.xml xml/
+COPY OdhApiImporter/xml/BezirkWeather.xml xml/
 #COPY OdhApiImporter/xml/RequestInterceptor.xml xml/
 
 ENTRYPOINT ["dotnet", "OdhApiImporter.dll"]

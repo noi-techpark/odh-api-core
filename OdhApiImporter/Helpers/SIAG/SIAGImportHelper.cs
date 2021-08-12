@@ -29,21 +29,21 @@ namespace OdhApiImporter.Helpers
             //Save all Responses to rawdata table
 
             var siagweatherde = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeather>(weatherresponsetaskde);
-            var siagweatherit = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeather>(weatherresponsetaskit); 
+            var siagweatherit = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeather>(weatherresponsetaskit);
             var siagweatheren = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeather>(weatherresponsetasken);
 
             RawDataStore rawData = new RawDataStore();
             rawData.importdate = DateTime.Now;
             rawData.type = "weather";
-            rawData.sourceid = siagweatherde.id.ToString();
+            rawData.sourceid = siagweatherde?.id.ToString() ?? "";
             rawData.datasource = "siag";
             rawData.sourceinterface = "weatherbulletin";
             rawData.sourceurl = "http://daten.buergernetz.bz.it/services/weather/bulletin";
             rawData.raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren });
-            
+
             var insertresultraw = await QueryFactory.Query("rawdata")
                   .InsertGetIdAsync<int>(rawData);
-            
+
             //Save parsed Response to measurement history table
             var odhweatherresultde = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("de", settings.XmlConfig.XmldirWeather, weatherresponsetaskde, true);
             var odhweatherresultit = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("it", settings.XmlConfig.XmldirWeather, weatherresponsetaskit, true);
@@ -68,9 +68,9 @@ namespace OdhApiImporter.Helpers
             myweatherhistory.Shortname = odhweatherresultde.evolutiontitle;
 
             var insertresult = await QueryFactory.Query("weatherdatahistory")
-                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });            
+                  .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });
 
-            return String.Format("id: {0}, rawdataid: {1}, datetime: {2}", odhweatherresultde.Id.ToString(), insertresultraw.ToString(), DateTime.Now.ToShortDateString());
+            return String.Format("id: {0}, rawdataid: {1}, datetime: {2}", odhweatherresultde.Id.ToString(), insertresultraw.ToString(), DateTime.Now.ToShortDateString());        
         }
     }
 

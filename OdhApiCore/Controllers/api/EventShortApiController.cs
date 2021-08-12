@@ -291,7 +291,7 @@ namespace OdhApiCore.Controllers.api
                     await query
                             .GetAsync<string>();
 
-            var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x)).ToList();
+            var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x)!).ToList();
 
             var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter);
 
@@ -992,6 +992,9 @@ namespace OdhApiCore.Controllers.api
             {
                 var bdprooms = await GetBDPNoiRooms();
 
+                if (bdprooms == null)
+                    return new Dictionary<string, string>();
+
                 //var noimaproomlist = new List<NoiMapRooms>();
                 var noimaproomlist = new Dictionary<string, string>();
 
@@ -1021,7 +1024,7 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        private async Task<BDPResponseObject> GetBDPNoiRooms()
+        private async Task<BDPResponseObject?> GetBDPNoiRooms()
         {
             var requesturl = bdpserviceurl;
 

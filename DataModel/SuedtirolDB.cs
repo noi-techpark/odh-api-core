@@ -547,8 +547,8 @@ namespace DataModel
     public class LTSTaggingInfo
     {
         //NEW LTS RID
-        public string LTSTaggingTypeId { get; set; }
-        public string LTSTaggingTypeParentId { get; set; }
+        public string LTSRID { get; set; }
+        public string ParentLTSRID { get; set; }
     }
 
 #endregion
@@ -637,7 +637,7 @@ public class Marketinggroup : IIdentifiable
     /// </summary>
     public class LTSPoi : PoiBaseInfos, ILicenseInfo
     {
-        public List<LTSTags>? LTSTags { get; set; }
+        
     }
 
     //For PG Activities & Pois
@@ -659,9 +659,7 @@ public class Marketinggroup : IIdentifiable
             GpsPoints = new Dictionary<string, GpsInfo>();
         }
 
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
-
-        public List<LTSTags>? LTSTags { get; set; }
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }        
     }
 
     //End for PG
@@ -792,6 +790,8 @@ public class Marketinggroup : IIdentifiable
                         case "wineaward":
                             return "Common/WineAward/" + this.Id;
                         case "accommodation":
+                            return "Accommodation/" + this.Id;
+                        case "acco":
                             return "Accommodation/" + this.Id;
                         default:
                             return "ODHActivityPoi/" + this.Id;
@@ -2147,9 +2147,6 @@ public class Marketinggroup : IIdentifiable
         //obsolete ??
         public string? Difficulty { get; set; }
 
-        ////Des brauchi lei firn Filter auf nome
-        //public string Title { get; set; }
-
         //Activity SubType
         public string? Type { get; set; }
         public string? SubType { get; set; }
@@ -2228,6 +2225,8 @@ public class Marketinggroup : IIdentifiable
         public Nullable<int> WayNumber { get; set; }
 
         public string? Number { get; set; }
+
+        public List<LTSTags>? LTSTags { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
@@ -2584,11 +2583,14 @@ public class Marketinggroup : IIdentifiable
 
         //NEW Webcam Properties
         public string? Id { get; set; }
+        public new string? Streamurl { get; set; }
+        public new string? Previewurl { get; set; }
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
         public string? Shortname { get; set; }
         public bool? Active { get; set; }
         public bool? SmgActive { get; set; }
+        public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 
         public ICollection<string>? AreaIds { get; set; }
@@ -2698,14 +2700,15 @@ public class Marketinggroup : IIdentifiable
 
     public class LTSTags
     {
-        public LTSTags()
-        {
-            TagName = new Dictionary<string, string>();
-        }
+        //public LTSTags()
+        //{
+        //    TagName = new Dictionary<string, string>();
+        //}
 
         public string? Id { get; set; }
+        public string? LTSRID { get; set; }
         public int Level { get; set; }
-        public IDictionary<string, string> TagName { get; set; }
+        //public IDictionary<string, string> TagName { get; set; }
     }
 
     public class AdditionalArticleInfos : ILanguage
@@ -2787,11 +2790,9 @@ public class Marketinggroup : IIdentifiable
         public bool Monday { get; set; }
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
-        /// <summary>
-        /// Here for compatibility reasons
-        /// </summary>
+        // Here for compatibility reasons        
         public bool Thuresday { get; set; }
-        public bool Thursday { get; set; }
+        public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
