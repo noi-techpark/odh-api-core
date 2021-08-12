@@ -2147,9 +2147,6 @@ public class Marketinggroup : IIdentifiable
         //obsolete ??
         public string? Difficulty { get; set; }
 
-        ////Des brauchi lei firn Filter auf nome
-        //public string Title { get; set; }
-
         //Activity SubType
         public string? Type { get; set; }
         public string? SubType { get; set; }
