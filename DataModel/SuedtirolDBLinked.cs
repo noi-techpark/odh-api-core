@@ -157,7 +157,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "ODHTag/" + this.Shortname);
+                return String.IsNullOrEmpty(this.Shortname) ? null : ODHConstant.ApplicationURL + "ODHTag/" + this.Shortname;
             }
         }
     }
