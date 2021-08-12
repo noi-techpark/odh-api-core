@@ -91,6 +91,13 @@ namespace Helper
                 $"Webcamname.{lang}"
             ).ToArray();
 
+        public static string[] WeatherHistoryFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"Weather.{lang}.evolutiontitle"
+            ).ToArray();
+
         public static void CheckPassedLanguage(ref string language, IEnumerable<string> availablelanguages)
         {
             language = language.ToLower();
@@ -502,9 +509,9 @@ namespace Helper
             return query
                 .IdUpperFilter(idlist)
                 .SourceFilter_GeneratedColumn(sourcelist)
-                //.ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
-                //.OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
-                .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))
+                .SearchFilter(WeatherHistoryFieldsToSearchFor(language), searchfilter)
+                .LastChangedFilter_GeneratedColumn(begindate, enddate)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }

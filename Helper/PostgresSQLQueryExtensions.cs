@@ -1198,6 +1198,19 @@ namespace Helper
                )
            );
 
+        //Weatherhistory lastchangedBetween
+        //Filter on Generated Field gen_lastchange 
+        public static Query LastChangedFilter_GeneratedColumn(this Query query, DateTime? updatefrom, DateTime? updateto) =>
+            query.When(
+                updatefrom != null && updateto != null,
+                query => query.WhereRaw(
+                    //"to_date(gen_lastchange, 'YYYY-MM-DD') > date(?)",
+                    "gen_lastchange > date(?) AND gen_lastchange < date(?)",
+                    updatefrom,
+                    updateto
+                )
+            );
+
         #endregion
 
         #region Query Extension Methods Common used
