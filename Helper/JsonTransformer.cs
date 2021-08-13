@@ -13,7 +13,7 @@ namespace Helper
     {              
         public static JsonRaw? TransformRawData(
             this JsonRaw raw, string? language, string[] fields, bool checkCC0,
-            bool filterClosedData, bool filteroutNullValues, Func<string, string> urlGenerator, IEnumerable<string> userroles)
+            bool filterClosedData, bool filteroutNullValues, Func<string, string> urlGenerator, IEnumerable<string> fieldstohide)
         {
             JToken? token = JToken.Parse(raw.Value);
             //Filter out not desired langugae fields
@@ -26,10 +26,15 @@ namespace Helper
             if (checkCC0) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
 
             //Filter out all Data 
-            var rolefilter = FilterOutPropertiesByRole(userroles);
-            if (rolefilter.Count > 0)
-                if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, rolefilter);
-            
+            //var rolefilter = FilterOutPropertiesByRole(userroles);
+            //if (rolefilter.Count > 0)
+            //    if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, rolefilter);
+
+            if (fieldstohide.Count() > 0)
+                token = JsonTransformerMethods.FilterOutProperties(token, fieldstohide.ToList());
+
+
+
             if (filterClosedData) token = token.FilterClosedData();
             
             //Ensure Self Link is the right url
