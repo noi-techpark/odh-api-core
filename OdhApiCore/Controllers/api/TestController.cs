@@ -17,22 +17,41 @@ using OdhApiCore.Filters;
 using AspNetCore.CacheOutput;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
+using System.Net.Http;
 
 namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [Route("[controller]")]
     [ApiController]
-    public class TestController : ControllerBase
+    public class TestController : OdhController
     {
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
+        private readonly IHttpClientFactory httpClientFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings)           
+        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
+            : base(env, settings, logger, queryFactory)
         {
-            this.env = env;
+            this.httpClientFactory = httpClientFactory;
             this.settings = settings;
+            this.env = env;
         }
+
+        [HttpGet, Route("TestAppsettings")]
+        public IActionResult GetTestappsettings()
+        {
+
+            return Ok(JsonConvert.SerializeObject(settings.Field2HideConfig));
+        }
+
+        [HttpGet, Route("TestField2Hide")]
+        public IActionResult GetFieldToHide()
+        {
+
+            return Ok(JsonConvert.SerializeObject(GetFieldsToHide));
+        }
+
 
         [HttpGet, Route("UrlHelper", Name = "UrlHelperTest")]
         public object GetUrl(CancellationToken cancellationToken)
@@ -59,14 +78,7 @@ namespace OdhApiCore.Controllers.api
             }; 
         }
 
-        //Not working
-        [HttpGet, Route("TestAppsettings")]
-        public IActionResult GetTestappsettings()
-        {
-            
-            return Ok(JsonConvert.SerializeObject(settings.Field2HideConfig));
-        }
-
+        
         //Not working
         [HttpGet, Route("TestDateTimeConversion1")]
         public IActionResult GetDatetimeConversion1()
