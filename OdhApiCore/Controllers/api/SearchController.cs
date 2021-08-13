@@ -21,13 +21,10 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class SearchController : OdhController
-    {
-        private readonly IEnumerable<string> fieldsTohide;
-
+    {        
         public SearchController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
-            fieldsTohide = FieldsToHide;
         }
 
         #region SWAGGER Exposed API
@@ -154,7 +151,9 @@ namespace OdhApiCore.Controllers
 
 
             var data = await query.GetAsync<JsonRaw>();
-
+            
+            var fieldsTohide = FieldsToHide;
+            
             return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide))
                     .Where(json => json != null)
                     .Select(json => json!);
