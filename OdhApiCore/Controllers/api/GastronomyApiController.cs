@@ -23,13 +23,10 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class GastronomyController : OdhController
-    {
-        private readonly IEnumerable<string> fieldsTohide;
-
+    {        
         public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
-            fieldsTohide = FieldsToHide;
         }
 
         #region SWAGGER Exposed API
@@ -226,6 +223,8 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.List.Select(
                         raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
@@ -255,6 +254,8 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
+                var fieldsTohide = FieldsToHide;
+
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
@@ -281,6 +282,8 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.GetAsync<JsonRaw?>();
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.Select(
                         raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
@@ -306,6 +309,8 @@ namespace OdhApiCore.Controllers
                 //.Where("data#>>'\\{Key\\}'", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                var fieldsTohide = FieldsToHide;
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });

@@ -24,13 +24,10 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
-    {
-        private readonly IEnumerable<string> fieldsTohide;
-
+    {     
         public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
-            fieldsTohide = FieldsToHide;
         }
 
         #region SWAGGER Exposed API
@@ -271,6 +268,7 @@ namespace OdhApiCore.Controllers
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.List.Select(
@@ -304,8 +302,9 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
-
+               
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
@@ -332,6 +331,7 @@ namespace OdhApiCore.Controllers
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.Select(
@@ -358,6 +358,7 @@ namespace OdhApiCore.Controllers
                         .When(FilterClosedData, q => q.FilterClosedData());                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });

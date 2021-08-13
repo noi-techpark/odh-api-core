@@ -23,13 +23,10 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class WebcamInfoController : OdhController
-    {
-        private readonly IEnumerable<string> fieldsTohide;
-
+    {        
         public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<WebcamInfoController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
-            fieldsTohide = FieldsToHide;
         }
 
         #region SWAGGER Exposed API
@@ -150,6 +147,8 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.List.Select(
                         raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
@@ -177,6 +176,8 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
+
+                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

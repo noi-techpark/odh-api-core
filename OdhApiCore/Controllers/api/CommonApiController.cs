@@ -17,12 +17,9 @@ namespace OdhApiCore.Controllers.api
 {
     public class CommonController : OdhController
     {
-        private readonly IEnumerable<string> fieldsTohide;
-
         public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<CommonController> logger, QueryFactory queryFactory)
        : base(env, settings, logger, queryFactory)
-        {
-            fieldsTohide = FieldsToHide;
+        {            
         }
 
         #region SWAGGER Exposed API        
@@ -850,6 +847,8 @@ namespace OdhApiCore.Controllers.api
                 var data =
                     await query
                         .GetAsync<JsonRaw>();
+                
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.Select(
@@ -877,6 +876,8 @@ namespace OdhApiCore.Controllers.api
                 var data =
                     await query
                         .GetAsync<JsonRaw>();
+                
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.Select(
@@ -896,6 +897,8 @@ namespace OdhApiCore.Controllers.api
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
+                
+                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

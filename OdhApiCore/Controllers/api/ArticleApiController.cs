@@ -23,13 +23,10 @@ namespace OdhApiCore.Controllers.api
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ArticleController : OdhController
-    {
-        private readonly IEnumerable<string> fieldsTohide;
-
+    {      
         public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ArticleController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
         {
-            fieldsTohide = FieldsToHide;
         }
 
         #region SWAGGER Exposed API
@@ -217,6 +214,8 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
+                
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.List.Select(
@@ -245,8 +244,10 @@ namespace OdhApiCore.Controllers.api
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
-
+                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                var fieldsTohide = FieldsToHide;
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
@@ -269,6 +270,8 @@ namespace OdhApiCore.Controllers.api
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
+                
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                       data.Select(
@@ -288,7 +291,9 @@ namespace OdhApiCore.Controllers.api
                         .Select("data")
                         //.WhereJsonb("Key", "ilike", id)
                         .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());                
+                        .When(FilterClosedData, q => q.FilterClosedData());
+                
+                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

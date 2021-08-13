@@ -26,13 +26,10 @@ namespace OdhApiCore.Controllers.api
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class EventShortController : OdhController
-    {
-        private readonly IEnumerable<string> fieldsTohide;
-
+    {        
         public EventShortController(IWebHostEnvironment env, ISettings settings, ILogger<EventShortController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
         {
-            fieldsTohide = FieldsToHide;
         }
 
         #region SWAGGER Exposed API
@@ -229,6 +226,8 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
+                
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.List.Select(
@@ -258,6 +257,8 @@ namespace OdhApiCore.Controllers.api
                         .Select("data")
                         .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());
+
+                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
@@ -299,6 +300,8 @@ namespace OdhApiCore.Controllers.api
             var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter);
 
             IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
+
+            var fieldsTohide = FieldsToHide;
 
             var dataTransformed =
                     resultraw.Select(
