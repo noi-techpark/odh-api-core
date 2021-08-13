@@ -64,7 +64,7 @@ namespace OdhApiCore.Controllers.api
         public IActionResult GetTestappsettings()
         {
             
-            return Ok(JsonConvert.SerializeObject(settings.Field2HideConfig)));
+            return Ok(JsonConvert.SerializeObject(settings.Field2HideConfig));
         }
 
         //Not working
