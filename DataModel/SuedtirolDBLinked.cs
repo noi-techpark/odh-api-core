@@ -1202,7 +1202,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Measuringpoint/" + Uri.EscapeUriString(this.Id));
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Weather/Measuringpoint/" + Uri.EscapeUriString(this.Id));
             }
         }
 
