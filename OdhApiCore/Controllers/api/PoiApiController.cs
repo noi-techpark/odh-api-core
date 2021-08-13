@@ -24,7 +24,7 @@ namespace OdhApiCore.Controllers.api
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
-    {
+    {      
         public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
@@ -251,9 +251,11 @@ namespace OdhApiCore.Controllers.api
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -290,7 +292,9 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                var fieldsTohide = FieldsToHide;
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 
@@ -316,9 +320,11 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.GetAsync<JsonRaw?>();
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 return dataTransformed;
@@ -343,7 +349,9 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                var fieldsTohide = FieldsToHide;
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 

@@ -28,11 +28,11 @@ namespace OdhApiCore.Controllers
     public class WeatherController : OdhController
     {
         private readonly ISettings settings;
-
+        
         public WeatherController(IWebHostEnvironment env, ISettings settings, ILogger<WeatherController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
-            this.settings = settings;
+            this.settings = settings;            
         }
 
         #region SwaggerExposed API
@@ -442,9 +442,11 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 //return dataTransformed;
@@ -512,9 +514,11 @@ namespace OdhApiCore.Controllers
                         await query
                             .GetAsync<JsonRaw>();
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 return dataTransformed;
@@ -537,9 +541,11 @@ namespace OdhApiCore.Controllers
                         .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
 
+                var fieldsTohide = FieldsToHide;
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
 
         }

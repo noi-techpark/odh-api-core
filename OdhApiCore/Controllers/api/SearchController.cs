@@ -21,7 +21,7 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class SearchController : OdhController
-    {
+    {        
         public SearchController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
@@ -151,8 +151,10 @@ namespace OdhApiCore.Controllers
 
 
             var data = await query.GetAsync<JsonRaw>();
-
-            return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList))
+            
+            var fieldsTohide = FieldsToHide;
+            
+            return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide))
                     .Where(json => json != null)
                     .Select(json => json!);
         }

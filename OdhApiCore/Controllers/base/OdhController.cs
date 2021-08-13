@@ -60,6 +60,31 @@ namespace OdhApiCore.Controllers
             }
         }
 
+        protected IEnumerable<string> FieldsToHide
+        {
+            get
+            {
+                List<string> fieldstohide = new List<string>();
+
+                var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
+
+                //Search all settings with Entity = Controllername
+                var fields = settings.Field2HideConfig
+                    .Where(x => x.Entity == this.ControllerContext.RouteData.Values["controller"].ToString() ||
+                                String.IsNullOrEmpty(x.Entity));
+
+                foreach(var field in fields)
+                {
+                    if(roleclaims.Intersect(field.DisplayOnRoles).Count() == 0)
+                    {
+                        fieldstohide.AddRange(field.Fields);
+                    }
+                }
+
+                return fieldstohide;
+            }
+        }
+
         protected Func<string, string> UrlGenerator
         {
             get

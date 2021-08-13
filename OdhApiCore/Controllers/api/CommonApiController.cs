@@ -19,7 +19,7 @@ namespace OdhApiCore.Controllers.api
     {
         public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<CommonController> logger, QueryFactory queryFactory)
        : base(env, settings, logger, queryFactory)
-        {
+        {            
         }
 
         #region SWAGGER Exposed API        
@@ -847,10 +847,12 @@ namespace OdhApiCore.Controllers.api
                 var data =
                     await query
                         .GetAsync<JsonRaw>();
+                
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 return dataTransformed;
@@ -874,10 +876,12 @@ namespace OdhApiCore.Controllers.api
                 var data =
                     await query
                         .GetAsync<JsonRaw>();
+                
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 return dataTransformed;
@@ -893,10 +897,12 @@ namespace OdhApiCore.Controllers.api
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
+                
+                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 

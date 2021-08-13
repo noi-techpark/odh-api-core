@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class WebcamInfoController : OdhController
-    {
+    {        
         public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<WebcamInfoController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
@@ -147,9 +147,11 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -175,9 +177,11 @@ namespace OdhApiCore.Controllers
                         .Where("id", id.ToUpper())
                         .When(FilterClosedData, q => q.FilterClosedData());
 
+                var fieldsTohide = FieldsToHide;
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 

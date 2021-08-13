@@ -135,7 +135,9 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.GetAsync<JsonRaw>();
 
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList));
+                var fieldsTohide = FieldsToHide;
+
+                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
             });
         }      
 
@@ -149,7 +151,9 @@ namespace OdhApiCore.Controllers
                     .When(FilterClosedData, q => q.FilterClosedData())
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                var fieldsTohide = FieldsToHide;
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 

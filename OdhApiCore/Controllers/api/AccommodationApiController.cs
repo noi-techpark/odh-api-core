@@ -28,11 +28,11 @@ namespace OdhApiCore.Controllers
     public class AccommodationController : OdhController
     {
         private readonly IHttpClientFactory httpClientFactory;
-
+     
         public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
             : base(env, settings, logger, queryFactory)
         {
-            this.httpClientFactory = httpClientFactory;
+            this.httpClientFactory = httpClientFactory;            
         }
 
         #region SWAGGER Exposed API
@@ -123,11 +123,10 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            
             //bool availabilitysearchallowed = CheckAvailabilitySearch(User);
-            
-            //Contains 6 Methods GETPAGED, GETFILTERED, GETAVAILABLE, GETAVAILABLELCS, GETAVAILABLEMSSANDLCS
 
+            //Contains 6 Methods GETPAGED, GETFILTERED, GETAVAILABLE, GETAVAILABLELCS, GETAVAILABLEMSSANDLCS
+                    
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
@@ -655,9 +654,11 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -684,8 +685,9 @@ namespace OdhApiCore.Controllers
                         .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 
@@ -700,8 +702,9 @@ namespace OdhApiCore.Controllers
                         .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 
@@ -749,10 +752,11 @@ namespace OdhApiCore.Controllers
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                    data.Select(
-                       raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                       raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                    );
 
                 return dataTransformed;
@@ -780,8 +784,9 @@ namespace OdhApiCore.Controllers
                         .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 
@@ -808,10 +813,11 @@ namespace OdhApiCore.Controllers
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 return dataTransformed;
@@ -831,8 +837,9 @@ namespace OdhApiCore.Controllers
                 //.Where("Key", "ILIKE", id);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 
@@ -849,10 +856,11 @@ namespace OdhApiCore.Controllers
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList)
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
 
                 return dataTransformed;
@@ -871,8 +879,9 @@ namespace OdhApiCore.Controllers
                         .When(FilterClosedData, q => q.FilterClosedData());
                 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var fieldsTohide = FieldsToHide;
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, userroles: UserRolesList);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 
