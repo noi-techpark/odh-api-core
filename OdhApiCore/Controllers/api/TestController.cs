@@ -60,6 +60,14 @@ namespace OdhApiCore.Controllers.api
         }
 
         //Not working
+        [HttpGet, Route("TestAppsettings")]
+        public IActionResult GetDatetimeConversion1()
+        {
+            
+            return Ok(JsonConvert.SerializeObject(settings.Field2HideConfig)));
+        }
+
+        //Not working
         [HttpGet, Route("TestDateTimeConversion1")]
         public IActionResult GetDatetimeConversion1()
         {
