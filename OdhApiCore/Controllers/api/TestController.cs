@@ -49,7 +49,7 @@ namespace OdhApiCore.Controllers.api
         public IActionResult GetFieldToHide()
         {
 
-            return Ok(JsonConvert.SerializeObject(GetFieldsToHide));
+            return Ok(JsonConvert.SerializeObject(FieldsToHide));
         }
 
 

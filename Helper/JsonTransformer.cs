@@ -33,8 +33,6 @@ namespace Helper
             if (fieldstohide.Count() > 0)
                 token = JsonTransformerMethods.FilterOutProperties(token, fieldstohide.ToList());
 
-
-
             if (filterClosedData) token = token.FilterClosedData();
             
             //Ensure Self Link is the right url

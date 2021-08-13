@@ -60,7 +60,7 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        protected IEnumerable<string> GetFieldsToHide
+        protected IEnumerable<string> FieldsToHide
         {
             get
             {
