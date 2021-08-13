@@ -178,7 +178,7 @@ namespace OdhApiCore
             this.field2hideConfig = new List<Field2HideConfig>();
             foreach (var field2hide in field2hidelist)
             {
-                this.field2hideConfig.Add(new Field2HideConfig(field2hide.GetValue<string>("Entity", ""), field2hide.GetValue<string>("Fields", ""), field2hide.GetValue<string>("ValidForRoles", "")));
+                this.field2hideConfig.Add(new Field2HideConfig(field2hide.GetValue<string>("Entity", ""), field2hide.GetValue<string>("Fields", ""), field2hide.GetValue<string>("DisplayOnRoles", "")));
             }
             
         }
