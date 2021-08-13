@@ -22,9 +22,12 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class ODHTagController : OdhController
     {
+        private readonly IEnumerable<string> fieldsTohide;
+
         public ODHTagController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
+            fieldsTohide = FieldsToHide;
         }
 
         #region SWAGGER Exposed API
@@ -135,7 +138,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await query.GetAsync<JsonRaw>();
 
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide));
+                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
             });
         }      
 
@@ -149,7 +152,7 @@ namespace OdhApiCore.Controllers
                     .When(FilterClosedData, q => q.FilterClosedData())
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
         }
 
