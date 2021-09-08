@@ -10731,6 +10731,8 @@ namespace ServiceReferenceLCS
         
         private ServiceReferenceLCS.Tags TagsField;
         
+        private ServiceReferenceLCS.Tins TinsField;
+        
         [System.Runtime.Serialization.DataMemberAttribute()]
         public ServiceReferenceLCS.Description[] Description
         {
@@ -10832,6 +10834,108 @@ namespace ServiceReferenceLCS
             set
             {
                 this.TagsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Tins Tins
+        {
+            get
+            {
+                return this.TinsField;
+            }
+            set
+            {
+                this.TinsField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Tins", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class Tins : object
+    {
+        
+        private ServiceReferenceLCS.Tin[] TinField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Tin[] Tin
+        {
+            get
+            {
+                return this.TinField;
+            }
+            set
+            {
+                this.TinField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Tin", Namespace="http://schemas.datacontract.org/2004/07/LCS")]
+    public partial class Tin : object
+    {
+        
+        private ServiceReferenceLCS.Description[] DescriptionField;
+        
+        private string IDField;
+        
+        private ServiceReferenceLCS.Common_Name[] NameField;
+        
+        private string RIDField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Description[] Description
+        {
+            get
+            {
+                return this.DescriptionField;
+            }
+            set
+            {
+                this.DescriptionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ID
+        {
+            get
+            {
+                return this.IDField;
+            }
+            set
+            {
+                this.IDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ServiceReferenceLCS.Common_Name[] Name
+        {
+            get
+            {
+                return this.NameField;
+            }
+            set
+            {
+                this.NameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string RID
+        {
+            get
+            {
+                return this.RIDField;
+            }
+            set
+            {
+                this.RIDField = value;
             }
         }
     }
