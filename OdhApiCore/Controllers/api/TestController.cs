@@ -127,6 +127,9 @@ namespace OdhApiCore.Controllers.api
             return Ok(date);
         }
 
+        [ProducesResponseType(typeof(IEnumerable<ObjectwithDeprecated>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("TestDeprecated")]
         public IActionResult GetDeprecated()
         {
