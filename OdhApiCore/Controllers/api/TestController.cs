@@ -127,6 +127,19 @@ namespace OdhApiCore.Controllers.api
             return Ok(date);
         }
 
+        [HttpGet, Route("TestDeprecated")]
+        public IActionResult GetDeprecated()
+        {
+            ObjectwithDeprecated test1 = new ObjectwithDeprecated() { name = "test", name2 = "test", namecol = new List<string>() { "test1", "test2" } };
+            ObjectwithDeprecated test2 = new ObjectwithDeprecated() { name = "test2", name2 = "test2", namecol = new List<string>() { "test21", "test22" } };
+
+            var toreturn = new List<ObjectwithDeprecated>();
+            toreturn.Add(test1);
+            toreturn.Add(test2);
+
+            return Ok(toreturn);
+        }
+
         ////Not working
         //[HttpGet, Route("TestDateTimeConversion6")]
         //public IActionResult GetDatetimeConversiont6()
@@ -224,5 +237,13 @@ namespace OdhApiCore.Controllers.api
         //TODO SEE if Cache distinguish between Authenticated and not authenticated user
 
         #endregion
-    }    
+    }
+    
+    public class ObjectwithDeprecated
+    {
+        public string name { get; set; }
+        [Obsolete("name2 is deprecated, please use name instead.")]
+        public string name2 { get; set; }
+        public ICollection<string> namecol { get; set; }
+    }
 }
