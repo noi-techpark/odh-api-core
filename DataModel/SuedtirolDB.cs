@@ -2700,15 +2700,30 @@ public class Marketinggroup : IIdentifiable
 
     public class LTSTags
     {
-        //public LTSTags()
-        //{
-        //    TagName = new Dictionary<string, string>();
-        //}
+        public LTSTags()
+        {
+            TagName = new Dictionary<string, string>();
+            LTSTins = new List<LTSTins>();
+        }
 
-        public string? Id { get; set; }
-        public string? LTSRID { get; set; }
+        public string? Id { get; set; }        
         public int Level { get; set; }
-        //public IDictionary<string, string> TagName { get; set; }
+        public string? LTSRID { get; set; }
+        public IDictionary<string, string> TagName { get; set; }
+
+        public ICollection<LTSTins> LTSTins { get; set; }
+    }
+
+    public class LTSTins
+    {
+        public LTSTins()
+        {
+            TinName = new Dictionary<string, string>();
+        }
+
+        public string Id { get; set; }
+        public string LTSRID { get; set; }
+        public IDictionary<string, string> TinName { get; set; }
     }
 
     public class AdditionalArticleInfos : ILanguage
