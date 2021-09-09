@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace DataModel
 {
@@ -2805,7 +2806,9 @@ public class Marketinggroup : IIdentifiable
         public bool Monday { get; set; }
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
-        // Here for compatibility reasons        
+        // Here for compatibility reasons
+        [SwaggerSchema("Will be removed withhin 2021-12-31")]
+        [Obsolete]
         public bool Thuresday { get; set; }
         public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }
