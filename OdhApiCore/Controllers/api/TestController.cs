@@ -18,10 +18,11 @@ using AspNetCore.CacheOutput;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
 using System.Net.Http;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace OdhApiCore.Controllers.api
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     [Route("[controller]")]
     [ApiController]
     public class TestController : OdhController
@@ -243,8 +244,9 @@ namespace OdhApiCore.Controllers.api
     }
     
     public class ObjectwithDeprecated
-    {
+    {       
         public string name { get; set; }
+        [SwaggerSchema("Will be removed on 12-05-22")]
         [Obsolete("name2 is deprecated, please use name instead.")]
         public string name2 { get; set; }
         public ICollection<string> namecol { get; set; }
