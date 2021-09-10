@@ -552,15 +552,38 @@ namespace DataModel
         public string ParentLTSRID { get; set; }
     }
 
-#endregion
+    public class LTSTin
+    {
+        public LTSTin()
+        {
+            Name = new Dictionary<string, string>();
+            Description = new Dictionary<string, string>();
+            LTSTinAssignment = new List<LTSTinAssignment>();
+        }
 
+        public string Id { get; set; }
 
-/// <summary>
-/// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
-/// </summary>
-#region Marketinggroup
+        public IDictionary<string, string> Name { get; set; }
+        public IDictionary<string, string> Description { get; set; }
 
-public class Marketinggroup : IIdentifiable
+        public ICollection<LTSTinAssignment> LTSTinAssignment { get; set; }
+    }
+
+    public class LTSTinAssignment
+    {
+        public string RID { get; set; }
+        public string ODHTagId { get; set; }
+        public string LTSTagRID { get; set; }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
+    /// </summary>
+    #region Marketinggroup
+
+    public class Marketinggroup : IIdentifiable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
