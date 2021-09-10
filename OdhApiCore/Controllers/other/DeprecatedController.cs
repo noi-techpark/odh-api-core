@@ -25,9 +25,10 @@ namespace OdhApiCore.Controllers.other
 
             using (var client = new HttpClient())
             {
-                var myresponse = await client.GetAsync(requesturl);
+                var response = await client.GetAsync(requesturl);
+                var responsecontent = await response.Content.ReadAsStringAsync();                
 
-                JObject obj = JsonConvert.DeserializeObject(result);
+                JObject obj = JsonConvert.DeserializeObject<JObject>(responsecontent);
 
                 //obj["dialog"]["prompt"]
 
