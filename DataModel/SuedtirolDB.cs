@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Linq;
 
 namespace DataModel
 {
@@ -941,6 +942,27 @@ namespace DataModel
         public IndependentData IndependentData { get; set; }
 
         public ICollection<AccoRoomInfo> AccoRoomInfo { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     public class AccoRoomInfo
@@ -1373,7 +1395,7 @@ namespace DataModel
             PackageDetail = new Dictionary<string, PackageDetail>();
             Inclusive = new Dictionary<string, Inclusive>();
             ChannelInfo = new Dictionary<string, string>();
-            //PackageTheme = new Dictionary<string, PackageTheme>();
+            GpsPoints = new Dictionary<string, GpsInfo>();
         }
 
         //IIdentifiable
@@ -1443,6 +1465,9 @@ namespace DataModel
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
 
         public EvalancheMapping? EvalancheMapping { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
     }
 
     public class Season
@@ -1542,7 +1567,28 @@ namespace DataModel
         public LocationInfo? LocationInfo { get; set; }
         public string? OwnerId { get; set; }
 
-        public List<string>? AreaIds { get; set; }        
+        public List<string>? AreaIds { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     public class WeatherObservation
@@ -2120,10 +2166,21 @@ namespace DataModel
         public bool Active { get; set; }
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
+        
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public string? Gpstype { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public double Latitude { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public double Longitude { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public Nullable<double> Altitude { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -2141,6 +2198,27 @@ namespace DataModel
 
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
@@ -2310,6 +2388,24 @@ namespace DataModel
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
+                {
+                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     //Erweiterte Baseinfos für Gastronomy
@@ -2477,6 +2573,27 @@ namespace DataModel
         public IDictionary<string, ICollection<string>> Hashtag { get; set; }
 
         public EventOperationScheduleOverview EventOperationScheduleOverview { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     public class Topic
@@ -2623,6 +2740,27 @@ namespace DataModel
         public ICollection<string>? AreaIds { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
+
+        //new Add GPS Points from GpsInfo
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.GpsInfo != null)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { this.GpsInfo.Gpstype, this.GpsInfo }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     public class PublishedonObject
@@ -3099,6 +3237,11 @@ namespace DataModel
 
     public class EventShort : IIdentifiable
     {
+        public EventShort()
+        {
+            GpsPoints = new Dictionary<string, GpsInfo>();
+        }
+
         public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
@@ -3217,6 +3360,9 @@ namespace DataModel
         public bool? ExternalOrganizer { get; set; }
 
         public string? Shortname { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
     }
 
     public class RoomBooked

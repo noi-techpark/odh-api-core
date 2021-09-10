@@ -1191,28 +1191,7 @@ namespace DataModel
             {
                 return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
             }
-        }
-
-        //new Add GPS Points from GpsInfo
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                if (this.GpsInfo != null)
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                        { this.GpsInfo.Gpstype, this.GpsInfo }
-                    };
-                }
-                else
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
-                }
-            }
-        }
+        }       
     }
 
     public class MeasuringpointLinked : Measuringpoint, IMetaData
@@ -1244,28 +1223,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
-
-        //new Add GPS Points from Root Representation
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                if (this.Latitude != 0 && this.Longitude != 0)
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
-                    };
-                }
-                else
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
-                }
-            }
-        }
+        public new LocationInfoLinked LocationInfo { get; set; }       
     }
 
     public class WineLinked : Wine, IMetaData
