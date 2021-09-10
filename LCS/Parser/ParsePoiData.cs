@@ -593,7 +593,7 @@ namespace LCS.Parser
                         currentltstinen.TinName.TryAddOrUpdate("en", ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : "");
 
                         //Set ID
-                        currentltstinen.Id = "LTSTIN_" + ltstin.Name.FirstOrDefault().InnerText.Replace("/", "");
+                        currentltstinen.Id = ltstin.Name.FirstOrDefault().InnerText.ComputeSHA1Hash();
                     }
                 }
             }
