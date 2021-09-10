@@ -1542,7 +1542,7 @@ namespace DataModel
         public LocationInfo? LocationInfo { get; set; }
         public string? OwnerId { get; set; }
 
-        public List<string>? AreaIds { get; set; }
+        public List<string>? AreaIds { get; set; }        
     }
 
     public class WeatherObservation
@@ -2571,6 +2571,9 @@ namespace DataModel
         public string? WebcamId { get; set; }
         public IDictionary<string, string> Webcamname { get; set; }
         public string? Webcamurl { get; set; }
+
+        [Obsolete]
+        [SwaggerSchema("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
         //Neu
         public Nullable<int> ListPosition { get; set; }
