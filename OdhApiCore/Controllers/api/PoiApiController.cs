@@ -19,8 +19,9 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers.api
 {
     /// <summary>
-    /// Poi Api (data provided by LTS PoiData) SOME DATA Available as OPENDATA
+    /// Poi Api (data provided by LTS PoiData) Deprecated! Please use Endpoint ODHActivityPoi
     /// </summary>
+    [Obsolete("Please use ODHActivityPoi Endpoint")]
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class PoiController : OdhController

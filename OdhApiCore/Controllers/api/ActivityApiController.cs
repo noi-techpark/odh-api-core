@@ -20,9 +20,8 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace OdhApiCore.Controllers
 {
     /// <summary>
-    /// Activity Api (data provided by LTS ActivityData) SOME DATA Available as OPENDATA
+    /// Activity Api (data provided by LTS ActivityData) Deprecated! Please use Endpoint ODHActivityPoi
     /// </summary>
-    [SwaggerSchema("Deprecated: Please use ODHActivityPoi Endpoint")]
     [Obsolete("Please use ODHActivityPoi Endpoint")]
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
