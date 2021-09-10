@@ -15,12 +15,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Context;
 using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace OdhApiCore.Controllers
 {
     /// <summary>
     /// Activity Api (data provided by LTS ActivityData) SOME DATA Available as OPENDATA
     /// </summary>
+    [SwaggerSchema("Deprecated: Please use ODHActivityPoi Endpoint")]
+    [Obsolete("Please use ODHActivityPoi Endpoint")]
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
