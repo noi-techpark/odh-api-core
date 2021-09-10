@@ -22,7 +22,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace OdhApiCore.Controllers.api
 {
-    //[ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("[controller]")]
     [ApiController]
     public class TestController : OdhController

@@ -13,12 +13,12 @@ namespace OdhApiCore.Controllers.other
     /// <summary>
     /// Returns all info about Deprecated Methods, fields etc...
     /// </summary>
-    [Route("v1/[controller]")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
     public class DeprecatedController : ControllerBase
     {
         //TODO Get openapi file and parse trough an render to output
-
+        [HttpGet, Route("v1/Deprecated")]
         public async Task<IActionResult> Deprecated()
         {
             var requesturl = string.Format("{0}://{1}{2}{3}", HttpContext.Request.Scheme, HttpContext.Request.Host, HttpContext.Request.Path, "swagger/v1/swagger.json");
