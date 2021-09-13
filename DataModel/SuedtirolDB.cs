@@ -598,14 +598,7 @@ namespace DataModel
     /// <summary>
     /// Alle Aktivitäten welche eine Route haben
     /// </summary>
-    #region Activities & POIs
-
-    //Activities
-
-    //public class Wanderung : PoiBaseInfos
-    //{
-    //    //public List<string> LTSTagList { get; set; }
-    //}
+    #region Activities & POIs  
 
     public class Hike : PoiBaseInfos
     {
@@ -963,6 +956,9 @@ namespace DataModel
                 }
             }
         }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class AccoRoomInfo
@@ -1061,6 +1057,9 @@ namespace DataModel
 
         public Nullable<DateTime> LastChange { get; set; }
         public Nullable<DateTime> FirstImport { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -1468,6 +1467,9 @@ namespace DataModel
 
         //new Add GPS Points from Root Representation
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class Season
@@ -1589,6 +1591,9 @@ namespace DataModel
                 }
             }
         }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class WeatherObservation
@@ -2219,6 +2224,9 @@ namespace DataModel
                 }
             }
         }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
@@ -2276,7 +2284,6 @@ namespace DataModel
         public double AltitudeSumUp { get; set; }
         public double AltitudeSumDown { get; set; }
 
-
         public double DistanceDuration { get; set; }
         public double DistanceLength { get; set; }
         //neu LTSUpdate 11.16
@@ -2322,13 +2329,15 @@ namespace DataModel
 
         public List<string>? ChildPoiIds { get; set; }
         public List<string>? MasterPoiIds { get; set; }
-        
-        //New
+                
         public Nullable<int> WayNumber { get; set; }
 
         public string? Number { get; set; }
 
         public List<LTSTags>? LTSTags { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
@@ -2406,6 +2415,9 @@ namespace DataModel
                 }
             }
         }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
@@ -2478,6 +2490,9 @@ namespace DataModel
 
         //NEW
         public Nullable<int> RepresentationRestriction { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
@@ -2594,6 +2609,9 @@ namespace DataModel
                 }
             }
         }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class Topic
@@ -2761,6 +2779,9 @@ namespace DataModel
                 }
             }
         }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class PublishedonObject
@@ -3363,6 +3384,9 @@ namespace DataModel
 
         //new Add GPS Points from Root Representation
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class RoomBooked
