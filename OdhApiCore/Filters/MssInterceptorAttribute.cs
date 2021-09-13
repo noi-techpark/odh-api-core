@@ -25,6 +25,18 @@ namespace OdhApiCore.Filters
         private readonly ISettings settings;
         protected QueryFactory QueryFactory { get; }
 
+        public bool CheckAvailabilitySearch(System.Security.Claims.ClaimsPrincipal User)
+        {
+            List<string> roles = new List<string>() { "DataReader", "AccoReader" };
+
+            foreach (var role in roles)
+            {
+                if (User.IsInRole(role))
+                    return true;
+            }
+
+            return false;
+        }
 
         public MssInterceptorAttribute(QueryFactory queryFactory, IHttpClientFactory httpClientFactory, ISettings settings)
         {
@@ -35,11 +47,13 @@ namespace OdhApiCore.Filters
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            bool availabilitysearchavailable = CheckAvailabilitySearch(context.HttpContext.User);
+
             //Getting Action name
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
 
             //Only if Action ID is GetAccommodations perform the Availability Check before
-            if (actionid == "GetAccommodations")
+            if (actionid == "GetAccommodations" && availabilitysearchavailable)
             {
                 //Getting the Querystrings
                 var actionarguments = context.ActionArguments;
@@ -146,6 +160,8 @@ namespace OdhApiCore.Filters
 
         public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
+            bool availabilitysearchavailable = CheckAvailabilitySearch(context.HttpContext.User);
+
             //Getting Action name
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
 
@@ -158,7 +174,7 @@ namespace OdhApiCore.Filters
             string bokfilter = (string?)query["bokfilter"] ?? "hgv";
             var bokfilterlist = bokfilter.Split(',').ToList(); ;
 
-            if (availabilitycheck)
+            if (availabilitycheck && availabilitysearchavailable)
             {
                 string language = (string?)query["language"] ?? "de";
                 //string availabilitychecklanguage = (string?)query["availabilitychecklanguage"] ?? "en";
