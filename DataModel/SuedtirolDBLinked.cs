@@ -1191,7 +1191,7 @@ namespace DataModel
             {
                 return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
             }
-        }
+        }       
     }
 
     public class MeasuringpointLinked : Measuringpoint, IMetaData
@@ -1223,7 +1223,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked LocationInfo { get; set; }       
     }
 
     public class WineLinked : Wine, IMetaData

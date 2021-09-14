@@ -264,7 +264,7 @@ namespace OdhApiCore
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);                
 
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
@@ -281,6 +281,7 @@ namespace OdhApiCore
                     Scheme = "Bearer"
                 });
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
+                c.EnableAnnotations();                       
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{
                 //    {
@@ -363,7 +364,7 @@ namespace OdhApiCore
                 c.PreSerializeFilters.Add((swagger, httpReq) =>
                 {
                     swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
-                });
+                });                
             });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),

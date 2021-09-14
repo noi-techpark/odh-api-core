@@ -123,7 +123,7 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            //bool availabilitysearchallowed = CheckAvailabilitySearch(User);
+            //bool availabilitysearchallowed = CheckAvailabilitySearch();
 
             //Contains 6 Methods GETPAGED, GETFILTERED, GETAVAILABLE, GETAVAILABLELCS, GETAVAILABLEMSSANDLCS
                     
@@ -141,9 +141,7 @@ namespace OdhApiCore.Controllers
                     seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
             else if(availabilitycheck?.Value == true)
-            {
-                //TODO! ONLY ON AUTHENTICATED USER
-
+            {               
                 var accobooklist = Request.HttpContext.Items["accobooklist"];
                 var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
                 var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
@@ -163,6 +161,10 @@ namespace OdhApiCore.Controllers
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
+            //else if(availabilitycheck?.Value == true && !availabilitysearchallowed)
+            //{
+            //    return BadRequest("AvailabilitySearchnot available as open data!");
+            //}
 
             //Fall 3 Available MSS
             //else if (availabilitycheck?.Value == true && (bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp") || bokfilterlist.Contains("bok")) && !bokfilterlist.Contains("lts"))

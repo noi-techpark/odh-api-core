@@ -10,8 +10,6 @@ namespace LCS
 {
     public class ParseActivityData
     {
-        //public static string xmldir = "C:\\VSProjects\\SuedtirolDB\\ActivityData\\xml\\";
-        //public static string xmldir = "..\\..\\xml\\";
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Get the Activity Detail Information
@@ -20,6 +18,7 @@ namespace LCS
             List<string> myactivitylist = new List<string>();
             myactivitylist.Add(rid);
 
+            //Get LTS Data
             var myactivityrequestde = GetActivityDataLCS.GetActivityDetailRequest("de", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
             var myactivityrequestit = GetActivityDataLCS.GetActivityDetailRequest("it", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
             var myactivityrequesten = GetActivityDataLCS.GetActivityDetailRequest("en", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
@@ -41,50 +40,25 @@ namespace LCS
             var theactivityit = myactivityresponseit.Activities.Activity.FirstOrDefault();
             var theactivityen = myactivityresponseen.Activities.Activity.FirstOrDefault();
 
-            //TODO If Date LastChange equal to imported Date do nothing
-            //if(Convert.ToDateTime(theactivityde.News.Status.LastChange) > hike.LastChange)
-
-
-            string nome = "";
-
-            if (theactivityde.Name != null)
-                nome = theactivityde.Name.FirstOrDefault().InnerText;
-            else
-                nome = "kein Name";
-
-            hike.Shortname = nome.Trim();
             hike.Id = theactivityde.RID;
 
+            //Assign Shortname
+            string shortname = "";
+            if (theactivityde.Name != null)
+                shortname = theactivityde.Name.FirstOrDefault().InnerText;
+            else
+                shortname = "no name";
+
+            hike.Shortname = shortname.Trim();
+
+            //SmgID obsolete?
             if (theactivityde.ID != null)
                 if (theactivityde.ID.StartsWith("SMG-"))
                     hike.SmgId = theactivityde.ID.Replace("SMG-", "");
 
-            //SMG ACtive übernehmen  
+            //Reapply SmgActive
             hike.Active = true;
             hike.SmgActive = hike.SmgActive;
-
-
-            //hike.Type = thepoide.EnumCodes.EnumCode != null ? thepoide.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetPoiMainType(activitytype)["de"];
-            //hike.SubType = thepoide.EnumCodes.EnumCode != null ? thepoide.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "";
-
-
-            hike.Type = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["de"] : GetActivityMainType(activitytype)["de"];
-
-            //Bei lift subtype level 2 fehlt komplett? ging das nicht
-            hike.SubType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "no Subtype" : "no Subtype" : "no Subtype";
-
-            //PoiType setzen falls vorhanden
-            hike.PoiType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
-
-            if (activitytype == "SLOPE" || activitytype == "SKITRACK")
-            {
-                hike.PoiType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "0").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "0").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
-
-            }
-
-
-            //OBSOLETE????
-            //hike.Difficulty = ""; //theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "0").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "0").FirstOrDefault().Name.FirstOrDefault().InnerText : "";
 
             //Altitude Total
             if (theactivityde.GeoDatas.GeoData.FirstOrDefault().Altitude != null)
@@ -113,22 +87,13 @@ namespace LCS
                 hike.AltitudeSumDown = 0;
             }
 
-
             if (theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance != null)
             {
                 if (theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance.Duration != null)
                 {
-                    //Do wirfts an Exception iber 23 stunden
-                    //var mydurationtemp = TimeSpan.Parse(theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance.Duration);
-                    //hike.DistanceDuration = Convert.ToDouble(mydurationtemp.Hours + "," + mydurationtemp.Minutes);
-
-                    // seconds
-
-
-                    //Ondere Meglichkeit TO TEST!!!!
                     string duration = theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance.Duration;
                     var durationsplittet = duration.Split(':');
-                    //DES GEAT NET!
+
                     TimeSpan durationts = new TimeSpan(int.Parse(durationsplittet[0]), int.Parse(durationsplittet[1]), 0);
 
                     //int tshours = Convert.ToInt32(durationsplittet[0]);
@@ -167,20 +132,11 @@ namespace LCS
             else
                 hike.Number = null;
 
-
-            //LTS Internal
-            //if (theactivityde.RightToUseTheWay != null && theactivityde.RightToUseTheWay != 0)
-            //    hike.RightToUseTheWay = Convert.ToBoolean(theactivityde.RightToUseTheWay);
-            //else
-            //    hike.RightToUseTheWay = null;
-
-
-
             hike.BikeTransport = theactivityde.Features.BikeTransport != null ? Convert.ToBoolean(theactivityde.Features.BikeTransport) : false;
 
-            hike.LastChange = DateTime.Now; //Convert.ToDateTime(theactivityde.News.Status.LastChange);          
+            hike.LastChange = DateTime.Now;
 
-
+            //END PROPERTIES PARSING
 
             //Ratings
             if (theactivityde.Rating != null)
@@ -209,10 +165,7 @@ namespace LCS
                 hike.Difficulty = theactivityde.Rating.Difficulty != null ? theactivityde.Rating.Difficulty.ToString() : "";
             }
 
-
             //ContactInfos
-
-            //List<ContactInfos> contactinfolist = new List<ContactInfos>();
 
             if (theactivityde.ContactInfos.ContactInfo != null)
             {
@@ -289,7 +242,6 @@ namespace LCS
                     mycontactinfo.Faxnumber = parsedcontactinfoit.Phones != null ? parsedcontactinfoit.Phones.Phone.Where(x => x.PhoneTechType == "3").Count() > 0 ? parsedcontactinfoit.Phones.Phone.Where(x => x.PhoneTechType == "3").FirstOrDefault().PhoneNumber : "" : "";
 
 
-
                     mycontactinfo.Url = parsedcontactinfoit.URLs.URL.FirstOrDefault().InnerText;
 
                     //contactinfolist.Add(mycontactinfo);
@@ -339,11 +291,11 @@ namespace LCS
 
             //Ende ContactInfos
 
-            //Multimedia Infos            
+            //Multimedia Infos IMAGEGALLERY + DETAIL           
 
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
-            //Bei Update alle Imagegallery Elemente welche nicht SMG Typ sind löschen.
+            //OBSOLETE: Bei Update alle Imagegallery Elemente welche nicht SMG Typ sind löschen.
             if (hike.ImageGallery != null)
             {
                 foreach (var imggallery in hike.ImageGallery.Where(x => x.ImageSource == "SMG"))
@@ -373,7 +325,7 @@ namespace LCS
                         myimggallery.CopyRight = imageelement.ImageFormat.CopyrightOwner;
                         myimggallery.License = imageelement.ImageFormat.License;
 
-                        //Kimmp oanmol mit . oanmol mit - oanmol isch Monat vorne oanmol Tog wilder kaas
+                        //Problems on Parsing using . and - also different date format (month first, day first etc...) TODO
 
                         //string applicablestart = imageelement.ImageFormat.ApplicableStart;
                         //if (!String.IsNullOrEmpty(applicablestart))
@@ -681,143 +633,43 @@ namespace LCS
             }
 
             hike.ImageGallery = imagegallerylist.ToList();
-            //hike.Detail = detaillist.ToList();
 
             //Ende MultimediaInfos
 
-            //AdditionalPoiInfos
+            //Other Infos
 
-            //List<AdditionalPoiInfos> myaddpoiinfoslist = new List<AdditionalPoiInfos>();
-
-            AdditionalPoiInfos myaddpoiinfosde = new AdditionalPoiInfos();
-            AdditionalPoiInfos myaddpoiinfosit = new AdditionalPoiInfos();
-            AdditionalPoiInfos myaddpoiinfosen = new AdditionalPoiInfos();
-
-            if (theactivityde.EnumCodes != null)
-            {
-                var myenumcodesde = theactivityde.EnumCodes.EnumCode.FirstOrDefault();
-
-                if (myenumcodesde.Code != null)
-                {
-                    foreach (var enumcode in myenumcodesde.Code)
-                    {
-                        //if (enumcode.Level == "0")
-                        //{
-                        //    myaddpoiinfosde.Difficulty = enumcode.Name.FirstOrDefault().InnerText;
-                        //}
-                        if (enumcode.Level == "1")
-                        {
-                            myaddpoiinfosde.SubType = enumcode.Name.FirstOrDefault().InnerText;
-                        }
-                    }
-                }
-            }
-            if (theactivityde.EnumCodes != null)
-            {
-                var myenumcodesit = theactivityit.EnumCodes.EnumCode.FirstOrDefault();
-
-                if (myenumcodesit.Code != null)
-                {
-                    foreach (var enumcode in myenumcodesit.Code)
-                    {
-                        //if (enumcode.Level == "0")
-                        //{
-
-
-                        //    myaddpoiinfosit.Difficulty = enumcode.Name.FirstOrDefault().InnerText;
-                        //}
-                        if (enumcode.Level == "1")
-                        {
-                            myaddpoiinfosit.SubType = enumcode.Name.FirstOrDefault().InnerText;
-                        }
-                    }
-                }
-            }
-            if (theactivityde.EnumCodes != null)
-            {
-                var myenumcodesen = theactivityen.EnumCodes.EnumCode.FirstOrDefault();
-
-                if (myenumcodesen.Code != null)
-                {
-                    foreach (var enumcode in myenumcodesen.Code)
-                    {
-                        //if (enumcode.Level == "0")
-                        //{
-                        //    myaddpoiinfosen.Difficulty = enumcode.Name.FirstOrDefault().InnerText;
-                        //}
-                        if (enumcode.Level == "1")
-                        {
-                            myaddpoiinfosen.SubType = enumcode.Name.FirstOrDefault().InnerText;
-                        }
-                    }
-                }
-            }
-            myaddpoiinfosde.Language = "de";
-            myaddpoiinfosit.Language = "it";
-            myaddpoiinfosen.Language = "en";
-
-            myaddpoiinfosde.MainType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["de"] : GetActivityMainType(activitytype)["de"];
-            myaddpoiinfosit.MainType = theactivityit.EnumCodes != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["it"] : GetActivityMainType(activitytype)["it"];
-            myaddpoiinfosen.MainType = theactivityen.EnumCodes != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["en"] : GetActivityMainType(activitytype)["en"];
-
-            myaddpoiinfosde.SubType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
-            myaddpoiinfosit.SubType = theactivityit.EnumCodes != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
-            myaddpoiinfosen.SubType = theactivityen.EnumCodes != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
-
-            myaddpoiinfosde.PoiType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
-            myaddpoiinfosit.PoiType = theactivityit.EnumCodes != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").Count() > 0 ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
-            myaddpoiinfosen.PoiType = theactivityen.EnumCodes != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").Count() > 0 ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
-
-
-            List<string> assignedltstags = new List<string>();
-
-            //NEU gehe alle LTS Tags durch
-            foreach (var ltstag in theactivityde.Tags.Tag)
-            {
-                assignedltstags.Add(ltstag.Name.FirstOrDefault().InnerText);
-            }
-
-            if (activitytype == "SLIDE" || activitytype == "SLOPE" || activitytype == "SKITRACK")
-            {
-                if (hike.SubType == "" || hike.SubType == "no Subtype")
-                {
-                    myaddpoiinfosde.SubType = SubTypeSpecialTranslator("de", hike.Type, assignedltstags);
-                    myaddpoiinfosit.SubType = SubTypeSpecialTranslator("it", hike.Type, assignedltstags);
-                    myaddpoiinfosen.SubType = SubTypeSpecialTranslator("en", hike.Type, assignedltstags);
-                }
-            }
-
-            if (theactivityde.News.Novelty.Description != null)
-            {
-                myaddpoiinfosde.Novelty = theactivityde.News.Novelty.Description.InnerText;
-            }
-            if (theactivityit.News.Novelty.Description != null)
-            {
-                myaddpoiinfosit.Novelty = theactivityit.News.Novelty.Description.InnerText;
-            }
-            if (theactivityen.News.Novelty.Description != null)
-            {
-                myaddpoiinfosen.Novelty = theactivityen.News.Novelty.Description.InnerText;
-            }
-
-            hike.AdditionalPoiInfos.TryAddOrUpdate("de", myaddpoiinfosde);
-            hike.AdditionalPoiInfos.TryAddOrUpdate("it", myaddpoiinfosit);
-            hike.AdditionalPoiInfos.TryAddOrUpdate("en", myaddpoiinfosen);
-
-            //myaddpoiinfoslist.Add(myaddpoiinfosde);
-            //myaddpoiinfoslist.Add(myaddpoiinfosit);
-            //myaddpoiinfoslist.Add(myaddpoiinfosen);
-
-            //hike.AdditionalPoiInfos = myaddpoiinfoslist.ToList();
-
-            //Ende AdditionalPoiInfos
-
-            //hike.DistrictId = "";
             hike.TourismorganizationId = theactivityde.Owner.RID;
 
             hike.OwnerRid = theactivityde.Owner.RID;
 
-            //hike.RegionId = "";
+            List<string> arearidlist = new List<string>();
+
+            if (theactivityde.Memberships != null)
+            {
+                var members = theactivityde.Memberships.Membership;
+
+                foreach (var member in members)
+                {
+                    if (member.Area != null)
+                    {
+                        foreach (var myarea in member.Area)
+                        {
+                            string z = myarea.RID;
+                            arearidlist.Add(z);
+                        }
+                    }
+                }
+
+                hike.AreaId = arearidlist.ToList();
+            }
+
+            //IDM Favorite over Area
+            if (hike.AreaId.Contains("EEDD568AC5B14A9DB6BED6C2592483BF"))
+                hike.Highlight = true;
+            else
+                hike.Highlight = false;
+
+            //GPS Information
 
             List<GpsInfo> mygpsinfolist = new List<GpsInfo>();
 
@@ -913,7 +765,7 @@ namespace LCS
             }
 
             hike.GpsTrack = mygpstracklist.ToList();
-
+            //End GPS
 
             //Exposition
 
@@ -930,41 +782,146 @@ namespace LCS
 
             hike.Exposition = expositionlist.ToList();
 
+            //BEGIN Fill LTSTags
 
-            List<string> arearidlist = new List<string>();
+            List<LTSTags> ltstaglist = new List<LTSTags>();
 
-            if (theactivityde.Memberships != null)
+            foreach (var ltstag in theactivityde.Tags.Tag)
             {
-                var members = theactivityde.Memberships.Membership;
+                LTSTags myltstag = new LTSTags();
+                myltstag.LTSRID = ltstag.RID;
+                myltstag.Id = ltstag.Name.FirstOrDefault().InnerText.Replace("/", "");
 
-                foreach (var member in members)
+                myltstag.TagName.TryAddOrUpdate("de", ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : "");
+
+                //Sonderfix Tag DE enthält /
+                if (myltstag.TagName["de"].Contains("/"))
+                    myltstag.TagName.TryAddOrUpdate("de", myltstag.TagName["de"].Replace("/", ""));
+
+                //NEW add also TIN info
+                if (ltstag.Tins != null)
                 {
-                    if (member.Area != null)
+                    foreach (var ltstin in ltstag.Tins.Tin)
                     {
-                        foreach (var myarea in member.Area)
-                        {
-                            string z = myarea.RID;
-                            arearidlist.Add(z);
-                        }
+                        LTSTins mytin = new LTSTins();
+                        mytin.TinName.TryAddOrUpdate("de", ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : "");
+                        mytin.LTSRID = ltstin.RID;
+
+                        myltstag.LTSTins.Add(mytin);
                     }
                 }
 
-                hike.AreaId = arearidlist.ToList();
+                ltstaglist.Add(myltstag);
             }
 
-            //Neu Smg Favorit über Area
-            if (hike.AreaId.Contains("EEDD568AC5B14A9DB6BED6C2592483BF"))
-                hike.Highlight = true;
-            else
-                hike.Highlight = false;
+            foreach (var ltstag in theactivityit.Tags.Tag)
+            {
+                var currentltstagit = ltstaglist.Where(x => x.LTSRID == ltstag.RID).FirstOrDefault();
+                currentltstagit.TagName.TryAddOrUpdate("it", ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : "");
 
+                //add the tin info in IT
+                if (ltstag.Tins != null)
+                {
+                    foreach (var ltstin in ltstag.Tins.Tin)
+                    {
+                        var currentltstinit = currentltstagit.LTSTins.Where(x => x.LTSRID == ltstin.RID).FirstOrDefault();
+                        currentltstinit.TinName.TryAddOrUpdate("it", ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : "");
+                    }
+                }
+            }
+            foreach (var ltstag in theactivityen.Tags.Tag)
+            {
+                var currentltstagen = ltstaglist.Where(x => x.LTSRID == ltstag.RID).FirstOrDefault();
+                currentltstagen.TagName.TryAddOrUpdate("en", ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : "");
+
+                //add the tin info in EN and set the id to EN object
+                if (ltstag.Tins != null)
+                {
+                    foreach (var ltstin in ltstag.Tins.Tin)
+                    {
+                        var currentltstinen = currentltstagen.LTSTins.Where(x => x.LTSRID == ltstin.RID).FirstOrDefault();
+                        currentltstinen.TinName.TryAddOrUpdate("en", ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : "");
+
+                        //Set ID
+                        currentltstinen.Id = ltstin.Name.FirstOrDefault().InnerText.ComputeSHA1Hash();
+                    }
+                }
+            }
+
+            hike.LTSTags = ltstaglist;
+
+            //END LTSTags
+
+
+            //BEGIN TYPE SYNC
+
+            //Assign Type Level 1
+            hike.Type = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["de"] : GetActivityMainType(activitytype)["de"];
+
+            //Bei lift subtype level 2 fehlt komplett? ging das nicht
+            hike.SubType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+
+            //PoiType setzen falls vorhanden
+            hike.PoiType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+
+            if (activitytype == "SLOPE" || activitytype == "SKITRACK")
+            {
+                hike.PoiType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "0").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "0").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+            }
+
+            //AdditionalPoiInfos
+
+            AdditionalPoiInfos myaddpoiinfosde = new AdditionalPoiInfos();
+            AdditionalPoiInfos myaddpoiinfosit = new AdditionalPoiInfos();
+            AdditionalPoiInfos myaddpoiinfosen = new AdditionalPoiInfos();
+
+            myaddpoiinfosde.Language = "de";
+            myaddpoiinfosit.Language = "it";
+            myaddpoiinfosen.Language = "en";
+
+            myaddpoiinfosde.MainType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["de"] : GetActivityMainType(activitytype)["de"];
+            myaddpoiinfosit.MainType = theactivityit.EnumCodes != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["it"] : GetActivityMainType(activitytype)["it"];
+            myaddpoiinfosen.MainType = theactivityen.EnumCodes != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["en"] : GetActivityMainType(activitytype)["en"];
+
+            myaddpoiinfosde.SubType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+            myaddpoiinfosit.SubType = theactivityit.EnumCodes != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+            myaddpoiinfosen.SubType = theactivityen.EnumCodes != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+
+            myaddpoiinfosde.PoiType = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+            myaddpoiinfosit.PoiType = theactivityit.EnumCodes != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").Count() > 0 ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+            myaddpoiinfosen.PoiType = theactivityen.EnumCodes != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").Count() > 0 ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "2").FirstOrDefault().Name.FirstOrDefault().InnerText : "" : "" : "";
+
+
+
+            if (activitytype == "SLIDE" || activitytype == "SLOPE" || activitytype == "SKITRACK")
+            {
+                if (hike.SubType == "" || hike.SubType == "no Subtype")
+                {
+                    myaddpoiinfosde.SubType = SubTypeSpecialTranslator("de", hike.Type, ltstaglist.Select(x => x.Id).ToList());
+                    myaddpoiinfosit.SubType = SubTypeSpecialTranslator("it", hike.Type, ltstaglist.Select(x => x.Id).ToList());
+                    myaddpoiinfosen.SubType = SubTypeSpecialTranslator("en", hike.Type, ltstaglist.Select(x => x.Id).ToList());
+                }
+            }
+
+            if (theactivityde.News.Novelty.Description != null)
+            {
+                myaddpoiinfosde.Novelty = theactivityde.News.Novelty.Description.InnerText;
+            }
+            if (theactivityit.News.Novelty.Description != null)
+            {
+                myaddpoiinfosit.Novelty = theactivityit.News.Novelty.Description.InnerText;
+            }
+            if (theactivityen.News.Novelty.Description != null)
+            {
+                myaddpoiinfosen.Novelty = theactivityen.News.Novelty.Description.InnerText;
+            }
+
+            hike.AdditionalPoiInfos.TryAddOrUpdate("de", myaddpoiinfosde);
+            hike.AdditionalPoiInfos.TryAddOrUpdate("it", myaddpoiinfosit);
+            hike.AdditionalPoiInfos.TryAddOrUpdate("en", myaddpoiinfosen);
 
             //Tags beibehalten. Maintyp + Subtyp als Tag übernehmen    
             List<string> currenttags = new List<string>();
-
-            //Des tiamer mol weck
-            //if(hike.SmgTags != null)
-            //    currenttags = hike.SmgTags.ToList();
 
             string type = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText : GetActivityMainType(activitytype)["de"] : GetActivityMainType(activitytype)["de"];
             string subtype = theactivityde.EnumCodes != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code != null ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "no Subtype" : "no Subtype" : "no Subtype";
@@ -987,7 +944,7 @@ namespace LCS
             {
                 if (hike.SubType == "" || hike.SubType == "no Subtype")
                 {
-                    hike.SubType = SubTypeSpecialTranslator("de", hike.Type, assignedltstags);
+                    hike.SubType = SubTypeSpecialTranslator("de", hike.Type, ltstaglist.Select(x => x.Id).ToList());
                 }
             }
 
@@ -1006,13 +963,13 @@ namespace LCS
 
             hike.SmgTags = currenttags.Distinct().ToList();
 
-            //Fixen
+            //Fix no subtype as tag
             if (hike.SmgTags.Contains("no Subtype"))
             {
                 hike.SmgTags.Remove("no Subtype");
             }
 
-            //OperationSchedules muss ich mir noch genauer anschauen
+            //OperationSchedules
             List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();
 
             if (theactivityde.OperationSchedules != null)
@@ -1276,717 +1233,5 @@ namespace LCS
 
             return subtypetoreturn;
         }
-
-        ////Get the Activity Detail Information OLLERHOND NO TODO!
-        //public static PoiBaseInfos GetActivitiesDetailSmgPoi(string rid, SmgPoi hike)
-        //{
-        //    //Hier gilt es zu definieren was alles Upgedated wird!!!!
-
-        //    List<string> myactivitylist = new List<string>();
-        //    myactivitylist.Add(rid);
-
-        //    var myactivityrequestde = GetActivityDataLCS.GetActivityDetailRequest("de", "0", "1", "1", "1", "1", "1", "0", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG");
-        //    var myactivityrequestit = GetActivityDataLCS.GetActivityDetailRequest("it", "0", "1", "1", "1", "1", "1", "0", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG");
-        //    var myactivityrequesten = GetActivityDataLCS.GetActivityDetailRequest("en", "0", "1", "1", "1", "1", "1", "0", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG");
-
-        //    GetActivityDataLCS myactivitysearch = new GetActivityDataLCS();
-        //    var myactivityresponsede = myactivitysearch.GetActivityDetail(myactivityrequestde);
-        //    var myactivityresponseit = myactivitysearch.GetActivityDetail(myactivityrequestit);
-        //    var myactivityresponseen = myactivitysearch.GetActivityDetail(myactivityrequesten);
-
-        //    var theactivityde = myactivityresponsede.Activities.Activity.FirstOrDefault();
-        //    var theactivityit = myactivityresponseit.Activities.Activity.FirstOrDefault();
-        //    var theactivityen = myactivityresponseen.Activities.Activity.FirstOrDefault();
-
-        //    //TODO If Date LastChange equal to imported Date do nothing
-        //    //if(Convert.ToDateTime(theactivityde.News.Status.LastChange) > hike.LastChange)
-
-
-        //    string nome = "";
-
-        //    if (theactivityde.Name != null)
-        //        nome = theactivityde.Name.FirstOrDefault().InnerText;
-        //    else
-        //        nome = "kein Name";
-
-        //    hike.Shortname = nome.Trim();
-
-        //    //hike.Id = theactivityde.RID;
-
-        //    //if (theactivityde.ID != null)
-        //    //    if (theactivityde.ID.StartsWith("SMG-"))
-        //    //        hike.SmgId = theactivityde.ID.Replace("SMG-", "");
-
-        //    //Highlight wird von SMG definiert
-        //    //hike.Highlight = hike.Highlight;
-        //    //No net in Servicemodel aktiv 
-        //    //if (theactivityde.News.Status.FavouriteSpecified)
-        //    //    hike.Highlight = Convert.ToBoolean(theactivityde.News.Status.Favourite);
-        //    //else
-        //    //    hike.Highlight = false;
-
-        //    //SMG ACtive übernehmen  
-        //    hike.Active = hike.Active;
-        //    hike.SmgActive = hike.SmgActive;
-
-
-        //    //hike.Type = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText;
-        //    //Bei lift ging das nicht
-
-        //    //hike.SubType = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "no Subtype";
-
-        //    //OBSOLET
-        //    //hike.Difficulty = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "0").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "0").FirstOrDefault().Name.FirstOrDefault().InnerText : "";
-
-        //    if (theactivityde.GeoDatas.GeoData.FirstOrDefault().Altitude != null)
-        //        hike.AltitudeDifference = theactivityde.GeoDatas.GeoData.FirstOrDefault().Altitude.Difference;
-        //    else
-        //        hike.AltitudeDifference = 0;
-
-        //    if (theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance != null)
-        //        hike.DistanceLength = theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance.Length;
-        //    else
-        //        hike.DistanceLength = 0;
-
-        //    if (theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance != null)
-        //    {
-        //        if (theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance.Duration != null)
-        //        {
-        //            //Do wirfts an Exception iber 23 stunden
-        //            //var mydurationtemp = TimeSpan.Parse(theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance.Duration);
-        //            //hike.DistanceDuration = Convert.ToDouble(mydurationtemp.Hours + "," + mydurationtemp.Minutes);
-
-
-        //            //Ondere Meglichkeit
-        //            string duration = theactivityde.GeoDatas.GeoData.FirstOrDefault().Distance.Duration;
-        //            var durationsplittet = duration.Split(':');
-        //            hike.DistanceDuration = Convert.ToDouble(durationsplittet[0] + "," + durationsplittet[1]);
-
-        //        }
-        //        else
-        //            hike.DistanceDuration = 0;
-        //    }
-        //    else
-        //        hike.DistanceDuration = 0;
-
-        //    hike.HasRentals = Convert.ToBoolean(theactivityde.Features.HasRentals);
-        //    hike.IsWithLigth = Convert.ToBoolean(theactivityde.Features.IsWithLight);
-        //    hike.IsOpen = Convert.ToBoolean(theactivityde.News.Status.IsOpen);
-        //    hike.IsPrepared = Convert.ToBoolean(theactivityde.News.Status.IsPrepared);
-        //    hike.RunToValley = Convert.ToBoolean(theactivityde.News.RunToValley.IsPossible);
-
-        //    hike.LastChange = DateTime.Now; //Convert.ToDateTime(theactivityde.News.Status.LastChange);
-
-
-        //    //ContactInfos
-
-        //    //List<ContactInfos> contactinfolist = new List<ContactInfos>();
-
-        //    if (theactivityde.ContactInfos.ContactInfo != null)
-        //    {
-        //        var parsedcontactinfode = theactivityde.ContactInfos.ContactInfo.FirstOrDefault();
-        //        if (parsedcontactinfode != null)
-        //        {
-
-        //            ContactInfos mycontactinfo = hike.ContactInfos["de"];
-
-        //            var myadresselement = parsedcontactinfode.Addresses;
-
-        //            mycontactinfo.Address = myadresselement.Address.FirstOrDefault().AddressLine;
-
-        //            mycontactinfo.City = parsedcontactinfode.Addresses.Address.FirstOrDefault().CityName;
-        //            mycontactinfo.CountryCode = parsedcontactinfode.Addresses.Address.FirstOrDefault().CountryName.Code;
-        //            mycontactinfo.CountryName = parsedcontactinfode.Addresses.Address.FirstOrDefault().CountryName.InnerText;
-        //            mycontactinfo.ZipCode = parsedcontactinfode.Addresses.Address.FirstOrDefault().PostalCode;
-
-        //            mycontactinfo.Email = parsedcontactinfode.Emails.Email.FirstOrDefault().InnerText;
-        //            mycontactinfo.Faxnumber = "";
-
-        //            mycontactinfo.Givenname = parsedcontactinfode.Names.Name.FirstOrDefault().GivenName;
-        //            mycontactinfo.Surname = parsedcontactinfode.Names.Name.FirstOrDefault().Surname;
-        //            mycontactinfo.NamePrefix = parsedcontactinfode.Names.Name.FirstOrDefault().NamePrefix;
-
-        //            mycontactinfo.CompanyName = parsedcontactinfode.CompanyName.InnerText;
-
-        //            mycontactinfo.Language = "de";
-
-        //            mycontactinfo.Phonenumber = parsedcontactinfode.Phones.Phone.FirstOrDefault().PhoneNumber;
-        //            mycontactinfo.Url = parsedcontactinfode.URLs.URL.FirstOrDefault().InnerText;
-
-        //            //contactinfolist.Add(mycontactinfo);
-
-        //            hike.ContactInfos.TryAddOrUpdate("de", mycontactinfo);
-        //        }
-        //    }
-
-        //    if (theactivityit.ContactInfos.ContactInfo != null)
-        //    {
-        //        var parsedcontactinfoit = theactivityit.ContactInfos.ContactInfo.FirstOrDefault();
-        //        if (parsedcontactinfoit != null)
-        //        {
-
-        //            ContactInfos mycontactinfo = hike.ContactInfos["it"];
-
-        //            var myadresselement = parsedcontactinfoit.Addresses;
-
-        //            mycontactinfo.Address = myadresselement.Address.FirstOrDefault().AddressLine;
-
-        //            mycontactinfo.City = parsedcontactinfoit.Addresses.Address.FirstOrDefault().CityName;
-        //            mycontactinfo.CountryCode = parsedcontactinfoit.Addresses.Address.FirstOrDefault().CountryName.Code;
-        //            mycontactinfo.CountryName = parsedcontactinfoit.Addresses.Address.FirstOrDefault().CountryName.InnerText;
-        //            mycontactinfo.ZipCode = parsedcontactinfoit.Addresses.Address.FirstOrDefault().PostalCode;
-
-        //            mycontactinfo.Email = parsedcontactinfoit.Emails.Email.FirstOrDefault().InnerText;
-        //            mycontactinfo.Faxnumber = "";
-
-        //            mycontactinfo.Givenname = parsedcontactinfoit.Names.Name.FirstOrDefault().GivenName;
-        //            mycontactinfo.Surname = parsedcontactinfoit.Names.Name.FirstOrDefault().Surname;
-        //            mycontactinfo.NamePrefix = parsedcontactinfoit.Names.Name.FirstOrDefault().NamePrefix;
-
-        //            mycontactinfo.CompanyName = parsedcontactinfoit.CompanyName.InnerText;
-
-        //            mycontactinfo.Language = "it";
-
-        //            mycontactinfo.Phonenumber = parsedcontactinfoit.Phones.Phone.FirstOrDefault().PhoneNumber;
-        //            mycontactinfo.Url = parsedcontactinfoit.URLs.URL.FirstOrDefault().InnerText;
-
-        //            //contactinfolist.Add(mycontactinfo);
-        //            hike.ContactInfos.TryAddOrUpdate("it", mycontactinfo);
-        //        }
-        //    }
-
-        //    if (theactivityen.ContactInfos.ContactInfo != null)
-        //    {
-        //        var parsedcontactinfoen = theactivityen.ContactInfos.ContactInfo.FirstOrDefault();
-        //        if (parsedcontactinfoen != null)
-        //        {
-
-        //            ContactInfos mycontactinfo = hike.ContactInfos["en"];
-
-        //            var myadresselement = parsedcontactinfoen.Addresses;
-
-        //            mycontactinfo.Address = myadresselement.Address.FirstOrDefault().AddressLine;
-
-        //            mycontactinfo.City = parsedcontactinfoen.Addresses.Address.FirstOrDefault().CityName;
-        //            mycontactinfo.CountryCode = parsedcontactinfoen.Addresses.Address.FirstOrDefault().CountryName.Code;
-        //            mycontactinfo.CountryName = parsedcontactinfoen.Addresses.Address.FirstOrDefault().CountryName.InnerText;
-        //            mycontactinfo.ZipCode = parsedcontactinfoen.Addresses.Address.FirstOrDefault().PostalCode;
-
-        //            mycontactinfo.Email = parsedcontactinfoen.Emails.Email.FirstOrDefault().InnerText;
-        //            mycontactinfo.Faxnumber = "";
-
-        //            mycontactinfo.Givenname = parsedcontactinfoen.Names.Name.FirstOrDefault().GivenName;
-        //            mycontactinfo.Surname = parsedcontactinfoen.Names.Name.FirstOrDefault().Surname;
-        //            mycontactinfo.NamePrefix = parsedcontactinfoen.Names.Name.FirstOrDefault().NamePrefix;
-
-        //            mycontactinfo.CompanyName = parsedcontactinfoen.CompanyName.InnerText;
-
-        //            mycontactinfo.Language = "en";
-
-        //            mycontactinfo.Phonenumber = parsedcontactinfoen.Phones.Phone.FirstOrDefault().PhoneNumber;
-        //            mycontactinfo.Url = parsedcontactinfoen.URLs.URL.FirstOrDefault().InnerText;
-
-        //            //contactinfolist.Add(mycontactinfo);
-        //            hike.ContactInfos.TryAddOrUpdate("en", mycontactinfo);
-        //        }
-        //    }
-
-        //    //hike.ContactInfos = contactinfolist.ToList();
-
-        //    //Ende ContactInfos
-
-        //    //Multimedia Infos            
-
-        //    List<ImageGallery> imagegallerylist = new List<ImageGallery>();
-
-        //    //Bei Update alle Imagegallery Elemente welche nicht SMG Typ sind löschen.
-        //    if (hike.ImageGallery != null)
-        //    {
-        //        foreach (var imggallery in hike.ImageGallery.Where(x => x.ImageSource == "SMG"))
-        //        {
-        //            imagegallerylist.Add(imggallery);
-        //        }
-        //    }
-
-        //    var parsedmultimediainfode = theactivityde.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
-        //    if (parsedmultimediainfode != null)
-        //    {
-        //        if (parsedmultimediainfode.ImageItems.ImageItem != null)
-        //        {
-        //            int i = 0;
-
-        //            foreach (var imageelement in parsedmultimediainfode.ImageItems.ImageItem)
-        //            {
-        //                ImageGallery myimggallery = new ImageGallery();
-        //                myimggallery.Height = imageelement.ImageFormat.Height;
-        //                myimggallery.ImageDesc.TryAddOrUpdate("de", imageelement.Description.FirstOrDefault().InnerText);
-        //                myimggallery.ImageSource = "LTS";
-        //                myimggallery.ImageName = imageelement.RID;
-        //                myimggallery.ImageUrl = imageelement.ImageFormat.URL.InnerText;
-        //                myimggallery.IsInGallery = true;
-        //                myimggallery.ListPosition = i;
-        //                myimggallery.Width = imageelement.ImageFormat.Width;
-        //                //Kimmp oanmol mit . oanmol mit - oanmol isch Monat vorne oanmol Tog wilder kaas
-
-        //                //string applicablestart = imageelement.ImageFormat.ApplicableStart;
-        //                //if (!String.IsNullOrEmpty(applicablestart))
-        //                //{
-        //                //    string startmonth = applicablestart.Substring(0, 2);
-        //                //    string startday = applicablestart.Substring(3, 2);
-        //                //    myimggallery.ValidFrom = DateTime.Parse("2000-" + startmonth + "-" + startday);
-        //                //}
-        //                //else
-        //                //{
-        //                //    myimggallery.ValidFrom = new DateTime(2000, 1, 1);
-        //                //}
-
-        //                //string applicableend = imageelement.ImageFormat.ApplicableEnd;
-        //                //if (!String.IsNullOrEmpty(applicableend))
-        //                //{
-        //                //    string startmonth = applicableend.Substring(0, 2);
-        //                //    string startday = applicableend.Substring(3, 2);
-        //                //    myimggallery.ValidTo = DateTime.Parse("2000-" + startmonth + "-" + startday);
-        //                //}
-        //                //else
-        //                //{
-        //                //    myimggallery.ValidTo = new DateTime(2000, 12, 31);
-        //                //}
-
-
-        //                //myimggallery.ValidFrom = String.IsNullOrEmpty(imageelement.ImageFormat.ApplicableStart) ? new DateTime(2000, 1, 1) : DateTime.Parse(imageelement.ImageFormat.ApplicableStart + ".2000");
-        //                //myimggallery.ValidTo = String.IsNullOrEmpty(imageelement.ImageFormat.ApplicableEnd) ? new DateTime(2000, 12, 31) : DateTime.Parse(imageelement.ImageFormat.ApplicableEnd + ".2000");
-
-        //                imagegallerylist.Add(myimggallery);
-        //                i++;
-        //            }
-        //        }
-
-        //        var mytextitems = parsedmultimediainfode.TextItems;
-
-        //        Detail mydetailde = new Detail();
-        //        //Wenn Detail vorhanden nehmen vorhandenes und überschreibe nur Muassimer onschaugn magari mit der Extension method glöst
-        //        if (hike.Detail != null)
-        //        {
-        //            if (hike.Detail.ContainsKey("de"))
-        //                mydetailde = hike.Detail["de"];
-        //        }
-        //        mydetailde.Title = theactivityde.Name != null ? theactivityde.Name.FirstOrDefault().InnerText.Trim() : "";
-        //        //mydetailde.Header = "";
-        //        mydetailde.Language = "de";
-        //        //mydetailde.AdditionalText = "";
-        //        //mydetailde.Alttext = "";
-        //        //mydetailde.IntroText = "";                
-
-        //        if (mytextitems.TextItem != null)
-        //        {
-        //            foreach (var textelement in mytextitems.TextItem)
-        //            {
-        //                //Allgemeine Beschreibung
-        //                if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "732512C9492340F4AB30FFB800461BE7")
-        //                {
-        //                    mydetailde.BaseText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
-        //                }
-        //                //Anfahrtstext
-        //                if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C26C826A239C47BDB773B4E4B3F27547")
-        //                {
-        //                    mydetailde.GetThereText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
-        //                }
-        //            }
-        //        }
-
-        //        //detaillist.Add(mydetailde);
-        //        hike.Detail.TryAddOrUpdate("de", mydetailde);
-        //    }
-
-        //    //it
-        //    var parsedmultimediainfoit = theactivityit.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
-        //    if (parsedmultimediainfoit != null)
-        //    {
-        //        if (parsedmultimediainfoit.ImageItems.ImageItem != null)
-        //        {
-        //            int i = 0;
-
-        //            foreach (var imageelement in parsedmultimediainfoit.ImageItems.ImageItem)
-        //            {
-        //                imagegallerylist.Where(x => x.ListPosition == i && x.ImageSource == "LTS").FirstOrDefault().ImageDesc.TryAddOrUpdate("it", imageelement.Description.FirstOrDefault().InnerText);
-        //                i++;
-        //                //ImageGallery myimggallery = hike.ImageGallery.Where(x => x.ListPosition == 0).FirstOrDefault();
-        //                //myimggallery.ImageDesc.Add("it", imageelement.Description.FirstOrDefault().InnerText);                        
-
-        //                //myimggallery.Height = imageelement.ImageFormat.Height;                        
-        //                //myimggallery.ImageName = imageelement.RID;
-        //                //myimggallery.ImageUrl = imageelement.ImageFormat.URL.InnerText;
-        //                //myimggallery.IsInGallery = true;
-        //                //myimggallery.Language = "it";
-        //                //myimggallery.ListPosition = 0;
-        //                //myimggallery.Width = imageelement.ImageFormat.Width;
-
-
-        //            }
-        //        }
-
-        //        var mytextitems = parsedmultimediainfoit.TextItems;
-
-        //        Detail mydetailit = new Detail();
-        //        if (hike.Detail != null)
-        //        {
-        //            if (hike.Detail.ContainsKey("it"))
-        //                mydetailit = hike.Detail["it"];
-        //        }
-
-        //        mydetailit.Title = theactivityit.Name != null ? theactivityit.Name.FirstOrDefault().InnerText.Trim() : "";
-        //        //mydetailit.Header = "";
-        //        mydetailit.Language = "it";
-        //        //mydetailit.AdditionalText = "";
-        //        //mydetailit.Alttext = "";
-        //        //mydetailit.IntroText = "";                
-
-        //        if (mytextitems.TextItem != null)
-        //        {
-        //            foreach (var textelement in mytextitems.TextItem)
-        //            {
-        //                //Allgemeine Beschreibung
-        //                if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "732512C9492340F4AB30FFB800461BE7")
-        //                {
-        //                    mydetailit.BaseText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
-        //                }
-        //                //Anfahrtstext
-        //                if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C26C826A239C47BDB773B4E4B3F27547")
-        //                {
-        //                    mydetailit.GetThereText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
-        //                }
-        //            }
-        //        }
-
-        //        //detaillist.Add(mydetailit);
-        //        hike.Detail.TryAddOrUpdate("it", mydetailit);
-        //    }
-
-        //    //en
-        //    var parsedmultimediainfoen = theactivityen.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
-        //    if (parsedmultimediainfoen != null)
-        //    {
-
-        //        if (parsedmultimediainfoen.ImageItems.ImageItem != null)
-        //        {
-        //            int i = 0;
-        //            foreach (var imageelement in parsedmultimediainfoen.ImageItems.ImageItem)
-        //            {
-        //                imagegallerylist.Where(x => x.ListPosition == i && x.ImageSource == "LTS").FirstOrDefault().ImageDesc.TryAddOrUpdate("en", imageelement.Description.FirstOrDefault().InnerText);
-        //                i++;
-        //                //ImageGallery myimggallery = new ImageGallery();
-        //                //myimggallery.Height = imageelement.ImageFormat.Height;
-        //                //myimggallery.ImageDesc = imageelement.Description.FirstOrDefault().InnerText;
-        //                //myimggallery.ImageName = imageelement.RID;
-        //                //myimggallery.ImageUrl = imageelement.ImageFormat.URL.InnerText;
-        //                //myimggallery.IsInGallery = true;
-        //                //myimggallery.Language = "en";
-        //                //myimggallery.ListPosition = 0;
-        //                //myimggallery.Width = imageelement.ImageFormat.Width;
-
-        //                //imagegallerylist.Add(myimggallery);
-        //            }
-        //        }
-
-
-        //        var mytextitems = parsedmultimediainfoen.TextItems;
-
-        //        Detail mydetailen = new Detail();
-        //        if (hike.Detail != null)
-        //        {
-        //            if (hike.Detail.ContainsKey("en"))
-        //                mydetailen = hike.Detail["en"];
-        //        }
-
-        //        mydetailen.Title = theactivityen.Name != null ? theactivityen.Name.FirstOrDefault().InnerText.Trim() : "";
-        //        //mydetailen.Header = "";
-        //        mydetailen.Language = "en";
-        //        //mydetailen.AdditionalText = "";
-        //        //mydetailen.Alttext = "";
-        //        //mydetailen.IntroText = "";                
-
-        //        if (mytextitems.TextItem != null)
-        //        {
-        //            foreach (var textelement in mytextitems.TextItem)
-        //            {
-        //                //Allgemeine Beschreibung
-        //                if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "732512C9492340F4AB30FFB800461BE7")
-        //                {
-        //                    mydetailen.BaseText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
-        //                }
-        //                //Anfahrtstext
-        //                if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C26C826A239C47BDB773B4E4B3F27547")
-        //                {
-        //                    mydetailen.GetThereText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
-        //                }
-        //            }
-        //        }
-        //        //detaillist.Add(mydetailen);
-        //        hike.Detail.TryAddOrUpdate("en", mydetailen);
-        //    }
-
-        //    hike.ImageGallery = imagegallerylist.ToList();
-        //    //hike.Detail = detaillist.ToList();
-
-        //    //Ende MultimediaInfos
-
-        //    //AdditionalPoiInfos
-
-        //    //List<AdditionalPoiInfos> myaddpoiinfoslist = new List<AdditionalPoiInfos>();
-
-        //    AdditionalPoiInfos myaddpoiinfosde = hike.AdditionalPoiInfos["de"];
-        //    AdditionalPoiInfos myaddpoiinfosit = hike.AdditionalPoiInfos["it"];
-        //    AdditionalPoiInfos myaddpoiinfosen = hike.AdditionalPoiInfos["en"];
-
-        //    //var myenumcodesde = theactivityde.EnumCodes.EnumCode.FirstOrDefault();
-
-        //    //foreach (var enumcode in myenumcodesde.Code)
-        //    //{
-        //    //    //if (enumcode.Level == "0")
-        //    //    //{
-        //    //    //    myaddpoiinfosde.Difficulty = enumcode.Name.FirstOrDefault().InnerText;
-        //    //    //}
-        //    //    if (enumcode.Level == "1")
-        //    //    {
-        //    //        myaddpoiinfosde.SubType = enumcode.Name.FirstOrDefault().InnerText;
-        //    //    }
-        //    //}
-
-        //    //var myenumcodesit = theactivityit.EnumCodes.EnumCode.FirstOrDefault();
-
-        //    //foreach (var enumcode in myenumcodesit.Code)
-        //    //{
-        //    //    //if (enumcode.Level == "0")
-        //    //    //{
-
-
-        //    //    //    myaddpoiinfosit.Difficulty = enumcode.Name.FirstOrDefault().InnerText;
-        //    //    //}
-        //    //    if (enumcode.Level == "1")
-        //    //    {
-        //    //        myaddpoiinfosit.SubType = enumcode.Name.FirstOrDefault().InnerText;
-        //    //    }
-        //    //}
-
-        //    //var myenumcodesen = theactivityen.EnumCodes.EnumCode.FirstOrDefault();
-
-        //    //foreach (var enumcode in myenumcodesen.Code)
-        //    //{
-        //    //    //if (enumcode.Level == "0")
-        //    //    //{
-        //    //    //    myaddpoiinfosen.Difficulty = enumcode.Name.FirstOrDefault().InnerText;
-        //    //    //}
-        //    //    if (enumcode.Level == "1")
-        //    //    {
-        //    //        myaddpoiinfosen.SubType = enumcode.Name.FirstOrDefault().InnerText;
-        //    //    }
-        //    //}
-
-        //    //myaddpoiinfosde.Language = "de";
-        //    //myaddpoiinfosit.Language = "it";
-        //    //myaddpoiinfosen.Language = "en";
-
-        //    //myaddpoiinfosde.MainType = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText;
-        //    //myaddpoiinfosit.MainType = theactivityit.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText;
-        //    //myaddpoiinfosen.MainType = theactivityen.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText;
-
-        //    //myaddpoiinfosde.SubType = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "";
-        //    //myaddpoiinfosit.SubType = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityit.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "";
-        //    //myaddpoiinfosen.SubType = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityen.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "";
-
-
-        //    if (theactivityde.News.Novelty.Description != null)
-        //    {
-        //        myaddpoiinfosde.Novelty = theactivityde.News.Novelty.Description.InnerText;
-        //    }
-        //    if (theactivityit.News.Novelty.Description != null)
-        //    {
-        //        myaddpoiinfosit.Novelty = theactivityit.News.Novelty.Description.InnerText;
-        //    }
-        //    if (theactivityen.News.Novelty.Description != null)
-        //    {
-        //        myaddpoiinfosen.Novelty = theactivityen.News.Novelty.Description.InnerText;
-        //    }
-
-        //    hike.AdditionalPoiInfos.TryAddOrUpdate("de", myaddpoiinfosde);
-        //    hike.AdditionalPoiInfos.TryAddOrUpdate("it", myaddpoiinfosit);
-        //    hike.AdditionalPoiInfos.TryAddOrUpdate("en", myaddpoiinfosen);
-
-        //    //myaddpoiinfoslist.Add(myaddpoiinfosde);
-        //    //myaddpoiinfoslist.Add(myaddpoiinfosit);
-        //    //myaddpoiinfoslist.Add(myaddpoiinfosen);
-
-        //    //hike.AdditionalPoiInfos = myaddpoiinfoslist.ToList();
-
-        //    //Ende AdditionalPoiInfos
-
-        //    //hike.DistrictId = "";
-
-        //    //Des tiamer a nimmer weilmers onders zuaweisen wellen kennen!
-        //    //hike.TourismorganizationId = theactivityde.Owner.RID;
-
-        //    //hike.RegionId = "";
-
-        //    List<GpsInfo> mygpsinfolist = new List<GpsInfo>();
-
-        //    var positions = theactivityde.GeoDatas.GeoData.FirstOrDefault().Positions.Position;
-
-        //    if (positions != null)
-        //    {
-        //        foreach (var position in positions)
-        //        {
-        //            GpsInfo mygpsinfo = new GpsInfo();
-
-        //            mygpsinfo.Gpstype = position.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
-        //            mygpsinfo.AltitudeUnitofMeasure = "m";
-        //            mygpsinfo.Altitude = position.Altitude;
-        //            mygpsinfo.Longitude = Convert.ToDouble(position.Longitude, myculture);
-        //            mygpsinfo.Latitude = Convert.ToDouble(position.Latitude, myculture);
-
-        //            mygpsinfolist.Add(mygpsinfo);
-        //        }
-
-        //        hike.GpsInfo = mygpsinfolist.ToList();
-        //    }
-
-        //    List<GpsTrack> mygpstracklist = new List<GpsTrack>();
-
-        //    var gpstracks = theactivityde.GeoDatas.GeoData.FirstOrDefault().GPSTracks.GPSTrack;
-        //    //TODO Language Specific GPXTrackdesc noch rausfieseln
-        //    if (gpstracks != null)
-        //    {
-        //        foreach (var gpstrack in gpstracks)
-        //        {
-        //            GpsTrack mygpstrack = new GpsTrack();
-
-        //            mygpstrack.Id = gpstrack.RID;
-        //            mygpstrack.GpxTrackUrl = gpstrack.File.URL.InnerText;
-
-        //            //EN und IT Info?
-
-        //            mygpstrack.GpxTrackDesc.TryAddOrUpdate("de", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
-
-        //            mygpstracklist.Add(mygpstrack);
-        //        }
-        //    }
-        //    var gpstracksit = theactivityit.GeoDatas.GeoData.FirstOrDefault().GPSTracks.GPSTrack;
-        //    //TODO Language Specific GPXTrackdesc noch rausfieseln
-        //    if (gpstracksit != null)
-        //    {
-        //        foreach (var gpstrack in gpstracksit)
-        //        {
-        //            GpsTrack mygpstrack = mygpstracklist.Where(x => x.Id == gpstrack.RID).FirstOrDefault();
-        //            mygpstrack.GpxTrackDesc.TryAddOrUpdate("it", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
-        //            //mygpstracklist.Add(mygpstrack);
-        //        }
-        //    }
-
-        //    var gpstracksen = theactivityen.GeoDatas.GeoData.FirstOrDefault().GPSTracks.GPSTrack;
-        //    //TODO Language Specific GPXTrackdesc noch rausfieseln
-        //    if (gpstracksen != null)
-        //    {
-        //        foreach (var gpstrack in gpstracksen)
-        //        {
-        //            GpsTrack mygpstrack = mygpstracklist.Where(x => x.Id == gpstrack.RID).FirstOrDefault();
-        //            mygpstrack.GpxTrackDesc.TryAddOrUpdate("en", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
-        //            //mygpstracklist.Add(mygpstrack);
-        //        }
-        //    }
-
-
-        //    hike.GpsTrack = mygpstracklist.ToList();
-
-        //    List<string> arearidlist = new List<string>();
-
-        //    if (theactivityde.Memberships != null)
-        //    {
-        //        var members = theactivityde.Memberships.Membership;
-
-        //        foreach (var member in members)
-        //        {
-        //            if (member.Area != null)
-        //            {
-        //                foreach (var myarea in member.Area)
-        //                {
-        //                    string z = myarea.RID;
-        //                    arearidlist.Add(z);
-        //                }
-        //            }
-        //        }
-
-        //        hike.AreaId = arearidlist.ToList();
-        //    }
-
-        //    //Tags lassen wir wie sie sind 
-        //    //List<string> currenttags = new List<string>();
-
-        //    //if (hike.SmgTags != null)
-        //    //    currenttags = hike.SmgTags.ToList();
-
-        //    //string type = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Name.FirstOrDefault().InnerText;
-        //    //string subtype = theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").Count() > 0 ? theactivityde.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "no Subtype";
-
-        //    //if (!currenttags.Contains(type))
-        //    //    currenttags.Add(type);
-        //    //if (!currenttags.Contains(subtype))
-        //    //    currenttags.Add(subtype);
-
-        //    //hike.SmgTags = currenttags.ToList();
-
-        //    //OperationSchedules muss ich mir noch genauer anschauen
-        //    List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();
-
-        //    if (theactivityde.OperationSchedules != null)
-        //    {
-        //        if (theactivityde.OperationSchedules.OperationSchedule != null)
-        //        {
-        //            foreach (var myoperationschedule in theactivityde.OperationSchedules.OperationSchedule)
-        //            {
-        //                OperationSchedule theoperationschedule = new OperationSchedule();
-        //                theoperationschedule.OperationscheduleName["de"] = myoperationschedule.Name != null ? myoperationschedule.Name.FirstOrDefault().InnerText : "";
-        //                theoperationschedule.Start = DateTime.Parse(myoperationschedule.Start);
-        //                theoperationschedule.Stop = DateTime.Parse(myoperationschedule.End);
-        //                theoperationschedule.Type = myoperationschedule.Type;
-
-        //                List<OperationScheduleTime> myopeningtimes = new List<OperationScheduleTime>();
-
-        //                if (myoperationschedule.OperationTime != null)
-        //                {
-        //                    foreach (var operationscheduletime in myoperationschedule.OperationTime)
-        //                    {
-        //                        OperationScheduleTime mytime = new OperationScheduleTime();
-        //                        mytime.Start = operationscheduletime.Start == null ? TimeSpan.Parse("00:00:00") : TimeSpan.Parse(operationscheduletime.Start);
-        //                        mytime.End = operationscheduletime.End == null ? TimeSpan.Parse("23:59:00") : TimeSpan.Parse(operationscheduletime.End);
-        //                        mytime.Monday = operationscheduletime.Mon;
-        //                        mytime.Tuesday = operationscheduletime.Tue;
-        //                        mytime.Wednesday = operationscheduletime.Weds;
-        //                        mytime.Thuresday = operationscheduletime.Thur;
-        //                        mytime.Friday = operationscheduletime.Fri;
-        //                        mytime.Saturday = operationscheduletime.Sat;
-        //                        mytime.Sunday = operationscheduletime.Sun;
-        //                        mytime.Timecode = 0;
-
-        //                        myopeningtimes.Add(mytime);
-        //                    }
-
-        //                    theoperationschedule.OperationScheduleTime = myopeningtimes.ToList();
-        //                }
-        //                operationschedulelist.Add(theoperationschedule);
-        //            }
-        //        }
-        //    }
-        //    hike.OperationSchedule = operationschedulelist.ToList();
-        //    //Ende OperationSchedule Activity
-
-        //    //Add The available Languages
-        //    //Check wo überall in Details sprachknoten enthalten sind     
-        //    //var availablelanguages = hike.Detail.Select(x => x.Key).ToList();
-        //    //hike.HasLanguage = availablelanguages;
-
-        //    return hike;
-        //}
-
-
-
     }
 }

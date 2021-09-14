@@ -60,6 +60,19 @@ namespace OdhApiCore.Controllers
             }
         }
 
+        public bool CheckAvailabilitySearch()
+        {
+            List<string> roles = new List<string>() { "DataReader", "AccoReader" };
+
+            foreach(var role in roles)
+            {
+                if (User.IsInRole(role))
+                    return true;                
+            }
+
+            return false;
+        }
+
         protected IEnumerable<string> FieldsToHide
         {
             get
@@ -105,7 +118,7 @@ namespace OdhApiCore.Controllers
                     return Url.Link($"Single{controller}", new { id })!;
                 };
             }
-        }
+        }        
 
         protected async Task<IActionResult> DoAsync(Func<Task<IActionResult>> f)
         {
@@ -209,5 +222,5 @@ namespace OdhApiCore.Controllers
 
             return Ok(new GenericResult() { Message = String.Format("DELETE success: {0}", id) });
         }
-    }
+    }    
 }

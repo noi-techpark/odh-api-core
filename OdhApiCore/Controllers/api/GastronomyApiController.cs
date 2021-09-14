@@ -18,8 +18,9 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers
 {
     /// <summary>
-    /// Gastronomy Api (data provided by LTS GastronomyData) SOME DATA Available as OPENDATA
+    /// Gastronomy Api (data provided by LTS GastronomicData) Deprecated! Please use Endpoint ODHActivityPoi?type=32
     /// </summary>
+    [Obsolete("Please use ODHActivityPoi Endpoint")]
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class GastronomyController : OdhController

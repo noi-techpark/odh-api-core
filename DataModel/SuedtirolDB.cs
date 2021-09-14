@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Linq;
 
 namespace DataModel
 {
@@ -551,15 +553,38 @@ namespace DataModel
         public string ParentLTSRID { get; set; }
     }
 
-#endregion
+    public class LTSTin
+    {
+        public LTSTin()
+        {
+            Name = new Dictionary<string, string>();
+            Description = new Dictionary<string, string>();
+            LTSTinAssignment = new List<LTSTinAssignment>();
+        }
 
+        public string Id { get; set; }
 
-/// <summary>
-/// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
-/// </summary>
-#region Marketinggroup
+        public IDictionary<string, string> Name { get; set; }
+        public IDictionary<string, string> Description { get; set; }
 
-public class Marketinggroup : IIdentifiable
+        public ICollection<LTSTinAssignment> LTSTinAssignment { get; set; }
+    }
+
+    public class LTSTinAssignment
+    {
+        public string RID { get; set; }
+        public string ODHTagId { get; set; }
+        public string LTSTagRID { get; set; }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
+    /// </summary>
+    #region Marketinggroup
+
+    public class Marketinggroup : IIdentifiable
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -573,14 +598,7 @@ public class Marketinggroup : IIdentifiable
     /// <summary>
     /// Alle Aktivitäten welche eine Route haben
     /// </summary>
-    #region Activities & POIs
-
-    //Activities
-
-    //public class Wanderung : PoiBaseInfos
-    //{
-    //    //public List<string> LTSTagList { get; set; }
-    //}
+    #region Activities & POIs  
 
     public class Hike : PoiBaseInfos
     {
@@ -917,6 +935,30 @@ public class Marketinggroup : IIdentifiable
         public IndependentData IndependentData { get; set; }
 
         public ICollection<AccoRoomInfo> AccoRoomInfo { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class AccoRoomInfo
@@ -1015,6 +1057,9 @@ public class Marketinggroup : IIdentifiable
 
         public Nullable<DateTime> LastChange { get; set; }
         public Nullable<DateTime> FirstImport { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -1349,7 +1394,7 @@ public class Marketinggroup : IIdentifiable
             PackageDetail = new Dictionary<string, PackageDetail>();
             Inclusive = new Dictionary<string, Inclusive>();
             ChannelInfo = new Dictionary<string, string>();
-            //PackageTheme = new Dictionary<string, PackageTheme>();
+            GpsPoints = new Dictionary<string, GpsInfo>();
         }
 
         //IIdentifiable
@@ -1419,6 +1464,12 @@ public class Marketinggroup : IIdentifiable
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
 
         public EvalancheMapping? EvalancheMapping { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class Season
@@ -1519,6 +1570,30 @@ public class Marketinggroup : IIdentifiable
         public string? OwnerId { get; set; }
 
         public List<string>? AreaIds { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class WeatherObservation
@@ -2096,10 +2171,21 @@ public class Marketinggroup : IIdentifiable
         public bool Active { get; set; }
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
+        
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public string? Gpstype { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public double Latitude { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public double Longitude { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public Nullable<double> Altitude { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use GpsPoints")] 
         public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -2117,6 +2203,30 @@ public class Marketinggroup : IIdentifiable
 
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
@@ -2174,7 +2284,6 @@ public class Marketinggroup : IIdentifiable
         public double AltitudeSumUp { get; set; }
         public double AltitudeSumDown { get; set; }
 
-
         public double DistanceDuration { get; set; }
         public double DistanceLength { get; set; }
         //neu LTSUpdate 11.16
@@ -2220,13 +2329,15 @@ public class Marketinggroup : IIdentifiable
 
         public List<string>? ChildPoiIds { get; set; }
         public List<string>? MasterPoiIds { get; set; }
-        
-        //New
+                
         public Nullable<int> WayNumber { get; set; }
 
         public string? Number { get; set; }
 
         public List<LTSTags>? LTSTags { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
@@ -2286,6 +2397,27 @@ public class Marketinggroup : IIdentifiable
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
+                {
+                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
@@ -2358,6 +2490,9 @@ public class Marketinggroup : IIdentifiable
 
         //NEW
         public Nullable<int> RepresentationRestriction { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
@@ -2453,6 +2588,30 @@ public class Marketinggroup : IIdentifiable
         public IDictionary<string, ICollection<string>> Hashtag { get; set; }
 
         public EventOperationScheduleOverview EventOperationScheduleOverview { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class Topic
@@ -2547,6 +2706,9 @@ public class Marketinggroup : IIdentifiable
         public string? WebcamId { get; set; }
         public IDictionary<string, string> Webcamname { get; set; }
         public string? Webcamurl { get; set; }
+
+        [Obsolete]
+        [SwaggerSchema("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
         //Neu
         public Nullable<int> ListPosition { get; set; }
@@ -2596,6 +2758,30 @@ public class Marketinggroup : IIdentifiable
         public ICollection<string>? AreaIds { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
+
+        //new Add GPS Points from GpsInfo
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.GpsInfo != null)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { this.GpsInfo.Gpstype, this.GpsInfo }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class PublishedonObject
@@ -2700,15 +2886,30 @@ public class Marketinggroup : IIdentifiable
 
     public class LTSTags
     {
-        //public LTSTags()
-        //{
-        //    TagName = new Dictionary<string, string>();
-        //}
+        public LTSTags()
+        {
+            TagName = new Dictionary<string, string>();
+            LTSTins = new List<LTSTins>();
+        }
 
-        public string? Id { get; set; }
-        public string? LTSRID { get; set; }
+        public string? Id { get; set; }        
         public int Level { get; set; }
-        //public IDictionary<string, string> TagName { get; set; }
+        public string? LTSRID { get; set; }
+        public IDictionary<string, string> TagName { get; set; }
+
+        public ICollection<LTSTins> LTSTins { get; set; }
+    }
+
+    public class LTSTins
+    {
+        public LTSTins()
+        {
+            TinName = new Dictionary<string, string>();
+        }
+
+        public string Id { get; set; }
+        public string LTSRID { get; set; }
+        public IDictionary<string, string> TinName { get; set; }
     }
 
     public class AdditionalArticleInfos : ILanguage
@@ -2790,7 +2991,9 @@ public class Marketinggroup : IIdentifiable
         public bool Monday { get; set; }
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
-        // Here for compatibility reasons        
+        // Here for compatibility reasons
+        [SwaggerSchema("Will be removed withhin 2021-12-31")]
+        [Obsolete]
         public bool Thuresday { get; set; }
         public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }
@@ -3055,6 +3258,11 @@ public class Marketinggroup : IIdentifiable
 
     public class EventShort : IIdentifiable
     {
+        public EventShort()
+        {
+            GpsPoints = new Dictionary<string, GpsInfo>();
+        }
+
         public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
@@ -3173,6 +3381,12 @@ public class Marketinggroup : IIdentifiable
         public bool? ExternalOrganizer { get; set; }
 
         public string? Shortname { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+
+        //New published on List
+        public List<string> PublishedOn { get; set; }
     }
 
     public class RoomBooked

@@ -204,20 +204,12 @@ namespace SuedtirolWein.Parser
                 myprop4.Value = companydata.Element("companyholiday").Value;
                 mypropertylist.Add(myprop4);
             }
-
-            //De sochen glabi war besser als boolwerte ozuspeichern lei schaugn wohin.............
-            //hallo hasvisits, hasovernichtgs, hasbiowine........
-
+            
             if (companydata.Element("hasvisits") != null)
             {
                 PoiProperty myprop5 = new PoiProperty();
                 myprop5.Name = "hasvisits";
-
-                //string hasvisitsstr = "false";
-
-                //if (companydata.Element("hasvisits").Value == "True")
-                //    hasvisitsstr = "true";
-
+          
                 myprop5.Value = companydata.Element("hasvisits").Value;
                 mypropertylist.Add(myprop5);
             }
@@ -226,11 +218,6 @@ namespace SuedtirolWein.Parser
                 PoiProperty myprop6 = new PoiProperty();
                 myprop6.Name = "hasovernights";
 
-                //string hasovernightsstr = "nein";
-
-                //if (companydata.Element("hasovernights").Value == "True")
-                //    hasovernightsstr = "ja";
-
                 myprop6.Value = companydata.Element("hasovernights").Value;
                 mypropertylist.Add(myprop6);
             }
@@ -238,11 +225,6 @@ namespace SuedtirolWein.Parser
             {
                 PoiProperty myprop7 = new PoiProperty();
                 myprop7.Name = "hasbiowine";
-
-                //string hasbiowinestr = "nein";
-
-                //if (companydata.Element("hasbiowine").Value == "True")
-                //    hasbiowinestr = "ja";
 
                 myprop7.Value = companydata.Element("hasbiowine").Value;
                 mypropertylist.Add(myprop7);
@@ -375,16 +357,7 @@ namespace SuedtirolWein.Parser
                 myprop22.Value = companydata.Element("h2").Value;
                 mypropertylist.Add(myprop22);
             }
-            ////new imagemetaalt
-            //if (companydata.Element("imagemetaalt") != null)
-            //{
-            //    PoiProperty myprop23 = new PoiProperty();
-            //    myprop23.Name = "imagemetaalt";
-
-            //    myprop23.Value = companydata.Element("imagemetaalt").Value;
-            //    mypropertylist.Add(myprop23);
-            //}
-
+       
             //new quote
             if (companydata.Element("quote") != null)
             {
@@ -433,6 +406,25 @@ namespace SuedtirolWein.Parser
 
                 myprop27.Value = companydata.Element("h2sparklingwineproducer").Value;
                 mypropertylist.Add(myprop27);
+            }
+
+            if (companydata.Element("imagesparklingwineproducer") != null)
+            {
+                PoiProperty myprop28 = new PoiProperty();
+                myprop28.Name = "imagesparklingwineproducer";
+
+                myprop28.Value = companydata.Element("imagesparklingwineproducer").Value;
+                mypropertylist.Add(myprop28);
+            }
+
+            //new <hasdirectsales>
+            if (companydata.Element("hasdirectsales") != null)
+            {
+                PoiProperty myprop29 = new PoiProperty();
+                myprop29.Name = "hasdirectsales";
+
+                myprop29.Value = companydata.Element("hasdirectsales").Value;
+                mypropertylist.Add(myprop29);
             }
 
             mywinecompany.PoiProperty.TryAddOrUpdate(language, mypropertylist);
