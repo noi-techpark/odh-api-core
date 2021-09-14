@@ -666,13 +666,28 @@ namespace OdhApiCore.Controllers
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
 
-                return ResponseHelpers.GetResult(
-                    pagenumber,
-                    totalpages,
-                    totalcount,
-                    seed,
-                    dataTransformed,
-                    Url);
+                var availableonline = Request.HttpContext.Items["mssavailablity"] != null ? ((MssResult?)Request.HttpContext.Items["mssavailablity"]).MssResponseShort.Count : 0;
+                if (availableonline > 0)
+                {
+                    return ResponseHelpers.GetResult(
+                      pagenumber,
+                      totalpages,
+                      totalcount,
+                      availableonline,
+                      seed,
+                      dataTransformed,
+                      Url);
+                }
+                else
+                {
+                    return ResponseHelpers.GetResult(
+                   pagenumber,
+                   totalpages,
+                   totalcount,
+                   seed,
+                   dataTransformed,
+                   Url);
+                }
             });
         }
 

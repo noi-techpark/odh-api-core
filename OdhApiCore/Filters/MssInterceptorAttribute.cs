@@ -47,7 +47,7 @@ namespace OdhApiCore.Filters
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            bool availabilitysearchavailable = CheckAvailabilitySearch(context.HttpContext.User);
+            var availabilitysearchavailable = CheckAvailabilitySearch(context.HttpContext.User);            
 
             //Getting Action name
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
@@ -82,7 +82,6 @@ namespace OdhApiCore.Filters
                     string? longitude = actionarguments.ContainsKey("longitude") ? (string?)actionarguments["longitude"] : null;
                     string? radius = actionarguments.ContainsKey("radius") ? (string?)actionarguments["radius"] : null;
 
-
                     string language = actionarguments.ContainsKey("language") ? (string)actionarguments["language"] : "de";
                     string? langfilter = actionarguments.ContainsKey("langfilter") ? (string)actionarguments["langfilter"] : null;
 
@@ -95,59 +94,62 @@ namespace OdhApiCore.Filters
                     string bokfilter = actionarguments.ContainsKey("bokfilter") ? (string)actionarguments["bokfilter"] : "hgv";
                     string idsource = actionarguments.ContainsKey("idsource") ? (string)actionarguments["idsource"] : "lts";
 
-                    AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
+                    if(CheckArrivalAndDeparture(arrival, departure))
+                    {
+                        AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                        QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                        featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
                        smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, langfilter: langfilter, (CancellationToken)context.ActionArguments["cancellationToken"]);
 
-                    var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+                        var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-                    //Get Accommodations IDlist 
-                    var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
+                        //Get Accommodations IDlist 
+                        var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
 
-                    ////Fix
-                    //List<AccoBookList> myaccoboklist = new List<AccoBookList>();
-                    //foreach(var item in idlist)
-                    //{
-                    //    var x = new AccoBookList();
-                    //    x.Id = item.Id;
-                    //    x.IsBookable = item.IsBookable;
-                    //    x.AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(item.AccoBookingChannel.Value);                        
-                    //}
+                        ////Fix
+                        //List<AccoBookList> myaccoboklist = new List<AccoBookList>();
+                        //foreach(var item in idlist)
+                        //{
+                        //    var x = new AccoBookList();
+                        //    x.Id = item.Id;
+                        //    x.IsBookable = item.IsBookable;
+                        //    x.AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(item.AccoBookingChannel.Value);                        
+                        //}
 
-                    //crashes because some AccobookingChannels are null TODO!
-                    //var myaccobooklist = idlist.Select(x => new AccoBookList { Id = x.Id, IsBookable = x.IsBookable, AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(x.AccoBookingChannel.Value) }).ToList();
-                    
-                    //TODO NOT WORKING, Availability Request is returned without paging
+                        //crashes because some AccobookingChannels are null TODO!
+                        //var myaccobooklist = idlist.Select(x => new AccoBookList { Id = x.Id, IsBookable = x.IsBookable, AccoBookingChannel = JsonConvert.DeserializeObject<ICollection<AccoBookingChannel>?>(x.AccoBookingChannel.Value) }).ToList();
+
+                        //TODO NOT WORKING, Availability Request is returned without paging
 
 
-                    var booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
-                    var bokfilterlist = bokfilter.Split(',').ToList();
+                        var booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
+                        var bokfilterlist = bokfilter.Split(',').ToList();
 
-                    context.HttpContext.Items.Add("accobooklist", booklist);
+                        context.HttpContext.Items.Add("accobooklist", booklist);
 
-                    if (bokfilterlist.Contains("hgv"))
-                    {
-                        MssResult mssresult = await GetMSSAvailability(
-                                  language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                  roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: booklist, idsofchannel: idsource, source: source);
-                        
-                        if (mssresult != null)
+                        if (bokfilterlist.Contains("hgv"))
                         {
-                            context.HttpContext.Items.Add("mssavailablity", mssresult);
-                        }
-                    }
-                    if (bokfilterlist.Contains("lts"))
-                    {
-                        MssResult lcsresult = await GetLCSAvailability(
-                                        language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                        roominfo: roominfo, bookableaccoIDs: booklist, source: source);
+                            MssResult mssresult = await GetMSSAvailability(
+                                      language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                      roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: booklist, idsofchannel: idsource, source: source);
 
-                        if (lcsresult != null)
-                        {
-                            context.HttpContext.Items.Add("lcsavailablity", lcsresult);
+                            if (mssresult != null)
+                            {
+                                context.HttpContext.Items.Add("mssavailablity", mssresult);
+                            }
                         }
-                    }                                      
+                        if (bokfilterlist.Contains("lts"))
+                        {
+                            MssResult lcsresult = await GetLCSAvailability(
+                                            language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                            roominfo: roominfo, bookableaccoIDs: booklist, source: source);
+
+                            if (lcsresult != null)
+                            {
+                                context.HttpContext.Items.Add("lcsavailablity", lcsresult);
+                            }
+                        }
+                    }                                                          
                 }
 
                 await base.OnActionExecutionAsync(context, next);
@@ -172,7 +174,7 @@ namespace OdhApiCore.Filters
             bool.TryParse(availabilitychecklegacy, out bool availabilitycheck);
 
             string bokfilter = (string?)query["bokfilter"] ?? "hgv";
-            var bokfilterlist = bokfilter.Split(',').ToList(); ;
+            var bokfilterlist = bokfilter.Split(',').ToList();
 
             if (availabilitycheck && availabilitysearchavailable)
             {
@@ -185,70 +187,15 @@ namespace OdhApiCore.Filters
                 string source = (string?)query["source"] ?? "sinfo";
                 string detail = (string?)query["detail"] ?? "0";
 
-                var bookableAccoIds = new List<string>();
-                if (context.RouteData.Values.TryGetValue("id", out object? id) && id != null)
-                    bookableAccoIds.Add((string)id);
-
-                if (context.Result is OkObjectResult okObject && okObject.Value is JsonRaw jRaw)
+                if (CheckArrivalAndDeparture(arrival, departure))
                 {
-                    string json = jRaw.Value;
-                    var jtoken = JToken.Parse(json);
-                    if (jtoken is JObject jObject)
+                    var bookableAccoIds = new List<string>();
+                    if (context.RouteData.Values.TryGetValue("id", out object? id) && id != null)
+                        bookableAccoIds.Add((string)id);
+
+                    if (context.Result is OkObjectResult okObject && okObject.Value is JsonRaw jRaw)
                     {
-                        var mssResponseShort = jObject.Property("MssResponseShort");
-                        if (mssResponseShort is JProperty mssResponseShortProperty)
-                        {
-                            
-                            List<MssResult> result = new List<MssResult>();
-
-                            if (bokfilterlist.Contains("hgv"))
-                            {
-                                MssResult? mssresult = default(MssResult);
-
-                                if (actionid == "GetAccommodations")
-                                {
-                                    mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
-                                }
-                                else if (actionid == "GetAccommodation")
-                                {
-                                   mssresult = await GetMSSAvailability(
-                                   language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                   roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: bookableAccoIds, idsofchannel: idsource, source: source);
-                                }
-
-                                if (mssresult != null)
-                                {
-                                    result.Add(mssresult);                               
-                                }
-                            }
-                            if (bokfilterlist.Contains("lts"))
-                            {
-                                MssResult lcsresult = await GetLCSAvailability(
-                                    language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                    roominfo: roominfo, bookableaccoIDs: bookableAccoIds, source: source);
-
-                                if (lcsresult != null)
-                                {
-                                    result.Add(lcsresult);                                    
-                                }
-                            }
-
-                            if(result.Count > 0)
-                            {
-                                var resultJson = JsonConvert.SerializeObject(result.SelectMany(x => x.MssResponseShort));
-                                mssResponseShortProperty.Value = new JRaw(resultJson);
-                            }
-                        }
-                    }
-                    okObject.Value = jtoken;
-                }
-                else if (context.Result is OkObjectResult okObjectlist && okObjectlist.Value is JsonResult<JsonRaw> jRawList)
-                {
-                    List<JToken> myRawList = new List<JToken>();
-
-                    foreach (var myjRaw in jRawList.Items)
-                    {
-                        string json = myjRaw.Value;
+                        string json = jRaw.Value;
                         var jtoken = JToken.Parse(json);
                         if (jtoken is JObject jObject)
                         {
@@ -260,7 +207,7 @@ namespace OdhApiCore.Filters
 
                                 if (bokfilterlist.Contains("hgv"))
                                 {
-                                    MssResult? mssresult = null;
+                                    MssResult? mssresult = default(MssResult);
 
                                     if (actionid == "GetAccommodations")
                                     {
@@ -280,18 +227,9 @@ namespace OdhApiCore.Filters
                                 }
                                 if (bokfilterlist.Contains("lts"))
                                 {
-                                    MssResult? lcsresult = null;
-
-                                    if (actionid == "GetAccommodations")
-                                    {
-                                        lcsresult = (MssResult?)context.HttpContext.Items["lcsavailablity"];
-                                    }
-                                    else if (actionid == "GetAccommodation")
-                                    {
-                                        lcsresult = await GetLCSAvailability(
-                                         language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                         roominfo: roominfo, bookableaccoIDs: bookableAccoIds, source: source);
-                                    }                                     
+                                    MssResult lcsresult = await GetLCSAvailability(
+                                        language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                        roominfo: roominfo, bookableaccoIDs: bookableAccoIds, source: source);
 
                                     if (lcsresult != null)
                                     {
@@ -301,16 +239,83 @@ namespace OdhApiCore.Filters
 
                                 if (result.Count > 0)
                                 {
-                                    string? accid = jObject.Property("Id")?.Value.ToString();
-                                    var data = result.SelectMany(x => x.MssResponseShort).Where(x => x.A0RID == accid);
-                                    mssResponseShortProperty.Value = new JRaw(JsonConvert.SerializeObject(data));
+                                    var resultJson = JsonConvert.SerializeObject(result.SelectMany(x => x.MssResponseShort));
+                                    mssResponseShortProperty.Value = new JRaw(resultJson);
                                 }
                             }
                         }
-                        myRawList.Add(jtoken);
+                        okObject.Value = jtoken;
                     }
+                    else if (context.Result is OkObjectResult okObjectlist && okObjectlist.Value is JsonResult<JsonRaw> jRawList)
+                    {
+                        List<JToken> myRawList = new List<JToken>();
 
-                    jRawList.Items = myRawList.Select(jtoken => new JsonRaw(jtoken.ToString()));
+                        foreach (var myjRaw in jRawList.Items)
+                        {
+                            string json = myjRaw.Value;
+                            var jtoken = JToken.Parse(json);
+                            if (jtoken is JObject jObject)
+                            {
+                                var mssResponseShort = jObject.Property("MssResponseShort");
+                                if (mssResponseShort is JProperty mssResponseShortProperty)
+                                {
+
+                                    List<MssResult> result = new List<MssResult>();
+
+                                    if (bokfilterlist.Contains("hgv"))
+                                    {
+                                        MssResult? mssresult = null;
+
+                                        if (actionid == "GetAccommodations")
+                                        {
+                                            mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
+                                        }
+                                        else if (actionid == "GetAccommodation")
+                                        {
+                                            mssresult = await GetMSSAvailability(
+                                            language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                            roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: bookableAccoIds, idsofchannel: idsource, source: source);
+                                        }
+
+                                        if (mssresult != null)
+                                        {
+                                            result.Add(mssresult);
+                                        }
+                                    }
+                                    if (bokfilterlist.Contains("lts"))
+                                    {
+                                        MssResult? lcsresult = null;
+
+                                        if (actionid == "GetAccommodations")
+                                        {
+                                            lcsresult = (MssResult?)context.HttpContext.Items["lcsavailablity"];
+                                        }
+                                        else if (actionid == "GetAccommodation")
+                                        {
+                                            lcsresult = await GetLCSAvailability(
+                                             language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                             roominfo: roominfo, bookableaccoIDs: bookableAccoIds, source: source);
+                                        }
+
+                                        if (lcsresult != null)
+                                        {
+                                            result.Add(lcsresult);
+                                        }
+                                    }
+
+                                    if (result.Count > 0)
+                                    {
+                                        string? accid = jObject.Property("Id")?.Value.ToString();
+                                        var data = result.SelectMany(x => x.MssResponseShort).Where(x => x.A0RID == accid);
+                                        mssResponseShortProperty.Value = new JRaw(JsonConvert.SerializeObject(data));
+                                    }
+                                }
+                            }
+                            myRawList.Add(jtoken);
+                        }
+
+                        jRawList.Items = myRawList.Select(jtoken => new JsonRaw(jtoken.ToString()));
+                    }
                 }
             }
 
