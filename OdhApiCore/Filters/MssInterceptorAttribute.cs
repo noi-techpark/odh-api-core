@@ -62,18 +62,18 @@ namespace OdhApiCore.Filters
                 
                 if(availabilitycheck != null && availabilitycheck == true)
                 {
-                    string? locfilter = actionarguments.ContainsKey("locfilter") ? (string?)actionarguments["locfilter"] : null;
                     string? categoryfilter = actionarguments.ContainsKey("categoryfilter") ? (string?)actionarguments["categoryfilter"] : null;
                     string? typefilter = actionarguments.ContainsKey("typefilter") ? (string?)actionarguments["typefilter"] : null;
                     string? featurefilter = actionarguments.ContainsKey("featurefilter") ? (string?)actionarguments["featurefilter"] : null;
                     string? featureidfilter = actionarguments.ContainsKey("featureidfilter") ? (string?)actionarguments["featureidfilter"] : null;
+                    string? themefilter = actionarguments.ContainsKey("themefilter") ? (string?)actionarguments["themefilter"] : null;
                     string? badgefilter = actionarguments.ContainsKey("badgefilter") ? (string?)actionarguments["badgefilter"] : null;
                     string? idfilter = actionarguments.ContainsKey("idfilter") ? (string?)actionarguments["idfilter"] : null;
-                    string? themefilter = actionarguments.ContainsKey("themefilter") ? (string?)actionarguments["themefilter"] : null;
+                    string? locfilter = actionarguments.ContainsKey("locfilter") ? (string?)actionarguments["locfilter"] : null;
                     string? altitudefilter = actionarguments.ContainsKey("altitudefilter") ? (string?)actionarguments["altitudefilter"] : null;
-                    string? smgtagfilter = actionarguments.ContainsKey("smgtagfilter") ? (string?)actionarguments["smgtagfilter"] : null;
+                    string? odhtagfilter = actionarguments.ContainsKey("odhtagfilter") ? (string?)actionarguments["odhtagfilter"] : null;
                     bool? active = actionarguments.ContainsKey("active") ? ((LegacyBool)actionarguments["active"]).Value : null;
-                    bool? smgactive = actionarguments.ContainsKey("smgactive") ? ((LegacyBool)actionarguments["smgactive"]).Value : null;
+                    bool? odhactive = actionarguments.ContainsKey("odhactive") ? ((LegacyBool)actionarguments["odhactive"]).Value : null;
                     bool? bookablefilter = actionarguments.ContainsKey("bookablefilter") ? ((LegacyBool)actionarguments["bookablefilter"]).Value : null;
                     string? updatefrom = actionarguments.ContainsKey("updatefrom") ? (string?)actionarguments["updatefrom"] : null;
                     string? seed = actionarguments.ContainsKey("seed") ? (string?)actionarguments["seed"] : null;
@@ -98,8 +98,8 @@ namespace OdhApiCore.Filters
                     {
                         AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                        QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
-                       featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active,
-                       smgactivefilter: smgactive, bookablefilter: bookablefilter, lastchange: updatefrom, langfilter: langfilter, (CancellationToken)context.ActionArguments["cancellationToken"]);
+                       featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: odhtagfilter, activefilter: active,
+                       smgactivefilter: odhactive, bookablefilter: bookablefilter, lastchange: updatefrom, langfilter: langfilter, (CancellationToken)context.ActionArguments["cancellationToken"]);
 
                         var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
