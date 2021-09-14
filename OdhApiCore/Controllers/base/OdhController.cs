@@ -60,18 +60,18 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        public bool CheckAvailabilitySearch()
-        {
-            List<string> roles = new List<string>() { "DataReader", "AccoReader" };
+        //public bool CheckAvailabilitySearch()
+        //{
+        //    List<string> roles = new List<string>() { "DataReader", "AccoReader" };
 
-            foreach(var role in roles)
-            {
-                if (User.IsInRole(role))
-                    return true;                
-            }
+        //    foreach(var role in roles)
+        //    {
+        //        if (User.IsInRole(role))
+        //            return true;                
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         protected IEnumerable<string> FieldsToHide
         {
