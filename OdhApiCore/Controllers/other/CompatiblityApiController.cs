@@ -599,6 +599,8 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,
+                            categorycodeslist: helper.categorycodesids, dishcodeslist: helper.dishcodesids, ceremonycodeslist: helper.ceremonycodesids,
+                            facilitycodeslist: helper.facilitycodesids, publishedonlist: helper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)

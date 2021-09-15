@@ -109,8 +109,8 @@ namespace OdhApiCore.GenericHelpers
                             municipalitylist: new List<string>(), tourismvereinlist: new List<string>(),
                             regionlist: new List<string>(), arealist: new List<string>(),
                             sourcelist: new List<string>(), languagelist: new List<string>() { language },
-                            highlight: null,
-                            activefilter: true, smgactivefilter: null,
+                            highlight: null, activefilter: true, smgactivefilter: null,
+                            categorycodeslist: new List<string>(), dishcodeslist: new List<string>(), ceremonycodeslist: new List<string>(), facilitycodeslist: new List<string>(), publishedonlist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null,
                             filterClosedData: true)
                     .OrderByRaw(orderby);
