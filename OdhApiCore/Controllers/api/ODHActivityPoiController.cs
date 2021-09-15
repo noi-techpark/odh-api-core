@@ -54,11 +54,12 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
         /// <param name="active">Active ODHActivityPoi Filter (possible Values: 'true' only active ODHActivityPoi, 'false' only not active ODHActivityPoi), (default:'null')</param>        
         /// <param name="odhactive">ODH Active (Published) ODHActivityPoi Filter (Refers to field OdhActive) (possible Values: 'true' only published ODHActivityPoi, 'false' only not published ODHActivityPoi), (default:'null')</param>        
+        /// <param name="categorycodefilter">CategoryCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: CategoryCodes</param>
         /// <param name="dishcodefilter">DishCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: DishCodes</param>
         /// <param name="ceremonycodefilter">CeremonyCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: CeremonyCodes</param>
-        /// <param name="categorycodefilter">CategoryCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: CategoryCodes</param>
         /// <param name="facilitycodefilter">FacilityCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: with FacilityCodes_ prefix</param>       
         /// <param name="cuisinecodefilter">CuisineCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: CuisineCodes</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -91,6 +92,12 @@ namespace OdhApiCore.Controllers.api
             string? odhtagfilter = null,
             LegacyBool odhactive = null!,
             LegacyBool active = null!,
+            string? categorycodefilter = null,
+            string? dishcodefilter = null,
+            string? ceremonycodefilter = null,            
+            string? facilitycodefilter = null,
+            string? cuisinecodefilter = null,
+            string? publishedon = null,
             string? updatefrom = null,
             string? seed = null,
             string? latitude = null,
@@ -110,7 +117,10 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: type, subtypefilter: subtype, poitypefilter: poitype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter,
                 sourcefilter: source, locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight?.Value, active: active?.Value,
-                smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
+                smgactive: odhactive?.Value, smgtags: odhtagfilter, 
+                categorycodefilter: categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
+                publishedon: publishedon,
+                seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
                 removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -205,15 +215,21 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize,
             string? type, string? subtypefilter, string? poitypefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter,
-            string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, 
+            string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
+            string? publishedon,
+            string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 ODHActivityPoiHelper myodhactivitypoihelper = await ODHActivityPoiHelper.CreateAsync(
-                    QueryFactory, type, subtypefilter, poitypefilter, idfilter, locfilter,
-                    areafilter, languagefilter, sourcefilter, highlightfilter, active, smgactive, smgtags,
-                    lastchange, cancellationToken);
+                    queryFactory: QueryFactory,typefilter: type, subtypefilter: subtypefilter, poitypefilter: poitypefilter, 
+                    idfilter: idfilter, locfilter: locfilter, areafilter: areafilter,  languagefilter: languagefilter, sourcefilter: sourcefilter, 
+                    highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, 
+                    categorycodefilter : categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
+                    publishedonfilter: publishedon,
+                    cancellationToken);
 
                 var query =
                     QueryFactory.Query()
