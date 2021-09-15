@@ -188,6 +188,19 @@ namespace OdhApiCore.Controllers.api
             return await GetBDPNoiRoomsWithLink();
         }
 
+        /// <summary>
+        /// GET EventShort Types
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> GetEventShortTypes()
+        {
+            return Ok(new EventShortType()
+            {
+                CustomTaggings = new List<string>() { "Arts&Culture", "Square", "Camp4Company", "MiniNOI", "Out of the Lab", "Summer at NOI" },
+                TechnologyFields = new List<string>() { "Alpine", "Automotive/Automation", "Digital", "Food", "Green" }
+            });
+        }
+
         #endregion
 
         #region GETTER
@@ -1049,5 +1062,11 @@ namespace OdhApiCore.Controllers.api
         }
 
         #endregion
+    }
+
+    public class EventShortType
+    {
+        public List<string> TechnologyFields { get; set; }
+        public List<string> CustomTaggings { get; set; }
     }
 }
