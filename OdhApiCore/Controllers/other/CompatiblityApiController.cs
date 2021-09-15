@@ -578,8 +578,9 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
-                    QueryFactory, type, subtype, poitype, null, locfilter, areafilter,
-                    language, source, highlightfilter, active, smgactive, smgtags, null, cancellationToken);
+                    queryFactory: QueryFactory, typefilter: type, subtypefilter: subtype, poitypefilter: poitype, idfilter: null, locfilter: locfilter, areafilter: areafilter,
+                    languagefilter: language, sourcefilter: source, highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: null,
+                    categorycodefilter: null, dishcodefilter: null, ceremonycodefilter: null, facilitycodefilter: null, cuisinecodefilter: null, publishedonfilter: null, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
