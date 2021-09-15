@@ -115,8 +115,9 @@ namespace OdhApiCore.Controllers
 
             return DoAsyncReturn(async () =>
             {
-                //if (String.IsNullOrEmpty(rawsort))
-                //    rawsort = "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'";
+                //Hack
+                if (smgtagtype == "odhactivitypoi")
+                    smgtagtype = "smgpoi";
                 
                 var query = 
                     QueryFactory.Query()
