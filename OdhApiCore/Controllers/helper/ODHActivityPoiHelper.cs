@@ -46,12 +46,32 @@ namespace OdhApiCore.Controllers.api
         public int durationmax;
         //Poi
         public List<string> poitypelist2;
+        //New Publishedonlist
+        public List<string> publishedonlist;
 
 
         public static async Task<ODHActivityPoiHelper> CreateAsync(
-            QueryFactory queryFactory, string? typefilter, string? subtypefilter, string? poitypefilter, string? idfilter, string? locfilter,
-            string? areafilter, string? languagefilter, string? sourcefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, CancellationToken cancellationToken)
+            QueryFactory queryFactory, 
+            string? typefilter, 
+            string? subtypefilter, 
+            string? poitypefilter, 
+            string? idfilter, 
+            string? locfilter,
+            string? areafilter, 
+            string? languagefilter, 
+            string? sourcefilter, 
+            bool? highlightfilter, 
+            bool? activefilter, 
+            bool? smgactivefilter,
+            string? smgtags, 
+            string? lastchange,
+            string? categorycodefilter, 
+            string? dishcodefilter,
+            string? ceremonycodefilter, 
+            string? facilitycodefilter, 
+            string? cuisinecodefilter,
+            string? publishedonfilter,
+            CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 
@@ -62,12 +82,30 @@ namespace OdhApiCore.Controllers.api
                 tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
             }
 
-            return new ODHActivityPoiHelper(typefilter, subtypefilter, poitypefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange, tourismusvereinids);
+            return new ODHActivityPoiHelper(typefilter, subtypefilter, poitypefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, 
+                highlightfilter, activefilter, smgactivefilter, smgtags, 
+                categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
+                publishedonfilter,
+                lastchange, tourismusvereinids);
         }
 
         private ODHActivityPoiHelper(
-            string? typefilter, string? subtypefilter, string? poitypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist, string? languagefilter, string? sourcefilter,
-            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
+            string? typefilter, 
+            string? subtypefilter, 
+            string? poitypefilter, 
+            string? idfilter, 
+            string? locfilter, 
+            IEnumerable<string> arealist, 
+            string? languagefilter, 
+            string? sourcefilter,
+            bool? highlightfilter, 
+            bool? activefilter, 
+            bool? smgactivefilter, 
+            string? smgtags,
+            string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter,  string? facilitycodefilter,  string? cuisinecodefilter,
+            string? publishedonfilter,
+            string? lastchange,             
+            IEnumerable<string>? tourismusvereinids)
         {
             typelist = new List<string>();
             int typeinteger = 0;
@@ -142,6 +180,16 @@ namespace OdhApiCore.Controllers.api
             active = activefilter;
             //smgactive
             smgactive = smgactivefilter;
+
+            //Using Gastronomy Filters
+            dishcodesids = GastronomyListCreator.CreateGastroDishCodeListfromFlag(dishcodefilter);
+            ceremonycodesids = GastronomyListCreator.CreateGastroCeremonyCodeListfromFlag(ceremonycodefilter);
+            categorycodesids = GastronomyListCreator.CreateGastroCategoryCodeListfromFlag(categorycodefilter);
+            facilitycodesids = GastronomyListCreator.CreateGastroFacilityCodeListfromFlag(facilitycodefilter);
+            cuisinecodesids = GastronomyListCreator.CreateGastroCusineCodeListfromFlag(cuisinecodefilter);
+            facilitycodesids.AddRange(cuisinecodesids);
+
+            publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
             this.lastchange = lastchange;
         }
