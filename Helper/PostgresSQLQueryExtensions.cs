@@ -882,6 +882,13 @@ namespace Helper
 
         //}
 
+        public static Query PublishedOnFilter(this Query query, IReadOnlyCollection<string> publishedonlist) =>
+           query.WhereInJsonb(
+               publishedonlist,
+               publishedon => new { PublishedOn = new[] { publishedon.ToLower() } }
+           );
+
+
         //Standard JSON Filter
         public static Query FilterClosedData(this Query query) =>
             query.Where(q =>
