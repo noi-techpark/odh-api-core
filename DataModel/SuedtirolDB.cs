@@ -3383,10 +3383,10 @@ namespace DataModel
         public string? Shortname { get; set; }
 
         //new Add GPS Points from Root Representation
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+        public IDictionary<string, GpsInfo>? GpsPoints { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class RoomBooked
