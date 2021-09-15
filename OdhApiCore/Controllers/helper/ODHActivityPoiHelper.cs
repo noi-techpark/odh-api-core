@@ -26,6 +26,27 @@ namespace OdhApiCore.Controllers.api
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
+        //Gastronomy
+        public List<string> dishcodesids;
+        public List<string> ceremonycodesids;
+        public List<string> categorycodesids;
+        public List<string> facilitycodesids;
+        public List<string> cuisinecodesids;
+        //Activity
+        public List<string> activitytypelist;
+        public List<string> difficultylist;
+        public bool distance;
+        public int distancemin;
+        public int distancemax;
+        public bool altitude;
+        public int altitudemin;
+        public int altitudemax;
+        public bool duration;
+        public int durationmin;
+        public int durationmax;
+        //Poi
+        public List<string> poitypelist2;
+
 
         public static async Task<ODHActivityPoiHelper> CreateAsync(
             QueryFactory queryFactory, string? typefilter, string? subtypefilter, string? poitypefilter, string? idfilter, string? locfilter,
