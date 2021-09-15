@@ -3403,6 +3403,12 @@ namespace DataModel
         public double StartDateUTC { get; set; }
         public double EndDateUTC { get; set; }
 
+        public string? SpaceMappingKey { 
+            get
+            {
+                return !String.IsNullOrEmpty(this.SpaceDesc) ? (this.SpaceDesc.StartsWith("NOI ") || this.SpaceDesc.StartsWith("Noi ") || this.SpaceDesc.StartsWith("noi ")) ? this.SpaceDesc.Remove(0, 3).Trim() : this.SpaceDesc : this.SpaceDesc;
+            } 
+        }
     }
 
     public class EventShortByRoom
