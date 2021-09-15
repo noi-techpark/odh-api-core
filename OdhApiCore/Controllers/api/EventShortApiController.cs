@@ -191,14 +191,54 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET EventShort Types
         /// </summary>
-        /// <returns></returns>
-        public async Task<IActionResult> GetEventShortTypes()
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
+        /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
+        /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <returns>Collection of EventShortType Object</returns> 
+        /// [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("EventShortTypes")]
+        public async Task<IActionResult> GetEventShortTypes(
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
         {
-            return Ok(new EventShortType()
-            {
-                CustomTaggings = new List<string>() { "Arts&Culture", "Square", "Camp4Company", "MiniNOI", "Out of the Lab", "Summer at NOI" },
-                TechnologyFields = new List<string>() { "Alpine", "Automotive/Automation", "Digital", "Food", "Green" }
-            });
+            return await GetEventShortTypesList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
+        }
+
+        /// <summary>
+        /// GET EventShort Type Single
+        /// </summary>
+        /// <param name="id">ID of the EventShort Type</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <returns>ActivityPoiType Object</returns>                
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(SmgPoiTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("EventShortTypes/{*id}", Name = "SingleEventShortTypes")]
+        public async Task<IActionResult> GetEventShortTypesSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await GetEventShortType(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         #endregion
@@ -488,6 +528,51 @@ namespace OdhApiCore.Controllers.api
             else
                 eventshortlistbyroom.Add(roomtoadd);
 
+        }
+
+        private Task<IActionResult> GetEventShortTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("eventshorttypes")
+                        .SelectRaw("data")
+                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
+                        .ApplyRawFilter(rawfilter)
+                        .OrderOnlyByRawSortIfNotNull(rawsort);
+
+                var data = await query.GetAsync<JsonRaw?>();
+
+                var fieldsTohide = FieldsToHide;
+
+                var dataTransformed =
+                    data.Select(
+                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                    );
+
+                return dataTransformed;
+            });
+        }
+
+        private Task<IActionResult> GetEventShortType(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("eventshorttypes")
+                        .Select("data")
+                        //.WhereJsonb("Key", "ilike", id)
+                        .Where("id", id.ToLower())
+                        .When(FilterClosedData, q => q.FilterClosedData());
+                //.Where("Key", "ILIKE", id);
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                var fieldsTohide = FieldsToHide;
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+            });
         }
 
         #endregion
