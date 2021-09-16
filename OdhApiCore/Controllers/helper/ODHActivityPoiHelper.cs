@@ -34,6 +34,7 @@ namespace OdhApiCore.Controllers.api
         public List<string> cuisinecodesids;
         //Activity
         public List<string> activitytypelist;
+        //public List<string> activitysubtypelist;
         public List<string> difficultylist;
         public bool distance;
         public int distancemin;
@@ -128,7 +129,6 @@ namespace OdhApiCore.Controllers.api
                 }
             }
 
-
             if (typelist.Count > 0)
                 subtypelist = Helper.ActivityPoiListCreator.CreateSmgPoiSubTypefromFlag(typelist.FirstOrDefault(), subtypefilter);
             else
@@ -138,12 +138,7 @@ namespace OdhApiCore.Controllers.api
                 poitypelist = Helper.ActivityPoiListCreator.CreateSmgPoiPoiTypefromFlag(subtypelist.FirstOrDefault(), poitypefilter);
             else
                 poitypelist = new List<string>();
-
-
-            //if (poitypelist.Count > 0)
-            //    subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
-            //else
-            //    subtypelist = new List<string>();
+            
 
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
@@ -202,6 +197,11 @@ namespace OdhApiCore.Controllers.api
                     activitytypelist.Add(activitytypefilter);
                 }
             }
+
+            //ODHActivityPoi Typelist has priority
+            if (typelist.Count == 0 && activitytypelist.Count > 0)
+                subtypelist = Helper.ActivityPoiListCreator.CreateSmgPoiSubTypefromFlag(typelist.FirstOrDefault(), subtypefilter);
+            
             difficultylist = CommonListCreator.CreateDifficultyList(difficultyfilter, activitytypefilter);
             //Distance
             distance = distancefilter != null;
