@@ -228,7 +228,7 @@ namespace OdhApiCore.Controllers.api
             string? type, string? subtypefilter, string? poitypefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, 
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
-            string? activitytype = null, string? difficultyfilter = null, string? distancefilter = null, string? altitudefilter = null, string? durationfilter = null,
+            string? activitytype, string? difficultyfilter, string? distancefilter, string? altitudefilter, string? durationfilter,
             string? publishedon,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)

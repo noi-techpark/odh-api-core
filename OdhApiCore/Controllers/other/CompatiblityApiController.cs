@@ -580,7 +580,8 @@ namespace OdhApiCore.Controllers.api
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
                     queryFactory: QueryFactory, typefilter: type, subtypefilter: subtype, poitypefilter: poitype, idfilter: null, locfilter: locfilter, areafilter: areafilter,
                     languagefilter: language, sourcefilter: source, highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: null,
-                    categorycodefilter: null, dishcodefilter: null, ceremonycodefilter: null, facilitycodefilter: null, cuisinecodefilter: null, publishedonfilter: null, cancellationToken);
+                    categorycodefilter: null, dishcodefilter: null, ceremonycodefilter: null, facilitycodefilter: null, cuisinecodefilter: null, activitytypefilter: null, distancefilter: null, 
+                    altitudefilter: null, durationfilter: null, difficultyfilter: null, publishedonfilter: null, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
@@ -600,7 +601,11 @@ namespace OdhApiCore.Controllers.api
                             arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,
                             categorycodeslist: helper.categorycodesids, dishcodeslist: helper.dishcodesids, ceremonycodeslist: helper.ceremonycodesids,
-                            facilitycodeslist: helper.facilitycodesids, publishedonlist: helper.publishedonlist,
+                            facilitycodeslist: helper.facilitycodesids,
+                            activitytypelist: helper.activitytypelist, difficultylist: helper.difficultylist, distance: helper.distance,
+                            distancemin: helper.distancemin, distancemax: helper.distancemax, duration: helper.duration, durationmin: helper.durationmin,
+                            durationmax: helper.durationmax, altitude: helper.altitude, altitudemin: helper.altitudemin, altitudemax: helper.altitudemax,
+                            publishedonlist: helper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)

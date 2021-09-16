@@ -110,7 +110,11 @@ namespace OdhApiCore.GenericHelpers
                             regionlist: new List<string>(), arealist: new List<string>(),
                             sourcelist: new List<string>(), languagelist: new List<string>() { language },
                             highlight: null, activefilter: true, smgactivefilter: null,
-                            categorycodeslist: new List<string>(), dishcodeslist: new List<string>(), ceremonycodeslist: new List<string>(), facilitycodeslist: new List<string>(), publishedonlist: new List<string>(),
+                            categorycodeslist: new List<string>(), dishcodeslist: new List<string>(), ceremonycodeslist: new List<string>(), facilitycodeslist: new List<string>(),
+                            activitytypelist: new List<string>(), difficultylist: new List<string>(), distance: false,
+                            distancemin: 0, distancemax: 0, duration: false, durationmin: 0,
+                            durationmax: 0, altitude: false, altitudemin: 0, altitudemax: 0,
+                            publishedonlist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null,
                             filterClosedData: true)
                     .OrderByRaw(orderby);
