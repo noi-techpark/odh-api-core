@@ -258,7 +258,11 @@ namespace OdhApiCore.Controllers.api
                             highlight: myodhactivitypoihelper.highlight,
                             activefilter: myodhactivitypoihelper.active, smgactivefilter: myodhactivitypoihelper.smgactive,
                             categorycodeslist: myodhactivitypoihelper.categorycodesids, dishcodeslist: myodhactivitypoihelper.dishcodesids, ceremonycodeslist: myodhactivitypoihelper.ceremonycodesids,
-                            facilitycodeslist: myodhactivitypoihelper.facilitycodesids, publishedonlist: myodhactivitypoihelper.publishedonlist,
+                            facilitycodeslist: myodhactivitypoihelper.facilitycodesids, 
+                            activitytypelist: myodhactivitypoihelper.activitytypelist, difficultylist: myodhactivitypoihelper.difficultylist, distance: myodhactivitypoihelper.distance,
+                            distancemin: myodhactivitypoihelper.distancemin, distancemax: myodhactivitypoihelper.distancemax, duration: myodhactivitypoihelper.duration, durationmin: myodhactivitypoihelper.durationmin, 
+                            durationmax: myodhactivitypoihelper.durationmax, altitude: myodhactivitypoihelper.altitude, altitudemin: myodhactivitypoihelper.altitudemin, altitudemax: myodhactivitypoihelper.altitudemax,
+                            publishedonlist: myodhactivitypoihelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
