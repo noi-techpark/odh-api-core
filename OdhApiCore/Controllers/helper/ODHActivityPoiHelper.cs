@@ -65,11 +65,8 @@ namespace OdhApiCore.Controllers.api
             bool? smgactivefilter,
             string? smgtags, 
             string? lastchange,
-            string? categorycodefilter, 
-            string? dishcodefilter,
-            string? ceremonycodefilter, 
-            string? facilitycodefilter, 
-            string? cuisinecodefilter,
+            string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
+            string? activitytypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
             string? publishedonfilter,
             CancellationToken cancellationToken)
         {
@@ -85,6 +82,7 @@ namespace OdhApiCore.Controllers.api
             return new ODHActivityPoiHelper(typefilter, subtypefilter, poitypefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, 
                 highlightfilter, activefilter, smgactivefilter, smgtags, 
                 categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
+                activitytypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter,
                 publishedonfilter,
                 lastchange, tourismusvereinids);
         }
@@ -103,6 +101,7 @@ namespace OdhApiCore.Controllers.api
             bool? smgactivefilter, 
             string? smgtags,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter,  string? facilitycodefilter,  string? cuisinecodefilter,
+            string? activitytypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
             string? publishedonfilter,
             string? lastchange,             
             IEnumerable<string>? tourismusvereinids)
@@ -188,6 +187,41 @@ namespace OdhApiCore.Controllers.api
             facilitycodesids = GastronomyListCreator.CreateGastroFacilityCodeListfromFlag(facilitycodefilter);
             cuisinecodesids = GastronomyListCreator.CreateGastroCusineCodeListfromFlag(cuisinecodefilter);
             facilitycodesids.AddRange(cuisinecodesids);
+
+            //using Activity Filters
+            activitytypelist = new List<string>();
+            if (activitytypefilter != null)
+            {
+                if (int.TryParse(activitytypefilter, out int typeintegeractivity))
+                {
+                    if (typeintegeractivity != 1023)
+                        activitytypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(activitytypefilter);
+                }
+                else
+                {
+                    activitytypelist.Add(activitytypefilter);
+                }
+            }
+            difficultylist = CommonListCreator.CreateDifficultyList(difficultyfilter, activitytypefilter);
+            //Distance
+            distance = distancefilter != null;
+            if (distance)
+            {
+                var (min, max) = CommonListCreator.CreateRangeString(distancefilter);
+                distancemin = min * 1000;
+                distancemax = max * 1000;
+            }
+
+            //Altitude
+            altitude = altitudefilter != null;
+            if (altitude)
+                (altitudemin, altitudemax) = CommonListCreator.CreateRangeString(altitudefilter);
+
+            //Duration
+            duration = durationfilter != null;
+            if (duration)
+                (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
+
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
