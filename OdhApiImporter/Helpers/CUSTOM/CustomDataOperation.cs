@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Helper;
 
-namespace OdhApiImporter.Helpers.CUSTOM
+namespace OdhApiImporter.Helpers
 {
     public class CustomDataOperation
     {
@@ -19,7 +19,7 @@ namespace OdhApiImporter.Helpers.CUSTOM
             this.settings = settings;
         }
 
-        public async Task UpdateAllEventShortstonewDataModel()
+        public async Task<int> UpdateAllEventShortstonewDataModel()
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
@@ -27,12 +27,14 @@ namespace OdhApiImporter.Helpers.CUSTOM
                    .From("eventeuracnoi");
 
             var data = await query.GetObjectListAsync<EventShort>();
+            int i = 0;
 
             foreach(var eventshort in data)
             {
-
+                i++;
             }
 
+            return i;
         }
     }
 }
