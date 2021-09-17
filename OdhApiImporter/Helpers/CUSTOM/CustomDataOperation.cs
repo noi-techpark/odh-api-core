@@ -35,7 +35,7 @@ namespace OdhApiImporter.Helpers
                 //TODO CHECK IF THIS WORKS     
                 var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
                     //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBDataRaw() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
 
                 i++;
             }
