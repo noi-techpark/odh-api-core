@@ -39,8 +39,9 @@ namespace OdhApiCore.Controllers.api
         /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, not provided disables Random Sorting, (default:'null') </param>
-        /// <param name="type">Type of the ODHActivityPoi ('null' = Filter disabled, possible values: BITMASK: 1 = Wellness, 2 = Winter, 4 = Summer, 8 = Culture, 16 = Other, 32 = Gastronomy, 64 = Mobility, 128 = Shops and services), (default: 63 == ALL), refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">ODHActivityPoiTypes</a>, Type: Type</param>
-        /// <param name="subtype">Subtype of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype reference to ODHActivityPoiTypes)</param>
+        /// <param name="type">Type of the ODHActivityPoi ('null' = Filter disabled, possible values: BITMASK: 1 = Wellness, 2 = Winter, 4 = Summer, 8 = Culture, 16 = Other, 32 = Gastronomy, 64 = Mobility, 128 = Shops and services), (default: 63 == ALL), refers to <a href='https://tourism.opendatahub.bz.it/v1/ODHActivityPoiTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">ODHActivityPoi Types</a>, Type: Type</param>
+        /// <param name="activitytype">Filtering by Activity Type defined by LTS ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), , refers to <a href='https://tourism.opendatahub.bz.it/v1/ActivityTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">ActivityTypes</a>, Type: Type</param>
+        /// <param name="subtype">Subtype of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype) <a href='https://tourism.opendatahub.bz.it/v1/ODHActivityPoiTypes?rawfilter=eq(Type,%27SubType%27)' target="_blank">ODHActivityPoi SubTypes</a>, or <a href='https://tourism.opendatahub.bz.it/v1/ActivityTypes?rawfilter=eq(Type,%27SubType%27)' target="_blank">Activity SubTypes</a>, Type: SubType</param>
         /// <param name="poitype">Additional Type of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype, SubType reference to ODHActivityPoiTypes)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of ODHActivityPoi IDs), (default:'null')</param>
         /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
@@ -59,6 +60,10 @@ namespace OdhApiCore.Controllers.api
         /// <param name="ceremonycodefilter">CeremonyCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: CeremonyCodes</param>
         /// <param name="facilitycodefilter">FacilityCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: with FacilityCodes_ prefix</param>       
         /// <param name="cuisinecodefilter">CuisineCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes' target="_blank">GastronomyTypes</a>, Type: CuisineCodes</param>       
+        /// <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km), (default:'null')</param>
+        /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
+        /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours), (default:'null')</param>
+        /// <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
@@ -97,6 +102,11 @@ namespace OdhApiCore.Controllers.api
             string? ceremonycodefilter = null,            
             string? facilitycodefilter = null,
             string? cuisinecodefilter = null,
+            string? activitytype = null,
+            string? difficultyfilter = null,
+            string? distancefilter = null,
+            string? altitudefilter = null,
+            string? durationfilter = null,
             string? publishedon = null,
             string? updatefrom = null,
             string? seed = null,
@@ -119,6 +129,7 @@ namespace OdhApiCore.Controllers.api
                 sourcefilter: source, locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight?.Value, active: active?.Value,
                 smgactive: odhactive?.Value, smgtags: odhtagfilter, 
                 categorycodefilter: categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
+                activitytype: activitytype, difficultyfilter: difficultyfilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
                 publishedon: publishedon,
                 seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
                 removenullvalues: removenullvalues, cancellationToken);
@@ -217,6 +228,7 @@ namespace OdhApiCore.Controllers.api
             string? type, string? subtypefilter, string? poitypefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, 
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
+            string? activitytype, string? difficultyfilter, string? distancefilter, string? altitudefilter, string? durationfilter,
             string? publishedon,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
@@ -228,6 +240,7 @@ namespace OdhApiCore.Controllers.api
                     idfilter: idfilter, locfilter: locfilter, areafilter: areafilter,  languagefilter: languagefilter, sourcefilter: sourcefilter, 
                     highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, 
                     categorycodefilter : categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
+                    activitytypefilter: activitytype, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter, difficultyfilter: difficultyfilter,
                     publishedonfilter: publishedon,
                     cancellationToken);
 
@@ -245,7 +258,11 @@ namespace OdhApiCore.Controllers.api
                             highlight: myodhactivitypoihelper.highlight,
                             activefilter: myodhactivitypoihelper.active, smgactivefilter: myodhactivitypoihelper.smgactive,
                             categorycodeslist: myodhactivitypoihelper.categorycodesids, dishcodeslist: myodhactivitypoihelper.dishcodesids, ceremonycodeslist: myodhactivitypoihelper.ceremonycodesids,
-                            facilitycodeslist: myodhactivitypoihelper.facilitycodesids, publishedonlist: myodhactivitypoihelper.publishedonlist,
+                            facilitycodeslist: myodhactivitypoihelper.facilitycodesids, 
+                            activitytypelist: myodhactivitypoihelper.activitytypelist, difficultylist: myodhactivitypoihelper.difficultylist, distance: myodhactivitypoihelper.distance,
+                            distancemin: myodhactivitypoihelper.distancemin, distancemax: myodhactivitypoihelper.distancemax, duration: myodhactivitypoihelper.duration, durationmin: myodhactivitypoihelper.durationmin, 
+                            durationmax: myodhactivitypoihelper.durationmax, altitude: myodhactivitypoihelper.altitude, altitudemin: myodhactivitypoihelper.altitudemin, altitudemax: myodhactivitypoihelper.altitudemax,
+                            publishedonlist: myodhactivitypoihelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)

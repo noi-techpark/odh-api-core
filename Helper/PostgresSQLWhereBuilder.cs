@@ -260,6 +260,7 @@ namespace Helper
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> categorycodeslist, IReadOnlyCollection<string> dishcodeslist, IReadOnlyCollection<string> ceremonycodeslist, IReadOnlyCollection<string> facilitycodeslist,
+            IReadOnlyCollection<string> activitytypelist, IReadOnlyCollection<string> difficultylist, bool distance, int distancemin, int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin, int altitudemax,
             IReadOnlyCollection<string> publishedonlist,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
@@ -296,6 +297,12 @@ namespace Helper
                 .CategoryCodeFilter(categorycodeslist)
                 .CuisineCodeFilter(facilitycodeslist)
                 .DishCodeFilter(dishcodeslist)
+                //New ActivityFilters
+                .When(activitytypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(activitytypelist))  //.ActivityTypeFilterOnTags(activitytypelist)
+                .DifficultyFilter(difficultylist)
+                .DistanceFilter(distance, distancemin, distancemax)
+                .DurationFilter(duration, durationmin, durationmax)
+                .AltitudeFilter(altitude, altitudemin, altitudemax)
                 .PublishedOnFilter(publishedonlist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
@@ -583,7 +590,7 @@ namespace Helper
                 .EventShortActiveFilter(activefilter)
                 .EventShortDateFilterEnd(start, end, !getbyrooms)
                 .EventShortDateFilterBegin(start, end, !getbyrooms)
-                .EventShortDateFilterBeginEnd(start, end, !getbyrooms)
+                .EventShortDateFilterBeginEndWithInBehaviour(start, end, !getbyrooms)
                 .EventShortDateFilterEndByRoom(start, end, getbyrooms)
                 .EventShortDateFilterBeginByRoom(start, end, getbyrooms)
                 .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)

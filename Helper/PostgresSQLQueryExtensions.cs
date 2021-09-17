@@ -718,6 +718,15 @@ namespace Helper
                 )
             );
 
+        //Both Begin and Enddate given which allows Today Query (In behaviour)
+        public static Query EventShortDateFilterBeginEndWithInBehaviour(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query.When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "(((to_timestamp(data ->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (to_timestamp(data->> 'StartDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "')))"
+                )
+            );
+
         //Only Begindate given
         public static Query EventShortDateFilterBeginByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
             query.When(

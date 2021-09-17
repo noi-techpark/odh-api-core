@@ -3387,6 +3387,14 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? AnchorVenueRoomMapping
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(this.AnchorVenue) ? (this.AnchorVenue.StartsWith("NOI ") || this.AnchorVenue.StartsWith("Noi ") || this.AnchorVenue.StartsWith("noi ")) ? this.AnchorVenue.Remove(0, 3).Trim() : this.AnchorVenue : this.AnchorVenue;
+            }
+        }
     }
 
     public class RoomBooked
@@ -3403,7 +3411,8 @@ namespace DataModel
         public double StartDateUTC { get; set; }
         public double EndDateUTC { get; set; }
 
-        public string? SpaceMappingKey { 
+        public string? SpaceDescRoomMapping
+        { 
             get
             {
                 return !String.IsNullOrEmpty(this.SpaceDesc) ? (this.SpaceDesc.StartsWith("NOI ") || this.SpaceDesc.StartsWith("Noi ") || this.SpaceDesc.StartsWith("noi ")) ? this.SpaceDesc.Remove(0, 3).Trim() : this.SpaceDesc : this.SpaceDesc;
