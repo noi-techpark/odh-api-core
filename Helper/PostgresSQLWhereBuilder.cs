@@ -590,7 +590,7 @@ namespace Helper
                 .EventShortActiveFilter(activefilter)
                 .EventShortDateFilterEnd(start, end, !getbyrooms)
                 .EventShortDateFilterBegin(start, end, !getbyrooms)
-                .EventShortDateFilterBeginEnd(start, end, !getbyrooms)
+                .EventShortDateFilterBeginEndWithInBehaviour(start, end, !getbyrooms)
                 .EventShortDateFilterEndByRoom(start, end, getbyrooms)
                 .EventShortDateFilterBeginByRoom(start, end, getbyrooms)
                 .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
