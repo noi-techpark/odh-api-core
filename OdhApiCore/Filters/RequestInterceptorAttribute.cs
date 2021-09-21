@@ -56,7 +56,7 @@ namespace OdhApiCore.Filters
 
         public bool GetActionsToIntercept(string? actionid)
         {
-            if (actionid == "GetTagObject")
+            if (settings.RequestInterceptorConfig != null && settings.RequestInterceptorConfig.Where(x => x.Route == actionid).Count() > 0)
                 return true;
             else
                 return false;
