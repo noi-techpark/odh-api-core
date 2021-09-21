@@ -69,8 +69,29 @@ namespace OdhApiCore.Filters
         public void GetQueryStringsToIntercept(RequestInterceptorConfig config, IDictionary<string,object> querystrings)
         {
             //Forget about cancellationtoken and other generated
+            Dictionary<string, string> configdict = new Dictionary<string, string>();
 
+            foreach(var item in config.QueryStrings)
+            {
+                var configqssplitted = item.Split("=");
 
+                if(configqssplitted.Count() >= 2)
+                {
+                    configdict.TryAdd(configqssplitted[0], configqssplitted[1]);
+                }
+                
+            }
+
+            var actualdict = new Dictionary<string, string>(); 
+
+            foreach(var item in querystrings)
+            {
+                actualdict.TryAdd(item.Key, item.Value.ToString());
+            }
+
+            var resultDict =
+                    configdict.Where(x => actualdict.ContainsKey(x.Key))
+                               .ToDictionary(x => x.Key, x => x.Value + actualdict[x.Key]);
         }
 
         //public Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
