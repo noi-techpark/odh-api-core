@@ -86,7 +86,7 @@ namespace OdhApiCore.Filters
 
             foreach(var item in querystrings)
             {
-                actualdict.TryAdd(item.Key, item.Value.ToString());
+                actualdict.TryAdd(item.Key,  (string?)item.Value );
             }
 
             var resultDict =
