@@ -124,6 +124,21 @@ namespace OdhApiCore
         public List<string>? DisplayOnRoles { get; private set; }
     }
 
+    public class RequestInterceptorConfig
+    {
+        public RequestInterceptorConfig(string route, string querystrings, string redirecturi)
+        {
+            this.Route = route;
+            this.QueryStrings = querystrings != null ? querystrings.Split(',').ToList() : null;
+            this.RedirectUri = redirecturi;
+        }
+
+        public string Route { get; private set; }
+        public List<string>? QueryStrings { get; private set; }
+        public string RedirectUri { get; private set; }
+    }
+
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -137,6 +152,7 @@ namespace OdhApiCore
         RavenConfig RavenConfig { get; }
 
         List<Field2HideConfig> Field2HideConfig { get; }
+        List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
     }
 
     public class Settings : ISettings
@@ -152,6 +168,7 @@ namespace OdhApiCore
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
         private readonly List<Field2HideConfig> field2hideConfig;
+        private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -180,7 +197,14 @@ namespace OdhApiCore
             {
                 this.field2hideConfig.Add(new Field2HideConfig(field2hide.GetValue<string>("Entity", ""), field2hide.GetValue<string>("Fields", ""), field2hide.GetValue<string>("DisplayOnRoles", "")));
             }
-            
+
+            var requestinterceptorlist = this.configuration.GetSection("RequestInterceptorConfig").GetChildren();
+            this.requestInterceptorConfig = new List<RequestInterceptorConfig>();
+
+            foreach (var requestinterceptor in requestinterceptorlist)
+            {
+                this.requestInterceptorConfig.Add(new RequestInterceptorConfig(requestinterceptor.GetValue<string>("Route", ""), requestinterceptor.GetValue<string>("QueryStrings", ""), requestinterceptor.GetValue<string>("RedirectUri", "")));
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -194,5 +218,6 @@ namespace OdhApiCore
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
+        public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
     }
 }
