@@ -126,16 +126,18 @@ namespace OdhApiCore
 
     public class RequestInterceptorConfig
     {
-        public RequestInterceptorConfig(string route, string querystrings, string redirecturi)
+        public RequestInterceptorConfig(string route, string querystrings, string redirecturi, string redirectquerystrings)
         {
             this.Route = route;
-            this.QueryStrings = querystrings != null ? querystrings.Split(',').ToList() : null;
+            this.QueryStrings = querystrings != null ? querystrings.Split('&').ToList() : null;
             this.RedirectUri = redirecturi;
+            this.RedirectQueryStrings = redirectquerystrings != null ? redirectquerystrings.Split('&').ToList() : null;
         }
 
         public string Route { get; private set; }
         public List<string>? QueryStrings { get; private set; }
         public string RedirectUri { get; private set; }
+        public List<string>? RedirectQueryStrings { get; private set; }
     }
 
 
@@ -203,7 +205,7 @@ namespace OdhApiCore
 
             foreach (var requestinterceptor in requestinterceptorlist)
             {
-                this.requestInterceptorConfig.Add(new RequestInterceptorConfig(requestinterceptor.GetValue<string>("Route", ""), requestinterceptor.GetValue<string>("QueryStrings", ""), requestinterceptor.GetValue<string>("RedirectUri", "")));
+                this.requestInterceptorConfig.Add(new RequestInterceptorConfig(requestinterceptor.GetValue<string>("Route", ""), requestinterceptor.GetValue<string>("QueryStrings", ""), requestinterceptor.GetValue<string>("RedirectUri", ""), requestinterceptor.GetValue<string>("RedirectQueryStrings", "")));
             }
         }
 
