@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using OdhApiCore.Controllers;
 using OdhApiCore.Responses;
 using System;
 using System.Collections.Generic;
@@ -82,11 +83,21 @@ namespace OdhApiCore.Filters
                 
             }
 
-            var actualdict = new Dictionary<string, string>(); 
+            var actualdict = new Dictionary<string, string>();
+
+            List<string> toexclude = new List<string> { "cancellationToken" };
 
             foreach(var item in querystrings)
             {
-                actualdict.TryAdd(item.Key,  (string?)item.Value );
+                if (!toexclude.Contains(item.Key))
+                {
+                    if (item.Key == "pagesize")
+                        actualdict.TryAdd(item.Key, ((PageSize)item.Value).Value.ToString());
+                    else if (item.Key == "highlight" || item.Key == "active" || item.Key == "odhactive")
+                        actualdict.TryAdd(item.Key, ((LegacyBool)item.Value).Value.ToString());
+                    else
+                        actualdict.TryAdd(item.Key, (string?)item.Value);
+                }
             }
 
             var resultDict =
