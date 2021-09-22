@@ -58,7 +58,7 @@ namespace OdhApiCore.Filters
             {
                 foreach(var validconfig in settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller))
                 {
-                    var match = GetQueryStringsToIntercept(validconfig, actionarguments);
+                    var match = GetQueryStringsToInterceptAndMatch(validconfig, actionarguments);
 
                     if (match)
                         return validconfig;
@@ -68,7 +68,7 @@ namespace OdhApiCore.Filters
             return null;
         }
 
-        public bool GetQueryStringsToIntercept(RequestInterceptorConfig config, IDictionary<string,object> querystrings)
+        public bool GetQueryStringsToInterceptAndMatch(RequestInterceptorConfig config, IDictionary<string,object> querystrings)
         {
             //Forget about cancellationtoken and other generated
             Dictionary<string, string> configdict = new Dictionary<string, string>();
@@ -124,13 +124,15 @@ namespace OdhApiCore.Filters
             //return only if there is a 1:1 match
             foreach(var item in dict1)
             {
-             
+                //if the Request does not contain the configured QS Key exit immediately
                 if (!dict2.ContainsKey(item.Key))
                     return false;
 
 
-                if (!dict2[item.Key].Contains("*"))
+                //if the config does not contains a * go on
+                if (!item.Value.Contains("*"))
                 {
+                    //if the values are different exit immediately
                     if (dict2[item.Key].ToLower() != item.Value.ToLower())
                         return false;
                 }
@@ -142,10 +144,16 @@ namespace OdhApiCore.Filters
 
                     foreach(var lang in validlanguages)
                     {
-                        if (dict2[item.Key].ToLower().Replace("*", lang) == item.Value.ToLower())
-                            matchcount++;
+                        var newconfigvalue = item.Value.ToLower().Replace("*", lang);
+
+                        if(dict2.ContainsKey(lang))
+                        {
+                            if(dict2[lang].ToLower() == newconfigvalue.ToLower())
+                                matchcount++;
+                        }                            
                     }
 
+                    //if no matches exit immediately
                     if (matchcount == 0)
                         return false;
                 }
