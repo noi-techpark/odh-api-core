@@ -57,7 +57,8 @@ namespace OdhApiCore.Filters
                     {
                         foreach (var redirectqs in actiontointercept.RedirectQueryStrings)
                         {
-                            redirectTargetDictionary.Add("language", context.ActionArguments["language"]);
+                            if(context.ActionArguments.ContainsKey(redirectqs))
+                                redirectTargetDictionary.Add(redirectqs, context.ActionArguments[redirectqs]);
                         }
                     }
 
