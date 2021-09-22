@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using OdhApiCore.Controllers;
 using OdhApiCore.Responses;
 using System;
@@ -42,8 +43,15 @@ namespace OdhApiCore.Filters
                 //actionarguments["availabilitycheck"]).Value;
 
                 //await GetReturnObject(context, actionid ?? "", actionarguments, httpheaders);
-                
-                await base.OnActionExecutionAsync(context, next);
+
+
+                RouteValueDictionary redirectTargetDictionary = new RouteValueDictionary();
+                redirectTargetDictionary.Add("action", "GetODHActivityPoiListSTA");
+                redirectTargetDictionary.Add("controller", "STAController");
+                redirectTargetDictionary.Add("language", "de");
+
+                context.Result = new RedirectToRouteResult(redirectTargetDictionary);
+                await context.Result.ExecuteResultAsync(context);
             }
             else
             {
@@ -53,11 +61,6 @@ namespace OdhApiCore.Filters
             //Maybe with config like "action", match (parameter:blah) (referer:blah) return "json", withlanguage true/false
 
         }
-
-        //public override async Task OnActionExecuting(HttpActionContext context, ActionExecutionDelegate next)
-        //{
-
-        //}
 
         public RequestInterceptorConfig? GetActionsToIntercept(string? actionid)
         {
@@ -93,8 +96,12 @@ namespace OdhApiCore.Filters
                 {
                     if (item.Key == "pagesize")
                         actualdict.TryAdd(item.Key, ((PageSize)item.Value).Value.ToString());
+                    //TODO add only if not empty
                     else if (item.Key == "highlight" || item.Key == "active" || item.Key == "odhactive")
                         actualdict.TryAdd(item.Key, ((LegacyBool)item.Value).Value.ToString());
+                    //TODO add only if not empty
+                    else if (item.Key == "fields")
+                        actualdict.TryAdd(item.Key, (String.Join(",",(string[])item.Value)));
                     else
                         actualdict.TryAdd(item.Key, (string?)item.Value);
                 }
