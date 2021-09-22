@@ -23,59 +23,49 @@ namespace OdhApiCore.Filters
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            
+        {            
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
             context.ActionDescriptor.RouteValues.TryGetValue("controller", out string? controllerid);
 
-            var actiontointercept = GetActionsToIntercept(actionid, controllerid);
+            var matchedactiontointercept = GetActionsToIntercept(actionid, controllerid, context.ActionArguments);
 
-            if (actiontointercept != null)
+            if (matchedactiontointercept != null)
             {
-                //Configure here the Actions where Interceptor should do something and configure it globally
+                RouteValueDictionary redirectTargetDictionary = new RouteValueDictionary();
 
-                //Getting the Querystrings
-                var match = GetQueryStringsToIntercept(actiontointercept, context.ActionArguments);
-                //bool? availabilitycheck = ((LegacyBool)actionarguments["availabilitycheck"]).Value;  //EX
+                redirectTargetDictionary.Add("action", matchedactiontointercept.RedirectAction);
+                redirectTargetDictionary.Add("controller", matchedactiontointercept.RedirectController);
 
-                ////Getting Referer
-                //var httpheaders = context.HttpContext.Request.Headers;
-                //var referer = httpheaders["Referer"].ToString();
-
-                //actionarguments["availabilitycheck"]).Value;
-
-                //await GetReturnObject(context, actionid ?? "", actionarguments, httpheaders);
-
-                if (match)
+                if (matchedactiontointercept.RedirectQueryStrings != null)
                 {
-                    RouteValueDictionary redirectTargetDictionary = new RouteValueDictionary();
-                    
-                    redirectTargetDictionary.Add("action", actiontointercept.RedirectAction);
-                    redirectTargetDictionary.Add("controller", actiontointercept.RedirectController);
-                    
-                    if(actiontointercept.RedirectQueryStrings != null)
+                    foreach (var redirectqs in matchedactiontointercept.RedirectQueryStrings)
                     {
-                        foreach (var redirectqs in actiontointercept.RedirectQueryStrings)
-                        {
-                            if(context.ActionArguments.ContainsKey(redirectqs))
-                                redirectTargetDictionary.Add(redirectqs, context.ActionArguments[redirectqs]);
-                        }
+                        if (context.ActionArguments.ContainsKey(redirectqs))
+                            redirectTargetDictionary.Add(redirectqs, context.ActionArguments[redirectqs]);
                     }
+                }
 
-                    context.Result = new RedirectToRouteResult(redirectTargetDictionary);
-                    await context.Result.ExecuteResultAsync(context);
-                }                
+                context.Result = new RedirectToRouteResult(redirectTargetDictionary);
+                await context.Result.ExecuteResultAsync(context);
             }
             
             await base.OnActionExecutionAsync(context, next);                                  
         }
 
-        public RequestInterceptorConfig? GetActionsToIntercept(string actionid, string controller)
+        public RequestInterceptorConfig? GetActionsToIntercept(string actionid, string controller, IDictionary<string,object> actionarguments)
         {
             if (settings.RequestInterceptorConfig != null && settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller).Count() > 0)
-                return settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller).FirstOrDefault();
-            else
-                return null;
+            {
+                foreach(var validconfig in settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller))
+                {
+                    var match = GetQueryStringsToIntercept(validconfig, actionarguments);
+
+                    if (match)
+                        return validconfig;
+                }                
+            }                
+            
+            return null;
         }
 
         public bool GetQueryStringsToIntercept(RequestInterceptorConfig config, IDictionary<string,object> querystrings)
@@ -89,7 +79,7 @@ namespace OdhApiCore.Filters
 
                 if(configqssplitted.Count() >= 2)
                 {
-                    configdict.TryAdd(configqssplitted[0], configqssplitted[1]);
+                    configdict.TryAdd(configqssplitted[0], configqssplitted[1].ToLower());
                 }
                 
             }
@@ -118,7 +108,7 @@ namespace OdhApiCore.Filters
                     }
                     else
                     {
-                        actualdict.TryAdd(item.Key, (string?)item.Value);
+                        actualdict.TryAdd(item.Key, ((string)item.Value));
                     }                        
                 }
             }
@@ -129,14 +119,36 @@ namespace OdhApiCore.Filters
 
         private static bool MatchDictionaries(IDictionary<string,string> dict1, IDictionary<string,string> dict2)
         {
+            List<string> validlanguages = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
+
             //return only if there is a 1:1 match
             foreach(var item in dict1)
             {
+             
                 if (!dict2.ContainsKey(item.Key))
                     return false;
 
-                if (dict2[item.Key] != item.Value)
-                    return false;
+
+                if (!dict2[item.Key].Contains("*"))
+                {
+                    if (dict2[item.Key].ToLower() != item.Value.ToLower())
+                        return false;
+                }
+                else
+                {
+                    //Specialcase Language + fields with *
+                    //check if one of the validlanguages matches
+                    int matchcount = 0;
+
+                    foreach(var lang in validlanguages)
+                    {
+                        if (dict2[item.Key].ToLower().Replace("*", lang) == item.Value.ToLower())
+                            matchcount++;
+                    }
+
+                    if (matchcount == 0)
+                        return false;
+                }
             }
 
             return true;
