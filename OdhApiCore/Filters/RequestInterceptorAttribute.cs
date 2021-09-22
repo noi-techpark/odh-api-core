@@ -24,16 +24,18 @@ namespace OdhApiCore.Filters
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
+            context.ActionDescriptor.RouteValues.TryGetValue("controller", out string? controllerid);
 
-            var actiontointercept = GetActionsToIntercept(actionid);
+            var actiontointercept = GetActionsToIntercept(actionid, controllerid);
 
             if (actiontointercept != null)
             {
                 //Configure here the Actions where Interceptor should do something and configure it globally
 
                 //Getting the Querystrings
-                GetQueryStringsToIntercept(actiontointercept, context.ActionArguments);
+                var match = GetQueryStringsToIntercept(actiontointercept, context.ActionArguments);
                 //bool? availabilitycheck = ((LegacyBool)actionarguments["availabilitycheck"]).Value;  //EX
 
                 ////Getting Referer
@@ -44,33 +46,38 @@ namespace OdhApiCore.Filters
 
                 //await GetReturnObject(context, actionid ?? "", actionarguments, httpheaders);
 
+                if (match)
+                {
+                    RouteValueDictionary redirectTargetDictionary = new RouteValueDictionary();
+                    
+                    redirectTargetDictionary.Add("action", actiontointercept.RedirectAction);
+                    redirectTargetDictionary.Add("controller", actiontointercept.RedirectController);
+                    
+                    if(actiontointercept.RedirectQueryStrings != null)
+                    {
+                        foreach (var redirectqs in actiontointercept.RedirectQueryStrings)
+                        {
+                            redirectTargetDictionary.Add("language", context.ActionArguments["language"]);
+                        }
+                    }
 
-                RouteValueDictionary redirectTargetDictionary = new RouteValueDictionary();
-                redirectTargetDictionary.Add("action", "GetODHActivityPoiListSTA");
-                redirectTargetDictionary.Add("controller", "STAController");
-                redirectTargetDictionary.Add("language", "de");
-
-                context.Result = new RedirectToRouteResult(redirectTargetDictionary);
-                await context.Result.ExecuteResultAsync(context);
+                    context.Result = new RedirectToRouteResult(redirectTargetDictionary);
+                    await context.Result.ExecuteResultAsync(context);
+                }                
             }
-            else
-            {
-                await base.OnActionExecutionAsync(context, next);
-            }
-           
-            //Maybe with config like "action", match (parameter:blah) (referer:blah) return "json", withlanguage true/false
-
+            
+            await base.OnActionExecutionAsync(context, next);                                  
         }
 
-        public RequestInterceptorConfig? GetActionsToIntercept(string? actionid)
+        public RequestInterceptorConfig? GetActionsToIntercept(string actionid, string controller)
         {
-            if (settings.RequestInterceptorConfig != null && settings.RequestInterceptorConfig.Where(x => x.Route == actionid).Count() > 0)
-                return settings.RequestInterceptorConfig.Where(x => x.Route == actionid).FirstOrDefault();
+            if (settings.RequestInterceptorConfig != null && settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller).Count() > 0)
+                return settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller).FirstOrDefault();
             else
                 return null;
         }
 
-        public void GetQueryStringsToIntercept(RequestInterceptorConfig config, IDictionary<string,object> querystrings)
+        public bool GetQueryStringsToIntercept(RequestInterceptorConfig config, IDictionary<string,object> querystrings)
         {
             //Forget about cancellationtoken and other generated
             Dictionary<string, string> configdict = new Dictionary<string, string>();
@@ -95,21 +102,43 @@ namespace OdhApiCore.Filters
                 if (!toexclude.Contains(item.Key))
                 {
                     if (item.Key == "pagesize")
+                    {
                         actualdict.TryAdd(item.Key, ((PageSize)item.Value).Value.ToString());
-                    //TODO add only if not empty
+                    }
                     else if (item.Key == "highlight" || item.Key == "active" || item.Key == "odhactive")
-                        actualdict.TryAdd(item.Key, ((LegacyBool)item.Value).Value.ToString());
-                    //TODO add only if not empty
+                    {
+                        if (((LegacyBool)item.Value).Value != null)
+                            actualdict.TryAdd(item.Key, ((LegacyBool)item.Value).Value.ToString());
+                    }
                     else if (item.Key == "fields")
-                        actualdict.TryAdd(item.Key, (String.Join(",",(string[])item.Value)));
+                    {
+                        if (((string[])item.Value).Count() > 0)
+                            actualdict.TryAdd(item.Key, (String.Join(",", (string[])item.Value)));
+                    }
                     else
+                    {
                         actualdict.TryAdd(item.Key, (string?)item.Value);
+                    }                        
                 }
             }
 
-            var resultDict =
-                    configdict.Where(x => actualdict.ContainsKey(x.Key))
-                               .ToDictionary(x => x.Key, x => x.Value + actualdict[x.Key]);
+            //Matching the two Dictionaries
+            return MatchDictionaries(configdict, actualdict);               
+        }
+
+        private static bool MatchDictionaries(IDictionary<string,string> dict1, IDictionary<string,string> dict2)
+        {
+            //return only if there is a 1:1 match
+            foreach(var item in dict1)
+            {
+                if (!dict2.ContainsKey(item.Key))
+                    return false;
+
+                if (dict2[item.Key] != item.Value)
+                    return false;
+            }
+
+            return true;
         }
 
         //public Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)

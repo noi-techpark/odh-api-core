@@ -126,17 +126,21 @@ namespace OdhApiCore
 
     public class RequestInterceptorConfig
     {
-        public RequestInterceptorConfig(string route, string querystrings, string redirecturi, string redirectquerystrings)
+        public RequestInterceptorConfig(string action, string controller, string querystrings, string redirectaction, string redirectcontroller, string redirectquerystrings)
         {
-            this.Route = route;
+            this.Action = action;
+            this.Controller = controller;
             this.QueryStrings = querystrings != null ? querystrings.Split('&').ToList() : null;
-            this.RedirectUri = redirecturi;
+            this.RedirectAction = redirectaction;
+            this.RedirectController = redirectcontroller;
             this.RedirectQueryStrings = redirectquerystrings != null ? redirectquerystrings.Split('&').ToList() : null;
         }
 
-        public string Route { get; private set; }
+        public string Action { get; private set; }
+        public string Controller { get; private set; }
         public List<string>? QueryStrings { get; private set; }
-        public string RedirectUri { get; private set; }
+        public string RedirectAction { get; private set; }
+        public string RedirectController { get; private set; }
         public List<string>? RedirectQueryStrings { get; private set; }
     }
 
@@ -205,7 +209,8 @@ namespace OdhApiCore
 
             foreach (var requestinterceptor in requestinterceptorlist)
             {
-                this.requestInterceptorConfig.Add(new RequestInterceptorConfig(requestinterceptor.GetValue<string>("Route", ""), requestinterceptor.GetValue<string>("QueryStrings", ""), requestinterceptor.GetValue<string>("RedirectUri", ""), requestinterceptor.GetValue<string>("RedirectQueryStrings", "")));
+                this.requestInterceptorConfig.Add(new RequestInterceptorConfig(requestinterceptor.GetValue<string>("Action", ""), requestinterceptor.GetValue<string>("Controller", ""), requestinterceptor.GetValue<string>("QueryStrings", ""), 
+                    requestinterceptor.GetValue<string>("RedirectAction", ""), requestinterceptor.GetValue<string>("RedirectController", ""), requestinterceptor.GetValue<string>("RedirectQueryStrings", "")));
             }
         }
 
