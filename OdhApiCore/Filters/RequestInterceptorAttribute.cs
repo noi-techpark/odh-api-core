@@ -146,11 +146,8 @@ namespace OdhApiCore.Filters
                     {
                         var newconfigvalue = item.Value.ToLower().Replace("*", lang);
 
-                        if(dict2.ContainsKey(lang))
-                        {
-                            if(dict2[lang].ToLower() == newconfigvalue.ToLower())
-                                matchcount++;
-                        }                            
+                        if(dict2[item.Key].ToLower() == newconfigvalue.ToLower())
+                             matchcount++;
                     }
 
                     //if no matches exit immediately
