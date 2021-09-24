@@ -3,7 +3,9 @@ using Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,28 +27,43 @@ namespace OdhApiCore.Formatters
             return context.HttpContext.Response.WriteAsync("Bad Request");
         }
 
+        private object? Transform(PathString path, JsonRaw jsonRaw)
+        {
+            if (path.StartsWithSegments("/v1/Accommodation"))
+            {
+                var acco = JsonConvert.DeserializeObject<Accommodation>(jsonRaw.Value);
+                return JsonLDTransformer.TransformToLD.TransformAccommodationToLD(acco, "de");
+            }
+            else if (path.StartsWithSegments("/v1/Gastronomy"))
+            {
+                var gastro = JsonConvert.DeserializeObject<Gastronomy>(jsonRaw.Value);
+                return JsonLDTransformer.TransformToLD.TransformGastronomyToLD(gastro, "de");
+            }
+            else if (path.StartsWithSegments("/v1/Event"))
+            {
+                var @event = JsonConvert.DeserializeObject<Event>(jsonRaw.Value);
+                return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             if (context.Object is JsonRaw jsonRaw)
             {
-                var language = "en";
-                var jToken = JToken.Parse(jsonRaw.Value);
-                if (jToken is JObject jObject)
+                var transformed = Transform(context.HttpContext.Request.Path, jsonRaw);
+                if (transformed != null)
                 {
-                    var fieldsFromQueryString = new[] {
-                        $"AccoDetail.{language}.Name",
-                        $"AccoDetail.{language}.Shortdesc",
-                        $"AccoDetail.{language}.Website"
-                    };
-                    // TODO: Extract Type form meta information: rewrite JsonTransformer logic, because it is already stripped away
-                    // TODO: Add image with URL https://doc.lts.it/DocSite/ImageRender.aspx?ID={id}&W=800
-                    var transformedJToken = JsonTransformerMethods.FilterByFields(jObject, fieldsFromQueryString, language);
-                    if (transformedJToken != null)
-                        await context.HttpContext.Response.WriteAsync(transformedJToken.ToString());
+                    var jsonLD = JsonConvert.SerializeObject(transformed);
+                    await context.HttpContext.Response.WriteAsync(jsonLD);
                 }
                 else
                 {
-                    await BadRequest(context);
+                    await context.HttpContext.Response.WriteAsync("Not implemented");
+                    await BadRequest(context); 
                 }
             }
             else
