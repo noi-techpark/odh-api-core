@@ -13,7 +13,7 @@ namespace JsonLDTransformer
 {
     public class TransformToSchemaNet
     {
-        public static List<object> TransformDataToSchemaNet<T>(T data, object parentobject, string language, string idtoshow, string urltoshow, string imageurltoshow, string type, bool showid)
+        public static List<object> TransformDataToSchemaNet<T>(T data, string type,  string language, object parentobject = null, string idtoshow = "", string urltoshow = "", string imageurltoshow = "", bool showid = true)
         {
             var objectlist = new List<object>();
 

@@ -32,7 +32,9 @@ namespace OdhApiCore.Formatters
             if (path.StartsWithSegments("/v1/Accommodation"))
             {
                 var acco = JsonConvert.DeserializeObject<Accommodation>(jsonRaw.Value);
-                return JsonLDTransformer.TransformToLD.TransformAccommodationToLD(acco, "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<Accommodation>(acco, "accommodation", "de");
+                
+                //return JsonLDTransformer.TransformToLD.TransformAccommodationToLD(acco, "de");
             }
             else if (path.StartsWithSegments("/v1/Gastronomy"))
             {
