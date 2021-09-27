@@ -51,6 +51,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EBMS\EBMS.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />
+    <ProjectReference Include="..\JsonLDTransformer\JsonLDTransformer.csproj" />
     <ProjectReference Include="..\LCS\LCS.csproj" />
     <ProjectReference Include="..\MSS\MSS.csproj" />
     <ProjectReference Include="..\NINJA\NINJA.csproj" />
