@@ -29,22 +29,24 @@ namespace OdhApiCore.Formatters
 
         private object? Transform(PathString path, JsonRaw jsonRaw)
         {
+            //TODO extract language
+
             if (path.StartsWithSegments("/v1/Accommodation"))
             {
                 var acco = JsonConvert.DeserializeObject<Accommodation>(jsonRaw.Value);
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<Accommodation>(acco, "accommodation", "de");
-                
-                //return JsonLDTransformer.TransformToLD.TransformAccommodationToLD(acco, "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<Accommodation>(acco, "accommodation", "de");                
             }
             else if (path.StartsWithSegments("/v1/Gastronomy"))
             {
-                var gastro = JsonConvert.DeserializeObject<Gastronomy>(jsonRaw.Value);
-                return JsonLDTransformer.TransformToLD.TransformGastronomyToLD(gastro, "de");
+                var gastro = JsonConvert.DeserializeObject<SmgPoi>(jsonRaw.Value);
+                //return JsonLDTransformer.TransformToLD.TransformGastronomyToLD(gastro, "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<SmgPoi>(gastro, "gastronomy", "de");
             }
             else if (path.StartsWithSegments("/v1/Event"))
             {
                 var @event = JsonConvert.DeserializeObject<Event>(jsonRaw.Value);
-                return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
+                //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<Event>(@event, "event", "de");
             }
             else
             {
