@@ -183,8 +183,9 @@ namespace Helper
         [Description("Bonus Vacanze")]
         BonusVacanze = 1 << 15,
         [Description("Christkindlmarkt")]
-        Christkindlmarkt = 1 << 16
-
+        Christkindlmarkt = 1 << 16,
+        [Description("Sustainability")]
+        Sustainability = 1 << 17
     }
 
     //Theme für Accommodations
