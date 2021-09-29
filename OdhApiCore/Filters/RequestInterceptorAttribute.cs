@@ -73,15 +73,17 @@ namespace OdhApiCore.Filters
             //Forget about cancellationtoken and other generated
             Dictionary<string, string> configdict = new Dictionary<string, string>();
 
-            foreach(var item in config.QueryStrings)
+            if (config.QueryStrings != null)
             {
-                var configqssplitted = item.Split("=");
-
-                if(configqssplitted.Count() >= 2)
+                foreach (var item in config.QueryStrings)
                 {
-                    configdict.TryAdd(configqssplitted[0], configqssplitted[1].ToLower());
+                    var configqssplitted = item.Split("=");
+
+                    if (configqssplitted.Count() >= 2)
+                    {
+                        configdict.TryAdd(configqssplitted[0], configqssplitted[1].ToLower());
+                    }
                 }
-                
             }
 
             var actualdict = new Dictionary<string, string>();
