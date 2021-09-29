@@ -55,9 +55,9 @@ namespace NINJA
         [JsonProperty("end_time")]
         public string end_time { get; set; }
         [JsonProperty("price")]
-        public Nullable<double> price { get; set; }
+        public string price { get; set; }
         [JsonProperty("number_of_seats")]
-        public Nullable<int> number_of_seats { get; set; }
+        public string number_of_seats { get; set; }
     }
 
     public class NinjaPlaceRoom

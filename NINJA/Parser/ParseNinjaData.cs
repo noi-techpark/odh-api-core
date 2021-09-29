@@ -94,16 +94,20 @@ namespace NINJA.Parser
                 paymet = "1";
             }
 
-            if (ninjaevent.price > 0)
+            //Try to convert price to double
+            if(Double.TryParse(ninjaevent.price, out var pricedouble))
             {
-                foreach (var language in languages)
+                if (pricedouble > 0)
                 {
-                    EventPrice myeventprice = new EventPrice();
-                    myeventprice.Language = language;
-                    myeventprice.Price = ninjaevent.price != null ? ninjaevent.price.Value : 0;
-                    myeventprice.Type = ninjaevent.event_type_key;
+                    foreach (var language in languages)
+                    {
+                        EventPrice myeventprice = new EventPrice();
+                        myeventprice.Language = language;
+                        myeventprice.Price = pricedouble;
+                        myeventprice.Type = ninjaevent.event_type_key;
 
-                    myevent.EventPrice.TryAddOrUpdate(language, myeventprice);
+                        myevent.EventPrice.TryAddOrUpdate(language, myeventprice);
+                    }
                 }
             }
 
@@ -139,7 +143,7 @@ namespace NINJA.Parser
                     End = TimeSpan.Parse(ninjaevent.end_time),
                     To = DateTime.ParseExact(ninjaevent.end_date, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     Ticket = ticket,
-                    MaxPersons = ninjaevent.number_of_seats != null ? ninjaevent.number_of_seats.Value : 0
+                    MaxPersons = !String.IsNullOrEmpty(ninjaevent.number_of_seats) && int.TryParse(ninjaevent.number_of_seats, out var numberofseatsint) ? numberofseatsint : 0
                 }
             };
 
