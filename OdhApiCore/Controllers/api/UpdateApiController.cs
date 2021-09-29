@@ -347,47 +347,50 @@ namespace OdhApiCore.Controllers.api
                 foreach (var ninjadata in ninjadataarr.Select(x => x.tmetadata))
                 {
                     foreach (KeyValuePair<string, NinjaEvent> kvp in ninjadata)
-                    {                        
-                        var place = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.place).FirstOrDefault();
-                        var room = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.room).FirstOrDefault();
-
-                        var eventtosave = ParseNinjaData.ParseNinjaEventToODHEvent(kvp.Key, kvp.Value, place, room);
-
-                        //Setting Location Info
-                        //Location Info (by GPS Point)
-                        if (eventtosave.Latitude != 0 && eventtosave.Longitude != 0)
+                    {
+                        if (!String.IsNullOrEmpty(kvp.Key))
                         {
-                            await SetLocationInfo(eventtosave);
+                            var place = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.place).FirstOrDefault();
+                            var room = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.room).FirstOrDefault();
+
+                            var eventtosave = ParseNinjaData.ParseNinjaEventToODHEvent(kvp.Key, kvp.Value, place, room);
+
+                            //Setting Location Info
+                            //Location Info (by GPS Point)
+                            if (eventtosave.Latitude != 0 && eventtosave.Longitude != 0)
+                            {
+                                await SetLocationInfo(eventtosave);
+                            }
+
+                            eventtosave.Active = true;
+                            eventtosave.SmgActive = false;
+
+                            var idtocheck = kvp.Key;
+
+                            if (idtocheck.Length > 50)
+                                idtocheck = idtocheck.Substring(0, 50);
+
+                            var result = await InsertEventInPG(eventtosave, idtocheck);
+
+                            if (result.Item1 == "insert")
+                            {
+                                if (result.Item2 == "1")
+                                    newimportcounter++;
+                            }
+                            else if (result.Item1 == "update")
+                            {
+                                if (result.Item2 == "1")
+                                    updateimportcounter++;
+                            }
+                            else
+                            {
+                                errorimportcounter++;
+                            }
+
+                            idlistspreadsheet.Add(idtocheck.ToUpper());
+                            if (!sourcelist.Contains(eventtosave.Source))
+                                sourcelist.Add(eventtosave.Source);
                         }
-
-                        eventtosave.Active = true;
-                        eventtosave.SmgActive = false;
-
-                        var idtocheck = kvp.Key;
-
-                        if (idtocheck.Length > 50)
-                            idtocheck = idtocheck.Substring(0, 50);
-
-                        var result = await InsertEventInPG(eventtosave, idtocheck);
-                                                
-                        if(result.Item1 == "insert")
-                        {
-                            if (result.Item2 == "1")
-                                newimportcounter++;
-                        }
-                        else if (result.Item1 == "update")
-                        {
-                            if (result.Item2 == "1")
-                                updateimportcounter++;
-                        }
-                        else
-                        {
-                            errorimportcounter++;
-                        }
-
-                        idlistspreadsheet.Add(idtocheck.ToUpper());
-                        if(!sourcelist.Contains(eventtosave.Source))
-                            sourcelist.Add(eventtosave.Source);
                     }
 
                     //TODO get all IDs in DB
