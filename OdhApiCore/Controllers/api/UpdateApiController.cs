@@ -339,6 +339,10 @@ namespace OdhApiCore.Controllers.api
                 var newimportcounter = 0;
                 var updateimportcounter = 0;
                 var errorimportcounter = 0;
+                var deleteimportcounter = 0;
+
+                List<string> idlistspreadsheet = new List<string>();
+                List<string> sourcelist = new List<string>();
 
                 foreach (var ninjadata in ninjadataarr.Select(x => x.tmetadata))
                 {
@@ -379,11 +383,26 @@ namespace OdhApiCore.Controllers.api
                         else
                         {
                             errorimportcounter++;
-                        }                                   
+                        }
+
+                        idlistspreadsheet.Add(idtocheck.ToUpper());
+                        if(!sourcelist.Contains(eventtosave.Source))
+                            sourcelist.Add(eventtosave.Source);
                     }
+
+                    //TODO get all IDs in DB
+                    var idlistdb = await GetAllEventsBySource(sourcelist);
+
+                    var idstodelete = idlistdb.Where(p => !idlistspreadsheet.Any(p2 => p2 == p));
+
+                    foreach(var idtodelete in idstodelete)
+                    {
+                        deleteimportcounter = deleteimportcounter + await DeleteOrDisableEvents(idtodelete, false);
+                    }
+
                 }
 
-                return String.Format("Events Updated {0} New {1} Error {2}", updateimportcounter.ToString(), newimportcounter.ToString(), errorimportcounter.ToString());
+                return String.Format("Events Updated {0} New {1} Error {2} Deleted {3}", updateimportcounter.ToString(), newimportcounter.ToString(), errorimportcounter.ToString(), deleteimportcounter.ToString());
             }
             catch (Exception ex)
             {
@@ -485,6 +504,50 @@ namespace OdhApiCore.Controllers.api
             }                      
         }
 
+        private async Task<List<string>> GetAllEventsBySource(List<string> sourcelist)
+        {
+
+            var query =
+               QueryFactory.Query("events")
+                   .Select("id")
+                   .SourceFilter_GeneratedColumn(sourcelist);
+
+            var eventids = await query.GetAsync<string>();
+
+            return eventids.ToList();
+        }
+
+        private async Task<int> DeleteOrDisableEvents(string eventid, bool delete)
+        {
+            var result = 0;
+
+            if (delete)
+            {
+                result = await QueryFactory.Query("events").Where("id", eventid)
+                    .DeleteAsync();
+            }
+            else
+            {
+                var query =
+               QueryFactory.Query("events")
+                   .Select("data")
+                   .Where("id", eventid);
+
+                var data = await query.GetFirstOrDefaultAsObject<EventLinked>();
+
+                if(data != null)
+                {
+                    data.Active = false;
+                    data.SmgActive = false;
+
+                    result = await QueryFactory.Query("events").Where("id", eventid)
+                                    .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+                }               
+            }
+
+            return result;
+        }
+        
         public async Task<LocationInfo?> GetTheLocationInfoDistrict(string districtid)
         {
             try
