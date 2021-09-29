@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
+using OdhApiCore.Controllers;
 using OdhApiCore.Responses;
 using System;
 using System.Collections.Generic;
@@ -21,65 +23,162 @@ namespace OdhApiCore.Filters
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
+        {            
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
+            context.ActionDescriptor.RouteValues.TryGetValue("controller", out string? controllerid);
 
-            if (GetActionsToIntercept(actionid))
+            var matchedactiontointercept = GetActionsToIntercept(actionid, controllerid, context.ActionArguments);
+
+            if (matchedactiontointercept != null)
             {
-                //Configure here the Actions where Interceptor should do something and configure it globally
+                RouteValueDictionary redirectTargetDictionary = new RouteValueDictionary();
 
-                //Getting the Querystrings
-                var actionarguments = context.ActionArguments;
-                //bool? availabilitycheck = ((LegacyBool)actionarguments["availabilitycheck"]).Value;  //EX
+                redirectTargetDictionary.Add("action", matchedactiontointercept.RedirectAction);
+                redirectTargetDictionary.Add("controller", matchedactiontointercept.RedirectController);
 
-                //Getting Referer
-                var httpheaders = context.HttpContext.Request.Headers;
-                var referer = httpheaders["Referer"].ToString();
+                if (matchedactiontointercept.RedirectQueryStrings != null)
+                {
+                    foreach (var redirectqs in matchedactiontointercept.RedirectQueryStrings)
+                    {
+                        if (context.ActionArguments.ContainsKey(redirectqs))
+                            redirectTargetDictionary.Add(redirectqs, context.ActionArguments[redirectqs]);
+                    }
+                }
 
-                //actionarguments["availabilitycheck"]).Value;
-
-                await GetReturnObject(context, actionid ?? "", actionarguments, httpheaders);                
+                context.Result = new RedirectToRouteResult(redirectTargetDictionary);
+                await context.Result.ExecuteResultAsync(context);
             }
-            else
-            {
-                await base.OnActionExecutionAsync(context, next);
-            }
-           
-            //Maybe with config like "action", match (parameter:blah) (referer:blah) return "json", withlanguage true/false
-
+            
+            await base.OnActionExecutionAsync(context, next);                                  
         }
 
-        //public override async Task OnActionExecuting(HttpActionContext context, ActionExecutionDelegate next)
-        //{
-
-        //}
-
-        public bool GetActionsToIntercept(string? actionid)
+        public RequestInterceptorConfig? GetActionsToIntercept(string actionid, string controller, IDictionary<string,object> actionarguments)
         {
-            if (actionid == "GetTagObject")
-                return true;
-            else
-                return false;
+            if (settings.RequestInterceptorConfig != null && settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller).Count() > 0)
+            {
+                foreach(var validconfig in settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller))
+                {
+                    var match = GetQueryStringsToInterceptAndMatch(validconfig, actionarguments);
+
+                    if (match)
+                        return validconfig;
+                }                
+            }                
+            
+            return null;
         }
 
-        public Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
-        {     
-            var language = (string?)actionarguments["language"];
+        public bool GetQueryStringsToInterceptAndMatch(RequestInterceptorConfig config, IDictionary<string,object> querystrings)
+        {
+            //Forget about cancellationtoken and other generated
+            Dictionary<string, string> configdict = new Dictionary<string, string>();
 
-            string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAAccommodations_{language}.json");
-
-            using (StreamReader r = new StreamReader(fileName))
+            if (config.QueryStrings != null)
             {
-                string json = r.ReadToEndAsync().Result;
+                foreach (var item in config.QueryStrings)
+                {
+                    var configqssplitted = item.Split("=");
 
-                //var response = this.Request.CreateResponse(HttpStatusCode.OK);
-                //response.Content = new StringContent(json, Encoding.UTF8, "application/json");
-                //return ResponseMessage(response);
-
-                context.Result = new OkObjectResult(new JsonRaw(json));
+                    if (configqssplitted.Count() >= 2)
+                    {
+                        configdict.TryAdd(configqssplitted[0], configqssplitted[1].ToLower());
+                    }
+                }
             }
 
-            return Task.CompletedTask;
+            var actualdict = new Dictionary<string, string>();
+
+            List<string> toexclude = new List<string> { "cancellationToken" };
+
+            foreach(var item in querystrings)
+            {
+                if (!toexclude.Contains(item.Key))
+                {
+                    if (item.Key == "pagesize")
+                    {
+                        actualdict.TryAdd(item.Key, ((PageSize)item.Value).Value.ToString());
+                    }
+                    else if (item.Key == "highlight" || item.Key == "active" || item.Key == "odhactive")
+                    {
+                        if (((LegacyBool)item.Value).Value != null)
+                            actualdict.TryAdd(item.Key, ((LegacyBool)item.Value).Value.ToString());
+                    }
+                    else if (item.Key == "fields")
+                    {
+                        if (((string[])item.Value).Count() > 0)
+                            actualdict.TryAdd(item.Key, (String.Join(",", (string[])item.Value)));
+                    }
+                    else
+                    {
+                        actualdict.TryAdd(item.Key, ((string)item.Value));
+                    }                        
+                }
+            }
+
+            //Matching the two Dictionaries
+            return MatchDictionaries(configdict, actualdict);               
         }
+
+        private static bool MatchDictionaries(IDictionary<string,string> dict1, IDictionary<string,string> dict2)
+        {
+            List<string> validlanguages = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
+
+            //return only if there is a 1:1 match
+            foreach(var item in dict1)
+            {
+                //if the Request does not contain the configured QS Key exit immediately
+                if (!dict2.ContainsKey(item.Key))
+                    return false;
+
+
+                //if the config does not contains a * go on
+                if (!item.Value.Contains("*"))
+                {
+                    //if the values are different exit immediately
+                    if (dict2[item.Key].ToLower() != item.Value.ToLower())
+                        return false;
+                }
+                else
+                {
+                    //Specialcase Language + fields with *
+                    //check if one of the validlanguages matches
+                    int matchcount = 0;
+
+                    foreach(var lang in validlanguages)
+                    {
+                        var newconfigvalue = item.Value.ToLower().Replace("*", lang);
+
+                        if(dict2[item.Key].ToLower() == newconfigvalue.ToLower())
+                             matchcount++;
+                    }
+
+                    //if no matches exit immediately
+                    if (matchcount == 0)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        //public Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
+        //{     
+        //    var language = (string?)actionarguments["language"];
+
+        //    string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAAccommodations_{language}.json");
+
+        //    using (StreamReader r = new StreamReader(fileName))
+        //    {
+        //        string json = r.ReadToEndAsync().Result;
+
+        //        //var response = this.Request.CreateResponse(HttpStatusCode.OK);
+        //        //response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+        //        //return ResponseMessage(response);
+
+        //        context.Result = new OkObjectResult(new JsonRaw(json));
+        //    }
+
+        //    return Task.CompletedTask;
+        //}
     }
 }

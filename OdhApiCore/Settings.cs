@@ -124,6 +124,27 @@ namespace OdhApiCore
         public List<string>? DisplayOnRoles { get; private set; }
     }
 
+    public class RequestInterceptorConfig
+    {
+        public RequestInterceptorConfig(string action, string controller, string querystrings, string redirectaction, string redirectcontroller, string redirectquerystrings)
+        {
+            this.Action = action;
+            this.Controller = controller;
+            this.QueryStrings = querystrings != null ? querystrings.Split('&').ToList() : null;
+            this.RedirectAction = redirectaction;
+            this.RedirectController = redirectcontroller;
+            this.RedirectQueryStrings = redirectquerystrings != null ? redirectquerystrings.Split('&').ToList() : null;
+        }
+
+        public string Action { get; private set; }
+        public string Controller { get; private set; }
+        public List<string>? QueryStrings { get; private set; }
+        public string RedirectAction { get; private set; }
+        public string RedirectController { get; private set; }
+        public List<string>? RedirectQueryStrings { get; private set; }
+    }
+
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -137,6 +158,7 @@ namespace OdhApiCore
         RavenConfig RavenConfig { get; }
 
         List<Field2HideConfig> Field2HideConfig { get; }
+        List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
     }
 
     public class Settings : ISettings
@@ -152,6 +174,7 @@ namespace OdhApiCore
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
         private readonly List<Field2HideConfig> field2hideConfig;
+        private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -180,7 +203,15 @@ namespace OdhApiCore
             {
                 this.field2hideConfig.Add(new Field2HideConfig(field2hide.GetValue<string>("Entity", ""), field2hide.GetValue<string>("Fields", ""), field2hide.GetValue<string>("DisplayOnRoles", "")));
             }
-            
+
+            var requestinterceptorlist = this.configuration.GetSection("RequestInterceptorConfig").GetChildren();
+            this.requestInterceptorConfig = new List<RequestInterceptorConfig>();
+
+            foreach (var requestinterceptor in requestinterceptorlist)
+            {
+                this.requestInterceptorConfig.Add(new RequestInterceptorConfig(requestinterceptor.GetValue<string>("Action", ""), requestinterceptor.GetValue<string>("Controller", ""), requestinterceptor.GetValue<string>("QueryStrings", ""), 
+                    requestinterceptor.GetValue<string>("RedirectAction", ""), requestinterceptor.GetValue<string>("RedirectController", ""), requestinterceptor.GetValue<string>("RedirectQueryStrings", "")));
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -194,5 +225,6 @@ namespace OdhApiCore
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
+        public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
     }
 }

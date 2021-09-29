@@ -341,6 +341,9 @@ namespace Helper
                             case "Theme17":
                                 themeids.Add("Christkindlmarkt");
                                 break;
+                            case "Theme18":
+                                themeids.Add("Sustainability");
+                                break;
                         }
 
                     }
@@ -353,23 +356,11 @@ namespace Helper
         {
             Dictionary<int, bool> themeids = new Dictionary<int, bool>();
 
-            themeids.Add(1, false);
-            themeids.Add(2, false);
-            themeids.Add(3, false);
-            themeids.Add(4, false);
-            themeids.Add(5, false);
-            themeids.Add(6, false);
-            themeids.Add(7, false);
-            themeids.Add(8, false);
-            themeids.Add(9, false);
-            themeids.Add(10, false);
-            themeids.Add(11, false);
-            themeids.Add(12, false);
-            themeids.Add(13, false);
-            themeids.Add(14, false);
-            themeids.Add(15, false);
-            themeids.Add(16, false);
-            themeids.Add(17, false);
+            for(int i = 1; i <= 18; i++)
+            {
+                themeids.Add(i, false);
+            }        
+
             if (!String.IsNullOrEmpty(themefilter))
             {
                 if (themefilter != "null")
@@ -434,8 +425,10 @@ namespace Helper
                             case "Theme17":
                                 themeids[17] = true;
                                 break;
+                            case "Theme18":
+                                themeids[18] = true;
+                                break;
                         }
-
                     }
                 }
             }

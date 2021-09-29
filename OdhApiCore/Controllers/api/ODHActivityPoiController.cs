@@ -79,6 +79,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(JsonResult<ODHActivityPoi>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("ODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiList(
