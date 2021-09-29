@@ -389,6 +389,7 @@ namespace OdhApiCore.Controllers.api
                         if(!sourcelist.Contains(eventtosave.Source))
                             sourcelist.Add(eventtosave.Source);
                     }
+
                     //TODO get all IDs in DB
                     var idlistdb = await GetAllEventsBySource(sourcelist);
 
@@ -546,7 +547,6 @@ namespace OdhApiCore.Controllers.api
 
             return result;
         }
-
         
         public async Task<LocationInfo?> GetTheLocationInfoDistrict(string districtid)
         {
