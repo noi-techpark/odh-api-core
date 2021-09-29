@@ -37,7 +37,7 @@ namespace OdhApiImporter.Helpers
             {
                 var newimportcounter = 0;
                 var updateimportcounter = 0;
-                var errorimportcounter = 0;
+                var errorimportcounter = 0;                
 
                 foreach (var ninjadata in ninjadataarr.Select(x => x.tmetadata))
                 {
