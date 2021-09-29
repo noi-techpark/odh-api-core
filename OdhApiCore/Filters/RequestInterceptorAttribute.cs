@@ -108,6 +108,14 @@ namespace OdhApiCore.Filters
                         if (((string[])item.Value).Count() > 0)
                             actualdict.TryAdd(item.Key, (String.Join(",", (string[])item.Value)));
                     }
+                    else if (item.Key == "pagenumber")
+                    {
+                        actualdict.TryAdd(item.Key, ((uint)item.Value).ToString());
+                    }
+                    else if (item.Key == "removenullvalues")
+                    {
+                        actualdict.TryAdd(item.Key, ((bool)item.Value).ToString());
+                    }
                     else
                     {
                         actualdict.TryAdd(item.Key, ((string)item.Value));
