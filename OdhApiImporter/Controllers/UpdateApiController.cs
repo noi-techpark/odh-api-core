@@ -203,7 +203,7 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Raven",
                     updatetype = "single",
-                    otherinfo = "Data updated",
+                    otherinfo = datatype,
                     message = "",
                     id = id,
                     recordsmodified = (result.created + result.updated + result.deleted).ToString(),
@@ -219,7 +219,8 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Raven",
                     updatetype = "all",
-                    otherinfo = "",
+                    otherinfo = datatype,
+                    id = id,
                     message = "Update Raven failed: " + ex.Message,
                     recordsmodified = "0",
                     created = 0,

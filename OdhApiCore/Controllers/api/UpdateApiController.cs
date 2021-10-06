@@ -177,7 +177,8 @@ namespace OdhApiCore.Controllers.api
                 {
                     operation = "Update Raven",
                     updatetype = "single",
-                    otherinfo = "Data updated",
+                    otherinfo = datatype,
+                    id = id,
                     message = "",
                     recordsmodified = (result.created + result.updated + result.deleted).ToString(),
                     created = result.created,
@@ -193,6 +194,7 @@ namespace OdhApiCore.Controllers.api
                     operation = "Update Raven",
                     updatetype = "all",
                     otherinfo = "",
+                    id = id,
                     message = "Update Raven failed: " + ex.Message,
                     recordsmodified = "0",
                     created = 0,
