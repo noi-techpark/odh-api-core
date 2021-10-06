@@ -91,30 +91,56 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("STA/JsonPoi")]
         public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
         {
-            await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
-
-            return Ok(new
+            try
             {
-                operation = "Json Generation",
-                type = "ODHActivityPoi",
-                message = "Generate Json ODHActivityPoi for STA succeeded",
-                success = true
-            });
+                await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
+            
+                return Ok(new
+                {
+                    operation = "Json Generation",
+                    type = "ODHActivityPoi",
+                    message = "Generate Json ODHActivityPoi for STA succeeded",
+                    success = true
+                });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new
+                {
+                    operation = "Json Generation",
+                    type = "ODHActivityPoi",
+                    message = "Generate Json ODHActivityPoi for STA failed error:" + ex.Message,
+                    success = false
+                });
+            }
         }
 
         [InvalidateCacheOutput(nameof(GetAccommodationsSTA), typeof(STAController))] // this will invalidate Get in a different controller
         [HttpGet, Route("STA/JsonAccommodation")]
         public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
         {
-            await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
-
-            return Ok(new
+            try
             {
-                operation = "Json Generation",
-                type = "Accommodation",
-                message = "Generate Json Accommodation for STA succeeded",
-                success = true
-            });
+                await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
+
+                return Ok(new
+                {
+                    operation = "Json Generation",
+                    type = "Accommodation",
+                    message = "Generate Json Accommodation for STA succeeded",
+                    success = true
+                });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new
+                {
+                    operation = "Json Generation",
+                    type = "Accommodation",
+                    message = "Generate Json Accommodation for STA failed error:" + ex.Message,
+                    success = false
+                });
+            }
         }
 
         #endregion
@@ -141,11 +167,37 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {
-                return await PostVendingPointsFromSTA(Request);
+                var result = await PostVendingPointsFromSTA(Request);
+
+                return Ok(new
+                {
+                    operation = "Import Vendingpoints",
+                    updatetype = "all",
+                    otherinfo = "STA",
+                    id = "",
+                    message = "Import Vendingpoints succeeded",
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(new GenericResult() { Message = ex.Message });
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Import Vendingpoints",
+                    updatetype = "all",
+                    otherinfo = "STA",
+                    id = "",
+                    message = "Import Vendingpoints failed: " + ex.Message,
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
             }
         }
 
@@ -161,7 +213,7 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        private async Task<IActionResult> PostVendingPointsFromSTA(HttpRequest request)
+        private async Task<UpdateDetail> PostVendingPointsFromSTA(HttpRequest request)
         {
             string jsonContent = await ReadStringDataManual(request);
 
@@ -173,12 +225,16 @@ namespace OdhApiCore.Controllers.api
                 throw new Exception("no Content");
         }
 
-        private async Task<IActionResult> ImportVendingPointsFromCSV(string csvcontent)
+        private async Task<UpdateDetail> ImportVendingPointsFromCSV(string csvcontent)
         {
             var vendingpoints = await STA.GetDataFromSTA.ImportCSVFromSTA(csvcontent);
 
             if (vendingpoints.Success)
             {
+                var updatecounter = 0;
+                var newcounter = 0;
+                var deletecounter = 0;
+
                 //Import Each STA Vendingpoi to ODH
                 foreach (var vendingpoint in vendingpoints.records)
                 {
@@ -210,11 +266,19 @@ namespace OdhApiCore.Controllers.api
                     odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi?.SubType, new List<string>() { "de","it","en" });
 
                     //Save to PG
-                    //Check if data exists
-                    await UpsertData<ODHActivityPoi>(odhactivitypoi!, "smgpois");
+                    //Check if data exists                    
+
+                    var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "smgpois");
+
+                    if(result.updated != null)
+                        updatecounter = updatecounter + result.updated.Value;
+                    if (result.created != null)
+                        newcounter = newcounter + result.created.Value;
+                    if (result.deleted != null)
+                        deletecounter = deletecounter + result.deleted.Value;
                 }
 
-                return new OkObjectResult("import from posted csv succeeded");
+                return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
             }
             else if (vendingpoints.Error)
                 throw new Exception(vendingpoints.ErrorMessage);

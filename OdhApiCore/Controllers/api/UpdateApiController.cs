@@ -894,32 +894,33 @@ namespace OdhApiCore.Controllers.api
 
             //Temporary Hack will be moved to the importer workerservice
 
-            var result = await UpsertData<T>(datatosave, table);
+            var result = await QueryFactory.UpsertData<T>(datatosave, table);
 
             var insertcounter = 0;
             var updatecounter = 0;
             var deletecounter = 0;
 
-            if(result is OkObjectResult)
-            {
-                var resultstr = ((OkObjectResult)result).Value.ToString();
+            //obsolete
+            //if(result is OkObjectResult)
+            //{
+            //    var resultstr = ((OkObjectResult)result).Value.ToString();
 
-                if (resultstr != null)
-                {
-                    if (resultstr.StartsWith("INSERT"))
-                    {
-                        if (resultstr.Contains("recordsmodified: 1"))
-                            insertcounter++;
-                    }
-                    if (resultstr.StartsWith("UPDATE"))
-                    {
-                        if (resultstr.Contains("recordsmodified: 1"))
-                            updatecounter++;
-                    }
-                }
-            }
+            //    if (resultstr != null)
+            //    {
+            //        if (resultstr.StartsWith("INSERT"))
+            //        {
+            //            if (resultstr.Contains("recordsmodified: 1"))
+            //                insertcounter++;
+            //        }
+            //        if (resultstr.StartsWith("UPDATE"))
+            //        {
+            //            if (resultstr.Contains("recordsmodified: 1"))
+            //                updatecounter++;
+            //        }
+            //    }
+            //}
 
-            return new UpdateDetail() { created = insertcounter, updated = updatecounter, deleted = deletecounter };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
         }
 
         #endregion
