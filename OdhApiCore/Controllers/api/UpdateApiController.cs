@@ -896,10 +896,6 @@ namespace OdhApiCore.Controllers.api
 
             var result = await QueryFactory.UpsertData<T>(datatosave, table);
 
-            var insertcounter = 0;
-            var updatecounter = 0;
-            var deletecounter = 0;
-
             //obsolete
             //if(result is OkObjectResult)
             //{
