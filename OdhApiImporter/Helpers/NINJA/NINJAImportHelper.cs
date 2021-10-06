@@ -172,7 +172,7 @@ namespace OdhApiImporter.Helpers
             }
             catch (Exception ex)
             {
-                return Tuple.Create("error", ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 
