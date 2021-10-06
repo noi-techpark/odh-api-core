@@ -22,4 +22,8 @@
     <ProjectReference Include="..\SIAG\SIAG.csproj" />
     <ProjectReference Include="..\STA\STA.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
 </Project>

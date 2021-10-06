@@ -24,7 +24,6 @@ using System.Net.Http;
 using RAVEN;
 using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers;
-using OdhApiImporter.Models;
 
 namespace OdhApiImporter.Controllers
 {
@@ -55,7 +54,7 @@ namespace OdhApiImporter.Controllers
                 operation = "Test WS",
                 updatetype = "",
                 message = "Workerservice is online",
-                recordsupdated = "0",
+                recordsmodified = "0",
                 success = true
             });
         }
@@ -77,8 +76,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update EBMS",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "EBMS Eventshorts update succeeded",
-                    recordsupdated = result,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
@@ -88,8 +91,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update EBMS",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }
@@ -108,8 +115,12 @@ namespace OdhApiImporter.Controllers
                     operation = "Update EBMS",
                     id = id,
                     updatetype = "single",
+                    otherinfo = "",
                     message = "EBMS Eventshorts update succeeded",
-                    recordsupdated = "1",
+                    recordsmodified = "1",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = true
                 });
             }
@@ -119,8 +130,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update EBMS",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }
@@ -145,8 +160,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Ninja Events",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "Ninja Events update succeeded",
-                    recordsupdated = result,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
@@ -156,8 +175,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Ninja Events",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "Update Ninja Events failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }
@@ -180,8 +203,13 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Raven",
                     updatetype = "single",
+                    otherinfo = datatype,
                     message = "",
-                    recordsupdated = "1",
+                    id = id,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
@@ -191,8 +219,13 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Raven",
                     updatetype = "all",
+                    otherinfo = datatype,
+                    id = id,
                     message = "Update Raven failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             } 
@@ -213,9 +246,13 @@ namespace OdhApiImporter.Controllers
                 return Ok(new UpdateResult
                 {
                     operation = "Import Weather data",
-                    updatetype = "all",
+                    updatetype = "single",
+                    otherinfo = "actual",
                     message = "Import Weather data succeeded",
-                    recordsupdated = result,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),                    
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
@@ -224,9 +261,52 @@ namespace OdhApiImporter.Controllers
                 return BadRequest(new UpdateResult
                 {
                     operation = "Import Weather data",
-                    updatetype = "all",
+                    updatetype = "single",
+                    otherinfo = "actual",
                     message = "Import Weather data failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
+        }
+
+        [HttpGet, Route("Siag/Weather/Import/{id}")]
+        public async Task<IActionResult> ImportWeatherByID(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                var result = await siagimporthelper.SaveWeatherToHistoryTable(id);
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "single",
+                    otherinfo = "byid",
+                    id = id,
+                    message = "Import Weather data succeeded id:" + id.ToString(),
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "single",
+                    otherinfo = "byid",
+                    message = "Import Weather data failed: id:" + id.ToString() + " error:" + ex.Message,
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }

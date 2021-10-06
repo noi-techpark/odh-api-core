@@ -17,7 +17,6 @@ using System.Net.Http;
 using RAVEN;
 using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers;
-using OdhApiImporter.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 
@@ -51,9 +50,14 @@ namespace OdhApiImporter.Controllers
             return Ok(new UpdateResult
             {
                 operation = "Modify EventShort",
-                updatetype = "",
+                updatetype = "custom",
+                otherinfo = "",
                 message = "Done",
-                recordsupdated = objectscount.ToString(),
+                recordsmodified = objectscount.ToString(),
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = objectscount,
                 success = true
             });
         }

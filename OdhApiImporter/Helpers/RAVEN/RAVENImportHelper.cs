@@ -23,9 +23,8 @@ namespace OdhApiImporter.Helpers
 
         #region ODHRAVEN Helpers
 
-        public async Task<string> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
+        public async Task<UpdateDetail> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
         {
-
             var mydata = default(IIdentifiable);
             var mypgdata = default(IIdentifiable);
 
@@ -38,7 +37,7 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+                    var accoresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
 
                     //UPDATE ACCOMMODATIONROOMS
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
@@ -55,7 +54,7 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    return String.Format("{0} success: {1}", "accommodations", id);
+                    return accoresult; // String.Format("{0} success: {1}", "accommodations", id);
 
                 case "gastronomy":
                     mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -234,11 +233,13 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<string> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
+        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            return await QueryFactory.UpsertData<T>(datatosave, table);
+            var result = await QueryFactory.UpsertData<T>(datatosave, table);
+
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
         }
 
         #endregion
