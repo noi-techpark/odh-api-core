@@ -274,7 +274,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
-                var result = await siagimporthelper.SaveWeatherToHistoryTable();
+                var result = await siagimporthelper.SaveWeatherToHistoryTable(id);
 
                 return Ok(new UpdateResult
                 {
