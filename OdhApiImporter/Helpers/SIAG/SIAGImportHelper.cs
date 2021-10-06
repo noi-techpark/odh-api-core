@@ -26,7 +26,7 @@ namespace OdhApiImporter.Helpers
             string? weatherresponsetaskit = "";
             string? weatherresponsetasken = "";
 
-            if (id == null)
+            if (!String.IsNullOrEmpty(id))
             {
                 weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true, id);
                 weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("it", settings.SiagConfig.Username, settings.SiagConfig.Password, true, id);
