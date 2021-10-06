@@ -11,7 +11,7 @@ namespace OdhApiImporter.Helpers
     {
         #region PG Helpers
 
-        public static async Task<string> UpsertData<T>(this QueryFactory QueryFactory, T data, string table) where T : IIdentifiable, IImportDateassigneable
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table) where T : IIdentifiable, IImportDateassigneable
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
@@ -25,12 +25,15 @@ namespace OdhApiImporter.Helpers
 
             string operation = "";
 
+            int createresult = 0;
+            int updateresult = 0;
+
             if (queryresult == null || queryresult.Count() == 0)
             {
                 data.FirstImport = DateTime.Now;
                 data.LastChange = DateTime.Now;
 
-                var insertresult = await QueryFactory.Query(table)
+                createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
             }
@@ -38,15 +41,15 @@ namespace OdhApiImporter.Helpers
             {
                 data.LastChange = DateTime.Now;
 
-                var updateresult = await QueryFactory.Query(table).Where("id", data.Id)
+                updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "UPDATE";
             }
 
-            return String.Format("{0} success: {1}", operation, data.Id);
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, operation = operation };
         }
 
-        private static async Task<string> DeleteData(this QueryFactory QueryFactory, string id, string table)
+        private static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException(nameof(id), "No data");
@@ -57,17 +60,19 @@ namespace OdhApiImporter.Helpers
                       .Select("data")
                       .Where("id", id);
 
+            var deleteresult = 0;
+
             if (query == null)
             {
                 throw new ArgumentNullException(nameof(query), "No data");
             }
             else
             {
-                await QueryFactory.Query(table).Where("id", id)
+                deleteresult = await QueryFactory.Query(table).Where("id", id)
                         .DeleteAsync();
             }
 
-            return String.Format("DELETE success: {0}", id);
+            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, operation = "DELETE" };
         }
 
         #endregion
@@ -77,5 +82,14 @@ namespace OdhApiImporter.Helpers
 
 
         #endregion
+    }
+
+    public struct PGCRUDResult
+    {
+        public string id { get; init; }
+        public string operation { get; init; }
+        public int? updated { get; init; }
+        public int? created { get; init; }
+        public int? deleted { get; init; }
     }
 }

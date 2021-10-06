@@ -2,6 +2,7 @@
 using EBMS;
 using Helper;
 using Newtonsoft.Json;
+using OdhApiImporter.Models;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace OdhApiImporter.Helpers
 
         #region EBMS Helpers
 
-        public async Task<string> ImportEbmsEventsToDB(CancellationToken cancellationToken)
+        public async Task<UpdateDetail> ImportEbmsEventsToDB(CancellationToken cancellationToken)
         {
             var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
             var resulttuplesorted = resulttuple.OrderBy(x => x.Item1.StartDate);
@@ -166,7 +167,7 @@ namespace OdhApiImporter.Helpers
             if (resulttuple.Select(x => x.Item1).Count() > 0)
                 deletecounter = await DeleteDeletedEvents(resulttuple.Select(x => x.Item1).ToList(), currenteventshort.ToList());
 
-            return String.Format("Events Updated {0} New {1} Deleted {2}", updatecounter.ToString(), newcounter.ToString(), deletecounter.ToString());
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
         }
 
         private static List<string>? AssignTechnologyfieldsautomatically(string companyname, List<string>? technologyfields)

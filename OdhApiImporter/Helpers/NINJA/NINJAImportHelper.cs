@@ -3,6 +3,7 @@ using Helper;
 using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
+using OdhApiImporter.Models;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -31,84 +32,78 @@ namespace OdhApiImporter.Helpers
         /// Save Events to Postgres
         /// </summary>
         /// <param name="ninjadataarr"></param>
-        public async Task<string> SaveEventsToPG(ICollection<NinjaData<NinjaEvent>> ninjadataarr, ICollection<NinjaData<NinjaPlaceRoom>> ninjaplaceroomarr)
+        public async Task<UpdateDetail> SaveEventsToPG(ICollection<NinjaData<NinjaEvent>> ninjadataarr, ICollection<NinjaData<NinjaPlaceRoom>> ninjaplaceroomarr)
         {
-            try
+
+            var newimportcounter = 0;
+            var updateimportcounter = 0;
+            var errorimportcounter = 0;
+            var deleteimportcounter = 0;
+
+            List<string> idlistspreadsheet = new List<string>();
+            List<string> sourcelist = new List<string>();
+
+            foreach (var ninjadata in ninjadataarr.Select(x => x.tmetadata))
             {
-                var newimportcounter = 0;
-                var updateimportcounter = 0;
-                var errorimportcounter = 0;
-                var deleteimportcounter = 0;
-
-                List<string> idlistspreadsheet = new List<string>();
-                List<string> sourcelist = new List<string>();
-
-                foreach (var ninjadata in ninjadataarr.Select(x => x.tmetadata))
+                foreach (KeyValuePair<string, NinjaEvent> kvp in ninjadata)
                 {
-                    foreach (KeyValuePair<string, NinjaEvent> kvp in ninjadata)
+                    if (!String.IsNullOrEmpty(kvp.Key))
                     {
-                        if (!String.IsNullOrEmpty(kvp.Key))
+                        var place = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.place).FirstOrDefault();
+                        var room = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.room).FirstOrDefault();
+
+                        var eventtosave = ParseNinjaData.ParseNinjaEventToODHEvent(kvp.Key, kvp.Value, place, room);
+
+                        //Setting Location Info
+                        //Location Info (by GPS Point)
+                        if (eventtosave.Latitude != 0 && eventtosave.Longitude != 0)
                         {
-                            var place = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.place).FirstOrDefault();
-                            var room = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.room).FirstOrDefault();
-
-                            var eventtosave = ParseNinjaData.ParseNinjaEventToODHEvent(kvp.Key, kvp.Value, place, room);
-
-                            //Setting Location Info
-                            //Location Info (by GPS Point)
-                            if (eventtosave.Latitude != 0 && eventtosave.Longitude != 0)
-                            {
-                                await SetLocationInfo(eventtosave);
-                            }
-
-                            eventtosave.Active = true;
-                            eventtosave.SmgActive = false;
-
-                            var idtocheck = kvp.Key;
-
-                            if (idtocheck.Length > 50)
-                                idtocheck = idtocheck.Substring(0, 50);
-
-                            var result = await InsertEventInPG(eventtosave, idtocheck, kvp);
-
-                            if (result.Item1 == "insert")
-                            {
-                                if (result.Item2 == "1")
-                                    newimportcounter++;
-                            }
-                            else if (result.Item1 == "update")
-                            {
-                                if (result.Item2 == "1")
-                                    updateimportcounter++;
-                            }
-                            else
-                            {
-                                errorimportcounter++;
-                            }
-
-                            idlistspreadsheet.Add(idtocheck.ToUpper());
-                            if (!sourcelist.Contains(eventtosave.Source))
-                                sourcelist.Add(eventtosave.Source);
+                            await SetLocationInfo(eventtosave);
                         }
-                    }
 
-                    //TODO get all IDs in DB
-                    var idlistdb = await GetAllEventsBySource(sourcelist);
+                        eventtosave.Active = true;
+                        eventtosave.SmgActive = false;
 
-                    var idstodelete = idlistdb.Where(p => !idlistspreadsheet.Any(p2 => p2 == p));
+                        var idtocheck = kvp.Key;
 
-                    foreach (var idtodelete in idstodelete)
-                    {
-                        deleteimportcounter = deleteimportcounter + await DeleteOrDisableEvents(idtodelete, false);
+                        if (idtocheck.Length > 50)
+                            idtocheck = idtocheck.Substring(0, 50);
+
+                        var result = await InsertEventInPG(eventtosave, idtocheck, kvp);
+
+                        if (result.Item1 == "insert")
+                        {
+                            if (result.Item2 == "1")
+                                newimportcounter++;
+                        }
+                        else if (result.Item1 == "update")
+                        {
+                            if (result.Item2 == "1")
+                                updateimportcounter++;
+                        }
+                        else
+                        {
+                            errorimportcounter++;
+                        }
+
+                        idlistspreadsheet.Add(idtocheck.ToUpper());
+                        if (!sourcelist.Contains(eventtosave.Source))
+                            sourcelist.Add(eventtosave.Source);
                     }
                 }
 
-                return String.Format("Events Updated {0} New {1} Error {2}", updateimportcounter.ToString(), newimportcounter.ToString(), errorimportcounter.ToString());
+                //TODO get all IDs in DB
+                var idlistdb = await GetAllEventsBySource(sourcelist);
+
+                var idstodelete = idlistdb.Where(p => !idlistspreadsheet.Any(p2 => p2 == p));
+
+                foreach (var idtodelete in idstodelete)
+                {
+                    deleteimportcounter = deleteimportcounter + await DeleteOrDisableEvents(idtodelete, false);
+                }
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+
+            return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter };
         }
 
         private async Task SetLocationInfo(EventLinked myevent)
@@ -296,11 +291,14 @@ namespace OdhApiImporter.Helpers
 
                 if (data != null)
                 {
-                    data.Active = false;
-                    data.SmgActive = false;
+                    if(data.Active != false || data.SmgActive != false)
+                    {
+                        data.Active = false;
+                        data.SmgActive = false;
 
-                    result = await QueryFactory.Query("events").Where("id", eventid)
-                                    .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+                        result = await QueryFactory.Query("events").Where("id", eventid)
+                                        .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+                    }                
                 }
             }
 

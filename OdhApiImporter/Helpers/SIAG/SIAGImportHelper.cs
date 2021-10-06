@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SIAG;
 using DataModel;
 using Newtonsoft.Json;
+using OdhApiImporter.Models;
 
 namespace OdhApiImporter.Helpers
 {
@@ -20,7 +21,7 @@ namespace OdhApiImporter.Helpers
             this.settings = settings;
         }
 
-        public async Task<string> SaveWeatherToHistoryTable(string? id = null)
+        public async Task<UpdateDetail> SaveWeatherToHistoryTable(string? id = null)
         {
             string? weatherresponsetaskde = "";
             string? weatherresponsetaskit = "";
@@ -85,7 +86,7 @@ namespace OdhApiImporter.Helpers
                 var insertresult = await QueryFactory.Query("weatherdatahistory")
                       .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });
 
-                return String.Format("id: {0}, rawdataid: {1}, datetime: {2}", odhweatherresultde.Id.ToString(), insertresultraw.ToString(), DateTime.Now.ToShortDateString());
+                return new UpdateDetail() { created = insertresult, updated = 0, deleted = 0 };                    
             }
             else
                 throw new Exception("No weatherdata received from source!");

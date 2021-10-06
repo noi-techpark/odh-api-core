@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Microsoft.AspNetCore.Mvc;
+using OdhApiImporter.Models;
 using RAVEN;
 using SqlKata.Execution;
 using System;
@@ -23,9 +24,8 @@ namespace OdhApiImporter.Helpers
 
         #region ODHRAVEN Helpers
 
-        public async Task<string> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
+        public async Task<UpdateDetail> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
         {
-
             var mydata = default(IIdentifiable);
             var mypgdata = default(IIdentifiable);
 
@@ -234,11 +234,13 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<string> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
+        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            return await QueryFactory.UpsertData<T>(datatosave, table);
+            var result = await QueryFactory.UpsertData<T>(datatosave, table);
+
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
         }
 
         #endregion

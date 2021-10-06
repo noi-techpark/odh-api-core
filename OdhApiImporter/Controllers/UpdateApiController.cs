@@ -55,7 +55,7 @@ namespace OdhApiImporter.Controllers
                 operation = "Test WS",
                 updatetype = "",
                 message = "Workerservice is online",
-                recordsupdated = "0",
+                recordsmodified = "0",
                 success = true
             });
         }
@@ -77,8 +77,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update EBMS",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "EBMS Eventshorts update succeeded",
-                    recordsupdated = result,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
@@ -88,8 +92,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update EBMS",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }
@@ -108,8 +116,12 @@ namespace OdhApiImporter.Controllers
                     operation = "Update EBMS",
                     id = id,
                     updatetype = "single",
+                    otherinfo = "",
                     message = "EBMS Eventshorts update succeeded",
-                    recordsupdated = "1",
+                    recordsmodified = "1",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = true
                 });
             }
@@ -119,8 +131,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update EBMS",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }
@@ -145,8 +161,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Ninja Events",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "Ninja Events update succeeded",
-                    recordsupdated = result,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
@@ -156,8 +176,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Ninja Events",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "Update Ninja Events failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }
@@ -180,8 +204,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Raven",
                     updatetype = "single",
+                    otherinfo = "Data updated",
                     message = "",
-                    recordsupdated = "1",
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
@@ -191,8 +219,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Update Raven",
                     updatetype = "all",
+                    otherinfo = "",
                     message = "Update Raven failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             } 
@@ -213,9 +245,10 @@ namespace OdhApiImporter.Controllers
                 return Ok(new UpdateResult
                 {
                     operation = "Import Weather data",
-                    updatetype = "all",
+                    updatetype = "single",
+                    otherinfo = "actual",
                     message = "Import Weather data succeeded",
-                    recordsupdated = result,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
                     success = true
                 });
             }
@@ -224,9 +257,13 @@ namespace OdhApiImporter.Controllers
                 return BadRequest(new UpdateResult
                 {
                     operation = "Import Weather data",
-                    updatetype = "all",
+                    updatetype = "single",
+                    otherinfo = "actual",
                     message = "Import Weather data failed: " + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }
@@ -242,10 +279,11 @@ namespace OdhApiImporter.Controllers
 
                 return Ok(new UpdateResult
                 {
-                    operation = "Import Weather data by Id",
+                    operation = "Import Weather data",
                     updatetype = "single",
+                    otherinfo = "byid",
                     message = "Import Weather data succeeded id:" + id.ToString(),
-                    recordsupdated = result,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
                     success = true
                 });
             }
@@ -255,8 +293,12 @@ namespace OdhApiImporter.Controllers
                 {
                     operation = "Import Weather data",
                     updatetype = "single",
+                    otherinfo = "byid",
                     message = "Import Weather data failed: id:" + id.ToString() + " error:" + ex.Message,
-                    recordsupdated = "0",
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
                     success = false
                 });
             }
