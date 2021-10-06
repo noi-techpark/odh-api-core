@@ -177,13 +177,14 @@ namespace OdhApiCore.Controllers
             var queryresult = await query.GetAsync<T>();
 
             string operation = "";
+            var crudresult = 0;
 
             if (queryresult == null || queryresult.Count() == 0)
             {
                 data.FirstImport = DateTime.Now;
                 data.LastChange = DateTime.Now;
 
-                var insertresult = await QueryFactory.Query(table)
+                crudresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
             }
@@ -191,12 +192,12 @@ namespace OdhApiCore.Controllers
             {
                 data.LastChange = DateTime.Now;
 
-                var updateresult = await QueryFactory.Query(table).Where("id", data.Id)
+                crudresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "UPDATE";
             }
                         
-            return Ok(new GenericResult() { Message = String.Format("{0} success: {1}", operation, data.Id) });
+            return Ok(new GenericResult() { Message = String.Format("{0} success: {1} recordsmodified: {2}", operation, data.Id, crudresult) });
         }
 
         protected async Task<IActionResult> DeleteData(string id, string table)
@@ -209,18 +210,23 @@ namespace OdhApiCore.Controllers
                   QueryFactory.Query(table)
                       .Select("data")
                       .Where("id", id);
-            
+
+            var crudresult = 0;
+
             if (query == null)
             {
                 throw new Exception("No data");
             }
             else
             {
-                await QueryFactory.Query(table).Where("id", id)
+                crudresult = await QueryFactory.Query(table).Where("id", id)
                         .DeleteAsync();                
             }
 
-            return Ok(new GenericResult() { Message = String.Format("DELETE success: {0}", id) });
+            return Ok(new GenericResult() { Message = String.Format("DELETE success: {0} recordsmodified: {1}", id, crudresult) });
         }
+
+        //Temporary Here will be outsourced to Importer
+
     }    
 }

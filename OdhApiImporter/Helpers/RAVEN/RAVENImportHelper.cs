@@ -1,6 +1,5 @@
 ﻿using DataModel;
 using Microsoft.AspNetCore.Mvc;
-using OdhApiImporter.Models;
 using RAVEN;
 using SqlKata.Execution;
 using System;
@@ -38,7 +37,7 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+                    var accoresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
 
                     //UPDATE ACCOMMODATIONROOMS
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
@@ -55,7 +54,7 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    return String.Format("{0} success: {1}", "accommodations", id);
+                    return accoresult; // String.Format("{0} success: {1}", "accommodations", id);
 
                 case "gastronomy":
                     mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);

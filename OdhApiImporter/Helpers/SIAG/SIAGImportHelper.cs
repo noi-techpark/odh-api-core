@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using SIAG;
 using DataModel;
 using Newtonsoft.Json;
-using OdhApiImporter.Models;
 
 namespace OdhApiImporter.Helpers
 {

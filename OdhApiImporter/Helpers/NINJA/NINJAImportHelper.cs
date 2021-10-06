@@ -3,7 +3,6 @@ using Helper;
 using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
-using OdhApiImporter.Models;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;

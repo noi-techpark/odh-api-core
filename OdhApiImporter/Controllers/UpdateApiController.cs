@@ -24,7 +24,6 @@ using System.Net.Http;
 using RAVEN;
 using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers;
-using OdhApiImporter.Models;
 
 namespace OdhApiImporter.Controllers
 {
