@@ -247,7 +247,10 @@ namespace OdhApiImporter.Controllers
                     updatetype = "single",
                     otherinfo = "actual",
                     message = "Import Weather data succeeded",
-                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),                    
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
@@ -283,6 +286,9 @@ namespace OdhApiImporter.Controllers
                     otherinfo = "byid",
                     message = "Import Weather data succeeded id:" + id.ToString(),
                     recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
                     success = true
                 });
             }
