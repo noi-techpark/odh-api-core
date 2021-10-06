@@ -34,29 +34,55 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("ODH/AccommodationBooklist")]
         public async Task<IActionResult> ProduceAccoBooklistJson(CancellationToken cancellationToken)
         {
-            await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosBookable");
-
-            return Ok(new
+            try
             {
-                operation = "Json Generation",
-                type = "AccommodationBooklist",
-                message = "Generate Json AccommodationBooklist succeeded",
-                success = true
-            });
+                await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosBookable");
+
+                return Ok(new
+                {
+                    operation = "Json Generation",
+                    type = "AccommodationBooklist",
+                    message = "Generate Json AccommodationBooklist succeeded",
+                    success = true
+                });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new
+                {
+                    operation = "Json Generation",
+                    type = "AccommodationBooklist",
+                    message = "Generate Json AccommodationBooklist failed error:" + ex.Message,
+                    success = false
+                });
+            }
         }
 
         [HttpGet, Route("ODH/AccommodationFulllist")]
         public async Task<IActionResult> ProduceAccoFulllistJson(CancellationToken cancellationToken)
         {
-            await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosAll");
-
-            return Ok(new
+            try
             {
-                operation = "Json Generation",
-                type = "AccommodationFullist",
-                message = "Generate Json AccommodationFullist succeeded",
-                success = true
-            });
+                await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosAll");
+
+                return Ok(new
+                {
+                    operation = "Json Generation",
+                    type = "AccommodationFullist",
+                    message = "Generate Json AccommodationFullist succeeded",
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    operation = "Json Generation",
+                    type = "AccommodationFullist",
+                    message = "Generate Json AccommodationBooklist failed error: " + ex.Message,
+                    success = false
+                });
+            }
         }
 
         //TODO ADD the Json Generation for        

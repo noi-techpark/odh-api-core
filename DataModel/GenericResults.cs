@@ -28,4 +28,13 @@ namespace DataModel
         public int? created { get; init; }
         public int? deleted { get; init; }
     }
+
+    public struct PGCRUDResult
+    {
+        public string id { get; init; }
+        public string operation { get; init; }
+        public int? updated { get; init; }
+        public int? created { get; init; }
+        public int? deleted { get; init; }
+    }
 }
