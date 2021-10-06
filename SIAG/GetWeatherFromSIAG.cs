@@ -18,7 +18,7 @@ namespace SIAG
         public const string serviceurl = @"http://daten.buergernetz.bz.it/services/weather/bulletin";
         public const string serviceurlbezirk = @" http://daten.buergernetz.bz.it/services/weather/district/";
 
-        public static async Task<HttpResponseMessage> RequestAsync(string lang, string siaguser, string siagpswd, string source, bool usejson = false)
+        public static async Task<HttpResponseMessage> RequestAsync(string lang, string siaguser, string siagpswd, string source, bool usejson = false, string? weatherid = null)
         {
             try
             {
@@ -29,9 +29,18 @@ namespace SIAG
                 }                    
 
                 string requesturl = serviceurl + "?lang=" + lang + "&format=" + format;
-                
+
+                if(!String.IsNullOrEmpty(weatherid))
+                    requesturl = serviceurl + "/" + weatherid + "?lang=" + lang + "&format=" + format;
+
                 if (source == "siag" && !usejson)
+                {
                     requesturl = serviceurlsiag + "?lang=" + lang + "&format=" + format;
+
+                    if (!String.IsNullOrEmpty(weatherid))
+                        requesturl = serviceurlsiag + "/" + weatherid + "?lang=" + lang + "&format=" + format;
+                }
+                    
 
                 CredentialCache wrCache = new CredentialCache();
                 wrCache.Add(new Uri(requesturl), "Basic", new NetworkCredential(siaguser, siagpswd));

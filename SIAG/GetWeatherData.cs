@@ -20,10 +20,10 @@ namespace SIAG
         #region Weather general
  
         //Gets SIAG Weather Data (RAW DATA)
-        public static async Task<string> GetSiagWeatherData(string lang, string siaguser, string siagpswd, bool json)
+        public static async Task<string> GetSiagWeatherData(string lang, string siaguser, string siagpswd, bool json, string? id = null)
         {
             //Request on Siag Service
-            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source, json);
+            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source, json, id);
             //Reading Content and returning
             return await weatherresponse.Content.ReadAsStringAsync();
         }

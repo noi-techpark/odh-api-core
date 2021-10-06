@@ -232,6 +232,36 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+        [HttpGet, Route("Siag/Weather/Import/{id}")]
+        public async Task<IActionResult> ImportWeatherByID(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                var result = await siagimporthelper.SaveWeatherToHistoryTable();
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Import Weather data by Id",
+                    updatetype = "single",
+                    message = "Import Weather data succeeded id:" + id.ToString(),
+                    recordsupdated = result,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "single",
+                    message = "Import Weather data failed: id:" + id.ToString() + " error:" + ex.Message,
+                    recordsupdated = "0",
+                    success = false
+                });
+            }
+        }
+
         #endregion
     }
 }
