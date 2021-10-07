@@ -44,7 +44,7 @@ module Sorting =
     /// a property with a sort direction.
     let writeSortStatement statement =
         let direction = writeDirection statement.Direction
-        let field = writeTextField statement.Field
+        let field = writeRawField statement.Field
         $"{field} {direction}"
 
     /// Statements are concatenated <see cref=">writeStatement</c>

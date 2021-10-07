@@ -172,8 +172,8 @@ namespace OdhApiCore.Controllers.api
             try
             {
                 var result = await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
-                
-                return Ok(new UpdateResult
+
+                var updateresult = new UpdateResult
                 {
                     operation = "Update Raven",
                     updatetype = "single",
@@ -185,11 +185,17 @@ namespace OdhApiCore.Controllers.api
                     updated = result.updated,
                     deleted = result.deleted,
                     success = true
-                });
+                };
+            
+                //Console.WriteLine();
+                //Trying with logger
+                Logger.LogInformation(JsonConvert.SerializeObject(updateresult));
+
+                return Ok(updateresult);
             }
             catch (Exception ex)
             {
-                return BadRequest(new UpdateResult
+                var updateerror = new UpdateResult
                 {
                     operation = "Update Raven",
                     updatetype = "all",
@@ -201,7 +207,11 @@ namespace OdhApiCore.Controllers.api
                     updated = 0,
                     deleted = 0,
                     success = false
-                });
+                };
+
+                Logger.LogError(JsonConvert.SerializeObject(updateerror));
+
+                return BadRequest(updateerror);
             }
         }
 
