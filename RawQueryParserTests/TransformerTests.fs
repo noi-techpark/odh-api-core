@@ -18,7 +18,7 @@ let transfomerTests =
                 Expect.equal actual expected ""
             }
             test "Combined sort statements" {
-                let expected = "data#>'\{Detail,de,Title\}' ASC, data#>>'\{Detail,de,Body\}' DESC"
+                let expected = "data#>'\{Detail,de,Title\}' ASC, data#>'\{Detail,de,Body\}' DESC"
                 let actual = Transformer.transformSort "Detail.de.Title, -Detail.de.Body"
                 Expect.equal actual expected ""
             }
