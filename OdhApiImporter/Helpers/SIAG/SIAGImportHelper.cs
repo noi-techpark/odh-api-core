@@ -73,6 +73,7 @@ namespace OdhApiImporter.Helpers
                 //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_en", data = new JsonRaw(odhweatherresulten), raw = weatherresponsetasken });
 
                 var myweatherhistory = new WeatherHistory();
+                myweatherhistory.Id = odhweatherresultde.Id.ToString();
                 myweatherhistory.Weather.Add("de", odhweatherresultde);
                 myweatherhistory.Weather.Add("it", odhweatherresultit);
                 myweatherhistory.Weather.Add("en", odhweatherresulten);

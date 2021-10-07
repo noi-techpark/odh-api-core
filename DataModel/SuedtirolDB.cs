@@ -1323,6 +1323,7 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public string? Shortname { get; set; }
+        public string Id { get; set; }
     }
 
     #endregion
