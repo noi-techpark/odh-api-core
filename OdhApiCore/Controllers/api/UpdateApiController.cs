@@ -187,9 +187,9 @@ namespace OdhApiCore.Controllers.api
                     success = true
                 };
             
-                //Console.WriteLine();
-                //Trying with logger
-                Logger.LogInformation(JsonConvert.SerializeObject(updateresult));
+                Console.WriteLine(JsonConvert.SerializeObject(updateresult));
+                //Trying with logger not working
+                //Logger.LogInformation(JsonConvert.SerializeObject(updateresult));
 
                 return Ok(updateresult);
             }
@@ -209,7 +209,8 @@ namespace OdhApiCore.Controllers.api
                     success = false
                 };
 
-                Logger.LogError(JsonConvert.SerializeObject(updateerror));
+                //Logger.LogError(JsonConvert.SerializeObject(updateerror));
+                Console.WriteLine(JsonConvert.SerializeObject(updateerror));
 
                 return BadRequest(updateerror);
             }
