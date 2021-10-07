@@ -101,7 +101,7 @@ namespace OdhApiCore.Controllers
 
                     foreach(var field in fields)
                     {
-                        customfields.AddToStringArray(field);
+                        customfields = customfields.AddToStringArray(field);
                     }
                     
                     var result = await SearchTroughEntity(entitytype, ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, searchontext, passedfieldstosearchon, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
