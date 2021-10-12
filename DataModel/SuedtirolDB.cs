@@ -2259,8 +2259,14 @@ namespace DataModel
         public string? Difficulty { get; set; }
 
         //Activity SubType
+        [Obsolete]
+        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
         public string? Type { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
         public string? SubType { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
         public string? PoiType { get; set; }
 
         //NEU SMG Infos
@@ -2868,9 +2874,17 @@ namespace DataModel
     {
         //public string Difficulty { get; set; }
         public string? Novelty { get; set; }
+
+        [Obsolete]
+        [SwaggerSchema("Use Categories instead")]
         public string? MainType { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Use Categories instead")]
         public string? SubType { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Use Categories instead")]
         public string? PoiType { get; set; }
+
         public string? Language { get; set; }
 
         public List<string> Categories { get; set; }
