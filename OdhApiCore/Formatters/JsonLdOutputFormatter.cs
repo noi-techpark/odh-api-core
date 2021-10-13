@@ -30,7 +30,7 @@ namespace OdhApiCore.Formatters
         private object? Transform(PathString path, JsonRaw jsonRaw)
         {
             //TODO extract language
-            //TODO new JsonSerializerSettings {  NullValueHandling = NullValueHandling.Ignore })
+            //TODO new JsonSerializerSettings {  NullValueHandling = NullValueHandling.Ignore  })
 
             if (path.StartsWithSegments("/v1/Accommodation"))
             {

@@ -1095,7 +1095,9 @@ namespace OdhApiCore.Controllers.api
             try
             {
                 var langtoinsert = "";
-                if (!String.IsNullOrEmpty(language))
+
+                //Temporary workaround
+                if (!String.IsNullOrEmpty(language) && (language == "en" || language == "de"))
                     langtoinsert = language + "/";
 
                 var bdprooms = await GetBDPNoiRooms();
