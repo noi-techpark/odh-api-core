@@ -97,7 +97,6 @@ namespace OdhApiCore.Controllers.api
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, cancellationToken: cancellationToken);
         }
 
-
         /// <summary>
         /// GET EventShort Single
         /// </summary>
@@ -182,10 +181,11 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventShort/RoomMapping")]
-        //[CacheOutput(ClientTimeSpan = 3600, ServerTimeSpan = 3600, AnonymousOnly = true)]
-        public async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLinkDictionary()
+        public async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLinkDictionary(
+            string? language = null
+            )
         {
-            return await GetBDPNoiRoomsWithLink();
+            return await GetBDPNoiRoomsWithLink(language);
         }
 
         /// <summary>
@@ -1090,10 +1090,14 @@ namespace OdhApiCore.Controllers.api
 
         private const string bdpserviceurl = @"https://mobility.api.opendatahub.bz.it/v2/flat/NOI-Place?select=smetadata&where=sactive.eq.true&limit=-1";
 
-        private async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLink()
+        private async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLink(string? language)
         {
             try
             {
+                var langtoinsert = "";
+                if (!String.IsNullOrEmpty(language))
+                    langtoinsert = language + "/";
+
                 var bdprooms = await GetBDPNoiRooms();
 
                 if (bdprooms == null)
@@ -1117,7 +1121,7 @@ namespace OdhApiCore.Controllers.api
                         nametodisplay = nametodisplay.Remove(0, 3).Trim();
 
                     if (!noimaproomlist.ContainsKey(nametodisplay))
-                        noimaproomlist.Add(nametodisplay, "https://maps.noi.bz.it/?shared=" + maplink);
+                        noimaproomlist.Add(nametodisplay, "https://maps.noi.bz.it/" + langtoinsert + "?shared=" + maplink);
                 }
 
                 return noimaproomlist;
