@@ -38,6 +38,7 @@ namespace OdhApiCore.Controllers
         /// <param name="limitto">Limit search to n items per entity</param>
         /// <param name="searchbasetext">Search also trough base text (true/false), caution can slow down the search significantly</param>
         /// <param name="filteronfields">Search also on this fields, syntax analog to the fields filter</param>
+        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
@@ -60,6 +61,7 @@ namespace OdhApiCore.Controllers
             bool searchbasetext = false,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? filteronfields = null,
+            string? locfilter = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? rawfilter = null,
@@ -72,7 +74,7 @@ namespace OdhApiCore.Controllers
             var fieldstosearchon = filteronfields ?? Array.Empty<string>();
 
             return await Get(language: language ?? "en", validforentity: odhtype, fields: fieldstodisplay,
-                  searchfilter: term, searchontext: searchbasetext, passedfieldstosearchon: fieldstosearchon,
+                  searchfilter: term, searchontext: searchbasetext, passedfieldstosearchon: fieldstosearchon, locfilter: locfilter,
                   rawfilter: rawfilter, rawsort: rawsort, limitto: limitto, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -83,7 +85,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(string language, string? validforentity, string[] fields,
-            string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
+            string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? locfilter, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var myentitytypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -104,7 +106,7 @@ namespace OdhApiCore.Controllers
                         customfields = customfields.AddToStringArray(field);
                     }
                     
-                    var result = await SearchTroughEntity(entitytype, ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, searchontext, passedfieldstosearchon, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
+                    var result = await SearchTroughEntity(entitytype, ODHTypeHelper.TranslateTypeToSearchField(entitytype), ODHTypeHelper.TranslateTypeString2Table(entitytype), language, customfields, searchfilter, searchontext, passedfieldstosearchon, locfilter, rawfilter, rawsort, limitto, removenullvalues, cancellationToken);
 
                     if (result != null)
                     {
@@ -124,7 +126,7 @@ namespace OdhApiCore.Controllers
         }
 
         private async Task<IEnumerable<JsonRaw>> SearchTroughEntity(string entitytype, Func<string, string[]> fieldsearchfunc, string table, string language, string[] fields,
-            string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
+            string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? locfilter, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
             var searchonfields = fieldsearchfunc(language);
 
@@ -141,11 +143,36 @@ namespace OdhApiCore.Controllers
                 searchonfields = searchonfields.AddToStringArray(passedfieldstosearchon);
             }
 
+            //Locfilter extensions            
+            var tourismvereinlist = new List<string>();
+            var regionlist = new List<string>();
+            var municipalitylist = new List<string>();
+            var districtlist = new List<string>();
+
+            if (locfilter != null && locfilter.Contains("reg"))
+                regionlist = Helper.CommonListCreator.CreateDistrictIdList(locfilter, "reg");
+            if (locfilter != null && locfilter.Contains("tvs"))
+                tourismvereinlist = Helper.CommonListCreator.CreateDistrictIdList(locfilter, "tvs");
+            if (locfilter != null && locfilter.Contains("mun"))
+                municipalitylist = Helper.CommonListCreator.CreateDistrictIdList(locfilter, "mun");
+            if (locfilter != null && locfilter.Contains("fra"))
+                districtlist = Helper.CommonListCreator.CreateDistrictIdList(locfilter, "fra");
+            if (locfilter != null && locfilter.Contains("mta"))
+            {
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
+                tourismvereinlist.AddRange(await GenericHelper.RetrieveLocFilterDataAsync(QueryFactory, metaregionlist, cancellationToken));
+            }
+            //end locfilter extensions
+
             var query =
                 QueryFactory.Query()
                 .SelectRaw("data")
                 .From(table)
                 .SearchFilter(searchonfields, searchfilter)
+                .LocFilterDistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)                
                 .When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
