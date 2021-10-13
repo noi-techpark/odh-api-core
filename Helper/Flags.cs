@@ -1211,7 +1211,13 @@ namespace Helper
         [Description("Zip-lines")]
         Ziplines = 1 << 7,
         [Description("Weitere Spiel und Sportanlagen")]
-        WeitereSpielSportanlagen = 1 << 8
+        WeitereSpielSportanlagen = 1 << 8,
+        [Description("Tierpark")]
+        Tierpark = 1 << 9,
+        [Description("Bikepark")]
+        Bikepark = 1 << 10,
+        [Description("Pumptracks und mehr")]
+        Pumptracksundmehr = 1 << 11,
     }
 
     [Flags]
