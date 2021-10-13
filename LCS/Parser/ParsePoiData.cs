@@ -540,7 +540,7 @@ namespace LCS.Parser
             {
                 LTSTags myltstag = new LTSTags();
                 myltstag.LTSRID = ltstag.RID;
-                myltstag.Id = ltstag.Name.FirstOrDefault().InnerText.Replace("/", "");
+                myltstag.Id = ltstag.Name.FirstOrDefault().InnerText.Trim().Replace("/", "");
 
                 myltstag.TagName.TryAddOrUpdate("de", ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : "");
 

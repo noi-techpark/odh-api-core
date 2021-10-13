@@ -912,7 +912,9 @@ namespace Helper
         [Description("Krankenhaus")]
         Krankenhaus = 1 << 9,
         [Description("Weitere öffentliche Einrichtungen")]
-        WeitereoeffentlicheEinrichtungen = 1 << 10
+        WeitereoeffentlicheEinrichtungen = 1 << 10,
+        [Description("Trinkwasserauffüllpunkte")]
+        Trinkwasserauffuellpunkte = 1 << 11
     }
 
     //POI Type Nachtleben Unterhaltung
@@ -1724,7 +1726,9 @@ namespace Helper
         [Description("Pumptrack")]
         Pumptrack = 1 << 8,
         [Description("Singletrail / Freeride")]
-        SingleTrailFreeride = 1 << 9
+        SingleTrailFreeride = 1 << 9,
+        [Description("E-MTB")]
+        EMtb = 1 << 10
     }
 
     [Flags]
@@ -1973,7 +1977,9 @@ namespace Helper
         [Description("Krankenhaus")]
         Krankenhaus = 1 << 9,
         [Description("Weitere öffentliche Einrichtungen")]
-        WeitereoeffentlicheEinrichtungen = 1 << 10
+        WeitereoeffentlicheEinrichtungen = 1 << 10,
+        [Description("Trinkwasserauffüllpunkte")]
+        Trinkwasserauffuellpunkte = 1 << 11
     }
 
     [Flags]
@@ -2241,7 +2247,13 @@ namespace Helper
         [Description("Weitere Verleih, Depot")]
         WeitereVerleihDepot = 1L << 47,
         [Description("Schneeschuhverleih")]
-        Schneeschuhverleih = 1L << 48
+        Schneeschuhverleih = 1L << 48,
+        [Description("Tierpark")]
+        Tierpark = 1L << 49,
+        [Description("Bikepark")]
+        Bikepark = 1L << 50,
+        [Description("Pumptracks und mehr")]
+        Pumptracksundmehr = 1L << 51
     }
 
     #endregion
