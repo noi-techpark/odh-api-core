@@ -197,8 +197,17 @@ namespace OdhApiCore.Filters
             var query = context.HttpContext.Request.Query;
 
             string idsource = (string?)query["idsource"] ?? "lts";
-            var availabilitychecklegacy = (string?)query["availabilitycheck"];
-            bool.TryParse(availabilitychecklegacy, out bool availabilitycheck);
+           
+
+            bool availabilitycheck = false;
+
+            if (actionid == "PostAvailableAccommodations")
+                availabilitycheck = true;
+            if (actionid == "GetAccommodations")
+            {
+                var availabilitychecklegacy = (string?)query["availabilitycheck"];
+                bool.TryParse(availabilitychecklegacy, out availabilitycheck);
+            }
 
             string bokfilter = (string?)query["bokfilter"] ?? "hgv";
             var bokfilterlist = bokfilter.Split(',').ToList();
