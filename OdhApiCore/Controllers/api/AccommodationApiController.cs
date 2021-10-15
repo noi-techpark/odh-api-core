@@ -125,10 +125,6 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            //bool availabilitysearchallowed = CheckAvailabilitySearch();
-
-            //Contains 6 Methods GETPAGED, GETFILTERED, GETAVAILABLE, GETAVAILABLELCS, GETAVAILABLEMSSANDLCS
-                    
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
@@ -439,7 +435,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [HttpPost, Route("AccommodationAvailable")]
         [HttpPost, Route("AvailabilityCheck")]
-        public IActionResult? PostAvailableAccommodations(
+        public async Task<IActionResult> PostAvailableAccommodations(
             [FromBody] string idfilter,
             string? availabilitychecklanguage = "en",
             string? boardfilter = null,
@@ -451,13 +447,49 @@ namespace OdhApiCore.Controllers
             int detail = 0,
             bool withoutmssids = false,
             bool withoutlcsids = false,
-            bool availabilityonly = false
-            )
+            bool availabilityonly = false,
+            CancellationToken cancellationToken = default)
         {
             //TODO if Route = AvailabilityCheck return only Mssresult
             var x = this.HttpContext.Request.RouteValues;
 
             //TODO if no idfilter given make request to all (make use of cached MSS)
+
+            var accobooklist = Request.HttpContext.Items["accobooklist"];
+            var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
+            var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
+
+            var availableonlineaccos = new List<string>();
+            if (accoavailabilitymss != null)
+                availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
+            if (accoavailabilitylcs != null)
+                availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
+            
+            
+            if (availabilityonly)
+            {
+                //return immediately the mss response
+                var result = ResponseHelpers.GetResult(
+                   1,
+                   1,
+                   1,
+                   availableonlineaccos.Count,
+                   "0",
+                   ((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList(),
+                   Url);
+
+                return (Ok(result));
+            }
+            else
+            {
+                return await GetFiltered(
+                fields: Array.Empty<string>(), language: null, pagenumber: 1,
+                pagesize: -1, idfilter: idfilter, idlist: availableonlineaccos, locfilter: null, categoryfilter: null,
+                typefilter: null, boardfilter: boardfilter, featurefilter: null, featureidfilter: null, themefilter: null, badgefilter: null,
+                altitudefilter: null, active: null, smgactive: null, bookablefilter: null, smgtagfilter: null,
+                seed: null, updatefrom: null, langfilter: null, searchfilter: null, new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
+                rawfilter: null, rawsort: null, removenullvalues: false, cancellationToken);
+            }
 
 
             //if (String.IsNullOrEmpty(arrival))
