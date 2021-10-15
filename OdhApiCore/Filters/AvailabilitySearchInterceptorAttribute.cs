@@ -58,7 +58,12 @@ namespace OdhApiCore.Filters
                 //Getting the Querystrings
                 var actionarguments = context.ActionArguments;
 
-                bool? availabilitycheck = ((LegacyBool)actionarguments["availabilitycheck"]).Value;
+                bool? availabilitycheck = false;
+
+                if (actionid == "PostAvailableAccommodations")
+                    availabilitycheck = true;
+                if (actionid == "GetAccommodations")
+                    availabilitycheck = ((LegacyBool)actionarguments["availabilitycheck"]).Value;
                 
                 if(availabilitycheck != null && availabilitycheck == true)
                 {
@@ -141,7 +146,10 @@ namespace OdhApiCore.Filters
                         {
                             if(withoutmssids == false)
                             {
-                                //add the parsed ids                                
+                                //add the parsed ids                      
+                                var x = actionarguments.ContainsKey("idfilter") ? (string)actionarguments["idfilter"] : null;
+
+                                //booklist = actionarguments.ContainsKey("idfilter") ? (string)actionarguments["idfilter"].ToString().Split(",").ToList() : new List<string>();
                             }
                         }
                         

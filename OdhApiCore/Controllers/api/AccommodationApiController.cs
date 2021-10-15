@@ -433,6 +433,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
+        [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
         [HttpPost, Route("AccommodationAvailable")]
         [HttpPost, Route("AvailabilityCheck")]
         public async Task<IActionResult> PostAvailableAccommodations(
@@ -484,7 +485,7 @@ namespace OdhApiCore.Controllers
             {
                 return await GetFiltered(
                 fields: Array.Empty<string>(), language: null, pagenumber: 1,
-                pagesize: -1, idfilter: idfilter, idlist: availableonlineaccos, locfilter: null, categoryfilter: null,
+                pagesize: new PageSize(-1), idfilter: idfilter, idlist: availableonlineaccos, locfilter: null, categoryfilter: null,
                 typefilter: null, boardfilter: boardfilter, featurefilter: null, featureidfilter: null, themefilter: null, badgefilter: null,
                 altitudefilter: null, active: null, smgactive: null, bookablefilter: null, smgtagfilter: null,
                 seed: null, updatefrom: null, langfilter: null, searchfilter: null, new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
