@@ -196,14 +196,13 @@ namespace OdhApiCore.Filters
 
             var query = context.HttpContext.Request.Query;
 
-            string idsource = (string?)query["idsource"] ?? "lts";
-           
+            string idsource = (string?)query["idsource"] ?? "lts";           
 
             bool availabilitycheck = false;
 
             if (actionid == "PostAvailableAccommodations")
                 availabilitycheck = true;
-            if (actionid == "GetAccommodations")
+            if (actionid == "GetAccommodations" || actionid == "GetAccommodation")
             {
                 var availabilitychecklegacy = (string?)query["availabilitycheck"];
                 bool.TryParse(availabilitychecklegacy, out availabilitycheck);
@@ -212,7 +211,10 @@ namespace OdhApiCore.Filters
             string bokfilter = (string?)query["bokfilter"] ?? "hgv";
             var bokfilterlist = bokfilter.Split(',').ToList();
 
-            if (availabilitycheck && availabilitysearchavailable)
+            var availabilityonlychecklegacy = (string?)query["availabilityonly"];
+            bool.TryParse(availabilityonlychecklegacy, out bool availabilityonly);
+
+            if (availabilitycheck && availabilitysearchavailable && !availabilityonly)
             {
                 string language = (string?)query["language"] ?? "de";
                 //string availabilitychecklanguage = (string?)query["availabilitychecklanguage"] ?? "en";
