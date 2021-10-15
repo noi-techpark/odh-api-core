@@ -82,7 +82,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(JsonResult<Accommodation>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
+        [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Accommodation", Name = "AccommodationList")]
         public async Task<IActionResult> GetAccommodations(
@@ -162,66 +162,7 @@ namespace OdhApiCore.Controllers
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
-            }
-            //else if(availabilitycheck?.Value == true && !availabilitysearchallowed)
-            //{
-            //    return BadRequest("AvailabilitySearchnot available as open data!");
-            //}
-
-            //Fall 3 Available MSS
-            //else if (availabilitycheck?.Value == true && (bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp") || bokfilterlist.Contains("bok")) && !bokfilterlist.Contains("lts"))
-            //{
-            //    if (availabilitysearchallowed)
-            //    {
-            //        if (String.IsNullOrEmpty(arrival))
-            //            arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //        if (String.IsNullOrEmpty(departure))
-            //            departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //        if (boardfilter == null)
-            //            boardfilter = "0";
-
-            //        throw new NotImplementedException(); //return await GetAvailableAsync(pagenumber, pagesize, availabilitychecklanguage, categoryfilter, typefilter, boardfilter, featurefilter, themefilter, badgefilter, idfilter, locfilter, active?.Value, odhactive?.Value, odhtagfilter, arrival, departure, roominfo, bokfilter, seed, geosearchresult, source, fieldselector, language, updatefrom, searchfilter);
-            //    }
-            //    else
-            //        return BadRequest("AvailabilitySearch only available for logged Users, not as open data!");
-            //}
-
-            ////Fall 4 Available LCS
-            //else if (availabilitycheck?.Value == true && !bokfilterlist.Contains("hgv") && !bokfilterlist.Contains("htl") && !bokfilterlist.Contains("exp") && !bokfilterlist.Contains("bok") && bokfilterlist.Contains("lts"))
-            //{
-            //    if (availabilitysearchallowed)
-            //    {
-            //        if (String.IsNullOrEmpty(arrival))
-            //            arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //        if (String.IsNullOrEmpty(departure))
-            //            departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //        if (boardfilter == null)
-            //            boardfilter = "0";
-
-            //        throw new NotImplementedException(); // return await GetAvailableLCSAsync(pagenumber, pagesize, availabilitychecklanguage, categoryfilter, typefilter, boardfilter, featurefilter, themefilter, badgefilter, idfilter, locfilter, active?.Value, odhactive?.Value, odhtagfilter, arrival, departure, roominfo, seed, geosearchresult, fieldselector, language, updatefrom, searchfilter);
-            //    }
-            //    else
-            //        return BadRequest("AvailabilitySearch only available for logged Users, not as open data!");
-            //}
-
-            ////Fall 5 Available MSS and LCS
-            //else if (availabilitycheck?.Value == true && (bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp") || bokfilterlist.Contains("bok")) && bokfilterlist.Contains("lts"))
-            //{
-            //    if (availabilitysearchallowed)
-            //    {
-            //        if (String.IsNullOrEmpty(arrival))
-            //            arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //        if (String.IsNullOrEmpty(departure))
-            //            departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //        if (boardfilter == null)
-            //            boardfilter = "0";
-
-            //        throw new NotImplementedException(); // return await GetAvailableMSSLCSAsync(pagenumber, pagesize, availabilitychecklanguage, categoryfilter, typefilter, boardfilter, featurefilter, themefilter, badgefilter, idfilter, locfilter, active?.Value, odhactive?.Value, odhtagfilter, arrival, departure, roominfo, bokfilter, seed, geosearchresult, source, fieldselector, language, updatefrom, searchfilter);
-            //    }
-            //    else
-            //        return BadRequest("AvailabilitySearch only available for logged Users, not as open data!");
-            //}
-            else
+            }          
             {
                 return BadRequest("not supported!");
             }
@@ -251,7 +192,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
         [HttpGet, Route("Accommodation/{id}", Name = "SingleAccommodation")]
-        [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
+        [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
         public async Task<IActionResult> GetAccommodation(
             string id,
             string? idsource = "lts",

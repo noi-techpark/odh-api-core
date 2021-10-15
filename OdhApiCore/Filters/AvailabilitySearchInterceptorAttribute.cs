@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace OdhApiCore.Filters
 {
-    public class MssInterceptorAttribute : ActionFilterAttribute
+    public class AvailabilitySearchInterceptorAttribute : ActionFilterAttribute
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly ISettings settings;
@@ -38,7 +38,7 @@ namespace OdhApiCore.Filters
             return false;
         }
 
-        public MssInterceptorAttribute(QueryFactory queryFactory, IHttpClientFactory httpClientFactory, ISettings settings)
+        public AvailabilitySearchInterceptorAttribute(QueryFactory queryFactory, IHttpClientFactory httpClientFactory, ISettings settings)
         {
             this.httpClientFactory = httpClientFactory;
             this.settings = settings;
