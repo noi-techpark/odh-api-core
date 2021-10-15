@@ -438,20 +438,28 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [HttpPost, Route("AccommodationAvailable")]
+        [HttpPost, Route("AvailabilityCheck")]
         public IActionResult? PostAvailableAccommodations(
             [FromBody] string idfilter,
-            string availabilitychecklanguage = "en",
+            string? availabilitychecklanguage = "en",
             string? boardfilter = null,
             string? arrival = null,
             string? departure = null,
-            string roominfo = "1-18,18",
-            string bokfilter = "hgv",
-            string source = "sinfo",
+            string? roominfo = "1-18,18",
+            string? bokfilter = "hgv",
+            string? source = "sinfo",
             int detail = 0,
             bool withoutmssids = false,
-            bool withoutlcsids = false
+            bool withoutlcsids = false,
+            bool availabilityonly = false
             )
         {
+            //TODO if Route = AvailabilityCheck return only Mssresult
+            var x = this.HttpContext.Request.RouteValues;
+
+            //TODO if no idfilter given make request to all (make use of cached MSS)
+
+
             //if (String.IsNullOrEmpty(arrival))
             //    arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
             //if (String.IsNullOrEmpty(departure))
