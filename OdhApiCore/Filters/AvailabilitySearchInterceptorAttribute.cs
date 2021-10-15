@@ -238,14 +238,13 @@ namespace OdhApiCore.Filters
                             var mssResponseShort = jObject.Property("MssResponseShort");
                             if (mssResponseShort is JProperty mssResponseShortProperty)
                             {
-
                                 List<MssResult> result = new List<MssResult>();
 
                                 if (bokfilterlist.Contains("hgv"))
                                 {
                                     MssResult? mssresult = default(MssResult);
 
-                                    if (actionid == "GetAccommodations")
+                                    if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
                                     {
                                         mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
                                     }
@@ -302,7 +301,7 @@ namespace OdhApiCore.Filters
                                     {
                                         MssResult? mssresult = null;
 
-                                        if (actionid == "GetAccommodations")
+                                        if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
                                         {
                                             mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
                                         }
@@ -323,7 +322,7 @@ namespace OdhApiCore.Filters
                                     {
                                         MssResult? lcsresult = null;
 
-                                        if (actionid == "GetAccommodations")
+                                        if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
                                         {
                                             lcsresult = (MssResult?)context.HttpContext.Items["lcsavailablity"];
                                         }
