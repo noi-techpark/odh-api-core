@@ -138,21 +138,20 @@ namespace OdhApiCore.Filters
                             //TODO NOT WORKING, Availability Request is returned without paging
 
 
-                            booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
-                           
-                            context.HttpContext.Items.Add("accobooklist", booklist);
+                            booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();                                                      
                         }
                         else if(actionid == "PostAvailableAccommodations")
                         {
                             if(withoutmssids == false)
                             {
                                 //add the parsed ids                      
-                                var x = actionarguments.ContainsKey("idfilter") ? (string)actionarguments["idfilter"] : null;
+                                var passedids = actionarguments.ContainsKey("idfilter") ? (string)actionarguments["idfilter"] : "";
 
-                                //booklist = actionarguments.ContainsKey("idfilter") ? (string)actionarguments["idfilter"].ToString().Split(",").ToList() : new List<string>();
+                                booklist = passedids.Split(",").ToList();
                             }
                         }
-                        
+
+                        context.HttpContext.Items.Add("accobooklist", booklist);
 
                         if (bokfilterlist.Contains("hgv"))
                         {
