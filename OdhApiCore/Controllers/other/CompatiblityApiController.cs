@@ -510,7 +510,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="language">Localization Language, (default:'en')</param>
         /// <param name="type">Type of the ODHActivityPoi ('null' = Filter disabled, possible values: BITMASK: 1 = Wellness, 2 = Winter, 4 = Summer, 8 = Culture, 16 = Other, 32 = Gastronomy), (default: 63 == ALL), REFERENCE TO: GET /api/ODHActivityPoiTypes </param>
         /// <param name="subtype">Subtype of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype reference to ODHActivityPoiTypes)</param>
-        /// <param name="poitype">Additional Type of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype, SubType reference to ODHActivityPoiTypes)</param>
+        /// <param name="level3type">Additional Type of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype, SubType reference to ODHActivityPoiTypes)</param>
         /// <param name="locfilter">Locfilter (Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = No Filter), (default:'null')</param>
         /// <param name="areafilter">AreaFilter (Alternate Locfilter, can be combined with locfilter) (Separator ',' possible values: reg + REGIONID = (Filter by Region), tvs + TOURISMASSOCIATIONID = (Filter by Tourismassociation), skr + SKIREGIONID = (Filter by Skiregion), ska + SKIAREAID = (Filter by Skiarea), are + AREAID = (Filter by LTS Area), 'null' = No Filter), (default:'null')</param>
         /// <param name="highlight">Hightlight Filter (possible values: 'false' = only ODHActivityPoi with Highlight false, 'true' = only ODHActivityPoi with Highlight true), (default:'null')</param>
@@ -530,7 +530,7 @@ namespace OdhApiCore.Controllers.api
             string? language = "en",
             string? type = "255",
             string? subtype = null,
-            string? poitype = null,
+            string? level3type = null,
             string? locfilter = null,
             //string langfilter = null,
             string? areafilter = null,
@@ -551,7 +551,7 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return await GetODHActivityPoiReduced(language, type, subtype, poitype, locfilter, areafilter, highlight?.Value, active?.Value, odhactive?.Value,
+            return await GetODHActivityPoiReduced(language, type, subtype, level3type, locfilter, areafilter, highlight?.Value, active?.Value, odhactive?.Value,
                 source, odhtagfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, searchfilter,
                 geosearchresult, cancellationToken);
         }
@@ -570,7 +570,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="smgtags">SMGTag Filter (String, Separator ',' more SMGTags possible, 'null' = No Filter)</param>
         /// <returns>Collection of Reduced Poi Objects</returns>
         private Task<IActionResult> GetODHActivityPoiReduced(
-            string? language, string? type, string? subtype, string? poitype, string? locfilter,
+            string? language, string? type, string? subtype, string? level3type, string? locfilter,
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? source,
             string? smgtags, string[] fields, string? rawfilter, string? rawsort, string? searchfilter,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
@@ -578,9 +578,9 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
-                    queryFactory: QueryFactory, typefilter: type, subtypefilter: subtype, poitypefilter: poitype, idfilter: null, locfilter: locfilter, areafilter: areafilter,
+                    queryFactory: QueryFactory, typefilter: type, subtypefilter: subtype, level3typefilter: level3type, idfilter: null, locfilter: locfilter, areafilter: areafilter,
                     languagefilter: language, sourcefilter: source, highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: null,
-                    categorycodefilter: null, dishcodefilter: null, ceremonycodefilter: null, facilitycodefilter: null, cuisinecodefilter: null, activitytypefilter: null, distancefilter: null, 
+                    categorycodefilter: null, dishcodefilter: null, ceremonycodefilter: null, facilitycodefilter: null, cuisinecodefilter: null, activitytypefilter: null, poitypefilter: null, distancefilter: null, 
                     altitudefilter: null, durationfilter: null, difficultyfilter: null, publishedonfilter: null, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
@@ -595,14 +595,14 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw(select)
                         .From("smgpois")
                         .ODHActivityPoiWhereExpression(
-                            idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, poitypelist: helper.poitypelist,
+                            idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, level3typelist: helper.level3typelist,
                             smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,
                             categorycodeslist: helper.categorycodesids, dishcodeslist: helper.dishcodesids, ceremonycodeslist: helper.ceremonycodesids,
                             facilitycodeslist: helper.facilitycodesids,
-                            activitytypelist: helper.activitytypelist, difficultylist: helper.difficultylist, distance: helper.distance,
+                            activitytypelist: helper.activitytypelist, poitypelist: helper.poitypelist, difficultylist: helper.difficultylist, distance: helper.distance,
                             distancemin: helper.distancemin, distancemax: helper.distancemax, duration: helper.duration, durationmin: helper.durationmin,
                             durationmax: helper.durationmax, altitude: helper.altitude, altitudemin: helper.altitudemin, altitudemax: helper.altitudemax,
                             publishedonlist: helper.publishedonlist,

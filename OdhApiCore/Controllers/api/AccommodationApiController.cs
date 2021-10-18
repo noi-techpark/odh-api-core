@@ -82,7 +82,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(JsonResult<Accommodation>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
+        [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Accommodation", Name = "AccommodationList")]
         public async Task<IActionResult> GetAccommodations(
@@ -125,10 +125,6 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            //bool availabilitysearchallowed = CheckAvailabilitySearch();
-
-            //Contains 6 Methods GETPAGED, GETFILTERED, GETAVAILABLE, GETAVAILABLELCS, GETAVAILABLEMSSANDLCS
-                    
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
@@ -162,66 +158,7 @@ namespace OdhApiCore.Controllers
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
-            }
-            //else if(availabilitycheck?.Value == true && !availabilitysearchallowed)
-            //{
-            //    return BadRequest("AvailabilitySearchnot available as open data!");
-            //}
-
-            //Fall 3 Available MSS
-            //else if (availabilitycheck?.Value == true && (bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp") || bokfilterlist.Contains("bok")) && !bokfilterlist.Contains("lts"))
-            //{
-            //    if (availabilitysearchallowed)
-            //    {
-            //        if (String.IsNullOrEmpty(arrival))
-            //            arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //        if (String.IsNullOrEmpty(departure))
-            //            departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //        if (boardfilter == null)
-            //            boardfilter = "0";
-
-            //        throw new NotImplementedException(); //return await GetAvailableAsync(pagenumber, pagesize, availabilitychecklanguage, categoryfilter, typefilter, boardfilter, featurefilter, themefilter, badgefilter, idfilter, locfilter, active?.Value, odhactive?.Value, odhtagfilter, arrival, departure, roominfo, bokfilter, seed, geosearchresult, source, fieldselector, language, updatefrom, searchfilter);
-            //    }
-            //    else
-            //        return BadRequest("AvailabilitySearch only available for logged Users, not as open data!");
-            //}
-
-            ////Fall 4 Available LCS
-            //else if (availabilitycheck?.Value == true && !bokfilterlist.Contains("hgv") && !bokfilterlist.Contains("htl") && !bokfilterlist.Contains("exp") && !bokfilterlist.Contains("bok") && bokfilterlist.Contains("lts"))
-            //{
-            //    if (availabilitysearchallowed)
-            //    {
-            //        if (String.IsNullOrEmpty(arrival))
-            //            arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //        if (String.IsNullOrEmpty(departure))
-            //            departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //        if (boardfilter == null)
-            //            boardfilter = "0";
-
-            //        throw new NotImplementedException(); // return await GetAvailableLCSAsync(pagenumber, pagesize, availabilitychecklanguage, categoryfilter, typefilter, boardfilter, featurefilter, themefilter, badgefilter, idfilter, locfilter, active?.Value, odhactive?.Value, odhtagfilter, arrival, departure, roominfo, seed, geosearchresult, fieldselector, language, updatefrom, searchfilter);
-            //    }
-            //    else
-            //        return BadRequest("AvailabilitySearch only available for logged Users, not as open data!");
-            //}
-
-            ////Fall 5 Available MSS and LCS
-            //else if (availabilitycheck?.Value == true && (bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp") || bokfilterlist.Contains("bok")) && bokfilterlist.Contains("lts"))
-            //{
-            //    if (availabilitysearchallowed)
-            //    {
-            //        if (String.IsNullOrEmpty(arrival))
-            //            arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //        if (String.IsNullOrEmpty(departure))
-            //            departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //        if (boardfilter == null)
-            //            boardfilter = "0";
-
-            //        throw new NotImplementedException(); // return await GetAvailableMSSLCSAsync(pagenumber, pagesize, availabilitychecklanguage, categoryfilter, typefilter, boardfilter, featurefilter, themefilter, badgefilter, idfilter, locfilter, active?.Value, odhactive?.Value, odhtagfilter, arrival, departure, roominfo, bokfilter, seed, geosearchresult, source, fieldselector, language, updatefrom, searchfilter);
-            //    }
-            //    else
-            //        return BadRequest("AvailabilitySearch only available for logged Users, not as open data!");
-            //}
-            else
+            }          
             {
                 return BadRequest("not supported!");
             }
@@ -251,7 +188,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
         [HttpGet, Route("Accommodation/{id}", Name = "SingleAccommodation")]
-        [TypeFilter(typeof(Filters.MssInterceptorAttribute))]
+        [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
         public async Task<IActionResult> GetAccommodation(
             string id,
             string? idsource = "lts",
@@ -496,21 +433,66 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
+        [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
         [HttpPost, Route("AccommodationAvailable")]
-        public IActionResult? PostAvailableAccommodations(
+        [HttpPost, Route("AvailabilityCheck")]
+        public async Task<IActionResult> PostAvailableAccommodations(
             [FromBody] string idfilter,
-            string availabilitychecklanguage = "en",
+            string? availabilitychecklanguage = "en",
             string? boardfilter = null,
             string? arrival = null,
             string? departure = null,
-            string roominfo = "1-18,18",
-            string bokfilter = "hgv",
-            string source = "sinfo",
+            string? roominfo = "1-18,18",
+            string? bokfilter = "hgv",
+            string? source = "sinfo",
             int detail = 0,
             bool withoutmssids = false,
-            bool withoutlcsids = false
-            )
+            bool withoutlcsids = false,
+            bool availabilityonly = false,
+            CancellationToken cancellationToken = default)
         {
+            //TODO if Route = AvailabilityCheck return only Mssresult
+            var x = this.HttpContext.Request.RouteValues;
+
+            //TODO if no idfilter given make request to all (make use of cached MSS)
+
+            var accobooklist = Request.HttpContext.Items["accobooklist"];
+            var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
+            var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
+
+            var availableonlineaccos = new List<string>();
+            if (accoavailabilitymss != null)
+                availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
+            if (accoavailabilitylcs != null)
+                availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
+            
+            
+            if (availabilityonly)
+            {
+                //return immediately the mss response
+                var result = ResponseHelpers.GetResult(
+                   1,
+                   1,
+                   1,
+                   availableonlineaccos.Count,
+                   "0",
+                   ((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList(),
+                   Url);
+
+                return (Ok(result));
+            }
+            else
+            {
+                return await GetFiltered(
+                fields: Array.Empty<string>(), language: null, pagenumber: 1,
+                pagesize: int.MaxValue, idfilter: idfilter, idlist: availableonlineaccos, locfilter: null, categoryfilter: null,
+                typefilter: null, boardfilter: boardfilter, featurefilter: null, featureidfilter: null, themefilter: null, badgefilter: null,
+                altitudefilter: null, active: null, smgactive: null, bookablefilter: null, smgtagfilter: null,
+                seed: null, updatefrom: null, langfilter: null, searchfilter: null, new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
+                rawfilter: null, rawsort: null, removenullvalues: false, cancellationToken);
+            }
+
+
             //if (String.IsNullOrEmpty(arrival))
             //    arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
             //if (String.IsNullOrEmpty(departure))

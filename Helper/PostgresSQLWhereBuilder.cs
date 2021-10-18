@@ -255,12 +255,13 @@ namespace Helper
         public static Query ODHActivityPoiWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
-            IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> sourcelist,
+            IReadOnlyCollection<string> level3typelist, IReadOnlyCollection<string> sourcelist,
             IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> categorycodeslist, IReadOnlyCollection<string> dishcodeslist, IReadOnlyCollection<string> ceremonycodeslist, IReadOnlyCollection<string> facilitycodeslist,
-            IReadOnlyCollection<string> activitytypelist, IReadOnlyCollection<string> difficultylist, bool distance, int distancemin, int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin, int altitudemax,
+            IReadOnlyCollection<string> activitytypelist, IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> difficultylist, 
+            bool distance, int distancemin, int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin, int altitudemax,
             IReadOnlyCollection<string> publishedonlist,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
@@ -268,7 +269,7 @@ namespace Helper
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, typelist,
-                subtypelist, poitypelist, languagelist, sourcelist,
+                subtypelist, level3typelist, poitypelist, languagelist, sourcelist,
                 smgtaglist, districtlist,
                 municipalitylist, tourismvereinlist,
                 regionlist, arealist, highlight, activefilter,
@@ -285,7 +286,7 @@ namespace Helper
                 .AreaFilter(arealist)
                 .When(typelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(typelist)) //.ODHActivityPoiTypeFilterOnTags(typelist)
                 .When(subtypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(subtypelist)) //.ODHActivityPoiSubTypeFilterOnTags(subtypelist)
-                .When(poitypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(poitypelist)) //.ODHActivityPoiPoiTypeFilterOnTags(poitypelist)
+                .When(level3typelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(level3typelist)) //.ODHActivityPoiSubTypeFilterOnTags(subtypelist)
                 .SourceFilter_GeneratedColumn(sourcelist) //.SourceFilter(sourcelist)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
@@ -299,6 +300,8 @@ namespace Helper
                 .DishCodeFilter(dishcodeslist)
                 //New ActivityFilters
                 .When(activitytypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(activitytypelist))  //.ActivityTypeFilterOnTags(activitytypelist)
+                //Changed PoiTypeFilter
+                .When(poitypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(poitypelist)) //.ODHActivityPoiPoiTypeFilterOnTags(poitypelist)
                 .DifficultyFilter(difficultylist)
                 .DistanceFilter(distance, distancemin, distancemax)
                 .DurationFilter(duration, durationmin, durationmax)

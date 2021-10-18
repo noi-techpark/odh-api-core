@@ -11,7 +11,7 @@ namespace OdhApiCore.Controllers.api
     public class ODHActivityPoiHelper
     {
         public List<string> typelist;
-        public List<string> poitypelist;
+        public List<string> level3typelist;
         public List<string> subtypelist;
         public List<string> idlist;
         public List<string> arealist;
@@ -34,7 +34,8 @@ namespace OdhApiCore.Controllers.api
         public List<string> cuisinecodesids;
         //Activity
         public List<string> activitytypelist;
-        //public List<string> activitysubtypelist;
+        public List<string> poitypelist;
+
         public List<string> difficultylist;
         public bool distance;
         public int distancemin;
@@ -45,8 +46,7 @@ namespace OdhApiCore.Controllers.api
         public bool duration;
         public int durationmin;
         public int durationmax;
-        //Poi
-        public List<string> poitypelist2;
+        
         //New Publishedonlist
         public List<string> publishedonlist;
 
@@ -55,7 +55,7 @@ namespace OdhApiCore.Controllers.api
             QueryFactory queryFactory, 
             string? typefilter, 
             string? subtypefilter, 
-            string? poitypefilter, 
+            string? level3typefilter, 
             string? idfilter, 
             string? locfilter,
             string? areafilter, 
@@ -67,7 +67,8 @@ namespace OdhApiCore.Controllers.api
             string? smgtags, 
             string? lastchange,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
-            string? activitytypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
+            string? activitytypefilter, string? poitypefilter,
+            string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
             string? publishedonfilter,
             CancellationToken cancellationToken)
         {
@@ -80,10 +81,10 @@ namespace OdhApiCore.Controllers.api
                 tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
             }
 
-            return new ODHActivityPoiHelper(typefilter, subtypefilter, poitypefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, 
+            return new ODHActivityPoiHelper(typefilter, subtypefilter, level3typefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, 
                 highlightfilter, activefilter, smgactivefilter, smgtags, 
                 categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
-                activitytypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter,
+                activitytypefilter, poitypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter,
                 publishedonfilter,
                 lastchange, tourismusvereinids);
         }
@@ -91,7 +92,7 @@ namespace OdhApiCore.Controllers.api
         private ODHActivityPoiHelper(
             string? typefilter, 
             string? subtypefilter, 
-            string? poitypefilter, 
+            string? level3typefilter, 
             string? idfilter, 
             string? locfilter, 
             IEnumerable<string> arealist, 
@@ -102,7 +103,7 @@ namespace OdhApiCore.Controllers.api
             bool? smgactivefilter, 
             string? smgtags,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter,  string? facilitycodefilter,  string? cuisinecodefilter,
-            string? activitytypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
+            string? activitytypefilter, string? poitypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
             string? publishedonfilter,
             string? lastchange,             
             IEnumerable<string>? tourismusvereinids)
@@ -135,9 +136,9 @@ namespace OdhApiCore.Controllers.api
                 subtypelist = new List<string>();
 
             if (subtypelist.Count > 0)
-                poitypelist = Helper.ActivityPoiListCreator.CreateSmgPoiPoiTypefromFlag(subtypelist.FirstOrDefault(), poitypefilter);
+                level3typelist = Helper.ActivityPoiListCreator.CreateSmgPoiPoiTypefromFlag(subtypelist.FirstOrDefault(), level3typefilter);
             else
-                poitypelist = new List<string>();
+                level3typelist = new List<string>();
             
 
 
@@ -199,9 +200,30 @@ namespace OdhApiCore.Controllers.api
             }
 
             //ODHActivityPoi Typelist has priority
-            if (typelist.Count == 0 && activitytypelist.Count > 0)
-                subtypelist = Helper.ActivityPoiListCreator.CreateSmgPoiSubTypefromFlag(typelist.FirstOrDefault(), subtypefilter);
-            
+            if (typelist.Count == 0 && poitypelist.Count == 0 && activitytypelist.Count > 0)
+                subtypelist = Helper.ActivityPoiListCreator.CreateActivitySubTypefromFlag(activitytypelist.FirstOrDefault(), subtypefilter);
+
+            //using Poi Filters
+            poitypelist = new List<string>();
+            if (poitypefilter != null)
+            {
+                if (int.TryParse(poitypefilter, out int typeintegerpoi))
+                {
+                    if (typeintegerpoi != 511)
+                        poitypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(poitypefilter);
+                }
+                else
+                {
+                    activitytypelist.Add(poitypefilter);
+                }
+            }
+
+            //ODHActivityPoi Typelist has priority
+            if (typelist.Count == 0 && activitytypelist.Count == 0 && poitypelist.Count > 0)
+                subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
+
+
+
             difficultylist = CommonListCreator.CreateDifficultyList(difficultyfilter, activitytypefilter);
             //Distance
             distance = distancefilter != null;

@@ -82,7 +82,7 @@ namespace OdhApiCore.Controllers.helper
             else
                 mssrequestlanguage = language.ToLower();
 
-            this.accoidlist = accoidlist;
+            this.accoidlist = accoidlist != null && accoidlist.Count > 0 ? accoidlist.Select(x => x.ToUpper()).ToList() : accoidlist;
             this.idsofchannel = idsofchannel;
         }
 
