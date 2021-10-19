@@ -214,7 +214,7 @@ namespace OdhApiCore.Controllers.api
                 if (int.TryParse(poitypefilter, out int typeintegerpoi))
                 {
                     if (typeintegerpoi != 511)
-                        poitypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(poitypefilter);
+                        poitypelist = Helper.ActivityPoiListCreator.CreatePoiTypefromFlag(poitypefilter);
                 }
                 else
                 {
