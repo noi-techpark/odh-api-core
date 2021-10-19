@@ -277,7 +277,11 @@ namespace OdhApiCore
                         Password = new OpenApiOAuthFlow
                         {
                            TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
-                        }                        
+                        },
+                        ClientCredentials = new OpenApiOAuthFlow
+                        {
+                            TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
+                        }
                     },
                     BearerFormat = "JWT",
                     Scheme = "Bearer"

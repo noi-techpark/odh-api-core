@@ -34,6 +34,7 @@ namespace OdhApiCore.Formatters
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
+            //Works only with List Method add an understandable Exception if it is used on single methods
             var result = context.Object as IResponse<JsonRaw>;
             if (result != null)
             {

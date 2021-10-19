@@ -62,6 +62,9 @@ namespace OdhApiCore.Controllers.helper
             if (detail != null && detail == 1)
             {
                 offerdetail = 33081;
+                if (mssversion == "2")
+                    offerdetail = 1343801;
+
                 hoteldetail = 524800;
             }
 

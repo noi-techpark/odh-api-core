@@ -186,6 +186,10 @@ namespace OdhApiCore.Controllers.api
 
             //using Activity Filters
             activitytypelist = new List<string>();
+            //using Poi Filters
+            poitypelist = new List<string>();
+
+
             if (activitytypefilter != null)
             {
                 if (int.TryParse(activitytypefilter, out int typeintegeractivity))
