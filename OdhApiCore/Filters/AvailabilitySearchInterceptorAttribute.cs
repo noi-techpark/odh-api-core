@@ -12,6 +12,7 @@ using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -363,12 +364,22 @@ namespace OdhApiCore.Filters
         }
 
         private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
-        {            
-            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, detail, source, mssversion);
-                       
-            //Achtung muassi no schaugn!
-            if (bookableaccoIDs.Count > 0 || withoutmssids)
+        {                       
+            //Edge Case No Ids Provided, withoutmssids true
+            if ((bookableaccoIDs == null || bookableaccoIDs.Count == 0) && withoutmssids)
             {
+                using (StreamReader r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosBookable.json")))
+                {
+                    string json = await r.ReadToEndAsync();
+
+                    bookableaccoIDs = JsonConvert.DeserializeObject<List<string>>(json);
+                }
+            }
+
+            MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, detail, source, mssversion);
+
+            if (bookableaccoIDs.Count > 0 || withoutmssids)
+            {                
                 //0 MSS Method Olle channels affamol mit IDList
                 var myparsedresponse = await GetMssData.GetMssResponse(
                     httpClientFactory.CreateClient("mss"),
