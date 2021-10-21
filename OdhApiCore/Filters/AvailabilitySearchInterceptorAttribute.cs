@@ -395,11 +395,20 @@ namespace OdhApiCore.Filters
             return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
         }
 
-        private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string source)
+        private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string source, bool withoutids = false)
         {
             LcsHelper myhelper = LcsHelper.Create(bookableaccoIDs, language, roominfo, boardfilter, arrival, departure, source);
 
-            //TODO implement withoutlcsids, get all ids from json
+            //Edge Case No Ids Provided, withoutids true
+            if ((bookableaccoIDs == null || bookableaccoIDs.Count == 0) && withoutids)
+            {
+                using (StreamReader r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosAll.json")))
+                {
+                    string json = await r.ReadToEndAsync();
+
+                    bookableaccoIDs = JsonConvert.DeserializeObject<List<string>>(json);
+                }
+            }
 
             if (bookableaccoIDs.Count > 0)
             {
