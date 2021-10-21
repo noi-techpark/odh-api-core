@@ -424,8 +424,7 @@ namespace OdhApiCore.Controllers
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (Boolean, 1 = full Details)</param>
         /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutmssids">Search over all bookable Accommodations on HGV MSS (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="withoutlcsids">Search over all Accommodations on LTS (No Ids have to be provided as Post Data) (default: false)</param>        
+        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data) (default: false)</param>        
         /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
         /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
@@ -437,7 +436,7 @@ namespace OdhApiCore.Controllers
         [HttpPost, Route("AccommodationAvailable")]
         [HttpPost, Route("AvailabilityCheck")]
         public async Task<IActionResult> PostAvailableAccommodations(
-            [FromBody] string idfilter,
+            [FromBody] string idfilter = null,
             string? availabilitychecklanguage = "en",
             string? boardfilter = null,
             string? arrival = null,
@@ -446,8 +445,8 @@ namespace OdhApiCore.Controllers
             string? bokfilter = "hgv",
             string? source = "sinfo",
             int detail = 0,
-            bool withoutmssids = false,
-            bool withoutlcsids = false,
+            bool withoutids = false,
+            //bool withoutlcsids = false,
             bool availabilityonly = false,
             CancellationToken cancellationToken = default)
         {
@@ -455,6 +454,9 @@ namespace OdhApiCore.Controllers
             var x = this.HttpContext.Request.RouteValues;
 
             //TODO if no idfilter given make request to all (make use of cached MSS)
+            if(idfilter == null && withoutids == false)
+                return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutmssids/ set to null");
+
 
             var accobooklist = Request.HttpContext.Items["accobooklist"];
             var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
@@ -530,8 +532,7 @@ namespace OdhApiCore.Controllers
             //{
             //    return BadRequest("not supported");
             //}
-
-            return null;
+            
         }
 
         ///// <summary>

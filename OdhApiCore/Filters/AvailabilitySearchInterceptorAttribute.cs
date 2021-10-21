@@ -101,9 +101,9 @@ namespace OdhApiCore.Filters
 
                     //only needed for PostAvailableAccommodations
                     bool? availabilityonly = actionarguments.ContainsKey("availabilityonly") ? (bool)actionarguments["availabilityonly"] : false;
-                    bool? withoutmssids = actionarguments.ContainsKey("withoutmssids") ? (bool)actionarguments["withoutmssids"] : false;
-                    bool? withoutlcsids = actionarguments.ContainsKey("withoutlcsids") ? (bool)actionarguments["withoutlcsids"] : false;
-
+                    //bool? withoutmssids = actionarguments.ContainsKey("withoutmssids") ? (bool)actionarguments["withoutmssids"] : false;
+                    //bool? withoutlcsids = actionarguments.ContainsKey("withoutlcsids") ? (bool)actionarguments["withoutlcsids"] : false;
+                    bool? withoutmssids = actionarguments.ContainsKey("withoutids") ? (bool)actionarguments["withoutids"] : false;
 
                     if (CheckArrivalAndDeparture(arrival, departure))
                     {
