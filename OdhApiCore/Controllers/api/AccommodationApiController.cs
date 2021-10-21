@@ -477,6 +477,8 @@ namespace OdhApiCore.Controllers
                 if (bokfilter.Contains("lts") && accoavailabilitylcs != null)
                     toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort.ToList());
 
+                //TODO Totalresults, onlineresults, lcsresults, accommodationssearched?
+
                 //return immediately the mss response
                 var result = ResponseHelpers.GetResult(
                    1,
