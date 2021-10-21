@@ -474,7 +474,7 @@ namespace OdhApiCore.Controllers
 
                 if (bokfilter.Contains("hgv") && accoavailabilitymss != null)
                     toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList());
-                if (bokfilter.Contains("lts") && ccoavailabilitylcs != null)
+                if (bokfilter.Contains("lts") && accoavailabilitylcs != null)
                     toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort.ToList());
 
                 //return immediately the mss response
