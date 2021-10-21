@@ -415,7 +415,7 @@ namespace OdhApiCore.Controllers
         //SPECIAL GETTER
 
         /// <summary>
-        /// POST Available Accommodations HGV(Booking Suedtirol MSS) / LTS on posted IDs
+        /// POST Accommodation Ids and get Available Accommodations (
         /// </summary>
         /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
         /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
@@ -426,9 +426,9 @@ namespace OdhApiCore.Controllers
         /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
         /// <param name="withoutmssids">Search over all bookable Accommodations on HGV MSS (No Ids have to be provided as Post Data) (default: false)</param>        
         /// <param name="withoutlcsids">Search over all Accommodations on LTS (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="idfilter">Posted Accommodation IDs (Separated by ,)</param>
-        /// <returns>Result Object with Collection of Accommodation Objects</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
+        /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
+        /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -469,6 +469,13 @@ namespace OdhApiCore.Controllers
             
             if (availabilityonly)
             {
+                var toreturn = new List<MssResponseShort>();
+
+                if (bokfilter.Contains("hgv"))
+                    toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList());
+                if (bokfilter.Contains("lts"))
+                    toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort.ToList());
+
                 //return immediately the mss response
                 var result = ResponseHelpers.GetResult(
                    1,
@@ -476,7 +483,7 @@ namespace OdhApiCore.Controllers
                    1,
                    availableonlineaccos.Count,
                    "0",
-                   ((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList(),
+                   toreturn,
                    Url);
 
                 return (Ok(result));
