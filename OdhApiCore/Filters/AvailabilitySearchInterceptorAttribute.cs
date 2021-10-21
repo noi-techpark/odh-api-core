@@ -388,7 +388,7 @@ namespace OdhApiCore.Filters
         {
             LcsHelper myhelper = LcsHelper.Create(bookableaccoIDs, language, roominfo, boardfilter, arrival, departure, source);
 
-            //TODO implement withoutlcsids, get all ids
+            //TODO implement withoutlcsids, get all ids from json
 
             if (bookableaccoIDs.Count > 0)
             {
