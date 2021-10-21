@@ -436,7 +436,7 @@ namespace OdhApiCore.Controllers
         [HttpPost, Route("AccommodationAvailable")]
         [HttpPost, Route("AvailabilityCheck")]
         public async Task<IActionResult> PostAvailableAccommodations(
-            [FromBody] string? idfilter = null,
+            [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow]) string? idfilter = null,
             string? availabilitychecklanguage = "en",
             string? boardfilter = null,
             string? arrival = null,
