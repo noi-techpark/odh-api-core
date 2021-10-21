@@ -454,9 +454,8 @@ namespace OdhApiCore.Controllers
             var x = this.HttpContext.Request.RouteValues;
 
             //TODO if no idfilter given make request to all (make use of cached MSS)
-            if(idfilter == null && withoutids == false)
+            if((idfilter == null || String.IsNullOrEmpty(idfilter)) && withoutids == false)
                 return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutmssids/ set to null");
-
 
             var accobooklist = Request.HttpContext.Items["accobooklist"];
             var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
@@ -473,9 +472,9 @@ namespace OdhApiCore.Controllers
             {
                 var toreturn = new List<MssResponseShort>();
 
-                if (bokfilter.Contains("hgv"))
+                if (bokfilter.Contains("hgv") && accoavailabilitymss != null)
                     toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList());
-                if (bokfilter.Contains("lts"))
+                if (bokfilter.Contains("lts") && ccoavailabilitylcs != null)
                     toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort.ToList());
 
                 //return immediately the mss response
