@@ -63,7 +63,7 @@ namespace OdhApiCore.Controllers
         /// <param name="bokfilter">Booking Channels Filter REQUIRED ON Availabilitycheck = true (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check)), (default:'hgv')</param>
         /// <param name="source">Source for MSS availability check, (default:'sinfo')</param>
         /// <param name="availabilitychecklanguage">Language of the Availability Response (possible values: 'de','it','en')</param>
-        /// <param name="detail">Detail of the Availablity check (Boolean, 1 = full Details, 0 = basic Details (default))</param>
+        /// <param name="detail">Detail of the Availablity check (string, 1 = full Details, 0 = basic Details (default))</param>
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
@@ -176,7 +176,7 @@ namespace OdhApiCore.Controllers
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="source">Source for MSS availability check, (default:'sinfo')</param>
         /// <param name="bokfilter">Booking Channels Filter REQUIRED (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check)), (default:'hgv')</param>
         /// <param name="availabilitychecklanguage">Language of the Availability Response (possible values: 'de','it','en')</param>
-        /// <param name="detail">Detail of the Availablity check (Boolean, 1 = full Details, 0 = basic Details (default))</param>
+        /// <param name="detail">Detail of the Availablity check (string, 1 = full Details, 0 = basic Details (default))</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
@@ -415,20 +415,19 @@ namespace OdhApiCore.Controllers
         //SPECIAL GETTER
 
         /// <summary>
-        /// POST Available Accommodations HGV(Booking Suedtirol MSS) / LTS on posted IDs
+        /// POST Accommodation Ids and get Available Accommodations (
         /// </summary>
         /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
         /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
         /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED</param>
         /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
-        /// <param name="detail">Include Offer Details (Boolean, 1 = full Details)</param>
+        /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
         /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutmssids">Search over all bookable Accommodations on HGV MSS (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="withoutlcsids">Search over all Accommodations on LTS (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="idfilter">Posted Accommodation IDs (Separated by ,)</param>
-        /// <returns>Result Object with Collection of Accommodation Objects</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data) (default: false)</param>        
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
+        /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
+        /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -437,7 +436,7 @@ namespace OdhApiCore.Controllers
         [HttpPost, Route("AccommodationAvailable")]
         [HttpPost, Route("AvailabilityCheck")]
         public async Task<IActionResult> PostAvailableAccommodations(
-            [FromBody] string idfilter,
+            [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] string? idfilter = null,
             string? availabilitychecklanguage = "en",
             string? boardfilter = null,
             string? arrival = null,
@@ -445,9 +444,9 @@ namespace OdhApiCore.Controllers
             string? roominfo = "1-18,18",
             string? bokfilter = "hgv",
             string? source = "sinfo",
-            int detail = 0,
-            bool withoutmssids = false,
-            bool withoutlcsids = false,
+            string? detail = "0",
+            bool withoutids = false,
+            //bool withoutlcsids = false,
             bool availabilityonly = false,
             CancellationToken cancellationToken = default)
         {
@@ -455,6 +454,8 @@ namespace OdhApiCore.Controllers
             var x = this.HttpContext.Request.RouteValues;
 
             //TODO if no idfilter given make request to all (make use of cached MSS)
+            if((idfilter == null || String.IsNullOrEmpty(idfilter)) && withoutids == false)
+                return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutmssids/ set to null");
 
             var accobooklist = Request.HttpContext.Items["accobooklist"];
             var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
@@ -469,6 +470,13 @@ namespace OdhApiCore.Controllers
             
             if (availabilityonly)
             {
+                var toreturn = new List<MssResponseShort>();
+
+                if (bokfilter.Contains("hgv") && accoavailabilitymss != null)
+                    toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList());
+                if (bokfilter.Contains("lts") && accoavailabilitylcs != null)
+                    toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort.ToList());
+
                 //return immediately the mss response
                 var result = ResponseHelpers.GetResult(
                    1,
@@ -476,7 +484,7 @@ namespace OdhApiCore.Controllers
                    1,
                    availableonlineaccos.Count,
                    "0",
-                   ((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList(),
+                   toreturn,
                    Url);
 
                 return (Ok(result));
@@ -523,78 +531,76 @@ namespace OdhApiCore.Controllers
             //{
             //    return BadRequest("not supported");
             //}
-
-            return null;
+            
         }
 
-        /// <summary>
-        /// POST Available Accommodations HGV(Booking Suedtirol MSS) / LTS on posted IDs only Availability Response NOT AVAILABLE AS OPEN DATA
-        /// </summary>
-        /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
-        /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
-        /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED</param>
-        /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
-        /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
-        /// <param name="detail">Include Offer Details (Boolean, 1 = full Details)</param>
-        /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutmssids">Search over all bookable Accommodations on HGV MSS (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="withoutlcsids">Search over all Accommodations on LTS (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="idfilter">Posted Accommodation IDs (Separated by ,)</param>
-        /// <returns>Result Object with Collection of MssResponseShort Objects</returns>
-        [ProducesResponseType(typeof(IEnumerable<MssResponseShort>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
-        [HttpPost, Route("AvailabilityCheck")]
-        public IActionResult? PostAvailableMSSResponseonlyAccommodations(
-            [FromBody] string idfilter,
-            string availabilitychecklanguage = "en",
-            string? boardfilter = null,
-            string? arrival = null,
-            string? departure = null,
-            string roominfo = "1-18,18",
-            string bokfilter = "hgv",
-            string source = "sinfo",
-            int detail = 0,
-            bool withoutmssids = false,
-            bool withoutlcsids = false
-            )
-        {
-            //if (String.IsNullOrEmpty(arrival))
-            //    arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
-            //if (String.IsNullOrEmpty(departure))
-            //    departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
-            //if (boardfilter == null)
-            //    boardfilter = "0";
+        ///// <summary>
+        ///// POST Available Accommodations HGV(Booking Suedtirol MSS) / LTS on posted IDs only Availability Response NOT AVAILABLE AS OPEN DATA
+        ///// </summary>
+        ///// <param name="availabilitychecklanguage">Language of the Availability Response</param>
+        ///// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
+        ///// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED</param>
+        ///// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
+        ///// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
+        ///// <param name="detail">Include Offer Details (Boolean, 1 = full Details)</param>
+        ///// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
+        ///// <param name="withoutmssids">Search over all bookable Accommodations on HGV MSS (No Ids have to be provided as Post Data) (default: false)</param>        
+        ///// <param name="withoutlcsids">Search over all Accommodations on LTS (No Ids have to be provided as Post Data) (default: false)</param>        
+        ///// <param name="idfilter">Posted Accommodation IDs (Separated by ,)</param>
+        ///// <returns>Result Object with Collection of MssResponseShort Objects</returns>
+        //[ProducesResponseType(typeof(IEnumerable<MssResponseShort>), StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        ////[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
+        //[HttpPost, Route("AvailabilityCheck")]
+        //public IActionResult? PostAvailableMSSResponseonlyAccommodations(
+        //    [FromBody] string idfilter,
+        //    string availabilitychecklanguage = "en",
+        //    string? boardfilter = null,
+        //    string? arrival = null,
+        //    string? departure = null,
+        //    string roominfo = "1-18,18",
+        //    string bokfilter = "hgv",
+        //    string source = "sinfo",
+        //    int detail = 0,
+        //    bool withoutmssids = false,
+        //    bool withoutlcsids = false
+        //    )
+        //{
+        //    //if (String.IsNullOrEmpty(arrival))
+        //    //    arrival = String.Format("{0:yyyy-MM-dd}", DateTime.Now);
+        //    //if (String.IsNullOrEmpty(departure))
+        //    //    departure = String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(1));
+        //    //if (boardfilter == null)
+        //    //    boardfilter = "0";
 
 
-            ////Fix Remove string value from swagger
-            //if (idfilter.ToLower() == "string" || idfilter == "{}")
-            //    idfilter = "";
+        //    ////Fix Remove string value from swagger
+        //    //if (idfilter.ToLower() == "string" || idfilter == "{}")
+        //    //    idfilter = "";
 
-            //List<string> bokfilterlist = bokfilter.Split(',').ToList();
+        //    //List<string> bokfilterlist = bokfilter.Split(',').ToList();
 
-            //if ((bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && bokfilterlist.Contains("lts"))
-            //{
-            //    return await PostAvailableMssLcsOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, detail, source, "0", idfilter, withoutmssids, withoutlcsids);
-            //}
-            //else if ((bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && !bokfilterlist.Contains("lts"))
-            //{
-            //    return await PostAvailableMssOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, detail, source, "0", idfilter, withoutmssids);
-            //}
-            //else if (!(bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && bokfilterlist.Contains("lts"))
-            //{
-            //    return await PostAvailableLCSOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, idfilter, withoutlcsids);
-            //}
-            //else
-            //{
-            //    return BadRequest("not supported");
-            //}
+        //    //if ((bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && bokfilterlist.Contains("lts"))
+        //    //{
+        //    //    return await PostAvailableMssLcsOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, detail, source, "0", idfilter, withoutmssids, withoutlcsids);
+        //    //}
+        //    //else if ((bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && !bokfilterlist.Contains("lts"))
+        //    //{
+        //    //    return await PostAvailableMssOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, detail, source, "0", idfilter, withoutmssids);
+        //    //}
+        //    //else if (!(bokfilterlist.Contains("hgv") || bokfilterlist.Contains("htl") || bokfilterlist.Contains("exp")) && bokfilterlist.Contains("lts"))
+        //    //{
+        //    //    return await PostAvailableLCSOptimizedAsync(availabilitychecklanguage, boardfilter, arrival, departure, roominfo, idfilter, withoutlcsids);
+        //    //}
+        //    //else
+        //    //{
+        //    //    return BadRequest("not supported");
+        //    //}
 
-            return null;
-        }
-
+        //    return null;
+        //}
 
         #endregion
 

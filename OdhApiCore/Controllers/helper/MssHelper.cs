@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -39,7 +40,7 @@ namespace OdhApiCore.Controllers.helper
         private MssHelper(
             List<string> accoidlist, string idsofchannel,
             string bokfilter, string language, string roominfo, string boardfilter,
-            string arrival, string departure, int? detail, string source, 
+            string arrival, string departure, int? detail, string source,
             string mssversion)
         {
             if (bokfilter.EndsWith(","))
@@ -82,7 +83,8 @@ namespace OdhApiCore.Controllers.helper
             else
                 mssrequestlanguage = language.ToLower();
 
-            this.accoidlist = accoidlist != null && accoidlist.Count > 0 ? accoidlist.Select(x => x.ToUpper()).ToList() : accoidlist;
+            this.accoidlist = accoidlist != null && accoidlist.Count > 0 ? accoidlist.Select(x => x.ToUpper()).ToList() : accoidlist;            
+
             this.idsofchannel = idsofchannel;
         }
 
