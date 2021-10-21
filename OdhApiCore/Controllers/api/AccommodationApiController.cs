@@ -415,7 +415,7 @@ namespace OdhApiCore.Controllers
         //SPECIAL GETTER
 
         /// <summary>
-        /// POST Accommodation Ids and get Available Accommodations (
+        /// POST Pass Accommodation Ids and get Accommodations with Availability Information / Availability Information Only
         /// </summary>
         /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
         /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
