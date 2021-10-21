@@ -97,6 +97,8 @@ pipeline {
                 sh """
                     curl "${API_URL}STA/JsonPoi"
 		    curl "${API_URL}STA/JsonAccommodation"
+		    curl "${API_URL}ODH/AccommodationBooklist"
+		    curl "${API_URL}ODH/AccommodationFulllist"
                 """
             }
         }
