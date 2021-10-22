@@ -461,15 +461,22 @@ namespace OdhApiCore.Controllers
             var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
             var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
 
+            var accosonmss = ((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
+            var accosonlcs = ((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
+
             var availableonlineaccos = new List<string>();
             if (accoavailabilitymss != null)
-                availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
+                availableonlineaccos.AddRange(accosonmss);
             if (accoavailabilitylcs != null)
-                availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
+                availableonlineaccos.AddRange(accosonlcs);
+
+            var resultid = ((MssResult?)accoavailabilitymss)?.ResultId ?? "";
 
             //Counts
-            var availabletotal = accobooklist != null ? ((List<string>)accobooklist).Count : 0;
+            var requestedtotal = accobooklist != null ? ((List<string>)accobooklist).Count : 0;
 
+            var availableonline = accosonmss.Count;
+            var availableonrequest = accosonlcs.Count;
 
 
             if (availabilityonly)
@@ -487,11 +494,11 @@ namespace OdhApiCore.Controllers
                 var result = ResponseHelpers.GetResult(
                    1,
                    1,
-                   availabletotal,
-                   availabletotal,
-                   availableonlineaccos.Count,
-                   availableonlineaccos.Count,
-                   "resultid",
+                   (UInt32)requestedtotal,
+                   requestedtotal,
+                   availableonline,
+                   availableonrequest,
+                   resultid,
                    "",
                    toreturn,
                    Url);
