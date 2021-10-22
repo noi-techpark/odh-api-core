@@ -484,9 +484,9 @@ namespace OdhApiCore.Controllers
                 var toreturn = new List<MssResponseShort>();
 
                 if (bokfilter.Contains("hgv") && accoavailabilitymss != null)
-                    toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort.ToList());
+                    toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.ToList());
                 if (bokfilter.Contains("lts") && accoavailabilitylcs != null)
-                    toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort.ToList());
+                    toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.ToList());
 
                 //TODO Totalresults, onlineresults, lcsresults, accommodationssearched?
 
