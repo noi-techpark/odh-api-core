@@ -44,9 +44,9 @@ namespace OdhApiCore.Responses
 
     public class JsonResultWithBookingInfo<T> : JsonResultWithOnlineResultsAndResultId<T>
     {
-        public string? AvailableOnline { get; set; }
-        public string? AvailableOnRequest { get; set; }
-        public string? AccommodationsRequested { get; set; }
+        public int AvailableOnline { get; set; }
+        public int AvailableOnRequest { get; set; }
+        public int AccommodationsRequested { get; set; }
     }
 
     public class JsonResultWithOnlineResultsAndResultIdLowercase<T> : IResponse<T>
@@ -175,20 +175,23 @@ namespace OdhApiCore.Responses
             };
         }
 
-        public static JsonResultWithOnlineResultsAndResultId<T> GetResult<T>(
-            uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
+        public static JsonResultWithBookingInfo<T> GetResult<T>(
+            uint pagenumber, uint totalpages, uint totalcount, int accosrequested, int availableonline, int availableonrequest,
             string resultid, string? seed, IEnumerable<T> data, IUrlHelper url)
             where T : notnull
         {
             var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url, seed);
-            return new JsonResultWithOnlineResultsAndResultId<T>
+            return new JsonResultWithBookingInfo<T>
             {
                 TotalResults = totalcount,
                 TotalPages = totalpages,
                 CurrentPage = pagenumber,
                 PreviousPage = previouspage,
                 NextPage = nextpage,
-                OnlineResults = onlineresults,
+                OnlineResults = availableonline,
+                AccommodationsRequested = accosrequested,
+                AvailableOnline = availableonline,
+                AvailableOnRequest = availableonrequest,
                 ResultId = resultid,
                 Seed = seed,
                 Items = data
