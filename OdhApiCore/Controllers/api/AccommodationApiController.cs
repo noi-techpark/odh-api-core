@@ -466,8 +466,12 @@ namespace OdhApiCore.Controllers
                 availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
             if (accoavailabilitylcs != null)
                 availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
-            
-            
+
+            //Counts
+            var availabletotal = accobooklist != null ? ((List<string>)accobooklist).Count : 0;
+
+
+
             if (availabilityonly)
             {
                 var toreturn = new List<MssResponseShort>();
@@ -483,9 +487,12 @@ namespace OdhApiCore.Controllers
                 var result = ResponseHelpers.GetResult(
                    1,
                    1,
-                   1,
+                   availabletotal,
+                   availabletotal,
                    availableonlineaccos.Count,
-                   "0",
+                   availableonlineaccos.Count,
+                   "resultid",
+                   "",
                    toreturn,
                    Url);
 
