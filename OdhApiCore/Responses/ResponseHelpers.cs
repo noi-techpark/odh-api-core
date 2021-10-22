@@ -42,6 +42,13 @@ namespace OdhApiCore.Responses
         public string? ResultId { get; set; }
     }
 
+    public class JsonResultWithBookingInfo<T> : JsonResultWithOnlineResultsAndResultId<T>
+    {
+        public string? AvailableOnline { get; set; }
+        public string? AvailableOnRequest { get; set; }
+        public string? AccommodationsRequested { get; set; }
+    }
+
     public class JsonResultWithOnlineResultsAndResultIdLowercase<T> : IResponse<T>
     {
         public uint totalResults { get; set; }
@@ -165,6 +172,26 @@ namespace OdhApiCore.Responses
                 resultId = resultid,
                 seed = seed,
                 items = data
+            };
+        }
+
+        public static JsonResultWithOnlineResultsAndResultId<T> GetResult<T>(
+            uint pagenumber, uint totalpages, uint totalcount, int onlineresults,
+            string resultid, string? seed, IEnumerable<T> data, IUrlHelper url)
+            where T : notnull
+        {
+            var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url, seed);
+            return new JsonResultWithOnlineResultsAndResultId<T>
+            {
+                TotalResults = totalcount,
+                TotalPages = totalpages,
+                CurrentPage = pagenumber,
+                PreviousPage = previouspage,
+                NextPage = nextpage,
+                OnlineResults = onlineresults,
+                ResultId = resultid,
+                Seed = seed,
+                Items = data
             };
         }
     }
