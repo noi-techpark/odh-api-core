@@ -478,7 +478,6 @@ namespace OdhApiCore.Controllers
             var availableonline = accosonmss.Count;
             var availableonrequest = accosonlcs.Count;
 
-
             if (availabilityonly)
             {
                 var toreturn = new List<MssResponseShort>();
@@ -675,13 +674,21 @@ namespace OdhApiCore.Controllers
                 uint totalcount = (uint)data.Count;
 
                 var availableonline = Request.HttpContext.Items["mssavailablity"] != null ? ((MssResult?)Request.HttpContext.Items["mssavailablity"]).MssResponseShort.Count : 0;
+                var availableonrequest = Request.HttpContext.Items["lcsavailablity"] != null ? ((MssResult?)Request.HttpContext.Items["lcsavailablity"]).MssResponseShort.Count : 0;
+                var accobooklist = Request.HttpContext.Items["accobooklist"];
+                var accosrequested = accobooklist != null ? ((List<string>)accobooklist).Count : 0;
+                var resultid = ((MssResult?)Request.HttpContext.Items["mssavailablity"])?.ResultId ?? "";
+
                 if (availableonline > 0)
                 {
                     return ResponseHelpers.GetResult(
                       pagenumber,
                       totalpages,
-                      totalcount,
+                      (UInt32)accosrequested,
+                      accosrequested,
                       availableonline,
+                      availableonrequest,
+                      resultid,
                       seed,
                       dataTransformed,
                       Url);
@@ -689,12 +696,12 @@ namespace OdhApiCore.Controllers
                 else
                 {
                     return ResponseHelpers.GetResult(
-                   pagenumber,
-                   totalpages,
-                   totalcount,
-                   seed,
-                   dataTransformed,
-                   Url);
+                       pagenumber,
+                       totalpages,
+                       totalcount,
+                       seed,
+                       dataTransformed,
+                       Url);
                 }
             });
         }
