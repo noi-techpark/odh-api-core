@@ -104,7 +104,7 @@ namespace OdhApiCore.Filters
                     bool? availabilityonly = actionarguments.ContainsKey("availabilityonly") ? (bool)actionarguments["availabilityonly"] : false;
                     //bool? withoutmssids = actionarguments.ContainsKey("withoutmssids") ? (bool)actionarguments["withoutmssids"] : false;
                     //bool? withoutlcsids = actionarguments.ContainsKey("withoutlcsids") ? (bool)actionarguments["withoutlcsids"] : false;
-                    bool? withoutmssids = actionarguments.ContainsKey("withoutids") ? (bool)actionarguments["withoutids"] : false;
+                    bool? withoutids = actionarguments.ContainsKey("withoutids") ? (bool)actionarguments["withoutids"] : false;
 
                     if (CheckArrivalAndDeparture(arrival, departure))
                     {
@@ -143,7 +143,7 @@ namespace OdhApiCore.Filters
                         }
                         else if(actionid == "PostAvailableAccommodations")
                         {
-                            if(withoutmssids == false)
+                            if(withoutids == false)
                             {
                                 //add the parsed ids                      
                                 var passedids = actionarguments.ContainsKey("idfilter") ? (string)actionarguments["idfilter"] : "";
@@ -159,7 +159,7 @@ namespace OdhApiCore.Filters
                             MssResult mssresult = await GetMSSAvailability(
                                       language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
                                       roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: booklist, 
-                                      idsofchannel: idsource, source: source, withoutmssids.Value);
+                                      idsofchannel: idsource, source: source, withoutids.Value);
 
                             if (mssresult != null)
                             {
@@ -170,7 +170,7 @@ namespace OdhApiCore.Filters
                         {
                             MssResult lcsresult = await GetLCSAvailability(
                                             language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                            roominfo: roominfo, bookableaccoIDs: booklist, source: source);
+                                            roominfo: roominfo, bookableaccoIDs: booklist, source: source, withoutids: withoutids.Value);
 
                             if (lcsresult != null)
                             {
