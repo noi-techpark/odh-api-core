@@ -450,10 +450,13 @@ namespace OdhApiCore.Controllers
             bool availabilityonly = false,
             CancellationToken cancellationToken = default)
         {
-            //TODO if Route = AvailabilityCheck return only Mssresult
-            var x = this.HttpContext.Request.RouteValues;
+            //if Route = AvailabilityCheck return only Mssresult
+            var usedroute = ControllerContext.ActionDescriptor.AttributeRouteInfo.Template;
 
-            //TODO if no idfilter given make request to all (make use of cached MSS)
+            if (usedroute == "v1/AvailabilityCheck")
+                availabilityonly = true;
+
+            //If no idfilter given make request to all (make use of cached MSS)
             if((idfilter == null || String.IsNullOrEmpty(idfilter)) && withoutids == false)
                 return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutids set to true");
 
