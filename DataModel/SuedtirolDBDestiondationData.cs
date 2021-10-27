@@ -34,6 +34,11 @@ namespace DataModel
 
     public class ODHData
     {
+        public ODHData()
+        {
+            GpsPoints = new Dictionary<string, GpsInfo>();
+        }
+
         public LicenseInfo LicenseInfo { get; set; }
 
         public string Shortname { get; set; }
@@ -55,6 +60,9 @@ namespace DataModel
         //New Details
         public Nullable<int> RoomCount { get; set; }
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
+
+        //derzuageton
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
     }
 
     public class VenueType
