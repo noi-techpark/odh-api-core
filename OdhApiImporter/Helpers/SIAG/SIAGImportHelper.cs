@@ -20,6 +20,11 @@ namespace OdhApiImporter.Helpers
             this.settings = settings;
         }
 
+        /// <summary>
+        /// Save Weather to History Table
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<UpdateDetail> SaveWeatherToHistoryTable(string? id = null)
         {
             string? weatherresponsetaskde = "";
@@ -92,6 +97,4 @@ namespace OdhApiImporter.Helpers
                 throw new Exception("No weatherdata received from source!");
         }
     }
-
-
 }

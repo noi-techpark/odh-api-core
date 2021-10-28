@@ -15,8 +15,6 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
-//using OdhApiCore.Filters;
-//using OdhApiCore.GenericHelpers;
 using EBMS;
 using NINJA;
 using NINJA.Parser;
@@ -42,26 +40,54 @@ namespace OdhApiImporter.Controllers
             this.settings = settings;
             this.logger = logger;
             this.QueryFactory = queryFactory;
-        }
+        }        
 
-        #region TEST
+        #region UPDATE FROM RAVEN INSTANCE
 
-        [HttpGet, Route("TestWS")]
-        public IActionResult TestWS(CancellationToken cancellationToken)
+        [HttpGet, Route("Raven/{datatype}/Update/{id}")]
+        //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
+        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
         {
-            return Ok(new UpdateResult
+            try
             {
-                operation = "Test WS",
-                updatetype = "",
-                message = "Workerservice is online",
-                recordsmodified = "0",
-                success = true
-            });
+                RAVENImportHelper ravenimporthelper = new RAVENImportHelper(settings, QueryFactory);
+                var result = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Update Raven",
+                    updatetype = "single",
+                    otherinfo = datatype,
+                    message = "",
+                    id = id,
+                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Update Raven",
+                    updatetype = "all",
+                    otherinfo = datatype,
+                    id = id,
+                    message = "Update Raven failed: " + ex.Message,
+                    recordsmodified = "0",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
         }
 
         #endregion
 
-        #region EBMS exposed
+        #region EBMS DATA SYNC (EventShort)
 
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]
         public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken)
@@ -143,7 +169,7 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
-        #region NINJA exposed
+        #region NINJA DATA SYNC (Events Centro Trevi and DRIN)
 
         [HttpGet, Route("NINJA/Events/UpdateAll")]
         public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken)
@@ -186,54 +212,9 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-        #endregion
+        #endregion        
 
-        #region ODH RAVEN exposed
-
-        [HttpGet, Route("Raven/{datatype}/Update/{id}")]
-        //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
-        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
-        {
-            try
-            {
-                RAVENImportHelper ravenimporthelper = new RAVENImportHelper(settings, QueryFactory);
-                var result = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
-
-                return Ok(new UpdateResult
-                {
-                    operation = "Update Raven",
-                    updatetype = "single",
-                    otherinfo = datatype,
-                    message = "",
-                    id = id,
-                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update Raven",
-                    updatetype = "all",
-                    otherinfo = datatype,
-                    id = id,
-                    message = "Update Raven failed: " + ex.Message,
-                    recordsmodified = "0",
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
-            } 
-        }
-
-        #endregion
-
-        #region SIAG Exposed
+        #region SIAG DATA SYNC WEATHER 
 
         [HttpGet, Route("Siag/Weather/Import")]
         public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken)
@@ -311,6 +292,50 @@ namespace OdhApiImporter.Controllers
                 });
             }
         }
+
+        #endregion
+
+        #region SIAG DATA SYNC MUSEUMS
+
+        #endregion
+
+        #region SUEDTIROLWEIN DATA SYNC
+
+        #endregion
+
+        #region LTS ACTIVITYDATA SYNC
+
+        #endregion
+
+        #region LTS POIDATA SYNC
+
+        #endregion
+
+        #region LTS EVENT DATA SYNC
+
+        #endregion
+
+        #region LTS GASTRONOMIC DATA SYNC
+
+        #endregion
+
+        #region LTS ACCOMMODATION DATA SYNC
+
+        #endregion
+
+        #region HGV ACCOMMODATION DATA SYNC
+
+        #endregion
+
+        #region LTS MEASURINGPOINTS DATA SYNC
+
+        #endregion
+
+        #region LTS WEBCAM DATA SYNC
+
+        #endregion
+
+        #region STA POI DATA SYNC
 
         #endregion
     }

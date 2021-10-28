@@ -8,6 +8,9 @@ using Helper;
 
 namespace OdhApiImporter.Helpers
 {
+    /// <summary>
+    /// This class is used for different update operations on the data
+    /// </summary>
     public class CustomDataOperation
     {
         private readonly QueryFactory QueryFactory;
@@ -19,28 +22,28 @@ namespace OdhApiImporter.Helpers
             this.settings = settings;
         }
 
-        public async Task<int> UpdateAllEventShortstonewDataModel()
-        {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("eventeuracnoi");
+        //public async Task<int> UpdateAllEventShortstonewDataModel()
+        //{
+        //    //Load all data from PG and resave
+        //    var query = QueryFactory.Query()
+        //           .SelectRaw("data")
+        //           .From("eventeuracnoi");
 
-            var data = await query.GetObjectListAsync<EventShort>();
-            int i = 0;
+        //    var data = await query.GetObjectListAsync<EventShort>();
+        //    int i = 0;
 
-            foreach(var eventshort in data)
-            {
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+        //    foreach(var eventshort in data)
+        //    {
+        //        //Save tp DB
+        //        //TODO CHECK IF THIS WORKS     
+        //        var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+        //            //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+        //            .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
 
-                i++;
-            }
+        //        i++;
+        //    }
 
-            return i;
-        }
+        //    return i;
+        //}
     }
 }
