@@ -46,7 +46,7 @@ namespace OdhApiImporter.Controllers
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
         //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
-        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace OdhApiImporter.Controllers
         #region EBMS DATA SYNC (EventShort)
 
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]
-        public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -129,42 +129,41 @@ namespace OdhApiImporter.Controllers
         }
 
         [HttpGet, Route("EBMS/EventShort/UpdateSingle/{id}")]
-        public IActionResult UpdateSingleEBMS(string id, CancellationToken cancellationToken)
+        public IActionResult UpdateSingleEBMS(string id, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                //TODO
-                //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
+            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
 
-                return Ok(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    id = id,
-                    updatetype = "single",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update succeeded",
-                    recordsmodified = "1",
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = true
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsmodified = "0",
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
-            }
+            //try
+            //{               
+            //    return Ok(new UpdateResult
+            //    {
+            //        operation = "Update EBMS",
+            //        id = id,
+            //        updatetype = "single",
+            //        otherinfo = "",
+            //        message = "EBMS Eventshorts update succeeded",
+            //        recordsmodified = "1",
+            //        created = 0,
+            //        updated = 0,
+            //        deleted = 0,
+            //        success = true
+            //    });
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest(new UpdateResult
+            //    {
+            //        operation = "Update EBMS",
+            //        updatetype = "all",
+            //        otherinfo = "",
+            //        message = "EBMS Eventshorts update failed: " + ex.Message,
+            //        recordsmodified = "0",
+            //        created = 0,
+            //        updated = 0,
+            //        deleted = 0,
+            //        success = false
+            //    });
+            //}
         }
 
         #endregion
@@ -172,7 +171,7 @@ namespace OdhApiImporter.Controllers
         #region NINJA DATA SYNC (Events Centro Trevi and DRIN)
 
         [HttpGet, Route("NINJA/Events/UpdateAll")]
-        public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -212,12 +211,18 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+        [HttpGet, Route("NINJA/Events/UpdateSingle/{id}")]
+        public async Task<IActionResult> UpdateSingleNinjaEvents(string id, CancellationToken cancellationToken = default)
+        {           
+            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
+        }
+
         #endregion        
 
         #region SIAG DATA SYNC WEATHER 
 
         [HttpGet, Route("Siag/Weather/Import")]
-        public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken)
+        public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -255,7 +260,7 @@ namespace OdhApiImporter.Controllers
         }
 
         [HttpGet, Route("Siag/Weather/Import/{id}")]
-        public async Task<IActionResult> ImportWeatherByID(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> ImportWeatherByID(string id, CancellationToken cancellationToken = default)
         {
             try
             {

@@ -123,8 +123,7 @@ namespace OdhApiImporter.Helpers
 
             myevent.DistrictId = districtlist.Id;
             myevent.DistrictIds = new List<string>() { districtlist.Id };
-
-            //TODO MAYBE IN HELPER!
+            
             var locinfo = await GetTheLocationInfoDistrict(districtlist.Id);
             if (locinfo != null)
             {
@@ -187,7 +186,7 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "culture",
                             sourceid = ninjaevent.Key,
                             sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
-                            type = "eventeuracnoi"
+                            type = "event_centrotrevi-drin"
                         });
         }
 
