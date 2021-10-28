@@ -32,7 +32,7 @@ namespace OdhApiImporter.Helpers
         //    var data = await query.GetObjectListAsync<EventShort>();
         //    int i = 0;
 
-        //    foreach(var eventshort in data)
+        //    foreach (var eventshort in data)
         //    {
         //        //Save tp DB
         //        //TODO CHECK IF THIS WORKS     

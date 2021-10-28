@@ -129,8 +129,8 @@ namespace OdhApiImporter.Helpers
                             raw = JsonConvert.SerializeObject(eventebms),
                             sourceinterface = "ebms",
                             sourceid = eventebms.EventId.ToString(),
-                            sourceurl = "https://eurac.edu",
-                            type = "eventeuracnoi"
+                            sourceurl = "https://emea-interface.ungerboeck.com",
+                            type = "event_euracnoi"
                         }, cancellationToken);
 
 
