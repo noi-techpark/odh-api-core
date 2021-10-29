@@ -302,6 +302,45 @@ namespace OdhApiImporter.Controllers
 
         #region SIAG DATA SYNC MUSEUMS
 
+        [HttpGet, Route("Siag/Museum/Import")]
+        public async Task<IActionResult> ImportMuseum(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                var result = await siagimporthelper.SaveWeatherToHistoryTable();
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "single",
+                    otherinfo = "actual",
+                    message = "Import Weather data succeeded",
+                    recordsmodified = result.created + result.updated + result.deleted,
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "single",
+                    otherinfo = "actual",
+                    message = "Import Weather data failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
+        }
+
+
         #endregion
 
         #region SUEDTIROLWEIN DATA SYNC
