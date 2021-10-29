@@ -40,8 +40,6 @@ namespace OdhApiImporter.Helpers
 
             foreach (var (eventshort, eventebms) in resulttuplesorted)
             {
-                bool neweventshort = false;
-
                 var query =
                    QueryFactory.Query("eventeuracnoi")
                        .Select("data")
@@ -84,12 +82,7 @@ namespace OdhApiImporter.Helpers
                     eventdocument = eventindb.EventDocument;
                     soldout = eventindb.SoldOut;
                 }
-                else
-                {
-                    neweventshort = true;
-                }
-
-
+               
                 if (changedonDB != eventshort.ChangedOn)
                 {
 
