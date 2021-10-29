@@ -29,7 +29,7 @@ namespace OdhApiImporter.Helpers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<UpdateDetail> SaveWeatherToHistoryTable(string? id = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveWeatherToHistoryTable(CancellationToken cancellationToken, string? id = null)
         {
             string? weatherresponsetaskde = "";
             string? weatherresponsetaskit = "";

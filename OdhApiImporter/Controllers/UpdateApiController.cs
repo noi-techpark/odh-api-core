@@ -265,7 +265,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
-                var result = await siagimporthelper.SaveWeatherToHistoryTable(id, cancellationToken);
+                var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
 
                 return Ok(new UpdateResult
                 {
@@ -308,7 +308,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
-                var result = await siagimporthelper.SaveMuseumsToODH(cancellationToken);
+                var result = await siagimporthelper.SaveMuseumsToODH(null, cancellationToken);
 
                 return Ok(new UpdateResult
                 {

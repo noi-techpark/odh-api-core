@@ -37,6 +37,6 @@ namespace DataModel
         public int? created { get; init; }
         public int? deleted { get; init; }
 
-        public int? error { get; init }
+        public int? error { get; init; }
     }
 }
