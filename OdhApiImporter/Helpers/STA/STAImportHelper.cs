@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
@@ -30,19 +31,19 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<UpdateDetail> PostVendingPointsFromSTA(HttpRequest request)
+        public async Task<UpdateDetail> PostVendingPointsFromSTA(HttpRequest request, CancellationToken cancellationToken)
         {
             string jsonContent = await ReadStringDataManual(request);
 
             if (!string.IsNullOrEmpty(jsonContent))
             {
-                return await ImportVendingPointsFromCSV(jsonContent);
+                return await ImportVendingPointsFromCSV(jsonContent, cancellationToken);
             }
             else
                 throw new Exception("no Content");
         }
 
-        private async Task<UpdateDetail> ImportVendingPointsFromCSV(string csvcontent)
+        private async Task<UpdateDetail> ImportVendingPointsFromCSV(string csvcontent, CancellationToken cancellationToken)
         {
             var vendingpoints = await STA.GetDataFromSTA.ImportCSVFromSTA(csvcontent);
 

@@ -342,6 +342,49 @@ namespace OdhApiImporter.Controllers
 
         #region STA POI DATA SYNC
 
+        [Authorize(Roles = "DataWriter,STAPoiImport")]
+        [HttpPost, Route("STA/ImportVendingPoints")]
+        public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
+        {
+            try
+            {
+                STAImportHelper staimporthelper = new STAImportHelper(settings, QueryFactory);
+
+                var result = await staimporthelper.PostVendingPointsFromSTA(Request, cancellationToken);
+
+                return Ok(new
+                {
+                    operation = "Import Vendingpoints",
+                    updatetype = "all",
+                    otherinfo = "STA",
+                    id = "",
+                    message = "Import Vendingpoints succeeded",
+                    recordsmodified = (result.created + result.updated + result.deleted),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Import Vendingpoints",
+                    updatetype = "all",
+                    otherinfo = "STA",
+                    id = "",
+                    message = "Import Vendingpoints failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
+        }
+
+
         #endregion
     }
 }
