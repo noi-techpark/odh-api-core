@@ -1,6 +1,7 @@
 ﻿using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -83,10 +84,12 @@ namespace OdhApiImporter.Helpers
                     //Adding TypeInfo Additional
                     odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi?.SubType, new List<string>() { "de", "it", "en" });
 
+                    //Save to Rawdatatable
+                    var rawdataid = await InsertInRawDataDB(vendingpoint);
+
                     //Save to PG
                     //Check if data exists                    
-
-                    var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "smgpois");
+                    var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "smgpois", rawdataid);
 
                     if (result.updated != null)
                         updatecounter = updatecounter + result.updated.Value;
@@ -102,6 +105,21 @@ namespace OdhApiImporter.Helpers
                 throw new Exception(vendingpoints.ErrorMessage);
             else
                 throw new Exception("no data to import");
+        }
+
+        private async Task<int> InsertInRawDataDB(STA.STAVendingPoint stavendingpoint)
+        {
+            return await QueryFactory.InsertInRawtableAndGetIdAsync(
+                        new RawDataStore()
+                        {
+                            datasource = "sta",
+                            importdate = DateTime.Now,
+                            raw = JsonConvert.SerializeObject(stavendingpoint),
+                            sourceinterface = "csv",
+                            sourceid = stavendingpoint.STA_ID,
+                            sourceurl = "csvfile",
+                            type = "poi_sta_vendingpoint"
+                        });
         }
     }
 }

@@ -105,7 +105,7 @@ namespace OdhApiImporter.Helpers
 
         #region SIAG Museumdata
 
-        public async Task<UpdateDetail> SaveMuseumsToODH(DateTime? lastchanged, CancellationToken cancellationToken)
+        public async Task<UpdateDetail> SaveMuseumsToODH(DateTime? lastchanged = null, CancellationToken cancellationToken)
         {
             var museumslist = await ImportMuseumlist(cancellationToken);
             //var updateresult = await ImportMuseums(museumslist, cancellationToken);

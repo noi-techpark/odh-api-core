@@ -102,11 +102,48 @@ namespace Helper
 
         #region RawDataStore
 
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, int rawdataid) where T : IIdentifiable, IImportDateassigneable
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data), "no data");
+
+            //Check if data exists
+            var query = QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", data.Id);
+
+            var queryresult = await query.GetAsync<T>();
+
+            string operation = "";
+
+            int createresult = 0;
+            int updateresult = 0;
+
+            if (queryresult == null || queryresult.Count() == 0)
+            {
+                data.FirstImport = DateTime.Now;
+                data.LastChange = DateTime.Now;
+
+                createresult = await QueryFactory.Query(table)
+                   .InsertAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
+                operation = "INSERT";
+            }
+            else
+            {
+                data.LastChange = DateTime.Now;
+
+                updateresult = await QueryFactory.Query(table).Where("id", data.Id)
+                        .UpdateAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
+                operation = "UPDATE";
+            }
+
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, operation = operation };                    
+        }
 
 
         #endregion
 
     }
 
-   
+
 }
