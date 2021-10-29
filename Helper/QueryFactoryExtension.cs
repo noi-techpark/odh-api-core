@@ -50,6 +50,7 @@ namespace Helper
 
             int createresult = 0;
             int updateresult = 0;
+            int errorresult = 0;
 
             if (queryresult == null || queryresult.Count() == 0)
             {
@@ -69,7 +70,10 @@ namespace Helper
                 operation = "UPDATE";
             }
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, operation = operation };
+            if (createresult == 0 && updateresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };
         }
 
         private static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
@@ -84,6 +88,7 @@ namespace Helper
                       .Where("id", id);
 
             var deleteresult = 0;
+            var errorresult = 0;
 
             if (query == null)
             {
@@ -95,7 +100,10 @@ namespace Helper
                         .DeleteAsync();
             }
 
-            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, operation = "DELETE" };
+            if (deleteresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
         }
 
         #endregion
@@ -118,6 +126,7 @@ namespace Helper
 
             int createresult = 0;
             int updateresult = 0;
+            int errorresult = 0;
 
             if (queryresult == null || queryresult.Count() == 0)
             {
@@ -137,9 +146,11 @@ namespace Helper
                 operation = "UPDATE";
             }
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, operation = operation };                    
-        }
+            if (createresult == 0 && updateresult == 0)
+                errorresult = 1;
 
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };                    
+        }
 
         #endregion
 

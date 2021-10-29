@@ -3271,7 +3271,7 @@ namespace DataModel
 
     #region EBMS
 
-    public class EventShort : IIdentifiable
+    public class EventShort : IIdentifiable, IImportDateassigneable
     {
         public EventShort()
         {
@@ -3410,6 +3410,9 @@ namespace DataModel
                 return !String.IsNullOrEmpty(this.AnchorVenue) ? (this.AnchorVenue.StartsWith("NOI ") || this.AnchorVenue.StartsWith("Noi ") || this.AnchorVenue.StartsWith("noi ")) ? this.AnchorVenue.Remove(0, 3).Trim() : this.AnchorVenue : this.AnchorVenue;
             }
         }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
     }
 
     public class RoomBooked

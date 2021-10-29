@@ -70,20 +70,9 @@ namespace OdhApiImporter.Helpers
 
                         var result = await InsertEventInPG(eventtosave, idtocheck, kvp);
 
-                        if (result.Item1 == "insert")
-                        {
-                            if (result.Item2 == "1")
-                                newimportcounter++;
-                        }
-                        else if (result.Item1 == "update")
-                        {
-                            if (result.Item2 == "1")
-                                updateimportcounter++;
-                        }
-                        else
-                        {
-                            errorimportcounter++;
-                        }
+                        newimportcounter = newimportcounter + result.created.Value;
+                        updateimportcounter = updateimportcounter + result.updated.Value;
+                        errorimportcounter = errorimportcounter + result.error.Value;
 
                         idlistspreadsheet.Add(idtocheck.ToUpper());
                         if (!sourcelist.Contains(eventtosave.Source))
@@ -155,7 +144,7 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<Tuple<string, string>> InsertEventInPG(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)
+        private async Task<PGCRUDResult> InsertEventInPG(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)
         {
             try
             {
@@ -165,9 +154,9 @@ namespace OdhApiImporter.Helpers
                 //Set LicenseInfo
                 eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(eventtosave, Helper.LicenseHelper.GetLicenseforEvent);
 
-                var rawdatid = await InsertInRawDataDB(ninjaevent);
+                var rawdataid = await InsertInRawDataDB(ninjaevent);
 
-                return await InsertInDB(eventtosave, idtocheck, "events", rawdatid);
+                return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid);                
             }
             catch (Exception ex)
             {
@@ -188,36 +177,7 @@ namespace OdhApiImporter.Helpers
                             sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
                             type = "event_centrotrevi-drin"
                         });
-        }
-
-        private async Task<Tuple<string, string>> InsertInDB(EventLinked eventtosave, string idtocheck, string tablename, int rawdataid)
-        {
-            //Check if data exists on PG
-
-            var query =
-               QueryFactory.Query("events")
-                   .Select("data")
-                   .Where("id", idtocheck);
-
-            var eventindb = await query.GetAsync<JsonRaw>();
-
-            if (eventindb.Count() == 0)
-            {
-                eventtosave.FirstImport = DateTime.Now;
-
-                var queryresult = await QueryFactory.Query(tablename)
-                               .InsertAsync(new JsonBDataRaw() { id = idtocheck, data = new JsonRaw(eventtosave), rawdataid = rawdataid });
-
-                return Tuple.Create("insert", queryresult.ToString());
-            }
-            else
-            {
-                var queryresult = await QueryFactory.Query(tablename).Where("id", idtocheck)
-                                .UpdateAsync(new JsonBDataRaw() { id = idtocheck, data = new JsonRaw(eventtosave), rawdataid = rawdataid });
-
-                return Tuple.Create("update", queryresult.ToString());
-            }
-        }
+        }        
 
         private async Task<LocationInfo?> GetTheLocationInfoDistrict(string districtid)
         {

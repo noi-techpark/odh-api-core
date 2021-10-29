@@ -79,6 +79,7 @@ namespace EBMS
                     eventtosave.AnchorVenueShort = myevent.AnchorVenueShort ?? "";
                     //letzte Änderung
                     eventtosave.ChangedOn = myevent.ChangedOn;
+                    eventtosave.LastChange = myevent.ChangedOn;
                     //Beginndatum
                     eventtosave.StartDate = new DateTime(myevent.StartDate.Year, myevent.StartDate.Month, myevent.StartDate.Day, myevent.StartTime.Hour, myevent.StartTime.Minute, myevent.StartTime.Second);
                     //Beginnzeit

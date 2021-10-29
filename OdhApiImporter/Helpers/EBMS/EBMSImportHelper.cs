@@ -47,7 +47,7 @@ namespace OdhApiImporter.Helpers
                        .Select("data")
                        .Where("id", eventshort.Id);
 
-                var eventindb = await query.GetFirstOrDefaultAsObject<EventShort>();
+                var eventindb = await query.GetFirstOrDefaultAsObject<EventShortLinked>();
 
                 //currenteventshort.Where(x => x.EventId == eventshort.EventId).FirstOrDefault();
 
@@ -116,9 +116,7 @@ namespace OdhApiImporter.Helpers
 
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
-
-                    int queryresult = 0;
-
+                 
                     //Setting LicenseInfo
                     eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
 
@@ -133,33 +131,10 @@ namespace OdhApiImporter.Helpers
                             type = "event_euracnoi"
                         }, cancellationToken);
 
+                    var queryresult = await QueryFactory.UpsertData<EventShort>(eventshort, "eventeuracnoi", rawid);
 
-                    if (neweventshort)
-                    {
-                        queryresult = await QueryFactory.Query("eventeuracnoi")
-                            //.InsertAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                            .InsertAsync(new JsonBDataRaw() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort), rawdataid = rawid });
-
-                        newcounter++;
-                    }
-                    else
-                    {
-                        //var query = await QueryFactory.Query("alpinebits").UpdateAsync(new JsonBData() { id = id, data = new JsonRaw(input) });
-
-                        //TODO CHECK IF THIS WORKS     
-                        queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                            //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                            .UpdateAsync(new JsonBDataRaw() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort), rawdataid = rawid });
-
-                        updatecounter++;
-                    }
-
-                    //if (queryresult != "1")
-                    //    Constants.tracesource.TraceEvent(TraceEventType.Error, 0, "EventShort save error: " + eventshort.Id);
-
-                    //Console.ForegroundColor = ConsoleColor.Green;
-                    //Console.WriteLine("EventShort imported: " + eventshort.Id);
-                    //Constants.tracesource.TraceEvent(TraceEventType.Information, 0, "EventShort imported: " + eventshort.Id);                        
+                    newcounter = newcounter + queryresult.created.Value;
+                    updatecounter = updatecounter + queryresult.updated.Value;               
                 }
             }
 
