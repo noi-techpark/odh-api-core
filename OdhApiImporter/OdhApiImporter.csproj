@@ -27,7 +27,6 @@
     <Folder Include="Helpers\CDB\" />
     <Folder Include="Helpers\LCS\" />
     <Folder Include="Helpers\SUEDTIROLWEIN\" />
-    <Folder Include="Helpers\STA\" />
     <Folder Include="Models\" />
   </ItemGroup>
 </Project>
