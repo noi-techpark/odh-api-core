@@ -95,6 +95,10 @@ namespace OdhApiImporter.Helpers
                 var insertresult = await QueryFactory.Query("weatherdatahistory")
                       .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });
 
+                ////Save to PG
+                ////Check if data exists                    
+                //var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "weatherdatahistory", insertresultraw);
+
                 return new UpdateDetail() { created = insertresult, updated = 0, deleted = 0 };                    
             }
             else

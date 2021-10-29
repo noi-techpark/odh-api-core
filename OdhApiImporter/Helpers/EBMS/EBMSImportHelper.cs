@@ -82,10 +82,10 @@ namespace OdhApiImporter.Helpers
                     eventdocument = eventindb.EventDocument;
                     soldout = eventindb.SoldOut;
                 }
-               
+
+
                 if (changedonDB != eventshort.ChangedOn)
                 {
-
                     eventshort.ImageGallery = imagegallery;
                     eventshort.EventTextDE = eventTextDE;
                     eventshort.EventTextIT = eventTextIT;
