@@ -96,24 +96,15 @@ namespace OdhApiImporter.Helpers
 
         private async Task SetLocationInfo(EventLinked myevent)
         {
-            string wheregeo = PostgresSQLHelper.GetGeoWhereSimple(myevent.Latitude, myevent.Longitude, 30000);
-            string orderbygeo = PostgresSQLHelper.GetGeoOrderBySimple(myevent.Latitude, myevent.Longitude);
+            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, myevent.Latitude, myevent.Longitude, 30000);
 
-            var query =
-                     QueryFactory.Query("districts")
-                         .Select("data")
-                         .WhereRaw(wheregeo)
-                         .OrderByRaw(orderbygeo);
-
-            var districtlist = await query.GetFirstOrDefaultAsObject<District>();
-
-            if (districtlist == null)
+            if (district == null)
                 return;
 
-            myevent.DistrictId = districtlist.Id;
-            myevent.DistrictIds = new List<string>() { districtlist.Id };
+            myevent.DistrictId = district.Id;
+            myevent.DistrictIds = new List<string>() { district.Id };
             
-            var locinfo = await GetTheLocationInfoDistrict(districtlist.Id);
+            var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
             if (locinfo != null)
             {
                 LocationInfoLinked locinfolinked = new LocationInfoLinked
@@ -178,44 +169,7 @@ namespace OdhApiImporter.Helpers
                             type = "event_centrotrevi-drin"
                         });
         }        
-
-        private async Task<LocationInfo?> GetTheLocationInfoDistrict(string districtid)
-        {
-            try
-            {
-                LocationInfo mylocinfo = new LocationInfo();
-
-                var district = await QueryFactory.Query("districts").Select("data").Where("id", districtid.ToUpper()).GetFirstOrDefaultAsObject<District>();
-                var districtnames = (from x in district?.Detail
-                                     select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                var municipality = await QueryFactory.Query("municipalities").Select("data").Where("id", district?.MunicipalityId?.ToUpper()).GetFirstOrDefaultAsObject<Municipality>();
-                var municipalitynames = (from x in municipality?.Detail
-                                         select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                var tourismverein = await QueryFactory.Query("tvs").Select("data").Where("id", district?.TourismvereinId?.ToUpper()).GetFirstOrDefaultAsObject<Tourismverein>();
-                var tourismvereinnames = (from x in tourismverein?.Detail
-                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                var region = await QueryFactory.Query("regions").Select("data").Where("id", district?.RegionId?.ToUpper()).GetFirstOrDefaultAsObject<Region>();
-                var regionnames = (from x in region?.Detail
-                                   select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                //conn.Close();
-
-                mylocinfo.DistrictInfo = new DistrictInfo() { Id = district?.Id, Name = districtnames };
-                mylocinfo.MunicipalityInfo = new MunicipalityInfo() { Id = municipality?.Id, Name = municipalitynames };
-                mylocinfo.TvInfo = new TvInfo() { Id = tourismverein?.Id, Name = tourismvereinnames };
-                mylocinfo.RegionInfo = new RegionInfo() { Id = region?.Id, Name = regionnames };
-
-                return mylocinfo;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
+      
         private async Task<List<string>> GetAllEventsBySource(List<string> sourcelist)
         {
 

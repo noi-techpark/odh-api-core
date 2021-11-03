@@ -1,4 +1,5 @@
-﻿using SqlKata;
+﻿using DataModel;
+using SqlKata;
 using SqlKata.Execution;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Helper
 {
     public static class LocationListCreator
     {
-        #region PostGres
+        #region Locfilter Helper
 
         public static async Task<IEnumerable<string>> CreateActivityAreaListPGAsync(QueryFactory queryFactory, string areafilter, CancellationToken cancellationToken)
         {
@@ -94,6 +95,8 @@ namespace Helper
             return areaIdsJson.SelectMany(FromJsonArray)
                               .Distinct();
         }
-        #endregion
+
+        #endregion        
+
     }
 }
