@@ -47,8 +47,10 @@ namespace OdhApiCore.Filters
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            var availabilitysearchavailable = CheckAvailabilitySearch(context.HttpContext.User);            
+        {            
+            var availabilitysearchavailable = CheckAvailabilitySearch(context.HttpContext.User);
+
+            //TODO if Availability Requested and CheckAvailabilitySearch gives false, return a 401 Unauthorized
 
             //Getting Action name
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
