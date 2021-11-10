@@ -17,18 +17,95 @@ namespace NINJA.Parser
 
             switch (ninjaeventtype)
             {
-                case "Evento":
+                case "Convegni/conferenze":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "0D25868CC23242D6AC97AEB2973CB3D6",
+                        TopicInfo = "Tagungen/Vorträge"
+                    };
+                    break;
+                case "Sport":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "162C0067811B477DA725D2F5F2D98398",
+                        TopicInfo = "Sport"
+                    };
+                    break;
+                case "Enogastronomia/prodotti":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "252200A028C8449D9A6205369A6D0D36",
+                        TopicInfo = "Gastronomie/Typische Produkte"
+                    };
+                    break;
+                case "Artigianato/tradizioni":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "33BDC54BD39946F4852B3394B00610AE",
+                        TopicInfo = "Handwerk/Brauchtum"
+                    };
+                    break;
+                case "Fiere/mercati":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "4C4961D9FC5B48EEB73067BEB9D4402A",
+                        TopicInfo = "Messen/Märkte"
+                    };
+                    break;
+                case "Teatro/cinema":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "6884FE362C88434B9F49725E3328112B",
+                        TopicInfo = "Theater/Vorführungen"
+                    };
+                    break;
+                case "Corsi/lezioni":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "767F6F43FC394CE9A3C8A9725C6FF134",
+                        TopicInfo = "Kurse/Bildung"
+                    };
+                    break;
+                case "Musica/danza":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "7E048074BA004EC58E29E330A9AA476B",
+                        TopicInfo = "Musik/Tanz"
+                    };
+                    break;
+                case "Sagre/feste":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "9C3449EE278C4D94AA5A7C286729DEA0",
+                        TopicInfo = "Volksfeste/Festivals"
+                    };
+                    break;
+                case "Gite/escursioni":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "ACE8B613F2074A7BB59C0B1DD40A43CD",
+                        TopicInfo = "Wanderungen/Ausflüge"
+                    };
+                    break;
+                case "Visite guidate":
+                    topic = new TopicLinked
+                    {
+                        TopicRID = "B5467FEFE5C74FA5AD32B83793A76165",
+                        TopicInfo = "Führungen/Besichtigungen"
+                    };
+                    break;
+                case "Mostre/arte":
                     topic = new TopicLinked
                     {
                         TopicRID = "C72CE969B98947FABC99CBC7B033F28E",
                         TopicInfo = "Ausstellungen/Kunst"
                     };
                     break;
-                case "Mostra":
+                case "Famiglia":
                     topic = new TopicLinked
                     {
-                        TopicRID = "C72CE969B98947FABC99CBC7B033F28E",
-                        TopicInfo = "Ausstellungen/Kunst"
+                        TopicRID = "D98B49DF24C342D09A8161836435CF86",
+                        TopicInfo = "Familie"
                     };
                     break;
                 default:

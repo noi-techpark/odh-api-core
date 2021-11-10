@@ -50,6 +50,7 @@ namespace Helper
 
             int createresult = 0;
             int updateresult = 0;
+            int errorresult = 0;
 
             if (queryresult == null || queryresult.Count() == 0)
             {
@@ -69,7 +70,10 @@ namespace Helper
                 operation = "UPDATE";
             }
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, operation = operation };
+            if (createresult == 0 && updateresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };
         }
 
         private static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
@@ -84,6 +88,7 @@ namespace Helper
                       .Where("id", id);
 
             var deleteresult = 0;
+            var errorresult = 0;
 
             if (query == null)
             {
@@ -95,18 +100,61 @@ namespace Helper
                         .DeleteAsync();
             }
 
-            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, operation = "DELETE" };
+            if (deleteresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
         }
 
         #endregion
 
         #region RawDataStore
 
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, int rawdataid) where T : IIdentifiable, IImportDateassigneable
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data), "no data");
 
+            //Check if data exists
+            var query = QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", data.Id);
+
+            var queryresult = await query.GetAsync<T>();
+
+            string operation = "";
+
+            int createresult = 0;
+            int updateresult = 0;
+            int errorresult = 0;
+
+            if (queryresult == null || queryresult.Count() == 0)
+            {
+                data.FirstImport = DateTime.Now;
+                data.LastChange = DateTime.Now;
+
+                createresult = await QueryFactory.Query(table)
+                   .InsertAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
+                operation = "INSERT";
+            }
+            else
+            {
+                data.LastChange = DateTime.Now;
+
+                updateresult = await QueryFactory.Query(table).Where("id", data.Id)
+                        .UpdateAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
+                operation = "UPDATE";
+            }
+
+            if (createresult == 0 && updateresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };                    
+        }
 
         #endregion
 
     }
 
-   
+
 }

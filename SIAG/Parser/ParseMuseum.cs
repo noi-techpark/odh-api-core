@@ -11,7 +11,7 @@ namespace SIAG.Parser
 {
     public class ParseMuseum
     {
-        public static Tuple<string, ODHActivityPoi> ParseMuseumToPG(ODHActivityPoi mymuseum, XElement mysiagmuseum, string plz)
+        public static ODHActivityPoiLinked ParseMuseumToPG(ODHActivityPoiLinked mymuseum, XElement mysiagmuseum, string plz)
         {
             XNamespace ax211 = "http://data.service.kks.siag/xsd";
 
@@ -93,7 +93,7 @@ namespace SIAG.Parser
 
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
-            foreach (var photogallery in mysiagmuseum.Elements(ax211 + "photoGallery"))
+            foreach(var photogallery in mysiagmuseum.Elements(ax211 + "photoGallery"))
             {
                 string imagedescDE = photogallery.Element(ax211 + "beschreibungD").Value;
                 string imagedescIT = photogallery.Element(ax211 + "beschreibungI").Value;
@@ -449,10 +449,8 @@ namespace SIAG.Parser
             }
 
             mymuseum.SmgTags = smgtaglist.ToList();
-
-            Tuple<string, ODHActivityPoi> mytuple = new Tuple<string, ODHActivityPoi>(gemeindeid, mymuseum);
-
-            return mytuple;
+            
+            return mymuseum;
         }
     }
 }

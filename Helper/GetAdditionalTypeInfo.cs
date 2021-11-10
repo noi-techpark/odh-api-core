@@ -36,7 +36,7 @@ namespace Helper
                     await maintypequery
                         .GetFirstOrDefaultAsObject<SmgPoiTypes>();
 
-                var validtags = await ODHTagHelper.GetSmgTagsValidforTranslations(QueryFactory, new List<string>(), new List<string>() { maintypedata?.Key ?? "", subtypedata.Key });
+                var validtags = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>(), new List<string>() { maintypedata?.Key ?? "", subtypedata.Key });
 
                 foreach (var lang in languages)
                 {
@@ -58,7 +58,7 @@ namespace Helper
 
     public class ODHTagHelper
     {
-        public static async Task<IEnumerable<SmgTags>> GetSmgTagsValidforTranslations(QueryFactory QueryFactory, List<string> validforentity, List<string>? idlist = null)
+        public static async Task<IEnumerable<SmgTags>> GetODHTagsValidforTranslations(QueryFactory QueryFactory, List<string> validforentity, List<string>? idlist = null)
         {
             try
             {
@@ -82,6 +82,23 @@ namespace Helper
             catch (Exception)
             {
                 return new List<SmgTags>();
+            }
+        }
+
+        public static async Task<SmgTags> GeODHTagByID(QueryFactory QueryFactory, string id)
+        {
+            try
+            {
+                var query =
+                       QueryFactory.Query("smgtags")
+                           .Select("data")
+                           .Where("id", id.ToLower());                           
+
+                return await query.FirstOrDefaultAsync<SmgTags>();
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }

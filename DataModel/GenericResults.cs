@@ -13,7 +13,7 @@ namespace DataModel
         public string otherinfo { get; init; }
         public string message { get; init; }
         public bool success { get; init; }
-        public string recordsmodified { get; init; }
+        public int? recordsmodified { get; init; }
 
         public int? updated { get; init; }
         public int? created { get; init; }
@@ -36,5 +36,7 @@ namespace DataModel
         public int? updated { get; init; }
         public int? created { get; init; }
         public int? deleted { get; init; }
+
+        public int? error { get; init; }
     }
 }

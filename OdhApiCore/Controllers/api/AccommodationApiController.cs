@@ -445,15 +445,17 @@ namespace OdhApiCore.Controllers
             string? bokfilter = "hgv",
             string? source = "sinfo",
             string? detail = "0",
-            bool withoutids = false,
-            //bool withoutlcsids = false,
+            bool withoutids = false,            
             bool availabilityonly = false,
             CancellationToken cancellationToken = default)
         {
-            //TODO if Route = AvailabilityCheck return only Mssresult
-            var x = this.HttpContext.Request.RouteValues;
+            //For Compatiblity if Route equals AvailabilityCheck return only Availability Response
+            var usedroute = ControllerContext.ActionDescriptor.AttributeRouteInfo.Template;
 
-            //TODO if no idfilter given make request to all (make use of cached MSS)
+            if (usedroute == "v1/AvailabilityCheck")
+                availabilityonly = true;
+
+            //If no ids in the post body, makes ure withoutids is checked (make use of cached MSS)
             if((idfilter == null || String.IsNullOrEmpty(idfilter)) && withoutids == false)
                 return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutids set to true");
 

@@ -15,8 +15,6 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
-//using OdhApiCore.Filters;
-//using OdhApiCore.GenericHelpers;
 using EBMS;
 using NINJA;
 using NINJA.Parser;
@@ -42,157 +40,13 @@ namespace OdhApiImporter.Controllers
             this.settings = settings;
             this.logger = logger;
             this.QueryFactory = queryFactory;
-        }
+        }        
 
-        #region TEST
-
-        [HttpGet, Route("TestWS")]
-        public IActionResult TestWS(CancellationToken cancellationToken)
-        {
-            return Ok(new UpdateResult
-            {
-                operation = "Test WS",
-                updatetype = "",
-                message = "Workerservice is online",
-                recordsmodified = "0",
-                success = true
-            });
-        }
-
-        #endregion
-
-        #region EBMS exposed
-
-        [HttpGet, Route("EBMS/EventShort/UpdateAll")]
-        public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken)
-        {
-            try
-            {
-                EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(settings, QueryFactory);
-
-                var result = await ebmsimporthelper.ImportEbmsEventsToDB(cancellationToken);
-
-                return Ok(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update succeeded",
-                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsmodified = "0",
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
-            }
-        }
-
-        [HttpGet, Route("EBMS/EventShort/UpdateSingle/{id}")]
-        public IActionResult UpdateSingleEBMS(string id, CancellationToken cancellationToken)
-        {
-            try
-            {
-                //TODO
-                //await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
-
-                return Ok(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    id = id,
-                    updatetype = "single",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update succeeded",
-                    recordsmodified = "1",
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = true
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsmodified = "0",
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
-            }
-        }
-
-        #endregion
-
-        #region NINJA exposed
-
-        [HttpGet, Route("NINJA/Events/UpdateAll")]
-        public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken)
-        {
-            try
-            {
-                var responseevents = await GetNinjaData.GetNinjaEvent();
-                var responseplaces = await GetNinjaData.GetNinjaPlaces();
-
-                NINJAImportHelper ninjaimporthelper = new NINJAImportHelper(settings, QueryFactory);
-                var result = await ninjaimporthelper.SaveEventsToPG(responseevents.data, responseplaces.data);
-
-                return Ok(new UpdateResult
-                {
-                    operation = "Update Ninja Events",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "Ninja Events update succeeded",
-                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update Ninja Events",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "Update Ninja Events failed: " + ex.Message,
-                    recordsmodified = "0",
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
-            }
-        }
-
-        #endregion
-
-        #region ODH RAVEN exposed
+        #region UPDATE FROM RAVEN INSTANCE
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
         //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
-        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -206,7 +60,7 @@ namespace OdhApiImporter.Controllers
                     otherinfo = datatype,
                     message = "",
                     id = id,
-                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    recordsmodified = (result.created + result.updated + result.deleted),
                     created = result.created,
                     updated = result.updated,
                     deleted = result.deleted,
@@ -222,26 +76,158 @@ namespace OdhApiImporter.Controllers
                     otherinfo = datatype,
                     id = id,
                     message = "Update Raven failed: " + ex.Message,
-                    recordsmodified = "0",
+                    recordsmodified = 0,
                     created = 0,
                     updated = 0,
                     deleted = 0,
                     success = false
                 });
-            } 
+            }
         }
 
         #endregion
 
-        #region SIAG Exposed
+        #region EBMS DATA SYNC (EventShort)
+
+        [HttpGet, Route("EBMS/EventShort/UpdateAll")]
+        public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(settings, QueryFactory);
+
+                var result = await ebmsimporthelper.ImportEbmsEventsToDB(cancellationToken);
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Update EBMS",
+                    updatetype = "all",
+                    otherinfo = "",
+                    message = "EBMS Eventshorts update succeeded",
+                    recordsmodified = (result.created + result.updated + result.deleted),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Update EBMS",
+                    updatetype = "all",
+                    otherinfo = "",
+                    message = "EBMS Eventshorts update failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
+        }
+
+        [HttpGet, Route("EBMS/EventShort/UpdateSingle/{id}")]
+        public IActionResult UpdateSingleEBMS(string id, CancellationToken cancellationToken = default)
+        {
+            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
+
+            //try
+            //{               
+            //    return Ok(new UpdateResult
+            //    {
+            //        operation = "Update EBMS",
+            //        id = id,
+            //        updatetype = "single",
+            //        otherinfo = "",
+            //        message = "EBMS Eventshorts update succeeded",
+            //        recordsmodified = 1,
+            //        created = 0,
+            //        updated = 0,
+            //        deleted = 0,
+            //        success = true
+            //    });
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest(new UpdateResult
+            //    {
+            //        operation = "Update EBMS",
+            //        updatetype = "all",
+            //        otherinfo = "",
+            //        message = "EBMS Eventshorts update failed: " + ex.Message,
+            //        recordsmodified = 0,
+            //        created = 0,
+            //        updated = 0,
+            //        deleted = 0,
+            //        success = false
+            //    });
+            //}
+        }
+
+        #endregion
+
+        #region NINJA DATA SYNC (Events Centro Trevi and DRIN)
+
+        [HttpGet, Route("NINJA/Events/UpdateAll")]
+        public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var responseevents = await GetNinjaData.GetNinjaEvent();
+                var responseplaces = await GetNinjaData.GetNinjaPlaces();
+
+                NINJAImportHelper ninjaimporthelper = new NINJAImportHelper(settings, QueryFactory);
+                var result = await ninjaimporthelper.SaveEventsToPG(responseevents.data, responseplaces.data);
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Update Ninja Events",
+                    updatetype = "all",
+                    otherinfo = "",
+                    message = "Ninja Events update succeeded",
+                    recordsmodified = (result.created + result.updated + result.deleted),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Update Ninja Events",
+                    updatetype = "all",
+                    otherinfo = "",
+                    message = "Update Ninja Events failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
+        }
+
+        [HttpGet, Route("NINJA/Events/UpdateSingle/{id}")]
+        public async Task<IActionResult> UpdateSingleNinjaEvents(string id, CancellationToken cancellationToken = default)
+        {           
+            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
+        }
+
+        #endregion        
+
+        #region SIAG DATA SYNC WEATHER 
 
         [HttpGet, Route("Siag/Weather/Import")]
-        public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken)
+        public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken = default)
         {
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
-                var result = await siagimporthelper.SaveWeatherToHistoryTable();
+                var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
 
                 return Ok(new UpdateResult
                 {
@@ -249,7 +235,7 @@ namespace OdhApiImporter.Controllers
                     updatetype = "single",
                     otherinfo = "actual",
                     message = "Import Weather data succeeded",
-                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),                    
+                    recordsmodified = result.created + result.updated + result.deleted,                    
                     created = result.created,
                     updated = result.updated,
                     deleted = result.deleted,
@@ -264,7 +250,7 @@ namespace OdhApiImporter.Controllers
                     updatetype = "single",
                     otherinfo = "actual",
                     message = "Import Weather data failed: " + ex.Message,
-                    recordsmodified = "0",
+                    recordsmodified = 0,
                     created = 0,
                     updated = 0,
                     deleted = 0,
@@ -274,12 +260,12 @@ namespace OdhApiImporter.Controllers
         }
 
         [HttpGet, Route("Siag/Weather/Import/{id}")]
-        public async Task<IActionResult> ImportWeatherByID(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> ImportWeatherByID(string id, CancellationToken cancellationToken = default)
         {
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
-                var result = await siagimporthelper.SaveWeatherToHistoryTable(id);
+                var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
 
                 return Ok(new UpdateResult
                 {
@@ -288,7 +274,7 @@ namespace OdhApiImporter.Controllers
                     otherinfo = "byid",
                     id = id,
                     message = "Import Weather data succeeded id:" + id.ToString(),
-                    recordsmodified = (result.created + result.updated + result.deleted).ToString(),
+                    recordsmodified = (result.created + result.updated + result.deleted),
                     created = result.created,
                     updated = result.updated,
                     deleted = result.deleted,
@@ -303,7 +289,7 @@ namespace OdhApiImporter.Controllers
                     updatetype = "single",
                     otherinfo = "byid",
                     message = "Import Weather data failed: id:" + id.ToString() + " error:" + ex.Message,
-                    recordsmodified = "0",
+                    recordsmodified = 0,
                     created = 0,
                     updated = 0,
                     deleted = 0,
@@ -311,6 +297,132 @@ namespace OdhApiImporter.Controllers
                 });
             }
         }
+
+        #endregion
+
+        #region SIAG DATA SYNC MUSEUMS
+
+        [HttpGet, Route("Siag/Museum/Import")]
+        public async Task<IActionResult> ImportMuseum(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                var result = await siagimporthelper.SaveMuseumsToODH(QueryFactory, null, cancellationToken);
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "single",
+                    otherinfo = "actual",
+                    message = "Import Weather data succeeded",
+                    recordsmodified = result.created + result.updated + result.deleted,
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Import Weather data",
+                    updatetype = "single",
+                    otherinfo = "actual",
+                    message = "Import Weather data failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
+        }
+
+
+        #endregion
+
+        #region SUEDTIROLWEIN DATA SYNC
+
+        #endregion
+
+        #region LTS ACTIVITYDATA SYNC
+
+        #endregion
+
+        #region LTS POIDATA SYNC
+
+        #endregion
+
+        #region LTS EVENT DATA SYNC
+
+        #endregion
+
+        #region LTS GASTRONOMIC DATA SYNC
+
+        #endregion
+
+        #region LTS ACCOMMODATION DATA SYNC
+
+        #endregion
+
+        #region HGV ACCOMMODATION DATA SYNC
+
+        #endregion
+
+        #region LTS MEASURINGPOINTS DATA SYNC
+
+        #endregion
+
+        #region LTS WEBCAM DATA SYNC
+
+        #endregion
+
+        #region STA POI DATA SYNC
+
+        [Authorize(Roles = "DataWriter,STAPoiImport")]
+        [HttpPost, Route("STA/ImportVendingPoints")]
+        public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
+        {
+            try
+            {
+                STAImportHelper staimporthelper = new STAImportHelper(settings, QueryFactory);
+
+                var result = await staimporthelper.PostVendingPointsFromSTA(Request, cancellationToken);
+
+                return Ok(new
+                {
+                    operation = "Import Vendingpoints",
+                    updatetype = "all",
+                    otherinfo = "STA",
+                    id = "",
+                    message = "Import Vendingpoints succeeded",
+                    recordsmodified = (result.created + result.updated + result.deleted),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Import Vendingpoints",
+                    updatetype = "all",
+                    otherinfo = "STA",
+                    id = "",
+                    message = "Import Vendingpoints failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
+        }
+
 
         #endregion
     }

@@ -35,6 +35,7 @@ namespace OdhApiCore.Formatters
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             //Works only with List Method add an understandable Exception if it is used on single methods
+         
             var result = context.Object as IResponse<JsonRaw>;
             if (result != null)
             {
@@ -59,14 +60,52 @@ namespace OdhApiCore.Formatters
 
                 var stream = context.HttpContext.Response.Body;
 
-                await using var writer = new StreamWriter(stream, leaveOpen:true);
+                await using var writer = new StreamWriter(stream, leaveOpen: true);
                 await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
                 await csv.WriteRecordsAsync(data);
                 await writer.FlushAsync();
             }
+            else if (context.Object != null)
+            {
+                var listresult = context.Object as IEnumerable<JsonRaw>;
+
+                if (listresult != null)
+                {
+                    static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)
+                    {
+                        var eo = new ExpandoObject();
+                        var eoColl = (ICollection<KeyValuePair<string, object>>)eo!;
+                        foreach (var kvp in dict)
+                        {
+                            // Filter out IEnumerables, because they cannot be serialized to CSV
+                            if (kvp.Value is IEnumerable<object>)
+                                continue;
+                            eoColl.Add(kvp);
+                        }
+                        return eo;
+                    }
+
+                    var data =
+                        (from item in listresult
+                         let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(item.Value)
+                         select ConvertToExpandoObject(dict)).ToList<dynamic>();
+
+                    var stream = context.HttpContext.Response.Body;
+
+                    await using var writer = new StreamWriter(stream, leaveOpen: true);
+                    await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+                    await csv.WriteRecordsAsync(data);
+                    await writer.FlushAsync();
+                }
+                else
+                {
+                    context.HttpContext.Response.StatusCode = 501;
+                    await context.HttpContext.Response.WriteAsync("Bad Request");
+                }
+            }
             else
             {
-                context.HttpContext.Response.StatusCode = 401;
+                context.HttpContext.Response.StatusCode = 501;
                 await context.HttpContext.Response.WriteAsync("Bad Request");
             }
         }

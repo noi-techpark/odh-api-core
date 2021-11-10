@@ -70,20 +70,9 @@ namespace OdhApiImporter.Helpers
 
                         var result = await InsertEventInPG(eventtosave, idtocheck, kvp);
 
-                        if (result.Item1 == "insert")
-                        {
-                            if (result.Item2 == "1")
-                                newimportcounter++;
-                        }
-                        else if (result.Item1 == "update")
-                        {
-                            if (result.Item2 == "1")
-                                updateimportcounter++;
-                        }
-                        else
-                        {
-                            errorimportcounter++;
-                        }
+                        newimportcounter = newimportcounter + result.created.Value;
+                        updateimportcounter = updateimportcounter + result.updated.Value;
+                        errorimportcounter = errorimportcounter + result.error.Value;
 
                         idlistspreadsheet.Add(idtocheck.ToUpper());
                         if (!sourcelist.Contains(eventtosave.Source))
@@ -107,25 +96,15 @@ namespace OdhApiImporter.Helpers
 
         private async Task SetLocationInfo(EventLinked myevent)
         {
-            string wheregeo = PostgresSQLHelper.GetGeoWhereSimple(myevent.Latitude, myevent.Longitude, 30000);
-            string orderbygeo = PostgresSQLHelper.GetGeoOrderBySimple(myevent.Latitude, myevent.Longitude);
+            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, myevent.Latitude, myevent.Longitude, 30000);
 
-            var query =
-                     QueryFactory.Query("districts")
-                         .Select("data")
-                         .WhereRaw(wheregeo)
-                         .OrderByRaw(orderbygeo);
-
-            var districtlist = await query.GetFirstOrDefaultAsObject<District>();
-
-            if (districtlist == null)
+            if (district == null)
                 return;
 
-            myevent.DistrictId = districtlist.Id;
-            myevent.DistrictIds = new List<string>() { districtlist.Id };
-
-            //TODO MAYBE IN HELPER!
-            var locinfo = await GetTheLocationInfoDistrict(districtlist.Id);
+            myevent.DistrictId = district.Id;
+            myevent.DistrictIds = new List<string>() { district.Id };
+            
+            var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
             if (locinfo != null)
             {
                 LocationInfoLinked locinfolinked = new LocationInfoLinked
@@ -156,7 +135,7 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<Tuple<string, string>> InsertEventInPG(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)
+        private async Task<PGCRUDResult> InsertEventInPG(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)
         {
             try
             {
@@ -166,9 +145,9 @@ namespace OdhApiImporter.Helpers
                 //Set LicenseInfo
                 eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(eventtosave, Helper.LicenseHelper.GetLicenseforEvent);
 
-                var rawdatid = await InsertInRawDataDB(ninjaevent);
+                var rawdataid = await InsertInRawDataDB(ninjaevent);
 
-                return await InsertInDB(eventtosave, idtocheck, "events", rawdatid);
+                return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid);                
             }
             catch (Exception ex)
             {
@@ -187,76 +166,10 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "culture",
                             sourceid = ninjaevent.Key,
                             sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
-                            type = "eventeuracnoi"
+                            type = "event_centrotrevi-drin"
                         });
-        }
-
-        private async Task<Tuple<string, string>> InsertInDB(EventLinked eventtosave, string idtocheck, string tablename, int rawdataid)
-        {
-            //Check if data exists on PG
-
-            var query =
-               QueryFactory.Query("events")
-                   .Select("data")
-                   .Where("id", idtocheck);
-
-            var eventindb = await query.GetAsync<JsonRaw>();
-
-            if (eventindb.Count() == 0)
-            {
-                eventtosave.FirstImport = DateTime.Now;
-
-                var queryresult = await QueryFactory.Query(tablename)
-                               .InsertAsync(new JsonBDataRaw() { id = idtocheck, data = new JsonRaw(eventtosave), rawdataid = rawdataid });
-
-                return Tuple.Create("insert", queryresult.ToString());
-            }
-            else
-            {
-                var queryresult = await QueryFactory.Query(tablename).Where("id", idtocheck)
-                                .UpdateAsync(new JsonBDataRaw() { id = idtocheck, data = new JsonRaw(eventtosave), rawdataid = rawdataid });
-
-                return Tuple.Create("update", queryresult.ToString());
-            }
-        }
-
-        private async Task<LocationInfo?> GetTheLocationInfoDistrict(string districtid)
-        {
-            try
-            {
-                LocationInfo mylocinfo = new LocationInfo();
-
-                var district = await QueryFactory.Query("districts").Select("data").Where("id", districtid.ToUpper()).GetFirstOrDefaultAsObject<District>();
-                var districtnames = (from x in district?.Detail
-                                     select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                var municipality = await QueryFactory.Query("municipalities").Select("data").Where("id", district?.MunicipalityId?.ToUpper()).GetFirstOrDefaultAsObject<Municipality>();
-                var municipalitynames = (from x in municipality?.Detail
-                                         select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                var tourismverein = await QueryFactory.Query("tvs").Select("data").Where("id", district?.TourismvereinId?.ToUpper()).GetFirstOrDefaultAsObject<Tourismverein>();
-                var tourismvereinnames = (from x in tourismverein?.Detail
-                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                var region = await QueryFactory.Query("regions").Select("data").Where("id", district?.RegionId?.ToUpper()).GetFirstOrDefaultAsObject<Region>();
-                var regionnames = (from x in region?.Detail
-                                   select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                //conn.Close();
-
-                mylocinfo.DistrictInfo = new DistrictInfo() { Id = district?.Id, Name = districtnames };
-                mylocinfo.MunicipalityInfo = new MunicipalityInfo() { Id = municipality?.Id, Name = municipalitynames };
-                mylocinfo.TvInfo = new TvInfo() { Id = tourismverein?.Id, Name = tourismvereinnames };
-                mylocinfo.RegionInfo = new RegionInfo() { Id = region?.Id, Name = regionnames };
-
-                return mylocinfo;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
+        }        
+      
         private async Task<List<string>> GetAllEventsBySource(List<string> sourcelist)
         {
 
