@@ -60,14 +60,14 @@ namespace OdhApiCore.Formatters
 
                 var stream = context.HttpContext.Response.Body;
 
-                await using var writer = new StreamWriter(stream, leaveOpen:true);
+                await using var writer = new StreamWriter(stream, leaveOpen: true);
                 await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
                 await csv.WriteRecordsAsync(data);
                 await writer.FlushAsync();
             }
-            else if(context.Object != null)
+            else if (context.Object != null)
             {
-                var listresult = context.Object as IList<JsonRaw>;
+                var listresult = context.Object as IEnumerable<JsonRaw>;
 
                 if (listresult != null)
                 {
@@ -97,10 +97,17 @@ namespace OdhApiCore.Formatters
                     await csv.WriteRecordsAsync(data);
                     await writer.FlushAsync();
                 }
+                else
+                {
+                    context.HttpContext.Response.StatusCode = 501;
+                    await context.HttpContext.Response.WriteAsync("Bad Request");
+                }
             }
-            
-            context.HttpContext.Response.StatusCode = 501;
-            await context.HttpContext.Response.WriteAsync("Bad Request");            
+            else
+            {
+                context.HttpContext.Response.StatusCode = 501;
+                await context.HttpContext.Response.WriteAsync("Bad Request");
+            }
         }
     }
 }
