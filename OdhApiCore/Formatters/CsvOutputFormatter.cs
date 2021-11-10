@@ -35,6 +35,7 @@ namespace OdhApiCore.Formatters
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             //Works only with List Method add an understandable Exception if it is used on single methods
+         
             var result = context.Object as IResponse<JsonRaw>;
             if (result != null)
             {
@@ -66,7 +67,7 @@ namespace OdhApiCore.Formatters
             }
             else
             {
-                context.HttpContext.Response.StatusCode = 401;
+                context.HttpContext.Response.StatusCode = 501;
                 await context.HttpContext.Response.WriteAsync("Bad Request");
             }
         }
