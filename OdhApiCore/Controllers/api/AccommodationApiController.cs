@@ -35,6 +35,20 @@ namespace OdhApiCore.Controllers
             this.httpClientFactory = httpClientFactory;            
         }
 
+        //Duplicate on AVailabilitySearchInterceptorAttribute
+        public bool CheckAvailabilitySearch(System.Security.Claims.ClaimsPrincipal User)
+        {
+            List<string> roles = new List<string>() { "DataReader", "AccoReader" };
+
+            foreach (var role in roles)
+            {
+                if (User.IsInRole(role))
+                    return true;
+            }
+
+            return false;
+        }
+
         #region SWAGGER Exposed API
 
         /// <summary>
@@ -125,6 +139,12 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
+            //if availabilitysearch requested and User not logged
+            if (availabilitycheck?.Value == true && !CheckAvailabilitySearch(User))
+            {
+                return Unauthorized("User not allowed for availabilitysearch");
+            }
+
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
@@ -138,18 +158,18 @@ namespace OdhApiCore.Controllers
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
-            else if(availabilitycheck?.Value == true)
-            {               
+            else if (availabilitycheck?.Value == true)
+            {
                 var accobooklist = Request.HttpContext.Items["accobooklist"];
                 var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
                 var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
 
                 var availableonlineaccos = new List<string>();
-                if (accoavailabilitymss != null)                
-                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());                                                        
+                if (accoavailabilitymss != null)
+                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
                 if (accoavailabilitylcs != null)
                     availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
-                    
+
                 //TODO SORT ORDER???
 
                 return await GetFiltered(
@@ -158,7 +178,8 @@ namespace OdhApiCore.Controllers
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
-            }          
+            }            
+            else
             {
                 return BadRequest("not supported!");
             }
@@ -207,7 +228,13 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            if(idsource == "hgv")
+            //if availabilitysearch requested and User not logged
+            if (availabilitycheck?.Value == true && !CheckAvailabilitySearch(User))
+            {
+                return Unauthorized("User not allowed for availabilitysearch");
+            }
+
+            if (idsource == "hgv")
                 return await GetSingleByHgvId(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
             else
                 return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);           
@@ -449,6 +476,12 @@ namespace OdhApiCore.Controllers
             bool availabilityonly = false,
             CancellationToken cancellationToken = default)
         {
+            //if availabilitysearch requested and User not logged
+            if (!CheckAvailabilitySearch(User))
+            {
+                return Unauthorized("User not allowed for availabilitysearch");
+            }
+
             //For Compatiblity if Route equals AvailabilityCheck return only Availability Response
             var usedroute = ControllerContext.ActionDescriptor.AttributeRouteInfo.Template;
 
