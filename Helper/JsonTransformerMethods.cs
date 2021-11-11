@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Helper
@@ -269,11 +269,18 @@ namespace Helper
                     {
                         try
                         {
-                            return new JProperty(x.name, token.SelectToken(x.path));
+                            try
+                            {
+                                return new JProperty(x.name, token.SelectToken(x.path, errorWhenNoMatch: true));
+                            }
+                            catch (JsonException)
+                            {
+                                return new JProperty(x.name, token.SelectTokens(x.path, errorWhenNoMatch: true));
+                            }
                         }
-                        catch (JsonException ex)
+                        catch (JsonException)
                         {
-                            throw new JsonPathException(ex.Message, x.path, ex);
+                            return new JProperty(x.name);
                         }
                     })
                 );
