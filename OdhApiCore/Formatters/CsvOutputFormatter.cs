@@ -32,6 +32,20 @@ namespace OdhApiCore.Formatters
             return base.CanWriteType(type);
         }
 
+        private static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)
+        {
+            var eo = new ExpandoObject();
+            var eoColl = (ICollection<KeyValuePair<string, object>>)eo!;
+            foreach (var kvp in dict)
+            {
+                // Filter out IEnumerables, because they cannot be serialized to CSV
+                if (kvp.Value is IEnumerable<object>)
+                    continue;
+                eoColl.Add(kvp);
+            }
+            return eo;
+        }
+
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             //Works only with List Method add an understandable Exception if it is used on single methods
@@ -39,20 +53,6 @@ namespace OdhApiCore.Formatters
             var result = context.Object as IResponse<JsonRaw>;
             if (result != null)
             {
-                static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)
-                {
-                    var eo = new ExpandoObject();
-                    var eoColl = (ICollection<KeyValuePair<string, object>>)eo!;
-                    foreach (var kvp in dict)
-                    {
-                        // Filter out IEnumerables, because they cannot be serialized to CSV
-                        if (kvp.Value is IEnumerable<object>)
-                            continue;
-                        eoColl.Add(kvp);
-                    }
-                    return eo;
-                }
-
                 var data =
                     (from item in result.Items
                      let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(item.Value)
@@ -71,20 +71,6 @@ namespace OdhApiCore.Formatters
 
                 if (listresult != null)
                 {
-                    static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)
-                    {
-                        var eo = new ExpandoObject();
-                        var eoColl = (ICollection<KeyValuePair<string, object>>)eo!;
-                        foreach (var kvp in dict)
-                        {
-                            // Filter out IEnumerables, because they cannot be serialized to CSV
-                            if (kvp.Value is IEnumerable<object>)
-                                continue;
-                            eoColl.Add(kvp);
-                        }
-                        return eo;
-                    }
-
                     var data =
                         (from item in listresult
                          let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(item.Value)
