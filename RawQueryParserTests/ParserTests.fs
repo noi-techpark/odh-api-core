@@ -101,6 +101,14 @@ let parserTests =
                 let actual = run Filtering.statement """eq(ImageGallery, [])"""
                 Expect.equal actual expected ""
             }
+            test "Simple condition with array alternative notation" {
+                let expected =
+                    Ok (Comp { Field = Field [ IdentifierSegment "ImageGallery" ]
+                               Operator = Filtering.Operator.Eq
+                               Value = Filtering.Array })
+                let actual = run Filtering.statement """eq(ImageGallery, [*])"""
+                Expect.equal actual expected ""
+            }
             test "AND condition" {
                 let expected =
                     Ok (
