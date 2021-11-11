@@ -278,9 +278,9 @@ namespace Helper
                                 return new JProperty(x.name, token.SelectTokens(x.path, errorWhenNoMatch: true));
                             }
                         }
-                        catch (JsonException ex)
+                        catch (JsonException)
                         {
-                            throw new JsonPathException(ex.Message, x.path, ex);
+                            return new JProperty(x.name);
                         }
                     })
                 );
