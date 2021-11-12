@@ -280,7 +280,7 @@ namespace Helper
                         }
                         catch (JsonException)
                         {
-                            return new JProperty(x.name);
+                            return new JProperty(x.name, (object?)null);
                         }
                     })
                 );
