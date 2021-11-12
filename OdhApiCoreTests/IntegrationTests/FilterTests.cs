@@ -30,7 +30,7 @@ namespace OdhApiCoreTests.IntegrationTests
         [Fact]
         public async Task TestFields()
         {
-            var url = "/v1/Accommodation?pagesize=20&pagenumber=1&fields=AccoDetail.de.Name,Features[*].Name,HgvId";
+            var url = "/v1/Accommodation?pagesize=20&pagenumber=1&fields=AccoDetail.de.Name,Features[*].Name,HgvId,Test";
             var response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8",
@@ -60,7 +60,7 @@ namespace OdhApiCoreTests.IntegrationTests
                 Helpers.JsonIsType<string>(firstItem["AccoDetail.de.Name"]);
                 Assert.Equal("\"Bamguat\"", (string)firstItem["AccoDetail.de.Name"]);
                 Helpers.JsonIsType<JArray>(firstItem["Features[*].Name"]);
-                Assert.Equal(ToJArray(new[] { 
+                Assert.Equal(ToJArray(new[] {
                            "Families",
                            "Seniors",
                            "Hiking",
@@ -78,10 +78,12 @@ namespace OdhApiCoreTests.IntegrationTests
                            "Outdoor  pool",
                            "Partner Therme Meran",
                            "Quiet location",
-                           "MeranCard (15.10.-30.06.)" 
+                           "MeranCard (15.10.-30.06.)"
                     }), (JArray)firstItem["Features[*].Name"]);
                 Helpers.JsonIsType<string?>(firstItem.HgvId);
                 Assert.Null((string?)firstItem.HgvId);
+                Helpers.JsonIsType<object?>(firstItem.Test);
+                Assert.Equal((object?)firstItem.Test, new JValue((object?)null));
             }
         }
 
