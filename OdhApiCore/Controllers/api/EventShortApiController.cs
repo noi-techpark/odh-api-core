@@ -84,6 +84,7 @@ namespace OdhApiCore.Controllers.api
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool optimizeforapp = false,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default
             )
@@ -94,7 +95,8 @@ namespace OdhApiCore.Controllers.api
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, active: onlyactive.Value,
                    sortorder: sortorder, seed: seed, lastchange: lastchange,
-                   rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, cancellationToken: cancellationToken);
+                   rawfilter: rawfilter, rawsort: rawsort, optimizeforapp: optimizeforapp, removenullvalues: removenullvalues, 
+                   cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -248,7 +250,7 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
             string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, string? sortorder, string? seed,
-            string? lastchange, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+            string? lastchange, string? rawfilter, string? rawsort, bool removenullvalues, bool optimizeforapp, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -279,13 +281,17 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-                
+
+                if (optimizeforapp)
+                    OptimizeRoomyForApp(data.List);
+
                 var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.List.Select(
                         raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
+
 
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
@@ -529,6 +535,29 @@ namespace OdhApiCore.Controllers.api
                 eventshortlistbyroom.Add(roomtoadd);
 
         }
+     
+
+        private void OptimizeRoomyForApp(IEnumerable<JsonRaw>? data)
+        {
+            var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x.Value)!).ToList();
+
+            //var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter);
+
+            //IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
+
+            //var fieldsTohide = FieldsToHide;
+
+            //var dataTransformed =
+            //        resultraw.Select(
+            //            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+            //        );
+
+            //return Ok(dataTransformed);
+        }
+
+        #endregion
+
+        #region EVENTSHORT TYPES
 
         private Task<IActionResult> GetEventShortTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
