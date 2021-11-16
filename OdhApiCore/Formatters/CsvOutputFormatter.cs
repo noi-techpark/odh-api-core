@@ -42,9 +42,10 @@ namespace OdhApiCore.Formatters
                 if (kvp.Value is IEnumerable<object>)
                 {
                     //Try to cast to string
+                    //var stringlist = kvp.Value as Newtonsoft.Json.Linq.JArray;
                     var stringlist = kvp.Value as IEnumerable<object>;
                     if (stringlist != null)
-                        eoColl.Add(new KeyValuePair<string, object>(kvp.Key, String.Join("|", kvp.Value)));
+                        eoColl.Add(new KeyValuePair<string, object>(kvp.Key, String.Join("|", stringlist)));
                     else
                         continue;
                 }
