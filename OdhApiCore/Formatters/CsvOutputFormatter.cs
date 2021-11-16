@@ -40,8 +40,15 @@ namespace OdhApiCore.Formatters
             {
                 // Filter out IEnumerables, because they cannot be serialized to CSV
                 if (kvp.Value is IEnumerable<object>)
-                    continue;
-                eoColl.Add(kvp);
+                {
+                    //Try to cast to string
+                    var z = String.Join("|", kvp.Value);
+                    eoColl.Add(new KeyValuePair<string, object>(kvp.Key, z));
+                }
+                else
+                {
+                    eoColl.Add(kvp);
+                }                
             }
             return eo;
         }
