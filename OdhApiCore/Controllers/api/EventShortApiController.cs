@@ -283,7 +283,7 @@ namespace OdhApiCore.Controllers.api
                             perPage: pagesize ?? 25);
 
                 if (optimizeforapp)
-                    OptimizeRoomyForApp(data.List);
+                    OptimizeRoomForAppList(data.List);
 
                 var fieldsTohide = FieldsToHide;
 
@@ -535,40 +535,48 @@ namespace OdhApiCore.Controllers.api
                 eventshortlistbyroom.Add(roomtoadd);
 
         }
-     
 
-        private void OptimizeRoomyForApp(IEnumerable<JsonRaw>? data)
-        {
-            var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x.Value)!).ToList();
-           
-            foreach(var eventshort in eventshortlist)
+
+        private void OptimizeRoomForAppList(IEnumerable<JsonRaw>? data)
+        {           
+            foreach (var eventshortraw in data)
             {
-                //TODO
-                //Remove all Rooms with x
-                //Starting and ending date check with rooms remaining
-                if(eventshort.RoomBooked != null && eventshort.RoomBooked.Count > 0)
-                {
-                    eventshort.RoomBooked.RemoveAll(x => x.Comment == "x" || x.Comment == "X");                    
-                }
-
-                //Get the lowest room start date
-                var firstbegindate = eventshort.RoomBooked.OrderBy(x => x.StartDate).Select(x => x.StartDate).First();
-                var lastenddate = eventshort.RoomBooked.OrderByDescending(x => x.EndDate).Select(x => x.EndDate).First();
-
-                if(firstbegindate != eventshort.StartDate)
-                {
-                    eventshort.StartDate = firstbegindate;
-                    eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(firstbegindate);
-                }
-
-                if (lastenddate != eventshort.EndDate)
-                {
-                    eventshort.EndDate = lastenddate;
-                    eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(lastenddate);
-                }
+                OptimizeRoomForApp(eventshortraw);
             }
 
-            data = eventshortlist.Select(x => new JsonRaw(x));
+            //data = eventshortlist.Select(x => new JsonRaw(x));
+        }
+
+        private void OptimizeRoomForApp(JsonRaw eventshortraw)
+        {
+            //var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x.Value)!).ToList();
+            var eventshort = JsonConvert.DeserializeObject<EventShort>(eventshortraw.Value);
+
+            //TODO
+            //Remove all Rooms with x
+            //Starting and ending date check with rooms remaining
+            if (eventshort.RoomBooked != null && eventshort.RoomBooked.Count > 0)
+            {
+                eventshort.RoomBooked.RemoveAll(x => x.Comment == "x" || x.Comment == "X");
+            }
+
+            //Get the lowest room start date
+            var firstbegindate = eventshort.RoomBooked.OrderBy(x => x.StartDate).Select(x => x.StartDate).First();
+            var lastenddate = eventshort.RoomBooked.OrderByDescending(x => x.EndDate).Select(x => x.EndDate).First();
+
+            if (firstbegindate != eventshort.StartDate)
+            {
+                eventshort.StartDate = firstbegindate;
+                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(firstbegindate);
+            }
+
+            if (lastenddate != eventshort.EndDate)
+            {
+                eventshort.EndDate = lastenddate;
+                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(lastenddate);
+            }
+
+            eventshortraw = new JsonRaw(eventshort);
         }
 
         #endregion
