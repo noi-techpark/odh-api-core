@@ -538,16 +538,18 @@ namespace OdhApiCore.Controllers.api
 
 
         private void OptimizeRoomForAppList(IEnumerable<JsonRaw>? data)
-        {           
+        {
+            List<JsonRaw> datanew = new List<JsonRaw>();
+
             foreach (var eventshortraw in data)
             {
-                OptimizeRoomForApp(eventshortraw);
+                datanew.Add(OptimizeRoomForApp(eventshortraw));
             }
 
             //data = eventshortlist.Select(x => new JsonRaw(x));
         }
 
-        private void OptimizeRoomForApp(JsonRaw eventshortraw)
+        private JsonRaw OptimizeRoomForApp(JsonRaw eventshortraw)
         {
             //var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x.Value)!).ToList();
             var eventshort = JsonConvert.DeserializeObject<EventShort>(eventshortraw.Value);
@@ -576,7 +578,7 @@ namespace OdhApiCore.Controllers.api
                 eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(lastenddate);
             }
 
-            eventshortraw = new JsonRaw(eventshort);
+            return new JsonRaw(eventshort);
         }
 
         #endregion
