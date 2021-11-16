@@ -540,6 +540,20 @@ namespace OdhApiCore.Controllers.api
         private void OptimizeRoomyForApp(IEnumerable<JsonRaw>? data)
         {
             var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x.Value)!).ToList();
+           
+            foreach(var eventshort in eventshortlist)
+            {
+                //TODO
+                //Remove all Rooms with x
+                //Starting and ending date check with rooms remaining
+                if(eventshort.RoomBooked != null && eventshort.RoomBooked.Count > 0)
+                {
+                    eventshort.RoomBooked.RemoveAll(x => x.Comment == "x" || x.Comment == "X");
+                    
+                }
+                
+
+            }
 
             //var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter);
 
