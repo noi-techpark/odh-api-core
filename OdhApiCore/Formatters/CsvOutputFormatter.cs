@@ -42,8 +42,11 @@ namespace OdhApiCore.Formatters
                 if (kvp.Value is IEnumerable<object>)
                 {
                     //Try to cast to string
-                    var z = String.Join("|", kvp.Value);
-                    eoColl.Add(new KeyValuePair<string, object>(kvp.Key, z));
+                    var stringlist = kvp.Value as IEnumerable<object>;
+                    if (stringlist != null)
+                        eoColl.Add(new KeyValuePair<string, object>(kvp.Key, String.Join("|", kvp.Value)));
+                    else
+                        continue;
                 }
                 else
                 {
