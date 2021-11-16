@@ -546,6 +546,7 @@ namespace OdhApiCore.Controllers.api
                 datanew.Add(OptimizeRoomForApp(eventshortraw));
             }
 
+            data = datanew;
             //data = eventshortlist.Select(x => new JsonRaw(x));
         }
 
