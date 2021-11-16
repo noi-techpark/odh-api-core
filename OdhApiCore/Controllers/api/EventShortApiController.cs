@@ -548,25 +548,27 @@ namespace OdhApiCore.Controllers.api
                 //Starting and ending date check with rooms remaining
                 if(eventshort.RoomBooked != null && eventshort.RoomBooked.Count > 0)
                 {
-                    eventshort.RoomBooked.RemoveAll(x => x.Comment == "x" || x.Comment == "X");
-                    
+                    eventshort.RoomBooked.RemoveAll(x => x.Comment == "x" || x.Comment == "X");                    
                 }
-                
 
+                //Get the lowest room start date
+                var firstbegindate = eventshort.RoomBooked.OrderBy(x => x.StartDate).Select(x => x.StartDate).First();
+                var lastenddate = eventshort.RoomBooked.OrderByDescending(x => x.EndDate).Select(x => x.EndDate).First();
+
+                if(firstbegindate != eventshort.StartDate)
+                {
+                    eventshort.StartDate = firstbegindate;
+                    eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(firstbegindate);
+                }
+
+                if (lastenddate != eventshort.EndDate)
+                {
+                    eventshort.EndDate = lastenddate;
+                    eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(lastenddate);
+                }
             }
 
-            //var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter);
-
-            //IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
-
-            //var fieldsTohide = FieldsToHide;
-
-            //var dataTransformed =
-            //        resultraw.Select(
-            //            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-            //        );
-
-            //return Ok(dataTransformed);
+            data = eventshortlist.Select(x => new JsonRaw(x));
         }
 
         #endregion
