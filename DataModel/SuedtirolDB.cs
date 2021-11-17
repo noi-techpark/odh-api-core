@@ -3377,11 +3377,7 @@ namespace DataModel
         public List<ImageGallery>? ImageGallery { get; set; }
         public string? VideoUrl { get; set; }
 
-        /// <summary>
-        /// ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI
-        /// </summary>
-        public Nullable<bool> ActiveWeb { get; set; }
-
+        
         public string? EventTextDE { get; set; }
         public string? EventTextIT { get; set; }
         public string? EventTextEN { get; set; }
@@ -3390,7 +3386,6 @@ namespace DataModel
 
         public List<string>? CustomTagging { get; set; }
 
-        public bool? SoldOut { get; set; }
         public List<DocumentPDF>? EventDocument { get; set; }
 
         public bool? ExternalOrganizer { get; set; }
@@ -3413,6 +3408,17 @@ namespace DataModel
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+
+        public bool? SoldOut { get; set; }
+        /// <summary>
+        /// ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI
+        /// </summary>
+        public Nullable<bool> ActiveWeb { get; set; }
+        /// <summary>
+        /// ActiveCommunityApp Indicates if Event is shown on the Noi Community App
+        /// </summary>
+        public Nullable<bool> ActiveCommunityApp { get; set; }
+
     }
 
     public class RoomBooked

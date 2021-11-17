@@ -84,6 +84,7 @@ namespace OdhApiCore.Controllers.api
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
+            bool optimizeforapp = false,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default
             )
@@ -94,7 +95,8 @@ namespace OdhApiCore.Controllers.api
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, active: onlyactive.Value,
                    sortorder: sortorder, seed: seed, lastchange: lastchange,
-                   rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, cancellationToken: cancellationToken);
+                   rawfilter: rawfilter, rawsort: rawsort, optimizeforapp: optimizeforapp, removenullvalues: removenullvalues, 
+                   cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -248,7 +250,7 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
             string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, string? sortorder, string? seed,
-            string? lastchange, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+            string? lastchange, string? rawfilter, string? rawsort, bool removenullvalues, bool optimizeforapp, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -279,13 +281,17 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-                
+
+                if (optimizeforapp)
+                    data.List = OptimizeRoomForAppList(data.List);
+
                 var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
                     data.List.Select(
                         raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                     );
+
 
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
@@ -529,6 +535,56 @@ namespace OdhApiCore.Controllers.api
                 eventshortlistbyroom.Add(roomtoadd);
 
         }
+
+
+        private IEnumerable<JsonRaw>? OptimizeRoomForAppList(IEnumerable<JsonRaw>? data)
+        {
+            List<JsonRaw> datanew = new List<JsonRaw>();
+
+            foreach (var eventshortraw in data)
+            {
+                datanew.Add(OptimizeRoomForApp(eventshortraw));
+            }
+
+            return datanew;
+            //data = eventshortlist.Select(x => new JsonRaw(x));
+        }
+
+        private JsonRaw OptimizeRoomForApp(JsonRaw eventshortraw)
+        {
+            //var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x.Value)!).ToList();
+            var eventshort = JsonConvert.DeserializeObject<EventShort>(eventshortraw.Value);
+
+            //TODO
+            //Remove all Rooms with x
+            //Starting and ending date check with rooms remaining
+            if (eventshort.RoomBooked != null && eventshort.RoomBooked.Count > 0)
+            {
+                eventshort.RoomBooked.RemoveAll(x => x.Comment == "x" || x.Comment == "X");
+            }
+
+            //Get the lowest room start date
+            var firstbegindate = eventshort.RoomBooked.OrderBy(x => x.StartDate).Select(x => x.StartDate).First();
+            var lastenddate = eventshort.RoomBooked.OrderByDescending(x => x.EndDate).Select(x => x.EndDate).First();
+
+            if (firstbegindate != eventshort.StartDate)
+            {
+                eventshort.StartDate = firstbegindate;
+                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(firstbegindate);
+            }
+
+            if (lastenddate != eventshort.EndDate)
+            {
+                eventshort.EndDate = lastenddate;
+                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(lastenddate);
+            }
+
+            return new JsonRaw(eventshort);
+        }
+
+        #endregion
+
+        #region EVENTSHORT TYPES
 
         private Task<IActionResult> GetEventShortTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {

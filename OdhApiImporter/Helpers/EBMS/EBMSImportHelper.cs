@@ -58,6 +58,7 @@ namespace OdhApiImporter.Helpers
                 var eventTextEN = "";
                 var videourl = "";
                 Nullable<bool> activeweb = null;
+                Nullable<bool> activecommunity = null;
                 List<string>? technologyfields = null;
                 List<string>? customtagging = null;
                 var webadress = "";
@@ -73,6 +74,7 @@ namespace OdhApiImporter.Helpers
                     eventTextIT = eventindb.EventTextIT;
                     eventTextEN = eventindb.EventTextEN;
                     activeweb = eventindb.ActiveWeb;
+                    activecommunity = eventindb.ActiveCommunityApp;
                     videourl = eventindb.VideoUrl;
                     technologyfields = eventindb.TechnologyFields;
                     customtagging = eventindb.CustomTagging;
@@ -91,6 +93,7 @@ namespace OdhApiImporter.Helpers
                     eventshort.EventTextIT = eventTextIT;
                     eventshort.EventTextEN = eventTextEN;
                     eventshort.ActiveWeb = activeweb;
+                    eventshort.ActiveCommunityApp = activecommunity;
                     eventshort.VideoUrl = videourl;
                     eventshort.TechnologyFields = technologyfields;
                     eventshort.CustomTagging = customtagging;

@@ -35,6 +35,20 @@ namespace OdhApiCore.Controllers
             this.httpClientFactory = httpClientFactory;            
         }
 
+        //Duplicate on AVailabilitySearchInterceptorAttribute
+        private bool CheckAvailabilitySearch(System.Security.Claims.ClaimsPrincipal User)
+        {
+            List<string> roles = new List<string>() { "DataReader", "AccoReader" };
+
+            foreach (var role in roles)
+            {
+                if (User.IsInRole(role))
+                    return true;
+            }
+
+            return false;
+        }
+
         #region SWAGGER Exposed API
 
         /// <summary>
@@ -79,7 +93,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<Accommodation>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<AccommodationLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
@@ -125,6 +139,12 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
+            //if availabilitysearch requested and User not logged
+            if (availabilitycheck?.Value == true && !CheckAvailabilitySearch(User))
+            {
+                return Unauthorized("User not allowed for availabilitysearch");
+            }
+
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
@@ -138,18 +158,18 @@ namespace OdhApiCore.Controllers
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
-            else if(availabilitycheck?.Value == true)
-            {               
+            else if (availabilitycheck?.Value == true)
+            {
                 var accobooklist = Request.HttpContext.Items["accobooklist"];
                 var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
                 var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
 
                 var availableonlineaccos = new List<string>();
-                if (accoavailabilitymss != null)                
-                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());                                                        
+                if (accoavailabilitymss != null)
+                    availableonlineaccos.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
                 if (accoavailabilitylcs != null)
                     availableonlineaccos.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>());
-                    
+
                 //TODO SORT ORDER???
 
                 return await GetFiltered(
@@ -158,7 +178,8 @@ namespace OdhApiCore.Controllers
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter,
                     seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
-            }          
+            }            
+            else
             {
                 return BadRequest("not supported!");
             }
@@ -184,7 +205,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(Accommodation), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccommodationLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
         [HttpGet, Route("Accommodation/{id}", Name = "SingleAccommodation")]
@@ -207,7 +228,13 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            if(idsource == "hgv")
+            //if availabilitysearch requested and User not logged
+            if (availabilitycheck?.Value == true && !CheckAvailabilitySearch(User))
+            {
+                return Unauthorized("User not allowed for availabilitysearch");
+            }
+
+            if (idsource == "hgv")
                 return await GetSingleByHgvId(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
             else
                 return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);           
@@ -229,7 +256,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<ArticleTypes>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<AccoTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         [HttpGet, Route("AccommodationTypes")]
@@ -257,7 +284,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(ArticleTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccoTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
@@ -341,7 +368,7 @@ namespace OdhApiCore.Controllers
         // ACCO ROOMS
 
         /// <summary>
-        /// GET Accommodation Room Info by AccoID
+        /// GET Accommodation Room Info by Accommodation
         /// </summary>
         /// <param name="accoid">Accommodation ID</param>
         /// <param name="idsource">ID Source Filter (possible values:'lts','hgv'), (default:'lts')</param>        
@@ -355,7 +382,7 @@ namespace OdhApiCore.Controllers
         /// <param name="rawsort"><a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>Collection of AccoRoom Objects</returns>
-        [ProducesResponseType(typeof(IEnumerable<AccoRoom>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<AccommodationRoomLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
@@ -396,7 +423,7 @@ namespace OdhApiCore.Controllers
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>AccommodationRoom Object</returns>
-        [ProducesResponseType(typeof(AccoRoom), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccommodationRoomLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]        
@@ -424,17 +451,17 @@ namespace OdhApiCore.Controllers
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
         /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
+        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data, when set to true, all passed Ids are omitted) (default: false)</param>        
         /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
-        [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResultWithBookingInfo<AccommodationLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
         [HttpPost, Route("AccommodationAvailable")]
-        [HttpPost, Route("AvailabilityCheck")]
+        //[HttpPost, Route("AvailabilityCheck")]
         public async Task<IActionResult> PostAvailableAccommodations(
             [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] string? idfilter = null,
             string? availabilitychecklanguage = "en",
@@ -449,6 +476,12 @@ namespace OdhApiCore.Controllers
             bool availabilityonly = false,
             CancellationToken cancellationToken = default)
         {
+            //if availabilitysearch requested and User not logged
+            if (!CheckAvailabilitySearch(User))
+            {
+                return Unauthorized("User not allowed for availabilitysearch");
+            }
+
             //For Compatiblity if Route equals AvailabilityCheck return only Availability Response
             var usedroute = ControllerContext.ActionDescriptor.AttributeRouteInfo.Template;
 
@@ -514,7 +547,42 @@ namespace OdhApiCore.Controllers
                 seed: null, updatefrom: null, langfilter: null, searchfilter: null, new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
                 rawfilter: null, rawsort: null, removenullvalues: false, cancellationToken);
             }                      
-        }      
+        }
+
+        /// <summary>
+        /// POST Pass Accommodation Ids and get Accommodations with Availability Information / Availability Information Only
+        /// </summary>
+        /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
+        /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
+        /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED</param>
+        /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
+        /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
+        /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
+        /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
+        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data, when set to true, all passed Ids are omitted) (default: false)</param>        
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>        
+        /// <returns>Result Object with Collection of Accommodation Objects</returns>        
+        [ProducesResponseType(typeof(JsonResultWithBookingInfo<MssResult>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
+        [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]        
+        [HttpPost, Route("AvailabilityCheck")]
+        public async Task<IActionResult> PostAvailableAccommodationsOnlyMssResult(
+            [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] string? idfilter = null,
+            string? availabilitychecklanguage = "en",
+            string? boardfilter = null,
+            string? arrival = null,
+            string? departure = null,
+            string? roominfo = "1-18,18",
+            string? bokfilter = "hgv",
+            string? source = "sinfo",
+            string? detail = "0",
+            bool withoutids = false,            
+            CancellationToken cancellationToken = default)
+        {
+            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, source, detail, withoutids, true, cancellationToken);
+        }
 
         #endregion
 

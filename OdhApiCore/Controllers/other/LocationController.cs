@@ -476,6 +476,9 @@ namespace OdhApiCore.Controllers.api
                 mylocationlist.AddRange(myskiarealistreduced);
             }
 
+            //TO TEST
+            List<JsonRaw> mylocationlistraw = mylocationlist.Select(x => new JsonRaw(JsonConvert.SerializeObject(x))).ToList();
+
             return mylocationlist;
         }
 

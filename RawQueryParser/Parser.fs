@@ -14,7 +14,7 @@ let field =
     let options = IdentifierOptions(isAsciiIdStart = lettersDigitsAndUnderscore,
                                     isAsciiIdContinue = lettersDigitsAndUnderscore)
     let identifierSegment = identifier options |>> IdentifierSegment
-    let arraySegment = skipString "[]" >>% ArraySegment
+    let arraySegment = skipString "[]" <|> skipString "[*]" >>% ArraySegment
     sepBy (identifierSegment <|> arraySegment) (skipChar '.')
     |>> Field
     <?> "field"
@@ -103,9 +103,9 @@ module Filtering =
         <?> "datetime"
 
     let array: Parser<Value> =
-        pstring "[]"
+        pstring "[]" <|> pstring "[*]"
         >>% Array
-        <?> "array"
+        <?> "array"        
 
     let value: Parser<Value> =
         choice [

@@ -17,9 +17,14 @@ let parserTests =
                 let actual = run field "Detail.de.Title"
                 Expect.equal actual expected ""
             }
-            test "Field with array" {
+            test "Field with [] array syntax" {
                 let expected = Ok (Field [IdentifierSegment "Features"; ArraySegment; IdentifierSegment "Id"])
                 let actual = run field "Features.[].Id"
+                Expect.equal actual expected ""
+            }
+            test "Field with [*] array syntax" {
+                let expected = Ok (Field [IdentifierSegment "Features"; ArraySegment; IdentifierSegment "Id"])
+                let actual = run field "Features.[*].Id"
                 Expect.equal actual expected ""
             }
         ]
@@ -99,6 +104,14 @@ let parserTests =
                                Operator = Filtering.Operator.Eq
                                Value = Filtering.Array })
                 let actual = run Filtering.statement """eq(ImageGallery, [])"""
+                Expect.equal actual expected ""
+            }
+            test "Simple condition with array alternative notation" {
+                let expected =
+                    Ok (Comp { Field = Field [ IdentifierSegment "ImageGallery" ]
+                               Operator = Filtering.Operator.Eq
+                               Value = Filtering.Array })
+                let actual = run Filtering.statement """eq(ImageGallery, [*])"""
                 Expect.equal actual expected ""
             }
             test "AND condition" {
