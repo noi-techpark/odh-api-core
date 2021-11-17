@@ -89,8 +89,8 @@ namespace OdhApiCore.Formatters
 
                     var stream = context.HttpContext.Response.Body;
 
-                    await using var writer = new StreamWriter(stream, leaveOpen: true);
-                    await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture, encoding: Encoding.UTF8);
+                    await using var writer = new StreamWriter(stream, leaveOpen: true, encoding: Encoding.UTF8);
+                    await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
                     await csv.WriteRecordsAsync(data);
                     await writer.FlushAsync();
                 }
