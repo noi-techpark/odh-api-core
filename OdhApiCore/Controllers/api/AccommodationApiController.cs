@@ -93,7 +93,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<Accommodation>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<AccommodationLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
@@ -205,7 +205,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(Accommodation), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccommodationLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
         [HttpGet, Route("Accommodation/{id}", Name = "SingleAccommodation")]
@@ -256,7 +256,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<ArticleTypes>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<AccoTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         [HttpGet, Route("AccommodationTypes")]
@@ -284,7 +284,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(ArticleTypes), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccoTypes), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
@@ -382,7 +382,7 @@ namespace OdhApiCore.Controllers
         /// <param name="rawsort"><a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>Collection of AccoRoom Objects</returns>
-        [ProducesResponseType(typeof(IEnumerable<AccoRoom>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<AccommodationRoomLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]
@@ -423,7 +423,7 @@ namespace OdhApiCore.Controllers
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>AccommodationRoom Object</returns>
-        [ProducesResponseType(typeof(AccoRoom), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccommodationRoomLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader")]        
@@ -455,7 +455,7 @@ namespace OdhApiCore.Controllers
         /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
         /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
-        [ProducesResponseType(typeof(IEnumerable<Accommodation>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResultWithBookingInfo<MssResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
