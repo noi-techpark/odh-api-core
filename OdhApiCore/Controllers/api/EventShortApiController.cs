@@ -283,7 +283,7 @@ namespace OdhApiCore.Controllers.api
                             perPage: pagesize ?? 25);
 
                 if (optimizeforapp)
-                    OptimizeRoomForAppList(data.List);
+                    data.List = OptimizeRoomForAppList(data.List);
 
                 var fieldsTohide = FieldsToHide;
 
@@ -537,7 +537,7 @@ namespace OdhApiCore.Controllers.api
         }
 
 
-        private void OptimizeRoomForAppList(IEnumerable<JsonRaw>? data)
+        private IEnumerable<JsonRaw>? OptimizeRoomForAppList(IEnumerable<JsonRaw>? data)
         {
             List<JsonRaw> datanew = new List<JsonRaw>();
 
@@ -546,7 +546,7 @@ namespace OdhApiCore.Controllers.api
                 datanew.Add(OptimizeRoomForApp(eventshortraw));
             }
 
-            data = datanew;
+            return datanew;
             //data = eventshortlist.Select(x => new JsonRaw(x));
         }
 
