@@ -560,8 +560,7 @@ namespace OdhApiCore.Controllers
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
         /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
         /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
-        /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>        
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<MssResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
