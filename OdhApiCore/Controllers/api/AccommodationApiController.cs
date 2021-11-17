@@ -451,9 +451,9 @@ namespace OdhApiCore.Controllers
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
         /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data) (default: false)</param>        
-        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
+        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data, when set to true, all passed Ids are omitted) (default: false)</param>        
         /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<AccommodationLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -559,7 +559,7 @@ namespace OdhApiCore.Controllers
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
         /// <param name="source">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data) (default: false)</param>        
+        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data, when set to true, all passed Ids are omitted) (default: false)</param>        
         /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>        
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<MssResult>), StatusCodes.Status200OK)]
@@ -568,7 +568,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]        
         [HttpPost, Route("AvailabilityCheck")]
-        public async Task<IActionResult> PostAvailableAccommodations(
+        public async Task<IActionResult> PostAvailableAccommodationsOnlyMssResult(
             [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] string? idfilter = null,
             string? availabilitychecklanguage = "en",
             string? boardfilter = null,

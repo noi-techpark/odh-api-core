@@ -56,14 +56,14 @@ namespace OdhApiCore.Filters
             context.ActionDescriptor.RouteValues.TryGetValue("action", out string? actionid);
 
             //Only if Action ID is GetAccommodations perform the Availability Check before
-            if ((actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations") && availabilitysearchavailable)
+            if ((actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations" || actionid == "PostAvailableAccommodationsOnlyMssResult") && availabilitysearchavailable)
             {
                 //Getting the Querystrings
                 var actionarguments = context.ActionArguments;
 
                 bool? availabilitycheck = false;
 
-                if (actionid == "PostAvailableAccommodations")
+                if (actionid == "PostAvailableAccommodations" || actionid == "PostAvailableAccommodationsOnlyMssResult")
                     availabilitycheck = true;
                 if (actionid == "GetAccommodations")
                     availabilitycheck = ((LegacyBool)actionarguments["availabilitycheck"]).Value;
@@ -143,7 +143,7 @@ namespace OdhApiCore.Filters
 
                             booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();                                                      
                         }
-                        else if(actionid == "PostAvailableAccommodations")
+                        else if(actionid == "PostAvailableAccommodations" || actionid == "PostAvailableAccommodationsOnlyMssResult")
                         {
                             if(withoutids == false)
                             {
@@ -436,6 +436,9 @@ namespace OdhApiCore.Filters
             DateTime departuredt = DateTime.Parse(departure);
 
             if (arrivaldt.Date == departuredt.Date)
+                return false;
+
+            if (arrivaldt.Date > departuredt.Date)
                 return false;
 
             if (arrivaldt <= now.Date.AddDays(-1) || departuredt <= now.Date.AddDays(-1))
