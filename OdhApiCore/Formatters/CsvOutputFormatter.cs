@@ -69,12 +69,7 @@ namespace OdhApiCore.Formatters
                      let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(item.Value)
                      select ConvertToExpandoObject(dict)).ToList<dynamic>();
 
-                var stream = context.HttpContext.Response.Body;
-
-                await using var writer = new StreamWriter(stream, leaveOpen: true, encoding: Encoding.UTF8);
-                await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-                await csv.WriteRecordsAsync(data);
-                await writer.FlushAsync();
+                await WriteCSVStream(context, data);
             }
             else if (context.Object != null)
             {
@@ -87,12 +82,7 @@ namespace OdhApiCore.Formatters
                          let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(item.Value)
                          select ConvertToExpandoObject(dict)).ToList<dynamic>();
 
-                    var stream = context.HttpContext.Response.Body;
-
-                    await using var writer = new StreamWriter(stream, leaveOpen: true, encoding: Encoding.UTF8);
-                    await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-                    await csv.WriteRecordsAsync(data);
-                    await writer.FlushAsync();
+                    await WriteCSVStream(context, data);
                 }
                 else
                 {
@@ -105,6 +95,16 @@ namespace OdhApiCore.Formatters
                 context.HttpContext.Response.StatusCode = 501;
                 await context.HttpContext.Response.WriteAsync("Bad Request");
             }
+        }
+
+        private async Task WriteCSVStream(OutputFormatterWriteContext context, List<dynamic>? data)
+        {
+            var stream = context.HttpContext.Response.Body;
+
+            await using var writer = new StreamWriter(stream, leaveOpen: true, encoding: Encoding.UTF8);
+            await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            await csv.WriteRecordsAsync(data);
+            await writer.FlushAsync();
         }
     }
 }
