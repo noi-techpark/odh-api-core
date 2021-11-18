@@ -72,7 +72,9 @@ namespace OdhApiCore.Controllers.api
             string? datetimeformat = null, 
             string? source = null, 
             string? eventlocation = null, 
-            LegacyBool onlyactive = null!, 
+            LegacyBool onlyactive = null!,
+            LegacyBool websiteactive = null!,
+            LegacyBool communityactive = null!,
             string? eventids = null,
             string? webaddress = null,
             string? sortorder = "ASC",
@@ -94,7 +96,7 @@ namespace OdhApiCore.Controllers.api
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
-                   webaddressfilter: webaddress, active: onlyactive.Value, optimizedates: optimizedates,
+                   webaddressfilter: webaddress, active: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, optimizedates: optimizedates,
                    sortorder: sortorder, seed: seed, lastchange: lastchange,
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
                    cancellationToken: cancellationToken);
@@ -252,14 +254,14 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
-            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, bool optimizedates, string? sortorder, string? seed,
+            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, bool? websiteactive, bool? communityactive, bool optimizedates, string? sortorder, string? seed,
             string? lastchange, string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                    sourcefilter, eventlocationfilter, active, idfilter, webaddressfilter, lastchange, sortorder);
+                    sourcefilter, eventlocationfilter, active, websiteactive, communityactive, idfilter, webaddressfilter, lastchange, sortorder);
 
                 var query =
                    QueryFactory.Query()
