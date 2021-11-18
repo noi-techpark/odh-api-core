@@ -3418,7 +3418,6 @@ namespace DataModel
         /// ActiveCommunityApp Indicates if Event is shown on the Noi Community App
         /// </summary>
         public Nullable<bool> ActiveCommunityApp { get; set; }
-
     }
 
     public class RoomBooked

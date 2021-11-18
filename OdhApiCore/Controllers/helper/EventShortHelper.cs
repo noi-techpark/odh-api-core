@@ -16,21 +16,23 @@ namespace OdhApiCore.Controllers.api
         public List<string> eventlocationlist;
         public List<string> webaddresslist;
         public List<string> idlist;
-        public string? activefilter;        
+        public string? activefilter;
+        public bool? websiteactivefilter;
+        public bool? communityactivefilter;
         public string? lastchange;
         public string? sortorder;
 
         public static EventShortHelper Create(
             string? startdate, string? enddate, string? datetimeformat, string? source,
-            string? eventlocation, bool? onlyactive, string? eventids, string? webaddress,
-            string? lastchange, string? sortorder)
+            string? eventlocation, bool? onlyactive, bool? websiteactive, bool? communityactive,
+            string? eventids, string? webaddress, string? lastchange, string? sortorder)
         {
-            return new EventShortHelper(startdate, enddate, datetimeformat, source, eventlocation, onlyactive, eventids, webaddress, lastchange, sortorder);
+            return new EventShortHelper(startdate, enddate, datetimeformat, source, eventlocation, onlyactive, websiteactive, communityactive, eventids, webaddress, lastchange, sortorder);
         }
 
         private EventShortHelper(
             string? startdate, string? enddate, string? datetimeformat, string? source,
-            string? eventlocation, bool? onlyactive, string? eventids, string? webaddress,
+            string? eventlocation, bool? onlyactive, bool? websiteactive, bool? communityactive, string? eventids, string? webaddress,
             string? lastchange, string? sortorder)
         {            
             idlist = Helper.CommonListCreator.CreateIdList(eventids);
@@ -81,6 +83,9 @@ namespace OdhApiCore.Controllers.api
                 activefilter = "N";
             else
                 activefilter = null;
+
+            websiteactivefilter = websiteactive;
+            communityactivefilter = communityactive;
 
             this.sortorder = sortorder;
 

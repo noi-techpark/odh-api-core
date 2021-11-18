@@ -691,6 +691,24 @@ namespace Helper
                 )
             );
 
+        public static Query EventShortWebsiteActiveFilter(this Query query, bool? websiteactive) =>
+            query.When(
+                websiteactive != null,
+                query => query.WhereJsonb(
+                    "ActiveWeb",
+                    websiteactive ?? false
+                )
+            );
+
+        public static Query EventShortCommunityActiveFilter(this Query query, bool? communityactive) =>
+           query.When(
+               communityactive != null,
+               query => query.WhereJsonb(
+                   "ActiveCommunityApp",
+                   communityactive ?? false
+               )
+           );
+
         //Only Begindate given
         public static Query EventShortDateFilterBegin(this Query query, DateTime? start, DateTime? end, bool active) =>
             query.When(

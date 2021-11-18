@@ -571,7 +571,8 @@ namespace Helper
             this Query query, 
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
             IReadOnlyCollection<string> eventlocationlist, IReadOnlyCollection<string> webaddresslist,
-            string? activefilter, DateTime? start, DateTime? end, string? searchfilter,
+            string? activefilter, bool? websiteactivefilter, bool? communityactivefilter,
+            DateTime? start, DateTime? end, string? searchfilter,
             string? language, string? lastchange, bool filterClosedData, bool getbyrooms = false)
         {
             LogMethodInfo(
@@ -589,8 +590,10 @@ namespace Helper
                 .EventShortLocationFilter(eventlocationlist)
                 .EventShortWebaddressFilter(webaddresslist)
                 //.ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.EventShortActiveFilter(activefilter)
-                //.OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                //.OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)                
                 .EventShortActiveFilter(activefilter)
+                .EventShortWebsiteActiveFilter(websiteactivefilter)
+                .EventShortCommunityActiveFilter(communityactivefilter)
                 .EventShortDateFilterEnd(start, end, !getbyrooms)
                 .EventShortDateFilterBegin(start, end, !getbyrooms)
                 .EventShortDateFilterBeginEndWithInBehaviour(start, end, !getbyrooms)

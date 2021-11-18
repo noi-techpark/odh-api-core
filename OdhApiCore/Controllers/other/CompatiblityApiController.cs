@@ -1019,6 +1019,8 @@ namespace OdhApiCore.Controllers.api
             string? source = null,
             string? eventlocation = null,
             LegacyBool onlyactive = null!,
+            LegacyBool websiteactive = null!,
+            LegacyBool communityactive = null!,
             string? webaddress = null,
             string? sortorder = "ASC",
             string? lastchange = null,
@@ -1031,13 +1033,13 @@ namespace OdhApiCore.Controllers.api
         {
             return GetEventShortReduced(fields: fields ?? Array.Empty<string>(), language, searchfilter,
                 startdate, enddate, datetimeformat, source, eventlocation, webaddress,
-                onlyactive.Value, sortorder, null, rawfilter, rawsort, cancellationToken);
+                onlyactive.Value, websiteactive.Value, communityactive.Value, sortorder, null, rawfilter, rawsort, cancellationToken);
         }
 
 
         private Task<IActionResult> GetEventShortReduced(
          string[] fields, string language, string? searchfilter, string? startdate, string? enddate, string? datetimeformat,
-         string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, string? sortorder,
+         string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, bool? websiteactive, bool? communityactive, string? sortorder,
          string? lastchange, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -1051,7 +1053,7 @@ namespace OdhApiCore.Controllers.api
                     select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                    sourcefilter, eventlocationfilter, active, null, webaddressfilter, lastchange, sortorder);
+                    sourcefilter, eventlocationfilter, active, websiteactive, communityactive, null, webaddressfilter, lastchange, sortorder);
 
                 var query =
                    (XQuery)QueryFactory.Query()
@@ -1061,6 +1063,7 @@ namespace OdhApiCore.Controllers.api
                            idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
                            eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
                            start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
+                           websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
                            searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
                            filterClosedData: FilterClosedData, getbyrooms: false)
                        .ApplyRawFilter(rawfilter)
