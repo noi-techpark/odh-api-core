@@ -78,13 +78,13 @@ namespace OdhApiCore.Controllers.api
             string? seed = null,
             string? language = null,
             string? langfilter = null,
+            bool optimizeforapp = false,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? lastchange = null,
             string? searchfilter = null,
             string? rawfilter = null,
-            string? rawsort = null,
-            bool optimizeforapp = false,
+            string? rawsort = null,            
             bool removenullvalues = false,
             CancellationToken cancellationToken = default
             )
@@ -93,9 +93,9 @@ namespace OdhApiCore.Controllers.api
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
-                   webaddressfilter: webaddress, active: onlyactive.Value,
+                   webaddressfilter: webaddress, active: onlyactive.Value, optimizeforapp: optimizeforapp,
                    sortorder: sortorder, seed: seed, lastchange: lastchange,
-                   rawfilter: rawfilter, rawsort: rawsort, optimizeforapp: optimizeforapp, removenullvalues: removenullvalues, 
+                   rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
                    cancellationToken: cancellationToken);
         }
 
@@ -120,12 +120,13 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> GetSingle(
             string id,
             string? language,
+            bool optimizeforapp = false,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventShortSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
+            return await GetEventShortSingle(id, language, optimizeforapp: optimizeforapp, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -249,8 +250,8 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
-            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, string? sortorder, string? seed,
-            string? lastchange, string? rawfilter, string? rawsort, bool removenullvalues, bool optimizeforapp, CancellationToken cancellationToken)
+            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, bool optimizeforapp, string? sortorder, string? seed,
+            string? lastchange, string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -307,7 +308,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         private Task<IActionResult> GetEventShortSingle(
-            string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+            string id, string? language, bool optimizeforapp, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -320,6 +321,9 @@ namespace OdhApiCore.Controllers.api
                 var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                if (optimizeforapp)
+                    data = OptimizeRoomForApp(data);
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
