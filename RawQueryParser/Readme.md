@@ -89,10 +89,14 @@ But it is possible to traverse throgh the document's hierarchy by separating the
 ```
 
 It is also possible to query arrays:   
-`Features.[].Id` matches on a document with the following JSON structure:
-
+`Features.[0].Id`: returns the first Element of the Array as single field  
+`Features.[n].Id`: returns the n-th Element of the Array as single field  
+`Features.[*].Id`: returns all Elements of the Array (as array)  
+  
+This field matches on a document with the following JSON structure:  
+  
 ```json
-{ "Features": [{ "Id": <value>, ... }, { "Id": <value>, ... }, ...], ... }
+{ "Features": [{ "Id": "<value>", ... }, { "Id": "<value>", ... }, ...], ... }
 ```
 
 ## Supported value types:
