@@ -96,7 +96,7 @@ It is also possible to query arrays:
 This field matches on a document with the following JSON structure:  
   
 ```json
-{ "Features": [{ "Id": "<value>", ... }, { "Id": "<value>", ... }, ...], ... }
+{ "Features": [{ "Id": <value>, ... }, { "Id": <value>, ... }, ...], ... }
 ```
 
 ## Supported value types:
