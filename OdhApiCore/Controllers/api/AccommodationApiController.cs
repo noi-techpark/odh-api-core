@@ -45,7 +45,7 @@ namespace OdhApiCore.Controllers
                 if (User.IsInRole(role))
                     return true;
             }
-
+            
             return false;
         }
 

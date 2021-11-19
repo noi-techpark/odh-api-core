@@ -76,7 +76,7 @@ namespace OdhApiCore
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             });
-            services.AddHttpClient("lcs"); // TODO: put LCS config here
+            services.AddHttpClient("lcs"); // TODO: put LCS config here            
 
             services.AddInMemoryCacheOutput();
             services.AddSingleton<CustomCacheKeyGenerator>();
