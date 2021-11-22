@@ -351,6 +351,9 @@ namespace OdhApiCore.Controllers.api
             }
 
             return mylocationlist;
+
+            //Transform to JsonRAW List
+
         }
 
         /// <summary>
