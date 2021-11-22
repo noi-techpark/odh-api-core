@@ -78,7 +78,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="lang">Language</param>
         /// <param name="locfilter">Location Filter</param>
         /// <returns>Collection of Reduced Location Objects</returns>
-        private async Task<List<LocHelperclass>> GetLocationInfoFiltered(string lang, string? locfilter, bool allactivedata = false, string? type = null)
+        private async Task<List<JsonRaw>> GetLocationInfoFiltered(string lang, string? locfilter, bool allactivedata = false, string? type = null)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
             List<Tuple<string, string>> loclist = new List<Tuple<string, string>>();
@@ -350,10 +350,10 @@ namespace OdhApiCore.Controllers.api
                 }
             }
 
-            return mylocationlist;
+            //return mylocationlist;
 
             //Transform to JsonRAW List
-
+           return mylocationlist.Select(x => new JsonRaw(x)).ToList();
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="locfilter"></param>
         /// <returns>Collection of Reduced Location Objects</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        private async Task<List<LocHelperclass>> GetSkiAreaInfoFiltered(string lang, string? locfilter)
+        private async Task<List<JsonRaw>> GetSkiAreaInfoFiltered(string lang, string? locfilter)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 
@@ -482,7 +482,10 @@ namespace OdhApiCore.Controllers.api
             //TO TEST
             List<JsonRaw> mylocationlistraw = mylocationlist.Select(x => new JsonRaw(JsonConvert.SerializeObject(x))).ToList();
 
-            return mylocationlist;
+            //return mylocationlist;
+
+            //Transform to JsonRAW List
+            return mylocationlist.Select(x => new JsonRaw(x)).ToList();
         }
 
         #endregion
