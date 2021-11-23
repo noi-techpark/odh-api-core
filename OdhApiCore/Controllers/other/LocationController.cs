@@ -139,16 +139,18 @@ namespace OdhApiCore.Controllers.api
                         {
                             var regionlist = mymetaregionlist.FirstOrDefault().RegionIds ?? Enumerable.Empty<string>();
 
-                            string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                            //TODO THIS DOES NOT WORK
+
+                            string regionlistwhere = "data->>'RegionId' IN ('" + String.Join(",", regionlist) + "') AND " + defaultmunfrafilter;
                             var myregionlist = await GetLocationFromDB<Region>("regions", regionlistwhere);
 
-                            string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                            string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ") AND " + defaultmunfrafilter;
                             var mytvlist = await GetLocationFromDB<Tourismverein>("tvs", tvlistwhere);
                                         
-                            string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                            string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ") AND " + defaultmunfrafilter;
                             var mylocalitylist = await GetLocationFromDB<Municipality>("municipalities", localitylistwhere);
 
-                            string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                            string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ") AND " + defaultmunfrafilter;
                             var myfractionlist = await GetLocationFromDB<District>("districts", fractionlistwhere);
 
                             mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", mymetaregionlist, lang);
