@@ -133,64 +133,54 @@ namespace OdhApiCore.Controllers.api
 
                     if (loctype == "mta")
                     {
-                        var mymetaregion = await QueryFactory.Query()
-                               .Select("data")
-                               .From("metaregions")
-                               .Where("id", locid)
-                               .GetObjectSingleAsync<MetaRegion>();
+                        //var mymetaregion = await QueryFactory.Query()
+                        //       .Select("data")
+                        //       .From("metaregions")
+                        //       .Where("id", locid)
+                        //       .GetObjectSingleAsync<MetaRegion>();                        
+
+                        var mymetaregionlist = await GetLocationFromDB<MetaRegion>("metaregions", "id =" + locid);
+
+                        var mymetaregion = mymetaregionlist.FirstOrDefault();
 
                         var regionlist = mymetaregion.RegionIds ?? Enumerable.Empty<string>();
 
                         string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                        var myregionlist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("regions")
-                               .WhereRaw(regionlistwhere)
-                               .GetObjectListAsync<Region>();
+                        var myregionlist = await GetLocationFromDB<Region>("regions", regionlistwhere);
+
+                        //var myregionlist = await QueryFactory.Query()
+                        //       .Select("data")
+                        //       .From("regions")
+                        //       .WhereRaw(regionlistwhere)
+                        //       .GetObjectListAsync<Region>();
 
                         string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                        var mytvlist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("tvs")
-                               .WhereRaw(tvlistwhere)
-                               .GetObjectListAsync<Tourismverein>();
+                        var mytvlist = await GetLocationFromDB<Tourismverein>("tvs", tvlistwhere);
+                        
+                        //var mytvlist = await QueryFactory.Query()
+                        //       .Select("data")
+                        //       .From("tvs")
+                        //       .WhereRaw(tvlistwhere)
+                        //       .GetObjectListAsync<Tourismverein>();
 
                         string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                        var mylocalitylist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("municipalities")
-                               .WhereRaw(localitylistwhere)
-                               .GetObjectListAsync<Municipality>();
+                        var mylocalitylist = await GetLocationFromDB<Municipality>("municipalities", localitylistwhere);
+
+                        //var mylocalitylist = await QueryFactory.Query()
+                        //       .Select("data")
+                        //       .From("municipalities")
+                        //       .WhereRaw(localitylistwhere)
+                        //       .GetObjectListAsync<Municipality>();
 
                         string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                        var myfractionlist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("districts")
-                               .WhereRaw(fractionlistwhere)
-                               .GetObjectListAsync<District>();
+                        var myfractionlist = await GetLocationFromDB<District>("districts", fractionlistwhere);
 
-                        //var mymetaregionlistreduced = new LocHelperclassDynamic { typ = "mta", name = mymetaregion.Detail[lang].Title, id = mymetaregion.Id };
-                        //var myregionlistreduced = myregionlist.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
-                        //var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                        //var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-                        //var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-
-                        mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", new List<MetaRegion>() { mymetaregion }, lang);
-                        myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregionlist, lang);
-                        mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);
-                        mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);
-                        myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
-
-                        if (locationtypes.Contains("mta"))
-                            mylocationlist.AddRange(mymetaregionlistreduced);
-                        if (locationtypes.Contains("reg"))
-                            mylocationlist.AddRange(myregionlistreduced);
-                        if (locationtypes.Contains("tvs"))
-                            mylocationlist.AddRange(mylocalitylistreduced);
-                        if (locationtypes.Contains("mun"))
-                            mylocationlist.AddRange(mytvlistreduced);
-                        if (locationtypes.Contains("fra"))
-                            mylocationlist.AddRange(myfractionlistreduced);
+                        //var myfractionlist = await QueryFactory.Query()
+                        //       .Select("data")
+                        //       .From("districts")
+                        //       .WhereRaw(fractionlistwhere)
+                        //       .GetObjectListAsync<District>();
+                       
                     }
                     else if (loctype == "reg")
                     {
@@ -199,7 +189,7 @@ namespace OdhApiCore.Controllers.api
                                .Select("data")
                                .From("regions")
                                .Where("id", locid)
-                               .GetObjectSingleAsync<Region>();
+                               .GetObjectListAsync<Region>();
 
                         string tvlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
                         var mytvlist = await QueryFactory.Query()
@@ -222,19 +212,11 @@ namespace OdhApiCore.Controllers.api
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
                     
-                        myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", new List<Region>() { myregion }, lang);
+                        myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregion, lang);
                         mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);
                         mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);
                         myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
 
-                        if (locationtypes.Contains("reg"))
-                            mylocationlist.Add(myregionlistreduced.FirstOrDefault());
-                        if (locationtypes.Contains("tvs"))
-                            mylocationlist.AddRange(mylocalitylistreduced);
-                        if (locationtypes.Contains("mun"))
-                            mylocationlist.AddRange(mytvlistreduced);
-                        if (locationtypes.Contains("fra"))
-                            mylocationlist.AddRange(myfractionlistreduced);
                     }
                     else if (loctype == "tvs")
                     {
@@ -242,7 +224,7 @@ namespace OdhApiCore.Controllers.api
                                .Select("data")
                                .From("tvs")
                                .Where("id", locid)
-                               .GetObjectSingleAsync<Tourismverein>();
+                               .GetObjectListAsync<Tourismverein>();
 
                         string localitylistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
                         var mylocalitylist = await QueryFactory.Query()
@@ -258,16 +240,9 @@ namespace OdhApiCore.Controllers.api
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
 
-                        mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", new List<Tourismverein>() { mytv }, lang);
+                        mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytv, lang);
                         mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);                        
                         myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
-
-                        if (locationtypes.Contains("tvs"))
-                            mylocationlist.Add(mytvlistreduced.FirstOrDefault());
-                        if (locationtypes.Contains("mun"))
-                            mylocationlist.AddRange(mylocalitylistreduced);
-                        if (locationtypes.Contains("fra"))
-                            mylocationlist.AddRange(myfractionlistreduced);
                     }
                     else if (loctype == "mun")
                     {
@@ -275,7 +250,7 @@ namespace OdhApiCore.Controllers.api
                                .Select("data")
                                .From("municipalities")
                                .Where("id", locid)
-                               .GetObjectSingleAsync<Municipality>();
+                               .GetObjectListAsync<Municipality>();
 
                         string fractionlistwhere = "data->>'MunicipalityId' = '" + locid + "' AND " + defaultmunfrafilter;
                         var myfractionlist = await QueryFactory.Query()
@@ -284,13 +259,8 @@ namespace OdhApiCore.Controllers.api
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
 
-                        mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", new List<Municipality>() { mymun }, lang);
+                        mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mymun, lang);
                         myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
-
-                        if (locationtypes.Contains("mun"))
-                            mylocationlist.Add(mylocalitylistreduced.FirstOrDefault());
-                        if (locationtypes.Contains("fra"))
-                            mylocationlist.AddRange(myfractionlistreduced);
                     }
                     else if (loctype == "fra")
                     {
@@ -298,13 +268,21 @@ namespace OdhApiCore.Controllers.api
                                .Select("data")
                                .From("districts")
                                .Where("id", locid)
-                               .GetObjectSingleAsync<District>();
+                               .GetObjectListAsync<District>();
 
-                        myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", new List<District>() { myfra }, lang);
+                        myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfra, lang);
+                    }
 
-                        if (locationtypes.Contains("fra"))
-                            mylocationlist.Add(myfractionlistreduced.FirstOrDefault());
-                    } 
+                    if (locationtypes.Contains("mta") && mymetaregionlistreduced != null)
+                        mylocationlist.AddRange(mymetaregionlistreduced);
+                    if (locationtypes.Contains("reg") && myregionlistreduced != null)
+                        mylocationlist.AddRange(myregionlistreduced);
+                    if (locationtypes.Contains("tvs") && mylocalitylistreduced != null)
+                        mylocationlist.AddRange(mylocalitylistreduced);
+                    if (locationtypes.Contains("mun") && mytvlistreduced != null)
+                        mylocationlist.AddRange(mytvlistreduced);
+                    if (locationtypes.Contains("fra") && myfractionlistreduced != null)
+                        mylocationlist.AddRange(myfractionlistreduced);
                 }
             }
             else
@@ -317,9 +295,7 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw("data->'Active'='true'")
                        .GetObjectListAsync<MetaRegion>();
 
-                   mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", mymetaregionlist, lang);
-                   
-                    mylocationlist.AddRange(mymetaregionlistreduced);                   
+                   mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", mymetaregionlist, lang);                                                 
                 }
 
                 if (locationtypes.Contains("reg"))
@@ -330,9 +306,7 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw("data->'Active'='true'")
                        .GetObjectListAsync<Region>();
 
-                    myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregionlist, lang);
-
-                    mylocationlist.AddRange(myregionlistreduced);
+                    myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregionlist, lang);                    
                 }
 
                 if (locationtypes.Contains("tvs"))
@@ -343,9 +317,7 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw("data->'Active'='true'")
                        .GetObjectListAsync<Tourismverein>();
 
-                   mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);
-                   
-                    mylocationlist.AddRange(mytvlistreduced);
+                   mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);                   
                 }
 
                 if (locationtypes.Contains("mun"))
@@ -355,11 +327,8 @@ namespace OdhApiCore.Controllers.api
                        .From("municipalities")
                        .WhereRaw(defaultmunfrafilter)
                        .GetObjectListAsync<Municipality>();
-
                    
-                    mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);
-                   
-                    mylocationlist.AddRange(mylocalitylistreduced);
+                    mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);                                      
                 }
 
                 if (locationtypes.Contains("fra"))
@@ -370,14 +339,21 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw(defaultmunfrafilter)
                        .GetObjectListAsync<District>();
 
-                    myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
-
-                    mylocationlist.AddRange(myfractionlistreduced);
+                    myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);                    
                 }
+
+                if (locationtypes.Contains("mta") && mymetaregionlistreduced != null)
+                    mylocationlist.AddRange(mymetaregionlistreduced);
+                if (locationtypes.Contains("reg") && myregionlistreduced != null)
+                    mylocationlist.AddRange(myregionlistreduced);
+                if (locationtypes.Contains("tvs") && mylocalitylistreduced != null)
+                    mylocationlist.AddRange(mylocalitylistreduced);
+                if (locationtypes.Contains("mun") && mytvlistreduced != null)
+                    mylocationlist.AddRange(mytvlistreduced);
+                if (locationtypes.Contains("fra") && myfractionlistreduced != null)
+                    mylocationlist.AddRange(myfractionlistreduced);
             }
-
-            //return mylocationlist;
-
+            
             //Transform to JsonRAW List
             var jsonrawlist = mylocationlist.Select(x => new JsonRaw(x)).ToList();
             return Ok(jsonrawlist);
@@ -519,6 +495,23 @@ namespace OdhApiCore.Controllers.api
 
         #region HelperMethods
 
+        private async Task<IEnumerable<T>?> GetLocationFromDB<T>(string table, string whereraw) where T : notnull
+        {
+            return await QueryFactory.Query()
+                   .Select("data")
+                   .From(table)
+                   .WhereRaw(whereraw)
+                   .GetObjectListAsync<T>();
+        }
+
+        private async Task<T> GetLocationFromDBSingle<T>(string table, string id) where T : notnull
+        {
+            return await QueryFactory.Query()
+              .Select("data")
+              .From(table)
+              .Where("id", id)
+              .GetObjectSingleAsync<T>();
+        }
 
         private IEnumerable<LocHelperclassDynamic> CreateLocHelperClassDynamic<T>(string typ , IEnumerable<T> locationlist, string? lang)  where T : IIdentifiable, IDetailInfosAware
         {
