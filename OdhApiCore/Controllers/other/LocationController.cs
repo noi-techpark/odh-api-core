@@ -277,10 +277,10 @@ namespace OdhApiCore.Controllers.api
                         mylocationlist.AddRange(mymetaregionlistreduced);
                     if (locationtypes.Contains("reg") && myregionlistreduced != null)
                         mylocationlist.AddRange(myregionlistreduced);
-                    if (locationtypes.Contains("tvs") && mylocalitylistreduced != null)
-                        mylocationlist.AddRange(mylocalitylistreduced);
-                    if (locationtypes.Contains("mun") && mytvlistreduced != null)
+                    if (locationtypes.Contains("tvs") && mytvlistreduced != null)
                         mylocationlist.AddRange(mytvlistreduced);
+                    if (locationtypes.Contains("mun") && mylocalitylistreduced != null)
+                        mylocationlist.AddRange(mylocalitylistreduced);
                     if (locationtypes.Contains("fra") && myfractionlistreduced != null)
                         mylocationlist.AddRange(myfractionlistreduced);
                 }
