@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -117,7 +118,13 @@ namespace OdhApiCore.Controllers.api
                 if(type != "null")
                     locationtypes = type.ToLower().Split(',').ToList();
 
-            if(loclist.Count > 0)
+            var mymetaregionlistreduced = default(IEnumerable<LocHelperclassDynamic>);
+            var myregionlistreduced = default(IEnumerable<LocHelperclassDynamic>);
+            var mylocalitylistreduced = default(IEnumerable<LocHelperclassDynamic>);
+            var mytvlistreduced = default(IEnumerable<LocHelperclassDynamic>);
+            var myfractionlistreduced = default(IEnumerable<LocHelperclassDynamic>);            
+
+            if (loclist.Count > 0)
             {
                 foreach (var locitem in loclist)
                 {
@@ -162,14 +169,41 @@ namespace OdhApiCore.Controllers.api
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
 
-                        var mymetaregionlistreduced = new LocHelperclass { typ = "reg", name = mymetaregion.Detail[lang].Title, id = mymetaregion.Id };
-                        var myregionlistreduced = myregionlist.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
-                        var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                        var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-                        var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                        //var mymetaregionlistreduced = new LocHelperclassDynamic { typ = "mta", name = mymetaregion.Detail[lang].Title, id = mymetaregion.Id };
+                        //var myregionlistreduced = myregionlist.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
+                        //var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                        //var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                        //var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+
+                        if(lang != null)
+                            mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", new List<MetaRegion>() { mymetaregion },  x => x.Detail[lang].Title);
+                        else
+                            mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", new List<MetaRegion>() { mymetaregion }, x => x.Detail.ToDictionary(y => y.Key, y => y.Value.Title));
+
+                        if (lang != null)
+                            myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregionlist, x => x.Detail[lang].Title);
+                        else
+                            myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregionlist, x => x.Detail.ToDictionary(y => y.Key, y => y.Value.Title));
+
+                        if (lang != null)
+                            mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, x => x.Detail[lang].Title);
+                        else
+                            mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, x => x.Detail.ToDictionary(y => y.Key, y => y.Value.Title));
+
+                        if (lang != null)
+                            mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, x => x.Detail[lang].Title);
+                        else
+                            mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, x => x.Detail.ToDictionary(y => y.Key, y => y.Value.Title));
+
+
+                        if (lang != null)
+                            myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, x => x.Detail[lang].Title);
+                        else
+                            myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, x => x.Detail.ToDictionary(y => y.Key, y => y.Value.Title));
+
 
                         if (locationtypes.Contains("mta"))
-                            mylocationlist.Add(mymetaregionlistreduced);
+                            mylocationlist.AddRange(mymetaregionlistreduced);
                         if (locationtypes.Contains("reg"))
                             mylocationlist.AddRange(myregionlistreduced);
                         if (locationtypes.Contains("tvs"))
@@ -209,13 +243,13 @@ namespace OdhApiCore.Controllers.api
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
 
-                        var myregionlistreduced = new LocHelperclass { typ = "reg", name = myregion.Detail[lang].Title, id = myregion.Id };
-                        var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                        var mytvlistreduced = mytvlist.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-                        var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                        myregionlistreduced = new List<LocHelperclassDynamic> { new LocHelperclassDynamic { typ = "reg", name = myregion.Detail[lang].Title, id = myregion.Id } };
+                        mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclassDynamic { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                        mytvlistreduced = mytvlist.Select(x => new LocHelperclassDynamic { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                        myfractionlistreduced = myfractionlist.Select(x => new LocHelperclassDynamic { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
 
                         if (locationtypes.Contains("reg"))
-                            mylocationlist.Add(myregionlistreduced);
+                            mylocationlist.Add(myregionlistreduced.FirstOrDefault());
                         if (locationtypes.Contains("tvs"))
                             mylocationlist.AddRange(mylocalitylistreduced);
                         if (locationtypes.Contains("mun"))
@@ -245,12 +279,12 @@ namespace OdhApiCore.Controllers.api
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
 
-                        var mytvlistreduced = new LocHelperclass { typ = "tvs", name = mytv.Detail[lang].Title, id = mytv.Id };
-                        var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                        var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                        mytvlistreduced = new List<LocHelperclassDynamic>() { new LocHelperclassDynamic { typ = "tvs", name = mytv.Detail[lang].Title, id = mytv.Id } };
+                        mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclassDynamic { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                        myfractionlistreduced = myfractionlist.Select(x => new LocHelperclassDynamic { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
 
                         if (locationtypes.Contains("tvs"))
-                            mylocationlist.Add(mytvlistreduced);
+                            mylocationlist.Add(mytvlistreduced.FirstOrDefault());
                         if (locationtypes.Contains("mun"))
                             mylocationlist.AddRange(mylocalitylistreduced);
                         if (locationtypes.Contains("fra"))
@@ -271,11 +305,11 @@ namespace OdhApiCore.Controllers.api
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
 
-                        var mylocalitylistreduced = new LocHelperclass { typ = "mun", name = mymun.Detail[lang].Title, id = mymun.Id };
-                        var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                        mylocalitylistreduced = new List<LocHelperclassDynamic> { new LocHelperclassDynamic { typ = "mun", name = mymun.Detail[lang].Title, id = mymun.Id } };
+                        myfractionlistreduced = myfractionlist.Select(x => new LocHelperclassDynamic { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
 
                         if (locationtypes.Contains("mun"))
-                            mylocationlist.Add(mylocalitylistreduced);
+                            mylocationlist.Add(mylocalitylistreduced.FirstOrDefault());
                         if (locationtypes.Contains("fra"))
                             mylocationlist.AddRange(myfractionlistreduced);
                     }
@@ -287,10 +321,10 @@ namespace OdhApiCore.Controllers.api
                                .Where("id", locid)
                                .GetObjectSingleAsync<District>();
 
-                        var myfralistreduced = new LocHelperclass { typ = "fra", name = myfra.Detail[lang].Title, id = myfra.Id };
+                        myfractionlistreduced = new List<LocHelperclassDynamic> { new LocHelperclassDynamic { typ = "fra", name = myfra.Detail[lang].Title, id = myfra.Id } };
 
                         if (locationtypes.Contains("fra"))
-                            mylocationlist.Add(myfralistreduced);
+                            mylocationlist.Add(myfractionlistreduced.FirstOrDefault());
                     } 
                 }
             }
@@ -304,7 +338,7 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw("data->'Active'='true'")
                        .GetObjectListAsync<MetaRegion>();
 
-                    var mymetaregionlistreduced = mymetaregion.Select(x => new LocHelperclass { typ = "mta", name = x.Detail[lang].Title, id = x.Id });
+                    mymetaregionlistreduced = mymetaregion.Select(x => new LocHelperclassDynamic { typ = "mta", name = x.Detail[lang].Title, id = x.Id });
                     mylocationlist.AddRange(mymetaregionlistreduced);
                 }
 
@@ -316,7 +350,7 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw("data->'Active'='true'")
                        .GetObjectListAsync<Region>();
 
-                    var myregionlistreduced = myregion.Select(x => new LocHelperclass { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
+                    myregionlistreduced = myregion.Select(x => new LocHelperclassDynamic { typ = "reg", name = x.Detail[lang].Title, id = x.Id });
                     mylocationlist.AddRange(myregionlistreduced);
                 }
 
@@ -328,8 +362,8 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw("data->'Active'='true'")
                        .GetObjectListAsync<Tourismverein>();
 
-                    var mytourismvereinlistreduced = mytv.Select(x => new LocHelperclass { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-                    mylocationlist.AddRange(mytourismvereinlistreduced);
+                    mytvlistreduced = mytv.Select(x => new LocHelperclassDynamic { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
+                    mylocationlist.AddRange(mytvlistreduced);
                 }
 
                 if (locationtypes.Contains("mun"))
@@ -340,7 +374,7 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw(defaultmunfrafilter)
                        .GetObjectListAsync<Municipality>();
 
-                    var mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclass { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
+                    mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclassDynamic { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
                     mylocationlist.AddRange(mylocalitylistreduced);
                 }
 
@@ -352,7 +386,7 @@ namespace OdhApiCore.Controllers.api
                        .WhereRaw(defaultmunfrafilter)
                        .GetObjectListAsync<District>();
 
-                    var myfractionlistreduced = myfractionlist.Select(x => new LocHelperclass { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
+                    myfractionlistreduced = myfractionlist.Select(x => new LocHelperclassDynamic { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
                     mylocationlist.AddRange(myfractionlistreduced);
                 }
             }
@@ -494,6 +528,21 @@ namespace OdhApiCore.Controllers.api
 
             //Transform to JsonRAW List
             return Ok(mylocationlist.Select(x => new JsonRaw(x)).ToList());
+        }
+
+        #endregion
+
+        #region HelperMethods
+
+
+        private IEnumerable<LocHelperclassDynamic> CreateLocHelperClassDynamic<T>(string typ , IEnumerable<T> locationlist, Expression<Func<T,string>> predicate)  where T : IIdentifiable
+        {
+            return locationlist.Select(x => new LocHelperclassDynamic { typ = typ, name = predicate.Compile(), id = x.Id });
+        }
+
+        private IEnumerable<LocHelperclassDynamic> CreateLocHelperClassDynamic<T>(string typ, IEnumerable<T> locationlist, Expression<Func<T, Dictionary<string,string>>> predicate) where T : IIdentifiable
+        {
+            return locationlist.Select(x => new LocHelperclassDynamic { typ = typ, name = predicate.Compile(), id = x.Id });
         }
 
         #endregion

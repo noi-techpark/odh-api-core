@@ -46,5 +46,8 @@ namespace Helper
         public IDictionary<string, string> Name => new Dictionary<string, string>();
     }
 
-
+    public class LocHelperclassDynamic : LocHelperclass
+    {        
+        public dynamic? name { get; set; }     
+    }
 }
