@@ -555,7 +555,14 @@ namespace OdhApiCore.Controllers.api
 
         private IEnumerable<LocHelperclassDynamic> CreateLocHelperClassDynamic<T>(string typ , IEnumerable<T> locationlist, Expression<Func<T,string>> predicate)  where T : IIdentifiable
         {
-            return locationlist.Select(x => new LocHelperclassDynamic { typ = typ, name = predicate.Compile(), id = x.Id });
+            try
+            {
+                return locationlist.Select(x => new LocHelperclassDynamic { typ = typ, name = predicate.Compile(), id = x.Id });
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         private IEnumerable<LocHelperclassDynamic> CreateLocHelperClassDynamic<T>(string typ, IEnumerable<T> locationlist, Expression<Func<T, Dictionary<string,string>>> predicate) where T : IIdentifiable
