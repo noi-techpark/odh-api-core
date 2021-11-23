@@ -221,12 +221,7 @@ namespace OdhApiCore.Controllers.api
                                .From("districts")
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
-
-                        myregionlistreduced = new List<LocHelperclassDynamic> { new LocHelperclassDynamic { typ = "reg", name = myregion.Detail[lang].Title, id = myregion.Id } };
-                        mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclassDynamic { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                        mytvlistreduced = mytvlist.Select(x => new LocHelperclassDynamic { typ = "tvs", name = x.Detail[lang].Title, id = x.Id });
-                        myfractionlistreduced = myfractionlist.Select(x => new LocHelperclassDynamic { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-
+                    
                         myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", new List<Region>() { myregion }, lang);
                         mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);
                         mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);
@@ -263,10 +258,6 @@ namespace OdhApiCore.Controllers.api
                                .WhereRaw(fractionlistwhere)
                                .GetObjectListAsync<District>();
 
-                        mytvlistreduced = new List<LocHelperclassDynamic>() { new LocHelperclassDynamic { typ = "tvs", name = mytv.Detail[lang].Title, id = mytv.Id } };
-                        mylocalitylistreduced = mylocalitylist.Select(x => new LocHelperclassDynamic { typ = "mun", name = x.Detail[lang].Title, id = x.Id });
-                        myfractionlistreduced = myfractionlist.Select(x => new LocHelperclassDynamic { typ = "fra", name = x.Detail[lang].Title, id = x.Id });
-                                                ;
                         mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", new List<Tourismverein>() { mytv }, lang);
                         mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);                        
                         myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
