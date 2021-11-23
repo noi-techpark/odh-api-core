@@ -186,7 +186,7 @@ namespace OdhApiCore.Controllers.api
                         string fractionlistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
                         var myfractionlist = await GetLocationFromDB<District>("districts", fractionlistwhere);
 
-                        mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytv, lang);
+                        mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);
                         mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);                        
                         myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
                     }
@@ -222,56 +222,27 @@ namespace OdhApiCore.Controllers.api
             {
                 if (locationtypes.Contains("mta"))
                 {
-                    var mymetaregionlist = await QueryFactory.Query()
-                       .Select("data")
-                       .From("metaregions")
-                       .WhereRaw("data->'Active'='true'")
-                       .GetObjectListAsync<MetaRegion>();
-
-                   mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", mymetaregionlist, lang);                                                 
+                    var mymetaregionlist = await GetLocationFromDB<MetaRegion>("metaregions", "data->'Active'='true'");
+                    mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", mymetaregionlist, lang);                                                 
                 }
-
                 if (locationtypes.Contains("reg"))
                 {
-                    var myregionlist = await QueryFactory.Query()
-                       .Select("data")
-                       .From("regions")
-                       .WhereRaw("data->'Active'='true'")
-                       .GetObjectListAsync<Region>();
-
+                    var myregionlist = await GetLocationFromDB<Region>("regions", "data->'Active'='true'");
                     myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregionlist, lang);                    
                 }
-
                 if (locationtypes.Contains("tvs"))
                 {
-                    var mytvlist = await QueryFactory.Query()
-                       .Select("data")
-                       .From("tvs")
-                       .WhereRaw("data->'Active'='true'")
-                       .GetObjectListAsync<Tourismverein>();
-
-                   mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);                   
+                    var mytvlist = await GetLocationFromDB<Tourismverein>("tvs", "data->'Active'='true'");
+                    mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);
                 }
-
                 if (locationtypes.Contains("mun"))
                 {
-                    var mylocalitylist = await QueryFactory.Query()
-                       .Select("data")
-                       .From("municipalities")
-                       .WhereRaw(defaultmunfrafilter)
-                       .GetObjectListAsync<Municipality>();
-                   
+                    var mylocalitylist = await GetLocationFromDB<Municipality>("municipalities", defaultmunfrafilter);
                     mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);                                      
                 }
-
                 if (locationtypes.Contains("fra"))
                 {
-                    var myfractionlist = await QueryFactory.Query()
-                       .Select("data")
-                       .From("districts")
-                       .WhereRaw(defaultmunfrafilter)
-                       .GetObjectListAsync<District>();
-
+                    var myfractionlist = await GetLocationFromDB<District>("districts", defaultmunfrafilter);
                     myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);                    
                 }
 
