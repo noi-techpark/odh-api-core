@@ -1,4 +1,3 @@
-using AspNetCore.CacheOutput.Extensions;
 using AspNetCore.CacheOutput.InMemory.Extensions;
 using Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -360,9 +359,6 @@ namespace OdhApiCore
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            // Put app.UseCacheOutput() before app.UseMvc()
-            app.UseCacheOutput();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>

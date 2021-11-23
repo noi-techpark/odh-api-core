@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers.api
 
         #region GENERATEJSON
 
-        [InvalidateCacheOutput(nameof(GetODHActivityPoiListSTA), typeof(STAController))] // this will invalidate Get in a different controller
+        [InvalidateCacheOutput(typeof(STAController), nameof(GetODHActivityPoiListSTA))] // this will invalidate Get in a different controller
         [HttpGet, Route("STA/JsonPoi")]
         public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
         {
@@ -115,7 +115,7 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        [InvalidateCacheOutput(nameof(GetAccommodationsSTA), typeof(STAController))] // this will invalidate Get in a different controller
+        [InvalidateCacheOutput(typeof(STAController), nameof(GetAccommodationsSTA))] // this will invalidate Get in a different controller
         [HttpGet, Route("STA/JsonAccommodation")]
         public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
         {
