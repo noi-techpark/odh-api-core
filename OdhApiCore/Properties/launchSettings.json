@@ -28,6 +28,10 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/status"
+    },
+    "dotnet": {
+      "commandName": "Project",
+      "hotReloadProfile": "aspnetcore"
     }
   }
 }
