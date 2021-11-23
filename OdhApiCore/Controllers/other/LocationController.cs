@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
 using Helper;
@@ -36,6 +37,10 @@ namespace OdhApiCore.Controllers.api
         /// <param name="type">Type ('mta','reg','tvs','mun','fra') Separator ',' : 'null' returns all Location Objects (default)</param>     
         /// <param name="showall">Show all Data (true = all, false = show only data marked as visible)</param>
         /// <param name="locfilter">Locfilter (Separator ',') possible values: mta + MetaREGIONID = (Filter by MetaRegion), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), (default:'null')</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="rawfilter"><a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki rawfilter</a></param>
+        /// <param name="rawsort"><a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki rawsort</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>Reduced List of Locations Objects</returns>        
         [ProducesResponseType(typeof(IEnumerable<LocHelperclass>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -45,9 +50,10 @@ namespace OdhApiCore.Controllers.api
             string? language = "en",
             string? type = "null",
             bool showall = true,
-            string? locfilter = null)
+            string? locfilter = null,
+            CancellationToken cancellationToken = default)
         {
-            return Ok(await GetLocationInfoFiltered(language ?? "en", locfilter, showall, type));            
+            return await GetLocationInfoFiltered(language ?? "en", locfilter, showall, type, cancellationToken);            
         } 
 
         /// <summary>
@@ -63,9 +69,10 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Location/Skiarea")]
         public async Task<IActionResult> GetTheSkiareaList(
             string? language = "en",
-            string? locfilter = null)
+            string? locfilter = null,
+            CancellationToken cancellationToken = default)
         {
-            return Ok(await GetSkiAreaInfoFiltered(language ?? "en", locfilter));
+            return await GetSkiAreaInfoFiltered(language ?? "en", locfilter, cancellationToken);
         }
 
         #endregion
@@ -78,7 +85,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="lang">Language</param>
         /// <param name="locfilter">Location Filter</param>
         /// <returns>Collection of Reduced Location Objects</returns>
-        private async Task<List<JsonRaw>> GetLocationInfoFiltered(string lang, string? locfilter, bool allactivedata = false, string? type = null)
+        private async Task<IActionResult> GetLocationInfoFiltered(string lang, string? locfilter, bool allactivedata, string? type, CancellationToken cancellationToken)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
             List<Tuple<string, string>> loclist = new List<Tuple<string, string>>();
@@ -353,7 +360,8 @@ namespace OdhApiCore.Controllers.api
             //return mylocationlist;
 
             //Transform to JsonRAW List
-           return mylocationlist.Select(x => new JsonRaw(x)).ToList();
+            var jsonrawlist = mylocationlist.Select(x => new JsonRaw(x)).ToList();
+            return Ok(jsonrawlist);
         }
 
         /// <summary>
@@ -363,7 +371,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="locfilter"></param>
         /// <returns>Collection of Reduced Location Objects</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        private async Task<List<JsonRaw>> GetSkiAreaInfoFiltered(string lang, string? locfilter)
+        private async Task<IActionResult> GetSkiAreaInfoFiltered(string lang, string? locfilter, CancellationToken cancellationToken)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 
@@ -485,7 +493,7 @@ namespace OdhApiCore.Controllers.api
             //return mylocationlist;
 
             //Transform to JsonRAW List
-            return mylocationlist.Select(x => new JsonRaw(x)).ToList();
+            return Ok(mylocationlist.Select(x => new JsonRaw(x)).ToList());
         }
 
         #endregion
