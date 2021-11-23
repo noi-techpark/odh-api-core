@@ -133,112 +133,58 @@ namespace OdhApiCore.Controllers.api
 
                     if (loctype == "mta")
                     {
-                        //var mymetaregion = await QueryFactory.Query()
-                        //       .Select("data")
-                        //       .From("metaregions")
-                        //       .Where("id", locid)
-                        //       .GetObjectSingleAsync<MetaRegion>();                        
+                        var mymetaregionlist = await GetLocationFromDB<MetaRegion>("metaregions", Tuple.Create("id",locid));
 
-                        var mymetaregionlist = await GetLocationFromDB<MetaRegion>("metaregions", "id =" + locid);
+                        if(mymetaregionlist != null && mymetaregionlist.Count() > 0)
+                        {
+                            var regionlist = mymetaregionlist.FirstOrDefault().RegionIds ?? Enumerable.Empty<string>();
 
-                        var mymetaregion = mymetaregionlist.FirstOrDefault();
+                            string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                            var myregionlist = await GetLocationFromDB<Region>("regions", regionlistwhere);
 
-                        var regionlist = mymetaregion.RegionIds ?? Enumerable.Empty<string>();
+                            string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                            var mytvlist = await GetLocationFromDB<Tourismverein>("tvs", tvlistwhere);
+                                        
+                            string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                            var mylocalitylist = await GetLocationFromDB<Municipality>("municipalities", localitylistwhere);
 
-                        string regionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                        var myregionlist = await GetLocationFromDB<Region>("regions", regionlistwhere);
+                            string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
+                            var myfractionlist = await GetLocationFromDB<District>("districts", fractionlistwhere);
 
-                        //var myregionlist = await QueryFactory.Query()
-                        //       .Select("data")
-                        //       .From("regions")
-                        //       .WhereRaw(regionlistwhere)
-                        //       .GetObjectListAsync<Region>();
-
-                        string tvlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                        var mytvlist = await GetLocationFromDB<Tourismverein>("tvs", tvlistwhere);
-                        
-                        //var mytvlist = await QueryFactory.Query()
-                        //       .Select("data")
-                        //       .From("tvs")
-                        //       .WhereRaw(tvlistwhere)
-                        //       .GetObjectListAsync<Tourismverein>();
-
-                        string localitylistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                        var mylocalitylist = await GetLocationFromDB<Municipality>("municipalities", localitylistwhere);
-
-                        //var mylocalitylist = await QueryFactory.Query()
-                        //       .Select("data")
-                        //       .From("municipalities")
-                        //       .WhereRaw(localitylistwhere)
-                        //       .GetObjectListAsync<Municipality>();
-
-                        string fractionlistwhere = "data->>'RegionId' IN (" + String.Join(",", regionlist) + ")" + locid + "' AND " + defaultmunfrafilter;
-                        var myfractionlist = await GetLocationFromDB<District>("districts", fractionlistwhere);
-
-                        //var myfractionlist = await QueryFactory.Query()
-                        //       .Select("data")
-                        //       .From("districts")
-                        //       .WhereRaw(fractionlistwhere)
-                        //       .GetObjectListAsync<District>();
-                       
+                            mymetaregionlistreduced = CreateLocHelperClassDynamic<MetaRegion>("mta", mymetaregionlist, lang);
+                            myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregionlist, lang);
+                            mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);
+                            mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);
+                            myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
+                        }
                     }
                     else if (loctype == "reg")
                     {
-
-                        var myregion = await QueryFactory.Query()
-                               .Select("data")
-                               .From("regions")
-                               .Where("id", locid)
-                               .GetObjectListAsync<Region>();
+                        var myregionlist = await GetLocationFromDB<Region>("regions", Tuple.Create("id", locid));
 
                         string tvlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-                        var mytvlist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("tvs")
-                               .WhereRaw(tvlistwhere)
-                               .GetObjectListAsync<Tourismverein>();
+                        var mytvlist = await GetLocationFromDB<Tourismverein>("tvs", tvlistwhere);
 
                         string localitylistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-                        var mylocalitylist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("municipalities")
-                               .WhereRaw(localitylistwhere)
-                               .GetObjectListAsync<Municipality>();
+                        var mylocalitylist = await GetLocationFromDB<Municipality>("municipalities", localitylistwhere);
 
                         string fractionlistwhere = "data->>'RegionId' = '" + locid + "' AND " + defaultmunfrafilter;
-                        var myfractionlist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("districts")
-                               .WhereRaw(fractionlistwhere)
-                               .GetObjectListAsync<District>();
-                    
-                        myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregion, lang);
+                        var myfractionlist = await GetLocationFromDB<District>("districts", fractionlistwhere);
+
+                        myregionlistreduced = CreateLocHelperClassDynamic<Region>("reg", myregionlist, lang);
                         mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);
                         mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytvlist, lang);
                         myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
-
                     }
                     else if (loctype == "tvs")
                     {
-                        var mytv = await QueryFactory.Query()
-                               .Select("data")
-                               .From("tvs")
-                               .Where("id", locid)
-                               .GetObjectListAsync<Tourismverein>();
+                        var mytvlist = await GetLocationFromDB<Tourismverein>("tvs", Tuple.Create("id", locid));
 
                         string localitylistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
-                        var mylocalitylist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("municipalities")
-                               .WhereRaw(localitylistwhere)
-                               .GetObjectListAsync<Municipality>();
+                        var mylocalitylist = await GetLocationFromDB<Municipality>("municipalities", localitylistwhere);
 
                         string fractionlistwhere = "data->>'TourismvereinId' = '" + locid + "' AND " + defaultmunfrafilter;
-                        var myfractionlist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("districts")
-                               .WhereRaw(fractionlistwhere)
-                               .GetObjectListAsync<District>();
+                        var myfractionlist = await GetLocationFromDB<District>("districts", fractionlistwhere);
 
                         mytvlistreduced = CreateLocHelperClassDynamic<Tourismverein>("tvs", mytv, lang);
                         mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);                        
@@ -246,31 +192,18 @@ namespace OdhApiCore.Controllers.api
                     }
                     else if (loctype == "mun")
                     {
-                        var mymun = await QueryFactory.Query()
-                               .Select("data")
-                               .From("municipalities")
-                               .Where("id", locid)
-                               .GetObjectListAsync<Municipality>();
+                        var mylocalitylist = await GetLocationFromDB<Municipality>("municipalities", Tuple.Create("id", locid));
 
                         string fractionlistwhere = "data->>'MunicipalityId' = '" + locid + "' AND " + defaultmunfrafilter;
-                        var myfractionlist = await QueryFactory.Query()
-                               .Select("data")
-                               .From("districts")
-                               .WhereRaw(fractionlistwhere)
-                               .GetObjectListAsync<District>();
+                        var myfractionlist = await GetLocationFromDB<District>("districts", fractionlistwhere);
 
-                        mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mymun, lang);
+                        mylocalitylistreduced = CreateLocHelperClassDynamic<Municipality>("mun", mylocalitylist, lang);
                         myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
                     }
                     else if (loctype == "fra")
                     {
-                        var myfra = await QueryFactory.Query()
-                               .Select("data")
-                               .From("districts")
-                               .Where("id", locid)
-                               .GetObjectListAsync<District>();
-
-                        myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfra, lang);
+                        var myfractionlist = await GetLocationFromDB<District>("districts", Tuple.Create("id", locid));
+                        myfractionlistreduced = CreateLocHelperClassDynamic<District>("fra", myfractionlist, lang);
                     }
 
                     if (locationtypes.Contains("mta") && mymetaregionlistreduced != null)
@@ -504,13 +437,13 @@ namespace OdhApiCore.Controllers.api
                    .GetObjectListAsync<T>();
         }
 
-        private async Task<T> GetLocationFromDBSingle<T>(string table, string id) where T : notnull
+        private async Task<IEnumerable<T>?> GetLocationFromDB<T>(string table, Tuple<string,string> where) where T : notnull
         {
             return await QueryFactory.Query()
-              .Select("data")
-              .From(table)
-              .Where("id", id)
-              .GetObjectSingleAsync<T>();
+                   .Select("data")
+                   .From(table)
+                   .Where(where.Item1, where.Item2)
+                   .GetObjectListAsync<T>();
         }
 
         private IEnumerable<LocHelperclassDynamic> CreateLocHelperClassDynamic<T>(string typ , IEnumerable<T> locationlist, string? lang)  where T : IIdentifiable, IDetailInfosAware
