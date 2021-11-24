@@ -43,7 +43,9 @@ namespace Helper
 
         public static string JoinStringListForPG(string separator, IEnumerable<string> list, string escapechar)
         {
-            return String.Join(separator, list.Select(x => new string(escapechar + x + escapechar).ToList()));
+            var newlist = list.Select(x => (escapechar + x + escapechar)).ToList();
+
+            return String.Join(separator, newlist);
         }
     }
 
