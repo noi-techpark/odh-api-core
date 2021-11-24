@@ -139,7 +139,7 @@ namespace OdhApiCore.Controllers.api
                         {
                             var regionlist = mymetaregionlist.FirstOrDefault().RegionIds ?? Enumerable.Empty<string>();
 
-                            string regionlistwhere = "data->>'Id' IN ('" + Helper.StringHelpers.JoinStringListForPG(",", regionlist, "'") + "') AND " + defaultmunfrafilter;
+                            string regionlistwhere = "data->>'Id' IN (" + Helper.StringHelpers.JoinStringListForPG(",", regionlist, "'") + ") AND " + defaultmunfrafilter;
                             var myregionlist = await GetLocationFromDB<Region>("regions", regionlistwhere);
 
                             string tvlistwhere = "data->>'RegionId' IN (" + Helper.StringHelpers.JoinStringListForPG(",", regionlist, "'") + ") AND " + defaultmunfrafilter;
