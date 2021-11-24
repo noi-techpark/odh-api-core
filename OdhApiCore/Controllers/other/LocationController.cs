@@ -276,6 +276,8 @@ namespace OdhApiCore.Controllers.api
 
             List<Tuple<string, string>> loclist = new List<Tuple<string, string>>();
 
+            var myskiarealistreduced = default(IEnumerable<LocHelperclassDynamic>);
+
             //Split the string
             if (locfilter != null && locfilter != "null")
             {
@@ -315,10 +317,7 @@ namespace OdhApiCore.Controllers.api
                                );
 
                         var myskiarealist = await myskiarealistquery.GetObjectListAsync<SkiArea>();
-
-                        var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
-
-                        mylocationlist.AddRange(myskiarealistreduced);
+                        myskiarealistreduced = CreateLocHelperClassDynamic<SkiArea>("ska", myskiarealist, lang);
                     }
                     else if (loctype == "reg")
                     {
@@ -334,10 +333,7 @@ namespace OdhApiCore.Controllers.api
                                );
 
                         var myskiarealist = await myskiarealistquery.GetObjectListAsync<SkiArea>();
-
-                        var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
-
-                        mylocationlist.AddRange(myskiarealistreduced);
+                        myskiarealistreduced = CreateLocHelperClassDynamic<SkiArea>("ska", myskiarealist, lang);
                     }
                     else if (loctype == "mta")
                     {
@@ -346,14 +342,6 @@ namespace OdhApiCore.Controllers.api
                                .From("metaregions")
                                .Where("id", locid)
                                .GetObjectSingleAsync<MetaRegion>();
-
-                        //string regionfilter = "";
-                        //foreach (var regionid in mymetaregion.RegionIds ?? new List<string>())
-                        //{
-                        //    regionfilter = regionfilter + "data @> '{ \"RegionIds\": [\"" + regionid + "\"]}' OR ";
-                        //}
-
-                        //regionfilter = regionfilter.Remove(regionfilter.Length - 4);
 
                         var myskiarealistquery =
                           QueryFactory.Query()
@@ -365,11 +353,11 @@ namespace OdhApiCore.Controllers.api
                                );
 
                         var myskiarealist = await myskiarealistquery.GetObjectListAsync<SkiArea>();
-
-                        var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
-
-                        mylocationlist.AddRange(myskiarealistreduced);
+                        myskiarealistreduced = CreateLocHelperClassDynamic<SkiArea>("ska", myskiarealist, lang);
                     }
+
+                    if(myskiarealistreduced != null && myskiarealistreduced.Count() > 0)
+                        mylocationlist.AddRange(myskiarealistreduced);
                 }
             }
             else
@@ -381,8 +369,7 @@ namespace OdhApiCore.Controllers.api
 
                 var myskiarealist = await myskiarealistquery.GetObjectListAsync<SkiArea>();
 
-                var myskiarealistreduced = myskiarealist.Select(x => new LocHelperclass { typ = "ska", name = x.Detail[lang].Title, id = x.Id });
-
+                myskiarealistreduced = CreateLocHelperClassDynamic<SkiArea>("ska", myskiarealist, lang);
                 mylocationlist.AddRange(myskiarealistreduced);
             }
 
