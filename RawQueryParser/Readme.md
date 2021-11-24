@@ -29,7 +29,8 @@ eq(Type, 'Wandern')                                            // all entries of
 eq(ODHTags, [])                                                // all entries where Array ODHTags is empty
 isnotnull(Detail.ru.Title)                                     // all entries with a russian title set
 and(ge(GpsInfo.0.Altitude, 200), le(GpsInfo.0.Altitude, 400))  // all entries with an altitude between 200 and 400 meters
-in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries in an Array with a specific feature ID
+in(Features.[*].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")    // all entries in an Array with a specific feature ID
+in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries in an Array with a specific feature ID - alternative notation
 ```
 
 > `<field>` is described [here](#Supported-value-types:)   
@@ -88,8 +89,12 @@ But it is possible to traverse throgh the document's hierarchy by separating the
 ```
 
 It is also possible to query arrays:   
-`Features.[].Id` matches on a document with the following JSON structure:
-
+`Features.[0].Id`: returns the first Element of the Array as single field  
+`Features.[n].Id`: returns the n-th Element of the Array as single field  
+`Features.[*].Id`: returns all Elements of the Array (as array)  
+  
+This field matches on a document with the following JSON structure:  
+  
 ```json
 { "Features": [{ "Id": <value>, ... }, { "Id": <value>, ... }, ...], ... }
 ```

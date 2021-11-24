@@ -40,6 +40,13 @@ namespace Helper
                     return null;
             }
         }        
+
+        public static string JoinStringListForPG(string separator, IEnumerable<string> list, string escapechar)
+        {
+            var newlist = list.Select(x => (escapechar + x + escapechar)).ToList();
+
+            return String.Join(separator, newlist);
+        }
     }
 
     public static class StringExtensions
@@ -80,4 +87,6 @@ namespace Helper
             return strlist.ToArray();
         }
     }
+
+
 }

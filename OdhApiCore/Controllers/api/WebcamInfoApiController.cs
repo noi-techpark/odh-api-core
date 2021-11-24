@@ -196,7 +196,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,WebcamManager,WebcamCreate")]
-        [InvalidateCacheOutput(nameof(Get), typeof(WebcamInfoController))]
+        [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpPost, Route("WebcamInfo")]
         public Task<IActionResult> Post([FromBody] WebcamInfoLinked webcam)
         {
@@ -221,7 +221,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify")]
-        [InvalidateCacheOutput(nameof(Get), typeof(WebcamInfoController))]
+        [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpPut, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
         {
@@ -242,7 +242,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
-        [InvalidateCacheOutput(nameof(Get), typeof(WebcamInfoController))]
+        [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpDelete, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Delete(string id)
         {

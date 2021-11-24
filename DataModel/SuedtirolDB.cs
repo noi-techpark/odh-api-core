@@ -51,6 +51,11 @@ namespace DataModel
         ICollection<string>? HasLanguage { get; set; }
     }
 
+    public interface IDetailInfosAware
+    {
+        IDictionary<string,Detail> Detail { get; set; }
+    }
+
     public interface IDetailInfos
     {
         string? Header { get; set; }
@@ -84,8 +89,7 @@ namespace DataModel
     }
 
     public interface IContactInfosAware
-    {
-        //brauchts nix?
+    {        
         IDictionary<string, ContactInfos> ContactInfos { get; set; }
     }
 
@@ -109,8 +113,7 @@ namespace DataModel
     }
 
     public interface IImageGalleryAware
-    {
-        //brauchts nix?
+    {        
         ICollection<ImageGallery>? ImageGallery { get; set; }
     }
 
@@ -2108,8 +2111,6 @@ namespace DataModel
         public string? CustomId { get; set; }
         public string? CompanyId { get; set; }
 
-
-
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public ICollection<string>? Awards { get; set; }
 
@@ -2158,7 +2159,7 @@ namespace DataModel
     }
 
     //BaseInfos für Districts / Regions / Municipalities
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2231,7 +2232,7 @@ namespace DataModel
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
-    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo
+    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2348,7 +2349,7 @@ namespace DataModel
     }
 
     //Erweiterte Baseinfos für ARticles
-    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo
+    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2428,7 +2429,7 @@ namespace DataModel
     }
 
     //Erweiterte Baseinfos für Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2503,7 +2504,7 @@ namespace DataModel
     }
 
     //Erweiterte BaseInfo für Events
-    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable
+    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
