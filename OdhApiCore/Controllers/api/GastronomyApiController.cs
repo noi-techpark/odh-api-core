@@ -63,7 +63,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<Gastronomy>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<GastronomyLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
@@ -116,7 +116,7 @@ namespace OdhApiCore.Controllers
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>Gastronomy Object</returns>
-        [ProducesResponseType(typeof(Gastronomy), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GastronomyLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Gastronomy/{id}", Name = "SingleGastronomy")]

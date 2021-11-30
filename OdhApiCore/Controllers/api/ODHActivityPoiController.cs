@@ -77,7 +77,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<ODHActivityPoi>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<ODHActivityPoiLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
@@ -149,7 +149,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(ODHActivityPoi), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ODHActivityPoiLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ODHActivityPoi/{id}", Name = "SingleODHActivityPoi")]
