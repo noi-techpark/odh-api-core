@@ -65,7 +65,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<Event>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<EventLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
@@ -126,7 +126,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>        
-        [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EventLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Event/{id}", Name = "SingleEvent")]

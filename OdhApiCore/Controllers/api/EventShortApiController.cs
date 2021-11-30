@@ -142,7 +142,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="enddate">Format (yyyy-MM-dd HH:mm) default or Unix Timestamp</param>
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
-        /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>    /// <param name="onlyactive">'true' if only Events marked as Active by Eurac should be displayed</param>
+        /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>    
         /// <param name="onlyactive">'true' if only Events marked as Active should be returned</param>        
         /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>        
         /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>        
@@ -1170,7 +1170,7 @@ namespace OdhApiCore.Controllers.api
                 var langtoinsert = "";
 
                 //Temporary workaround
-                if (!String.IsNullOrEmpty(language) && (language == "en" || language == "de"))
+                if (!String.IsNullOrEmpty(language) && (language == "en" || language == "de" || language == "it"))
                     langtoinsert = language + "/";
 
                 var bdprooms = await GetBDPNoiRooms();
