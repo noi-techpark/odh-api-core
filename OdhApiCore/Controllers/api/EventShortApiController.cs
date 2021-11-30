@@ -1170,7 +1170,7 @@ namespace OdhApiCore.Controllers.api
                 var langtoinsert = "";
 
                 //Temporary workaround
-                if (!String.IsNullOrEmpty(language) && (language == "en" || language == "de"))
+                if (!String.IsNullOrEmpty(language) && (language == "en" || language == "de" || language == "it"))
                     langtoinsert = language + "/";
 
                 var bdprooms = await GetBDPNoiRooms();
