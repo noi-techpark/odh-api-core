@@ -373,7 +373,7 @@ namespace OdhApiCore.Controllers.api
 
             var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x)!).ToList();
 
-            var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, myeventshorthelper.activefilter);
+            var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, onlyactive);
 
             IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
 
