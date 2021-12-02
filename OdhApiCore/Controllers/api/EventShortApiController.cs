@@ -373,7 +373,7 @@ namespace OdhApiCore.Controllers.api
 
             var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x)!).ToList();
 
-            var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end, onlyactive);
+            var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end);
 
             IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
 
@@ -387,7 +387,7 @@ namespace OdhApiCore.Controllers.api
             return Ok(dataTransformed);
         }
 
-        private IEnumerable<EventShortByRoom> TransformEventShortToRoom(IEnumerable<EventShort> eventsshort, DateTime start, DateTime end, string? onlyactive)
+        private IEnumerable<EventShortByRoom> TransformEventShortToRoom(IEnumerable<EventShort> eventsshort, DateTime start, DateTime end)
         {
             List<EventShortByRoom> eventshortlistbyroom = new List<EventShortByRoom>();
 
@@ -508,20 +508,22 @@ namespace OdhApiCore.Controllers.api
                             if (!String.IsNullOrEmpty(eventshort.Display5))
                                 myeventshortbyroom.CompanyName = eventshort.Display5;
 
-                            if (onlyactive == null)
-                                onlyactive = "";
+                            AddToRoomList(eventshortlistbyroom, myeventshortbyroom);
 
-                            if (onlyactive.ToLower() == "true")
-                            {
-                                if (eventshort.Display1 == "Y")
-                                    AddToRoomList(eventshortlistbyroom, myeventshortbyroom);
-                                //eventshortlistbyroom.Add(myeventshortbyroom);
-                            }
-                            else
-                            {
-                                //eventshortlistbyroom.Add(myeventshortbyroom);
-                                AddToRoomList(eventshortlistbyroom, myeventshortbyroom);
-                            }
+                            //if (onlyactive == null)
+                            //    onlyactive = "";
+
+                            //if (onlyactive.ToLower() == "true")
+                            //{
+                            //    if (eventshort.Display1 == "Y")
+                            //        AddToRoomList(eventshortlistbyroom, myeventshortbyroom);
+                            //    //eventshortlistbyroom.Add(myeventshortbyroom);
+                            //}
+                            //else
+                            //{
+                            //    //eventshortlistbyroom.Add(myeventshortbyroom);
+                                
+                            //}
                         }
                     }
                 }
