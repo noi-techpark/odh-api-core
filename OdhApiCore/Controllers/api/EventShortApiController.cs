@@ -399,7 +399,8 @@ namespace OdhApiCore.Controllers.api
                 foreach (RoomBooked room in eventshort.RoomBooked ?? new List<RoomBooked>())
                 {
                     //Display room only if not comment x inserted
-                    if (room.Comment?.ToLower() != "x" && room.EndDate >= DateTime.Now)
+                    //if (room.Comment?.ToLower() != "x" && room.EndDate >= DateTime.Now)
+                    if (room.Comment?.ToLower() != "x" && room.EndDate >= start)
                     {
                         if (room.StartDate <= end)
                         {
