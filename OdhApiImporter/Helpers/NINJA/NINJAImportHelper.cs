@@ -87,7 +87,9 @@ namespace OdhApiImporter.Helpers
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    deleteimportcounter = deleteimportcounter + await DeleteOrDisableEvents(idtodelete, false);
+                    var deletedisableresult = await DeleteOrDisableEvents(idtodelete, false);
+
+                    deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
                 }
             }
 
@@ -183,13 +185,14 @@ namespace OdhApiImporter.Helpers
             return eventids.ToList();
         }
 
-        private async Task<int> DeleteOrDisableEvents(string eventid, bool delete)
+        private async Task<Tuple<int,int>> DeleteOrDisableEvents(string eventid, bool delete)
         {
-            var result = 0;
+            var deleteresult = 0;
+            var updateresult = 0;
 
             if (delete)
             {
-                result = await QueryFactory.Query("events").Where("id", eventid)
+                deleteresult = await QueryFactory.Query("events").Where("id", eventid)
                     .DeleteAsync();
             }
             else
@@ -208,13 +211,13 @@ namespace OdhApiImporter.Helpers
                         data.Active = false;
                         data.SmgActive = false;
 
-                        result = await QueryFactory.Query("events").Where("id", eventid)
+                        updateresult = await QueryFactory.Query("events").Where("id", eventid)
                                         .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
                     }                
                 }
             }
 
-            return result;
+            return Tuple.Create(updateresult, deleteresult);
         }   
 
         #endregion

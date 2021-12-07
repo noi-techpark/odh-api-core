@@ -426,7 +426,7 @@ namespace OdhApiImporter.Helpers
         }
 
         //TODO when import complete
-        private async Task SetMuseumsnotinListToInactive(XDocument mymuseumlist, CancellationToken cancellationToken)
+        private async Task<UpdateDetail> SetMuseumsnotinListToInactive(XDocument mymuseumlist, CancellationToken cancellationToken)
         {
             List<string> mymuseumroot = mymuseumlist.Root.Elements("Museum").Select(x => x.Attribute("ID").Value).ToList();
       
@@ -439,13 +439,20 @@ namespace OdhApiImporter.Helpers
             var mymuseumsonraven = await mymuseumquery.GetAsync<string>();
             
             var idstodelete = mymuseumsonraven.Where(p => !mymuseumroot.Any(p2 => p2 == p));
-            
+
+            int updateresult = 0;
+            int deleteresult = 0;
+
             foreach (var idtodelete in idstodelete)
             {
-                await DeleteOrDisableMuseum(idtodelete, false);
+                var result = await DeleteOrDisableMuseum(idtodelete, false);
+
+                updateresult = updateresult + result.Item1;
+                deleteresult = deleteresult + result.Item2;
             }
 
             //TODO CALL THIS METHOD and add a update counter
+            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult };
         }
 
         private async Task<PGCRUDResult> InsertSiagMuseumToDB(ODHActivityPoiLinked odhactivitypoi, string idtocheck, KeyValuePair<string, XElement> siagmuseumdata)
@@ -483,13 +490,14 @@ namespace OdhApiImporter.Helpers
                         });
         }
 
-        private async Task<int> DeleteOrDisableMuseum(string museumid, bool delete)
+        private async Task<Tuple<int,int>> DeleteOrDisableMuseum(string museumid, bool delete)
         {
-            var result = 0;
+            var deleteresult = 0;
+            var updateresult = 0;
 
             if (delete)
             {
-                result = await QueryFactory.Query("smgpois").Where("id", museumid)
+                deleteresult = await QueryFactory.Query("smgpois").Where("id", museumid)
                     .DeleteAsync();
             }
             else
@@ -508,13 +516,13 @@ namespace OdhApiImporter.Helpers
                         data.Active = false;
                         data.SmgActive = false;
 
-                        result = await QueryFactory.Query("smgpois").Where("id", museumid)
+                        updateresult = await QueryFactory.Query("smgpois").Where("id", museumid)
                                         .UpdateAsync(new JsonBData() { id = museumid, data = new JsonRaw(data) });
                     }
                 }
             }
 
-            return result;
+            return Tuple.Create(updateresult, deleteresult);
         }
 
 
