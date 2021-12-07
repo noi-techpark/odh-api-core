@@ -26,7 +26,6 @@
   <ItemGroup>
     <Folder Include="Helpers\CDB\" />
     <Folder Include="Helpers\LCS\" />
-    <Folder Include="Helpers\SUEDTIROLWEIN\" />
     <Folder Include="Models\" />
   </ItemGroup>
 </Project>

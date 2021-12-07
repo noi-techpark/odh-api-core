@@ -229,6 +229,7 @@ namespace NINJA.Parser
 
             myevent.Shortname = myevent.Detail.FirstOrDefault().Value.Title;
             myevent.LastChange = DateTime.Now;
+            myevent._Meta.LastUpdate = myevent.LastChange;
 
             //Gps Info
             myevent.Latitude = place != null ? place.scoordinate.y : 0;

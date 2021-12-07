@@ -187,6 +187,7 @@ namespace OdhApiImporter.Helpers
                 mymuseum.SyncSourceInterface = "museumdata";
                 mymuseum.SyncUpdateMode = "Full";
                 mymuseum.LastChange = DateTime.Now;
+                mymuseum._Meta.LastUpdate = mymuseum.LastChange;
 
                 if (mymuseum == null)
                 {
@@ -455,7 +456,6 @@ namespace OdhApiImporter.Helpers
         //    }
 
         //}
-
 
         private async Task<PGCRUDResult> InsertSiagMuseumToDB(ODHActivityPoiLinked odhactivitypoi, string idtocheck, KeyValuePair<string, XElement> siagmuseumdata)
         {
