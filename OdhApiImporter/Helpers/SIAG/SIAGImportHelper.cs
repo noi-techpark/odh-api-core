@@ -182,13 +182,7 @@ namespace OdhApiImporter.Helpers
                     .WhereRaw("data->>'CustomId' = ?", museumid.ToLower());
 
                 var mymuseum = await mymuseumquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
-
-                mymuseum.Source = "SIAG";
-                mymuseum.SyncSourceInterface = "museumdata";
-                mymuseum.SyncUpdateMode = "Full";
-                mymuseum.LastChange = DateTime.Now;
-                mymuseum._Meta.LastUpdate = mymuseum.LastChange;
-
+                
                 if (mymuseum == null)
                 {
 
@@ -410,12 +404,22 @@ namespace OdhApiImporter.Helpers
                     }                                 
                 }
 
+                //Setting Common Infos
+                mymuseum.Source = "SIAG";
+                mymuseum.SyncSourceInterface = "museumdata";
+                mymuseum.SyncUpdateMode = "Full";
+                mymuseum.LastChange = DateTime.Now;
+                mymuseum._Meta.LastUpdate = mymuseum.LastChange;
+
                 //Setting LicenseInfo
                 mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
                 var result = await InsertSiagMuseumToDB(mymuseum, mymuseum.Id, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
                 newcounter = newcounter + result.created.Value;
                 updatecounter = updatecounter + result.updated.Value;
+
+                LogOutput<ImportLog> logoutput = new LogOutput<ImportLog>() { id = mymuseum.Id, type = "import", log = "importsiagmuseum", output = new ImportLog() { sourceid = mymuseum.Id, sourceinterface = "siag museum", success = true } };
+                Console.WriteLine(JsonConvert.SerializeObject(logoutput));
             }
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };                
