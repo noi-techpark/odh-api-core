@@ -225,10 +225,13 @@ namespace OdhApiImporter.Helpers
 
                         foreach (var splitted in splittedlist)
                         {
-                            museumskategorien.Add(splitted.Trim());
+                            if (!String.IsNullOrEmpty(splitted))
+                            {
+                                museumskategorien.Add(splitted.Trim());
 
-                            var mykategoriequery = await ODHTagHelper.GeODHTagByID(QueryFactory, "Museen " + splitted.Trim());
-                            mysmgpoipoitype.Add(mykategoriequery);
+                                var mykategoriequery = await ODHTagHelper.GeODHTagByID(QueryFactory, "Museen " + splitted.Trim());
+                                mysmgpoipoitype.Add(mykategoriequery);
+                            }
                         }
                     }
 
@@ -350,10 +353,13 @@ namespace OdhApiImporter.Helpers
 
                         foreach (var splitted in splittedlist)
                         {
-                            museumskategorien.Add(splitted.Trim());
+                            if (!String.IsNullOrEmpty(splitted))
+                            {
+                                museumskategorien.Add(splitted.Trim());
 
-                            var mykategoriequery = await ODHTagHelper.GeODHTagByID(QueryFactory, "Museen " + splitted.Trim());
-                            mysmgpoipoitype.Add(mykategoriequery);
+                                var mykategoriequery = await ODHTagHelper.GeODHTagByID(QueryFactory, "Museen " + splitted.Trim());
+                                mysmgpoipoitype.Add(mykategoriequery);
+                            }
                         }
                     }
 
@@ -407,7 +413,7 @@ namespace OdhApiImporter.Helpers
                 //Setting LicenseInfo
                 mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
-                var result = await InsertSiagMuseumToDB(mymuseum, mymuseum.Id, new KeyValuePair<string, XElement>(museumid, mymuseumelement));
+                var result = await InsertSiagMuseumToDB(mymuseum, mymuseum.Id, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
                 newcounter = newcounter + result.created.Value;
                 updatecounter = updatecounter + result.updated.Value;
             }
@@ -415,6 +421,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };                
         }
 
+        //TODO when import complete
         //public static void SetMuseumsnotinListToInactive(IDocumentStore documentStore)
         //{
         //    var mymuseumlist = XDocument.Load(Constants.xmldir + "MuseumList.xml");
