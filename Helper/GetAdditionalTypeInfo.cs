@@ -94,7 +94,9 @@ namespace Helper
                            .Select("data")
                            .Where("id", id.ToLower());                           
 
-                return await query.FirstOrDefaultAsync<SmgTags>();
+                var result = await query.GetFirstOrDefaultAsObject<SmgTags>();
+
+                return result;
             }
             catch (Exception)
             {

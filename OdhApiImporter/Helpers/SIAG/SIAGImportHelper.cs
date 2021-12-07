@@ -177,7 +177,6 @@ namespace OdhApiImporter.Helpers
                 var mymuseumdata = await SIAG.GetMuseumFromSIAG.GetMuseumDetail(museumid);
                 var mymuseumxml = mymuseumdata.Root.Element(ns + "return");
 
-
                 var mymuseumquery = QueryFactory.Query("smgpois")
                     .Select("data")
                     .WhereRaw("data->>'CustomId' = ?", museumid.ToLower());
