@@ -426,47 +426,27 @@ namespace OdhApiImporter.Helpers
         }
 
         //TODO when import complete
-        //public static void SetMuseumsnotinListToInactive(IDocumentStore documentStore)
-        //{
-        //    var mymuseumlist = XDocument.Load(Constants.xmldir + "MuseumList.xml");
-        //    List<string> mymuseumroot = mymuseumlist.Root.Elements("Museum").Select(x => x.Attribute("ID").Value).ToList();
+        private async Task SetMuseumsnotinListToInactive(XDocument mymuseumlist, CancellationToken cancellationToken)
+        {
+            List<string> mymuseumroot = mymuseumlist.Root.Elements("Museum").Select(x => x.Attribute("ID").Value).ToList();
+      
+            int todeactivatecounter = 0;
+         
+            var mymuseumquery = QueryFactory.Query("smgpois")
+                .Select("data->>'CustomId'")
+                .Where("gen_syncsourceinterface", "museumdata");
 
-        //    Constants.tracesource.TraceEvent(TraceEventType.Information, 0, mymuseumroot.Count + " Elements on SIAG List");
+            var mymuseumsonraven = await mymuseumquery.GetAsync<string>();
+            
+            var idstodelete = mymuseumsonraven.Where(p => !mymuseumroot.Any(p2 => p2 == p));
+            
+            foreach (var idtodelete in idstodelete)
+            {
+                await DeleteOrDisableMuseum(idtodelete, false);
+            }
 
-
-        //    int todeactivatecounter = 0;
-
-        //    var mymuseumsonraven = default(IEnumerable<string>);
-
-        //    using (var session = documentStore.OpenSession())
-        //    {
-        //        mymuseumsonraven = session.Query<SmgPoi, SmgPoiMegaFilter>().Where(x => x.SyncSourceInterface == "MuseumData").Select(x => x.CustomId).Take(1024).ToList();
-        //    }
-
-        //    Constants.tracesource.TraceEvent(TraceEventType.Information, 0, mymuseumsonraven.Count() + " Elements in DB");
-
-
-        //    var idstodelete = mymuseumsonraven.Where(p => !mymuseumroot.Any(p2 => p2 == p));
-
-        //    Constants.tracesource.TraceEvent(TraceEventType.Information, 0, idstodelete.Count() + " Elements to delete");
-
-        //    foreach (var idtodelete in idstodelete)
-        //    {
-        //        using (var session = documentStore.OpenSession())
-        //        {
-        //            var mymuseumtodeactivate = session.Query<SmgPoi, SmgPoiMegaFilter>().Where(x => x.SyncSourceInterface == "MuseumData" && x.CustomId == idtodelete).FirstOrDefault();
-
-        //            if (mymuseumtodeactivate != null)
-        //            {
-        //                //session.Delete(mymuseumtodeactivate);
-        //                mymuseumtodeactivate.SmgActive = false;
-        //                mymuseumtodeactivate.Active = false;
-        //                session.SaveChanges();
-        //            }
-        //        }
-        //    }
-
-        //}
+            //TODO CALL THIS METHOD and add a update counter
+        }
 
         private async Task<PGCRUDResult> InsertSiagMuseumToDB(ODHActivityPoiLinked odhactivitypoi, string idtocheck, KeyValuePair<string, XElement> siagmuseumdata)
         {
@@ -503,7 +483,40 @@ namespace OdhApiImporter.Helpers
                         });
         }
 
-        
+        private async Task<int> DeleteOrDisableMuseum(string museumid, bool delete)
+        {
+            var result = 0;
+
+            if (delete)
+            {
+                result = await QueryFactory.Query("smgpois").Where("id", museumid)
+                    .DeleteAsync();
+            }
+            else
+            {
+                var query =
+               QueryFactory.Query("smgpois")
+                   .Select("data")
+                   .Where("id", museumid);
+
+                var data = await query.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+
+                if (data != null)
+                {
+                    if (data.Active != false || data.SmgActive != false)
+                    {
+                        data.Active = false;
+                        data.SmgActive = false;
+
+                        result = await QueryFactory.Query("smgpois").Where("id", museumid)
+                                        .UpdateAsync(new JsonBData() { id = museumid, data = new JsonRaw(data) });
+                    }
+                }
+            }
+
+            return result;
+        }
+
 
 
         #endregion
