@@ -340,7 +340,6 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-
         #endregion
 
         #region SUEDTIROLWEIN DATA SYNC

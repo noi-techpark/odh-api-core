@@ -237,18 +237,18 @@ namespace OdhApiImporter.Helpers
 
                     List<string> mysmgtags = mymuseum.SmgTags.ToList();
 
-                    if (!mysmgtags.Contains(mysmgmaintype.Id))
-                        mysmgtags.Add(mysmgmaintype.Id);
+                    if (!mysmgtags.Contains(mysmgmaintype.Id.ToLower()))
+                        mysmgtags.Add(mysmgmaintype.Id.ToLower());
 
-                    if (!mysmgtags.Contains(mysmgsubtype.Id))
-                        mysmgtags.Add(mysmgsubtype.Id);
+                    if (!mysmgtags.Contains(mysmgsubtype.Id.ToLower()))
+                        mysmgtags.Add(mysmgsubtype.Id.ToLower());
 
                     if (mysmgpoipoitype.Count > 0)
                     {
                         foreach (var mysmgpoipoitypel in mysmgpoipoitype)
                         {
-                            if (!mysmgtags.Contains(mysmgpoipoitypel.Id))
-                                mysmgtags.Add(mysmgpoipoitypel.Id);
+                            if (!mysmgtags.Contains(mysmgpoipoitypel.Id.ToLower()))
+                                mysmgtags.Add(mysmgpoipoitypel.Id.ToLower());
                         }
 
                     }
@@ -278,7 +278,7 @@ namespace OdhApiImporter.Helpers
                     }
 
                     //Setting Categorization by Valid Tags
-                    var currentcategories = validtagsforcategories.Where(x => mymuseum.SmgTags.Contains(x.Id));
+                    var currentcategories = validtagsforcategories.Where(x => mymuseum.SmgTags.Contains(x.Id.ToLower()));
 
                     foreach (var smgtagtotranslate in currentcategories)
                     {
@@ -360,16 +360,16 @@ namespace OdhApiImporter.Helpers
                     mymuseum.Type = mysmgmaintype.Shortname;
                     mymuseum.SubType = mysmgsubtype.Shortname;
 
-                    if (!mymuseum.SmgTags.Contains(mysmgmaintype.Id))
-                        mymuseum.SmgTags.Add(mysmgmaintype.Id);
-                    if (!mymuseum.SmgTags.Contains(mysmgsubtype.Id))
-                        mymuseum.SmgTags.Add(mysmgsubtype.Id);
+                    if (!mymuseum.SmgTags.Contains(mysmgmaintype.Id.ToLower()))
+                        mymuseum.SmgTags.Add(mysmgmaintype.Id.ToLower());
+                    if (!mymuseum.SmgTags.Contains(mysmgsubtype.Id.ToLower()))
+                        mymuseum.SmgTags.Add(mysmgsubtype.Id.ToLower());
                     if (mysmgpoipoitype.Count > 0)
                     {
                         foreach (var mysmgpoitypel in mysmgpoipoitype)
                         {
-                            if (!mymuseum.SmgTags.Contains(mysmgpoitypel.Id))
-                                mymuseum.SmgTags.Add(mysmgpoitypel.Id);
+                            if (!mymuseum.SmgTags.Contains(mysmgpoitypel.Id.ToLower()))
+                                mymuseum.SmgTags.Add(mysmgpoitypel.Id.ToLower());
                         }
                     }
 
@@ -390,7 +390,7 @@ namespace OdhApiImporter.Helpers
                     }
 
                     //Setting Categorization by Valid Tags
-                    var currentcategories = validtagsforcategories.Where(x => mymuseum.SmgTags.Contains(x.Id));
+                    var currentcategories = validtagsforcategories.Where(x => mymuseum.SmgTags.Contains(x.Id.ToLower()));
                     foreach (var smgtagtotranslate in currentcategories)
                     {
                         foreach (var languagecategory in languagelistcategories)
