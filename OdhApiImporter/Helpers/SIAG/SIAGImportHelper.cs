@@ -525,8 +525,6 @@ namespace OdhApiImporter.Helpers
             return Tuple.Create(updateresult, deleteresult);
         }
 
-
-
         #endregion
     }
 }

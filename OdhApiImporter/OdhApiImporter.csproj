@@ -21,6 +21,7 @@
     <ProjectReference Include="..\RAVEN\RAVEN.csproj" />
     <ProjectReference Include="..\SIAG\SIAG.csproj" />
     <ProjectReference Include="..\STA\STA.csproj" />
+    <ProjectReference Include="..\SuedtirolWein\SuedtirolWein.csproj" />
   </ItemGroup>
 
   <ItemGroup>
