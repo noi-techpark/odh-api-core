@@ -174,12 +174,9 @@ namespace OdhApiImporter.Controllers
         public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
         {
             try
-            {
-                var responseevents = await GetNinjaData.GetNinjaEvent();
-                var responseplaces = await GetNinjaData.GetNinjaPlaces();
-
+            {              
                 NINJAImportHelper ninjaimporthelper = new NINJAImportHelper(settings, QueryFactory);
-                var result = await ninjaimporthelper.SaveEventsToPG(responseevents.data, responseplaces.data);
+                var result = await ninjaimporthelper.SaveDataToODH(null, cancellationToken);
 
                 return Ok(new UpdateResult
                 {
@@ -308,7 +305,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
-                var result = await siagimporthelper.SaveMuseumsToODH(null, cancellationToken);
+                var result = await siagimporthelper.SaveDataToODH(null, cancellationToken);
 
                 return Ok(new UpdateResult
                 {
