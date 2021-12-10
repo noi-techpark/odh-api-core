@@ -12,7 +12,7 @@ using Helper;
 
 namespace OdhApiImporter.Helpers
 {
-    public class SIAGImportHelper : IImportHelper
+    public class SIAGImportHelper
     {
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
@@ -20,7 +20,7 @@ namespace OdhApiImporter.Helpers
         public SIAGImportHelper(ISettings settings, QueryFactory queryfactory)
         {
             this.QueryFactory = queryfactory;
-            this.settings = settings;
+            this.settings = settings;            
         }
 
         #region SIAG Weather
@@ -488,7 +488,7 @@ namespace OdhApiImporter.Helpers
                         });
         }
 
-        private async Task<Tuple<int,int>> DeleteOrDisableData(string museumid, bool delete)
+        private async Task<Tuple<int, int>> DeleteOrDisableData(string museumid, bool delete)
         {
             var deleteresult = 0;
             var updateresult = 0;
