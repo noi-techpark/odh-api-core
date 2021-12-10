@@ -45,8 +45,7 @@ namespace OdhApiImporter.Helpers
             return Tuple.Create(responseevents, responseplaces);
         }
 
-
-        public async Task<UpdateDetail> SaveEventsToPG(ICollection<NinjaData<NinjaEvent>> ninjadataarr, ICollection<NinjaData<NinjaPlaceRoom>> ninjaplaceroomarr)
+        private async Task<UpdateDetail> SaveEventsToPG(ICollection<NinjaData<NinjaEvent>> ninjadataarr, ICollection<NinjaData<NinjaPlaceRoom>> ninjaplaceroomarr)
         {
 
             var newimportcounter = 0;
