@@ -12,5 +12,5 @@ namespace Helper
         public string type { get; init; }
         public string id { get; init; }
         public T output { get; init; }
-    }
+    }    
 }

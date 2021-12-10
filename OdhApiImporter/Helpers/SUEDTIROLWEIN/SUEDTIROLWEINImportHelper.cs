@@ -38,13 +38,13 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
         public async Task<IDictionary<string, XDocument>> GetSuedtirolWeinGastronomiesList(CancellationToken cancellationToken = default)
         {
-            var winedatalistde = GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("de").Result;
-            var winedatalistit = GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("it").Result;
-            var winedatalisten = GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("en").Result;
+            var winedatalistde = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("de");
+            var winedatalistit = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("it");
+            var winedatalisten = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("en");
             //New getting in jp and ru and us
-            var winedatalistjp = GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("jp").Result;
-            var winedatalistru = GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("ru").Result;
-            var winedatalistus = GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("us").Result;
+            var winedatalistjp = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("jp");
+            var winedatalistru = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("ru");
+            var winedatalistus = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("us");
 
             IDictionary<string, XDocument> mywinedata = new Dictionary<string, XDocument>();
             mywinedata.Add("de", winedatalistde);

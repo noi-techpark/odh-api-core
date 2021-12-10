@@ -308,7 +308,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
-                var result = await siagimporthelper.SaveMuseumsToODH(QueryFactory, null, cancellationToken);
+                var result = await siagimporthelper.SaveMuseumsToODH(null, cancellationToken);
 
                 return Ok(new UpdateResult
                 {

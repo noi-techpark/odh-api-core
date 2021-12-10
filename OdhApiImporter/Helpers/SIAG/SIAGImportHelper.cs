@@ -12,7 +12,7 @@ using Helper;
 
 namespace OdhApiImporter.Helpers
 {
-    public class SIAGImportHelper
+    public class SIAGImportHelper : IImportHelper
     {
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
@@ -110,16 +110,19 @@ namespace OdhApiImporter.Helpers
 
         #region SIAG Museumdata
 
-        public async Task<UpdateDetail> SaveMuseumsToODH(QueryFactory QueryFactory, DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
         {
-            var museumslist = await ImportMuseumlist(cancellationToken);
-            var updateresult = await ImportMuseums(museumslist, cancellationToken);
-            //SetMuseumsnotinListToInactive()
+            //Import the actual museums List from SIAG
+            var museumslist = await ImportList(cancellationToken);
+            //Parse siag data single and import each museum
+            var updateresult = await ImportData(museumslist, cancellationToken);
+            //If in the DB there are museums no more listed in the siag response set this data to inactive
+            var deleteresult = await SetDataNotinListToInactive(museumslist, cancellationToken);
 
-            return updateresult;
+            return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
         }
 
-        private async Task<XDocument> ImportMuseumlist(CancellationToken cancellationToken)
+        private async Task<XDocument> ImportList(CancellationToken cancellationToken)
         {
             var myxml = await SIAG.GetMuseumFromSIAG.GetMuseumList();
 
@@ -142,13 +145,12 @@ namespace OdhApiImporter.Helpers
 
             mymuseumlist.Add(mymuseums);
 
-            //check if there is the need to save it
-            //mymuseumlist.Save(Constants.xmldir + "MuseumList.xml");
+            WriteLog.LogToConsole("", "dataimport", "list.siagmuseum", new ImportLog() { sourceid = "", sourceinterface = "siag.museum", success = true, error = "" });
 
             return mymuseumlist;
         }
 
-        private async Task<UpdateDetail> ImportMuseums(XDocument mymuseumlist, CancellationToken cancellationToken)
+        private async Task<UpdateDetail> ImportData(XDocument mymuseumlist, CancellationToken cancellationToken)
         {
             string museumid = "";
 
@@ -290,8 +292,7 @@ namespace OdhApiImporter.Helpers
                     }
 
 
-                    //Locationinfo aus GPS Punkte holen
-
+                    //Get Locationinfo by given GPS Points
                     if (mymuseum.GpsInfo != null && mymuseum.GpsInfo.Count > 0)
                     {
                         if (mymuseum.GpsInfo.FirstOrDefault().Latitude != 0 && mymuseum.GpsInfo.FirstOrDefault().Longitude != 0)
@@ -414,19 +415,17 @@ namespace OdhApiImporter.Helpers
                 //Setting LicenseInfo
                 mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
-                var result = await InsertSiagMuseumToDB(mymuseum, mymuseum.Id, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
+                var result = await InsertDataToDB(mymuseum, mymuseum.Id, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
                 newcounter = newcounter + result.created.Value;
                 updatecounter = updatecounter + result.updated.Value;
 
-                LogOutput<ImportLog> logoutput = new LogOutput<ImportLog>() { id = mymuseum.Id, type = "import", log = "importsiagmuseum", output = new ImportLog() { sourceid = mymuseum.Id, sourceinterface = "siag museum", success = true } };
-                Console.WriteLine(JsonConvert.SerializeObject(logoutput));
+                WriteLog.LogToConsole(mymuseum.Id, "dataimport", "single.siagmuseum", new ImportLog() { sourceid = mymuseum.Id, sourceinterface = "siag.museum", success = true, error = "" });                
             }
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };
         }
-
-        //TODO when import complete
-        private async Task<UpdateDetail> SetMuseumsnotinListToInactive(XDocument mymuseumlist, CancellationToken cancellationToken)
+        
+        private async Task<UpdateDetail> SetDataNotinListToInactive(XDocument mymuseumlist, CancellationToken cancellationToken)
         {
             List<string> mymuseumroot = mymuseumlist.Root.Elements("Museum").Select(x => x.Attribute("ID").Value).ToList();
       
@@ -445,17 +444,16 @@ namespace OdhApiImporter.Helpers
 
             foreach (var idtodelete in idstodelete)
             {
-                var result = await DeleteOrDisableMuseum(idtodelete, false);
+                var result = await DeleteOrDisableData(idtodelete, false);
 
                 updateresult = updateresult + result.Item1;
                 deleteresult = deleteresult + result.Item2;
             }
-
-            //TODO CALL THIS METHOD and add a update counter
+            
             return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult };
         }
 
-        private async Task<PGCRUDResult> InsertSiagMuseumToDB(ODHActivityPoiLinked odhactivitypoi, string idtocheck, KeyValuePair<string, XElement> siagmuseumdata)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, string idtocheck, KeyValuePair<string, XElement> siagmuseumdata)
         {
             try
             {
@@ -490,7 +488,7 @@ namespace OdhApiImporter.Helpers
                         });
         }
 
-        private async Task<Tuple<int,int>> DeleteOrDisableMuseum(string museumid, bool delete)
+        private async Task<Tuple<int,int>> DeleteOrDisableData(string museumid, bool delete)
         {
             var deleteresult = 0;
             var updateresult = 0;
