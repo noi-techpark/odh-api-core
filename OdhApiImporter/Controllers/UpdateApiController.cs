@@ -223,7 +223,7 @@ namespace OdhApiImporter.Controllers
         {
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
                 var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
 
                 return Ok(new UpdateResult
@@ -261,7 +261,7 @@ namespace OdhApiImporter.Controllers
         {
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
                 var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
 
                 return Ok(new UpdateResult
@@ -304,7 +304,7 @@ namespace OdhApiImporter.Controllers
         {
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "smgpois");
                 var result = await siagimporthelper.SaveDataToODH(null, cancellationToken);
 
                 return Ok(new UpdateResult

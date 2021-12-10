@@ -12,16 +12,22 @@ using Helper;
 
 namespace OdhApiImporter.Helpers
 {
-    public class SIAGImportHelper
+    public class SIAGImportHelper : ImportHelper
     {
-        private readonly QueryFactory QueryFactory;
-        private readonly ISettings settings;
+        //private readonly QueryFactory QueryFactory;
+        //private readonly ISettings settings;
 
-        public SIAGImportHelper(ISettings settings, QueryFactory queryfactory)
+        //public SIAGImportHelper(ISettings settings, QueryFactory queryfactory)
+        //{
+        //    this.QueryFactory = queryfactory;
+        //    this.settings = settings;            
+        //}
+
+        public SIAGImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
-            this.QueryFactory = queryfactory;
-            this.settings = settings;            
+
         }
+
 
         #region SIAG Weather
 
@@ -488,40 +494,40 @@ namespace OdhApiImporter.Helpers
                         });
         }
 
-        private async Task<Tuple<int, int>> DeleteOrDisableData(string museumid, bool delete)
-        {
-            var deleteresult = 0;
-            var updateresult = 0;
+        //private async Task<Tuple<int, int>> DeleteOrDisableData(string museumid, bool delete)
+        //{
+        //    var deleteresult = 0;
+        //    var updateresult = 0;
 
-            if (delete)
-            {
-                deleteresult = await QueryFactory.Query("smgpois").Where("id", museumid)
-                    .DeleteAsync();
-            }
-            else
-            {
-                var query =
-               QueryFactory.Query("smgpois")
-                   .Select("data")
-                   .Where("id", museumid);
+        //    if (delete)
+        //    {
+        //        deleteresult = await QueryFactory.Query("smgpois").Where("id", museumid)
+        //            .DeleteAsync();
+        //    }
+        //    else
+        //    {
+        //        var query =
+        //       QueryFactory.Query("smgpois")
+        //           .Select("data")
+        //           .Where("id", museumid);
 
-                var data = await query.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+        //        var data = await query.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
 
-                if (data != null)
-                {
-                    if (data.Active != false || data.SmgActive != false)
-                    {
-                        data.Active = false;
-                        data.SmgActive = false;
+        //        if (data != null)
+        //        {
+        //            if (data.Active != false || data.SmgActive != false)
+        //            {
+        //                data.Active = false;
+        //                data.SmgActive = false;
 
-                        updateresult = await QueryFactory.Query("smgpois").Where("id", museumid)
-                                        .UpdateAsync(new JsonBData() { id = museumid, data = new JsonRaw(data) });
-                    }
-                }
-            }
+        //                updateresult = await QueryFactory.Query("smgpois").Where("id", museumid)
+        //                                .UpdateAsync(new JsonBData() { id = museumid, data = new JsonRaw(data) });
+        //            }
+        //        }
+        //    }
 
-            return Tuple.Create(updateresult, deleteresult);
-        }
+        //    return Tuple.Create(updateresult, deleteresult);
+        //}
 
         #endregion
     }

@@ -17,9 +17,9 @@ namespace OdhApiImporter.Helpers
 
     public class ImportHelper : IImportHelper
     {
-        private readonly QueryFactory QueryFactory;
-        private readonly ISettings settings;
-        private readonly string table;        
+        protected readonly QueryFactory QueryFactory;
+        protected readonly ISettings settings;
+        protected readonly string table;        
 
         public ImportHelper(ISettings settings, QueryFactory queryfactory, string table)
         {
