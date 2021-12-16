@@ -20,7 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore OdhApiCore
     - name: Build OdhApiCore
-      run: dotnet build OdhApiCore.sln --no-restore
+      run: dotnet build OdhApiCore.sln
     - name: Build OdhApiImporter
       run: dotnet build OdhApiImporter.sln --no-restore
     - name: Test
