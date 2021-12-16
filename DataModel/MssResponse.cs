@@ -54,8 +54,8 @@ namespace DataModel
         public double? Price_fb { get; set; }
         public double? Price_ai { get; set; }
 
-        public double? Roomtype { get; set; }
-        public double? Roomfree { get; set; }
+        public int? Roomtype { get; set; }
+        public int? Roomfree { get; set; }
 
         //Zusatz RoomMax
         public int? Roommax { get; set; }
@@ -120,6 +120,8 @@ namespace DataModel
         public DateTime? Datefrom { get; set; }
         public int? Daysarrival { get; set; }
     }
+
+
 
 
     //TODO
