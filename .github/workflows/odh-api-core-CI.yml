@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build OdhApiCore --no-restore
     - name: Test
-      run: dotnet test OdhApiCoreTests --no-build --verbosity normal
+      run: dotnet test OdhApiCore.sln --filter Category!=Integration
