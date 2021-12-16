@@ -417,7 +417,7 @@ namespace OdhApiCore
                 //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
                 if (!String.IsNullOrEmpty(context.Request.Path.Value) && context.Request.Path.Value.StartsWith("/v1", StringComparison.OrdinalIgnoreCase))
                 {
-                    //TODO IF THE REFERER IS NOT PROVIDED IN THE HEADERS SEARCH IF A QS IS THERE
+                    //TODO Make a Referer Class/Method for the logic
                     var referer = "not provided";
 
                     if (context.Request.Headers.ContainsKey("Referer"))
@@ -428,6 +428,11 @@ namespace OdhApiCore
                         if (context.Request.Query.ContainsKey("Referer"))
                             referer = context.Request.Query["Referer"].ToString();
                     }
+
+                    //Quick Fix, Android is passing http://localhost/ as referer
+                    if(referer == "http://localhost/" && context.Request.Query.ContainsKey("Referer"))
+                        referer = context.Request.Query["Referer"].ToString();
+
 
                     //User Agent
                     var useragent = "not provided";
