@@ -121,7 +121,25 @@ namespace DataModel
         public int? Daysarrival { get; set; }
     }
 
+    public class CheapestRoomCombination
+    {
+        public CheapestRoomCombination()
+        {
+            CheapestRoomCombinationDetail = new List<CheapestRoomCombinationDetail>();
+        }
 
+        public double Price { get; set; }
+
+        public string Service { get; set; }
+        public ICollection<CheapestRoomCombinationDetail> CheapestRoomCombinationDetail { get; set; }
+    }
+
+    public class CheapestRoomCombinationDetail
+    {
+        public int RoomSeq { get; set; }
+        public string RoomId { get; set; }
+        public double Price { get; set; }
+    }
 
 
     //TODO
