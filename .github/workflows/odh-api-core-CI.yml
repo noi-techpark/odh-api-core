@@ -18,10 +18,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore OdhApiCore
-    - name: Build OdhApiCore
-      run: dotnet build OdhApiCore.sln
-    - name: Build OdhApiImporter
-      run: dotnet build OdhApiImporter.sln --no-restore
+      run: dotnet restore OdhApiCore.sln
+    - name: Build OdhApiCore Solution
+      run: dotnet build OdhApiCore.sln --no-restore
     - name: Test
-      run: dotnet test OdhApiCore.sln --filter Category!=Integration
+      run: dotnet test OdhApiCore --filter Category!=Integration
