@@ -121,24 +121,33 @@ namespace DataModel
         public int? Daysarrival { get; set; }
     }
 
+    public class CheapestOffer
+    {
+        public string RoomId { get; set; }
+        public int RoomSeq { get; set; }
+        public double Price { get; set; }
+
+        public int? RoomFree { get; set; }
+    }
+
+
     public class CheapestRoomCombination
     {
         public CheapestRoomCombination()
         {
-            CheapestRoomCombinationDetail = new List<CheapestRoomCombinationDetail>();
+            CheapestRoomCombinationDetail = new List<CheapestOffer>();
         }
 
-        public double Price { get; set; }
+        public IList<CheapestOffer> CheapestRoomCombinationDetail { get; set; }
 
         public string Service { get; set; }
-        public ICollection<CheapestRoomCombinationDetail> CheapestRoomCombinationDetail { get; set; }
-    }
-
-    public class CheapestRoomCombinationDetail
-    {
-        public int RoomSeq { get; set; }
-        public string RoomId { get; set; }
-        public double Price { get; set; }
+        public double Price
+        {
+            get
+            {
+                return this.CheapestRoomCombinationDetail != null && this.CheapestRoomCombinationDetail.Count > 0 ? this.CheapestRoomCombinationDetail.Sum(x => x.Price) : 0;
+            }
+        }
     }
 
 

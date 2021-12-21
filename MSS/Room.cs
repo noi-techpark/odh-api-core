@@ -26,14 +26,5 @@ namespace MSS
             get { return person; }
             set { person = value; }
         }
-    }
-
-    public class CheapestOfferlist
-    {
-        public string RoomId { get; set; }
-        public int RoomSeq { get; set; }
-        public double Price { get; set; }
-
-        public int? RoomFree { get; set; }
-    }
+    }   
 }
