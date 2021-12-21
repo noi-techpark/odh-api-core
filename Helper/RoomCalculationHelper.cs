@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Combinatorics.Collections;
 using DataModel;
 
-namespace MSS
+namespace Helper
 {
-    public class RoomCalculation
+    public class RoomCalculationHelper
     {
         public static CheapestRoomCombination CalculateCheapestRooms(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
         {

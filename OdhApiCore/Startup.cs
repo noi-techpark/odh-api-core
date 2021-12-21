@@ -171,7 +171,7 @@ namespace OdhApiCore
                         NameClaimType = "preferred_username",
                         ValidateAudience = false,
                         ValidateLifetime = true,
-                        ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Issuer"),
+                        ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
                         ValidateIssuer = true                        
                     };
                     jwtBearerOptions.Events = new JwtBearerEvents()

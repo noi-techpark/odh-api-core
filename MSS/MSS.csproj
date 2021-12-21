@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Combinatorics" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DataModel\DataModel.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />
   </ItemGroup>

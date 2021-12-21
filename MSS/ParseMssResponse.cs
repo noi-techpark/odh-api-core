@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -492,7 +493,7 @@ namespace MSS
                                 myresp.RoomDetails.Add(myroom);
                             }
                             
-                            var cheapestofferobj = RoomCalculation.CalculateCheapestRooms(cheapestofferlist, rooms, "");
+                            var cheapestofferobj = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist, rooms, "");
                             double cheapestchanneloffer = cheapestofferobj.Price;
 
                             myresp.CheapestOffer = cheapestchanneloffer;
@@ -501,27 +502,27 @@ namespace MSS
 
                             //Billigstes Angebot für die einzelnen Typen
 
-                            var cheapestofferobj_ws = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_ws, rooms, "ws");
+                            var cheapestofferobj_ws = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_ws, rooms, "ws");
                             myresp.CheapestOffer_ws = cheapestofferobj_ws.Price;
                             if (cheapestofferobj_ws.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_ws);
 
-                            var cheapestofferobj_bb = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_bb, rooms, "bb");
+                            var cheapestofferobj_bb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_bb, rooms, "bb");
                             myresp.CheapestOffer_bb = cheapestofferobj_bb.Price;
                             if (cheapestofferobj_bb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_bb);
 
-                            var cheapestofferobj_hb = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_hb, rooms, "hb");
+                            var cheapestofferobj_hb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_hb, rooms, "hb");
                             myresp.CheapestOffer_hb = cheapestofferobj_hb.Price;
                             if (cheapestofferobj_hb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_hb);
 
-                            var cheapestofferobj_fb = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_fb, rooms, "fb");
+                            var cheapestofferobj_fb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_fb, rooms, "fb");
                             myresp.CheapestOffer_fb = cheapestofferobj_fb.Price;
                             if (cheapestofferobj_fb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_fb);
 
-                            var cheapestofferobj_ai = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_ai, rooms, "ai");
+                            var cheapestofferobj_ai = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_ai, rooms, "ai");
                             myresp.CheapestOffer_ai = cheapestofferobj_ai.Price;
                             if (cheapestofferobj_ai.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_ai);
@@ -547,10 +548,10 @@ namespace MSS
                                     myresp.CheapestOffer = cheapestofferdouble;
                                     myresp.CheapestOfferString = String.Format(culturede, "{0:0,0.00}", cheapestofferdouble);
                                 }
-
                             }
 
-                            myparsedresponselist.MssResponseShort.Add(myresp);
+                            if (myresp.CheapestOfferDetail != null && myresp.CheapestOfferDetail.Count > 0)
+                                myparsedresponselist.MssResponseShort.Add(myresp);
                         }
                     }
                 };
