@@ -15,6 +15,12 @@ namespace DataModel
 
     public class MssResponseShort
     {
+        public MssResponseShort()
+        {
+            this.RoomDetails = new HashSet<RoomDetails>();
+            this.CheapestOfferDetail = new List<CheapestRoomCombination>();
+        }
+
         public int HotelId { get; set; }
         public string? A0RID { get; set; }
         public bool Bookable { get; set; }
