@@ -10,7 +10,7 @@ namespace MSS
 {
     public class RoomCalculation
     {
-        private static CheapestRoomCombination CalculateCheapestRooms(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        public static CheapestRoomCombination CalculateCheapestRooms(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
         {
             if (cheapestofferlist != null && cheapestofferlist.Count() > 0)
             {

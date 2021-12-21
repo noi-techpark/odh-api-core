@@ -491,18 +491,9 @@ namespace MSS
 
                                 myresp.RoomDetails.Add(myroom);
                             }
-
-                            double cheapestchanneloffer = 0;
-                            //Billigstes Angebot holen
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist
-                                                                where x.RoomSeq == i && x.RoomFree >= i
-                                                                orderby x.Price ascending
-                                                                select x.Price).FirstOrDefault();
-
-                                cheapestchanneloffer = cheapestchanneloffer + cheapestchanneloffertemp;
-                            }
+                            
+                            var cheapestofferobj = RoomCalculation.CalculateCheapestRooms(cheapestofferlist, rooms, "");
+                            double cheapestchanneloffer = cheapestofferobj.Price;
 
                             myresp.CheapestOffer = cheapestchanneloffer;
                             myresp.CheapestOfferString = String.Format(culturede, "{0:0,0.00}", cheapestchanneloffer);
@@ -510,66 +501,30 @@ namespace MSS
 
                             //Billigstes Angebot für die einzelnen Typen
 
-                            double cheapestchanneloffer_ws = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_ws
-                                                                where x.RoomSeq == i && x.RoomFree >= i
-                                                                orderby x.Price ascending
-                                                                select x.Price).FirstOrDefault();
+                            var cheapestofferobj_ws = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_ws, rooms, "ws");
+                            myresp.CheapestOffer_ws = cheapestofferobj_ws.Price;
+                            if (cheapestofferobj_ws.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_ws);
 
-                                cheapestchanneloffer_ws = cheapestchanneloffer_ws + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_ws = cheapestchanneloffer_ws;
+                            var cheapestofferobj_bb = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_bb, rooms, "bb");
+                            myresp.CheapestOffer_bb = cheapestofferobj_bb.Price;
+                            if (cheapestofferobj_bb.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_bb);
 
-                            double cheapestchanneloffer_bb = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_bb
-                                                                where x.RoomSeq == i && x.RoomFree >= i
-                                                                orderby x.Price ascending
-                                                                select x.Price).FirstOrDefault();
+                            var cheapestofferobj_hb = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_hb, rooms, "hb");
+                            myresp.CheapestOffer_hb = cheapestofferobj_hb.Price;
+                            if (cheapestofferobj_hb.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_hb);
 
-                                cheapestchanneloffer_bb = cheapestchanneloffer_bb + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_bb = cheapestchanneloffer_bb;
+                            var cheapestofferobj_fb = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_fb, rooms, "fb");
+                            myresp.CheapestOffer_fb = cheapestofferobj_fb.Price;
+                            if (cheapestofferobj_fb.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_fb);
 
-                            double cheapestchanneloffer_hb = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_hb
-                                                                where x.RoomSeq == i && x.RoomFree >= i
-                                                                orderby x.Price ascending
-                                                                select x.Price).FirstOrDefault();
-
-                                cheapestchanneloffer_hb = cheapestchanneloffer_hb + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_hb = cheapestchanneloffer_hb;
-
-                            double cheapestchanneloffer_fb = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_fb
-                                                                where x.RoomSeq == i && x.RoomFree >= i
-                                                                orderby x.Price ascending
-                                                                select x.Price).FirstOrDefault();
-
-                                cheapestchanneloffer_fb = cheapestchanneloffer_fb + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_fb = cheapestchanneloffer_fb;
-
-                            double cheapestchanneloffer_ai = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_ai
-                                                                where x.RoomSeq == i && x.RoomFree >= i
-                                                                orderby x.Price ascending
-                                                                select x.Price).FirstOrDefault();
-
-                                cheapestchanneloffer_ai = cheapestchanneloffer_ai + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_ai = cheapestchanneloffer_ai;
-
+                            var cheapestofferobj_ai = RoomCalculation.CalculateCheapestRooms(cheapestofferlist_ai, rooms, "ai");
+                            myresp.CheapestOffer_ai = cheapestofferobj_ai.Price;
+                            if (cheapestofferobj_ai.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_ai);
 
                             //Neu Cheapest Offer General
                             if (myresp.CheapestOffer == 0)

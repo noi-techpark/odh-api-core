@@ -40,6 +40,9 @@ namespace DataModel
         public double? CheapestOffer_ai { get; set; }
 
         public virtual ICollection<RoomDetails> RoomDetails { get; set; } = new List<RoomDetails>();
+
+        public virtual ICollection<CheapestRoomCombination> CheapestOfferDetail { get; set; }
+
     }
 
     public class RoomDetails
