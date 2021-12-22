@@ -21,12 +21,12 @@
     <ProjectReference Include="..\RAVEN\RAVEN.csproj" />
     <ProjectReference Include="..\SIAG\SIAG.csproj" />
     <ProjectReference Include="..\STA\STA.csproj" />
+    <ProjectReference Include="..\SuedtirolWein\SuedtirolWein.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Helpers\CDB\" />
     <Folder Include="Helpers\LCS\" />
-    <Folder Include="Helpers\SUEDTIROLWEIN\" />
     <Folder Include="Models\" />
   </ItemGroup>
 </Project>

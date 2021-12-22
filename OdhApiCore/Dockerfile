@@ -17,6 +17,7 @@ COPY SuedtirolWein/SuedtirolWein.csproj SuedtirolWein/
 COPY NINJA/NINJA.csproj NINJA/
 COPY RAVEN/RAVEN.csproj RAVEN/
 COPY STA/STA.csproj STA/
+COPY JsonLDTransformer/JsonLDTransformer.csproj JsonLDTransformer/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj
 COPY . .

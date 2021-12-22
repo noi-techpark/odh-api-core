@@ -184,12 +184,12 @@ namespace OdhApiCore.Controllers.api
         //    return this.Content(User.Identity?.Name + " WithRole working", "application/json", Encoding.UTF8);
         //}
 
-        //[Authorize(Roles = "Hallihallo")]
-        //[HttpGet, Route("WithRole2")]
-        //public IActionResult GetWithRole2(CancellationToken cancellationToken)
-        //{
-        //    return this.Content(User.Identity?.Name + " WithRole2 working", "application/json", Encoding.UTF8);
-        //}
+        [Authorize(Roles = "Hallihallo")]
+        [HttpGet, Route("WithRole2")]
+        public IActionResult GetWithRole2(CancellationToken cancellationToken)
+        {
+            return this.Content(User.Identity?.Name + " WithRole2 working", "application/json", Encoding.UTF8);
+        }
 
         //[HttpGet, Route("Environment")]
         //public IActionResult GetEnvironmentV(CancellationToken cancellationToken)

@@ -1,0 +1,25 @@
+name: odh-api-core-CI
+
+on:
+  push:
+    branches: [ dev,master ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore OdhApiCore.sln
+    - name: Build OdhApiCore Solution
+      run: dotnet build OdhApiCore.sln --no-restore
+    - name: Test
+      run: dotnet test OdhApiCore --filter Category!=Integration

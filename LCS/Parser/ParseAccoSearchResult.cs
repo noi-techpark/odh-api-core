@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,15 +34,14 @@ namespace LCS
                         lcsresponseshort.HotelId = 0;
                         lcsresponseshort.ChannelID = "lts";
 
-                        //Check Günstigstes Angebot
-                        List<Tuple<int, double>> CheapestOffer_ws = new List<Tuple<int, double>>();
-                        List<Tuple<int, double>> CheapestOffer_bb = new List<Tuple<int, double>>();
-                        List<Tuple<int, double>> CheapestOffer_hb = new List<Tuple<int, double>>();
-                        List<Tuple<int, double>> CheapestOffer_fb = new List<Tuple<int, double>>();
-                        List<Tuple<int, double>> CheapestOffer_ai = new List<Tuple<int, double>>();
+                        //Check Cheapest Offer
+                        List<CheapestOffer> CheapestOffer_ws = new List<CheapestOffer>();
+                        List<CheapestOffer> CheapestOffer_bb = new List<CheapestOffer>();
+                        List<CheapestOffer> CheapestOffer_hb = new List<CheapestOffer>();
+                        List<CheapestOffer> CheapestOffer_fb = new List<CheapestOffer>();
+                        List<CheapestOffer> CheapestOffer_ai = new List<CheapestOffer>();
 
-
-                        //Für jedes Zimmerangebot
+                        //Foreach room offer
                         foreach (var roomdetail in lcssearchdetail.RoomStay)
                         {
                             foreach (var roomdetailoffer in roomdetail.Rate)
@@ -68,109 +68,63 @@ namespace LCS
                                 myroomdetail.Roomtype = roomdetail.Genre != null ? Convert.ToInt32(roomdetail.Genre) : 0;  //roomdetail.Genre;
                                 //myroomdetail.Roomtype = 0;
 
-                                //Check billigstes Angebot
                                 if (roomdetailoffer.AmountAI != 0)
                                 {
-                                    var mytupleai = new Tuple<int, double>((int)roomdetailoffer.RoomStayIndex, roomdetailoffer.AmountAI);
-                                    CheapestOffer_ai.Add(mytupleai);
+                                    var mycheapestofferai = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountAI, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    CheapestOffer_ai.Add(mycheapestofferai);
                                 }
                                 if (roomdetailoffer.AmountBB != 0)
                                 {
-                                    var mytupleai = new Tuple<int, double>((int)roomdetailoffer.RoomStayIndex, roomdetailoffer.AmountBB);
-                                    CheapestOffer_bb.Add(mytupleai);
+                                    var mycheapestofferbb = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountBB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    CheapestOffer_bb.Add(mycheapestofferbb);
                                 }
                                 if (roomdetailoffer.AmountHB != 0)
                                 {
-                                    var mytupleai = new Tuple<int, double>((int)roomdetailoffer.RoomStayIndex, roomdetailoffer.AmountHB);
-                                    CheapestOffer_hb.Add(mytupleai);
+                                    var mycheapestofferhb = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountHB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    CheapestOffer_hb.Add(mycheapestofferhb);
                                 }
                                 if (roomdetailoffer.AmountFB != 0)
                                 {
-                                    var mytupleai = new Tuple<int, double>((int)roomdetailoffer.RoomStayIndex, roomdetailoffer.AmountFB);
-                                    CheapestOffer_fb.Add(mytupleai);
+                                    var mycheapestofferfb = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountFB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    CheapestOffer_fb.Add(mycheapestofferfb);
                                 }
                                 if (roomdetailoffer.AmountWS != 0)
                                 {
-                                    var mytupleai = new Tuple<int, double>((int)roomdetailoffer.RoomStayIndex, roomdetailoffer.AmountWS);
-                                    CheapestOffer_ws.Add(mytupleai);
+                                    var mycheapestofferws = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountWS, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    CheapestOffer_ws.Add(mycheapestofferws);
                                 }
-
 
                                 lcsresponseshort.RoomDetails.Add(myroomdetail);
                             }
-
-
-
                         }
 
-                        //Billigstes Angebot holen
-                        double cheapestaioffer = 0;
-                        for (int i = 1; i <= rooms; i++)
-                        {
-                            var cheapestoffertemp = (from x in CheapestOffer_ai
-                                                     where x.Item1 == i
-                                                     orderby x.Item2 ascending
-                                                     select x.Item2).FirstOrDefault();
+                        //Getting cheapest offer
+                        var cheapestofferobj_ai = RoomCalculationHelper.CalculateCheapestRooms(CheapestOffer_ai, rooms, "ai");
+                        lcsresponseshort.CheapestOffer_ai = cheapestofferobj_ai != null ? cheapestofferobj_ai.Price : 0;
+                        if (cheapestofferobj_ai != null && cheapestofferobj_ai.Price > 0)
+                            lcsresponseshort.CheapestOfferDetail.Add(cheapestofferobj_ai);
 
-                            cheapestaioffer = cheapestaioffer + cheapestoffertemp;
-                        }
+                        var cheapestofferobj_bb = RoomCalculationHelper.CalculateCheapestRooms(CheapestOffer_bb, rooms, "bb");
+                        lcsresponseshort.CheapestOffer_bb = cheapestofferobj_bb != null ? cheapestofferobj_bb.Price : 0;
+                        if (cheapestofferobj_bb != null && cheapestofferobj_bb.Price > 0)
+                            lcsresponseshort.CheapestOfferDetail.Add(cheapestofferobj_bb);
 
-                        lcsresponseshort.CheapestOffer_ai = cheapestaioffer;
+                        var cheapestofferobj_hb = RoomCalculationHelper.CalculateCheapestRooms(CheapestOffer_hb, rooms, "hb");
+                        lcsresponseshort.CheapestOffer_hb = cheapestofferobj_hb != null ? cheapestofferobj_hb.Price : 0;
+                        if (cheapestofferobj_hb != null && cheapestofferobj_hb.Price > 0)
+                            lcsresponseshort.CheapestOfferDetail.Add(cheapestofferobj_hb);
 
-                        double cheapestbboffer = 0;
-                        for (int i = 1; i <= rooms; i++)
-                        {
-                            var cheapestoffertemp = (from x in CheapestOffer_bb
-                                                     where x.Item1 == i
-                                                     orderby x.Item2 ascending
-                                                     select x.Item2).FirstOrDefault();
+                        var cheapestofferobj_fb = RoomCalculationHelper.CalculateCheapestRooms(CheapestOffer_fb, rooms, "fb");
+                        lcsresponseshort.CheapestOffer_fb = cheapestofferobj_fb != null ? cheapestofferobj_fb.Price : 0;
+                        if (cheapestofferobj_fb != null && cheapestofferobj_fb.Price > 0)
+                            lcsresponseshort.CheapestOfferDetail.Add(cheapestofferobj_fb);
 
-                            cheapestbboffer = cheapestbboffer + cheapestoffertemp;
-                        }
+                        var cheapestofferobj_ws = RoomCalculationHelper.CalculateCheapestRooms(CheapestOffer_ws, rooms, "ws");
+                        lcsresponseshort.CheapestOffer_ws = cheapestofferobj_ws != null ? cheapestofferobj_ws.Price : 0;
+                        if (cheapestofferobj_ws != null && cheapestofferobj_ws.Price > 0)
+                            lcsresponseshort.CheapestOfferDetail.Add(cheapestofferobj_ws);
 
-                        lcsresponseshort.CheapestOffer_bb = cheapestbboffer;
-
-                        double cheapesthboffer = 0;
-                        for (int i = 1; i <= rooms; i++)
-                        {
-                            var cheapestoffertemp = (from x in CheapestOffer_hb
-                                                     where x.Item1 == i
-                                                     orderby x.Item2 ascending
-                                                     select x.Item2).FirstOrDefault();
-
-                            cheapesthboffer = cheapesthboffer + cheapestoffertemp;
-                        }
-
-                        lcsresponseshort.CheapestOffer_hb = cheapesthboffer;
-
-                        double cheapestfboffer = 0;
-                        for (int i = 1; i <= rooms; i++)
-                        {
-                            var cheapestoffertemp = (from x in CheapestOffer_fb
-                                                     where x.Item1 == i
-                                                     orderby x.Item2 ascending
-                                                     select x.Item2).FirstOrDefault();
-
-                            cheapestfboffer = cheapestfboffer + cheapestoffertemp;
-                        }
-
-                        lcsresponseshort.CheapestOffer_fb = cheapestfboffer;
-
-                        double cheapestwsoffer = 0;
-                        for (int i = 1; i <= rooms; i++)
-                        {
-                            var cheapestoffertemp = (from x in CheapestOffer_ws
-                                                     where x.Item1 == i
-                                                     orderby x.Item2 ascending
-                                                     select x.Item2).FirstOrDefault();
-
-                            cheapestwsoffer = cheapestwsoffer + cheapestoffertemp;
-                        }
-
-                        lcsresponseshort.CheapestOffer_ws = cheapestwsoffer;
-
-
-                        //Neu Cheapest Offer General
+                        //Cheapest Offer General
                         if (lcsresponseshort.CheapestOffer == 0)
                         {
                             List<double> cheapestoffertotal = new List<double>();
@@ -194,8 +148,9 @@ namespace LCS
 
                         }
 
-
-                        result.MssResponseShort.Add(lcsresponseshort);
+                        //Add only if there is a valid Offer (enough Roomfree etc..)
+                        if (lcsresponseshort.CheapestOfferDetail != null && lcsresponseshort.CheapestOfferDetail.Count > 0)
+                            result.MssResponseShort.Add(lcsresponseshort);
                     }
                 }
 

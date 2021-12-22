@@ -25,13 +25,27 @@ namespace OdhApiImporter.Helpers
 
         #region NINJA Helpers
 
-        //TODO CHECK IF THIS IS WORKING AND REFACTOR
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        {
+            //Import the data from Mobility Api
+            var culturelist = await ImportList(cancellationToken);
+            //Parse the data and save it to DB
+            var result = await SaveEventsToPG(culturelist.Item1.data, culturelist.Item2.data);
 
-        /// <summary>
-        /// Save Events to Postgres
-        /// </summary>
-        /// <param name="ninjadataarr"></param>
-        public async Task<UpdateDetail> SaveEventsToPG(ICollection<NinjaData<NinjaEvent>> ninjadataarr, ICollection<NinjaData<NinjaPlaceRoom>> ninjaplaceroomarr)
+            return result;
+        }
+
+        private async Task<Tuple<NinjaObject<NinjaEvent>,NinjaObject<NinjaPlaceRoom>> > ImportList(CancellationToken cancellationToken)
+        {
+            var responseevents = await GetNinjaData.GetNinjaEvent();
+            var responseplaces = await GetNinjaData.GetNinjaPlaces();
+
+            WriteLog.LogToConsole("", "dataimport", "list.mobilityculture", new ImportLog() { sourceid = "", sourceinterface = "mobility.culture", success = true, error = "" });
+
+            return Tuple.Create(responseevents, responseplaces);
+        }
+
+        private async Task<UpdateDetail> SaveEventsToPG(ICollection<NinjaData<NinjaEvent>> ninjadataarr, ICollection<NinjaData<NinjaPlaceRoom>> ninjaplaceroomarr)
         {
 
             var newimportcounter = 0;
@@ -68,7 +82,7 @@ namespace OdhApiImporter.Helpers
                         if (idtocheck.Length > 50)
                             idtocheck = idtocheck.Substring(0, 50);
 
-                        var result = await InsertEventInPG(eventtosave, idtocheck, kvp);
+                        var result = await InsertDataToDB(eventtosave, idtocheck, kvp);
 
                         newimportcounter = newimportcounter + result.created.Value;
                         updateimportcounter = updateimportcounter + result.updated.Value;
@@ -77,65 +91,40 @@ namespace OdhApiImporter.Helpers
                         idlistspreadsheet.Add(idtocheck.ToUpper());
                         if (!sourcelist.Contains(eventtosave.Source))
                             sourcelist.Add(eventtosave.Source);
+
+                        WriteLog.LogToConsole(idtocheck.ToUpper(), "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtocheck.ToUpper(), sourceinterface = "mobility.culture", success = true, error = "" });
                     }
-                }
+                }               
+            }
 
-                //TODO get all IDs in DB
-                var idlistdb = await GetAllEventsBySource(sourcelist);
+            //Begin SetDataNotinListToInactive
+            var idlistdb = await GetAllEventsBySource(sourcelist);
 
-                var idstodelete = idlistdb.Where(p => !idlistspreadsheet.Any(p2 => p2 == p));
+            var idstodelete = idlistdb.Where(p => !idlistspreadsheet.Any(p2 => p2 == p));
 
-                foreach (var idtodelete in idstodelete)
-                {
-                    deleteimportcounter = deleteimportcounter + await DeleteOrDisableEvents(idtodelete, false);
-                }
+            foreach (var idtodelete in idstodelete)
+            {
+                var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+
+                if(deletedisableresult.Item1 > 0)
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                else if (deletedisableresult.Item2 > 0)
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+
+
+                deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
             }
 
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter };
         }
 
-        private async Task SetLocationInfo(EventLinked myevent)
-        {
-            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, myevent.Latitude, myevent.Longitude, 30000);
-
-            if (district == null)
-                return;
-
-            myevent.DistrictId = district.Id;
-            myevent.DistrictIds = new List<string>() { district.Id };
+        //Check if logic can be moved here
+        //private async Task<UpdateDetail> SetDataNotinListToInactive()
+        //{
             
-            var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
-            if (locinfo != null)
-            {
-                LocationInfoLinked locinfolinked = new LocationInfoLinked
-                {
-                    DistrictInfo = new DistrictInfoLinked
-                    {
-                        Id = locinfo.DistrictInfo?.Id,
-                        Name = locinfo.DistrictInfo?.Name
-                    },
-                    MunicipalityInfo = new MunicipalityInfoLinked
-                    {
-                        Id = locinfo.MunicipalityInfo?.Id,
-                        Name = locinfo.MunicipalityInfo?.Name
-                    },
-                    TvInfo = new TvInfoLinked
-                    {
-                        Id = locinfo.TvInfo?.Id,
-                        Name = locinfo.TvInfo?.Name
-                    },
-                    RegionInfo = new RegionInfoLinked
-                    {
-                        Id = locinfo.RegionInfo?.Id,
-                        Name = locinfo.RegionInfo?.Name
-                    }
-                };
+        //}
 
-                myevent.LocationInfo = locinfolinked;
-            }
-        }
-
-        private async Task<PGCRUDResult> InsertEventInPG(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)
+        private async Task<PGCRUDResult> InsertDataToDB(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)
         {
             try
             {
@@ -169,27 +158,15 @@ namespace OdhApiImporter.Helpers
                             type = "event_centrotrevi-drin"
                         });
         }        
-      
-        private async Task<List<string>> GetAllEventsBySource(List<string> sourcelist)
+          
+        private async Task<Tuple<int,int>> DeleteOrDisableData(string eventid, bool delete)
         {
-
-            var query =
-               QueryFactory.Query("events")
-                   .Select("id")
-                   .SourceFilter_GeneratedColumn(sourcelist);
-
-            var eventids = await query.GetAsync<string>();
-
-            return eventids.ToList();
-        }
-
-        private async Task<int> DeleteOrDisableEvents(string eventid, bool delete)
-        {
-            var result = 0;
+            var deleteresult = 0;
+            var updateresult = 0;
 
             if (delete)
             {
-                result = await QueryFactory.Query("events").Where("id", eventid)
+                deleteresult = await QueryFactory.Query("events").Where("id", eventid)
                     .DeleteAsync();
             }
             else
@@ -208,14 +185,72 @@ namespace OdhApiImporter.Helpers
                         data.Active = false;
                         data.SmgActive = false;
 
-                        result = await QueryFactory.Query("events").Where("id", eventid)
+                        updateresult = await QueryFactory.Query("events").Where("id", eventid)
                                         .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
                     }                
                 }
             }
 
-            return result;
-        }   
+            return Tuple.Create(updateresult, deleteresult);
+        }
+
+        #endregion
+
+        #region CUSTOM Ninja Import
+
+        private async Task<List<string>> GetAllEventsBySource(List<string> sourcelist)
+        {
+
+            var query =
+               QueryFactory.Query("events")
+                   .Select("id")
+                   .SourceFilter_GeneratedColumn(sourcelist);
+
+            var eventids = await query.GetAsync<string>();
+
+            return eventids.ToList();
+        }
+
+        private async Task SetLocationInfo(EventLinked myevent)
+        {
+            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, myevent.Latitude, myevent.Longitude, 30000);
+
+            if (district == null)
+                return;
+
+            myevent.DistrictId = district.Id;
+            myevent.DistrictIds = new List<string>() { district.Id };
+
+            var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+            if (locinfo != null)
+            {
+                LocationInfoLinked locinfolinked = new LocationInfoLinked
+                {
+                    DistrictInfo = new DistrictInfoLinked
+                    {
+                        Id = locinfo.DistrictInfo?.Id,
+                        Name = locinfo.DistrictInfo?.Name
+                    },
+                    MunicipalityInfo = new MunicipalityInfoLinked
+                    {
+                        Id = locinfo.MunicipalityInfo?.Id,
+                        Name = locinfo.MunicipalityInfo?.Name
+                    },
+                    TvInfo = new TvInfoLinked
+                    {
+                        Id = locinfo.TvInfo?.Id,
+                        Name = locinfo.TvInfo?.Name
+                    },
+                    RegionInfo = new RegionInfoLinked
+                    {
+                        Id = locinfo.RegionInfo?.Id,
+                        Name = locinfo.RegionInfo?.Name
+                    }
+                };
+
+                myevent.LocationInfo = locinfolinked;
+            }
+        }
 
         #endregion
 

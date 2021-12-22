@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DataModel
 {
@@ -14,6 +15,12 @@ namespace DataModel
 
     public class MssResponseShort
     {
+        public MssResponseShort()
+        {
+            this.RoomDetails = new HashSet<RoomDetails>();
+            this.CheapestOfferDetail = new List<CheapestRoomCombination>();
+        }
+
         public int HotelId { get; set; }
         public string? A0RID { get; set; }
         public bool Bookable { get; set; }
@@ -39,6 +46,9 @@ namespace DataModel
         public double? CheapestOffer_ai { get; set; }
 
         public virtual ICollection<RoomDetails> RoomDetails { get; set; } = new List<RoomDetails>();
+
+        public virtual ICollection<CheapestRoomCombination> CheapestOfferDetail { get; set; }
+
     }
 
     public class RoomDetails
@@ -54,8 +64,8 @@ namespace DataModel
         public double? Price_fb { get; set; }
         public double? Price_ai { get; set; }
 
-        public double? Roomtype { get; set; }
-        public double? Roomfree { get; set; }
+        public int? Roomtype { get; set; }
+        public int? Roomfree { get; set; }
 
         //Zusatz RoomMax
         public int? Roommax { get; set; }
@@ -119,6 +129,35 @@ namespace DataModel
         public int? Percent { get; set; }
         public DateTime? Datefrom { get; set; }
         public int? Daysarrival { get; set; }
+    }
+
+    public class CheapestOffer
+    {
+        public string RoomId { get; set; }
+        public int RoomSeq { get; set; }
+        public double Price { get; set; }
+
+        public int? RoomFree { get; set; }
+    }
+
+
+    public class CheapestRoomCombination
+    {
+        public CheapestRoomCombination()
+        {
+            CheapestRoomCombinationDetail = new List<CheapestOffer>();
+        }
+
+        public IList<CheapestOffer> CheapestRoomCombinationDetail { get; set; }
+
+        public string Service { get; set; }
+        public double Price
+        {
+            get
+            {
+                return this.CheapestRoomCombinationDetail != null && this.CheapestRoomCombinationDetail.Count > 0 ? this.CheapestRoomCombinationDetail.Sum(x => x.Price) : 0;
+            }
+        }
     }
 
 

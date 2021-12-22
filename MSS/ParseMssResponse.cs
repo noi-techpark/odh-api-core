@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,146 +17,9 @@ namespace MSS
             {
                 var resultid = mssresponse.Root.Element("header").Element("result_id").Value;
 
-                //foreach (XElement mytime in mssresponse.Root.Elements("root").Elements("header").Elements("time"))
-                //{
-                //    Console.WriteLine("Requestdauer " + mytime.Value);
-                //}
                 var myresult = mssresponse.Root.Elements("root").Elements("result").Elements("hotel");
 
                 return ResponseParser(myresult, servicecode, myroompersons, resultid, source, lang, version);
-
-
-                //OLT
-
-                //foreach (XElement mytime in mssresponse.Root.Elements("root").Elements("header").Elements("time"))
-                //{
-                //    Console.WriteLine("Requestdauer " + mytime.Value);
-                //}
-
-                //MssResult myparsedresponselist = new MssResult();
-
-                //var myresult = mssresponse.Root.Elements("root").Elements("result").Elements("hotel");
-
-                ////mapping für Servicetype
-
-                //double cheapestpricetemp = Double.MaxValue;
-                //double cheapestprice = 0;
-                //int bookablehotels = 0;
-                //string cheapestchannel = "";
-
-                //// foreach (var myhotelresult in myresult)
-                ////Parallel.ForEach(myresult, myhotelresult =>
-                //foreach (var myhotelresult in myresult.Where(x => x.Elements("channel").Count() > 0))
-                //{
-                //    //Nur wenn ein Angebot eines Channels vorhanden ist
-                //    if (myhotelresult.Elements("channel").Count() > 0)
-                //    {
-                //        var mychanneloffers = myhotelresult.Elements("channel");
-
-                //        double cheapestchanneloffertemp = Double.MaxValue;
-                //        double cheapestchanneloffer = Double.MaxValue;
-
-                //        foreach (var mychanneloffer in mychanneloffers)
-                //        {
-                //            MssResponseShort myresp = new MssResponseShort();
-
-                //            myresp.HotelId = Convert.ToInt32(myhotelresult.Element("id").Value);
-                //            myresp.A0RID = myhotelresult.Element("id_lts").Value;
-                //            if (myhotelresult.Element("bookable").Value == "1")
-                //                myresp.Bookable = true;
-                //            else
-                //                myresp.Bookable = false;
-
-                //            myresp.ChannelID = mychanneloffer.Element("channel_id").Value;
-
-                //            var myofferdescription = mychanneloffer.Element("offer_description");
-
-                //            if (myofferdescription != null)
-                //            {
-                //                var myofferdetails = myofferdescription.Element("offer");
-                //                if (myofferdetails != null)
-                //                {
-                //                    int offershow = 0;
-                //                    if(myofferdetails.Element("offer_gid") != null)
-                //                        myresp.OfferGid = !String.IsNullOrEmpty(myofferdetails.Element("offer_gid").Value) ? myofferdetails.Element("offer_gid").Value : "";
-                //                    if(myofferdetails.Element("offer_id") != null)
-                //                        myresp.OfferId = !String.IsNullOrEmpty(myofferdetails.Element("offer_id").Value) ? myofferdetails.Element("offer_id").Value : "";
-                //                    if (myofferdetails.Element("offer_show") != null)
-                //                        myresp.OfferShow = Int32.TryParse(myofferdetails.Element("offer_show").Value, out offershow) ? offershow : 0;
-                //                    int offertyp = 0;
-                //                    if (myofferdetails.Element("offer_typ") != null)
-                //                        myresp.OfferTyp = Int32.TryParse(myofferdetails.Element("offer_typ").Value, out offertyp) ? offertyp : 0;
-                //                }
-                //            }
-
-                //            var myroomdetails = mychanneloffer.Element("room_price").Elements("price");
-                //            foreach (var myroomdetail in myroomdetails)
-                //            {
-                //                RoomDetails myroom = new RoomDetails();
-
-                //                string roomid = myroomdetail.Element("room_id").Value;
-
-                //                myroom.RoomId = roomid;
-
-                //                int roomseq = 0;
-                //                if (myroomdetail.Element("room_seq") != null)
-                //                    myroom.RoomSeq = Int32.TryParse(myroomdetail.Element("room_seq").Value,out roomseq) ? roomseq : 0;
-
-                //                double mycurrentprice = !String.IsNullOrEmpty(myroomdetail.Element("price_total").Element(servicecode).Value) ? Convert.ToDouble(myroomdetail.Element("price_total").Element(servicecode).Value) : 0;
-                //                if (mycurrentprice < cheapestpricetemp)
-                //                {
-                //                    cheapestchannel = mychanneloffer.Element("channel_id").Value;
-                //                    cheapestprice = mycurrentprice;
-                //                    cheapestpricetemp = mycurrentprice;
-                //                }
-                //                if (mycurrentprice < cheapestchanneloffertemp)
-                //                {
-                //                    cheapestchanneloffer = mycurrentprice;
-                //                    cheapestchanneloffertemp = mycurrentprice;
-                //                }
-
-                //                var myroomdesc = mychanneloffer.Element("room_description").Elements("room").Where(x => x.Element("room_id").Value == roomid).FirstOrDefault();
-                //                if (myroomdesc != null)
-                //                {
-                //                    if (myroomdesc.Element("title") != null)
-                //                        myroom.Roomtitle = myroomdesc.Element("title").Value;
-                //                    if (myroomdesc.Element("description") != null)
-                //                        myroom.Roomdesc = myroomdesc.Element("description").Value;
-
-
-                //                    if(myroomdesc.Element("room_type") != null)
-                //                        myroom.Roomtype = !String.IsNullOrEmpty(myroomdesc.Element("room_type").Value) ? Convert.ToInt32(myroomdesc.Element("room_type").Value) : 0;
-                //                    if(myroomdesc.Element("room_free") != null)
-                //                        myroom.Roomfree = !String.IsNullOrEmpty(myroomdesc.Element("room_free").Value) ? Convert.ToInt32(myroomdesc.Element("room_free").Value) : 0;
-
-                //                    //Zimmerbilder
-                //                    var roompics = myroomdesc.Elements("pictures");
-                //                    foreach(var myroompic in roompics.Elements("picture"))
-                //                    {
-                //                        if (myroompic.Element("url") != null)
-                //                        {
-                //                            RoomPictures mypicture = new RoomPictures() { Pictureurl = myroompic.Element("url").Value };
-                //                            myroom.RoomPictures.Add(mypicture);
-                //                        }
-                //                    }
-
-                //                }
-                //                //myroom.MssResponseShort = myresp;
-
-                //                myresp.RoomDetails.Add(myroom);
-                //            }
-
-                //            myresp.CheapestOffer = cheapestchanneloffer;
-
-                //            myparsedresponselist.MssResponseShort.Add(myresp);
-                //        }
-                //    }
-                //};
-
-                //myparsedresponselist.CheapestChannel = cheapestchannel;
-                //myparsedresponselist.Cheapestprice = cheapestprice;
-
-                //return myparsedresponselist;
             }
             catch (Exception)
             {
@@ -225,32 +89,20 @@ namespace MSS
 
                 List<XElement> poslist = myresult.Elements("pos").Elements("id_pos").ToList();
 
-                //double cheapestpricetemp = Double.MaxValue;
-                //double cheapestprice = 0;
-                ////int bookablehotels = 0;
-                //string cheapestchannel = "";
-
-                // foreach (var myhotelresult in myresult)
-                //Parallel.ForEach(myresult, myhotelresult =>
                 foreach (var myhotelresult in myresult.Where(x => x.Elements("channel").Count() > 0))
                 {
                     //Nur wenn ein Angebot eines Channels vorhanden ist
                     if (myhotelresult.Elements("channel").Count() > 0)
                     {
-                        List<Tuple<int, double>> cheapestofferlist = new List<Tuple<int, double>>();
+                        List<CheapestOffer> cheapestofferlist = new List<CheapestOffer>();
 
-                        List<Tuple<int, double>> cheapestofferlist_ws = new List<Tuple<int, double>>();
-                        List<Tuple<int, double>> cheapestofferlist_bb = new List<Tuple<int, double>>();
-                        List<Tuple<int, double>> cheapestofferlist_hb = new List<Tuple<int, double>>();
-                        List<Tuple<int, double>> cheapestofferlist_fb = new List<Tuple<int, double>>();
-                        List<Tuple<int, double>> cheapestofferlist_ai = new List<Tuple<int, double>>();
+                        List<CheapestOffer> cheapestofferlist_ws = new List<CheapestOffer>();
+                        List<CheapestOffer> cheapestofferlist_bb = new List<CheapestOffer>();
+                        List<CheapestOffer> cheapestofferlist_hb = new List<CheapestOffer>();
+                        List<CheapestOffer> cheapestofferlist_fb = new List<CheapestOffer>();
+                        List<CheapestOffer> cheapestofferlist_ai = new List<CheapestOffer>();
 
                         var mychanneloffers = myhotelresult.Elements("channel");
-
-
-
-                        //double cheapestchanneloffertemp = Double.MaxValue;
-                        //double cheapestchanneloffer = Double.MaxValue;
 
                         foreach (var mychanneloffer in mychanneloffers)
                         {
@@ -265,7 +117,7 @@ namespace MSS
 
                             myresp.ChannelID = mychanneloffer.Element("channel_id").Value;
 
-                            //Zusatz funktioniert nur mit Version 1:
+                            //Addition: funktioniert nur mit Version 1:
                             var myonlinepayment = myhotelresult.Element("online_payment");
                             if (myonlinepayment != null)
                             {
@@ -273,9 +125,6 @@ namespace MSS
                                 myresp.OnlinepaymentPrepayment = myonlinepayment.Element("prepayment") != null ? myonlinepayment.Element("prepayment").Value : "";
                                 myresp.OnlinepaymentCCards = myonlinepayment.Element("ccards") != null ? myonlinepayment.Element("ccards").Value : "";
                             }
-
-
-
 
                             if (myresp.ChannelID == "pos")
                             {
@@ -290,7 +139,6 @@ namespace MSS
                                     //D396337B6995467693054ACB6E12D57D Seiser Alm
                                     //917D6175386A4EAEAB0564482E3F0728 Südtirols Süden
                                     //3C9A4171C7A84AB881FB07FCE3F972EF Val Gardena Marketing
-
 
                                     case "679490C3D4CE4864B0F1063ECEA9354D":
                                         myresp.ChannelID = "altabadia";
@@ -324,7 +172,7 @@ namespace MSS
                             if (mychanneloffer.Element("channel_link") != null)
                                 myresp.Channellink = mychanneloffer.Element("channel_link").Value;
 
-                            //spezialfall Booking Südtirol Buchungslink selbst zusammenstellen
+                            //Specialcase build the bookinglink for Booking Südtirol
                             if (myresp.ChannelID == "esy" || myresp.ChannelID == "lts" || myresp.ChannelID == "hgv")
                             {
                                 //http://www.bookingsuedtirol.com/index.php?action=view&src=" + + "&id=10096&result_id=ec373a3d116ce01806a1c5f9f110c16b&room_qty_0=1&room_occ_0=18&room_rid_0=3124
@@ -350,11 +198,7 @@ namespace MSS
                                 else if (lang.ToLower() == "en" || lang.ToLower() == "nl" || lang.ToLower() == "fr" || lang.ToLower() == "ru" || lang.ToLower() == "pl" || lang.ToLower() == "cs")
                                     bookingurl = "https://www.bookingsouthtyrol.com";
 
-
-
                                 string bookinglink = bookingurl + "/index.php?action=view&src=" + source + "&id=" + myresp.HotelId + "&result_id=" + resultid + "&" + roomstring;
-
-
 
                                 myresp.Channellink = bookinglink.Substring(0, bookinglink.Length - 1);
                             }
@@ -392,7 +236,6 @@ namespace MSS
                                 string offerid = myroomdetail.Element("offer_id").Value;
 
                                 myroom.OfferId = offerid;
-
 
                                 int roomseq = 0;
                                 if (myroomdetail.Element("room_seq") != null)
@@ -498,9 +341,7 @@ namespace MSS
 
                                 //ENDE NEU VERSION 2.0
 
-
-
-                                //Mal kucken wiamer do tian wenn olle verpflegungsorten ausgwählt sein gazzo
+                                //TODO Test and ensure functionality
                                 var splittedservice = servicecode.Split(',').ToList();
                                 foreach (var requestedservice in splittedservice)
                                 {
@@ -511,8 +352,7 @@ namespace MSS
 
                                         if (mycurrentpricews > 0)
                                         {
-                                            var mytuplews = new Tuple<int, double>((int)myroom.RoomSeq, mycurrentpricews);
-                                            cheapestofferlist_ws.Add(mytuplews);
+                                            cheapestofferlist_ws.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpricews, RoomFree = 0 });
                                         }
                                     }
                                     if (requestedservice == "price_bb")
@@ -522,8 +362,7 @@ namespace MSS
 
                                         if (mycurrentpricebb > 0)
                                         {
-                                            var mytuplebb = new Tuple<int, double>((int)myroom.RoomSeq, mycurrentpricebb);
-                                            cheapestofferlist_bb.Add(mytuplebb);
+                                            cheapestofferlist_bb.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpricebb, RoomFree = 0 });
                                         }
                                     }
                                     if (requestedservice == "price_hb")
@@ -533,8 +372,7 @@ namespace MSS
 
                                         if (mycurrentpricehb > 0)
                                         {
-                                            var mytuplehb = new Tuple<int, double>((int)myroom.RoomSeq, mycurrentpricehb);
-                                            cheapestofferlist_hb.Add(mytuplehb);
+                                            cheapestofferlist_hb.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpricehb, RoomFree = 0 });
                                         }
                                     }
                                     if (requestedservice == "price_fb")
@@ -544,8 +382,7 @@ namespace MSS
 
                                         if (mycurrentpricefb > 0)
                                         {
-                                            var mytuplefb = new Tuple<int, double>((int)myroom.RoomSeq, mycurrentpricefb);
-                                            cheapestofferlist_fb.Add(mytuplefb);
+                                            cheapestofferlist_fb.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpricefb, RoomFree = 0 });
                                         }
                                     }
                                     if (requestedservice == "price_ai")
@@ -554,9 +391,8 @@ namespace MSS
                                         myroom.Price_ai = mycurrentpriceai;
 
                                         if (mycurrentpriceai > 0)
-                                        {
-                                            var mytupleai = new Tuple<int, double>((int)myroom.RoomSeq, mycurrentpriceai);
-                                            cheapestofferlist_ai.Add(mytupleai);
+                                        {                                            
+                                            cheapestofferlist_ai.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpriceai, RoomFree = 0 });
                                         }
                                     }
                                 }
@@ -565,34 +401,18 @@ namespace MSS
                                 if (splittedservice.Count == 1)
                                 {
                                     double mycurrentprice = !String.IsNullOrEmpty(myroomdetail.Element("price_total").Element(servicecode).Value) ? Convert.ToDouble(myroomdetail.Element("price_total").Element(servicecode).Value, CultureInfo.InvariantCulture.NumberFormat) : 0;
-
-                                    var mytuple = new Tuple<int, double>((int)myroom.RoomSeq, mycurrentprice);
-                                    cheapestofferlist.Add(mytuple);
+                                    
+                                    cheapestofferlist.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentprice, RoomFree = 0 });
 
                                     myroom.TotalPrice = mycurrentprice;
                                     myroom.TotalPriceString = String.Format(culturede, "{0:0,0.00}", mycurrentprice);
                                 }
                                 else
                                 {
-                                    //billigsten preis suchen
-
-
+                                    //billigsten preis suchen TODO!
                                     myroom.TotalPrice = 0;
                                     myroom.TotalPriceString = String.Format(culturede, "{0:0,0.00}", 0);
                                 }
-
-
-                                //if (mycurrentprice < cheapestpricetemp)
-                                //{
-                                //    cheapestchannel = mychanneloffer.Element("channel_id").Value;
-                                //    cheapestprice = mycurrentprice;
-                                //    cheapestpricetemp = mycurrentprice;
-                                //}
-                                //if (mycurrentprice < cheapestchanneloffertemp)
-                                //{
-                                //    cheapestchanneloffer = mycurrentprice;
-                                //    cheapestchanneloffertemp = mycurrentprice;
-                                //}
 
                                 var myroomdesc = mychanneloffer.Element("room_description").Elements("room").Where(x => x.Element("room_id").Value == roomid).FirstOrDefault();
                                 if (myroomdesc != null)
@@ -607,6 +427,35 @@ namespace MSS
                                         myroom.Roomtype = !String.IsNullOrEmpty(myroomdesc.Element("room_type").Value) ? Convert.ToInt32(myroomdesc.Element("room_type").Value) : 0;
                                     if (myroomdesc.Element("room_free") != null)
                                         myroom.Roomfree = !String.IsNullOrEmpty(myroomdesc.Element("room_free").Value) ? Convert.ToInt32(myroomdesc.Element("room_free").Value) : 0;
+
+                                    //TODO add Roomfree also to cheapeast channel list
+                                    if (myroom.Roomfree != null && myroom.Roomfree > 0)
+                                    {
+                                        foreach (var cheapeastoffersingle in cheapestofferlist.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        {
+                                            cheapeastoffersingle.RoomFree = myroom.Roomfree;
+                                        }
+                                        foreach (var cheapeastoffersingle in cheapestofferlist_ws.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        {
+                                            cheapeastoffersingle.RoomFree = myroom.Roomfree;
+                                        }
+                                        foreach (var cheapeastoffersingle in cheapestofferlist_bb.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        {
+                                            cheapeastoffersingle.RoomFree = myroom.Roomfree;
+                                        }
+                                        foreach (var cheapeastoffersingle in cheapestofferlist_hb.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        {
+                                            cheapeastoffersingle.RoomFree = myroom.Roomfree;
+                                        }
+                                        foreach (var cheapeastoffersingle in cheapestofferlist_fb.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        {
+                                            cheapeastoffersingle.RoomFree = myroom.Roomfree;
+                                        }
+                                        foreach (var cheapeastoffersingle in cheapestofferlist_ai.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        {
+                                            cheapeastoffersingle.RoomFree = myroom.Roomfree;
+                                        }
+                                    }
 
                                     //Zusatzinfo Maximal Minimal und Standardbelegung
                                     if (myroomdesc.Element("properties") != null)
@@ -643,18 +492,9 @@ namespace MSS
 
                                 myresp.RoomDetails.Add(myroom);
                             }
-
-                            double cheapestchanneloffer = 0;
-                            //Billigstes Angebot holen
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist
-                                                                where x.Item1 == i
-                                                                orderby x.Item2 ascending
-                                                                select x.Item2).FirstOrDefault();
-
-                                cheapestchanneloffer = cheapestchanneloffer + cheapestchanneloffertemp;
-                            }
+                            
+                            var cheapestofferobj = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist, rooms, "");
+                            double cheapestchanneloffer = cheapestofferobj.Price;
 
                             myresp.CheapestOffer = cheapestchanneloffer;
                             myresp.CheapestOfferString = String.Format(culturede, "{0:0,0.00}", cheapestchanneloffer);
@@ -662,66 +502,30 @@ namespace MSS
 
                             //Billigstes Angebot für die einzelnen Typen
 
-                            double cheapestchanneloffer_ws = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_ws
-                                                                where x.Item1 == i
-                                                                orderby x.Item2 ascending
-                                                                select x.Item2).FirstOrDefault();
+                            var cheapestofferobj_ws = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_ws, rooms, "ws");
+                            myresp.CheapestOffer_ws = cheapestofferobj_ws.Price;
+                            if (cheapestofferobj_ws.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_ws);
 
-                                cheapestchanneloffer_ws = cheapestchanneloffer_ws + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_ws = cheapestchanneloffer_ws;
+                            var cheapestofferobj_bb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_bb, rooms, "bb");
+                            myresp.CheapestOffer_bb = cheapestofferobj_bb.Price;
+                            if (cheapestofferobj_bb.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_bb);
 
-                            double cheapestchanneloffer_bb = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_bb
-                                                                where x.Item1 == i
-                                                                orderby x.Item2 ascending
-                                                                select x.Item2).FirstOrDefault();
+                            var cheapestofferobj_hb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_hb, rooms, "hb");
+                            myresp.CheapestOffer_hb = cheapestofferobj_hb.Price;
+                            if (cheapestofferobj_hb.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_hb);
 
-                                cheapestchanneloffer_bb = cheapestchanneloffer_bb + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_bb = cheapestchanneloffer_bb;
+                            var cheapestofferobj_fb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_fb, rooms, "fb");
+                            myresp.CheapestOffer_fb = cheapestofferobj_fb.Price;
+                            if (cheapestofferobj_fb.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_fb);
 
-                            double cheapestchanneloffer_hb = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_hb
-                                                                where x.Item1 == i
-                                                                orderby x.Item2 ascending
-                                                                select x.Item2).FirstOrDefault();
-
-                                cheapestchanneloffer_hb = cheapestchanneloffer_hb + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_hb = cheapestchanneloffer_hb;
-
-                            double cheapestchanneloffer_fb = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_fb
-                                                                where x.Item1 == i
-                                                                orderby x.Item2 ascending
-                                                                select x.Item2).FirstOrDefault();
-
-                                cheapestchanneloffer_fb = cheapestchanneloffer_fb + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_fb = cheapestchanneloffer_fb;
-
-                            double cheapestchanneloffer_ai = 0;
-                            for (int i = 1; i <= rooms; i++)
-                            {
-                                var cheapestchanneloffertemp = (from x in cheapestofferlist_ai
-                                                                where x.Item1 == i
-                                                                orderby x.Item2 ascending
-                                                                select x.Item2).FirstOrDefault();
-
-                                cheapestchanneloffer_ai = cheapestchanneloffer_ai + cheapestchanneloffertemp;
-                            }
-                            myresp.CheapestOffer_ai = cheapestchanneloffer_ai;
-
+                            var cheapestofferobj_ai = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_ai, rooms, "ai");
+                            myresp.CheapestOffer_ai = cheapestofferobj_ai.Price;
+                            if (cheapestofferobj_ai.Price > 0)
+                                myresp.CheapestOfferDetail.Add(cheapestofferobj_ai);
 
                             //Neu Cheapest Offer General
                             if (myresp.CheapestOffer == 0)
@@ -744,10 +548,10 @@ namespace MSS
                                     myresp.CheapestOffer = cheapestofferdouble;
                                     myresp.CheapestOfferString = String.Format(culturede, "{0:0,0.00}", cheapestofferdouble);
                                 }
-
                             }
 
-                            myparsedresponselist.MssResponseShort.Add(myresp);
+                            if (myresp.CheapestOfferDetail != null && myresp.CheapestOfferDetail.Count > 0)
+                                myparsedresponselist.MssResponseShort.Add(myresp);
                         }
                     }
                 };

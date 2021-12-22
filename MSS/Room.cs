@@ -26,5 +26,5 @@ namespace MSS
             get { return person; }
             set { person = value; }
         }
-    }
+    }   
 }

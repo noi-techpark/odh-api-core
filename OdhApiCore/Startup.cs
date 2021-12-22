@@ -137,13 +137,13 @@ namespace OdhApiCore
                     //AllowAnyOrigin()
                     //builder.SetIsOriginAllowed(_ => true) //Hack
                 });
-                o.AddPolicy("DataBrowserCorsPolicy", builder =>
-                {
-                    builder.WithOrigins("https://localhost:6001")
-                                            .AllowAnyHeader()
-                                            .AllowAnyMethod()
-                                            .AllowCredentials();
-                });
+                //o.AddPolicy("DataBrowserCorsPolicy", builder =>
+                //{
+                //    builder.WithOrigins("https://localhost:6001")
+                //                            .AllowAnyHeader()
+                //                            .AllowAnyMethod()
+                //                            .AllowCredentials();
+                //});
             });
             
             services.AddControllers().AddNewtonsoftJson(options =>
@@ -155,60 +155,36 @@ namespace OdhApiCore
 
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
-
-            //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            //var filePath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
-
-            //JWT on .Net 2
-            //services.AddAuthentication("Bearer")
-            //  .AddJwtBearer("Bearer", options =>
-            //  {
-            //      options.Authority = "https://auth.testingmachine.eu";
-            //      options.RequireHttpsMetadata = false;
-
-            //      options.Audience = "api1";
-            //  });
-
-            //services.AddAuthentication("Bearer")
-            //  .AddJwtBearer("Bearer", options =>
-            //  {
-            //      options.Authority = "https://auth.opendatahub.testingmachine.eu/auth/realms/noi";
-            //      options.RequireHttpsMetadata = false;
-
-            //      options.Audience = "account";
-            //  });
-
+      
             //Initialize JWT Authentication
             services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                    .AddJwtBearer(jwtBearerOptions =>
+                .AddJwtBearer(jwtBearerOptions =>
                 {
-                    jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");
+                    jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");                    
                     //jwtBearerOptions.Audience = "account";                
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = "preferred_username",
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
+                        ValidateIssuer = true                        
                     };
-                    //jwtBearerOptions.Events = new JwtBearerEvents()
-                    //{
-                    //    OnAuthenticationFailed = c =>
-                    //    {
-                    //        c.NoResult();
+                    jwtBearerOptions.Events = new JwtBearerEvents()
+                    {
+                        OnAuthenticationFailed = c =>
+                        {
+                            c.NoResult();
 
-                    //        c.Response.StatusCode = 500;
-                    //        c.Response.ContentType = "text/plain";
-                    //        //if (env.IsDevelopment())
-                    //        //{
-                    //        //    return c.Response.WriteAsync(c.Exception.ToString());
-                    //        //}
-                    //        //return c.Response.WriteAsync("An error occured processing your authentication.");
-                    //        return c.Response.WriteAsync(c.Exception.ToString());
-                    //    }
-                    //};
+                            c.Response.StatusCode = 401;
+                            c.Response.ContentType = "text/plain";
+                            return c.Response.WriteAsync("");
+                        }
+                    };
                 });
 
             services.AddMvc(options =>
@@ -233,7 +209,6 @@ namespace OdhApiCore
             //        options.AddPolicy(prop.GetValue(null).ToString(), policy => policy.RequireClaim(ClaimType.Permission, prop.GetValue(null).ToString()));
             //    }
             //});
-
 
             //services.AddAuthorization(options =>
             //{
@@ -305,12 +280,10 @@ namespace OdhApiCore
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto; //.XForwardedProto;
-                //ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;                
             });
 
             //services.AddHttpContextAccessor();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -413,11 +386,11 @@ namespace OdhApiCore
 
                 await next();
 
-                //Log only if api is requested! with Statuscode thereofre after await next();
+                //Log only if api is requested! with Statuscode therefore after await next();
                 //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
                 if (!String.IsNullOrEmpty(context.Request.Path.Value) && context.Request.Path.Value.StartsWith("/v1", StringComparison.OrdinalIgnoreCase))
                 {
-                    //TODO IF THE REFERER IS NOT PROVIDED IN THE HEADERS SEARCH IF A QS IS THERE
+                    //TODO Make a Referer Class/Method for the logic
                     var referer = "not provided";
 
                     if (context.Request.Headers.ContainsKey("Referer"))
@@ -428,6 +401,11 @@ namespace OdhApiCore
                         if (context.Request.Query.ContainsKey("Referer"))
                             referer = context.Request.Query["Referer"].ToString();
                     }
+
+                    //Quick Fix, Android is passing http://localhost/ as referer
+                    if(referer == "http://localhost/" && context.Request.Query.ContainsKey("Referer"))
+                        referer = context.Request.Query["Referer"].ToString();
+
 
                     //User Agent
                     var useragent = "not provided";

@@ -39,4 +39,23 @@ namespace DataModel
 
         public int? error { get; init; }
     }
+
+    public class GenericResultsHelper
+    {
+        public static UpdateDetail MergeUpdateDetail(IEnumerable<UpdateDetail> updatedetails)
+        {
+            int? updated = 0;
+            int? created = 0;
+            int? deleted = 0;
+
+            foreach(var updatedetail in updatedetails)
+            {
+                created = updatedetail.created + created;
+                updated = updatedetail.updated + updated;
+                deleted = updatedetail.deleted + deleted;
+            }
+
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted };
+        }
+    }
 }

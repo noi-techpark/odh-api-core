@@ -174,12 +174,9 @@ namespace OdhApiImporter.Controllers
         public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
         {
             try
-            {
-                var responseevents = await GetNinjaData.GetNinjaEvent();
-                var responseplaces = await GetNinjaData.GetNinjaPlaces();
-
+            {              
                 NINJAImportHelper ninjaimporthelper = new NINJAImportHelper(settings, QueryFactory);
-                var result = await ninjaimporthelper.SaveEventsToPG(responseevents.data, responseplaces.data);
+                var result = await ninjaimporthelper.SaveDataToODH(null, cancellationToken);
 
                 return Ok(new UpdateResult
                 {
@@ -226,7 +223,7 @@ namespace OdhApiImporter.Controllers
         {
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
                 var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
 
                 return Ok(new UpdateResult
@@ -264,7 +261,7 @@ namespace OdhApiImporter.Controllers
         {
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
                 var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
 
                 return Ok(new UpdateResult
@@ -307,15 +304,15 @@ namespace OdhApiImporter.Controllers
         {
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory);
-                var result = await siagimporthelper.SaveMuseumsToODH(QueryFactory, null, cancellationToken);
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "smgpois");
+                var result = await siagimporthelper.SaveDataToODH(null, cancellationToken);
 
                 return Ok(new UpdateResult
                 {
-                    operation = "Import Weather data",
-                    updatetype = "single",
-                    otherinfo = "actual",
-                    message = "Import Weather data succeeded",
+                    operation = "Import SIAG Museum data",
+                    updatetype = "all",
+                    otherinfo = "",
+                    message = "Import SIAG Museum data succeeded",
                     recordsmodified = result.created + result.updated + result.deleted,
                     created = result.created,
                     updated = result.updated,
@@ -339,7 +336,6 @@ namespace OdhApiImporter.Controllers
                 });
             }
         }
-
 
         #endregion
 
