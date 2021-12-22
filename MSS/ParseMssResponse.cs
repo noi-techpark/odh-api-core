@@ -498,33 +498,31 @@ namespace MSS
 
                             myresp.CheapestOffer = cheapestchanneloffer;
                             myresp.CheapestOfferString = String.Format(culturede, "{0:0,0.00}", cheapestchanneloffer);
-
-
-                            //Billigstes Angebot für die einzelnen Typen
-
+                          
+                            //Cheapest offers calculation
                             var cheapestofferobj_ws = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_ws, rooms, "ws");
-                            myresp.CheapestOffer_ws = cheapestofferobj_ws.Price;
-                            if (cheapestofferobj_ws.Price > 0)
+                            myresp.CheapestOffer_ws = cheapestofferobj_ws != null ? cheapestofferobj_ws.Price : 0;
+                            if (cheapestofferobj_ws != null && cheapestofferobj_ws.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_ws);
 
                             var cheapestofferobj_bb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_bb, rooms, "bb");
-                            myresp.CheapestOffer_bb = cheapestofferobj_bb.Price;
-                            if (cheapestofferobj_bb.Price > 0)
+                            myresp.CheapestOffer_bb = cheapestofferobj_bb != null ? cheapestofferobj_bb.Price : 0;
+                            if (cheapestofferobj_bb != null && cheapestofferobj_bb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_bb);
 
                             var cheapestofferobj_hb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_hb, rooms, "hb");
-                            myresp.CheapestOffer_hb = cheapestofferobj_hb.Price;
-                            if (cheapestofferobj_hb.Price > 0)
+                            myresp.CheapestOffer_hb = cheapestofferobj_hb != null ? cheapestofferobj_hb.Price : 0;
+                            if (cheapestofferobj_hb != null && cheapestofferobj_hb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_hb);
 
                             var cheapestofferobj_fb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_fb, rooms, "fb");
-                            myresp.CheapestOffer_fb = cheapestofferobj_fb.Price;
-                            if (cheapestofferobj_fb.Price > 0)
+                            myresp.CheapestOffer_fb = cheapestofferobj_fb != null ? cheapestofferobj_fb.Price : 0;
+                            if (cheapestofferobj_fb != null && cheapestofferobj_fb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_fb);
 
                             var cheapestofferobj_ai = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_ai, rooms, "ai");
-                            myresp.CheapestOffer_ai = cheapestofferobj_ai.Price;
-                            if (cheapestofferobj_ai.Price > 0)
+                            myresp.CheapestOffer_ai = cheapestofferobj_ai != null ? cheapestofferobj_ai.Price : 0;
+                            if (cheapestofferobj_ai != null && cheapestofferobj_ai.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_ai);
 
                             //Neu Cheapest Offer General
