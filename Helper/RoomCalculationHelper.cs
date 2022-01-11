@@ -12,7 +12,7 @@ namespace Helper
     {
         public static CheapestRoomCombination CalculateCheapestRooms(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
         {
-            if (cheapestofferlist != null && cheapestofferlist.Count() > 0)
+            if (cheapestofferlist != null && cheapestofferlist.Count() > 0 && cheapestofferlist.Count() >= rooms)
             {
                 if (rooms == 1)
                 {

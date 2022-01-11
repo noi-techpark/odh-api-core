@@ -17,7 +17,6 @@ namespace LCS
 
                 CultureInfo culturede = CultureInfo.CreateSpecificCulture("de");
 
-
                 MssResult result = new MssResult();
                 result.ResultId = lcsresponse.Result != null ? lcsresponse.Result.RID : "";
                 result.bookableHotels = lcsresponse.Result != null ? lcsresponse.Result.ResultsQty : 0;
