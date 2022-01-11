@@ -49,8 +49,8 @@ namespace LCS
                                 RoomDetails myroomdetail = new RoomDetails();
 
                                 myroomdetail.RoomSeq = roomdetailoffer.RoomStayIndex;
-                                myroomdetail.RoomId = roomdetailoffer.RID;
-                                myroomdetail.OfferId = roomdetail.RID;
+                                myroomdetail.RoomId = roomdetail.RID;
+                                myroomdetail.OfferId = roomdetailoffer.RID;
                                 myroomdetail.Price_ai = roomdetailoffer.AmountAI;
                                 myroomdetail.Price_bb = roomdetailoffer.AmountBB;
                                 myroomdetail.Price_fb = roomdetailoffer.AmountFB;
@@ -70,27 +70,27 @@ namespace LCS
 
                                 if (roomdetailoffer.AmountAI != 0)
                                 {
-                                    var mycheapestofferai = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountAI, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    var mycheapestofferai = new CheapestOffer() { RoomId = roomdetail.RID, Price = roomdetailoffer.AmountAI, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
                                     CheapestOffer_ai.Add(mycheapestofferai);
                                 }
                                 if (roomdetailoffer.AmountBB != 0)
                                 {
-                                    var mycheapestofferbb = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountBB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    var mycheapestofferbb = new CheapestOffer() { RoomId = roomdetail.RID, Price = roomdetailoffer.AmountBB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
                                     CheapestOffer_bb.Add(mycheapestofferbb);
                                 }
                                 if (roomdetailoffer.AmountHB != 0)
                                 {
-                                    var mycheapestofferhb = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountHB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    var mycheapestofferhb = new CheapestOffer() { RoomId = roomdetail.RID, Price = roomdetailoffer.AmountHB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
                                     CheapestOffer_hb.Add(mycheapestofferhb);
                                 }
                                 if (roomdetailoffer.AmountFB != 0)
                                 {
-                                    var mycheapestofferfb = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountFB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    var mycheapestofferfb = new CheapestOffer() { RoomId = roomdetail.RID, Price = roomdetailoffer.AmountFB, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
                                     CheapestOffer_fb.Add(mycheapestofferfb);
                                 }
                                 if (roomdetailoffer.AmountWS != 0)
                                 {
-                                    var mycheapestofferws = new CheapestOffer() { RoomId = roomdetailoffer.RID, Price = roomdetailoffer.AmountWS, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
+                                    var mycheapestofferws = new CheapestOffer() { RoomId = roomdetail.RID, Price = roomdetailoffer.AmountWS, RoomSeq = (int)roomdetailoffer.RoomStayIndex, RoomFree = roomdetail.Qty };
                                     CheapestOffer_ws.Add(mycheapestofferws);
                                 }
 
