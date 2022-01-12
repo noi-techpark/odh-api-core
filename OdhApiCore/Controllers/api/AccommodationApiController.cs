@@ -95,7 +95,8 @@ namespace OdhApiCore.Controllers
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(JsonResult<AccommodationLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Accommodation", Name = "AccommodationList")]
@@ -207,6 +208,7 @@ namespace OdhApiCore.Controllers
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(AccommodationLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
         [HttpGet, Route("Accommodation/{id}", Name = "SingleAccommodation")]
         [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
@@ -457,6 +459,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<AccommodationLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]
@@ -564,6 +567,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<MssResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,AccoReader,PackageReader")]
         [TypeFilter(typeof(Filters.AvailabilitySearchInterceptorAttribute))]        
