@@ -134,16 +134,7 @@ namespace OdhApiCore
                             .AllowAnyHeader()
                             .AllowCredentials()
                             .SetIsOriginAllowed(hostName => true);
-                    //AllowAnyOrigin()
-                    //builder.SetIsOriginAllowed(_ => true) //Hack
                 });
-                //o.AddPolicy("DataBrowserCorsPolicy", builder =>
-                //{
-                //    builder.WithOrigins("https://localhost:6001")
-                //                            .AllowAnyHeader()
-                //                            .AllowAnyMethod()
-                //                            .AllowCredentials();
-                //});
             });
             
             services.AddControllers().AddNewtonsoftJson(options =>
@@ -172,10 +163,10 @@ namespace OdhApiCore
                         ValidateAudience = false,
                         ValidateLifetime = true,
                         ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
-                        ValidateIssuer = true                        
+                        ValidateIssuer = true
                     };
                     jwtBearerOptions.Events = new JwtBearerEvents()
-                    {
+                    {     
                         OnAuthenticationFailed = c =>
                         {
                             c.NoResult();
@@ -183,7 +174,7 @@ namespace OdhApiCore
                             c.Response.StatusCode = 401;
                             c.Response.ContentType = "text/plain";
                             return c.Response.WriteAsync("");
-                        }
+                        },                        
                     };
                 });
 
@@ -198,23 +189,7 @@ namespace OdhApiCore
                 //{
                 //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = new DefaultContractResolver();
                 //});
-
-            //TO TEST
-            // Here I stored necessary permissions/roles in a constant
-            //services.AddAuthorization(options =>
-            //{
-            //    // Here I stored necessary permissions/roles in a constant
-            //    foreach (var prop in typeof(ClaimPermission).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-            //    {
-            //        options.AddPolicy(prop.GetValue(null).ToString(), policy => policy.RequireClaim(ClaimType.Permission, prop.GetValue(null).ToString()));
-            //    }
-            //});
-
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("DataReader", policy => policy.RequireClaim("roles", "[DataReader]"));
-            //});
-
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { 
@@ -288,13 +263,7 @@ namespace OdhApiCore
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {            
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedProto & ForwardedHeaders.XForwardedFor
-            //    //ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
-            //});
-
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -315,21 +284,15 @@ namespace OdhApiCore
                 {
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-                },
-                //FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
-                //RequestPath = new PathString("")
-                //FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot")), RequestPath = "/StaticFiles" 
+                },                
             });
 
-            //app.UseSerilogRequestLogging(); throwing exception
- 
             app.UseRouting();
 
             //app.UseCookiePolicy();
 
-            //Important! Register Cors Policz before Using Authentication and Authorization
+            //Important! Register Cors Policy before Using Authentication and Authorization
             app.UseCors("CorsPolicy");
-
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -342,8 +305,7 @@ namespace OdhApiCore
                 });                
             });
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ODH Tourism API V1");
@@ -357,7 +319,7 @@ namespace OdhApiCore
             //LOG EVERY REQUEST WITH HEADERs
             app.Use(async (context, next) =>
             {
-                //TODO If Root is requested forward to Databrowser (Compatibility reason)
+                //If Root is requested forward to Databrowser (Compatibility reason)
                 if(String.IsNullOrEmpty(context.Request.Path.Value) || context.Request.Path.Value == "/")
                 {  
                     if(context.Request.Host.ToString().Equals("tourism.opendatahub.bz.it"))
@@ -382,14 +344,14 @@ namespace OdhApiCore
                 {
                     context.Response.Redirect("/swagger");
                     return;
-                }
+                }              
 
                 await next();
 
-                //Log only if api is requested! with Statuscode therefore after await next();
+                //Log only if api is requested! including HTTP Statuscode therefore after await next();
                 //if(context.Request.Path.StartsWithSegments("/v1/", StringComparison.OrdinalIgnoreCase))
                 if (!String.IsNullOrEmpty(context.Request.Path.Value) && context.Request.Path.Value.StartsWith("/v1", StringComparison.OrdinalIgnoreCase))
-                {
+                {                   
                     //TODO Make a Referer Class/Method for the logic
                     var referer = "not provided";
 
@@ -457,8 +419,7 @@ namespace OdhApiCore
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-                //endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");                
             });
         }
     }
