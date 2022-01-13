@@ -111,14 +111,14 @@ namespace OdhApiCore.Controllers
             string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
-            var mysmgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
-
             return DoAsyncReturn(async () =>
             {
                 //Hack
                 if (smgtagtype == "odhactivitypoi")
                     smgtagtype = "smgpoi";
-                
+
+                var mysmgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+
                 var query = 
                     QueryFactory.Query()
                     .SelectRaw("data")
