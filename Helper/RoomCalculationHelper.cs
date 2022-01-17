@@ -84,5 +84,24 @@ namespace Helper
 
             return cheapestcombination;
         }
+
+        //Hack because of CPU always over 90%
+        private static CheapestRoomCombination CalculateCheapestRoomCombinationsTemp(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        {
+            CheapestRoomCombination cheapestroomcombinationresult = new CheapestRoomCombination();
+            cheapestroomcombinationresult.Service = service;
+            cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { };
+
+            //Get always the cheapest
+            for (int i = 1; i <= rooms; i++)
+            {
+                var cheapestorffersingle = cheapestofferlist.Where(x => x.RoomSeq == i).OrderBy(x => x.Price).Take(1).FirstOrDefault();
+
+                if (cheapestorffersingle != null)
+                    cheapestroomcombinationresult.CheapestRoomCombinationDetail.Add(cheapestorffersingle);
+            }
+
+            return cheapestroomcombinationresult;
+        }
     }
 }
