@@ -22,9 +22,19 @@ namespace Helper
                     cheapestroomcombinationresult.Service = service;
 
                     return cheapestroomcombinationresult;
-                }
+                }                
                 else
                     return CalculateCheapestRoomCombinations(cheapestofferlist, rooms, service);
+                //else
+                //{
+                //    //count if all romseqs are in the cheapestofferlist
+                //    var romseqspresent = cheapestofferlist.Select(x => x.RoomSeq).Distinct().Count();
+
+                //    if (romseqspresent == rooms)
+                //        return CalculateCheapestRoomCombinationsTemp(cheapestofferlist, rooms, service);
+                //    else
+                //        return new CheapestRoomCombination() { Service = service, CheapestRoomCombinationDetail = new List<CheapestOffer>() };
+                //}
             }
             else
             {
