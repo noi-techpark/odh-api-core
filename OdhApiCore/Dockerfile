@@ -28,11 +28,11 @@ WORKDIR /src
 RUN dotnet test --filter Category!=Integration OdhApiCore.sln
 
 FROM build AS publish
-RUN dotnet publish OdhApiCore.csproj -c Release -o /app
+RUN dotnet publish OdhApiCore.csproj -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=publish /app/publish .
 COPY OdhApiCore/xml/Weather.xml xml/
 COPY OdhApiCore/xml/STACategories.xml xml/
 COPY OdhApiCore/xml/BezirkWeather.xml xml/
