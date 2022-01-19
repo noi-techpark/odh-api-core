@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using OdhApiCore.Responses;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -23,14 +24,25 @@ namespace OdhApiCore.Formatters
         {
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/rawdata"));
 
-            SupportedEncodings.Add(Encoding.UTF8);            
+            SupportedEncodings.Add(Encoding.UTF8);
             SupportedEncodings.Add(Encoding.Unicode);
-        }       
+        }
 
-        private static string ConvertToRawdataObject(JsonRaw jsonRaw)
+        //public RawdataOutputFormatter(QueryFactory queryFactory)
+        //{
+            
+
+        //    this.QueryFactory = queryFactory;
+        //}
+
+        //protected QueryFactory QueryFactory { get; }
+
+        private string ConvertToRawdataObject(JsonRaw jsonRaw)
         {
             //Get Id of jsonRaw
             //Load rawid
+
+
 
             return "<xmltest>test</xmltest>";
         }
@@ -54,6 +66,14 @@ namespace OdhApiCore.Formatters
             {
                 await OutputFormatterHelper.BadRequest(context);
             }
+        }
+
+        private void GetRawDatafromDB(string rawdataid)
+        {
+
+            //QueryFactory.Query()
+            //            .SelectRaw("data")
+            //            .From("webcams")
         }
     }
 }
