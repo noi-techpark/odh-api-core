@@ -13,9 +13,11 @@ namespace OdhApiCore.Formatters
 {
     public class JsonLdOutputFormatter : TextOutputFormatter
     {
-        public JsonLdOutputFormatter() : base()
+        public JsonLdOutputFormatter() //: base()
         {
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/ld+json"));
+            //Hack because Output formatter Mapping does not work with + inside
+            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/ldjson"));            
 
             SupportedEncodings.Add(Encoding.UTF8);
             SupportedEncodings.Add(Encoding.Unicode);
@@ -100,7 +102,12 @@ namespace OdhApiCore.Formatters
                 var transformed = Transform(context.HttpContext.Request.Path, jsonRaw);
                 if (transformed != null)
                 {
-                    var jsonLD = JsonConvert.SerializeObject(transformed);
+                    var jsonLD = JsonConvert.SerializeObject(transformed, Newtonsoft.Json.Formatting.None,
+                                    new JsonSerializerSettings
+                                    {
+                                        DefaultValueHandling = DefaultValueHandling.Ignore,
+                                        NullValueHandling = NullValueHandling.Ignore
+                                    });
                     await context.HttpContext.Response.WriteAsync(jsonLD);
                 }
                 else

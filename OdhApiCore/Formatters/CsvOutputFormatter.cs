@@ -27,10 +27,10 @@ namespace OdhApiCore.Formatters
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
-        protected override bool CanWriteType(Type type)
-        {
-            return base.CanWriteType(type);
-        }
+        //protected override bool CanWriteType(Type type)
+        //{
+        //    return base.CanWriteType(type);
+        //}
 
         private static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)
         {
