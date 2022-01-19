@@ -21,7 +21,7 @@ namespace OdhApiCore.Formatters
     {
         public RawdataOutputFormatter()
         {
-            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/rawdata"));
+            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/rawdata"));
 
             SupportedEncodings.Add(Encoding.UTF8);            
             SupportedEncodings.Add(Encoding.Unicode);

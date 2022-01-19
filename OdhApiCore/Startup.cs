@@ -181,9 +181,13 @@ namespace OdhApiCore
             services.AddMvc(options =>
                 {
                     options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
-                    options.OutputFormatters.Add(new Formatters.JsonLdOutputFormatter());
                     options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
+
+                    options.OutputFormatters.Add(new Formatters.JsonLdOutputFormatter());
                     options.FormatterMappings.SetMediaTypeMappingForFormat("json-ld", "application/ld+json");
+
+                    options.OutputFormatters.Add(new Formatters.RawdataOutputFormatter());
+                    options.FormatterMappings.SetMediaTypeMappingForFormat("rawdata", "application/rawdata");
                 });
                 //.AddJsonOptions(options =>
                 //{
