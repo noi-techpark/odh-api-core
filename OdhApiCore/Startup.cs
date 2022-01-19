@@ -187,7 +187,7 @@ namespace OdhApiCore
                     options.FormatterMappings.SetMediaTypeMappingForFormat("json-ld", "application/ldjson");
 
                     options.OutputFormatters.Add(new Formatters.RawdataOutputFormatter());
-                    options.FormatterMappings.SetMediaTypeMappingForFormat("raudata", "application/rawdata");
+                    options.FormatterMappings.SetMediaTypeMappingForFormat("rawdata", "application/rawdata");
                 });
                 //.AddJsonOptions(options =>
                 //{

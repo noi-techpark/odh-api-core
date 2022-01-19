@@ -37,21 +37,27 @@ namespace OdhApiCore.Formatters
 
         //protected QueryFactory QueryFactory { get; }
 
-        private string ConvertToRawdataObject(JsonRaw jsonRaw)
+        private string ConvertToRawdataObject(JsonRaw jsonRaw, QueryFactory QueryFactory)
         {
             //Get Id of jsonRaw
             //Load rawid
 
-
+            var rawid = QueryFactory.Query()
+                        .Select("rawdataid")
+                        .From("accommodations")
+                        .Where("id", "5CEA544EE34639034F07B79D4AEEB603")
+                        .Get<string>();
 
             return "<xmltest>test</xmltest>";
         }
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
+            var queryFactory = (QueryFactory)context.HttpContext.RequestServices.GetService(typeof(QueryFactory));
+
             if (context.Object is JsonRaw jsonRaw)
             {
-                var transformed = ConvertToRawdataObject(jsonRaw);
+                var transformed = ConvertToRawdataObject(jsonRaw, queryFactory);
                 if (transformed != null)
                 {
                     //var jsonLD = JsonConvert.SerializeObject(transformed);
