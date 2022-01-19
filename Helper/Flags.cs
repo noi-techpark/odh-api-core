@@ -250,8 +250,6 @@ namespace Helper
         BikehotelsEBike = 1 << 16, //65536,
         [Description("Bikehotels Freeride")]
         BikehotelsFreeride = 1 << 17, //131072,
-        //[Description("-")]
-        //Gibsnicht19 = 1 << 18, //262144,
         [Description("Bikehotels Mountainbike")]
         BikehotelsMountainbike = 1 << 18, //524288,
         [Description("Bikehotels Radwandern")]
@@ -262,8 +260,6 @@ namespace Helper
         Familienhotels = 1 << 21, //4194304,
         [Description("Familienhotels: Naturdetektiv")]
         FamilienhotelsNaturdetektiv = 1 << 22, //8388608,
-        //[Description("-")]
-        //Gibsnicht25 = 1 << 24, //16777216,
         [Description("Familienhotel")]
         Familienhotel = 1 << 23, //33554432,
         [Description("Naturdetektiv Sommer")]
