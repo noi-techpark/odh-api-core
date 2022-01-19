@@ -297,9 +297,9 @@ namespace Helper
         [Description("Allergikerküche")]
         Allergikerküche = 1 << 8,
         [Description("Kleine Haustiere")]
-        KleineHaustiere = 1 << 9
-        //[Description("Gruppenfreundlich")]
-        //Gruppenfreundlich = 1 << 10
+        KleineHaustiere = 1 << 9,
+        [Description("Guestcard")]
+        Guestcard = 1 << 10        
     }
 
     #endregion
