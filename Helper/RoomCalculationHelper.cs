@@ -22,9 +22,19 @@ namespace Helper
                     cheapestroomcombinationresult.Service = service;
 
                     return cheapestroomcombinationresult;
-                }
+                }                
                 else
                     return CalculateCheapestRoomCombinations(cheapestofferlist, rooms, service);
+                //else
+                //{
+                //    //count if all romseqs are in the cheapestofferlist
+                //    var romseqspresent = cheapestofferlist.Select(x => x.RoomSeq).Distinct().Count();
+
+                //    if (romseqspresent == rooms)
+                //        return CalculateCheapestRoomCombinationsTemp(cheapestofferlist, rooms, service);
+                //    else
+                //        return new CheapestRoomCombination() { Service = service, CheapestRoomCombinationDetail = new List<CheapestOffer>() };
+                //}
             }
             else
             {
@@ -83,6 +93,25 @@ namespace Helper
             var cheapestcombination = mycombinationresult.OrderBy(x => x.Price).Take(1).FirstOrDefault();
 
             return cheapestcombination;
+        }
+
+        //Hack because of CPU always over 90%
+        private static CheapestRoomCombination CalculateCheapestRoomCombinationsTemp(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        {
+            CheapestRoomCombination cheapestroomcombinationresult = new CheapestRoomCombination();
+            cheapestroomcombinationresult.Service = service;
+            cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { };
+
+            //Get always the cheapest
+            for (int i = 1; i <= rooms; i++)
+            {
+                var cheapestorffersingle = cheapestofferlist.Where(x => x.RoomSeq == i).OrderBy(x => x.Price).Take(1).FirstOrDefault();
+
+                if (cheapestorffersingle != null)
+                    cheapestroomcombinationresult.CheapestRoomCombinationDetail.Add(cheapestorffersingle);
+            }
+
+            return cheapestroomcombinationresult;
         }
     }
 }
