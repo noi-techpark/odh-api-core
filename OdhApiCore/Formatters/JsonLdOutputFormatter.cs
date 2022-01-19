@@ -21,12 +21,6 @@ namespace OdhApiCore.Formatters
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
-        private static Task BadRequest(OutputFormatterWriteContext context)
-        {
-            context.HttpContext.Response.StatusCode = 401;
-            return context.HttpContext.Response.WriteAsync("Bad Request");
-        }
-
         private object? Transform(PathString path, JsonRaw jsonRaw)
         {
             //TODO extract language
@@ -111,13 +105,12 @@ namespace OdhApiCore.Formatters
                 }
                 else
                 {
-                    await context.HttpContext.Response.WriteAsync("Not implemented");
-                    await BadRequest(context); 
+                    await OutputFormatterHelper.NotImplemented(context);
                 }
             }
             else
             {
-                await BadRequest(context);
+                await OutputFormatterHelper.BadRequest(context);
             }
         }
     }

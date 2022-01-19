@@ -87,14 +87,12 @@ namespace OdhApiCore.Formatters
                 }
                 else
                 {
-                    context.HttpContext.Response.StatusCode = 501;
-                    await context.HttpContext.Response.WriteAsync("Bad Request");
+                    await OutputFormatterHelper.NotImplemented(context);
                 }
             }
             else
             {
-                context.HttpContext.Response.StatusCode = 501;
-                await context.HttpContext.Response.WriteAsync("Bad Request");
+                await OutputFormatterHelper.BadRequest(context);
             }
         }
 
