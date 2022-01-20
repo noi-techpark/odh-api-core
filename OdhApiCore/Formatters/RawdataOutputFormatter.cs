@@ -54,10 +54,18 @@ namespace OdhApiCore.Formatters
                     var rawid = QueryFactory.Query()
                            .Select("rawdataid")
                            .From(table)
-                           .Where("id", id)                           
-                           .Get<string>();
+                           .Where("id", id)
+                           .Get<string>()
+                           .FirstOrDefault();
 
-                    return "<xmltest>test</xmltest>";
+                    var rawdata = QueryFactory.Query()
+                        .Select("raw")
+                        .From("rawdata")
+                        .Where("id", rawid)
+                        .Get<string>()
+                        .FirstOrDefault();
+
+                    return rawdata;
                 }
                 else
                     return null;
