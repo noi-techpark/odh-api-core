@@ -39,16 +39,34 @@ namespace OdhApiCore.Formatters
 
         private string ConvertToRawdataObject(JsonRaw jsonRaw, QueryFactory QueryFactory)
         {
-            //Get Id of jsonRaw
-            //Load rawid
+            try
+            {
+                if (jsonRaw != null)
+                {
+                    //Get Id of jsonRaw
+                    dynamic jsonvalue = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonRaw.Value);
+                    string id = Convert.ToString(jsonvalue.Id);
+                    string odhtype = Convert.ToString(jsonvalue._Meta.Type);
 
-            var rawid = QueryFactory.Query()
-                        .Select("rawdataid")
-                        .From("accommodations")
-                        .Where("id", "5CEA544EE34639034F07B79D4AEEB603")
-                        .Get<string>();
+                    string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
-            return "<xmltest>test</xmltest>";
+                    //Load rawid
+                    var rawid = QueryFactory.Query()
+                           .Select("rawdataid")
+                           .From(table)
+                           .Where("id", id)                           
+                           .Get<string>();
+
+                    return "<xmltest>test</xmltest>";
+                }
+                else
+                    return null;
+                
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }                       
         }
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
