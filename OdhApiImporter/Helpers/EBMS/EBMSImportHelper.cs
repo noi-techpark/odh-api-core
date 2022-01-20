@@ -127,7 +127,7 @@ namespace OdhApiImporter.Helpers
                             type = "event_euracnoi"
                         }, cancellationToken);
 
-                    var queryresult = await QueryFactory.UpsertData<EventShort>(eventshort, "eventeuracnoi", rawid);
+                    var queryresult = await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawid);
 
                     newcounter = newcounter + queryresult.created.Value;
                     updatecounter = updatecounter + queryresult.updated.Value;               
@@ -166,7 +166,7 @@ namespace OdhApiImporter.Helpers
                     automatictechnologyfields.Add(toassign);
         }
 
-        private async Task<int> DeleteDeletedEvents(List<EventShort> eventshortfromnow, List<EventShort> eventshortinDB)
+        private async Task<int> DeleteDeletedEvents(List<EventShortLinked> eventshortfromnow, List<EventShortLinked> eventshortinDB)
         {
             //TODO CHECK if Event is in list, if not, DELETE!
             //TODO CHECK IF THIS IS WORKING CORRECTLY
@@ -199,7 +199,7 @@ namespace OdhApiImporter.Helpers
             return deletecounter;
         }
 
-        private async Task<IEnumerable<EventShort>> GetAllEventsShort(DateTime now)
+        private async Task<IEnumerable<EventShortLinked>> GetAllEventsShort(DateTime now)
         {
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
 
@@ -208,7 +208,7 @@ namespace OdhApiImporter.Helpers
                              .Select("data")
                              .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = ?)", "EBMS");
 
-            return await query.GetAllAsObject<EventShort>();
+            return await query.GetAllAsObject<EventShortLinked>();
         }
 
         #endregion

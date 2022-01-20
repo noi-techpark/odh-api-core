@@ -38,11 +38,11 @@ namespace EBMS
             }
         }
 
-        public static List<Tuple<EventShort, EBMSEventREST>> GetEbmsEvents(string user, string pass)
+        public static List<Tuple<EventShortLinked, EBMSEventREST>> GetEbmsEvents(string user, string pass)
         {
             try
             {
-                List<Tuple<EventShort, EBMSEventREST>> myeventshortlist = new List<Tuple<EventShort, EBMSEventREST>>();
+                List<Tuple<EventShortLinked, EBMSEventREST>> myeventshortlist = new List<Tuple<EventShortLinked, EBMSEventREST>>();
 
                 System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
@@ -52,7 +52,7 @@ namespace EBMS
 
                 foreach (var myevent in eventarray)
                 {
-                    var eventtosave = new EventShort();
+                    var eventtosave = new EventShortLinked();
 
                     //CUSTOM Props
 
