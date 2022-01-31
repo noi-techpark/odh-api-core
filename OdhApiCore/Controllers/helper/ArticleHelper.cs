@@ -39,7 +39,7 @@ namespace OdhApiCore.Controllers.api
                 if (int.TryParse(typefilter, out typeinteger))
                 {
                     //Sonderfall wenn alles abgefragt wird um keine unnötige Where zu erzeugen
-                    if (typeinteger != 255)
+                    if (typeinteger != 1023)
                         typelist = Helper.ArticleListCreator.CreateArticleTypefromFlag(typefilter);
                 }
                 else

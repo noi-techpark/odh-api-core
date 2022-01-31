@@ -1288,7 +1288,11 @@ namespace Helper
         [Description("b2bartikel")]
         b2bartikel = 1 << 7,
         [Description("idmartikel")]
-        idmartikel = 1 << 8
+        idmartikel = 1 << 8,
+        [Description("specialannouncement")]
+        specialannouncement = 1 << 9,
+        [Description("newsfeednoi")]
+        newsfeednoi = 1 << 10
     }
 
     [Flags]
