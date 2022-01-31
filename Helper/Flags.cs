@@ -1272,27 +1272,27 @@ namespace Helper
     public enum ArticleTypeFlag
     {
         [Description("basisartikel")]
-        basisartikel = 1,
+        basisartikel = 1,  //1
         [Description("buchtippartikel")]
-        buchtippartikel = 1 << 1,
+        buchtippartikel = 1 << 1, //2
         [Description("contentartikel")]
-        contentartikel = 1 << 2,
+        contentartikel = 1 << 2, //4
         [Description("veranstaltungsartikel")]
-        veranstaltungsartikel = 1 << 3,
+        veranstaltungsartikel = 1 << 3, //8
         [Description("presseartikel")]
-        presseartikel = 1 << 4,
+        presseartikel = 1 << 4,  //16
         [Description("rezeptartikel")]
-        rezeptartikel = 1 << 5,
+        rezeptartikel = 1 << 5,  //32
         [Description("reiseveranstalter")]
-        reiseveranstalter = 1 << 6,
+        reiseveranstalter = 1 << 6,  //64
         [Description("b2bartikel")]
-        b2bartikel = 1 << 7,
+        b2bartikel = 1 << 7,  //128
         [Description("idmartikel")]
-        idmartikel = 1 << 8,
+        idmartikel = 1 << 8,  //256
         [Description("specialannouncement")]
-        specialannouncement = 1 << 9,
+        specialannouncement = 1 << 9,  //512
         [Description("newsfeednoi")]
-        newsfeednoi = 1 << 10
+        newsfeednoi = 1 << 10 //1024
     }
 
     [Flags]
