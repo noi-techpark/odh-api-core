@@ -661,7 +661,7 @@ namespace OdhApiCore.Controllers.api
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPost, Route("EventShort")]
         //[InvalidateCacheOutput("GetReducedAsync")]
-        public async Task<IActionResult> Post([FromBody] EventShort eventshort)
+        public async Task<IActionResult> Post([FromBody] EventShortLinked eventshort)
         {
             try
             {
@@ -682,6 +682,8 @@ namespace OdhApiCore.Controllers.api
                         throw new Exception("Start + End Time not set correctly");
 
                     eventshort.ChangedOn = DateTime.Now;
+                    eventshort.LastChange = eventshort.ChangedOn;
+
                     eventshort.AnchorVenueShort = eventshort.AnchorVenue;
 
                     //Save DAtetime without Offset??
@@ -759,6 +761,8 @@ namespace OdhApiCore.Controllers.api
 
                     //LicenseInfo
                     eventshort.LicenseInfo = new LicenseInfo() { Author = author, ClosedData = false, LicenseHolder = "https://noi.bz.it/", License = "CC0" };
+                    eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
+                    eventshort._Meta.LastUpdate = eventshort.LastChange;
 
                     //PostgresSQLHelper.InsertDataIntoTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
@@ -786,7 +790,7 @@ namespace OdhApiCore.Controllers.api
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPut, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
-        public async Task<IActionResult> Put(string id, [FromBody] EventShort eventshort)
+        public async Task<IActionResult> Put(string id, [FromBody] EventShortLinked eventshort)
         {
             try
             {
@@ -804,6 +808,7 @@ namespace OdhApiCore.Controllers.api
                         eventshort.Source = User.Identity != null ? User.Identity.Name : "";
 
                     eventshort.ChangedOn = DateTime.Now;
+                    eventshort.LastChange = eventshort.ChangedOn;
 
                     eventshort.AnchorVenueShort = eventshort.AnchorVenue;
 
