@@ -34,6 +34,9 @@ namespace OdhApiImporter.Helpers
 
             foreach (var eventshort in data)
             {
+                if (eventshort.LastChange == null)
+                    eventshort.LastChange = eventshort.ChangedOn;
+
                 //Setting MetaInfo
                 eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
                 eventshort._Meta.LastUpdate = eventshort.LastChange;

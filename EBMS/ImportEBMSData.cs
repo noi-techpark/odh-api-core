@@ -91,8 +91,6 @@ namespace EBMS
                     //UTC
                     //Int32 unixTimestampEStart = (Int32)(DateTime.UtcNow.Subtract(eventtosave.StartDate)).TotalSeconds;
                     //Int32 unixTimestampEEnd = (Int32)(DateTime.UtcNow.Subtract()).TotalSeconds;
-
-
                     eventtosave.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventtosave.EndDate);
                     eventtosave.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventtosave.StartDate);
 
@@ -104,8 +102,6 @@ namespace EBMS
 
                     //FÜR NOI ANZEIGE AKTIV (Oklären ob des no der Foll isch)
                     eventtosave.Display1 = myevent.Display1;
-
-
                     //Intranet Eurac (Y / N)
                     eventtosave.Display2 = myevent.Display2;
                     //Webseite Eurac ( Y /N)
