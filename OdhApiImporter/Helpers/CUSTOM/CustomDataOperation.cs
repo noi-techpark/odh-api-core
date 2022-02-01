@@ -22,28 +22,32 @@ namespace OdhApiImporter.Helpers
             this.settings = settings;
         }
 
-        //public async Task<int> UpdateAllEventShortstonewDataModel()
-        //{
-        //    //Load all data from PG and resave
-        //    var query = QueryFactory.Query()
-        //           .SelectRaw("data")
-        //           .From("eventeuracnoi");
+        public async Task<int> UpdateAllEventShortstonewDataModel()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
 
-        //    var data = await query.GetObjectListAsync<EventShort>();
-        //    int i = 0;
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
 
-        //    foreach (var eventshort in data)
-        //    {
-        //        //Save tp DB
-        //        //TODO CHECK IF THIS WORKS     
-        //        var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-        //            //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-        //            .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+            foreach (var eventshort in data)
+            {
+                //Setting MetaInfo
+                eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
+                eventshort._Meta.LastUpdate = eventshort.LastChange;
 
-        //        i++;
-        //    }
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
 
-        //    return i;
-        //}
+                i++;
+            }
+
+            return i;
+        }
     }
 }

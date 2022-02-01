@@ -556,7 +556,6 @@ namespace OdhApiCore.Controllers.api
 
         }
 
-
         private IEnumerable<JsonRaw>? OptimizeRoomForAppList(IEnumerable<JsonRaw>? data)
         {
             List<JsonRaw> datanew = new List<JsonRaw>();

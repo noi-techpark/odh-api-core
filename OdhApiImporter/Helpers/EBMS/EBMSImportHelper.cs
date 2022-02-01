@@ -112,9 +112,14 @@ namespace OdhApiImporter.Helpers
 
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
-                 
+
                     //Setting LicenseInfo
                     eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
+
+                    //Setting MetaInfo
+                    eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
+                    eventshort._Meta.LastUpdate = eventshort.LastChange;
+
 
                     var rawid = await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore() {
