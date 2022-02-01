@@ -119,7 +119,24 @@ namespace Helper
 
         public static Metadata GetMetadataforEventShort(EventShort data)
         {
-            return GetMetadata(data, "eurac");
+            string sourcestr = "";
+
+            string sourcemeta = data.Source != null ? data.Source.ToLower() : "ebms";
+
+            switch (sourcemeta)
+            {
+                case "content":
+                    sourcestr = "noi";
+                    break;
+                case "ebms":
+                    sourcestr = "eurac";
+                    break;
+                default:
+                    sourcestr = sourcemeta;
+                    break;                
+            }                
+
+            return GetMetadata(data, sourcestr, data.LastChange);
         }
 
         public static Metadata GetMetadataforExperienceArea(ExperienceArea data)

@@ -230,6 +230,7 @@ namespace Helper
             var isopendata = true;
             var licensetype = "CC0";
             var licenseholder = @"http://www.eurac.edu";
+            var author = "";
 
             if (data.Source == "Content")
             {
@@ -237,8 +238,15 @@ namespace Helper
                 isopendata = true;
                 licensetype = "CC0";
             }
+            else if (data.Source != "Content" && data.Source != "EBMS")
+            {
+                licenseholder = @"https://noi.bz.it";
+                isopendata = true;
+                licensetype = "CC0";
+                author = data.Source;
+            }
 
-            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+            return GetLicenseInfoobject(licensetype, author, licenseholder, !isopendata);
         }
 
         public static LicenseInfo GetLicenseforBaseInfo(BaseInfos data)
