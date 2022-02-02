@@ -113,13 +113,8 @@ namespace OdhApiImporter.Helpers
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 
-                    //Setting LicenseInfo
-                    eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
-
-                    //Setting MetaInfo
-                    eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
-                    eventshort._Meta.LastUpdate = eventshort.LastChange;
-
+                 
+                   
 
                     var rawid = await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore() {
@@ -144,6 +139,43 @@ namespace OdhApiImporter.Helpers
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
         }
+
+        private async Task<PGCRUDResult> InsertDataToDB(EventShortLinked eventshort, string idtocheck, KeyValuePair<string, EBMSEventREST> ebmsevent)
+        {
+            try
+            {                
+                //Setting LicenseInfo
+                eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
+
+                //Setting MetaInfo
+                eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
+                eventshort._Meta.LastUpdate = eventshort.LastChange;
+
+                var rawdataid = await InsertInRawDataDB(ebmsevent);
+
+                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, EBMSEventREST> eventebms)
+        {
+            return await QueryFactory.InsertInRawtableAndGetIdAsync(
+                        new RawDataStore()
+                        {
+                            datasource = "eurac",
+                            importdate = DateTime.Now,
+                            raw = JsonConvert.SerializeObject(eventebms.Value),
+                            sourceinterface = "ebms",
+                            sourceid = eventebms.Key,
+                            sourceurl = "https://emea-interface.ungerboeck.com",
+                            type = "event_euracnoi"
+                        });
+        }
+
 
         private static List<string>? AssignTechnologyfieldsautomatically(string companyname, List<string>? technologyfields)
         {

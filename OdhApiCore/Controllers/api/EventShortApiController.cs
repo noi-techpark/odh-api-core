@@ -669,7 +669,7 @@ namespace OdhApiCore.Controllers.api
                 {
                     if (eventshort.EventLocation == null)
                         throw new Exception("Eventlocation needed");
-
+                    
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
                     if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }) && eventshort.EventLocation != "VV")
