@@ -192,7 +192,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                ArticleHelper myrticlehelper = ArticleHelper.Create(
+                ArticleHelper myarticlehelper = ArticleHelper.Create(
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
                     active, smgactive, smgtags, articledate, articledateto, lastchange);
 
@@ -203,11 +203,11 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw("data")
                         .From("articles")
                         .ArticleWhereExpression(
-                            idlist: myrticlehelper.idlist, typelist: myrticlehelper.typelist,
-                            subtypelist: myrticlehelper.subtypelist, smgtaglist: myrticlehelper.smgtaglist, languagelist: myrticlehelper.languagelist,
-                            highlight: myrticlehelper.highlight,
-                            activefilter: myrticlehelper.active, smgactivefilter: myrticlehelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myrticlehelper.lastchange,
+                            idlist: myarticlehelper.idlist, typelist: myarticlehelper.typelist,
+                            subtypelist: myarticlehelper.subtypelist, smgtaglist: myarticlehelper.smgtaglist, languagelist: myarticlehelper.languagelist,
+                            highlight: myarticlehelper.highlight, activefilter: myarticlehelper.active, smgactivefilter: myarticlehelper.smgactive,
+                            articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto,
+                            searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);

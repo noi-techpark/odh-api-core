@@ -811,7 +811,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 ArticleHelper helper = ArticleHelper.Create(
-                    articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null);
+                    articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null, null, null);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
@@ -827,7 +827,8 @@ namespace OdhApiCore.Controllers.api
                         .ArticleWhereExpression(
                             idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, languagelist: helper.languagelist,
                             smgtaglist: helper.smgtaglist, highlight: helper.highlight, activefilter: helper.active,
-                            smgactivefilter: helper.smgactive, searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
+                            smgactivefilter: helper.smgactive, articledate: helper.articledate, articledateto: helper.articledateto,
+                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort);
