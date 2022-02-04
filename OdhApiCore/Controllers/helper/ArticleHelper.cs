@@ -18,8 +18,8 @@ namespace OdhApiCore.Controllers.api
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
-        public string? articledate;
-        public string? articledateto;
+        public DateTime? articledate;
+        public DateTime? articledateto;
 
         public static ArticleHelper Create(
             string? typefilter, string? subtypefilter, string? idfilter,
@@ -86,8 +86,17 @@ namespace OdhApiCore.Controllers.api
             smgactive = smgactivefilter;
 
             this.lastchange = lastchange;
-            this.lastchange = articledate;
-            this.lastchange = articledateto;
+
+            this.articledate = DateTime.MinValue;
+            this.articledateto = DateTime.MaxValue;
+
+            if (!String.IsNullOrEmpty(articledate))
+                if (articledate != "null")
+                    this.articledate = Convert.ToDateTime(articledate);
+
+            if (!String.IsNullOrEmpty(articledateto))
+                if (articledateto != "null")
+                    this.articledateto = Convert.ToDateTime(articledateto);
         }
     }
 }
