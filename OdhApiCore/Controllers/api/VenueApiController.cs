@@ -84,6 +84,7 @@ namespace OdhApiCore.Controllers
             string? source = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? publishedon = null,
             string? updatefrom = null,
             string? langfilter = null,
             string? seed = null,
@@ -106,6 +107,7 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, roomcountfilter: roomcountfilter,
                     featurefilter: featurefilter, setuptypefilter: setuptypefilter, sourcefilter: source,
                     active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
+                    publishedon: publishedon,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
@@ -204,7 +206,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(
           string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
-          string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter,
+          string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? publishedon,
           PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues,
           CancellationToken cancellationToken)
         {
@@ -212,7 +214,7 @@ namespace OdhApiCore.Controllers
             {
                 VenueHelper myvenuehelper = await VenueHelper.CreateAsync(
                     QueryFactory, idfilter, categoryfilter, featurefilter, setuptypefilter, locfilter, capacityfilter, roomcountfilter,
-                    langfilter, sourcefilter, active, smgactive, smgtags, lastchange,
+                    langfilter, sourcefilter, active, smgactive, smgtags, lastchange, publishedon,
                     cancellationToken);
 
                 var query =
@@ -227,7 +229,7 @@ namespace OdhApiCore.Controllers
                             regionlist: myvenuehelper.regionlist, sourcelist: myvenuehelper.sourcelist,
                             capacity: myvenuehelper.capacity, capacitymin: myvenuehelper.capacitymin, capacitymax: myvenuehelper.capacitymax,
                             roomcount: myvenuehelper.roomcount, roomcountmin: myvenuehelper.roomcountmin, roomcountmax: myvenuehelper.roomcountmax,
-                            activefilter: myvenuehelper.active, smgactivefilter: myvenuehelper.smgactive,
+                            activefilter: myvenuehelper.active, smgactivefilter: myvenuehelper.smgactive, publishedonlist: myvenuehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myvenuehelper.lastchange,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)

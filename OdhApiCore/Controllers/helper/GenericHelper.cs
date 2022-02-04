@@ -28,8 +28,6 @@ namespace OdhApiCore.Controllers
             }
         }
 
-
-
         public static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(
             QueryFactory queryFactory, IReadOnlyCollection<string> metaregionlist, CancellationToken cancellationToken)
         {

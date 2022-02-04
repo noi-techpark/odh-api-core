@@ -89,6 +89,7 @@ namespace OdhApiCore.Controllers
             string? sort = null,
             string? updatefrom = null,
             string? seed = null,
+            string? publishedon = null,
             string? langfilter = null,
             string? source = null,
             string? latitude = null,
@@ -110,7 +111,7 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, topicfilter: topicfilter, orgfilter: orgfilter,
                     begindate: begindate, enddate: enddate, sort: sort, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
-                    langfilter: langfilter, source: source,
+                    langfilter: langfilter, source: source, publishedon: publishedon,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
@@ -206,14 +207,14 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(
         string[] fields, string? language, uint pagenumber, int? pagesize, string? typefilter, string? idfilter,
         string? rancfilter, string? searchfilter, string? locfilter, string? orgfilter, string? topicfilter, string? begindate, string? enddate,
-        string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? source, 
+        string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? source, string? publishedon,
         PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 EventHelper myeventhelper = await EventHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate, enddate,
-                    active, smgactive, smgtags, lastchange, langfilter, source,
+                    active, smgactive, smgtags, lastchange, langfilter, source, publishedon,
                     cancellationToken);
 
                 string? sortifseednull = null;
@@ -243,8 +244,8 @@ namespace OdhApiCore.Controllers
                             municipalitylist: myeventhelper.municipalitylist, tourismvereinlist: myeventhelper.tourismvereinlist,
                             regionlist: myeventhelper.regionlist, topiclist: myeventhelper.topicrids, sourcelist: myeventhelper.sourcelist,
                             languagelist: myeventhelper.languagelist, begindate: myeventhelper.begin, enddate: myeventhelper.end,
-                            activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
+                            activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive, publishedonlist: myeventhelper.publishedonlist,
+                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange, 
                             filterClosedData: FilterClosedData)
                          .ApplyRawFilter(rawfilter)
                          .OrderByRawIfNotNull(sortifseednull)

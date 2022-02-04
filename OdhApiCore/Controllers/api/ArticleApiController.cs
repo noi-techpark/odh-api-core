@@ -79,6 +79,7 @@ namespace OdhApiCore.Controllers.api
             string? articledate = null,
             string? articledateto = null,
             string? seed = null,
+            string? publishedon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -92,7 +93,7 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: articletype, subtypefilter: articlesubtype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter, highlightfilter: null,
                 active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed,  
-                articledate: articledate, articledateto: articledateto, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value,
+                articledate: articledate, articledateto: articledateto, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value, publishedon: publishedon,
                 rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -187,14 +188,14 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize,
             string? type, string? subtypefilter, string? searchfilter, string? idfilter, string? languagefilter, bool? highlightfilter,
             bool? active, bool? smgactive, string? smgtags, string? seed, string? articledate, string? articledateto, string? lastchange, 
-            bool? sortbyarticledate, string? rawfilter, string? rawsort, bool removenullvalues,
+            bool? sortbyarticledate, string? publishedon, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 ArticleHelper myarticlehelper = ArticleHelper.Create(
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
-                    active, smgactive, smgtags, articledate, articledateto, lastchange);
+                    active, smgactive, smgtags, articledate, articledateto, lastchange, publishedon);
 
                 //TODO orderby = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') DESC";
 
@@ -206,8 +207,8 @@ namespace OdhApiCore.Controllers.api
                             idlist: myarticlehelper.idlist, typelist: myarticlehelper.typelist,
                             subtypelist: myarticlehelper.subtypelist, smgtaglist: myarticlehelper.smgtaglist, languagelist: myarticlehelper.languagelist,
                             highlight: myarticlehelper.highlight, activefilter: myarticlehelper.active, smgactivefilter: myarticlehelper.smgactive,
-                            articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto,
-                            searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange,
+                            articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, publishedonlist: myarticlehelper.publishedonlist,
+                            searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange, 
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);

@@ -20,19 +20,22 @@ namespace OdhApiCore.Controllers.api
         public string? lastchange;
         public DateTime? articledate;
         public DateTime? articledateto;
+        //New Publishedonlist
+        public List<string> publishedonlist;
 
         public static ArticleHelper Create(
             string? typefilter, string? subtypefilter, string? idfilter,
             string? languagefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? articledate, string? articledateto, string? lastchange)
+            string? smgtags, string? articledate, string? articledateto, string? lastchange, string? publishedonfilter)
         {
-            return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, smgtags, articledate, articledateto, lastchange);
+            return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, 
+                smgtags, articledate, articledateto, lastchange, publishedonfilter);
         }
 
         private ArticleHelper(
             string? typefilter, string? subtypefilter, string? idfilter, string? languagefilter,
             bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags,
-            string? articledate, string? articledateto, string? lastchange)
+            string? articledate, string? articledateto, string? lastchange, string? publishedonfilter)
         {
             typelist = new List<string>();
             int typeinteger = 0;
@@ -97,6 +100,8 @@ namespace OdhApiCore.Controllers.api
             if (!String.IsNullOrEmpty(articledateto))
                 if (articledateto != "null")
                     this.articledateto = Convert.ToDateTime(articledateto);
+
+            publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
     }
 }

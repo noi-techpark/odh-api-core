@@ -53,7 +53,7 @@ namespace OdhApiCore.GenericHelpers
                 string select = $"data->>'Id' as \"Id\", data->'AccoDetail'->'{language}'->>'Name' AS \"AccoDetail.{language}.Name\", data->'AccoDetail'->'{language}'->>'City' AS \"AccoDetail.{language}.City\"";
                 string orderby = "data ->>'Shortname' ASC";
                 //List<string> fieldselectorlist = new List<string>() { "Id", "AccoDetail." + language + ".Name", "AccoDetail." + language + ".City" };
-         
+
                 var query =
                     queryFactory.Query()
                       .SelectRaw(select)
@@ -67,7 +67,7 @@ namespace OdhApiCore.GenericHelpers
                             tourismvereinlist: new List<string>(), regionlist: new List<string>(),
                             apartmentfilter: null, bookable: null, altitude: false,
                             altitudemin: 0, altitudemax: 0,
-                            activefilter: true, smgactivefilter: null,
+                            activefilter: true, smgactivefilter: null, publishedonlist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>() { language },
                             filterClosedData: true)
                       .OrderByRaw(orderby);

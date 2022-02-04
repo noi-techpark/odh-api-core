@@ -20,9 +20,12 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
+        //New Publishedonlist
+        public List<string> publishedonlist;
 
         public static async Task<MeasuringPointsHelper> Create(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, string? areafilter, string? skiareafilter, bool? activefilter, bool? smgactivefilter, string? lastchange,
+            QueryFactory queryFactory, string? idfilter, string? locfilter, string? areafilter, string? skiareafilter, 
+            bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter,
             CancellationToken cancellationToken)
         {
             //TODO SKIAREAFILTER AND AREAFILTER not like on Activity Endpoint!
@@ -40,11 +43,13 @@ namespace OdhApiCore.Controllers
             return new MeasuringPointsHelper(
                 idfilter: idfilter, locfilter: locfilter, areafilterlist: arealistfromarea, skiareafilterlist: arealistfromskiarea,
                 activefilter: activefilter, smgactivefilter: smgactivefilter,
-                lastchange: lastchange, tourismusvereinids: tourismusvereinids);
+                lastchange: lastchange, publishedonfilter: publishedonfilter, 
+                tourismusvereinids: tourismusvereinids);
         }
 
         private MeasuringPointsHelper(
-            string? idfilter, string? locfilter, IEnumerable<string> areafilterlist, IEnumerable<string> skiareafilterlist, bool? activefilter, bool? smgactivefilter, string? lastchange, IEnumerable<string>? tourismusvereinids)
+            string? idfilter, string? locfilter, IEnumerable<string> areafilterlist, IEnumerable<string> skiareafilterlist, 
+            bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter, IEnumerable<string>? tourismusvereinids)
         {
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
 
@@ -79,6 +84,7 @@ namespace OdhApiCore.Controllers
             smgactive = smgactivefilter;
 
             this.lastchange = lastchange;
+            publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
 
 

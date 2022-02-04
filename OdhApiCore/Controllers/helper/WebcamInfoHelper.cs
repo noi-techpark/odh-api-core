@@ -15,19 +15,21 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
+        //New Publishedonlist
+        public List<string> publishedonlist;
 
         public static WebcamInfoHelper Create(
             string? sourcefilter,
-            string? idfilter, bool? activefilter, bool? smgactivefilter, string? lastchange)
+            string? idfilter, bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter)
         {
             return new WebcamInfoHelper(
                 idfilter: idfilter, sourcefilter: sourcefilter,
                 activefilter: activefilter, smgactivefilter: smgactivefilter,
-                lastchange: lastchange);
+                lastchange: lastchange, publishedonfilter: publishedonfilter);
         }
 
         private WebcamInfoHelper(
-            string? sourcefilter, string? idfilter, bool? activefilter, bool? smgactivefilter, string? lastchange)
+            string? sourcefilter, string? idfilter, bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter)
         {
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             sourcelist = Helper.CommonListCreator.CreateIdList(sourcefilter?.ToLower());
@@ -39,6 +41,8 @@ namespace OdhApiCore.Controllers
             smgactive = smgactivefilter;
 
             this.lastchange = lastchange;
+
+            publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
 
 

@@ -72,6 +72,7 @@ namespace OdhApiCore.Controllers
             string? longitude = null,
             string? radius = null,
             string? updatefrom = null,
+            string? publishedon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -84,7 +85,7 @@ namespace OdhApiCore.Controllers
 
             return await GetFilteredAsync(
                 fields: fields ?? Array.Empty<string>(), language, pagenumber, pagesize,
-                source, idlist, searchfilter, active?.Value, odhactive?.Value, 
+                source, idlist, searchfilter, active?.Value, odhactive?.Value, publishedon,
                 seed, updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                 removenullvalues: removenullvalues, cancellationToken);
         }
@@ -118,14 +119,14 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> GetFilteredAsync(
             string[] fields, string? language, uint pagenumber, int? pagesize, string? source,
-            string? idfilter, string? searchfilter, bool? active, bool? smgactive,
+            string? idfilter, string? searchfilter, bool? active, bool? smgactive, string? publishedon,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 WebcamInfoHelper mywebcaminfohelper = WebcamInfoHelper.Create(
-                    source, idfilter, active, smgactive, lastchange);
+                    source, idfilter, active, smgactive, lastchange, publishedon);
 
                 var query =
                     QueryFactory.Query()
@@ -133,12 +134,11 @@ namespace OdhApiCore.Controllers
                         .From("webcams")
                         .WebCamInfoWhereExpression(
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
-                            activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
+                            activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
                             languagelist: new List<string>(), filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
-
 
                 // Get paginated data
                 var data =

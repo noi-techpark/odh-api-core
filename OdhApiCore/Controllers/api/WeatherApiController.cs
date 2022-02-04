@@ -193,6 +193,7 @@ namespace OdhApiCore.Controllers
             string? language = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? publishedon = null,
             string? updatefrom = null,
             string? latitude = null,
             string? longitude = null,
@@ -211,7 +212,7 @@ namespace OdhApiCore.Controllers
             return await GetMeasuringPointList(
                 fields: fields ?? Array.Empty<string>(), language: language, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
-                    skiareafilter: skiareafilter, active: active,
+                    skiareafilter: skiareafilter, active: active, publishedon: publishedon,
                     smgactive: odhactive, seed: seed, lastchange: updatefrom,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                     removenullvalues: removenullvalues, cancellationToken: cancellationToken);
@@ -478,6 +479,7 @@ namespace OdhApiCore.Controllers
             bool? active,
             bool? smgactive,
             string? lastchange,
+            string? publishedon,
             string? searchfilter,
             string? seed,
             string[] fields,
@@ -494,7 +496,7 @@ namespace OdhApiCore.Controllers
                 string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
 
                 MeasuringPointsHelper mymeasuringpointshelper = await MeasuringPointsHelper.Create(QueryFactory, idfilter, locfilter,
-                    arefilterwithprefix, skiarefilterwithprefix, active, smgactive, lastchange, cancellationToken);
+                    arefilterwithprefix, skiarefilterwithprefix, active, smgactive, lastchange, publishedon, cancellationToken);
 
                 var query =
                     QueryFactory.Query()
@@ -503,7 +505,7 @@ namespace OdhApiCore.Controllers
                         .MeasuringpointWhereExpression(
                             idlist: mymeasuringpointshelper.idlist, districtlist: mymeasuringpointshelper.districtlist, municipalitylist: mymeasuringpointshelper.municipalitylist,
                             tourismvereinlist: mymeasuringpointshelper.tourismvereinlist, regionlist: mymeasuringpointshelper.regionlist, arealist: mymeasuringpointshelper.arealist,
-                            activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive,
+                            activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper. publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)

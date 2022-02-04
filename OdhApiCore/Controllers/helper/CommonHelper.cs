@@ -18,19 +18,23 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
         public bool? active;
         public bool? smgactive;
+        //New Publishedonlist
+        public List<string> publishedonlist;
 
         public static Task<CommonHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? languagefilter, bool? visibleinsearch, 
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
+            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? publishedonfilter,
             CancellationToken cancellationToken)
         {           
             return Task.FromResult(new CommonHelper(
                idfilter: idfilter, languagefilter: languagefilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, smgtags: smgtags, lastchange: lastchange));
+                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, 
+                smgtags: smgtags, lastchange: lastchange, publishedonfilter: publishedonfilter));
         }
 
         private CommonHelper(
-            string? idfilter, string? languagefilter, bool? activefilter, bool? smgactivefilter, bool? visibleinsearch, string? smgtags, string? lastchange)
+            string? idfilter, string? languagefilter, bool? activefilter, bool? smgactivefilter, bool? visibleinsearch, 
+            string? smgtags, string? lastchange, string? publishedonfilter)
         {           
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
 
@@ -48,6 +52,8 @@ namespace OdhApiCore.Controllers
             this.visibleinsearch = visibleinsearch;
 
             this.lastchange = lastchange;
+
+            publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
 
 
