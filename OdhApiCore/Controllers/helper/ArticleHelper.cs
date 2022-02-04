@@ -18,18 +18,21 @@ namespace OdhApiCore.Controllers.api
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
+        public string? articledate;
+        public string? articledateto;
 
         public static ArticleHelper Create(
             string? typefilter, string? subtypefilter, string? idfilter,
             string? languagefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange)
+            string? smgtags, string? articledate, string? articledateto, string? lastchange)
         {
-            return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange);
+            return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, smgtags, articledate, articledateto, lastchange);
         }
 
         private ArticleHelper(
             string? typefilter, string? subtypefilter, string? idfilter, string? languagefilter,
-            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange)
+            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags,
+            string? articledate, string? articledateto, string? lastchange)
         {
             typelist = new List<string>();
             int typeinteger = 0;
@@ -83,6 +86,8 @@ namespace OdhApiCore.Controllers.api
             smgactive = smgactivefilter;
 
             this.lastchange = lastchange;
+            this.lastchange = articledate;
+            this.lastchange = articledateto;
         }
     }
 }

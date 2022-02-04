@@ -76,6 +76,8 @@ namespace OdhApiCore.Controllers.api
             LegacyBool odhactive = null!,
             LegacyBool active = null!,
             string? updatefrom = null,
+            string? articledate = null,
+            string? articledateto = null,
             string? seed = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -89,7 +91,8 @@ namespace OdhApiCore.Controllers.api
             return await GetFiltered(
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: articletype, subtypefilter: articlesubtype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter, highlightfilter: null,
-                active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value,
+                active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed,  
+                articledate: articledate, articledateto: articledateto, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value,
                 rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -183,14 +186,15 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize,
             string? type, string? subtypefilter, string? searchfilter, string? idfilter, string? languagefilter, bool? highlightfilter,
-            bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, bool? sortbyarticledate, string? rawfilter, string? rawsort, bool removenullvalues,
+            bool? active, bool? smgactive, string? smgtags, string? seed, string? articledate, string? articledateto, string? lastchange, 
+            bool? sortbyarticledate, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 ArticleHelper myrticlehelper = ArticleHelper.Create(
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
-                    active, smgactive, smgtags, lastchange);
+                    active, smgactive, smgtags, articledate, articledateto, lastchange);
 
                 //TODO orderby = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') DESC";
 
