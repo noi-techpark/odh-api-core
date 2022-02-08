@@ -2681,7 +2681,7 @@ namespace DataModel
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public Nullable<double> Altitude { get; set; }
+        public double? Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
     }
 
@@ -2718,14 +2718,11 @@ namespace DataModel
         [Obsolete]
         [SwaggerSchema("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
-        //Neu
-        public Nullable<int> ListPosition { get; set; }
+        public int? ListPosition { get; set; }       
+        public string? Streamurl { get; set; }
+        public string? Previewurl { get; set; }
 
-        ////NEW Webcam Properties
-        public string Streamurl { get; set; }
-        public string Previewurl { get; set; }
-
-        public string Source { get; set; }
+        public string? Source { get; set; }
 
         ////NEW Webcam Properties
         //public string Streamurl { get; set; }
@@ -2810,18 +2807,18 @@ namespace DataModel
 
         public string? ImageName { get; set; }
         public string? ImageUrl { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
         public string? ImageSource { get; set; }
 
         public IDictionary<string, string> ImageTitle { get; set; }
         public IDictionary<string, string> ImageDesc { get; set; }
         public IDictionary<string, string> ImageAltText { get; set; }
 
-        public Nullable<bool> IsInGallery { get; set; }
-        public Nullable<int> ListPosition { get; set; }
-        public Nullable<DateTime> ValidFrom { get; set; }
-        public Nullable<DateTime> ValidTo { get; set; }
+        public bool? IsInGallery { get; set; }
+        public int? ListPosition { get; set; }
+        public DateTime? ValidFrom { get; set; }
+        public DateTime? ValidTo { get; set; }
 
         //NEU
         public string? CopyRight { get; set; }
@@ -2888,7 +2885,7 @@ namespace DataModel
 
         public string? Language { get; set; }
 
-        public List<string> Categories { get; set; }
+        public List<string>? Categories { get; set; }
     }
 
     public class Ratings : IRatings
@@ -2913,7 +2910,7 @@ namespace DataModel
         public string? LTSRID { get; set; }
         public IDictionary<string, string> TagName { get; set; }
 
-        public ICollection<LTSTins> LTSTins { get; set; }
+        public ICollection<LTSTins>? LTSTins { get; set; }
     }
 
     public class LTSTins
@@ -2923,8 +2920,8 @@ namespace DataModel
             TinName = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
-        public string LTSRID { get; set; }
+        public string? Id { get; set; }
+        public string? LTSRID { get; set; }
         public IDictionary<string, string> TinName { get; set; }
     }
 
@@ -2987,8 +2984,7 @@ namespace DataModel
         public OperationSchedule()
         {
             OperationscheduleName = new Dictionary<string, string>();
-        }
-        
+        }        
         public IDictionary<string, string> OperationscheduleName { get; set; }        
         public DateTime Start { get; set; }        
         public DateTime Stop { get; set; }
