@@ -711,7 +711,7 @@ namespace DataModel
             }
         }
 
-        public ICollection<ODHActivityPoiTypesLink> ArticleTypes
+        public ICollection<ODHActivityPoiTypesLink>? ArticleTypes
         {
             get
             {
@@ -719,6 +719,19 @@ namespace DataModel
                 returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeUriString(this.Type), Type = "ArticleType" });
                 if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
                     returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeUriString(this.SubType), Type = "ArticleSubType" });
+
+                return returnlist;
+            }
+        }
+
+        public ICollection<string>? ArticleTypeList
+        {
+            get
+            {
+                var returnlist = new List<string>();
+                returnlist.Add(this.Type);
+                if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
+                    returnlist.Add(this.SubType);
 
                 return returnlist;
             }

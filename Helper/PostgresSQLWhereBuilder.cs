@@ -332,9 +332,10 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .ODHActivityPoiTypeFilter(typelist)
-                .ODHActivityPoiSubTypeFilter(subtypelist)
-                .ODHActivityPoiPoiTypeFilter(subtypelist)
+                //.ODHActivityPoiTypeFilter(typelist)
+                //.ODHActivityPoiSubTypeFilter(subtypelist)
+                .When(typelist.Count > 0, q => q.ArticleTypeFilterOr_GeneratedColumn(typelist))
+                .When(subtypelist.Count > 0, q => q.ArticleTypeFilterOr_GeneratedColumn(subtypelist))
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
