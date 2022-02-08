@@ -99,17 +99,17 @@ namespace DataModel
 
         string? ImageName { get; set; }
         string? ImageUrl { get; set; }
-        int Width { get; set; }
-        int Height { get; set; }
+        int? Width { get; set; }
+        int? Height { get; set; }
         string? ImageSource { get; set; }
 
         IDictionary<string, string> ImageTitle { get; set; }
         IDictionary<string, string> ImageDesc { get; set; }
 
-        Nullable<bool> IsInGallery { get; set; }
-        Nullable<int> ListPosition { get; set; }
-        Nullable<DateTime> ValidFrom { get; set; }
-        Nullable<DateTime> ValidTo { get; set; }
+        bool? IsInGallery { get; set; }
+        int? ListPosition { get; set; }
+        DateTime? ValidFrom { get; set; }
+        DateTime? ValidTo { get; set; }
     }
 
     public interface IImageGalleryAware
