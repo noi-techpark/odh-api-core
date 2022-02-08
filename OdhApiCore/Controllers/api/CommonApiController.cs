@@ -888,6 +888,7 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw("data")
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
+                                             activefilter: winehelper.active, odhactivefilter: winehelper.smgactive,
                                                searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);

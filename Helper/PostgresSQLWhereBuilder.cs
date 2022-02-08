@@ -480,6 +480,7 @@ namespace Helper
         //Return Where and Parameters for Wine
         public static Query WineWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> companyid, IReadOnlyCollection<string> wineid,
+            bool? activefilter, bool? odhactivefilter,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
@@ -493,6 +494,8 @@ namespace Helper
                 .LastChangedFilter(lastchange)
                 .CompanyIdFilter(companyid)
                 .WineIdFilter(wineid)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .OdhActiveFilter_GeneratedColumn(odhactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
