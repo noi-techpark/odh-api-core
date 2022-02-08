@@ -2646,14 +2646,14 @@ namespace DataModel
         public string? GetThereText { get; set; }
         public string? Language { get; set; }
 
-        public ICollection<string> Keywords { get; set; }
+        public ICollection<string>? Keywords { get; set; }
 
         //New LTS Fields        
-        public string ParkingInfo { get; set; }
-        public string PublicTransportationInfo { get; set; }
-        public string AuthorTip { get; set; }
-        public string SafetyInfo { get; set; }
-        public string EquipmentInfo { get; set; }
+        public string? ParkingInfo { get; set; }
+        public string? PublicTransportationInfo { get; set; }
+        public string? AuthorTip { get; set; }
+        public string? SafetyInfo { get; set; }
+        public string? EquipmentInfo { get; set; }
     }
 
     //Special Element for Themed Content 
