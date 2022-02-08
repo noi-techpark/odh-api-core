@@ -695,7 +695,7 @@ namespace DataModel
     {
         public Metadata _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {

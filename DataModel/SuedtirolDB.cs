@@ -961,7 +961,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class AccoRoomInfo
@@ -1062,7 +1062,7 @@ namespace DataModel
         public Nullable<DateTime> FirstImport { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -1473,7 +1473,7 @@ namespace DataModel
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class Season
@@ -1597,7 +1597,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class WeatherObservation
@@ -2228,7 +2228,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
@@ -2345,13 +2345,13 @@ namespace DataModel
         public List<LTSTags>? LTSTags { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
     public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public ArticleBaseInfos()
         {
@@ -2377,10 +2377,10 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
 
-        public Nullable<DateTime> ArticleDate { get; set; }
+        public DateTime? ArticleDate { get; set; }
 
         //Mochmer des?
-        public Nullable<DateTime> ArticleDateTo { get; set; }
+        public DateTime? ArticleDateTo { get; set; }
 
         //OperationSchedule
         //public string OperationscheduleName { get; set; }
@@ -2425,7 +2425,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
@@ -2500,7 +2500,7 @@ namespace DataModel
         public Nullable<int> RepresentationRestriction { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
@@ -2619,7 +2619,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class Topic
@@ -2789,7 +2789,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class PublishedonObject
@@ -3376,9 +3376,7 @@ namespace DataModel
         ////gehört zu Abstract
         //public string Documents { get; set; }
         public List<ImageGallery>? ImageGallery { get; set; }
-        public string? VideoUrl { get; set; }
-
-        
+        public string? VideoUrl { get; set; }        
         public string? EventTextDE { get; set; }
         public string? EventTextIT { get; set; }
         public string? EventTextEN { get; set; }
@@ -3414,11 +3412,11 @@ namespace DataModel
         /// <summary>
         /// ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI
         /// </summary>
-        public Nullable<bool> ActiveWeb { get; set; }
+        public bool? ActiveWeb { get; set; }
         /// <summary>
         /// ActiveCommunityApp Indicates if Event is shown on the Noi Community App
         /// </summary>
-        public Nullable<bool> ActiveCommunityApp { get; set; }
+        public bool? ActiveCommunityApp { get; set; }
     }
 
     public class RoomBooked

@@ -29,7 +29,6 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         [JsonIgnore]
         public LicenseInfo LicenseInfo { get; set; }
-
     }
 
     public class ODHData
