@@ -774,8 +774,7 @@ namespace OdhApiCore.Controllers.api
                     //LicenseInfo
                     eventshort.LicenseInfo = new LicenseInfo() { Author = author, ClosedData = false, LicenseHolder = "https://noi.bz.it/", License = "CC0" };
                     eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
-                    //not needed?
-                    //eventshort._Meta.LastUpdate = eventshort.LastChange;
+                    eventshort._Meta.LastUpdate = eventshort.LastChange;
 
                     //PostgresSQLHelper.InsertDataIntoTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
@@ -823,6 +822,7 @@ namespace OdhApiCore.Controllers.api
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
                     eventshort.CheckMyInsertedLanguages();
+                    eventshort._Meta.LastUpdate = eventshort.LastChange;
 
                     eventshort.AnchorVenueShort = eventshort.AnchorVenue;
 
