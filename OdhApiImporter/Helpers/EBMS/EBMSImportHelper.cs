@@ -113,21 +113,20 @@ namespace OdhApiImporter.Helpers
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 
-                 
-                   
+                    //var rawid = await QueryFactory.InsertInRawtableAndGetIdAsync(
+                    //    new RawDataStore() {
+                    //        datasource = "eurac",
+                    //        importdate = DateTime.Now,
+                    //        raw = JsonConvert.SerializeObject(eventebms),
+                    //        sourceinterface = "ebms",
+                    //        sourceid = eventebms.EventId.ToString(),
+                    //        sourceurl = "https://emea-interface.ungerboeck.com",
+                    //        type = "event_euracnoi"
+                    //    }, cancellationToken);
 
-                    var rawid = await QueryFactory.InsertInRawtableAndGetIdAsync(
-                        new RawDataStore() {
-                            datasource = "eurac",
-                            importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(eventebms),
-                            sourceinterface = "ebms",
-                            sourceid = eventebms.EventId.ToString(),
-                            sourceurl = "https://emea-interface.ungerboeck.com",
-                            type = "event_euracnoi"
-                        }, cancellationToken);
+                    //var queryresult = await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawid);
 
-                    var queryresult = await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawid);
+                    var queryresult = await InsertDataToDB(eventshort, eventshort.Id, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
 
                     newcounter = newcounter + queryresult.created.Value;
                     updatecounter = updatecounter + queryresult.updated.Value;               
