@@ -322,6 +322,8 @@ namespace OdhApiCore.Controllers.api
         [HttpPost, Route("Article")]
         public Task<IActionResult> Post([FromBody] ArticlesLinked article)
         {
+            article.CheckMyInsertedLanguages(new List<string> { "de","en","it" });
+
             return DoAsyncReturn(async () =>
             {
                 article.Id = !String.IsNullOrEmpty(article.Id) ? article.Id.ToUpper() : "noId";
@@ -340,6 +342,8 @@ namespace OdhApiCore.Controllers.api
         [HttpPut, Route("Article/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ArticlesLinked article)
         {
+            article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
             return DoAsyncReturn(async () =>
             {
                 article.Id = id.ToUpper();

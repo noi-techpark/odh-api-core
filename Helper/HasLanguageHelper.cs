@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace Helper
 {
     public static class HasLanguageHelper
-    {
+    {        
         //For Articles
-        public static void CheckMyArticleInsertedLanguages(this ArticleBaseInfos myarticle, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this ArticleBaseInfos myarticle, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
@@ -118,7 +118,7 @@ namespace Helper
         }
 
         //For Activities, Pois, ODHActivityPois
-        public static void CheckMyActivityPoiInsertedLanguages(this PoiBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this PoiBaseInfos mypoiactivity, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
@@ -214,7 +214,7 @@ namespace Helper
         }
 
         //For Events
-        public static void CheckMyEventInsertedLanguages(this EventBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this EventBaseInfos mypoiactivity, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
@@ -309,8 +309,11 @@ namespace Helper
         }
 
         //For EventShort
-        public static void CheckMyEventInsertedLanguages(this EventShort mydata, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this EventShort mydata, List<string>? availablelanguages = null)
         {
+            if (availablelanguages == null)
+                availablelanguages = new List<string> { "de", "it", "en" };
+
             if (mydata.HasLanguage == null)
                 mydata.HasLanguage = new List<string>();
 
@@ -356,6 +359,6 @@ namespace Helper
             }
         }
 
-        //TODO: Accommodations, 
+        //TODO: Accommodations, etc...
     }
 }

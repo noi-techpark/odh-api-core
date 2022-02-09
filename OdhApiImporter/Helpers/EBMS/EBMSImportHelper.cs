@@ -150,6 +150,8 @@ namespace OdhApiImporter.Helpers
                 eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
                 eventshort._Meta.LastUpdate = eventshort.LastChange;
 
+                eventshort.CheckMyInsertedLanguages();
+
                 var rawdataid = await InsertInRawDataDB(ebmsevent);
 
                 return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid);

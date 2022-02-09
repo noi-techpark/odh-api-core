@@ -694,6 +694,8 @@ namespace OdhApiCore.Controllers.api
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
 
+                    eventshort.CheckMyInsertedLanguages();
+
                     eventshort.AnchorVenueShort = eventshort.AnchorVenue;
 
                     //Save DAtetime without Offset??
@@ -819,6 +821,7 @@ namespace OdhApiCore.Controllers.api
 
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
+                    eventshort.CheckMyInsertedLanguages();
 
                     eventshort.AnchorVenueShort = eventshort.AnchorVenue;
 
