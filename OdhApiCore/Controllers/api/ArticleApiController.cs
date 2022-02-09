@@ -323,6 +323,8 @@ namespace OdhApiCore.Controllers.api
         public Task<IActionResult> Post([FromBody] ArticlesLinked article)
         {
             article.CheckMyInsertedLanguages(new List<string> { "de","en","it" });
+            //Setting MetaInfo
+            article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
 
             return DoAsyncReturn(async () =>
             {
@@ -343,6 +345,9 @@ namespace OdhApiCore.Controllers.api
         public Task<IActionResult> Put(string id, [FromBody] ArticlesLinked article)
         {
             article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+            //Setting MetaInfo
+            article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
+
 
             return DoAsyncReturn(async () =>
             {

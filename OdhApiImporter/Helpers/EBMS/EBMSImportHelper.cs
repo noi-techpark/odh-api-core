@@ -146,9 +146,8 @@ namespace OdhApiImporter.Helpers
                 //Setting LicenseInfo
                 eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
 
-                //Setting MetaInfo
-                eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
-                eventshort._Meta.LastUpdate = eventshort.LastChange;
+                //not needed ?? 
+                //eventshort._Meta.LastUpdate = eventshort.LastChange;
 
                 eventshort.CheckMyInsertedLanguages();
 
