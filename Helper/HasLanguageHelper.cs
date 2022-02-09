@@ -12,8 +12,8 @@ namespace Helper
         //For Articles
         public static void CheckMyInsertedLanguages(this ArticleBaseInfos myarticle, List<string> availablelanguages)
         {
-            if (mypoiactivity.HasLanguage == null)
-                mypoiactivity.HasLanguage = new List<string>();
+            if (myarticle.HasLanguage == null)
+                myarticle.HasLanguage = new List<string>();
 
             //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
             foreach (string language in availablelanguages)
