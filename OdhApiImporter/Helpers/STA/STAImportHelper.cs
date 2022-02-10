@@ -61,7 +61,7 @@ namespace OdhApiImporter.Helpers
                     var odhactivitypoi = STA.ParseSTAPois.ParseSTAVendingPointToODHActivityPoi(vendingpoint);
 
                     //MetaData
-                    odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<ODHActivityPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
+                    //odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<ODHActivityPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
                     //LicenseInfo                                                                                                                                    //License
                     odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
 
@@ -89,7 +89,7 @@ namespace OdhApiImporter.Helpers
 
                     //Save to PG
                     //Check if data exists                    
-                    var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "smgpois", rawdataid);
+                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois", rawdataid);
 
                     if (result.updated != null)
                         updatecounter = updatecounter + result.updated.Value;
