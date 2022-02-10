@@ -164,7 +164,7 @@ namespace OdhApiCore.Controllers
 
         //Provide Methods for POST, PUT, DELETE passing DataType etc...
 
-        protected async Task<IActionResult> UpsertData<T>(T data, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        protected async Task<IActionResult> UpsertData<T>(T data, string table, bool errorwhendataexists = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             return Ok(await QueryFactory.UpsertData<T>(data, table));          
         }

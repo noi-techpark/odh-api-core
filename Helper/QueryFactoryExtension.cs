@@ -34,7 +34,7 @@ namespace Helper
 
         #region PG Helpers
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, bool errorwhendataexists = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             //TODO: What if no id is passed?
 
@@ -67,7 +67,10 @@ namespace Helper
                 operation = "INSERT";
             }
             else
-            {                
+            {   
+                if(errorwhendataexists)
+                    throw new ArgumentNullException(nameof(data), "Id exists already");
+
                 updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "UPDATE";

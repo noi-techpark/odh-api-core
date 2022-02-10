@@ -330,7 +330,7 @@ namespace OdhApiCore.Controllers.api
                 article.Id = !String.IsNullOrEmpty(article.Id) ? article.Id.ToUpper() : "noId";
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<ArticlesLinked>(article, "articles");
+                return await UpsertData<ArticlesLinked>(article, "articles", true);
             });
         }
 
