@@ -36,6 +36,8 @@ namespace Helper
 
         public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
+            //TODO: What if no id is passed?
+
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
 
@@ -76,10 +78,8 @@ namespace Helper
 
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };
         }
-
         
-
-        private static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
+        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException(nameof(id), "No data");

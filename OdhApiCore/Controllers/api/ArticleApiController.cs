@@ -324,14 +324,12 @@ namespace OdhApiCore.Controllers.api
         [InvalidateCacheOutput(nameof(GetArticleList))]        
         [HttpPost, Route("Article")]
         public Task<IActionResult> Post([FromBody] ArticlesLinked article)
-        {
-            article.CheckMyInsertedLanguages(new List<string> { "de","en","it" });
-            //Setting MetaInfo
-            //article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
-
+        {            
             return DoAsyncReturn(async () =>
             {
                 article.Id = !String.IsNullOrEmpty(article.Id) ? article.Id.ToUpper() : "noId";
+                article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
                 return await UpsertData<ArticlesLinked>(article, "articles");
             });
         }
@@ -347,14 +345,12 @@ namespace OdhApiCore.Controllers.api
         [InvalidateCacheOutput(nameof(GetArticleList))]
         [HttpPut, Route("Article/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ArticlesLinked article)
-        {
-            article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
-            //Setting MetaInfo
-            //article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
-
+        {            
             return DoAsyncReturn(async () =>
             {
                 article.Id = id.ToUpper();
+                article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
                 return await UpsertData<ArticlesLinked>(article, "articles");
             });
         }

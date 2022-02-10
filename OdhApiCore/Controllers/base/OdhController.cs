@@ -166,71 +166,12 @@ namespace OdhApiCore.Controllers
 
         protected async Task<IActionResult> UpsertData<T>(T data, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
-            return Ok(await QueryFactory.UpsertData<T>(data, table));
-
-            //if (data == null)
-            //    throw new Exception("No data");
-
-            ////Check if data exists
-            //var query = QueryFactory.Query(table)
-            //          .Select("data")
-            //          .Where("id", data.Id);
-
-            //var queryresult = await query.GetAsync<T>();
-
-            //string operation = "";
-            //var crudresult = 0;
-
-
-
-            //if (queryresult == null || queryresult.Count() == 0)
-            //{
-            //    data.FirstImport = DateTime.Now;
-            //    data.LastChange = DateTime.Now;
-
-            //    crudresult = await QueryFactory.Query(table)
-            //       .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
-            //    operation = "INSERT";
-            //}
-            //else
-            //{
-            //    data.LastChange = DateTime.Now;
-
-            //    crudresult = await QueryFactory.Query(table).Where("id", data.Id)
-            //            .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
-            //    operation = "UPDATE";
-            //}
-
-            //return Ok(new GenericResult() { Message = String.Format("{0} success: {1} recordsmodified: {2}", operation, data.Id, crudresult) });
+            return Ok(await QueryFactory.UpsertData<T>(data, table));          
         }
 
         protected async Task<IActionResult> DeleteData(string id, string table)
         {
-            if (String.IsNullOrEmpty(id))
-                throw new Exception("No data");
-
-            //Check if data exists
-            var query =
-                  QueryFactory.Query(table)
-                      .Select("data")
-                      .Where("id", id);
-
-            var crudresult = 0;
-
-            if (query == null)
-            {
-                throw new Exception("No data");
-            }
-            else
-            {
-                crudresult = await QueryFactory.Query(table).Where("id", id)
-                        .DeleteAsync();                
-            }
-
-            return Ok(new GenericResult() { Message = String.Format("DELETE success: {0} recordsmodified: {1}", id, crudresult) });
+            return Ok(await QueryFactory.DeleteData(id, table));            
         }
-
-        //Temporary Here will be outsourced to Importer
-
     }    
 }

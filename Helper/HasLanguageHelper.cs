@@ -9,6 +9,24 @@ namespace Helper
 {
     public static class HasLanguageHelper
     {        
+        private static void FixDetailBaseAndIntroText(Detail mydetail)
+        {
+            if (!String.IsNullOrEmpty(mydetail.BaseText))
+            {
+                mydetail.BaseText = mydetail.BaseText.Trim();
+
+                if (mydetail.BaseText == "&#10;&#10;" || mydetail.BaseText == "\n\n")
+                    mydetail.BaseText = "";
+            }
+            if (!String.IsNullOrEmpty(mydetail.IntroText))
+            {
+                mydetail.IntroText = mydetail.IntroText.Trim();
+
+                if (mydetail.IntroText == "&#10;&#10;" || mydetail.IntroText == "\n\n")
+                    mydetail.IntroText = "";
+            }
+        }
+
         //For Articles
         public static void CheckMyInsertedLanguages(this ArticleBaseInfos myarticle, List<string> availablelanguages)
         {
@@ -26,11 +44,13 @@ namespace Helper
                     {
                         var detailvalues = myarticle.Detail[language];
 
+                        FixDetailBaseAndIntroText(detailvalues);
+
                         if (!String.IsNullOrEmpty(detailvalues.AdditionalText))
                             if (!String.IsNullOrEmpty(detailvalues.AdditionalText.Trim()))
                                 removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.BaseText))
-                            if (detailvalues.BaseText.Trim() != "&#10;&#10;" && detailvalues.BaseText.Trim() != "\n\n")
+                            if (!String.IsNullOrEmpty(detailvalues.BaseText.Trim()))
                                 removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.GetThereText))
                             if (!String.IsNullOrEmpty(detailvalues.GetThereText.Trim()))
