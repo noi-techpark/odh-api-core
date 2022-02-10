@@ -142,6 +142,8 @@ namespace Helper
 
         public static Metadata GetMetadataforArticle(ArticleBaseInfos data)
         {
+            //
+
             return GetMetadata(data, "idm", data.LastChange);
         }
 

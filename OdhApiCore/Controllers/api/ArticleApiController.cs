@@ -321,6 +321,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
+        [InvalidateCacheOutput(nameof(GetArticleList))]        
         [HttpPost, Route("Article")]
         public Task<IActionResult> Post([FromBody] ArticlesLinked article)
         {
@@ -343,6 +344,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify")]
+        [InvalidateCacheOutput(nameof(GetArticleList))]
         [HttpPut, Route("Article/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ArticlesLinked article)
         {
@@ -365,6 +367,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataDelete,ArticleManager,ArticleDelete")]
+        [InvalidateCacheOutput(nameof(GetArticleList))]
         [HttpDelete, Route("Article/{id}")]
         public Task<IActionResult> Delete(string id)
         {
