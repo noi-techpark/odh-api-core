@@ -98,7 +98,7 @@ CREATE OR REPLACE FUNCTION text2ts(text)
  RETURNS timestamp without time zone
  LANGUAGE sql
  IMMUTABLE
-AS $function$SELECT CASE WHEN $1 ~'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?$' THEN CAST($1 AS timestamp without time zone) END$function$;
+AS $function$SELECT CASE WHEN $1 ~'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(?:Z|\+\d{2}:\d{2})?$' THEN CAST($1 AS timestamp without time zone) END$function$;
 ```
 * json_array_to_pg_array
 
