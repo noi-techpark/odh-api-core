@@ -352,7 +352,6 @@ namespace OdhApiCore.Controllers.api
             //Setting MetaInfo
             //article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
 
-
             return DoAsyncReturn(async () =>
             {
                 article.Id = id.ToUpper();
