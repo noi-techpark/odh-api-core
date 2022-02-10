@@ -1092,12 +1092,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
         [HttpPost, Route("WineAward")]
-        public Task<IActionResult> Post([FromBody] Wine data)
+        public Task<IActionResult> Post([FromBody] WineLinked data)
         {
             return DoAsyncReturn(async () =>
             {
                 data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<Wine>(data, "wines");
+                return await UpsertData<WineLinked>(data, "wines");
             });
         }
 
@@ -1272,12 +1272,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
         [HttpPut, Route("WineAward/{id}")]
-        public Task<IActionResult> Put(string id, [FromBody] Wine data)
+        public Task<IActionResult> Put(string id, [FromBody] WineLinked data)
         {
             return DoAsyncReturn(async () =>
             {
                 data.Id = id.ToUpper();
-                return await UpsertData<Wine>(data, "wines");
+                return await UpsertData<WineLinked>(data, "wines");
             });
         }
 

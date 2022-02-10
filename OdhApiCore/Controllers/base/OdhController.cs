@@ -164,7 +164,7 @@ namespace OdhApiCore.Controllers
 
         //Provide Methods for POST, PUT, DELETE passing DataType etc...
 
-        protected async Task<IActionResult> UpsertData<T>(T data, string table) where T : IIdentifiable, IImportDateassigneable
+        protected async Task<IActionResult> UpsertData<T>(T data, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             if (data == null)
                 throw new Exception("No data");
@@ -178,6 +178,9 @@ namespace OdhApiCore.Controllers
 
             string operation = "";
             var crudresult = 0;
+
+            //Setting MetaInfo
+            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
 
             if (queryresult == null || queryresult.Count() == 0)
             {

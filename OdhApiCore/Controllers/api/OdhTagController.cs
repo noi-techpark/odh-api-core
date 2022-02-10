@@ -170,12 +170,12 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
         [HttpPost, Route("ODHTag")]
-        public Task<IActionResult> Post([FromBody] SmgTags odhtag)
+        public Task<IActionResult> Post([FromBody] ODHTagLinked odhtag)
         {
             return DoAsyncReturn(async () =>
             {
                 odhtag.Id = !String.IsNullOrEmpty(odhtag.Id) ? odhtag.Id.ToUpper() : "noId";
-                return await UpsertData<SmgTags>(odhtag, "smgtags");
+                return await UpsertData<ODHTagLinked>(odhtag, "smgtags");
             });
         }
 
@@ -188,12 +188,12 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify")]
         [HttpPut, Route("ODHTag/{id}")]
-        public Task<IActionResult> Put(string id, [FromBody] SmgTags odhtag)
+        public Task<IActionResult> Put(string id, [FromBody] ODHTagLinked odhtag)
         {
             return DoAsyncReturn(async () =>
             {
                 odhtag.Id = id.ToUpper();
-                return await UpsertData<SmgTags>(odhtag, "smgtags");
+                return await UpsertData<ODHTagLinked>(odhtag, "smgtags");
             });
         }
 

@@ -378,12 +378,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
         [HttpPost, Route("ODHActivityPoi")]
-        public Task<IActionResult> Post([FromBody] ODHActivityPoi odhactivitypoi)
+        public Task<IActionResult> Post([FromBody] ODHActivityPoiLinked odhactivitypoi)
         {
             return DoAsyncReturn(async () =>
             {
                 odhactivitypoi.Id = !String.IsNullOrEmpty(odhactivitypoi.Id) ? odhactivitypoi.Id.ToUpper() : "noId";
-                return await UpsertData<ODHActivityPoi>(odhactivitypoi, "smgpois");
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois");
             });
         }
 
@@ -396,12 +396,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiManager,ODHActivityPoiModify,SmgPoiManager,SmgPoiModify")]
         [HttpPut, Route("ODHActivityPoi/{id}")]
-        public Task<IActionResult> Put(string id, [FromBody] ODHActivityPoi odhactivitypoi)
+        public Task<IActionResult> Put(string id, [FromBody] ODHActivityPoiLinked odhactivitypoi)
         {
             return DoAsyncReturn(async () =>
             {
                 odhactivitypoi.Id = id.ToUpper();
-                return await UpsertData<ODHActivityPoi>(odhactivitypoi, "smgpois");
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois");
             });
         }
 

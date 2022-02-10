@@ -21,6 +21,39 @@ namespace Helper
             return metadataganerator(myobject);
         }
 
+        //Discriminator if the function is not passed
+        public static Metadata GetMetadataobject<T>(T myobject)
+        {
+            return myobject switch
+            {
+                Accommodation or AccommodationLinked => GetMetadataforAccommodation(myobject as AccommodationLinked),
+                AccoRoom or AccommodationRoomLinked => GetMetadataforAccommodationRoom(myobject as AccommodationRoomLinked),
+                GBLTSActivity or LTSActivityLinked => GetMetadataforActivity(myobject as LTSActivityLinked),
+                GBLTSPoi or LTSPoiLinked => GetMetadataforPoi(myobject as LTSPoiLinked),
+                Gastronomy or GastronomyLinked => GetMetadataforGastronomy(myobject as GastronomyLinked),
+                Event or EventLinked => GetMetadataforEvent(myobject as EventLinked),
+                ODHActivityPoi or ODHActivityPoiLinked => GetMetadataforOdhActivityPoi(myobject as ODHActivityPoiLinked),
+                Package or PackageLinked => GetMetadataforPackage(myobject as PackageLinked),
+                Measuringpoint or MeasuringpointLinked => GetMetadataforMeasuringpoint(myobject as MeasuringpointLinked),
+                WebcamInfo or WebcamInfoLinked => GetMetadataforWebcam(myobject as WebcamInfoLinked),
+                Article or ArticlesLinked => GetMetadataforArticle(myobject as ArticlesLinked),
+                DDVenue => GetMetadataforVenue(myobject as DDVenue),
+                EventShort or EventShortLinked => GetMetadataforEventShort(myobject as EventShortLinked),
+                ExperienceArea or ExperienceAreaLinked => GetMetadataforExperienceArea(myobject as ExperienceArea),
+                MetaRegion or MetaRegionLinked => GetMetadataforMetaRegion(myobject as MetaRegionLinked),
+                Region or RegionLinked => GetMetadataforRegion(myobject as RegionLinked),
+                Tourismverein or TourismvereinLinked => GetMetadataforTourismverein(myobject as TourismvereinLinked),
+                Municipality or MunicipalityLinked => GetMetadataforMunicipality(myobject as MunicipalityLinked),
+                District or DistrictLinked => GetMetadataforDistrict(myobject as DistrictLinked),
+                SkiArea or SkiAreaLinked => GetMetadataforSkiArea(myobject as SkiAreaLinked),
+                SkiRegion or SkiRegionLinked => GetMetadataforSkiRegion(myobject as SkiRegionLinked),
+                Area or AreaLinked => GetMetadataforArea(myobject as AreaLinked),
+                Wine or WineLinked => GetMetadataforWineAward(myobject as WineLinked),
+                SmgTags or ODHTagLinked => GetMetadataforSmgTag(myobject as ODHTagLinked),
+                _ => throw new Exception("not known odh type")
+            };            
+        }
+
         public static Metadata GetMetadataforAccommodation(Accommodation data)
         {
             return GetMetadata(data, "lts", data.LastChange);
@@ -188,13 +221,16 @@ namespace Helper
         {
            return GetMetadata(data, "suedtirolwein", data.LastChange);
         }
+        
+        public static Metadata GetMetadataforSmgTag(SmgTags data)
+        {
+            var source = data.Source != null && data.Source.Count > 0  ? data.Source.FirstOrDefault().ToLower() : "";
+            string sourcemeta = "idm";
 
-        //TODO
-        //public static Metadata GetMetadataforSmgTag(SmgTags data)
-        //{
-        //    var source = data.Source.FirstOrDefault().ToLower();
+            if (data.Source.Contains("LTSCategory"))
+                sourcemeta = "lts";
 
-        //    return GetMetadata(data.Id, "odhtag", source, data.LastChange);
-        //}
+            return GetMetadata(data, sourcemeta, data.LastChange);
+        }
     }
 }
