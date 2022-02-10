@@ -42,6 +42,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="articletype">Type of the Article ('null' = Filter disabled, possible values: BITMASK values: 1 = basearticle, 2 = book article, 4 = contentarticle, 8 = eventarticle, 16 = pressarticle, 32 = recipe, 64 = touroperator , 128 = b2b, 256  = idmarticle, 512 = specialannouncement, 1024 = newsfeednoi), (also possible for compatibily reasons: basisartikel, buchtippartikel, contentartikel, veranstaltungsartikel, presseartikel, rezeptartikel, reiseveranstalter, b2bartikel ) (default:'255' == ALL), REFERENCE TO: GET /api/ArticleTypes</param>
         /// <param name="articlesubtype">Sub Type of the Article (depends on the Maintype of the Article 'null' = Filter disabled)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of Article IDs), (default:'null')</param>
+        /// <param name="startdate">Filter by ArticleDate Format (yyyy-MM-dd HH:mm)</param>
+        /// <param name="enddate">Filter by ArticleDate Format (yyyy-MM-dd HH:mm)</param>
         /// <param name="sortbyarticledate">Sort By Articledate ('true' sorts Articles by Articledate)</param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=article'), (default:'null')</param>                
         /// <param name="active">Active Articles Filter (possible Values: 'true' only Active Articles, 'false' only Disabled Articles), (default:'null')</param>
@@ -77,8 +79,8 @@ namespace OdhApiCore.Controllers.api
             LegacyBool odhactive = null!,
             LegacyBool active = null!,
             string? updatefrom = null,
-            string? articledate = null,
-            string? articledateto = null,
+            string? startdate = null,
+            string? enddate = null,
             string? seed = null,
             string? publishedon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
@@ -94,7 +96,7 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: articletype, subtypefilter: articlesubtype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter, highlightfilter: null,
                 active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed,  
-                articledate: articledate, articledateto: articledateto, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value, publishedon: publishedon,
+                articledate: startdate, articledateto: enddate, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value, publishedon: publishedon,
                 rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 

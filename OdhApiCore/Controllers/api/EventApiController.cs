@@ -45,8 +45,8 @@ namespace OdhApiCore.Controllers
         /// <param name="orgfilter">Organization Filter (Filter by Organizer RID)</param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
-        /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
         /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
+        /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field OdhActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events), (default:'null')</param>                
         /// <param name="source">Filter by Source (Separator ','), (Sources available 'lts','trevilab','drin'),(default: 'null')</param>
