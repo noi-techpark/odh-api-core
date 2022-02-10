@@ -120,7 +120,7 @@ namespace Helper
         {
             string sourcemeta = "idm";
 
-            if (data.Source == null && data.Source.Contains("LTSCategory"))
+            if (data.Source != null && data.Source.Contains("LTSCategory"))
                 sourcemeta = "lts";
 
             return GetMetadata(data, sourcemeta, data.LastChange);

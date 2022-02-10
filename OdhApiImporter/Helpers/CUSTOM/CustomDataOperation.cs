@@ -38,7 +38,7 @@ namespace OdhApiImporter.Helpers
                     eventshort.LastChange = eventshort.ChangedOn;
 
                 //Setting MetaInfo
-                eventshort._Meta = MetadataHelper.GetMetadataobject<EventShort>(eventshort, MetadataHelper.GetMetadataforEventShort);
+                eventshort._Meta = MetadataHelper.GetMetadataobject<EventShortLinked>(eventshort, MetadataHelper.GetMetadataforEventShort);
                 eventshort._Meta.LastUpdate = eventshort.LastChange;
 
                 //Save tp DB
