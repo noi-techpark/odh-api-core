@@ -44,7 +44,7 @@ namespace Helper
                 Article or ArticlesLinked => GetMetadataforArticle(myobject as ArticlesLinked),
                 DDVenue => GetMetadataforVenue(myobject as DDVenue),
                 EventShort or EventShortLinked => GetMetadataforEventShort(myobject as EventShortLinked),
-                ExperienceArea or ExperienceAreaLinked => GetMetadataforExperienceArea(myobject as ExperienceArea),
+                ExperienceArea or ExperienceAreaLinked => GetMetadataforExperienceArea(myobject as ExperienceAreaLinked),
                 MetaRegion or MetaRegionLinked => GetMetadataforMetaRegion(myobject as MetaRegionLinked),
                 Region or RegionLinked => GetMetadataforRegion(myobject as RegionLinked),
                 Tourismverein or TourismvereinLinked => GetMetadataforTourismverein(myobject as TourismvereinLinked),
@@ -120,7 +120,7 @@ namespace Helper
         {
             string sourcemeta = "idm";
 
-            if (!String.IsNullOrEmpty(data.Source) && data.Source.Contains("LTSCategory"))
+            if (data.Source == null && data.Source.Contains("LTSCategory"))
                 sourcemeta = "lts";
 
             return GetMetadata(data, sourcemeta, data.LastChange);

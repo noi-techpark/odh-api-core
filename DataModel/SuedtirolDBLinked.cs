@@ -480,7 +480,7 @@ namespace DataModel
         public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
-    public class PackageLinked : Package
+    public class PackageLinked : Package, IMetaData
     {
         public Metadata _Meta { get; set; }
 
