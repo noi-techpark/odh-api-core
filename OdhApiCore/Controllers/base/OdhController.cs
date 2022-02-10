@@ -166,41 +166,42 @@ namespace OdhApiCore.Controllers
 
         protected async Task<IActionResult> UpsertData<T>(T data, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
-            if (data == null)
-                throw new Exception("No data");
+            return Ok(await QueryFactory.UpsertData<T>(data, table));
 
-            //Check if data exists
-            var query = QueryFactory.Query(table)
-                      .Select("data")
-                      .Where("id", data.Id);
+            //if (data == null)
+            //    throw new Exception("No data");
 
-            var queryresult = await query.GetAsync<T>();
+            ////Check if data exists
+            //var query = QueryFactory.Query(table)
+            //          .Select("data")
+            //          .Where("id", data.Id);
 
-            string operation = "";
-            var crudresult = 0;
+            //var queryresult = await query.GetAsync<T>();
 
-            //Setting MetaInfo
-            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+            //string operation = "";
+            //var crudresult = 0;
 
-            if (queryresult == null || queryresult.Count() == 0)
-            {
-                data.FirstImport = DateTime.Now;
-                data.LastChange = DateTime.Now;
 
-                crudresult = await QueryFactory.Query(table)
-                   .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
-                operation = "INSERT";
-            }
-            else
-            {
-                data.LastChange = DateTime.Now;
 
-                crudresult = await QueryFactory.Query(table).Where("id", data.Id)
-                        .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
-                operation = "UPDATE";
-            }
-                        
-            return Ok(new GenericResult() { Message = String.Format("{0} success: {1} recordsmodified: {2}", operation, data.Id, crudresult) });
+            //if (queryresult == null || queryresult.Count() == 0)
+            //{
+            //    data.FirstImport = DateTime.Now;
+            //    data.LastChange = DateTime.Now;
+
+            //    crudresult = await QueryFactory.Query(table)
+            //       .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+            //    operation = "INSERT";
+            //}
+            //else
+            //{
+            //    data.LastChange = DateTime.Now;
+
+            //    crudresult = await QueryFactory.Query(table).Where("id", data.Id)
+            //            .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+            //    operation = "UPDATE";
+            //}
+
+            //return Ok(new GenericResult() { Message = String.Format("{0} success: {1} recordsmodified: {2}", operation, data.Id, crudresult) });
         }
 
         protected async Task<IActionResult> DeleteData(string id, string table)

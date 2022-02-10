@@ -326,7 +326,7 @@ namespace OdhApiCore.Controllers.api
         {
             article.CheckMyInsertedLanguages(new List<string> { "de","en","it" });
             //Setting MetaInfo
-            article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
+            //article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
 
             return DoAsyncReturn(async () =>
             {
@@ -348,7 +348,7 @@ namespace OdhApiCore.Controllers.api
         {
             article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
             //Setting MetaInfo
-            article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
+            //article._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(article, MetadataHelper.GetMetadataforArticle);
 
 
             return DoAsyncReturn(async () =>

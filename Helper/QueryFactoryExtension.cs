@@ -34,7 +34,7 @@ namespace Helper
 
         #region PG Helpers
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table) where T : IIdentifiable, IImportDateassigneable
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
@@ -52,19 +52,20 @@ namespace Helper
             int updateresult = 0;
             int errorresult = 0;
 
+            data.LastChange = DateTime.Now;
+            //Setting MetaInfo
+            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+
             if (queryresult == null || queryresult.Count() == 0)
             {
                 data.FirstImport = DateTime.Now;
-                data.LastChange = DateTime.Now;
-
+                
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
             }
             else
-            {
-                data.LastChange = DateTime.Now;
-
+            {                
                 updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "UPDATE";
@@ -75,6 +76,8 @@ namespace Helper
 
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };
         }
+
+        
 
         private static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
         {
