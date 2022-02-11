@@ -26,8 +26,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="message">PushServerMessage Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate")]
-        [HttpPost, Route("PushNotification/{type}/{id}")]
+        //[Authorize(Roles = "DataWriter,DataCreate")]
+        [HttpGet, Route("PushNotification/{type}/{id}")]
         public async Task<IActionResult> Get(string type, string id)
         {
             //Get the object
