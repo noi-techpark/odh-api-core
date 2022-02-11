@@ -144,6 +144,20 @@ namespace OdhApiCore
         public List<string>? RedirectQueryStrings { get; private set; }
     }
 
+    public class PushServerConfig
+    {
+        public PushServerConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
 
     public interface ISettings
     {
@@ -156,7 +170,7 @@ namespace OdhApiCore
         S3ImageresizerConfig S3ImageresizerConfig { get; }
         EBMSConfig EbmsConfig { get; }
         RavenConfig RavenConfig { get; }
-
+        PushServerConfig PushServerConfig { get; }
         List<Field2HideConfig> Field2HideConfig { get; }
         List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
     }
@@ -173,6 +187,7 @@ namespace OdhApiCore
         private readonly S3ImageresizerConfig s3imageresizerConfig;
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
+        private readonly PushServerConfig pushserverConfig;
         private readonly List<Field2HideConfig> field2hideConfig;
         private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
 
@@ -197,6 +212,8 @@ namespace OdhApiCore
             this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
             var raven = this.configuration.GetSection("RavenConfig");
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
+            var pushserver = this.configuration.GetSection("PushServerConfig");
+            this.pushserverConfig = new PushServerConfig(pushserver.GetValue<string>("Username", ""), pushserver.GetValue<string>("Password", ""), pushserver.GetValue<string>("ServiceUrl", ""));
             var field2hidelist = this.configuration.GetSection("Field2HideConfig").GetChildren();
             this.field2hideConfig = new List<Field2HideConfig>();
             foreach (var field2hide in field2hidelist)
@@ -224,6 +241,7 @@ namespace OdhApiCore
         public EBMSConfig EbmsConfig => this.ebmsConfig;
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
+        public PushServerConfig PushServerConfig => this.pushserverConfig;
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
     }

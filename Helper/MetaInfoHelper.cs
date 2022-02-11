@@ -17,12 +17,11 @@ namespace Helper
             if (data._Meta != null && !String.IsNullOrEmpty(data._Meta.Source))
                 source = data._Meta.Source;
 
-            //TODO when is data reduced
+            //TODO add Metainfo when data is reduced
 
             return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source };
         }
-
-        //TODO Make a HOF and apply all the rules
+               
         public static Metadata GetMetadataobject<T>(T myobject, Func<T, Metadata> metadataganerator)
         {
             return metadataganerator(myobject);
