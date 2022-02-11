@@ -3532,10 +3532,12 @@ namespace DataModel
     {
         public string Id { get; set; }
         public string Type { get; set; }
-        public Nullable<DateTime> LastUpdate { get; set; }
+        public DateTime? LastUpdate { get; set; }
 
         //New
         public string Source { get; set; }
+
+        public bool? Reduced { get; set; }
     }
 
     #endregion

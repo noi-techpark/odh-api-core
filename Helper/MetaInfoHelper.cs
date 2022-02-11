@@ -17,6 +17,8 @@ namespace Helper
             if (data._Meta != null && !String.IsNullOrEmpty(data._Meta.Source))
                 source = data._Meta.Source;
 
+            //TODO when is data reduced
+
             return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source };
         }
 
