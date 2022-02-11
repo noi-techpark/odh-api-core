@@ -43,7 +43,10 @@ namespace OdhApiCore.Controllers.api
             var fieldsTohide = FieldsToHide;
 
             var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-            //var data = await query.GetFirstOrDefaultAsObject<typeof()>();
+
+            var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
+
+            //TODO Create a logic that constructs a message out of the object
 
             var pushserverconfig = settings.PushServerConfig;
 
