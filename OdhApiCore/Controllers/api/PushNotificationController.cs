@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,41 @@ namespace OdhApiCore.Controllers.api
             : base(env, settings, logger, queryFactory)
         {
             this.settings = settings;
+        }
+
+        /// <summary>
+        /// GET Send a PushMessage to NOI Pushserver
+        /// </summary>
+        /// <param name="message">PushServerMessage Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate")]
+        [HttpPost, Route("PushNotification/{type}/{id}")]
+        public async Task<IActionResult> Get(string type, string id)
+        {
+            //Get the object
+            var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
+            var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
+
+            var query =
+              QueryFactory.Query(mytable)
+                  .Select("data")
+                  .Where("id", id.ToUpper())
+                  .When(FilterClosedData, q => q.FilterClosedData());
+
+            var fieldsTohide = FieldsToHide;
+
+            var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+            //var data = await query.GetFirstOrDefaultAsObject<typeof()>();
+
+            var pushserverconfig = settings.PushServerConfig;
+
+            //TODO Construct the message
+            var message = new PushServerMessage();
+
+            var result = await SendToPushServer.SendMessageToPushServer(pushserverconfig.ServiceUrl, message, pushserverconfig.User, pushserverconfig.Password, message.destination.language);
+
+            return Ok(result);
         }
 
         /// <summary>
