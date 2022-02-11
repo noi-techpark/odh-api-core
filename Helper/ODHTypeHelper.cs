@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -281,6 +282,42 @@ namespace Helper
                 "area" => id.ToUpper(),
                 "wineaward" => id.ToUpper(),
                 "odhtag" => id.ToLower(),
+                _ => throw new Exception("not known odh type")
+            };
+        }
+
+        #endregion
+
+        #region JsonRaw2Type
+
+        public static IIdentifiable ConvertJsonRawToObject(string odhtype, JsonRaw raw)
+        {
+            return odhtype switch
+            {
+                "accommodation" => JsonConvert.DeserializeObject<AccommodationLinked>(raw.Value),
+                "accommodationroom" => JsonConvert.DeserializeObject<AccommodationRoomLinked>(raw.Value),
+                "ltsactivity" => JsonConvert.DeserializeObject<LTSActivityLinked>(raw.Value),
+                "ltspoi" => JsonConvert.DeserializeObject<LTSPoiLinked>(raw.Value),
+                "ltsgastronomy" => JsonConvert.DeserializeObject<GastronomyLinked>(raw.Value),
+                "event" => JsonConvert.DeserializeObject<EventLinked>(raw.Value),
+                "odhactivitypoi" => JsonConvert.DeserializeObject<ODHActivityPoiLinked>(raw.Value),
+                "package" => JsonConvert.DeserializeObject<PackageLinked>(raw.Value),
+                "measuringpoint" => JsonConvert.DeserializeObject<MeasuringpointLinked>(raw.Value),
+                "webcam" => JsonConvert.DeserializeObject<WebcamInfoLinked>(raw.Value),
+                "article" => JsonConvert.DeserializeObject<ArticlesLinked>(raw.Value),
+                "venue" => JsonConvert.DeserializeObject<DDVenue>(raw.Value),
+                "eventshort" => JsonConvert.DeserializeObject<EventShortLinked>(raw.Value),
+                "experiencearea" => JsonConvert.DeserializeObject<ExperienceAreaLinked>(raw.Value),
+                "metaregion" => JsonConvert.DeserializeObject<MetaRegionLinked>(raw.Value),
+                "region" => JsonConvert.DeserializeObject<RegionLinked>(raw.Value),
+                "tourismassociation" => JsonConvert.DeserializeObject<TourismvereinLinked>(raw.Value),
+                "municipality" => JsonConvert.DeserializeObject<MunicipalityLinked>(raw.Value),
+                "district" => JsonConvert.DeserializeObject<DistrictLinked>(raw.Value),
+                "skiarea" => JsonConvert.DeserializeObject<SkiAreaLinked>(raw.Value),
+                "skiregion" => JsonConvert.DeserializeObject<SkiRegionLinked>(raw.Value),
+                "area" => JsonConvert.DeserializeObject<AreaLinked>(raw.Value),
+                "wineaward" => JsonConvert.DeserializeObject<WineLinked>(raw.Value),
+                "odhtag" => JsonConvert.DeserializeObject<ODHTagLinked>(raw.Value),
                 _ => throw new Exception("not known odh type")
             };
         }

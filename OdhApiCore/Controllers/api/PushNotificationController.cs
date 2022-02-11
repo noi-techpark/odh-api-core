@@ -37,7 +37,7 @@ namespace OdhApiCore.Controllers.api
             var query =
               QueryFactory.Query(mytable)
                   .Select("data")
-                  .Where("id", id.ToUpper())
+                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type,id))
                   .When(FilterClosedData, q => q.FilterClosedData());
 
             var fieldsTohide = FieldsToHide;
