@@ -1,4 +1,6 @@
-﻿namespace PushServer
+﻿using System.Collections.Generic;
+
+namespace DataModel
 {
 	public class PushServerMessage
 	{
