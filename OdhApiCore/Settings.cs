@@ -158,6 +158,18 @@ namespace OdhApiCore
         public string ServiceUrl { get; private set; }
     }
 
+    public class FCMConfig
+    {
+        public FCMConfig(string serverkey, string senderid)
+        {
+            this.ServerKey = serverkey;
+            this.SenderId = senderid;            
+        }
+
+        public string ServerKey { get; private set; }
+        public string SenderId { get; private set; }        
+    }
+
 
     public interface ISettings
     {
@@ -171,6 +183,7 @@ namespace OdhApiCore
         EBMSConfig EbmsConfig { get; }
         RavenConfig RavenConfig { get; }
         PushServerConfig PushServerConfig { get; }
+        FCMConfig FCMConfig { get; }
         List<Field2HideConfig> Field2HideConfig { get; }
         List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
     }
@@ -188,6 +201,7 @@ namespace OdhApiCore
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
         private readonly PushServerConfig pushserverConfig;
+        private readonly FCMConfig fcmConfig;
         private readonly List<Field2HideConfig> field2hideConfig;
         private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
 
@@ -214,6 +228,8 @@ namespace OdhApiCore
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
             var pushserver = this.configuration.GetSection("PushServerConfig");
             this.pushserverConfig = new PushServerConfig(pushserver.GetValue<string>("Username", ""), pushserver.GetValue<string>("Password", ""), pushserver.GetValue<string>("ServiceUrl", ""));
+            var fcm = this.configuration.GetSection("FCMConfig");
+            this.fcmConfig = new FCMConfig(fcm.GetValue<string>("ServerKey", ""), fcm.GetValue<string>("SenderId", ""));
             var field2hidelist = this.configuration.GetSection("Field2HideConfig").GetChildren();
             this.field2hideConfig = new List<Field2HideConfig>();
             foreach (var field2hide in field2hidelist)
@@ -242,6 +258,7 @@ namespace OdhApiCore
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
         public PushServerConfig PushServerConfig => this.pushserverConfig;
+        public FCMConfig FCMConfig => this.fcmConfig;
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
     }

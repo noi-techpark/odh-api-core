@@ -25,7 +25,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="message">PushServerMessage Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]        
+        [Authorize(Roles = "DataWriter,DataCreate")]        
         [HttpPost, Route("PushNotification")]
         public async Task<IActionResult> Post([FromBody] PushServerMessage message)
         {
