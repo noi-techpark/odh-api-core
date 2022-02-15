@@ -38,11 +38,11 @@ namespace EBMS
             }
         }
 
-        public static List<Tuple<EventShort, EBMSEventREST>> GetEbmsEvents(string user, string pass)
+        public static List<Tuple<EventShortLinked, EBMSEventREST>> GetEbmsEvents(string user, string pass)
         {
             try
             {
-                List<Tuple<EventShort, EBMSEventREST>> myeventshortlist = new List<Tuple<EventShort, EBMSEventREST>>();
+                List<Tuple<EventShortLinked, EBMSEventREST>> myeventshortlist = new List<Tuple<EventShortLinked, EBMSEventREST>>();
 
                 System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
@@ -52,7 +52,7 @@ namespace EBMS
 
                 foreach (var myevent in eventarray)
                 {
-                    var eventtosave = new EventShort();
+                    var eventtosave = new EventShortLinked();
 
                     //CUSTOM Props
 
@@ -91,8 +91,6 @@ namespace EBMS
                     //UTC
                     //Int32 unixTimestampEStart = (Int32)(DateTime.UtcNow.Subtract(eventtosave.StartDate)).TotalSeconds;
                     //Int32 unixTimestampEEnd = (Int32)(DateTime.UtcNow.Subtract()).TotalSeconds;
-
-
                     eventtosave.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventtosave.EndDate);
                     eventtosave.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventtosave.StartDate);
 
@@ -104,8 +102,6 @@ namespace EBMS
 
                     //FÜR NOI ANZEIGE AKTIV (Oklären ob des no der Foll isch)
                     eventtosave.Display1 = myevent.Display1;
-
-
                     //Intranet Eurac (Y / N)
                     eventtosave.Display2 = myevent.Display2;
                     //Webseite Eurac ( Y /N)

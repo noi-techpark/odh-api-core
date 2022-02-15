@@ -45,14 +45,15 @@ namespace OdhApiCore.Controllers
         /// <param name="orgfilter">Organization Filter (Filter by Organizer RID)</param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
-        /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
         /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
+        /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field OdhActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events), (default:'null')</param>                
         /// <param name="source">Filter by Source (Separator ','), (Sources available 'lts','trevilab','drin'),(default: 'null')</param>
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
@@ -89,6 +90,7 @@ namespace OdhApiCore.Controllers
             string? sort = null,
             string? updatefrom = null,
             string? seed = null,
+            string? publishedon = null,
             string? langfilter = null,
             string? source = null,
             string? latitude = null,
@@ -110,7 +112,7 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, topicfilter: topicfilter, orgfilter: orgfilter,
                     begindate: begindate, enddate: enddate, sort: sort, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
-                    langfilter: langfilter, source: source,
+                    langfilter: langfilter, source: source, publishedon: publishedon,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
@@ -206,14 +208,14 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(
         string[] fields, string? language, uint pagenumber, int? pagesize, string? typefilter, string? idfilter,
         string? rancfilter, string? searchfilter, string? locfilter, string? orgfilter, string? topicfilter, string? begindate, string? enddate,
-        string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? source, 
+        string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? source, string? publishedon,
         PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 EventHelper myeventhelper = await EventHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate, enddate,
-                    active, smgactive, smgtags, lastchange, langfilter, source,
+                    active, smgactive, smgtags, lastchange, langfilter, source, publishedon,
                     cancellationToken);
 
                 string? sortifseednull = null;
@@ -243,8 +245,8 @@ namespace OdhApiCore.Controllers
                             municipalitylist: myeventhelper.municipalitylist, tourismvereinlist: myeventhelper.tourismvereinlist,
                             regionlist: myeventhelper.regionlist, topiclist: myeventhelper.topicrids, sourcelist: myeventhelper.sourcelist,
                             languagelist: myeventhelper.languagelist, begindate: myeventhelper.begin, enddate: myeventhelper.end,
-                            activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
+                            activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive, publishedonlist: myeventhelper.publishedonlist,
+                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange, 
                             filterClosedData: FilterClosedData)
                          .ApplyRawFilter(rawfilter)
                          .OrderByRawIfNotNull(sortifseednull)

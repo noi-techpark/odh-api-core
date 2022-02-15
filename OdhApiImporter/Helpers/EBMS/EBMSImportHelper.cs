@@ -112,22 +112,8 @@ namespace OdhApiImporter.Helpers
 
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
-                 
-                    //Setting LicenseInfo
-                    eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
 
-                    var rawid = await QueryFactory.InsertInRawtableAndGetIdAsync(
-                        new RawDataStore() {
-                            datasource = "eurac",
-                            importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(eventebms),
-                            sourceinterface = "ebms",
-                            sourceid = eventebms.EventId.ToString(),
-                            sourceurl = "https://emea-interface.ungerboeck.com",
-                            type = "event_euracnoi"
-                        }, cancellationToken);
-
-                    var queryresult = await QueryFactory.UpsertData<EventShort>(eventshort, "eventeuracnoi", rawid);
+                    var queryresult = await InsertDataToDB(eventshort, eventshort.Id, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
 
                     newcounter = newcounter + queryresult.created.Value;
                     updatecounter = updatecounter + queryresult.updated.Value;               
@@ -139,6 +125,41 @@ namespace OdhApiImporter.Helpers
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
         }
+
+        private async Task<PGCRUDResult> InsertDataToDB(EventShortLinked eventshort, string idtocheck, KeyValuePair<string, EBMSEventREST> ebmsevent)
+        {
+            try
+            {                
+                //Setting LicenseInfo
+                eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
+                //Check Languages
+                eventshort.CheckMyInsertedLanguages();
+
+                var rawdataid = await InsertInRawDataDB(ebmsevent);
+
+                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, EBMSEventREST> eventebms)
+        {
+            return await QueryFactory.InsertInRawtableAndGetIdAsync(
+                        new RawDataStore()
+                        {
+                            datasource = "eurac",
+                            importdate = DateTime.Now,
+                            raw = JsonConvert.SerializeObject(eventebms.Value),
+                            sourceinterface = "ebms",
+                            sourceid = eventebms.Key,
+                            sourceurl = "https://emea-interface.ungerboeck.com",
+                            type = "event_euracnoi"
+                        });
+        }
+
 
         private static List<string>? AssignTechnologyfieldsautomatically(string companyname, List<string>? technologyfields)
         {
@@ -166,7 +187,7 @@ namespace OdhApiImporter.Helpers
                     automatictechnologyfields.Add(toassign);
         }
 
-        private async Task<int> DeleteDeletedEvents(List<EventShort> eventshortfromnow, List<EventShort> eventshortinDB)
+        private async Task<int> DeleteDeletedEvents(List<EventShortLinked> eventshortfromnow, List<EventShortLinked> eventshortinDB)
         {
             //TODO CHECK if Event is in list, if not, DELETE!
             //TODO CHECK IF THIS IS WORKING CORRECTLY
@@ -199,7 +220,7 @@ namespace OdhApiImporter.Helpers
             return deletecounter;
         }
 
-        private async Task<IEnumerable<EventShort>> GetAllEventsShort(DateTime now)
+        private async Task<IEnumerable<EventShortLinked>> GetAllEventsShort(DateTime now)
         {
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
 
@@ -208,7 +229,7 @@ namespace OdhApiImporter.Helpers
                              .Select("data")
                              .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = ?)", "EBMS");
 
-            return await query.GetAllAsObject<EventShort>();
+            return await query.GetAllAsObject<EventShortLinked>();
         }
 
         #endregion

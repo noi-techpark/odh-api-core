@@ -44,6 +44,7 @@ namespace OdhApiCore.Controllers
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null)<a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
@@ -72,6 +73,7 @@ namespace OdhApiCore.Controllers
             string? longitude = null,
             string? radius = null,
             string? updatefrom = null,
+            string? publishedon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -84,7 +86,7 @@ namespace OdhApiCore.Controllers
 
             return await GetFilteredAsync(
                 fields: fields ?? Array.Empty<string>(), language, pagenumber, pagesize,
-                source, idlist, searchfilter, active?.Value, odhactive?.Value, 
+                source, idlist, searchfilter, active?.Value, odhactive?.Value, publishedon,
                 seed, updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                 removenullvalues: removenullvalues, cancellationToken);
         }
@@ -118,14 +120,14 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> GetFilteredAsync(
             string[] fields, string? language, uint pagenumber, int? pagesize, string? source,
-            string? idfilter, string? searchfilter, bool? active, bool? smgactive,
+            string? idfilter, string? searchfilter, bool? active, bool? smgactive, string? publishedon,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 WebcamInfoHelper mywebcaminfohelper = WebcamInfoHelper.Create(
-                    source, idfilter, active, smgactive, lastchange);
+                    source, idfilter, active, smgactive, lastchange, publishedon);
 
                 var query =
                     QueryFactory.Query()
@@ -133,12 +135,11 @@ namespace OdhApiCore.Controllers
                         .From("webcams")
                         .WebCamInfoWhereExpression(
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
-                            activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive,
+                            activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
                             languagelist: new List<string>(), filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
-
 
                 // Get paginated data
                 var data =

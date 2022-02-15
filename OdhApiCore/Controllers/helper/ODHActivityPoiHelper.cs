@@ -189,7 +189,6 @@ namespace OdhApiCore.Controllers.api
             //using Poi Filters
             poitypelist = new List<string>();
 
-
             if (activitytypefilter != null)
             {
                 if (int.TryParse(activitytypefilter, out int typeintegeractivity))
@@ -225,8 +224,6 @@ namespace OdhApiCore.Controllers.api
             //ODHActivityPoi Typelist has priority
             if (typelist.Count == 0 && activitytypelist.Count == 0 && poitypelist.Count > 0)
                 subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
-
-
 
             difficultylist = CommonListCreator.CreateDifficultyList(difficultyfilter, activitytypefilter);
             //Distance

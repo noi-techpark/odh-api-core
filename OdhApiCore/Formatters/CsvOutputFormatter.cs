@@ -27,10 +27,10 @@ namespace OdhApiCore.Formatters
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
-        protected override bool CanWriteType(Type type)
-        {
-            return base.CanWriteType(type);
-        }
+        //protected override bool CanWriteType(Type type)
+        //{
+        //    return base.CanWriteType(type);
+        //}
 
         private static dynamic ConvertToExpandoObject(Dictionary<string, object> dict)
         {
@@ -87,14 +87,12 @@ namespace OdhApiCore.Formatters
                 }
                 else
                 {
-                    context.HttpContext.Response.StatusCode = 501;
-                    await context.HttpContext.Response.WriteAsync("Bad Request");
+                    await OutputFormatterHelper.NotImplemented(context);
                 }
             }
             else
             {
-                context.HttpContext.Response.StatusCode = 501;
-                await context.HttpContext.Response.WriteAsync("Bad Request");
+                await OutputFormatterHelper.BadRequest(context);
             }
         }
 

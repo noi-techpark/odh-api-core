@@ -250,8 +250,6 @@ namespace Helper
         BikehotelsEBike = 1 << 16, //65536,
         [Description("Bikehotels Freeride")]
         BikehotelsFreeride = 1 << 17, //131072,
-        //[Description("-")]
-        //Gibsnicht19 = 1 << 18, //262144,
         [Description("Bikehotels Mountainbike")]
         BikehotelsMountainbike = 1 << 18, //524288,
         [Description("Bikehotels Radwandern")]
@@ -262,8 +260,6 @@ namespace Helper
         Familienhotels = 1 << 21, //4194304,
         [Description("Familienhotels: Naturdetektiv")]
         FamilienhotelsNaturdetektiv = 1 << 22, //8388608,
-        //[Description("-")]
-        //Gibsnicht25 = 1 << 24, //16777216,
         [Description("Familienhotel")]
         Familienhotel = 1 << 23, //33554432,
         [Description("Naturdetektiv Sommer")]
@@ -297,9 +293,9 @@ namespace Helper
         [Description("Allergikerküche")]
         Allergikerküche = 1 << 8,
         [Description("Kleine Haustiere")]
-        KleineHaustiere = 1 << 9
-        //[Description("Gruppenfreundlich")]
-        //Gruppenfreundlich = 1 << 10
+        KleineHaustiere = 1 << 9,
+        [Description("Guestcard")]
+        Guestcard = 1 << 10        
     }
 
     #endregion
@@ -1276,23 +1272,27 @@ namespace Helper
     public enum ArticleTypeFlag
     {
         [Description("basisartikel")]
-        basisartikel = 1,
+        basisartikel = 1,  //1
         [Description("buchtippartikel")]
-        buchtippartikel = 1 << 1,
+        buchtippartikel = 1 << 1, //2
         [Description("contentartikel")]
-        contentartikel = 1 << 2,
+        contentartikel = 1 << 2, //4
         [Description("veranstaltungsartikel")]
-        veranstaltungsartikel = 1 << 3,
+        veranstaltungsartikel = 1 << 3, //8
         [Description("presseartikel")]
-        presseartikel = 1 << 4,
+        presseartikel = 1 << 4,  //16
         [Description("rezeptartikel")]
-        rezeptartikel = 1 << 5,
+        rezeptartikel = 1 << 5,  //32
         [Description("reiseveranstalter")]
-        reiseveranstalter = 1 << 6,
+        reiseveranstalter = 1 << 6,  //64
         [Description("b2bartikel")]
-        b2bartikel = 1 << 7,
+        b2bartikel = 1 << 7,  //128
         [Description("idmartikel")]
-        idmartikel = 1 << 8
+        idmartikel = 1 << 8,  //256
+        [Description("specialannouncement")]
+        specialannouncement = 1 << 9,  //512
+        [Description("newsfeednoi")]
+        newsfeednoi = 1 << 10 //1024
     }
 
     [Flags]

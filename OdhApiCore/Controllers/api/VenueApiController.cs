@@ -50,6 +50,7 @@ namespace OdhApiCore.Controllers
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
@@ -84,6 +85,7 @@ namespace OdhApiCore.Controllers
             string? source = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? publishedon = null,
             string? updatefrom = null,
             string? langfilter = null,
             string? seed = null,
@@ -106,6 +108,7 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, roomcountfilter: roomcountfilter,
                     featurefilter: featurefilter, setuptypefilter: setuptypefilter, sourcefilter: source,
                     active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
+                    publishedon: publishedon,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
@@ -204,7 +207,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(
           string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
-          string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter,
+          string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? publishedon,
           PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues,
           CancellationToken cancellationToken)
         {
@@ -212,7 +215,7 @@ namespace OdhApiCore.Controllers
             {
                 VenueHelper myvenuehelper = await VenueHelper.CreateAsync(
                     QueryFactory, idfilter, categoryfilter, featurefilter, setuptypefilter, locfilter, capacityfilter, roomcountfilter,
-                    langfilter, sourcefilter, active, smgactive, smgtags, lastchange,
+                    langfilter, sourcefilter, active, smgactive, smgtags, lastchange, publishedon,
                     cancellationToken);
 
                 var query =
@@ -227,7 +230,7 @@ namespace OdhApiCore.Controllers
                             regionlist: myvenuehelper.regionlist, sourcelist: myvenuehelper.sourcelist,
                             capacity: myvenuehelper.capacity, capacitymin: myvenuehelper.capacitymin, capacitymax: myvenuehelper.capacitymax,
                             roomcount: myvenuehelper.roomcount, roomcountmin: myvenuehelper.roomcountmin, roomcountmax: myvenuehelper.roomcountmax,
-                            activefilter: myvenuehelper.active, smgactivefilter: myvenuehelper.smgactive,
+                            activefilter: myvenuehelper.active, smgactivefilter: myvenuehelper.smgactive, publishedonlist: myvenuehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myvenuehelper.lastchange,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)

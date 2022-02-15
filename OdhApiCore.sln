@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29025.244
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdhApiCore", "OdhApiCore\OdhApiCore.csproj", "{DFB72943-14EB-4BC4-891F-4C2292584D90}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{48BEDD14-D366-4553-AD99-C35DDAF28FF2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helper", "Helper\Helper.csproj", "{D87BA784-F2A9-4308-AAA9-A94A76922B1C}"
 EndProject
@@ -38,11 +36,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NINJA", "NINJA\NINJA.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RAVEN", "RAVEN\RAVEN.csproj", "{AD6A0275-3699-49F6-B876-D672AC23AAD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STA", "STA\STA.csproj", "{7CF11DF2-132A-4A3B-BC3C-22DD543FC5BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STA", "STA\STA.csproj", "{7CF11DF2-132A-4A3B-BC3C-22DD543FC5BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdhApiImporter", "OdhApiImporter\OdhApiImporter.csproj", "{3AB01F9C-524C-46EA-A43D-5E9AAA47F331}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdhApiImporter", "OdhApiImporter\OdhApiImporter.csproj", "{3AB01F9C-524C-46EA-A43D-5E9AAA47F331}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonLDTransformer", "JsonLDTransformer\JsonLDTransformer.csproj", "{86048A5A-5F85-4E40-861F-974D2DA2E1D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonLDTransformer", "JsonLDTransformer\JsonLDTransformer.csproj", "{86048A5A-5F85-4E40-861F-974D2DA2E1D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PushServer", "PushServer\PushServer.csproj", "{F55BAA43-196C-4699-8E9D-A252F180A7C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,9 +54,6 @@ Global
 		{DFB72943-14EB-4BC4-891F-4C2292584D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFB72943-14EB-4BC4-891F-4C2292584D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFB72943-14EB-4BC4-891F-4C2292584D90}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48BEDD14-D366-4553-AD99-C35DDAF28FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48BEDD14-D366-4553-AD99-C35DDAF28FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48BEDD14-D366-4553-AD99-C35DDAF28FF2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D87BA784-F2A9-4308-AAA9-A94A76922B1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D87BA784-F2A9-4308-AAA9-A94A76922B1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D87BA784-F2A9-4308-AAA9-A94A76922B1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -121,6 +118,10 @@ Global
 		{86048A5A-5F85-4E40-861F-974D2DA2E1D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86048A5A-5F85-4E40-861F-974D2DA2E1D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86048A5A-5F85-4E40-861F-974D2DA2E1D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F55BAA43-196C-4699-8E9D-A252F180A7C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F55BAA43-196C-4699-8E9D-A252F180A7C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F55BAA43-196C-4699-8E9D-A252F180A7C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F55BAA43-196C-4699-8E9D-A252F180A7C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -90,6 +90,8 @@ namespace OdhApiCore.Filters
                     string? longitude = actionarguments.ContainsKey("longitude") ? (string?)actionarguments["longitude"] : null;
                     string? radius = actionarguments.ContainsKey("radius") ? (string?)actionarguments["radius"] : null;
 
+                    string? publishedon = actionarguments.ContainsKey("publishedon") ? (string?)actionarguments["publishedon"] : null;
+
                     string language = actionarguments.ContainsKey("language") ? (string)actionarguments["language"] : "de";
                     string? langfilter = actionarguments.ContainsKey("langfilter") ? (string)actionarguments["langfilter"] : null;
 
@@ -118,7 +120,7 @@ namespace OdhApiCore.Filters
                             AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                            QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                            featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: odhtagfilter, activefilter: active,
-                           smgactivefilter: odhactive, bookablefilter: bookablefilter, lastchange: updatefrom, langfilter: langfilter, (CancellationToken)context.ActionArguments["cancellationToken"]);
+                           smgactivefilter: odhactive, bookablefilter: bookablefilter, lastchange: updatefrom, langfilter: langfilter, publishedonfilter: publishedon, (CancellationToken)context.ActionArguments["cancellationToken"]);
 
                             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
@@ -465,7 +467,7 @@ namespace OdhApiCore.Filters
                            tourismvereinlist: myhelper.tourismvereinlist, regionlist: myhelper.regionlist,
                            apartmentfilter: myhelper.apartment, bookable: myhelper.bookable, altitude: myhelper.altitude,
                            altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
-                           activefilter: myhelper.active, smgactivefilter: myhelper.smgactive,
+                           activefilter: myhelper.active, smgactivefilter: myhelper.smgactive, publishedonlist: myhelper.publishedonlist,
                            searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
                            filterClosedData: false)//FilterClosedData -->TODO)
                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")

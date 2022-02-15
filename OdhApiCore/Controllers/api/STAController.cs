@@ -268,7 +268,7 @@ namespace OdhApiCore.Controllers.api
                     //Save to PG
                     //Check if data exists                    
 
-                    var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "smgpois");
+                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois");
 
                     if(result.updated != null)
                         updatecounter = updatecounter + result.updated.Value;

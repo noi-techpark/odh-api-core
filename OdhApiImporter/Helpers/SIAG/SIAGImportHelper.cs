@@ -415,8 +415,7 @@ namespace OdhApiImporter.Helpers
                 mymuseum.Source = "SIAG";
                 mymuseum.SyncSourceInterface = "museumdata";
                 mymuseum.SyncUpdateMode = "Full";
-                mymuseum.LastChange = DateTime.Now;
-                mymuseum._Meta = MetadataHelper.GetMetadataobject<ODHActivityPoiLinked>(mymuseum, MetadataHelper.GetMetadataforOdhActivityPoi);
+                mymuseum.LastChange = DateTime.Now;                
 
                 //Setting LicenseInfo
                 mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);

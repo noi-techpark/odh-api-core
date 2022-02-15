@@ -39,9 +39,11 @@ namespace OdhApiCore.Controllers.api
         /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
-        /// <param name="articletype">Type of the Article ('null' = Filter disabled, possible values: BITMASK values: 1 = basearticle, 2 = book article, 4 = contentarticle, 8 = eventarticle, 16 = pressarticle, 32 = recipe, 64 = touroperator , 128 = b2b), (also possible for compatibily reasons: basisartikel, buchtippartikel, contentartikel, veranstaltungsartikel, presseartikel, rezeptartikel, reiseveranstalter, b2bartikel ) (default:'255' == ALL), REFERENCE TO: GET /api/ArticleTypes</param>
+        /// <param name="articletype">Type of the Article ('null' = Filter disabled, possible values: BITMASK values: 1 = basearticle, 2 = book article, 4 = contentarticle, 8 = eventarticle, 16 = pressarticle, 32 = recipe, 64 = touroperator , 128 = b2b, 256  = idmarticle, 512 = specialannouncement, 1024 = newsfeednoi), (also possible for compatibily reasons: basisartikel, buchtippartikel, contentartikel, veranstaltungsartikel, presseartikel, rezeptartikel, reiseveranstalter, b2bartikel ) (default:'255' == ALL), REFERENCE TO: GET /api/ArticleTypes</param>
         /// <param name="articlesubtype">Sub Type of the Article (depends on the Maintype of the Article 'null' = Filter disabled)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of Article IDs), (default:'null')</param>
+        /// <param name="startdate">Filter by ArticleDate Format (yyyy-MM-dd HH:mm)</param>
+        /// <param name="enddate">Filter by ArticleDate Format (yyyy-MM-dd HH:mm)</param>
         /// <param name="sortbyarticledate">Sort By Articledate ('true' sorts Articles by Articledate)</param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=article'), (default:'null')</param>                
         /// <param name="active">Active Articles Filter (possible Values: 'true' only Active Articles, 'false' only Disabled Articles), (default:'null')</param>
@@ -49,6 +51,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -76,7 +79,10 @@ namespace OdhApiCore.Controllers.api
             LegacyBool odhactive = null!,
             LegacyBool active = null!,
             string? updatefrom = null,
+            string? startdate = null,
+            string? enddate = null,
             string? seed = null,
+            string? publishedon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -89,7 +95,8 @@ namespace OdhApiCore.Controllers.api
             return await GetFiltered(
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: articletype, subtypefilter: articlesubtype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter, highlightfilter: null,
-                active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value,
+                active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed,  
+                articledate: startdate, articledateto: enddate, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value, publishedon: publishedon,
                 rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -183,14 +190,15 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize,
             string? type, string? subtypefilter, string? searchfilter, string? idfilter, string? languagefilter, bool? highlightfilter,
-            bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, bool? sortbyarticledate, string? rawfilter, string? rawsort, bool removenullvalues,
+            bool? active, bool? smgactive, string? smgtags, string? seed, string? articledate, string? articledateto, string? lastchange, 
+            bool? sortbyarticledate, string? publishedon, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
-                ArticleHelper myrticlehelper = ArticleHelper.Create(
+                ArticleHelper myarticlehelper = ArticleHelper.Create(
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
-                    active, smgactive, smgtags, lastchange);
+                    active, smgactive, smgtags, articledate, articledateto, lastchange, publishedon);
 
                 //TODO orderby = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') DESC";
 
@@ -199,11 +207,11 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw("data")
                         .From("articles")
                         .ArticleWhereExpression(
-                            idlist: myrticlehelper.idlist, typelist: myrticlehelper.typelist,
-                            subtypelist: myrticlehelper.subtypelist, smgtaglist: myrticlehelper.smgtaglist, languagelist: myrticlehelper.languagelist,
-                            highlight: myrticlehelper.highlight,
-                            activefilter: myrticlehelper.active, smgactivefilter: myrticlehelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myrticlehelper.lastchange,
+                            idlist: myarticlehelper.idlist, typelist: myarticlehelper.typelist,
+                            subtypelist: myarticlehelper.subtypelist, smgtaglist: myarticlehelper.smgtaglist, languagelist: myarticlehelper.languagelist,
+                            highlight: myarticlehelper.highlight, activefilter: myarticlehelper.active, smgactivefilter: myarticlehelper.smgactive,
+                            articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, publishedonlist: myarticlehelper.publishedonlist,
+                            searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange, 
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
@@ -313,13 +321,16 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
+        [InvalidateCacheOutput(nameof(GetArticleList))]        
         [HttpPost, Route("Article")]
         public Task<IActionResult> Post([FromBody] ArticlesLinked article)
-        {
+        {            
             return DoAsyncReturn(async () =>
             {
                 article.Id = !String.IsNullOrEmpty(article.Id) ? article.Id.ToUpper() : "noId";
-                return await UpsertData<ArticlesLinked>(article, "articles");
+                article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<ArticlesLinked>(article, "articles", true);
             });
         }
 
@@ -331,12 +342,15 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify")]
+        [InvalidateCacheOutput(nameof(GetArticleList))]
         [HttpPut, Route("Article/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ArticlesLinked article)
-        {
+        {            
             return DoAsyncReturn(async () =>
             {
                 article.Id = id.ToUpper();
+                article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
                 return await UpsertData<ArticlesLinked>(article, "articles");
             });
         }
@@ -348,6 +362,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataDelete,ArticleManager,ArticleDelete")]
+        [InvalidateCacheOutput(nameof(GetArticleList))]
         [HttpDelete, Route("Article/{id}")]
         public Task<IActionResult> Delete(string id)
         {

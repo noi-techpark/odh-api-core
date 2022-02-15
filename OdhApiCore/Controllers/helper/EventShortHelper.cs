@@ -21,19 +21,22 @@ namespace OdhApiCore.Controllers.api
         public bool? communityactivefilter;
         public string? lastchange;
         public string? sortorder;
+        //New Publishedonlist
+        public List<string> publishedonlist;
 
         public static EventShortHelper Create(
             string? startdate, string? enddate, string? datetimeformat, string? source,
             string? eventlocation, bool? onlyactive, bool? websiteactive, bool? communityactive,
-            string? eventids, string? webaddress, string? lastchange, string? sortorder)
+            string? eventids, string? webaddress, string? lastchange, string? sortorder, string? publishedonfilter)
         {
-            return new EventShortHelper(startdate, enddate, datetimeformat, source, eventlocation, onlyactive, websiteactive, communityactive, eventids, webaddress, lastchange, sortorder);
+            return new EventShortHelper(startdate, enddate, datetimeformat, source, eventlocation, onlyactive, websiteactive, 
+                communityactive, eventids, webaddress, lastchange, sortorder, publishedonfilter);
         }
 
         private EventShortHelper(
             string? startdate, string? enddate, string? datetimeformat, string? source,
             string? eventlocation, bool? onlyactive, bool? websiteactive, bool? communityactive, string? eventids, string? webaddress,
-            string? lastchange, string? sortorder)
+            string? lastchange, string? sortorder, string? publishedonfilter)
         {            
             idlist = Helper.CommonListCreator.CreateIdList(eventids);
             sourcelist = Helper.CommonListCreator.CreateIdList(source);
@@ -97,8 +100,9 @@ namespace OdhApiCore.Controllers.api
                     sortorder = "";
             }
             
-
             this.lastchange = lastchange;
+            publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
+
         }
     }
 }

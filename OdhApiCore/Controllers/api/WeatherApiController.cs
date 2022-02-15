@@ -172,6 +172,7 @@ namespace OdhApiCore.Controllers
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -193,6 +194,7 @@ namespace OdhApiCore.Controllers
             string? language = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? publishedon = null,
             string? updatefrom = null,
             string? latitude = null,
             string? longitude = null,
@@ -211,7 +213,7 @@ namespace OdhApiCore.Controllers
             return await GetMeasuringPointList(
                 fields: fields ?? Array.Empty<string>(), language: language, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
-                    skiareafilter: skiareafilter, active: active,
+                    skiareafilter: skiareafilter, active: active, publishedon: publishedon,
                     smgactive: odhactive, seed: seed, lastchange: updatefrom,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                     removenullvalues: removenullvalues, cancellationToken: cancellationToken);
@@ -478,6 +480,7 @@ namespace OdhApiCore.Controllers
             bool? active,
             bool? smgactive,
             string? lastchange,
+            string? publishedon,
             string? searchfilter,
             string? seed,
             string[] fields,
@@ -494,7 +497,7 @@ namespace OdhApiCore.Controllers
                 string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
 
                 MeasuringPointsHelper mymeasuringpointshelper = await MeasuringPointsHelper.Create(QueryFactory, idfilter, locfilter,
-                    arefilterwithprefix, skiarefilterwithprefix, active, smgactive, lastchange, cancellationToken);
+                    arefilterwithprefix, skiarefilterwithprefix, active, smgactive, lastchange, publishedon, cancellationToken);
 
                 var query =
                     QueryFactory.Query()
@@ -503,7 +506,7 @@ namespace OdhApiCore.Controllers
                         .MeasuringpointWhereExpression(
                             idlist: mymeasuringpointshelper.idlist, districtlist: mymeasuringpointshelper.districtlist, municipalitylist: mymeasuringpointshelper.municipalitylist,
                             tourismvereinlist: mymeasuringpointshelper.tourismvereinlist, regionlist: mymeasuringpointshelper.regionlist, arealist: mymeasuringpointshelper.arealist,
-                            activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive,
+                            activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper. publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
                             filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)

@@ -1025,6 +1025,21 @@ namespace Helper
             return q;
         });
 
+
+        //Filter on Generated Field gen_articletype OR
+        public static Query ArticleTypeFilterOr_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
+        query.Where(q =>
+        {
+            foreach (var item in list)
+            {
+                q = q.OrWhereRaw(
+                    "gen_articletype @> array\\[?\\]", item.ToLower()
+                );
+            }
+            return q;
+        });
+
+
         //Filter on Generated Field gen_active 
         public static Query ActiveFilter_GeneratedColumn(this Query query, bool? active) =>
             query.When(
@@ -1044,6 +1059,7 @@ namespace Helper
                     odhactive ?? false
                 )
             );
+        
 
         //Filter on Generated Field gen_lastchange 
         public static Query LastChangedFilter_GeneratedColumn(this Query query, string? updatefrom) =>

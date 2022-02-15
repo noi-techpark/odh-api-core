@@ -32,11 +32,13 @@ namespace OdhApiCore.Controllers
         public bool roomcount;
         public int roomcountmin;
         public int roomcountmax;
+        //New Publishedonlist
+        public List<string> publishedonlist;
 
         public static async Task<VenueHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? categoryfilter, string? featurefilter, string? setuptypefilter, string? locfilter,
             string? capacityfilter, string? roomcountfilter, string? languagefilter, string? sourcefilter, bool? activefilter, bool? smgactivefilter,
-            string? odhtags, string? lastchange, CancellationToken cancellationToken)
+            string? odhtags, string? lastchange, string? publishedonfilter, CancellationToken cancellationToken)
         {
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
@@ -46,13 +48,13 @@ namespace OdhApiCore.Controllers
             }
 
             return new VenueHelper(idfilter, categoryfilter, featurefilter, setuptypefilter, locfilter, capacityfilter, roomcountfilter, 
-                languagefilter, sourcefilter, activefilter, smgactivefilter, odhtags, lastchange, tourismusvereinids);
+                languagefilter, sourcefilter, activefilter, smgactivefilter, odhtags, lastchange, publishedonfilter, tourismusvereinids);
         }
 
         private VenueHelper(
             string? idfilter, string? categoryfilter, string? featurefilter, string? setuptypefilter, string? locfilter,
             string? capacityfilter, string? roomcountfilter, string? languagefilter, string? sourcefilter,
-            bool? activefilter, bool? smgactivefilter, string? odhtags, string? lastchange, IEnumerable<string>? tourismusvereinids)
+            bool? activefilter, bool? smgactivefilter, string? odhtags, string? lastchange, string? publishedonfilter, IEnumerable<string>? tourismusvereinids)
         {
           
             sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
@@ -102,6 +104,8 @@ namespace OdhApiCore.Controllers
             smgactive = smgactivefilter;
 
             this.lastchange = lastchange;
+
+            publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
     }
 }

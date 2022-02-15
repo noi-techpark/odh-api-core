@@ -99,17 +99,17 @@ namespace DataModel
 
         string? ImageName { get; set; }
         string? ImageUrl { get; set; }
-        int Width { get; set; }
-        int Height { get; set; }
+        int? Width { get; set; }
+        int? Height { get; set; }
         string? ImageSource { get; set; }
 
         IDictionary<string, string> ImageTitle { get; set; }
         IDictionary<string, string> ImageDesc { get; set; }
 
-        Nullable<bool> IsInGallery { get; set; }
-        Nullable<int> ListPosition { get; set; }
-        Nullable<DateTime> ValidFrom { get; set; }
-        Nullable<DateTime> ValidTo { get; set; }
+        bool? IsInGallery { get; set; }
+        int? ListPosition { get; set; }
+        DateTime? ValidFrom { get; set; }
+        DateTime? ValidTo { get; set; }
     }
 
     public interface IImageGalleryAware
@@ -961,7 +961,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class AccoRoomInfo
@@ -1062,7 +1062,7 @@ namespace DataModel
         public Nullable<DateTime> FirstImport { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -1473,7 +1473,7 @@ namespace DataModel
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class Season
@@ -1597,7 +1597,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class WeatherObservation
@@ -2228,7 +2228,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
@@ -2345,13 +2345,13 @@ namespace DataModel
         public List<LTSTags>? LTSTags { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
     public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public ArticleBaseInfos()
         {
@@ -2377,10 +2377,10 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
 
-        public Nullable<DateTime> ArticleDate { get; set; }
+        public DateTime? ArticleDate { get; set; }
 
         //Mochmer des?
-        public Nullable<DateTime> ArticleDateTo { get; set; }
+        public DateTime? ArticleDateTo { get; set; }
 
         //OperationSchedule
         //public string OperationscheduleName { get; set; }
@@ -2425,7 +2425,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
@@ -2500,7 +2500,7 @@ namespace DataModel
         public Nullable<int> RepresentationRestriction { get; set; }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
@@ -2619,7 +2619,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class Topic
@@ -2646,14 +2646,14 @@ namespace DataModel
         public string? GetThereText { get; set; }
         public string? Language { get; set; }
 
-        public ICollection<string> Keywords { get; set; }
+        public ICollection<string>? Keywords { get; set; }
 
         //New LTS Fields        
-        public string ParkingInfo { get; set; }
-        public string PublicTransportationInfo { get; set; }
-        public string AuthorTip { get; set; }
-        public string SafetyInfo { get; set; }
-        public string EquipmentInfo { get; set; }
+        public string? ParkingInfo { get; set; }
+        public string? PublicTransportationInfo { get; set; }
+        public string? AuthorTip { get; set; }
+        public string? SafetyInfo { get; set; }
+        public string? EquipmentInfo { get; set; }
     }
 
     //Special Element for Themed Content 
@@ -2681,7 +2681,7 @@ namespace DataModel
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public Nullable<double> Altitude { get; set; }
+        public double? Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
     }
 
@@ -2718,14 +2718,11 @@ namespace DataModel
         [Obsolete]
         [SwaggerSchema("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
-        //Neu
-        public Nullable<int> ListPosition { get; set; }
+        public int? ListPosition { get; set; }       
+        public string? Streamurl { get; set; }
+        public string? Previewurl { get; set; }
 
-        ////NEW Webcam Properties
-        public string Streamurl { get; set; }
-        public string Previewurl { get; set; }
-
-        public string Source { get; set; }
+        public string? Source { get; set; }
 
         ////NEW Webcam Properties
         //public string Streamurl { get; set; }
@@ -2789,7 +2786,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
     }
 
     public class PublishedonObject
@@ -2810,18 +2807,18 @@ namespace DataModel
 
         public string? ImageName { get; set; }
         public string? ImageUrl { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
         public string? ImageSource { get; set; }
 
         public IDictionary<string, string> ImageTitle { get; set; }
         public IDictionary<string, string> ImageDesc { get; set; }
         public IDictionary<string, string> ImageAltText { get; set; }
 
-        public Nullable<bool> IsInGallery { get; set; }
-        public Nullable<int> ListPosition { get; set; }
-        public Nullable<DateTime> ValidFrom { get; set; }
-        public Nullable<DateTime> ValidTo { get; set; }
+        public bool? IsInGallery { get; set; }
+        public int? ListPosition { get; set; }
+        public DateTime? ValidFrom { get; set; }
+        public DateTime? ValidTo { get; set; }
 
         //NEU
         public string? CopyRight { get; set; }
@@ -2888,7 +2885,7 @@ namespace DataModel
 
         public string? Language { get; set; }
 
-        public List<string> Categories { get; set; }
+        public List<string>? Categories { get; set; }
     }
 
     public class Ratings : IRatings
@@ -2913,7 +2910,7 @@ namespace DataModel
         public string? LTSRID { get; set; }
         public IDictionary<string, string> TagName { get; set; }
 
-        public ICollection<LTSTins> LTSTins { get; set; }
+        public ICollection<LTSTins>? LTSTins { get; set; }
     }
 
     public class LTSTins
@@ -2923,8 +2920,8 @@ namespace DataModel
             TinName = new Dictionary<string, string>();
         }
 
-        public string Id { get; set; }
-        public string LTSRID { get; set; }
+        public string? Id { get; set; }
+        public string? LTSRID { get; set; }
         public IDictionary<string, string> TinName { get; set; }
     }
 
@@ -2987,8 +2984,7 @@ namespace DataModel
         public OperationSchedule()
         {
             OperationscheduleName = new Dictionary<string, string>();
-        }
-        
+        }        
         public IDictionary<string, string> OperationscheduleName { get; set; }        
         public DateTime Start { get; set; }        
         public DateTime Stop { get; set; }
@@ -3376,9 +3372,7 @@ namespace DataModel
         ////gehört zu Abstract
         //public string Documents { get; set; }
         public List<ImageGallery>? ImageGallery { get; set; }
-        public string? VideoUrl { get; set; }
-
-        
+        public string? VideoUrl { get; set; }        
         public string? EventTextDE { get; set; }
         public string? EventTextIT { get; set; }
         public string? EventTextEN { get; set; }
@@ -3414,11 +3408,13 @@ namespace DataModel
         /// <summary>
         /// ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI
         /// </summary>
-        public Nullable<bool> ActiveWeb { get; set; }
+        public bool? ActiveWeb { get; set; }
         /// <summary>
         /// ActiveCommunityApp Indicates if Event is shown on the Noi Community App
         /// </summary>
-        public Nullable<bool> ActiveCommunityApp { get; set; }
+        public bool? ActiveCommunityApp { get; set; }
+
+        public ICollection<string>? HasLanguage { get; set; }
     }
 
     public class RoomBooked
@@ -3536,10 +3532,12 @@ namespace DataModel
     {
         public string Id { get; set; }
         public string Type { get; set; }
-        public Nullable<DateTime> LastUpdate { get; set; }
+        public DateTime? LastUpdate { get; set; }
 
         //New
         public string Source { get; set; }
+
+        public bool? Reduced { get; set; }
     }
 
     #endregion

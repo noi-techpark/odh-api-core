@@ -18,18 +18,24 @@ namespace OdhApiCore.Controllers.api
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
+        public DateTime? articledate;
+        public DateTime? articledateto;
+        //New Publishedonlist
+        public List<string> publishedonlist;
 
         public static ArticleHelper Create(
             string? typefilter, string? subtypefilter, string? idfilter,
             string? languagefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange)
+            string? smgtags, string? articledate, string? articledateto, string? lastchange, string? publishedonfilter)
         {
-            return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange);
+            return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, 
+                smgtags, articledate, articledateto, lastchange, publishedonfilter);
         }
 
         private ArticleHelper(
             string? typefilter, string? subtypefilter, string? idfilter, string? languagefilter,
-            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange)
+            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags,
+            string? articledate, string? articledateto, string? lastchange, string? publishedonfilter)
         {
             typelist = new List<string>();
             int typeinteger = 0;
@@ -39,7 +45,7 @@ namespace OdhApiCore.Controllers.api
                 if (int.TryParse(typefilter, out typeinteger))
                 {
                     //Sonderfall wenn alles abgefragt wird um keine unnötige Where zu erzeugen
-                    if (typeinteger != 255)
+                    if (typeinteger != 2047)
                         typelist = Helper.ArticleListCreator.CreateArticleTypefromFlag(typefilter);
                 }
                 else
@@ -83,6 +89,19 @@ namespace OdhApiCore.Controllers.api
             smgactive = smgactivefilter;
 
             this.lastchange = lastchange;
+
+            this.articledate = DateTime.MinValue;
+            this.articledateto = DateTime.MaxValue;
+
+            if (!String.IsNullOrEmpty(articledate))
+                if (articledate != "null")
+                    this.articledate = Convert.ToDateTime(articledate);
+
+            if (!String.IsNullOrEmpty(articledateto))
+                if (articledateto != "null")
+                    this.articledateto = Convert.ToDateTime(articledateto);
+
+            publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
     }
 }

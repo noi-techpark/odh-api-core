@@ -34,8 +34,12 @@ namespace Helper
 
         #region PG Helpers
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table) where T : IIdentifiable, IImportDateassigneable
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, bool errorwhendataexists = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
+            //TODO: What if no id is passed? Generate ID
+            //TODO: Id Uppercase or Lowercase depending on table
+            //TODO: Shortname population?
+
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
 
@@ -52,18 +56,22 @@ namespace Helper
             int updateresult = 0;
             int errorresult = 0;
 
+            data.LastChange = DateTime.Now;
+            //Setting MetaInfo
+            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+
             if (queryresult == null || queryresult.Count() == 0)
             {
                 data.FirstImport = DateTime.Now;
-                data.LastChange = DateTime.Now;
-
+                
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
             }
             else
-            {
-                data.LastChange = DateTime.Now;
+            {   
+                if(errorwhendataexists)
+                    throw new ArgumentNullException(nameof(data), "Id exists already");
 
                 updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
@@ -75,8 +83,8 @@ namespace Helper
 
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };
         }
-
-        private static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
+        
+        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException(nameof(id), "No data");
@@ -110,7 +118,7 @@ namespace Helper
 
         #region RawDataStore
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, int rawdataid) where T : IIdentifiable, IImportDateassigneable
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, int rawdataid, bool errorwhendataexists = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
@@ -128,10 +136,13 @@ namespace Helper
             int updateresult = 0;
             int errorresult = 0;
 
+            data.LastChange = DateTime.Now;
+            //Setting MetaInfo
+            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+
             if (queryresult == null || queryresult.Count() == 0)
             {
-                data.FirstImport = DateTime.Now;
-                data.LastChange = DateTime.Now;
+                data.FirstImport = DateTime.Now;                
 
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
@@ -139,8 +150,9 @@ namespace Helper
             }
             else
             {
-                data.LastChange = DateTime.Now;
-
+                if (errorwhendataexists)
+                    throw new ArgumentNullException(nameof(data), "Id exists already");
+                
                 updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
                 operation = "UPDATE";

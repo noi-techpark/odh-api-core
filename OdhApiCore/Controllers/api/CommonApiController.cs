@@ -38,6 +38,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -68,6 +69,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null,
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -76,9 +78,9 @@ namespace OdhApiCore.Controllers.api
         {                        
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, active?.Value, odhactive?.Value, odhtagfilter, lastchange: updatefrom, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, active?.Value, odhactive?.Value, odhtagfilter, lastchange: updatefrom, publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "metaregions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "metaregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult:  geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -121,6 +123,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -151,6 +154,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null,
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -159,9 +163,9 @@ namespace OdhApiCore.Controllers.api
         {          
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, activefilter: active?.Value, 
-                smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+                smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "experienceareas", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "experienceareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -202,6 +206,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -231,6 +236,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null,
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -239,9 +245,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
-                activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+                activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "regions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "regions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -282,6 +288,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -311,6 +318,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null, 
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -319,9 +327,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
-                activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+                activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "tvs", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "tvs", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
 
         }
@@ -364,6 +372,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -394,6 +403,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null, 
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -402,9 +412,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, 
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "municipalities", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "municipalities", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
 
         }
@@ -447,6 +457,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -477,6 +488,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null,
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -485,9 +497,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, 
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "districts", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "districts", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -526,6 +538,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactive">Odhactive (Published) data Filter (possible Values: 'true' only published data, 'false' only not published data, (default:'null')</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -552,6 +565,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null,
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -559,9 +573,9 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "areas", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "areas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult:  new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -603,6 +617,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -629,6 +644,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null,
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
@@ -636,9 +652,9 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "skiregions", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "skiregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -679,6 +695,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -705,6 +722,7 @@ namespace OdhApiCore.Controllers.api
             string? langfilter = null,
             string? updatefrom = null, 
             string? seed = null,
+            string? publishedon = null,
             string? searchfilter = null,
             string? latitude = null,
             string? longitude = null,
@@ -717,9 +735,9 @@ namespace OdhApiCore.Controllers.api
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "skiareas", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            return await CommonGetListHelper(tablename: "skiareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -762,6 +780,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="wineid">Filter by Wine Id, (default:'null')</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -791,6 +810,7 @@ namespace OdhApiCore.Controllers.api
             string? seed = null,
             string? rawfilter = null,
             string? rawsort = null,
+            string? publishedon = null,
             string? searchfilter = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default
@@ -829,7 +849,7 @@ namespace OdhApiCore.Controllers.api
 
         #region GETTER
 
-        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? publishedon, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -838,7 +858,7 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw("data")
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
-                                               activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, searchfilter: searchfilter, language: language, 
+                                               activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, searchfilter: searchfilter, language: language, 
                                                lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
@@ -868,6 +888,7 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw("data")
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
+                                             activefilter: winehelper.active, odhactivefilter: winehelper.smgactive,
                                                searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
@@ -1071,12 +1092,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate")]
         [HttpPost, Route("WineAward")]
-        public Task<IActionResult> Post([FromBody] Wine data)
+        public Task<IActionResult> Post([FromBody] WineLinked data)
         {
             return DoAsyncReturn(async () =>
             {
                 data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<Wine>(data, "wines");
+                return await UpsertData<WineLinked>(data, "wines");
             });
         }
 
@@ -1251,12 +1272,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify")]
         [HttpPut, Route("WineAward/{id}")]
-        public Task<IActionResult> Put(string id, [FromBody] Wine data)
+        public Task<IActionResult> Put(string id, [FromBody] WineLinked data)
         {
             return DoAsyncReturn(async () =>
             {
                 data.Id = id.ToUpper();
-                return await UpsertData<Wine>(data, "wines");
+                return await UpsertData<WineLinked>(data, "wines");
             });
         }
 
