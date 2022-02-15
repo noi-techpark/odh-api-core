@@ -372,6 +372,10 @@ namespace OdhApiCore
                     if(referer == "http://localhost/" && context.Request.Query.ContainsKey("Referer"))
                         referer = context.Request.Query["Referer"].ToString();
 
+                    //Origin
+                    var origin = "not provided";
+                    if (context.Request.Query.ContainsKey("Origin"))
+                        referer = context.Request.Query["Origin"].ToString();
 
                     //User Agent
                     var useragent = "not provided";
@@ -393,7 +397,8 @@ namespace OdhApiCore
                         useragent = useragent,
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous",
                         ipaddress = remoteip,
-                        statuscode = context.Response.StatusCode
+                        statuscode = context.Response.StatusCode,
+                        origin = origin
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 

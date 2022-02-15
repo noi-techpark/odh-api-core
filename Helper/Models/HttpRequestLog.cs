@@ -10,6 +10,7 @@ namespace Helper
     {
         public string username { get; init; }
         public string referer { get; init; }
+        public string origin { get; init; }
         public string host { get; init; }
         public string path { get; init; }
         public string schema { get; init; }
