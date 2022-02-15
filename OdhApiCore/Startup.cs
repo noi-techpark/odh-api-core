@@ -375,7 +375,7 @@ namespace OdhApiCore
                     //Origin
                     var origin = "not provided";
                     if (context.Request.Query.ContainsKey("Origin"))
-                        referer = context.Request.Query["Origin"].ToString();
+                        origin = context.Request.Query["Origin"].ToString();
 
                     //User Agent
                     var useragent = "not provided";
