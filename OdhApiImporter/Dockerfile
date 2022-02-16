@@ -9,7 +9,7 @@ COPY DataModel/DataModel.csproj DataModel/
 COPY RawQueryParser/RawQueryParser.fsproj RawQueryParser/
 COPY Helper/Helper.csproj Helper/
 COPY EBMS/EBMS.csproj EBMS/
-COPY DSS/DSS.csproj EBMS/
+COPY DSS/DSS.csproj DSS/
 COPY MSS/MSS.csproj MSS/
 COPY LCS/LCS.csproj LCS/
 COPY SIAG/SIAG.csproj SIAG/
