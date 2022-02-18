@@ -28,7 +28,7 @@ namespace OdhApiCore.Filters
 
         public bool CheckAvailabilitySearch(System.Security.Claims.ClaimsPrincipal User)
         {
-            List<string> roles = new List<string>() { "DataReader", "AccoReader" };
+            List<string> roles = new List<string>() { "IDM", "LTS" };
 
             foreach (var role in roles)
             {
