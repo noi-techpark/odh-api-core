@@ -251,8 +251,9 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("articles")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                
+                        //.When(FilterClosedData, q => q.FilterClosedData())
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, ReducedData);
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 var fieldsTohide = FieldsToHide;

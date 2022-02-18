@@ -1268,7 +1268,7 @@ namespace Helper
         //anonymous -> where (closeddata = false and source != lts) OR (reduced = true and source = lts and cc0 = true)
         //logged -> where (source != lts) OR (reduced = true and source = lts)
         //idmuser -> where (source != lts) OR (reduced = false and source = lts)
-        public static Query Anonymous_Logged_IDM_UserRule_GeneratedColumn(this Query query, bool closeddatafilter, bool idmuser) =>
+        public static Query Anonymous_Logged_UserRule_GeneratedColumn(this Query query, bool closeddatafilter, bool idmuser) =>
             idmuser ? query.FilterSourceReducedLogged(false) : closeddatafilter ? query.FilterSourceReducedAnonymous() : query.FilterSourceReducedLogged(true);
 
         public static Query FilterSourceReducedLogged(this Query query, bool reduced) =>

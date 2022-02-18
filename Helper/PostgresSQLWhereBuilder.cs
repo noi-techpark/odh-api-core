@@ -318,7 +318,7 @@ namespace Helper
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
             IReadOnlyCollection<string> smgtaglist, bool? highlight, bool? activefilter, bool? smgactivefilter, DateTime? articledate, DateTime? articledateto,
             IReadOnlyCollection<string> publishedonlist, 
-            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
+            string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -342,13 +342,14 @@ namespace Helper
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                   //Articledate+ Articledatetofilter
+                //Articledate+ Articledatetofilter
                 .EventDateFilterEnd_GeneratedColumn(articledate, articledateto)
                 .EventDateFilterBegin_GeneratedColumn(articledate, articledateto)
                 .EventDateFilterBeginEnd_GeneratedColumn(articledate, articledateto)
                 .PublishedOnFilter(publishedonlist)
                 .LastChangedFilter(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
         }
 
         //Return Where and Parameters for Event
