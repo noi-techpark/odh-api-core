@@ -1100,7 +1100,26 @@ namespace DataModel
 
     public class Gastronomy : GastronomyBaseInfos, ILicenseInfo
     {
-
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     //Für Types Api
