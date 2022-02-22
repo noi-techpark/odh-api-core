@@ -247,7 +247,7 @@ namespace OdhApiCore.Controllers
                             languagelist: myeventhelper.languagelist, begindate: myeventhelper.begin, enddate: myeventhelper.end,
                             activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive, publishedonlist: myeventhelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange, 
-                            filterClosedData: FilterClosedData)
+                            filterClosedData: FilterClosedData, reducedData: ReducedData)
                          .ApplyRawFilter(rawfilter)
                          .OrderByRawIfNotNull(sortifseednull)
                          .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
@@ -297,7 +297,8 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("events")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        //.When(FilterClosedData, q => q.FilterClosedData());
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
                 var fieldsTohide = FieldsToHide;
 

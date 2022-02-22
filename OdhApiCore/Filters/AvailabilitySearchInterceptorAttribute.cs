@@ -469,7 +469,7 @@ namespace OdhApiCore.Filters
                            altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
                            activefilter: myhelper.active, smgactivefilter: myhelper.smgactive, publishedonlist: myhelper.publishedonlist,
                            searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
-                           filterClosedData: false)//FilterClosedData -->TODO)
+                           filterClosedData: false, reducedData: false) //Availability Search only for IDM Users therefore no filte Closed Data, no reduced data
                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
                        .GeoSearchFilterAndOrderby(geosearchresult);
 

@@ -127,7 +127,7 @@ namespace Helper
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
             int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
             int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
-            string? language, string? lastchange, bool filterClosedData)
+            string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -164,7 +164,8 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange) //.LastChangedFilter(lastchange)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))    //OK GENERATED COLUMNS
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
         }
 
         //Return Where and Parameters for Poi
@@ -365,7 +366,7 @@ namespace Helper
           bool? activefilter, bool? smgactivefilter,
           IReadOnlyCollection<string> publishedonlist,
           string? searchfilter,
-          string? language, string? lastchange, bool filterClosedData)
+          string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -400,7 +401,8 @@ namespace Helper
                 .PublishedOnFilter(publishedonlist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
         }
 
         //Return Where and Parameters for Accommodation
@@ -413,7 +415,7 @@ namespace Helper
             IReadOnlyCollection<string> regionlist, bool? apartmentfilter, bool? bookable,
             bool altitude, int altitudemin, int altitudemax, bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist,
-            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
+            string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -450,7 +452,8 @@ namespace Helper
                 .PublishedOnFilter(publishedonlist)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
         }
 
         //Return Where and Parameters for Common
