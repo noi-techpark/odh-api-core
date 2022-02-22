@@ -41,11 +41,15 @@ namespace RAVEN
         {
             data.Id = data.Id.ToLower();
 
+            if (data.Source != null)
+                data.Source = data.Source.ToLower();
+
             if (data.SyncSourceInterface != null)
                 data.SyncSourceInterface = data.SyncSourceInterface.ToLower();
 
             if (data.SmgTags != null && data.SmgTags.Count > 0)
                 data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+            
             if (!String.IsNullOrEmpty(data.CustomId))
                 data.CustomId = data.CustomId.ToUpper();
 
@@ -90,6 +94,18 @@ namespace RAVEN
             }            
 
             string sourcemeta = data.Source.ToLower();
+
+            if (data.LTSTags != null)
+            {
+                foreach (var myltstag in data.LTSTags)
+                {
+                    myltstag.Id = myltstag.Id.ToLower();
+                }
+            }
+
+            //Remove empty dictionary keys
+            data.PoiProperty = data.PoiProperty == null ? new Dictionary<string, List<PoiProperty>>() : data.PoiProperty.Where(f => f.Value.Count > 0).ToDictionary(x => x.Key, x => x.Value);
+
 
             //if (sourcemeta == "common" || sourcemeta == "magnolia" || sourcemeta == "content")
             //    sourcemeta = "idm";
