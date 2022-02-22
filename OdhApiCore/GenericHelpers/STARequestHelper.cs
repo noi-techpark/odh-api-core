@@ -116,7 +116,7 @@ namespace OdhApiCore.GenericHelpers
                             durationmax: 0, altitude: false, altitudemin: 0, altitudemax: 0,
                             publishedonlist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null,
-                            filterClosedData: true, reducedData: ReducedData)
+                            filterClosedData: true, reducedData: false)
                     .OrderByRaw(orderby);
 
                 var data = (await query.GetAsync()).ToList();
