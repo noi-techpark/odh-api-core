@@ -706,7 +706,8 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodations")
                         .Select("data")
                         .Where("gen_hgvid", "ILIKE", id)
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        //.When(FilterClosedData, q => q.FilterClosedData());
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
                 var fieldsTohide = FieldsToHide;
