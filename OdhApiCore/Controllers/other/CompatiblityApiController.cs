@@ -132,7 +132,7 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
                             arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
                             smgactivefilter: mypoihelper.smgactive, searchfilter: searchfilter, language: language, lastchange: null, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData
+                            filterClosedData: FilterClosedData, reducedData: ReducedData
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -390,7 +390,7 @@ namespace OdhApiCore.Controllers.api
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: null, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData
+                            filterClosedData: FilterClosedData, reducedData: ReducedData
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -606,7 +606,7 @@ namespace OdhApiCore.Controllers.api
                             distancemin: helper.distancemin, distancemax: helper.distancemax, duration: helper.duration, durationmin: helper.durationmin,
                             durationmax: helper.durationmax, altitude: helper.altitude, altitudemin: helper.altitudemin, altitudemax: helper.altitudemax,
                             publishedonlist: helper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData
+                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -1445,7 +1445,7 @@ namespace OdhApiCore.Controllers.api
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
-                            languagelist: new List<string>(), filterClosedData: FilterClosedData)
+                            languagelist: new List<string>(), filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 

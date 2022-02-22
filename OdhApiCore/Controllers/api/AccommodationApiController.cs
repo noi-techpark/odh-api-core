@@ -718,16 +718,16 @@ namespace OdhApiCore.Controllers
 
         private async Task<string> GetAccoIdByHgvId(string id, CancellationToken cancellationToken)
         {
-            
-                var query =
-                    QueryFactory.Query("accommodations")
-                        .Select("id")
-                        .Where("gen_hgvid", "ILIKE", id)
-                        .When(FilterClosedData, q => q.FilterClosedData());
+            var query =
+                QueryFactory.Query("accommodations")
+                    .Select("id")
+                    .Where("gen_hgvid", "ILIKE", id)
+                    //.When(FilterClosedData, q => q.FilterClosedData());
+                    .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
-                var data = await query.FirstOrDefaultAsync<string?>();
+            var data = await query.FirstOrDefaultAsync<string?>();
 
-                return data ?? "";
+            return data ?? "";
         }
 
         private Task<IActionResult> GetAccommodationRooms(
@@ -752,12 +752,13 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                         //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE ?", id)
                         .Where("gen_a0rid", "ILIKE", id)
-                        .When(FilterClosedData, q => q.FilterClosedData())
+                        //.When(FilterClosedData, q => q.FilterClosedData())
                         .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))
                         .When(!String.IsNullOrEmpty(updatefrom), q => q.LastChangedFilter_GeneratedColumn(updatefrom))
                         .SearchFilter(PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
-                        .OrderOnlyByRawSortIfNotNull(rawsort);
+                        .OrderOnlyByRawSortIfNotNull(rawsort)
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
                 var data = await query.GetAsync<JsonRaw?>();
                 var fieldsTohide = FieldsToHide;
@@ -789,7 +790,8 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodationrooms")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        //.When(FilterClosedData, q => q.FilterClosedData());
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
                 var fieldsTohide = FieldsToHide;
@@ -949,70 +951,6 @@ namespace OdhApiCore.Controllers
             });
         }
 
-
-        #endregion
-
-        #region PRIVATEHELPERS
-
-        //private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string source, bool withoutmssids = false, string mssversion = "2")
-        //{            
-        //    MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, detail, source, mssversion);
-                       
-        //    //Achtung muassi no schaugn!
-        //    if (bookableaccoIDs.Count > 0)
-        //    {
-        //        //0 MSS Method Olle channels affamol mit IDList
-        //        var myparsedresponse = await GetMssData.GetMssResponse(
-        //            httpClientFactory.CreateClient("mss"),
-        //            lang: myhelper.mssrequestlanguage, idlist: myhelper.accoidlist, idsofchannel: idsofchannel, mybookingchannels: myhelper.mybokchannels,
-        //            myroomdata: myhelper.myroomdata, arrival: myhelper.arrival, departure: myhelper.departure, service: myhelper.service,
-        //            hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,
-        //            rooms: myhelper.rooms, source: myhelper.source, version: myhelper.mssversion, mssuser: "", msspswd: "", withoutmssids: withoutmssids
-        //            );
-               
-        //        if (myparsedresponse != null)
-        //            return myparsedresponse;
-        //    }
-        //    return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
-        //}
-
-        //private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string source)
-        //{
-        //    //-------------------------------------------------MSSREQUEST------------------------------------------------------------
-
-        //    var service = Common.AccoListCreator.CreateBoardListLCSfromFlag(boardfilter);
-        //    var myroomdata = GetAccommodationDataLCS.RoomstayTransformer(roominfo);
-
-        //    //Achtung muassi no schaugn!
-        //    if (bookableaccoIDs.Count > 0)
-        //    {
-        //        var accosearchrequest = GetAccommodationDataLCS.GetAccommodationDataSearchRequest("", "1", "10000", "de", "1", "", "", "0", "0", arrival, departure, "1", "0", service, bookableaccoIDs, new List<string>(), new List<string>(), new List<string>(), myroomdata, source, ltsmessagepswd);
-
-        //        var myaccosearchlcs = new GetAccommodationDataLCS(ltsuser, ltspswd);
-        //        var response = await myaccosearchlcs.GetAccommodationDataSearchAsync(accosearchrequest);
-        //        var myparsedresponse = ParseAccoSearchResult.ParsemyLCSResponse(language, response, myroomdata.Count);
-
-        //        return myparsedresponse;
-        //    }
-        //    else
-        //        return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
-        //}
-
-
-        private bool CheckArrivalAndDeparture(string arrival, string departure)
-        {
-            DateTime now = DateTime.Now;
-            DateTime arrivaldt = DateTime.Parse(arrival);
-            DateTime departuredt = DateTime.Parse(departure);
-
-            if (arrivaldt.Date == departuredt.Date)
-                return false;
-
-            if (arrivaldt <= now.Date.AddDays(-1) || departuredt <= now.Date.AddDays(-1))
-                return false;
-            else
-                return true;
-        }
 
         #endregion
     }

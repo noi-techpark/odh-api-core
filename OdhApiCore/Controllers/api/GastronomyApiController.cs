@@ -213,7 +213,7 @@ namespace OdhApiCore.Controllers
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange, languagelist: mygastronomyhelper.languagelist,
-                            filterClosedData: FilterClosedData)
+                            filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -251,7 +251,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("gastronomies")
                         .Select("data")
-                        .Where("id", id.ToUpper());
+                        .Where("id", id.ToUpper())
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

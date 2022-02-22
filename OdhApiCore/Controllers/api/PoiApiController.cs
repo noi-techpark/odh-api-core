@@ -240,7 +240,7 @@ namespace OdhApiCore.Controllers.api
                             arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: myactivityhelper.languagelist,
-                            filterClosedData: FilterClosedData
+                            filterClosedData: FilterClosedData, reducedData: ReducedData
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
@@ -289,7 +289,8 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("pois")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        //.When(FilterClosedData, q => q.FilterClosedData());
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

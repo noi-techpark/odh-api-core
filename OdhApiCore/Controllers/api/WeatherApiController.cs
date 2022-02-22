@@ -508,7 +508,7 @@ namespace OdhApiCore.Controllers
                             tourismvereinlist: mymeasuringpointshelper.tourismvereinlist, regionlist: mymeasuringpointshelper.regionlist, arealist: mymeasuringpointshelper.arealist,
                             activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper. publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
-                            filterClosedData: FilterClosedData)
+                            filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -542,7 +542,8 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("measuringpoints")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.When(FilterClosedData, q => q.FilterClosedData());
 
                 var fieldsTohide = FieldsToHide;
 
