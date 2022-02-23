@@ -113,7 +113,7 @@ namespace OdhApiCore.Filters
                     if (CheckArrivalAndDeparture(arrival, departure))
                     {
                         var booklist = new List<string>();
-                        var bokfilterlist = bokfilter.Split(',').ToList();
+                        var bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
                         if (actionid == "GetAccommodations")
                         {
@@ -214,7 +214,7 @@ namespace OdhApiCore.Filters
             }
 
             string bokfilter = (string?)query["bokfilter"] ?? "hgv";
-            var bokfilterlist = bokfilter.Split(',').ToList();
+            var bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
             var availabilityonlychecklegacy = (string?)query["availabilityonly"];
             bool.TryParse(availabilityonlychecklegacy, out bool availabilityonly);
