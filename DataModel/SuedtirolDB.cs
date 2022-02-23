@@ -2537,6 +2537,7 @@ namespace DataModel
             EventPrices = new Dictionary<string, ICollection<EventPrice>>();
             EventVariants = new Dictionary<string, ICollection<EventVariant>>();
             Hashtag = new Dictionary<string, ICollection<string>>();
+            EventDescAdditional = new Dictionary<string, EventDescAdditional>();
         }
 
         //IIdentifiable
@@ -2639,6 +2640,11 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string ClassificationRID { get; set; }
+
+        public ICollection<EventCrossSelling> EventCrossSelling { get; set; }
+        public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
     }
 
     public class Topic
@@ -3099,6 +3105,8 @@ namespace DataModel
         public string Guide { get; set; }
         public string InscriptionLanguage { get; set; }
         public string Language { get; set; }
+
+        public string Cancelled { get; set; }
     }
 
     //TODO GET MORE INFOS ABOUT THIS
@@ -3173,6 +3181,22 @@ namespace DataModel
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
+    }
+
+    public class EventCrossSelling
+    {
+        public string EventRID { get; set; }
+    }
+
+    public class EventDescAdditional
+    {
+        public string Type { get; set; }
+        public string Language { get; set; }
+        public string Order { get; set; }
+        public string RQPlain { get; set; }
+        public string RQHtml { get; set; }
+        public string RSPlain { get; set; }
+        public string RSHtml { get; set; }
     }
 
     //Evalanche Spezial
