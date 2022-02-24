@@ -32,10 +32,10 @@ namespace OdhApiCoreTests.IntegrationTets
         [InlineData("/v1/Activity?activitytype=12")]
         [InlineData("/v1/Activity?language=de")]
         [InlineData("/v1/Activity?language=en")]
-        [InlineData("/v1/Activity?pagenumber=1&pagesize=100&activitytype=1023&areafilter=skaSKIC57DA31F859141A1802E86B410FEBD70&active=true&seed=null")]
-        [InlineData("/v1/Activity?pagenumber=1&pagesize=100&activitytype=1023&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
+        //[InlineData("/v1/Activity?pagenumber=1&pagesize=100&activitytype=1023&areafilter=skaSKIC57DA31F859141A1802E86B410FEBD70&active=true&seed=null")]
+        //[InlineData("/v1/Activity?pagenumber=1&pagesize=100&activitytype=1023&areafilter=skaSKIEC3B49365C47477B83D124D9AE6C3259&active=true&seed=null")]
         [InlineData("/v1/Activity?pagenumber=1&pagesize=10&activitytype=11&locfilter=tvs5228229651CA11D18F1400A02427D15E&odhactive=true&active=true&seed=null")]
-        [InlineData("/v1/Activity?pagenumber=1&pagesize=10&activitytype=511&highlight=true&seed=null")]
+        [InlineData("/v1/Activity?pagenumber=1&pagesize=10&activitytype=511&seed=null")]
         [InlineData("/v1/Activity?pagenumber=1&pagesize=20&activitytype=Berg&subtype=null&idlist=null&locfilter=null&areafilter=null&distancefilter=null&altitudefilter=null&durationfilter=null&highlight=null&difficultyfilter=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
         public async Task Get_Activities(string url)
         {
@@ -63,8 +63,8 @@ namespace OdhApiCoreTests.IntegrationTets
         }
 
         [Theory]
-        [InlineData("/v1/Activity/078883A95FF002AA246B5B99DA5BB9D7")]
-        [InlineData("/v1/Activity/EC73E28E771A21C431A7F8B5B931007E")]
+        [InlineData("/v1/Activity/078883A95FF002AA246B5B99DA5BB9D7_REDUCED")]
+        [InlineData("/v1/Activity/EC73E28E771A21C431A7F8B5B931007E_REDUCED")]
         public async Task Get_SingleActivity(string url)
         {
             var response = await _client.GetAsync(url);
@@ -81,14 +81,14 @@ namespace OdhApiCoreTests.IntegrationTets
                 JsonIsType<string>(data.Type);
                 JsonIsType<string?>(data.SmgId);
                 JsonIsType<bool>(data.Active);
-                Assert.IsType<JArray>(data.AreaId);
-                Assert.NotEmpty(data.AreaId);
+                //Assert.IsType<JArray>(data.AreaId);
+                //Assert.NotEmpty(data.AreaId);
                 Assert.IsType<JObject>(data.Detail);
                 Assert.IsType<JObject>(data.Detail.de);
                 JsonIsType<string>(data.Detail.de.Title);
                 JsonIsType<bool>(data.IsOpen);
                 Assert.IsType<JArray>(data.GpsInfo);
-                JsonIsType<bool>(data.Highlight);
+                //JsonIsType<bool>(data.Highlight);
                 Assert.IsType<JArray>(data.HasLanguage);
                 Assert.IsType<JObject>(data.ContactInfos);
                 Assert.IsType<JObject>(data.ContactInfos.de);

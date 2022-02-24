@@ -81,14 +81,14 @@ namespace OdhApiCoreTests.IntegrationTets
                 JsonIsType<string>(data.Type);
                 JsonIsType<string?>(data.SmgId);
                 JsonIsType<bool>(data.Active);
-                Assert.IsType<JArray>(data.AreaId);
-                Assert.NotEmpty(data.AreaId);
+                //Assert.IsType<JArray>(data.AreaId);
+                //Assert.NotEmpty(data.AreaId);
                 Assert.IsType<JObject>(data.Detail);
                 Assert.IsType<JObject>(data.Detail.de);
                 JsonIsType<string>(data.Detail.de.Title);
-                JsonIsType<bool>(data.IsOpen);
+                //JsonIsType<bool>(data.IsOpen);
                 Assert.IsType<JArray>(data.GpsInfo);
-                JsonIsType<bool>(data.Highlight);
+                //JsonIsType<bool>(data.Highlight);
                 Assert.IsType<JArray>(data.HasLanguage);
                 Assert.IsType<JObject>(data.ContactInfos);
                 Assert.IsType<JObject>(data.ContactInfos.de);
