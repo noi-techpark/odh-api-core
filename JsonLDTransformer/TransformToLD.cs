@@ -284,15 +284,15 @@ namespace JsonLDTransformer
                         myoffer.name = theevent.EventPrice[language].ShortDesc;
                         myoffer.description = theevent.EventPrice[language].Description;
 
-                        myoffer.validFrom = String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.ToString("hh\\:mm");
-                        myoffer.validTrough = String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.ToString("hh\\:mm");
+                        myoffer.validFrom = String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm");
+                        myoffer.validTrough = String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm");
 
                         myevent.offers = myoffer;
                     }
                 }
 
-                myevent.startDate = String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.ToString("hh\\:mm");
-                myevent.endDate = String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.ToString("hh\\:mm");
+                myevent.startDate = String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm");
+                myevent.endDate = String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm");
 
                 myeventlist.Add(myevent);
 

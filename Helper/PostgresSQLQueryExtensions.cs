@@ -1261,6 +1261,17 @@ namespace Helper
                 )
             );
 
+        //For Alpinebits
+        public static Query SourceFilterAlpineBits_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.Where(q =>
+            {
+                foreach (var source in sourcelist)
+                {
+                    q = q.OrWhere("gen_source", "ILIKE", source);
+                }
+                return q;
+            });
+
         #endregion
 
         #region Opendata_LTS_Rules

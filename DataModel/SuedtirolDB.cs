@@ -305,15 +305,15 @@ namespace DataModel
     {
         DateTime From { get; set; }
         DateTime To { get; set; }
-        bool SingleDays { get; set; }
-        int MinPersons { get; set; }
-        int MaxPersons { get; set; }
-        bool Ticket { get; set; }
-        double GpsNorth { get; set; }
-        double GpsEast { get; set; }
-        TimeSpan Begin { get; set; }
-        TimeSpan End { get; set; }
-        TimeSpan Entrance { get; set; }
+        bool? SingleDays { get; set; }
+        int? MinPersons { get; set; }
+        int? MaxPersons { get; set; }
+        bool? Ticket { get; set; }
+        double? GpsNorth { get; set; }
+        double? GpsEast { get; set; }
+        TimeSpan? Begin { get; set; }
+        TimeSpan? End { get; set; }
+        TimeSpan? Entrance { get; set; }
     }
 
     //End Event Interfaces
@@ -1725,7 +1725,7 @@ namespace DataModel
         //public virtual ICollection<IActivity> IActivity { get; set; }
     }
 
-    public class MeasuringpointReduced
+    public class MeasuringpointReduced : ISource
     {
         //IIdentifiable
         public string? Id { get; set; }
@@ -1738,6 +1738,7 @@ namespace DataModel
         public DateTime LastSnowDate { get; set; }
         public List<WeatherObservation>? WeatherObservation { get; set; }
 
+        public string? Source { get; set; }
 
         ////GPS
         //public string Gpstype { get; set; }
@@ -3096,19 +3097,19 @@ namespace DataModel
     {
         public DateTime From { get; set; }
         public DateTime To { get; set; }
-        public bool SingleDays { get; set; }
-        public int MinPersons { get; set; }
-        public int MaxPersons { get; set; }
-        public bool Ticket { get; set; }
-        public double GpsNorth { get; set; }
-        public double GpsEast { get; set; }
-        public TimeSpan Begin { get; set; }
-        public TimeSpan End { get; set; }
-        public TimeSpan Entrance { get; set; }
+        public bool? SingleDays { get; set; }
+        public int? MinPersons { get; set; }
+        public int? MaxPersons { get; set; }
+        public bool? Ticket { get; set; }
+        public double? GpsNorth { get; set; }
+        public double? GpsEast { get; set; }
+        public TimeSpan? Begin { get; set; }
+        public TimeSpan? End { get; set; }
+        public TimeSpan? Entrance { get; set; }
 
         //NEW Properties
-        public Nullable<double> InscriptionTill { get; set; }
-        public Nullable<bool> Active { get; set; }
+        public double? InscriptionTill { get; set; }
+        public bool? Active { get; set; }
         public string DayRID { get; set; }
 
         public Dictionary<string, EventDateAdditionalInfo> EventDateAdditionalInfo { get; set; }
@@ -3172,8 +3173,8 @@ namespace DataModel
             BookingUrl = new Dictionary<string, EventBookingDetail>();
         }
 
-        public DateTime BookableFrom { get; set; }
-        public DateTime BookableTo { get; set; }
+        public DateTime? BookableFrom { get; set; }
+        public DateTime? BookableTo { get; set; }
         public int? AccommodationAssignment { get; set; }
 
         public Dictionary<string, EventBookingDetail> BookingUrl { get; set; }

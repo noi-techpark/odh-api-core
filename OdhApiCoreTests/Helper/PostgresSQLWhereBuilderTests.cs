@@ -45,7 +45,7 @@ namespace OdhApiCoreTests.Helper
                         lastchange: null,
                         languagelist: System.Array.Empty<string>(),
                         filterClosedData: false,
-                        reducedData: false,
+                        reducedData: false
                     );
 
             var result = compiler.Compile(query);

@@ -46,7 +46,7 @@ namespace DataModel
         public bool ODHActive { get; set; }
         public ICollection<ODHTags> ODHTags { get; set; }
 
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfoLinked LocationInfo { get; set; }
         public ICollection<string> HasLanguage { get; set; }
 
         public ICollection<VenueType> VenueCategory { get; set; }
@@ -60,8 +60,10 @@ namespace DataModel
         public Nullable<int> RoomCount { get; set; }
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
-        //derzuageton
+        //added
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+
+        public List<string> PublishedOn { get; set; }
     }
 
     public class VenueType
@@ -98,10 +100,10 @@ namespace DataModel
         public string Id { get; set; }
         public string Shortname { get; set; }
 
-        public int SquareMeters { get; set; }
+        public int? SquareMeters { get; set; }
         //public int maxCapacity { get; set; }
 
-        public bool Indoor { get; set; }
+        public bool? Indoor { get; set; }
 
         public ICollection<VenueType> VenueFeatures { get; set; }
         public ICollection<VenueSetup> VenueSetup { get; set; }
