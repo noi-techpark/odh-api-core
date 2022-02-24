@@ -66,6 +66,16 @@ namespace OdhApiCore.Controllers.api
                 //Trying with logger not working
                 //Logger.LogInformation(JsonConvert.SerializeObject(updateresult));
 
+
+                ////TODO Invalidate the cache based on what was updated
+                ////https://github.com/filipw/Strathweb.CacheOutput
+                //// now get cache instance
+                //var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                //// and invalidate cache for method "Get" of "TeamsController"
+                //cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((TeamsController t) => t.Get()));
+
+
                 return Ok(updateresult);
             }
             catch (Exception ex)
@@ -121,6 +131,8 @@ namespace OdhApiCore.Controllers.api
                             var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
 
                             var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms");
+
+                            
                         }
                     }
                     else
