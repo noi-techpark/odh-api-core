@@ -1318,9 +1318,9 @@ namespace Helper
         public static Query FilterSourceReducedAnonymous(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(
-                    "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = false))"
+                    "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = ?))", false
                 ).OrWhereRaw(
-                    "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = false)))"
+                    "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = ?)))", false
                 )
             );
 
