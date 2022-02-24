@@ -3097,6 +3097,10 @@ namespace DataModel
         public Dictionary<string, EventDateAdditionalInfo> EventDateAdditionalInfo { get; set; }
         public ICollection<EventDateAdditionalTime> EventDateAdditionalTime { get; set; }
         public EventDateCalculatedDay EventCalculatedDay { get; set; }
+
+        //New
+        public string PriceFrom { get; set; }
+        public string Cancelled { get; set; }
     }
 
     public class EventDateAdditionalInfo : ILanguage
