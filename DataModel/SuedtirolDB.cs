@@ -30,6 +30,11 @@ namespace DataModel
         LicenseInfo LicenseInfo { get; set; }
     }
 
+    public interface ISource
+    {
+        string? Source { get; set; }        
+    }
+
     public interface IImportDateassigneable
     {
         DateTime? FirstImport { get; set; }
@@ -863,13 +868,11 @@ namespace DataModel
         public string? Objectid { get; set; }
     }
 
-
-
     #endregion
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo
+    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -962,6 +965,8 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     public class AccoRoomInfo
@@ -1021,7 +1026,7 @@ namespace DataModel
         public int TrustYouState { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo
+    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -1408,7 +1413,7 @@ namespace DataModel
 
     #region Packages
 
-    public class Package : IIdentifiable, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage
+    public class Package : IIdentifiable, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -1493,6 +1498,8 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; } 
     }
 
     public class Season
@@ -1558,7 +1565,7 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable
+    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -1617,6 +1624,8 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     public class WeatherObservation
@@ -2251,7 +2260,7 @@ namespace DataModel
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
-    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware
+    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2365,10 +2374,12 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
-    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware
+    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2445,10 +2456,12 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2520,10 +2533,12 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
-    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware
+    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2771,7 +2786,7 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable
+    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -3317,7 +3332,7 @@ namespace DataModel
 
     #region EBMS
 
-    public class EventShort : IIdentifiable, IImportDateassigneable
+    public class EventShort : IIdentifiable, IImportDateassigneable, ISource
     {
         public EventShort()
         {
