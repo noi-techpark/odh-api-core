@@ -1272,6 +1272,30 @@ namespace Helper
                 return q;
             });
 
+        //AlpineBits
+        public static Query AlpineBitsAccommodationIdFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> accommodationids) =>
+           query.Where(q =>
+           {
+               foreach (var item in accommodationids)
+               {
+                   q = q.OrWhere("gen_accommodation_id", "ILIKE", item);
+               }
+               return q;
+           });
+
+        //AlpineBits
+        public static Query AlpineBitsMessageFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> messagetypelist) =>
+            query.Where(q =>
+            {
+                foreach (var item in messagetypelist)
+                {
+                    q = q.OrWhereRaw(
+                        "gen_messagetype = ?", item
+                    );
+                }
+                return q;
+            });
+
         #endregion
 
         #region Opendata_LTS_Rules

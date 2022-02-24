@@ -704,9 +704,9 @@ namespace Helper
 
             return query
                 .IdIlikeFilter(idlist)
-                .SourceFilterAlpineBits(sourcelist)
-                .AlpineBitsMessageFilter(messagetypelist)
-                .AlpineBitsAccommodationIdFilter(accommodationIds);
+                .SourceFilterAlpineBits_GeneratedColumn(sourcelist) //.SourceFilterAlpineBits(sourcelist)
+                .AlpineBitsMessageFilter_GeneratedColumn(messagetypelist) //AlpineBitsMessageFilter(messagetypelist)
+                .AlpineBitsAccommodationIdFilter_GeneratedColumn(accommodationIds); //AlpineBitsAccommodationIdFilter(accommodationIds);
         }
 
         //Return Where and Parameters for Wine
