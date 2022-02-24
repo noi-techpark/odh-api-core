@@ -44,7 +44,7 @@ namespace OdhApiCore.GenericHelpers
                         altitudemin: 0, altitudemax: 0,
                         activefilter: null, smgactivefilter: true, publishedonlist: new List<string>(),
                         searchfilter: null, language: null, lastchange: null, languagelist: new List<string>(),
-                        filterClosedData: false)
+                        filterClosedData: false, reducedData: false)
                   .OrderByRaw(orderby);
 
             var data = await query.GetAsync<string>();

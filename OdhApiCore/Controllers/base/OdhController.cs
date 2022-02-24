@@ -38,6 +38,9 @@ namespace OdhApiCore.Controllers
         protected bool FilterCC0License => FilterClosedData;
 
         //TODO EXTEND THIS ALSO TO ODHActivityPoiReader etc...
+        /// <summary>
+        /// If User has Role DataReader or Reader of this Entity set Filtercloseddata to false
+        /// </summary>
         protected bool FilterClosedData
         {
             get
@@ -49,7 +52,24 @@ namespace OdhApiCore.Controllers
                 return !roles.Any(User.IsInRole);
             }
         }
-        
+        protected bool ReducedData => FiltertoReduced;
+
+        /// <summary>
+        /// If user is in Role IDM or LTS display full LTS Data
+        /// </summary>
+        protected bool FiltertoReduced
+        {
+            get
+            {
+                var roles = new[] {
+                    "IDM",
+                    "LTS"
+                };
+                return !roles.Any(User.IsInRole);
+            }
+        }
+
+
         protected IEnumerable<string> UserRolesList
         {
             get

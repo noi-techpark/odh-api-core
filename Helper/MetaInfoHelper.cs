@@ -9,6 +9,12 @@ namespace Helper
 {
     public class MetadataHelper
     {
+        //Simple Method to reset the Metainfo
+        public static Metadata GetMetadata(string id, string type, string source, Nullable<DateTime> lastupdated = null, Nullable<bool> reduced = false)
+        {
+            return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
+        }
+
         public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null) where T : IIdentifiable, IMetaData
         {
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);

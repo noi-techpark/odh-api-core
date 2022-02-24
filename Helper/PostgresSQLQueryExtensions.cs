@@ -1261,6 +1261,69 @@ namespace Helper
                 )
             );
 
+        //For Alpinebits
+        public static Query SourceFilterAlpineBits_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.Where(q =>
+            {
+                foreach (var source in sourcelist)
+                {
+                    q = q.OrWhere("gen_source", "ILIKE", source);
+                }
+                return q;
+            });
+
+        //AlpineBits
+        public static Query AlpineBitsAccommodationIdFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> accommodationids) =>
+           query.Where(q =>
+           {
+               foreach (var item in accommodationids)
+               {
+                   q = q.OrWhere("gen_accommodation_id", "ILIKE", item);
+               }
+               return q;
+           });
+
+        //AlpineBits
+        public static Query AlpineBitsMessageFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> messagetypelist) =>
+            query.Where(q =>
+            {
+                foreach (var item in messagetypelist)
+                {
+                    q = q.OrWhereRaw(
+                        "gen_messagetype = ?", item
+                    );
+                }
+                return q;
+            });
+
+        #endregion
+
+        #region Opendata_LTS_Rules
+
+        //anonymous -> where (closeddata = false and source != lts) OR (reduced = true and source = lts and cc0 = true)
+        //logged -> where (source != lts) OR (reduced = true and source = lts)
+        //idmuser -> where (source != lts) OR (reduced = false and source = lts)
+        public static Query Anonymous_Logged_UserRule_GeneratedColumn(this Query query, bool closeddatafilter, bool idmuser) =>
+            idmuser ? query.FilterSourceReducedLogged(false) : closeddatafilter ? query.FilterSourceReducedAnonymous() : query.FilterSourceReducedLogged(true);
+
+        public static Query FilterSourceReducedLogged(this Query query, bool reduced) =>
+            query.Where(q =>
+                q.WhereRaw(
+                    "(gen_source <> 'lts')"
+                ).OrWhereRaw(
+                    "(gen_source = 'lts' AND gen_reduced = ?)", reduced
+                )
+            );
+
+        public static Query FilterSourceReducedAnonymous(this Query query) =>
+            query.Where(q =>
+                q.WhereRaw(
+                    "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = false))"
+                ).OrWhereRaw(
+                    "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = false)))"
+                )
+            );
+
         #endregion
 
         #region Query Extension Methods Common used

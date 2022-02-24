@@ -172,8 +172,9 @@ namespace OdhApiCore.Controllers
                 .LocFilterDistrictFilter(districtlist)
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
-                .LocFilterRegionFilter(regionlist)                
-                .When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
+                .LocFilterRegionFilter(regionlist)
+                //.When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
+                .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
                 .Limit(limitto ?? int.MaxValue);
