@@ -2535,7 +2535,7 @@ namespace DataModel
             EventAdditionalInfos = new Dictionary<string, EventAdditionalInfos>();
             EventPrice = new Dictionary<string, EventPrice>();
             EventPrices = new Dictionary<string, ICollection<EventPrice>>();
-            EventVariants = new Dictionary<string, ICollection<EventVariant>>();
+            //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
             Hashtag = new Dictionary<string, ICollection<string>>();
             EventDescAdditional = new Dictionary<string, EventDescAdditional>();
         }
@@ -2611,7 +2611,9 @@ namespace DataModel
         public ICollection<LTSTags> LTSTags { get; set; }
 
         public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
-        public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
+        
+        //Only for LTS internal use
+        //public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
 
         public IDictionary<string, ICollection<string>> Hashtag { get; set; }
 
@@ -3130,23 +3132,23 @@ namespace DataModel
         public string CDayRID { get; set; }
         public DateTime Day { get; set; }
         public TimeSpan Begin { get; set; }
-        public int TicketsAvailable { get; set; }
-        public int MaxSellableTickets { get; set; }
-        public ICollection<EventDateCalculatedDayVariant> EventDateCalculatedDayVariant { get; set; }
+        //public int TicketsAvailable { get; set; }
+        //public int MaxSellableTickets { get; set; }
+        //public ICollection<EventDateCalculatedDayVariant> EventDateCalculatedDayVariant { get; set; }
 
-        //found in response
-        public Nullable<int> AvailabilityCalculatedValue { get; set; }
-        public Nullable<int> AvailabilityLow { get; set; }
-        public Nullable<double> PriceFrom { get; set; }
+        ////found in response
+        //public Nullable<int> AvailabilityCalculatedValue { get; set; }
+        //public Nullable<int> AvailabilityLow { get; set; }
+        //public Nullable<double> PriceFrom { get; set; }
     }
 
-    public class EventDateCalculatedDayVariant
-    {
-        public string VarRID { get; set; }
-        public double Price { get; set; }
-        public Nullable<bool> IsStandardVariant { get; set; }
-        public Nullable<int> TotalSellable { get; set; }
-    }
+    //public class EventDateCalculatedDayVariant
+    //{
+    //    public string VarRID { get; set; }
+    //    public double Price { get; set; }
+    //    public Nullable<bool> IsStandardVariant { get; set; }
+    //    public Nullable<int> TotalSellable { get; set; }
+    //}
 
     public class EventBooking
     {
