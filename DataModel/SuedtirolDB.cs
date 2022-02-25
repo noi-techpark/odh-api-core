@@ -2791,7 +2791,7 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource
+    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo
     {
         public LicenseInfo? LicenseInfo { get; set; }
 

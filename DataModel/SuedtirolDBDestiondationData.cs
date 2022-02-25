@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DataModel
 {
-    public class DDVenue : IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo
+    public class DDVenue : IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, ISource
     {
         public Metadata _Meta { get; set; }
         public string type { get; set; }
@@ -29,6 +29,9 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         [JsonIgnore]
         public LicenseInfo LicenseInfo { get; set; }
+
+        [JsonIgnore]
+        public string? Source { get; set; }
     }
 
     public class ODHData
