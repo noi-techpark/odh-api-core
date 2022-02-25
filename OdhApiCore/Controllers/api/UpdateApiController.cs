@@ -66,6 +66,18 @@ namespace OdhApiCore.Controllers.api
                 //Trying with logger not working
                 //Logger.LogInformation(JsonConvert.SerializeObject(updateresult));
 
+
+                ////TODO Invalidate the cache based on what was updated like in this doc
+                ////https://github.com/filipw/Strathweb.CacheOutput
+                //// now get cache instance
+                //var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                //// and invalidate cache for method "Get" of "TeamsController"
+                //cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((TeamsController t) => t.Get()));
+
+                //We use https://github.com/Iamcerba/AspNetCore.CacheOutput it seems there is only the Attribute solution in the docs
+
+
                 return Ok(updateresult);
             }
             catch (Exception ex)
@@ -100,6 +112,8 @@ namespace OdhApiCore.Controllers.api
             var mydata = default(IIdentifiable);
             var mypgdata = default(IIdentifiable);
 
+            var myupdateresult = default(UpdateDetail);
+
             switch (datatype.ToLower())
             {
                 case "accommodation":
@@ -109,7 +123,15 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    var accoresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+                    myupdateresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+                    
+                    //Check if data has to be reduced and save it
+                    if (ReduceDataTransformer.ReduceDataCheck<AccommodationLinked>((AccommodationLinked)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((AccommodationLinked)mypgdata, ReduceDataTransformer.CopyLTSAccommodationToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations");
+                    }                    
 
                     //UPDATE ACCOMMODATIONROOMS
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
@@ -120,14 +142,13 @@ namespace OdhApiCore.Controllers.api
                         {
                             var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
 
-                            var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms");
+                            var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms");                            
                         }
                     }
                     else
                         throw new Exception("No data found!");
-
-                    //return Ok(new GenericResult() { Message = String.Format("{0} success: {1}", "accommodations", id) });
-                    return accoresult;
+                    
+                    break;
 
                 case "gastronomy":
                     mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -136,8 +157,17 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
+                    myupdateresult = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
 
+                    //Check if data has to be reduced and save it
+                    if(ReduceDataTransformer.ReduceDataCheck<GastronomyLinked>((GastronomyLinked)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((GastronomyLinked)mypgdata, ReduceDataTransformer.CopyLTSGastronomyToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinkedReduced)reducedobject, "gastronomies");
+                    }
+
+                    break;
                 case "activity":
                     mydata = await GetDataFromRaven.GetRavenData<LTSActivityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
@@ -145,7 +175,17 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinked)mypgdata, "activities");
+                    myupdateresult = await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinked)mypgdata, "activities");
+
+                    //Check if data has to be reduced and save it
+                    if (ReduceDataTransformer.ReduceDataCheck<LTSActivityLinked>((LTSActivityLinked)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((LTSActivityLinked)mypgdata, ReduceDataTransformer.CopyLTSActivityToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinkedReduced)reducedobject, "activities");
+                    }
+
+                    break;
 
                 case "poi":
                     mydata = await GetDataFromRaven.GetRavenData<LTSPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -154,7 +194,17 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
+                    myupdateresult = await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
+
+                    //Check if data has to be reduced and save it
+                    if (ReduceDataTransformer.ReduceDataCheck<LTSPoiLinked>((LTSPoiLinked)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((LTSPoiLinked)mypgdata, ReduceDataTransformer.CopyLTSPoiToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinkedReduced)reducedobject, "pois");
+                    }
+
+                    break;
 
                 case "odhactivitypoi":
                     mydata = await GetDataFromRaven.GetRavenData<ODHActivityPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -163,7 +213,17 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
+                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
+
+                    //Check if data has to be reduced and save it
+                    if (ReduceDataTransformer.ReduceDataCheck<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((ODHActivityPoiLinked)mypgdata, ReduceDataTransformer.CopyLTSODHActivtyPoiToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<ODHActivityPoiLinked>((LTSODHActivityPoiReduced)reducedobject, "smgpois");
+                    }
+
+                    break;
 
                 case "event":
                     mydata = await GetDataFromRaven.GetRavenData<EventLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -172,16 +232,36 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+                    myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+
+                    //Check if data has to be reduced and save it
+                    if (ReduceDataTransformer.ReduceDataCheck<EventLinked>((EventLinked)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((EventLinked)mypgdata, ReduceDataTransformer.CopyLTSEventToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<EventLinked>((EventLinkedReduced)reducedobject, "events");
+                    }
+
+                    break;
 
                 case "webcam":
-                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "WebcamInfo/");
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<WebcamInfoLinked, WebcamInfoLinked>((WebcamInfoLinked)mydata, TransformToPGObject.GetWebcamInfoPGObject);
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+                    myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams");
+
+                    //Check if data has to be reduced and save it
+                    if (ReduceDataTransformer.ReduceDataCheck<WebcamInfoLinked>((WebcamInfoLinked)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((WebcamInfoLinked)mypgdata, ReduceDataTransformer.CopyLTSWebcamInfoToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinkedReduced)reducedobject, "webcams");
+                    }
+
+                    break;
 
                 case "metaregion":
                     mydata = await GetDataFromRaven.GetRavenData<MetaRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -280,7 +360,17 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints");
+                    myupdateresult = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints");
+
+                    //Check if data has to be reduced and save it
+                    if (ReduceDataTransformer.ReduceDataCheck<MeasuringpointLinked>((MeasuringpointLinked)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((MeasuringpointLinked)mypgdata, ReduceDataTransformer.CopyLTSMeasuringpointToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinkedReduced)reducedobject, "measuringpoints");
+                    }
+
+                    break;
 
                 case "venue":
                     mydata = await GetDataFromRaven.GetRavenData<DDVenue>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -289,7 +379,17 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venues");
+                    myupdateresult = await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venues");
+                    
+                    //Check if data has to be reduced and save it
+                    if (ReduceDataTransformer.ReduceDataCheck<DDVenue>((DDVenue)mypgdata) == true)
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((DDVenue)mypgdata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
+
+                        var updateresultreduced = await SaveRavenObjectToPG<DDVenue>((DDVenueReduced)reducedobject, "venues");
+                    }
+
+                    break;
 
                 case "wine":
                     mydata = await GetDataFromRaven.GetRavenData<WineLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -303,6 +403,8 @@ namespace OdhApiCore.Controllers.api
                 default:
                     throw new Exception("no match found");
             }
+
+            return myupdateresult;
         }
 
         private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
@@ -313,28 +415,8 @@ namespace OdhApiCore.Controllers.api
 
             var result = await QueryFactory.UpsertData<T>(datatosave, table);
 
-            //obsolete
-            //if(result is OkObjectResult)
-            //{
-            //    var resultstr = ((OkObjectResult)result).Value.ToString();
-
-            //    if (resultstr != null)
-            //    {
-            //        if (resultstr.StartsWith("INSERT"))
-            //        {
-            //            if (resultstr.Contains("recordsmodified: 1"))
-            //                insertcounter++;
-            //        }
-            //        if (resultstr.StartsWith("UPDATE"))
-            //        {
-            //            if (resultstr.Contains("recordsmodified: 1"))
-            //                updatecounter++;
-            //        }
-            //    }
-            //}
-
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
-        }
+        }        
 
         #endregion
 
@@ -661,7 +743,7 @@ namespace OdhApiCore.Controllers.api
         //private async Task<IEnumerable<EventShort>> GetAllEventsShort(DateTime now)
         //{
         //    var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
-            
+
         //    var query =
         //                 QueryFactory.Query("eventeuracnoi")
         //                     .Select("data")
@@ -673,7 +755,7 @@ namespace OdhApiCore.Controllers.api
         //#endregion
 
         //#region NINJA Helpers
-   
+
         ///// <summary>
         ///// Save Events to Postgres
         ///// </summary>
@@ -828,7 +910,7 @@ namespace OdhApiCore.Controllers.api
         //           .Where("id", idtocheck);
 
         //    var eventindb = await query.GetAsync<JsonRaw>();
-            
+
         //    if (eventindb.Count() == 0)
         //    {
         //        eventtosave.FirstImport = DateTime.Now;
@@ -890,7 +972,7 @@ namespace OdhApiCore.Controllers.api
 
         //    return result;
         //}
-        
+
         //public async Task<LocationInfo?> GetTheLocationInfoDistrict(string districtid)
         //{
         //    try

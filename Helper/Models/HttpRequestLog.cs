@@ -19,5 +19,7 @@ namespace Helper
         public string useragent { get; init; }
         public string? ipaddress { get; init; }
         public int? statuscode { get; init; }
+
+        public long? elapsedtime { get; init; }
     }
 }

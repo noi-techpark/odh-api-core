@@ -268,7 +268,7 @@ namespace OdhApiCore.Controllers.api
                             durationmax: myodhactivitypoihelper.durationmax, altitude: myodhactivitypoihelper.altitude, altitudemin: myodhactivitypoihelper.altitudemin, altitudemax: myodhactivitypoihelper.altitudemax,
                             publishedonlist: myodhactivitypoihelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
-                            filterClosedData: FilterClosedData)
+                            filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -306,7 +306,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("smgpois")
                         .Select("data")
-                        .Where("id", id.ToLower());
+                        .Where("id", id.ToLower())
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData); ;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

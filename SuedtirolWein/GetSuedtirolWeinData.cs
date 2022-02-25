@@ -37,7 +37,6 @@ namespace SuedtirolWein
             {
                 string requesturl = serviceurlawards + "?lang=" + lang;
 
-
                 using (var client = new HttpClient())
                 {
                     var myresponse = await client.GetAsync(requesturl);
@@ -50,14 +49,13 @@ namespace SuedtirolWein
             {
                 return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
             }
-
         }
 
         public static async Task<XDocument> GetSueditrolWineCompaniesAsync(string lang)
         {
-            //Request mochn
+            //make Request
             HttpResponseMessage response = await RequestCompaniesAsync(lang);
-            //Content auslesen und XDocument Parsen
+            //Read Content and parse to XDocument
             var responsetask = await response.Content.ReadAsStringAsync();
             XDocument myweatherresponse = XDocument.Parse(responsetask);
 
@@ -66,9 +64,9 @@ namespace SuedtirolWein
 
         public static async Task<XDocument> GetSueditrolWineAwardsAsync(string lang)
         {
-            //Request mochn
+            //make Request
             HttpResponseMessage response = await RequestAwardsAsync(lang);
-            //Content auslesen und XDocument Parsen
+            //Read Content and parse to XDocument
             var responsetask = await response.Content.ReadAsStringAsync();
             XDocument myweatherresponse = XDocument.Parse(responsetask);
 

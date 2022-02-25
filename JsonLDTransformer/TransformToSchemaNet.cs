@@ -522,8 +522,8 @@ namespace JsonLDTransformer
                         myoffer.Name = theevent.EventPrice[language].ShortDesc;
                         myoffer.Description = theevent.EventPrice[language].Description;
 
-                        myoffer.ValidFrom = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.ToString("hh\\:mm")));
-                        myoffer.ValidThrough = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.ToString("hh\\:mm")));
+                        myoffer.ValidFrom = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm")));
+                        myoffer.ValidThrough = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm")));
 
                         myevent.Offers = myoffer;
                     }
@@ -537,15 +537,15 @@ namespace JsonLDTransformer
                         myoffer.Name = theevent.EventPrice[fallbacklanguage].ShortDesc;
                         myoffer.Description = theevent.EventPrice[fallbacklanguage].Description;
 
-                        myoffer.ValidFrom = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.ToString("hh\\:mm")));
-                        myoffer.ValidThrough = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.ToString("hh\\:mm")));
+                        myoffer.ValidFrom = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm")));
+                        myoffer.ValidThrough = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm")));
 
                         myevent.Offers = myoffer;
                     }
                 }
 
-                myevent.StartDate = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.ToString("hh\\:mm")));
-                myevent.EndDate = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.ToString("hh\\:mm")));
+                myevent.StartDate = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm")));
+                myevent.EndDate = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm")));
 
                 myeventlist.Add(myevent);
             }

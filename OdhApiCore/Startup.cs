@@ -32,6 +32,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -348,7 +349,9 @@ namespace OdhApiCore
                 {
                     context.Response.Redirect("/swagger");
                     return;
-                }              
+                }
+                Stopwatch requesttime = new Stopwatch();
+                requesttime.Start();
 
                 await next();
 
@@ -387,6 +390,9 @@ namespace OdhApiCore
                     //To check
                     var remoteip = RemoteIpHelper.GetRequestIP(context, true);
 
+                    //Request Length                    
+                    requesttime.Stop();
+
                     HttpRequestLog httplog = new HttpRequestLog()
                     {
                         host = context.Request.Host.ToString(),
@@ -398,13 +404,13 @@ namespace OdhApiCore
                         username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous",
                         ipaddress = remoteip,
                         statuscode = context.Response.StatusCode,
-                        origin = origin
+                        origin = origin,
+                        elapsedtime = requesttime.ElapsedMilliseconds
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 
                     Console.WriteLine(JsonConvert.SerializeObject(logoutput));
-
-                    //Log.Information(output);
+                    
                 }
             });
 

@@ -188,8 +188,10 @@ namespace OdhApiCore.Controllers.api
                      .SelectRaw("data")
                      .From("alpinebits")
                      .AlpineBitsWhereExpression(idlist, sourcelist, accoidlist, messagetypelist, null)
-                     .OrderByRaw("TO_TIMESTAMP(data ->> 'RequestDate','YYYY-MM-DD T HH24:MI:SS') DESC");
-                
+                     //.OrderByRaw("TO_TIMESTAMP(data ->> 'RequestDate','YYYY-MM-DD T HH24:MI:SS') DESC");
+                     .OrderByDesc("gen_requestdate");
+
+
                 var data = await query.GetAsync<JsonRaw?>();
 
                 return Ok(data);
@@ -218,7 +220,8 @@ namespace OdhApiCore.Controllers.api
                      .SelectRaw("data")
                      .From("alpinebits")
                      .AlpineBitsWhereExpression(idlist, sourcelist, accoidlist, messagetypelist, null)
-                     .OrderByRaw("TO_TIMESTAMP(data ->> 'RequestDate','YYYY-MM-DD T HH24:MI:SS') DESC")
+                     //.OrderByRaw("TO_TIMESTAMP(data ->> 'RequestDate','YYYY-MM-DD T HH24:MI:SS') DESC")
+                     .OrderByDesc("gen_requestdate")
                      .Limit(limit);
 
                 var data = await query.GetAsync<JsonRaw?>();

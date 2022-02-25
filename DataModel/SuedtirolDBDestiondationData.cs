@@ -5,8 +5,16 @@ using System.Text;
 
 namespace DataModel
 {
-    public class DDVenue : IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo
+    public class DDVenue : IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, ISource
     {
+        public string Self
+        {
+            get
+            {
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Venue/" + Uri.EscapeUriString(this.Id));
+            }
+        }
+
         public Metadata _Meta { get; set; }
         public string type { get; set; }
         //public string id { get; set; }
@@ -29,6 +37,9 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         [JsonIgnore]
         public LicenseInfo LicenseInfo { get; set; }
+
+        [JsonIgnore]
+        public string? Source { get; set; }
     }
 
     public class ODHData
@@ -46,7 +57,7 @@ namespace DataModel
         public bool ODHActive { get; set; }
         public ICollection<ODHTags> ODHTags { get; set; }
 
-        public LocationInfo LocationInfo { get; set; }
+        public LocationInfoLinked LocationInfo { get; set; }
         public ICollection<string> HasLanguage { get; set; }
 
         public ICollection<VenueType> VenueCategory { get; set; }
@@ -60,8 +71,10 @@ namespace DataModel
         public Nullable<int> RoomCount { get; set; }
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
-        //derzuageton
+        //added
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+
+        public List<string> PublishedOn { get; set; }
     }
 
     public class VenueType
@@ -73,7 +86,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "api/VenueTypes/" + Uri.EscapeUriString(this.Id));
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "VenueTypes/" + Uri.EscapeUriString(this.Id));
             }
         }
     }
@@ -88,7 +101,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "api/VenueTypes/" + Uri.EscapeUriString(this.Id));
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "VenueTypes/" + Uri.EscapeUriString(this.Id));
             }
         }
     }
@@ -98,10 +111,10 @@ namespace DataModel
         public string Id { get; set; }
         public string Shortname { get; set; }
 
-        public int SquareMeters { get; set; }
+        public int? SquareMeters { get; set; }
         //public int maxCapacity { get; set; }
 
-        public bool Indoor { get; set; }
+        public bool? Indoor { get; set; }
 
         public ICollection<VenueType> VenueFeatures { get; set; }
         public ICollection<VenueSetup> VenueSetup { get; set; }

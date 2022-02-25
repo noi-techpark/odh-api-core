@@ -28,7 +28,7 @@ namespace OdhApiCore.Filters
 
         public bool CheckAvailabilitySearch(System.Security.Claims.ClaimsPrincipal User)
         {
-            List<string> roles = new List<string>() { "DataReader", "AccoReader" };
+            List<string> roles = new List<string>() { "IDM", "LTS" };
 
             foreach (var role in roles)
             {
@@ -113,7 +113,7 @@ namespace OdhApiCore.Filters
                     if (CheckArrivalAndDeparture(arrival, departure))
                     {
                         var booklist = new List<string>();
-                        var bokfilterlist = bokfilter.Split(',').ToList();
+                        var bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
                         if (actionid == "GetAccommodations")
                         {
@@ -214,7 +214,7 @@ namespace OdhApiCore.Filters
             }
 
             string bokfilter = (string?)query["bokfilter"] ?? "hgv";
-            var bokfilterlist = bokfilter.Split(',').ToList();
+            var bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
             var availabilityonlychecklegacy = (string?)query["availabilityonly"];
             bool.TryParse(availabilityonlychecklegacy, out bool availabilityonly);
@@ -469,7 +469,7 @@ namespace OdhApiCore.Filters
                            altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
                            activefilter: myhelper.active, smgactivefilter: myhelper.smgactive, publishedonlist: myhelper.publishedonlist,
                            searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
-                           filterClosedData: false)//FilterClosedData -->TODO)
+                           filterClosedData: false, reducedData: false) //Availability Search only for IDM Users therefore no filte Closed Data, no reduced data
                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
                        .GeoSearchFilterAndOrderby(geosearchresult);
 

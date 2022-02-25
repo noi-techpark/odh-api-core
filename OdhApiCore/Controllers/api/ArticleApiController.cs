@@ -212,7 +212,7 @@ namespace OdhApiCore.Controllers.api
                             highlight: myarticlehelper.highlight, activefilter: myarticlehelper.active, smgactivefilter: myarticlehelper.smgactive,
                             articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, publishedonlist: myarticlehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange, 
-                            filterClosedData: FilterClosedData)
+                            filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -251,8 +251,9 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("articles")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                
+                        //.When(FilterClosedData, q => q.FilterClosedData())
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, ReducedData);
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 var fieldsTohide = FieldsToHide;

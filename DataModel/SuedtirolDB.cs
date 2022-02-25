@@ -30,6 +30,11 @@ namespace DataModel
         LicenseInfo LicenseInfo { get; set; }
     }
 
+    public interface ISource
+    {
+        string? Source { get; set; }        
+    }
+
     public interface IImportDateassigneable
     {
         DateTime? FirstImport { get; set; }
@@ -156,10 +161,10 @@ namespace DataModel
 
     public interface IGeoDataInfoAware
     {
-        double AltitudeDifference { get; set; }
-        double AltitudeHighestPoint { get; set; }
-        double DistanceDuration { get; set; }
-        double DistanceLength { get; set; }
+        double? AltitudeDifference { get; set; }
+        double? AltitudeHighestPoint { get; set; }
+        double? DistanceDuration { get; set; }
+        double? DistanceLength { get; set; }
 
         ICollection<GpsInfo>? GpsInfo { get; set; }
         ICollection<GpsTrack>? GpsTrack { get; set; }
@@ -259,11 +264,11 @@ namespace DataModel
 
     public interface IActivityStatus
     {
-        bool IsOpen { get; set; }
-        bool IsPrepared { get; set; }
-        bool RunToValley { get; set; }
-        bool IsWithLigth { get; set; }
-        bool HasRentals { get; set; }
+        bool? IsOpen { get; set; }
+        bool? IsPrepared { get; set; }
+        bool? RunToValley { get; set; }
+        bool? IsWithLigth { get; set; }
+        bool? HasRentals { get; set; }
     }
 
     //End Activity & Poi Data Interfaces 
@@ -300,15 +305,15 @@ namespace DataModel
     {
         DateTime From { get; set; }
         DateTime To { get; set; }
-        bool SingleDays { get; set; }
-        int MinPersons { get; set; }
-        int MaxPersons { get; set; }
-        bool Ticket { get; set; }
-        double GpsNorth { get; set; }
-        double GpsEast { get; set; }
-        TimeSpan Begin { get; set; }
-        TimeSpan End { get; set; }
-        TimeSpan Entrance { get; set; }
+        bool? SingleDays { get; set; }
+        int? MinPersons { get; set; }
+        int? MaxPersons { get; set; }
+        bool? Ticket { get; set; }
+        double? GpsNorth { get; set; }
+        double? GpsEast { get; set; }
+        TimeSpan? Begin { get; set; }
+        TimeSpan? End { get; set; }
+        TimeSpan? Entrance { get; set; }
     }
 
     //End Event Interfaces
@@ -742,15 +747,15 @@ namespace DataModel
         public ICollection<string>? PoiServices { get; set; }
 
         //Neu        
-        public string? Source { get; set; }
+        //public string? Source { get; set; }
         public string? SyncSourceInterface { get; set; }
         public string? SyncUpdateMode { get; set; }
 
-        public int AgeFrom { get; set; }
-        public int AgeTo { get; set; }
+        public int? AgeFrom { get; set; }
+        public int? AgeTo { get; set; }
 
         //NEW Gastronomy
-        public int MaxSeatingCapacity { get; set; }
+        public int? MaxSeatingCapacity { get; set; }
         public ICollection<CategoryCodes>? CategoryCodes { get; set; }
         public ICollection<DishRates>? DishRates { get; set; }
         public ICollection<CapacityCeremony>? CapacityCeremony { get; set; }
@@ -863,13 +868,11 @@ namespace DataModel
         public string? Objectid { get; set; }
     }
 
-
-
     #endregion
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo
+    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -887,14 +890,14 @@ namespace DataModel
         //public int Units { get; set; }
         //public int Beds { get; set; }
         public int? Representation { get; set; }
-        public bool HasApartment { get; set; }
-        public bool HasRoom { get; set; }
-        public bool IsCamping { get; set; }
-        public bool IsGastronomy { get; set; }
-        public bool IsBookable { get; set; }
-        public bool IsAccommodation { get; set; }
+        public bool? HasApartment { get; set; }
+        public bool? HasRoom { get; set; }
+        public bool? IsCamping { get; set; }
+        public bool? IsGastronomy { get; set; }
+        public bool? IsBookable { get; set; }
+        public bool? IsAccommodation { get; set; }
         public bool SmgActive { get; set; }
-        public bool TVMember { get; set; }
+        public bool? TVMember { get; set; }
         public string? TourismVereinId { get; set; }
         public string? MainLanguage { get; set; }
         public DateTime? FirstImport { get; set; }
@@ -962,6 +965,8 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     public class AccoRoomInfo
@@ -1021,7 +1026,7 @@ namespace DataModel
         public int TrustYouState { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo
+    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -1100,7 +1105,26 @@ namespace DataModel
 
     public class Gastronomy : GastronomyBaseInfos, ILicenseInfo
     {
-
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.Latitude != 0 && this.Longitude != 0)
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
+                    };
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     //Für Types Api
@@ -1389,7 +1413,7 @@ namespace DataModel
 
     #region Packages
 
-    public class Package : IIdentifiable, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage
+    public class Package : IIdentifiable, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -1474,6 +1498,8 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; } 
     }
 
     public class Season
@@ -1539,7 +1565,7 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable
+    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -1598,6 +1624,8 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     public class WeatherObservation
@@ -1697,7 +1725,7 @@ namespace DataModel
         //public virtual ICollection<IActivity> IActivity { get; set; }
     }
 
-    public class MeasuringpointReduced
+    public class MeasuringpointReduced : ISource
     {
         //IIdentifiable
         public string? Id { get; set; }
@@ -1710,6 +1738,7 @@ namespace DataModel
         public DateTime LastSnowDate { get; set; }
         public List<WeatherObservation>? WeatherObservation { get; set; }
 
+        public string? Source { get; set; }
 
         ////GPS
         //public string Gpstype { get; set; }
@@ -2087,7 +2116,7 @@ namespace DataModel
     /// </summary>
     #region CommonInfos
 
-    public class Wine : IIdentifiable, IImportDateassigneable,ILicenseInfo
+    public class Wine : IIdentifiable, IImportDateassigneable,ILicenseInfo, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2121,6 +2150,8 @@ namespace DataModel
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        public string? Source { get; set; }
     }
 
     public class SuedtirolType : ISuedtirolType
@@ -2159,7 +2190,7 @@ namespace DataModel
     }
 
     //BaseInfos für Districts / Regions / Municipalities
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2229,10 +2260,12 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
-    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware
+    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2249,12 +2282,12 @@ namespace DataModel
         public string? OutdooractiveElevationID { get; set; }
 
         //new
-        public Nullable<bool> CopyrightChecked { get; set; }
+        public bool? CopyrightChecked { get; set; }
 
         public bool Active { get; set; }
         public string? Shortname { get; set; }
         public string? SmgId { get; set; }
-        public bool Highlight { get; set; }
+        public bool? Highlight { get; set; }
 
         //obsolete ??
         public string? Difficulty { get; set; }
@@ -2285,29 +2318,29 @@ namespace DataModel
 
 
         //Distance & Altitude Informationen
-        public double AltitudeDifference { get; set; }
+        public double? AltitudeDifference { get; set; }
         //neu LTSUpdate 11.16
-        public double AltitudeHighestPoint { get; set; }
-        public double AltitudeLowestPoint { get; set; }
-        public double AltitudeSumUp { get; set; }
-        public double AltitudeSumDown { get; set; }
+        public double? AltitudeHighestPoint { get; set; }
+        public double? AltitudeLowestPoint { get; set; }
+        public double? AltitudeSumUp { get; set; }
+        public double? AltitudeSumDown { get; set; }
 
-        public double DistanceDuration { get; set; }
-        public double DistanceLength { get; set; }
+        public double? DistanceDuration { get; set; }
+        public double? DistanceLength { get; set; }
         //neu LTSUpdate 11.16
 
         //Status & Features
-        public bool IsOpen { get; set; }
-        public bool IsPrepared { get; set; }
-        public bool RunToValley { get; set; }
-        public bool IsWithLigth { get; set; }
-        public bool HasRentals { get; set; }
-        public bool HasFreeEntrance { get; set; }
-        public bool LiftAvailable { get; set; }
-        public bool FeetClimb { get; set; }
+        public bool? IsOpen { get; set; }
+        public bool? IsPrepared { get; set; }
+        public bool? RunToValley { get; set; }
+        public bool? IsWithLigth { get; set; }
+        public bool? HasRentals { get; set; }
+        public bool? HasFreeEntrance { get; set; }
+        public bool? LiftAvailable { get; set; }
+        public bool? FeetClimb { get; set; }
 
         //neu
-        public Nullable<bool> BikeTransport { get; set; }
+        public bool? BikeTransport { get; set; }
 
         //OperationSchedule
         //public string OperationscheduleName { get; set; }
@@ -2338,7 +2371,7 @@ namespace DataModel
         public List<string>? ChildPoiIds { get; set; }
         public List<string>? MasterPoiIds { get; set; }
                 
-        public Nullable<int> WayNumber { get; set; }
+        public int? WayNumber { get; set; }
 
         public string? Number { get; set; }
 
@@ -2346,10 +2379,12 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
-    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware
+    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2426,10 +2461,12 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2472,7 +2509,7 @@ namespace DataModel
 
 
         //CapacityCeremony
-        public int MaxSeatingCapacity { get; set; }
+        public int? MaxSeatingCapacity { get; set; }
 
         //public ICollection<GpsInfo> GpsInfo { get; set; }
         public ICollection<ImageGallery>? ImageGallery { get; set; }
@@ -2501,10 +2538,12 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
-    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware
+    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2516,8 +2555,9 @@ namespace DataModel
             EventAdditionalInfos = new Dictionary<string, EventAdditionalInfos>();
             EventPrice = new Dictionary<string, EventPrice>();
             EventPrices = new Dictionary<string, ICollection<EventPrice>>();
-            EventVariants = new Dictionary<string, ICollection<EventVariant>>();
+            //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
             Hashtag = new Dictionary<string, ICollection<string>>();
+            EventDescAdditional = new Dictionary<string, EventDescAdditional>();
         }
 
         //IIdentifiable
@@ -2542,7 +2582,7 @@ namespace DataModel
 
         //Eventspezifische Infos
         public string? OrgRID { get; set; }
-        public int Ranc { get; set; }
+        public int? Ranc { get; set; }
         public string? Ticket { get; set; }
         public string? SignOn { get; set; }
         public string? PayMet { get; set; }
@@ -2591,7 +2631,9 @@ namespace DataModel
         public ICollection<LTSTags> LTSTags { get; set; }
 
         public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
-        public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
+        
+        //Only for LTS internal use
+        //public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
 
         public IDictionary<string, ICollection<string>> Hashtag { get; set; }
 
@@ -2620,6 +2662,11 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string ClassificationRID { get; set; }
+
+        public ICollection<EventCrossSelling> EventCrossSelling { get; set; }
+        public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
     }
 
     public class Topic
@@ -2744,7 +2791,7 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable
+    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -3054,24 +3101,28 @@ namespace DataModel
     {
         public DateTime From { get; set; }
         public DateTime To { get; set; }
-        public bool SingleDays { get; set; }
-        public int MinPersons { get; set; }
-        public int MaxPersons { get; set; }
-        public bool Ticket { get; set; }
-        public double GpsNorth { get; set; }
-        public double GpsEast { get; set; }
-        public TimeSpan Begin { get; set; }
-        public TimeSpan End { get; set; }
-        public TimeSpan Entrance { get; set; }
+        public bool? SingleDays { get; set; }
+        public int? MinPersons { get; set; }
+        public int? MaxPersons { get; set; }
+        public bool? Ticket { get; set; }
+        public double? GpsNorth { get; set; }
+        public double? GpsEast { get; set; }
+        public TimeSpan? Begin { get; set; }
+        public TimeSpan? End { get; set; }
+        public TimeSpan? Entrance { get; set; }
 
         //NEW Properties
-        public Nullable<double> InscriptionTill { get; set; }
-        public Nullable<bool> Active { get; set; }
+        public double? InscriptionTill { get; set; }
+        public bool? Active { get; set; }
         public string DayRID { get; set; }
 
         public Dictionary<string, EventDateAdditionalInfo> EventDateAdditionalInfo { get; set; }
         public ICollection<EventDateAdditionalTime> EventDateAdditionalTime { get; set; }
         public EventDateCalculatedDay EventCalculatedDay { get; set; }
+
+        //New
+        public string PriceFrom { get; set; }
+        public string Cancelled { get; set; }
     }
 
     public class EventDateAdditionalInfo : ILanguage
@@ -3080,6 +3131,8 @@ namespace DataModel
         public string Guide { get; set; }
         public string InscriptionLanguage { get; set; }
         public string Language { get; set; }
+
+        public string Cancelled { get; set; }
     }
 
     //TODO GET MORE INFOS ABOUT THIS
@@ -3099,23 +3152,23 @@ namespace DataModel
         public string CDayRID { get; set; }
         public DateTime Day { get; set; }
         public TimeSpan Begin { get; set; }
-        public int TicketsAvailable { get; set; }
-        public int MaxSellableTickets { get; set; }
-        public ICollection<EventDateCalculatedDayVariant> EventDateCalculatedDayVariant { get; set; }
+        //public int TicketsAvailable { get; set; }
+        //public int MaxSellableTickets { get; set; }
+        //public ICollection<EventDateCalculatedDayVariant> EventDateCalculatedDayVariant { get; set; }
 
-        //found in response
-        public Nullable<int> AvailabilityCalculatedValue { get; set; }
-        public Nullable<int> AvailabilityLow { get; set; }
-        public Nullable<double> PriceFrom { get; set; }
+        ////found in response
+        //public Nullable<int> AvailabilityCalculatedValue { get; set; }
+        //public Nullable<int> AvailabilityLow { get; set; }
+        //public Nullable<double> PriceFrom { get; set; }
     }
 
-    public class EventDateCalculatedDayVariant
-    {
-        public string VarRID { get; set; }
-        public double Price { get; set; }
-        public Nullable<bool> IsStandardVariant { get; set; }
-        public Nullable<int> TotalSellable { get; set; }
-    }
+    //public class EventDateCalculatedDayVariant
+    //{
+    //    public string VarRID { get; set; }
+    //    public double Price { get; set; }
+    //    public Nullable<bool> IsStandardVariant { get; set; }
+    //    public Nullable<int> TotalSellable { get; set; }
+    //}
 
     public class EventBooking
     {
@@ -3124,8 +3177,8 @@ namespace DataModel
             BookingUrl = new Dictionary<string, EventBookingDetail>();
         }
 
-        public DateTime BookableFrom { get; set; }
-        public DateTime BookableTo { get; set; }
+        public DateTime? BookableFrom { get; set; }
+        public DateTime? BookableTo { get; set; }
         public int? AccommodationAssignment { get; set; }
 
         public Dictionary<string, EventBookingDetail> BookingUrl { get; set; }
@@ -3136,14 +3189,14 @@ namespace DataModel
         public string Url { get; set; }
     }
 
-    public class EventVariant
-    {
-        public string VarRID { get; set; }
-        public string ShortDescription { get; set; }
-        public string LongDescription { get; set; }
-        public string Description { get; set; }
-        public string Language { get; set; }
-    }
+    //public class EventVariant
+    //{
+    //    public string VarRID { get; set; }
+    //    public string ShortDescription { get; set; }
+    //    public string LongDescription { get; set; }
+    //    public string Description { get; set; }
+    //    public string Language { get; set; }
+    //}
 
     public class EventOperationScheduleOverview
     {
@@ -3154,6 +3207,22 @@ namespace DataModel
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
+    }
+
+    public class EventCrossSelling
+    {
+        public string EventRID { get; set; }
+    }
+
+    public class EventDescAdditional
+    {
+        public string Type { get; set; }
+        public string Language { get; set; }
+        public string Order { get; set; }
+        public string RQPlain { get; set; }
+        public string RQHtml { get; set; }
+        public string RSPlain { get; set; }
+        public string RSHtml { get; set; }
     }
 
     //Evalanche Spezial
@@ -3268,7 +3337,7 @@ namespace DataModel
 
     #region EBMS
 
-    public class EventShort : IIdentifiable, IImportDateassigneable
+    public class EventShort : IIdentifiable, IImportDateassigneable, ISource
     {
         public EventShort()
         {

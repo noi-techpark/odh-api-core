@@ -26,14 +26,11 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
 
-            if (data.Representation != null)
+            if (data.SmgActive)
             {
-                if (data.Representation > 0 && data.Active)
-                {
-                    isopendata = true;
-                    licensetype = "CC0";
-                }
-            }
+                isopendata = true;
+                licensetype = "CC0";
+            }           
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
@@ -46,8 +43,8 @@ namespace Helper
 
             if (data.Source == "LTS")
             {
-                isopendata = true;
-                licensetype = "CC0";
+                isopendata = false;
+                licensetype = "Closed";
                 licenseholder = @"https://www.lts.it";
             }
 
@@ -108,7 +105,7 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
 
-            if (data.Active)
+            if (data.Active && data.ClassificationRID == "CE212B488FA14954BE91BBCFA47C0F06")
             {
                 isopendata = true;
                 licensetype = "CC0";
@@ -216,7 +213,7 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
 
-            if (!data.attributes.categories.Contains("lts/visi_unpublishedOnODH"))
+            if (!data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH"))
             {
                 isopendata = true;
                 licensetype = "CC0";
@@ -296,6 +293,14 @@ namespace Helper
             var licenseholder = "https://provinz.bz.it/wetter";
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
+        public static void CheckLicenseInfoWithSource(LicenseInfo licenseinfo, string source, bool setcloseddatato)
+        {
+            if (source == "lts")
+            {
+                licenseinfo.ClosedData = setcloseddatato;
+            }
         }
     }
 }

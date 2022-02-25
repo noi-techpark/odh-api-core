@@ -153,21 +153,20 @@ namespace Helper
                    if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
                     {
                         var detailvalues = mypoiactivity.Detail[language];
+                        FixDetailBaseAndIntroText(detailvalues);
 
                         if (!String.IsNullOrEmpty(detailvalues.AdditionalText))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.BaseText))
                             if (!String.IsNullOrEmpty(detailvalues.BaseText.Trim()))
-                                if (detailvalues.BaseText.Trim() != "&#10;&#10;")
-                                    removelang = false;
+                               removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.GetThereText))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.Header))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.IntroText))
                             if (!String.IsNullOrEmpty(detailvalues.IntroText.Trim()))
-                                if (detailvalues.IntroText.Trim() != "&#10;&#10;")
-                                    removelang = false;
+                                     removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.SubHeader))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.Title))
@@ -249,12 +248,12 @@ namespace Helper
                     if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
                     {
                         var detailvalues = mypoiactivity.Detail[language];
+                        FixDetailBaseAndIntroText(detailvalues);
 
                         if (!String.IsNullOrEmpty(detailvalues.AdditionalText))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.BaseText))
                             if (!String.IsNullOrEmpty(detailvalues.BaseText.Trim()))
-                                if (detailvalues.BaseText.Trim() != "&#10;&#10;")
                                     removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.GetThereText))
                             removelang = false;
@@ -262,7 +261,6 @@ namespace Helper
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.IntroText))
                             if (!String.IsNullOrEmpty(detailvalues.IntroText.Trim()))
-                                if (detailvalues.IntroText.Trim() != "&#10;&#10;")
                                     removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.SubHeader))
                             removelang = false;
