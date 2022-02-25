@@ -415,9 +415,15 @@ namespace Helper
             reduced.meta = venue.meta;
             reduced.LastChange = venue.LastChange;
             reduced.Source = venue.Source;
+            reduced.LicenseInfo = venue.odhdata.LicenseInfo;
 
-            reduced.relationships.multimediaDescriptions = null;
-            reduced.relationships.subVenues = venue.relationships.subVenues != null ? ReducedDataHelper.ReduceSubVenues(venue.relationships.subVenues) : null;
+            if (reduced.relationships != null)
+            {
+                reduced.relationships.multimediaDescriptions = null;
+                reduced.relationships.subVenues = venue.relationships.subVenues != null ? ReducedDataHelper.ReduceSubVenues(venue.relationships.subVenues) : null;
+            }
+
+            reduced.odhdata = new ODHData();
 
             //ODH Fields TODO
             reduced.odhdata.Active = venue.odhdata.Active;
