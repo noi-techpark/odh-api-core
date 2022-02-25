@@ -472,8 +472,25 @@ namespace RAVEN
             data.Id = data.Id.ToUpper();
 
             data.LastChange = data.meta.lastUpdate;
-            data.Shortname = data.attributes.name.Keys.Count > 0 ? data.attributes.name.FirstOrDefault().Value : "";
-            data.LicenseInfo = data.odhdata.LicenseInfo;
+            data.Shortname = data.attributes.name != null && data.attributes.name.Keys.Count > 0 ? data.attributes.name.FirstOrDefault().Value : "";
+            data.LicenseInfo = data.odhdata.LicenseInfo;          
+
+            if (data.odhdata.GpsInfo != null)
+            {
+                int i = 2;
+                foreach (var gpsinfo in data.odhdata.GpsInfo)
+                {
+                    if (!data.odhdata.GpsPoints.ContainsKey(gpsinfo.Gpstype))
+                    {
+                        data.odhdata.GpsPoints.Add(gpsinfo.Gpstype, gpsinfo);
+                    }
+                    else
+                    {
+                        data.odhdata.GpsPoints.Add("position" + i, gpsinfo);
+                        i++;
+                    }
+                }
+            }
 
             data.odhdata.ODHActive = !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH") ? true : false;
             data.links.self = ODHConstant.ApplicationURL + "Venue/" + data.Id;
