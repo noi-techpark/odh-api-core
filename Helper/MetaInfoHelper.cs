@@ -68,7 +68,7 @@ namespace Helper
         {
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
         }
@@ -97,7 +97,7 @@ namespace Helper
         {
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
         }
@@ -106,7 +106,7 @@ namespace Helper
         {
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
         }
@@ -115,7 +115,7 @@ namespace Helper
         {
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
         }
@@ -125,7 +125,7 @@ namespace Helper
             string sourcemeta = data.Source.ToLower();
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, sourcemeta, data.LastChange, reduced);
         }
@@ -139,7 +139,7 @@ namespace Helper
 
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, sourcemeta ?? "", data.LastChange, reduced);
         }
@@ -163,7 +163,7 @@ namespace Helper
         {
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
         }
@@ -176,7 +176,7 @@ namespace Helper
 
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, sourcemeta, data.LastChange, reduced);
         }
@@ -190,7 +190,7 @@ namespace Helper
         {
             bool reduced = false;
             if (data._Meta != null)
-                reduced = data._Meta.Reduced;
+                reduced = (bool)data._Meta.Reduced;
 
             return data._Meta = GetMetadata(data, "lts", data.meta.lastUpdate, reduced);
         }
