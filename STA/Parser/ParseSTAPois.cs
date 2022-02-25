@@ -216,7 +216,7 @@ namespace STA
           
             mypoi.SyncSourceInterface = "sta";
             mypoi.SyncUpdateMode = "Full";
-            mypoi.Source = "STA";
+            mypoi.Source = "sta";
 
             mypoi.Active = true;
             mypoi.SmgActive = true;
