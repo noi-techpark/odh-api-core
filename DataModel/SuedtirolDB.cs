@@ -161,10 +161,10 @@ namespace DataModel
 
     public interface IGeoDataInfoAware
     {
-        double AltitudeDifference { get; set; }
-        double AltitudeHighestPoint { get; set; }
-        double DistanceDuration { get; set; }
-        double DistanceLength { get; set; }
+        double? AltitudeDifference { get; set; }
+        double? AltitudeHighestPoint { get; set; }
+        double? DistanceDuration { get; set; }
+        double? DistanceLength { get; set; }
 
         ICollection<GpsInfo>? GpsInfo { get; set; }
         ICollection<GpsTrack>? GpsTrack { get; set; }
@@ -2282,12 +2282,12 @@ namespace DataModel
         public string? OutdooractiveElevationID { get; set; }
 
         //new
-        public Nullable<bool> CopyrightChecked { get; set; }
+        public bool? CopyrightChecked { get; set; }
 
         public bool Active { get; set; }
         public string? Shortname { get; set; }
         public string? SmgId { get; set; }
-        public bool Highlight { get; set; }
+        public bool? Highlight { get; set; }
 
         //obsolete ??
         public string? Difficulty { get; set; }
@@ -2318,29 +2318,29 @@ namespace DataModel
 
 
         //Distance & Altitude Informationen
-        public double AltitudeDifference { get; set; }
+        public double? AltitudeDifference { get; set; }
         //neu LTSUpdate 11.16
-        public double AltitudeHighestPoint { get; set; }
-        public double AltitudeLowestPoint { get; set; }
-        public double AltitudeSumUp { get; set; }
-        public double AltitudeSumDown { get; set; }
+        public double? AltitudeHighestPoint { get; set; }
+        public double? AltitudeLowestPoint { get; set; }
+        public double? AltitudeSumUp { get; set; }
+        public double? AltitudeSumDown { get; set; }
 
-        public double DistanceDuration { get; set; }
-        public double DistanceLength { get; set; }
+        public double? DistanceDuration { get; set; }
+        public double? DistanceLength { get; set; }
         //neu LTSUpdate 11.16
 
         //Status & Features
-        public bool IsOpen { get; set; }
-        public bool IsPrepared { get; set; }
-        public bool RunToValley { get; set; }
-        public bool IsWithLigth { get; set; }
-        public bool HasRentals { get; set; }
-        public bool HasFreeEntrance { get; set; }
-        public bool LiftAvailable { get; set; }
-        public bool FeetClimb { get; set; }
+        public bool? IsOpen { get; set; }
+        public bool? IsPrepared { get; set; }
+        public bool? RunToValley { get; set; }
+        public bool? IsWithLigth { get; set; }
+        public bool? HasRentals { get; set; }
+        public bool? HasFreeEntrance { get; set; }
+        public bool? LiftAvailable { get; set; }
+        public bool? FeetClimb { get; set; }
 
         //neu
-        public Nullable<bool> BikeTransport { get; set; }
+        public bool? BikeTransport { get; set; }
 
         //OperationSchedule
         //public string OperationscheduleName { get; set; }
@@ -2371,7 +2371,7 @@ namespace DataModel
         public List<string>? ChildPoiIds { get; set; }
         public List<string>? MasterPoiIds { get; set; }
                 
-        public Nullable<int> WayNumber { get; set; }
+        public int? WayNumber { get; set; }
 
         public string? Number { get; set; }
 
