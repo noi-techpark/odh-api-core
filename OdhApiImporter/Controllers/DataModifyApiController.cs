@@ -64,6 +64,29 @@ namespace OdhApiImporter.Controllers
             return Ok();
         }
 
-#endregion
+        [HttpGet, Route("ModifySTAVendingpoint")]
+        public async Task<IActionResult> ModifySTAVendingpoint(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateAllSTAVendingpoints();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify STA Vendingpoint",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = objectscount,
+                success = true
+            });
+
+            return Ok();
+        }
+
+        #endregion
     }
 }
