@@ -747,7 +747,7 @@ namespace DataModel
         public ICollection<string>? PoiServices { get; set; }
 
         //Neu        
-        public string? Source { get; set; }
+        //public string? Source { get; set; }
         public string? SyncSourceInterface { get; set; }
         public string? SyncUpdateMode { get; set; }
 
