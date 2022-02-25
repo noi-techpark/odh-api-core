@@ -15,15 +15,13 @@ namespace Helper
             return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
 
-        public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
+        public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null, Nullable<bool> reduced = false) where T : IIdentifiable, IMetaData
         {
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
             //If source is already set use the old source
             if (data._Meta != null && !String.IsNullOrEmpty(data._Meta.Source))
-                source = data._Meta.Source;
-
-            //TODO add Metainfo when data is reduced
+                source = data._Meta.Source;            
 
             return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
@@ -68,7 +66,11 @@ namespace Helper
 
         public static Metadata GetMetadataforAccommodation(AccommodationLinked data)
         {
-            return GetMetadata(data, "lts", data.LastChange);
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return GetMetadata(data, "lts", data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforAccommodationRoom(AccommodationRoomLinked data)
@@ -88,29 +90,44 @@ namespace Helper
                 datasource = datasource.ToLower();
             }
 
-            return GetMetadata(data, datasource, data.LastChange);
+            return GetMetadata(data, datasource, data.LastChange, false);
         }
 
         public static Metadata GetMetadataforActivity(LTSActivityLinked data)
-        { 
-            return GetMetadata(data, "lts", data.LastChange);
+        {
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return GetMetadata(data, "lts", data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforPoi(LTSPoiLinked data)
-        {            
-            return GetMetadata(data, "lts", data.LastChange);
+        {
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return GetMetadata(data, "lts", data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforGastronomy(GastronomyLinked data)
         {
-            return GetMetadata(data, "lts", data.LastChange); ;
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return GetMetadata(data, "lts", data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforEvent(EventLinked data)
         {
             string sourcemeta = data.Source.ToLower();
-            
-            return GetMetadata(data, sourcemeta, data.LastChange);
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return GetMetadata(data, sourcemeta, data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforOdhActivityPoi(ODHActivityPoiLinked data)
@@ -120,7 +137,11 @@ namespace Helper
             if (sourcemeta == "common" || sourcemeta == "magnolia" || sourcemeta == "content")
                 sourcemeta = "idm";
 
-            return GetMetadata(data, sourcemeta ?? "", data.LastChange);
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return GetMetadata(data, sourcemeta ?? "", data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforOdhTag(ODHTagLinked data)
@@ -135,12 +156,16 @@ namespace Helper
 
         public static Metadata GetMetadataforPackage(PackageLinked data)
         {
-            return GetMetadata(data, "hgv", data.LastUpdate);
+            return GetMetadata(data, "hgv", data.LastUpdate, false);
         }
 
         public static Metadata GetMetadataforMeasuringpoint(MeasuringpointLinked data)
         {
-           return GetMetadata(data, "lts", data.LastChange);
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return GetMetadata(data, "lts", data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforWebcam(WebcamInfoLinked data)
@@ -149,17 +174,25 @@ namespace Helper
             if (sourcemeta == "content")
                 sourcemeta = "idm";
 
-            return GetMetadata(data, sourcemeta, data.LastChange);
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return GetMetadata(data, sourcemeta, data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforArticle(ArticlesLinked data)
         {            
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforVenue(DDVenue data)
         {
-            return data._Meta = GetMetadata(data, "lts", data.meta.lastUpdate);
+            bool? reduced = false;
+            if (data._Meta != null && data._Meta.Reduced != null)
+                reduced = data._Meta.Reduced;
+
+            return data._Meta = GetMetadata(data, "lts", data.meta.lastUpdate, reduced);
         }
 
         public static Metadata GetMetadataforEventShort(EventShortLinked data)
@@ -181,57 +214,57 @@ namespace Helper
                     break;                
             }                
 
-            return GetMetadata(data, sourcestr, data.LastChange);
+            return GetMetadata(data, sourcestr, data.LastChange, false);
         }
 
         public static Metadata GetMetadataforExperienceArea(ExperienceAreaLinked data)
         {
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforMetaRegion(MetaRegionLinked data)
         {
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforRegion(RegionLinked data)
         {
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforTourismverein(TourismvereinLinked data)
         {
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforMunicipality(MunicipalityLinked data)
         {
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforDistrict(DistrictLinked data)
         {
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforSkiArea(SkiAreaLinked data)
         {
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforSkiRegion(SkiRegionLinked data)
         {
-            return GetMetadata(data, "idm", data.LastChange);
+            return GetMetadata(data, "idm", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforArea(AreaLinked data)
         {            
-            return GetMetadata(data, "lts", data.LastChange);
+            return GetMetadata(data, "lts", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforWineAward(WineLinked data)
         {
-           return GetMetadata(data, "suedtirolwein", data.LastChange);
+           return GetMetadata(data, "suedtirolwein", data.LastChange, false);
         }               
     }
 }
