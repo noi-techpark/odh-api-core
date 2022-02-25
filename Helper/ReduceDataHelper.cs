@@ -14,6 +14,25 @@ namespace Helper
             return reducedmodelgenerator(myobject);
         }
 
+        //Check if data should be reduced
+        public static bool ReduceData<T>(T myobject) where T : ISource, ILicenseInfo
+        {
+            return myobject switch
+            {
+                Accommodation or AccommodationLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                GBLTSActivity or LTSActivityLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                GBLTSPoi or LTSPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                Gastronomy or GastronomyLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                Event or EventLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                ODHActivityPoi or ODHActivityPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                Measuringpoint or MeasuringpointLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                WebcamInfo or WebcamInfoLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                DDVenue => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                _ => false
+            };
+        }
+
+
         //LTS ActivityData
         public static LTSActivityLinkedReduced CopyLTSActivityToReducedObject(LTSActivityLinked myactivity)
         {

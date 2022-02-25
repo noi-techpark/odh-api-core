@@ -328,25 +328,16 @@ namespace OdhApiCore.Controllers.api
 
             var result = await QueryFactory.UpsertData<T>(datatosave, table);
 
-            //obsolete
-            //if(result is OkObjectResult)
-            //{
-            //    var resultstr = ((OkObjectResult)result).Value.ToString();
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
+        }
 
-            //    if (resultstr != null)
-            //    {
-            //        if (resultstr.StartsWith("INSERT"))
-            //        {
-            //            if (resultstr.Contains("recordsmodified: 1"))
-            //                insertcounter++;
-            //        }
-            //        if (resultstr.StartsWith("UPDATE"))
-            //        {
-            //            if (resultstr.Contains("recordsmodified: 1"))
-            //                updatecounter++;
-            //        }
-            //    }
-            //}
+        private async Task<UpdateDetail> SaveRavenReducedObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, ISource
+        {
+            datatosave._Meta.LastUpdate = datatosave.LastChange;
+
+            //Temporary Hack will be moved to the importer workerservice
+
+            var result = await QueryFactory.UpsertData<T>(datatosave, table);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
         }
@@ -676,7 +667,7 @@ namespace OdhApiCore.Controllers.api
         //private async Task<IEnumerable<EventShort>> GetAllEventsShort(DateTime now)
         //{
         //    var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
-            
+
         //    var query =
         //                 QueryFactory.Query("eventeuracnoi")
         //                     .Select("data")
@@ -688,7 +679,7 @@ namespace OdhApiCore.Controllers.api
         //#endregion
 
         //#region NINJA Helpers
-   
+
         ///// <summary>
         ///// Save Events to Postgres
         ///// </summary>
@@ -843,7 +834,7 @@ namespace OdhApiCore.Controllers.api
         //           .Where("id", idtocheck);
 
         //    var eventindb = await query.GetAsync<JsonRaw>();
-            
+
         //    if (eventindb.Count() == 0)
         //    {
         //        eventtosave.FirstImport = DateTime.Now;
@@ -905,7 +896,7 @@ namespace OdhApiCore.Controllers.api
 
         //    return result;
         //}
-        
+
         //public async Task<LocationInfo?> GetTheLocationInfoDistrict(string districtid)
         //{
         //    try
