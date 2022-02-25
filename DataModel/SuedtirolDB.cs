@@ -3605,7 +3605,7 @@ namespace DataModel
 
         //New
         public string Source { get; set; }
-        public bool? Reduced { get; set; }
+        public bool Reduced { get; set; }
     }
 
     #endregion
