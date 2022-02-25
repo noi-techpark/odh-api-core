@@ -211,6 +211,14 @@ namespace RAVEN
             if (data2.SmgTags != null && data2.SmgTags.Count > 0)
                 data2.SmgTags = data2.SmgTags.Select(x => x.ToLower()).ToList();
 
+            if (data2.LTSTags != null)
+            {
+                foreach (var myltstag in data2.LTSTags)
+                {
+                    myltstag.Id = myltstag.Id.ToLower();
+                }
+            }
+
             //Problem
             if (data2.GpsInfo != null)
             {
@@ -268,6 +276,7 @@ namespace RAVEN
                 data2.Source = "lts";
 
             data2._Meta = MetadataHelper.GetMetadataobject<LTSActivityLinked>(data2, MetadataHelper.GetMetadataforActivity); //GetMetadata(data.Id, "ltsactivity", "lts", data.LastChange);
+            data2.PublishedOn = new List<string>();
 
             return data2;
         }
@@ -279,6 +288,14 @@ namespace RAVEN
 
             if (data.SmgTags != null && data.SmgTags.Count > 0)
                 data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (data.LTSTags != null)
+            {
+                foreach (var myltstag in data.LTSTags)
+                {
+                    myltstag.Id = myltstag.Id.ToLower();
+                }
+            }
 
             if (data.GpsInfo != null)
             {
@@ -329,6 +346,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "lts";
+
+            data.PublishedOn = new List<string>();
 
             data._Meta = MetadataHelper.GetMetadataobject<LTSPoiLinked>(data, MetadataHelper.GetMetadataforPoi); //GetMetadata(data.Id, "ltspoi", "lts", data.LastChange);
 
@@ -394,6 +413,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "lts";
+
+            data.PublishedOn = new List<string>();
 
             data._Meta = MetadataHelper.GetMetadataobject<GastronomyLinked>(data, MetadataHelper.GetMetadataforGastronomy); //GetMetadata(data.Id, "ltsgastronomy", "lts", data.LastChange);
 
