@@ -2116,7 +2116,7 @@ namespace DataModel
     /// </summary>
     #region CommonInfos
 
-    public class Wine : IIdentifiable, IImportDateassigneable,ILicenseInfo
+    public class Wine : IIdentifiable, IImportDateassigneable,ILicenseInfo, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2150,6 +2150,8 @@ namespace DataModel
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        public string? Source { get; set; }
     }
 
     public class SuedtirolType : ISuedtirolType
@@ -2188,7 +2190,7 @@ namespace DataModel
     }
 
     //BaseInfos für Districts / Regions / Municipalities
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2258,6 +2260,8 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        public string? Source { get; set; }
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten

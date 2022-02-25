@@ -15,7 +15,7 @@ namespace Helper
             return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
 
-        public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null) where T : IIdentifiable, IMetaData
+        public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
         {
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
@@ -25,7 +25,7 @@ namespace Helper
 
             //TODO add Metainfo when data is reduced
 
-            return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source };
+            return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
                
         public static Metadata GetMetadataobject<T>(T myobject, Func<T, Metadata> metadataganerator)

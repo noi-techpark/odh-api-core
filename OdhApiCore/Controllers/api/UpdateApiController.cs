@@ -121,6 +121,9 @@ namespace OdhApiCore.Controllers.api
 
                     var accoresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
 
+                    //TODO Check if it is from source LTS when yes set closeddata to true, reduce it set closeddata to false
+
+
                     //UPDATE ACCOMMODATIONROOMS
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
 
