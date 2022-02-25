@@ -412,6 +412,9 @@ namespace Helper
             //LTS ID(RID) (EvRID)
             reduced.Id = venue.Id + "_REDUCED";
             reduced.attributes = ReducedDataHelper.ReduceVenueAttributes(venue.attributes);
+            reduced.meta = venue.meta;
+            reduced.LastChange = venue.LastChange;
+            reduced.Source = venue.Source;
 
             reduced.relationships.multimediaDescriptions = null;
             reduced.relationships.subVenues = venue.relationships.subVenues != null ? ReducedDataHelper.ReduceSubVenues(venue.relationships.subVenues) : null;

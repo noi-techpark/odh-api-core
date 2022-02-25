@@ -439,6 +439,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = sourcemeta;
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<WebcamInfoLinked>(data, MetadataHelper.GetMetadataforWebcam); //GetMetadata(data.Id, "webcam", sourcemeta, data.LastChange);
             var webcampublished = data.WebcamAssignedOn != null && data.WebcamAssignedOn.Count > 0 ? true : false;
@@ -450,14 +452,16 @@ namespace RAVEN
 
         public static MeasuringpointLinked GetMeasuringpointPGObject(MeasuringpointLinked data)
         {
-            data.Id = data.Id.ToUpper();            
-            data._Meta = MetadataHelper.GetMetadataobject<MeasuringpointLinked>(data, MetadataHelper.GetMetadataforMeasuringpoint); //GetMetadata(data.Id, "measuringpoint", "lts", data.LastChange);
+            data.Id = data.Id.ToUpper();
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "lts";
             else
                 data.Source = data.Source.ToLower();
 
+            data._Meta = MetadataHelper.GetMetadataobject<MeasuringpointLinked>(data, MetadataHelper.GetMetadataforMeasuringpoint); //GetMetadata(data.Id, "measuringpoint", "lts", data.LastChange);
+
+            
             data.PublishedOn = PublishedOnHelper.GetPublishenOnList("mesuringpoint", data.SmgActive);
 
             return data;
@@ -471,11 +475,17 @@ namespace RAVEN
             data.Shortname = data.attributes.name.Keys.Count > 0 ? data.attributes.name.FirstOrDefault().Value : "";
             data.LicenseInfo = data.odhdata.LicenseInfo;
 
-            data.odhdata.ODHActive = data.attributes.categories.Contains("lts/visi_unpublishedOnODH") ? false : true;
+            data.odhdata.ODHActive = !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH") ? true : false;
             data.links.self = ODHConstant.ApplicationURL + "Venue/" + data.Id;
 
             data._Meta = MetadataHelper.GetMetadataobject<DDVenue>(data, MetadataHelper.GetMetadataforVenue);
             data.odhdata.PublishedOn = PublishedOnHelper.GetPublishenOnList("venue", data.odhdata.ODHActive);
+
+            //fixes
+            data.odhdata.Source = data.odhdata.Source.ToLower();
+            data.Source = data.odhdata.Source;
+
+            data.LicenseInfo = data.odhdata.LicenseInfo;
 
             return data;
         }

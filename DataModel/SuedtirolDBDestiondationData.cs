@@ -7,6 +7,14 @@ namespace DataModel
 {
     public class DDVenue : IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, ISource
     {
+        public string Self
+        {
+            get
+            {
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Venue/" + Uri.EscapeUriString(this.Id));
+            }
+        }
+
         public Metadata _Meta { get; set; }
         public string type { get; set; }
         //public string id { get; set; }
@@ -78,7 +86,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "api/VenueTypes/" + Uri.EscapeUriString(this.Id));
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "VenueTypes/" + Uri.EscapeUriString(this.Id));
             }
         }
     }
@@ -93,7 +101,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "api/VenueTypes/" + Uri.EscapeUriString(this.Id));
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "VenueTypes/" + Uri.EscapeUriString(this.Id));
             }
         }
     }
