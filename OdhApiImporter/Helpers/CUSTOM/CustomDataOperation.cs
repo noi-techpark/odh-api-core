@@ -52,5 +52,36 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        public async Task<int> UpdateAllSTAVendingpoints()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("smgpois")
+                   .Where("gen_source", "sta");
+
+            var data = await query.GetObjectListAsync<ODHActivityPoiLinked>();
+            int i = 0;
+
+            foreach (var stapoi in data)
+            {
+                //Setting MetaInfo
+                stapoi._Meta.Reduced = false;
+                stapoi.Source = "sta";
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("smgpois").Where("id", stapoi.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = stapoi.Id?.ToLower() ?? "", data = new JsonRaw(stapoi) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        
     }
 }
