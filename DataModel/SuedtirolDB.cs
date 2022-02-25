@@ -890,11 +890,11 @@ namespace DataModel
         //public int Units { get; set; }
         //public int Beds { get; set; }
         public int? Representation { get; set; }
-        public bool? HasApartment { get; set; }
+        public bool HasApartment { get; set; }
         public bool? HasRoom { get; set; }
         public bool? IsCamping { get; set; }
         public bool? IsGastronomy { get; set; }
-        public bool? IsBookable { get; set; }
+        public bool IsBookable { get; set; }
         public bool? IsAccommodation { get; set; }
         public bool SmgActive { get; set; }
         public bool? TVMember { get; set; }
@@ -3605,8 +3605,7 @@ namespace DataModel
 
         //New
         public string Source { get; set; }
-
-        public bool? Reduced { get; set; }
+        public bool Reduced { get; set; }
     }
 
     #endregion

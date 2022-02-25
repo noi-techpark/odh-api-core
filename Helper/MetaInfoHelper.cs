@@ -10,12 +10,12 @@ namespace Helper
     public class MetadataHelper
     {
         //Simple Method to reset the Metainfo
-        public static Metadata GetMetadata(string id, string type, string source, Nullable<DateTime> lastupdated = null, Nullable<bool> reduced = false)
+        public static Metadata GetMetadata(string id, string type, string source, Nullable<DateTime> lastupdated = null, bool reduced = false)
         {
             return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
 
-        public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null, Nullable<bool> reduced = false) where T : IIdentifiable, IMetaData
+        public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
         {
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
@@ -66,8 +66,8 @@ namespace Helper
 
         public static Metadata GetMetadataforAccommodation(AccommodationLinked data)
         {
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
@@ -95,8 +95,8 @@ namespace Helper
 
         public static Metadata GetMetadataforActivity(LTSActivityLinked data)
         {
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
@@ -104,8 +104,8 @@ namespace Helper
 
         public static Metadata GetMetadataforPoi(LTSPoiLinked data)
         {
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
@@ -113,8 +113,8 @@ namespace Helper
 
         public static Metadata GetMetadataforGastronomy(GastronomyLinked data)
         {
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
@@ -123,8 +123,8 @@ namespace Helper
         public static Metadata GetMetadataforEvent(EventLinked data)
         {
             string sourcemeta = data.Source.ToLower();
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return GetMetadata(data, sourcemeta, data.LastChange, reduced);
@@ -137,8 +137,8 @@ namespace Helper
             if (sourcemeta == "common" || sourcemeta == "magnolia" || sourcemeta == "content")
                 sourcemeta = "idm";
 
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return GetMetadata(data, sourcemeta ?? "", data.LastChange, reduced);
@@ -161,8 +161,8 @@ namespace Helper
 
         public static Metadata GetMetadataforMeasuringpoint(MeasuringpointLinked data)
         {
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
@@ -174,8 +174,8 @@ namespace Helper
             if (sourcemeta == "content")
                 sourcemeta = "idm";
 
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return GetMetadata(data, sourcemeta, data.LastChange, reduced);
@@ -188,8 +188,8 @@ namespace Helper
 
         public static Metadata GetMetadataforVenue(DDVenue data)
         {
-            bool? reduced = false;
-            if (data._Meta != null && data._Meta.Reduced != null)
+            bool reduced = false;
+            if (data._Meta != null)
                 reduced = data._Meta.Reduced;
 
             return data._Meta = GetMetadata(data, "lts", data.meta.lastUpdate, reduced);
