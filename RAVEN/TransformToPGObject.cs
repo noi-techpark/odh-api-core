@@ -204,7 +204,7 @@ namespace RAVEN
             data2.WayNumber = data.WayNumber;
             data2.Number = data.Number;
             data2.LicenseInfo = data.LicenseInfo;
-
+            data2.Source = data.Source;
 
             data2.Id = data2.Id.ToUpper();
 
@@ -452,6 +452,11 @@ namespace RAVEN
         {
             data.Id = data.Id.ToUpper();            
             data._Meta = MetadataHelper.GetMetadataobject<MeasuringpointLinked>(data, MetadataHelper.GetMetadataforMeasuringpoint); //GetMetadata(data.Id, "measuringpoint", "lts", data.LastChange);
+
+            if (String.IsNullOrEmpty(data.Source))
+                data.Source = "lts";
+            else
+                data.Source = data.Source.ToLower();
 
             data.PublishedOn = PublishedOnHelper.GetPublishenOnList("mesuringpoint", data.SmgActive);
 

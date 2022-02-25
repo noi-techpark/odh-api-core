@@ -276,6 +276,9 @@ namespace Helper
             //A0App
             reduced.HasApartment = myacco.HasApartment;
 
+            //fix 
+            reduced.IsBookable = false;
+
             //T6RID
             reduced.AccoCategoryId = myacco.AccoCategoryId;
             //T4RID
