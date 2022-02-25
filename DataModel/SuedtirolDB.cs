@@ -264,11 +264,11 @@ namespace DataModel
 
     public interface IActivityStatus
     {
-        bool IsOpen { get; set; }
-        bool IsPrepared { get; set; }
-        bool RunToValley { get; set; }
-        bool IsWithLigth { get; set; }
-        bool HasRentals { get; set; }
+        bool? IsOpen { get; set; }
+        bool? IsPrepared { get; set; }
+        bool? RunToValley { get; set; }
+        bool? IsWithLigth { get; set; }
+        bool? HasRentals { get; set; }
     }
 
     //End Activity & Poi Data Interfaces 
