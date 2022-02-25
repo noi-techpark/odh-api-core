@@ -416,6 +416,7 @@ namespace Helper
             reduced.LastChange = venue.LastChange;
             reduced.Source = venue.Source;
             reduced.LicenseInfo = venue.odhdata.LicenseInfo;
+            reduced.links = venue.links;
 
             if (reduced.relationships != null)
             {
