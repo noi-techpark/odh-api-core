@@ -2582,7 +2582,7 @@ namespace DataModel
 
         //Eventspezifische Infos
         public string? OrgRID { get; set; }
-        public int Ranc { get; set; }
+        public int? Ranc { get; set; }
         public string? Ticket { get; set; }
         public string? SignOn { get; set; }
         public string? PayMet { get; set; }

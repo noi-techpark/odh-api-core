@@ -17,13 +17,13 @@ namespace Helper
                 if (smgactive)
                     publishedonlist.Add("https://noi.bz.it");
             }
-            else
+            else if(type != "package")
             {
                 if (smgactive)
                     publishedonlist.Add("https://www.suedtirol.info");
             }
 
-            //TODO ADD some ifs
+            //TODO ADD some ifs Create better logic
 
             return publishedonlist;
         }
