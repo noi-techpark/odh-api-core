@@ -73,7 +73,7 @@ namespace Helper
             reduced.SubType = myactivity.SubType;
             reduced.PoiType = myactivity.PoiType;
             reduced.AdditionalPoiInfos = myactivity.AdditionalPoiInfos;
-
+            reduced.Source = myactivity.Source;
 
             //ODH Fields
             reduced.Active = myactivity.Active;
@@ -122,6 +122,7 @@ namespace Helper
             reduced.Type = mypoi.Type;
             reduced.SubType = mypoi.SubType;
             reduced.PoiType = mypoi.PoiType;
+            reduced.Source = mypoi.Source;
 
             ///LocationInfo, ODH Object calculated with
             reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(mypoi.LocationInfo);
@@ -162,6 +163,7 @@ namespace Helper
             reduced.FirstImport = mypoi.FirstImport;
             reduced.HasLanguage = mypoi.HasLanguage;
             reduced.Shortname = mypoi.Shortname;
+            reduced.Source = mypoi.Source;
 
             ///LocationInfo, ODH Object calculated with
             reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(mypoi.LocationInfo);
@@ -286,6 +288,7 @@ namespace Helper
             reduced.FirstImport = myacco.FirstImport;
             reduced.HasLanguage = myacco.HasLanguage;
             reduced.Shortname = myacco.Shortname;
+            reduced.Source = myacco.Source;
 
             ///LocationInfo, ODH Object calculated with
             reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(myacco.LocationInfo);
@@ -388,6 +391,7 @@ namespace Helper
             reduced.LastChange = measuringpoint.LastChange;
             reduced.FirstImport = measuringpoint.FirstImport;
             reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(measuringpoint.LocationInfo);
+            reduced.Source = measuringpoint.Source;
 
             //License + Meta
             reduced.LicenseInfo = measuringpoint.LicenseInfo;
