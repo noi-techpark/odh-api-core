@@ -751,11 +751,11 @@ namespace DataModel
         public string? SyncSourceInterface { get; set; }
         public string? SyncUpdateMode { get; set; }
 
-        public int AgeFrom { get; set; }
-        public int AgeTo { get; set; }
+        public int? AgeFrom { get; set; }
+        public int? AgeTo { get; set; }
 
         //NEW Gastronomy
-        public int MaxSeatingCapacity { get; set; }
+        public int? MaxSeatingCapacity { get; set; }
         public ICollection<CategoryCodes>? CategoryCodes { get; set; }
         public ICollection<DishRates>? DishRates { get; set; }
         public ICollection<CapacityCeremony>? CapacityCeremony { get; set; }
@@ -2509,7 +2509,7 @@ namespace DataModel
 
 
         //CapacityCeremony
-        public int MaxSeatingCapacity { get; set; }
+        public int? MaxSeatingCapacity { get; set; }
 
         //public ICollection<GpsInfo> GpsInfo { get; set; }
         public ICollection<ImageGallery>? ImageGallery { get; set; }
