@@ -67,13 +67,15 @@ namespace OdhApiCore.Controllers.api
                 //Logger.LogInformation(JsonConvert.SerializeObject(updateresult));
 
 
-                ////TODO Invalidate the cache based on what was updated
+                ////TODO Invalidate the cache based on what was updated like in this doc
                 ////https://github.com/filipw/Strathweb.CacheOutput
                 //// now get cache instance
                 //var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
 
                 //// and invalidate cache for method "Get" of "TeamsController"
                 //cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((TeamsController t) => t.Get()));
+
+                //We use https://github.com/Iamcerba/AspNetCore.CacheOutput it seems there is only the Attribute solution in the docs
 
 
                 return Ok(updateresult);
@@ -109,6 +111,8 @@ namespace OdhApiCore.Controllers.api
         {
             var mydata = default(IIdentifiable);
             var mypgdata = default(IIdentifiable);
+
+            var myupdateresult = default(UpdateDetail);
 
             switch (datatype.ToLower())
             {
@@ -151,8 +155,17 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
+                    myupdateresult = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
 
+                    //Check if data has to be reduced
+                    if(ReduceDataTransformer.ReduceDataCheck<GastronomyLinked>((GastronomyLinked)mypgdata))
+                    {
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((GastronomyLinked)mypgdata, ReduceDataTransformer.CopyLTSGastronomyToReducedObject);
+
+                        await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinkedReduced)reducedobject, "gastronomies");
+                    }
+
+                    break;
                 case "activity":
                     mydata = await GetDataFromRaven.GetRavenData<LTSActivityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
@@ -318,6 +331,8 @@ namespace OdhApiCore.Controllers.api
                 default:
                     throw new Exception("no match found");
             }
+
+            return myupdateresult;
         }
 
         private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo

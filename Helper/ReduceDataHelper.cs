@@ -15,7 +15,7 @@ namespace Helper
         }
 
         //Check if data should be reduced
-        public static bool ReduceData<T>(T myobject) where T : ISource, ILicenseInfo
+        public static bool ReduceDataCheck<T>(T myobject) where T : ISource, ILicenseInfo
         {
             return myobject switch
             {
