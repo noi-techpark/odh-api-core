@@ -1,4 +1,5 @@
 using AspNetCore.CacheOutput.InMemory.Extensions;
+using AspNetCoreRateLimit;
 using Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -78,8 +79,15 @@ namespace OdhApiCore
             });
             services.AddHttpClient("lcs"); // TODO: put LCS config here            
 
+            //Adding Cache Service in Memory
             services.AddInMemoryCacheOutput();
             services.AddSingleton<CustomCacheKeyGenerator>();
+
+            //Adding Quota Service in Memory https://github.com/stefanprodan/AspNetCoreRateLimit
+            services.AddMemoryCache();
+            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
 
             services.AddLogging(options =>
             {
