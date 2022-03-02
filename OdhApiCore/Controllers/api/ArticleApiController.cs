@@ -48,6 +48,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=article'), (default:'null')</param>                
         /// <param name="active">Active Articles Filter (possible Values: 'true' only Active Articles, 'false' only Disabled Articles), (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Articles Filter (Refers to field OdhActive) (possible Values: 'true' only published Article, 'false' only not published Articles), (default:'null')</param>        
+        /// <param name="source">Filter by Source (Separator ','), (Sources available 'idm','noi'...),(default: 'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
@@ -83,6 +84,7 @@ namespace OdhApiCore.Controllers.api
             string? enddate = null,
             string? seed = null,
             string? publishedon = null,
+            string? source = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -96,7 +98,7 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: articletype, subtypefilter: articlesubtype, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter, highlightfilter: null,
                 active: active?.Value, smgactive: odhactive?.Value, smgtags: odhtagfilter, seed: seed,  
-                articledate: startdate, articledateto: enddate, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value, publishedon: publishedon,
+                articledate: startdate, articledateto: enddate, source: source, lastchange: updatefrom, sortbyarticledate: sortbyarticledate?.Value, publishedon: publishedon,
                 rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -190,7 +192,7 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize,
             string? type, string? subtypefilter, string? searchfilter, string? idfilter, string? languagefilter, bool? highlightfilter,
-            bool? active, bool? smgactive, string? smgtags, string? seed, string? articledate, string? articledateto, string? lastchange, 
+            bool? active, bool? smgactive, string? smgtags, string? seed, string? articledate, string? articledateto, string? source, string? lastchange, 
             bool? sortbyarticledate, string? publishedon, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
@@ -198,7 +200,7 @@ namespace OdhApiCore.Controllers.api
             {
                 ArticleHelper myarticlehelper = ArticleHelper.Create(
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
-                    active, smgactive, smgtags, articledate, articledateto, lastchange, publishedon);
+                    active, smgactive, smgtags, articledate, articledateto, source, lastchange, publishedon);
 
                 //TODO orderby = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') DESC";
 
@@ -210,7 +212,8 @@ namespace OdhApiCore.Controllers.api
                             idlist: myarticlehelper.idlist, typelist: myarticlehelper.typelist,
                             subtypelist: myarticlehelper.subtypelist, smgtaglist: myarticlehelper.smgtaglist, languagelist: myarticlehelper.languagelist,
                             highlight: myarticlehelper.highlight, activefilter: myarticlehelper.active, smgactivefilter: myarticlehelper.smgactive,
-                            articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, publishedonlist: myarticlehelper.publishedonlist,
+                            articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, sourcelist: myarticlehelper.sourcelist, 
+                            publishedonlist: myarticlehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange, 
                             filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)

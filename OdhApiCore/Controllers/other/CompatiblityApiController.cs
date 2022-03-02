@@ -811,7 +811,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 ArticleHelper helper = ArticleHelper.Create(
-                    articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null, null, null, null);
+                    articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null, null, null, null, null);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
@@ -827,7 +827,8 @@ namespace OdhApiCore.Controllers.api
                         .ArticleWhereExpression(
                             idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, languagelist: helper.languagelist,
                             smgtaglist: helper.smgtaglist, highlight: helper.highlight, activefilter: helper.active,
-                            smgactivefilter: helper.smgactive, articledate: helper.articledate, articledateto: helper.articledateto, publishedonlist: helper.publishedonlist,
+                            smgactivefilter: helper.smgactive, articledate: helper.articledate, articledateto: helper.articledateto, sourcelist: helper.sourcelist,
+                            publishedonlist: helper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData
                         )
                         .ApplyRawFilter(rawfilter)

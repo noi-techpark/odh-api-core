@@ -46,8 +46,9 @@ namespace OdhApiCore.Controllers
             get
             {
                 var roles = new[] {
-                    "DataReader",
-                    $"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
+                    "IDM"
+                    //"DataReader",
+                    //$"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
                 };
                 return !roles.Any(User.IsInRole);
             }
