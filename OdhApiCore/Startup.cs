@@ -85,8 +85,27 @@ namespace OdhApiCore
 
             //Adding Quota Service in Memory https://github.com/stefanprodan/AspNetCoreRateLimit
             services.AddMemoryCache();
-            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+         
+            services.Configure<IpRateLimitOptions>(options =>
+            {                
+                options.GeneralRules = new List<RateLimitRule>
+                {                     
+                    new RateLimitRule
+                    {
+                        Endpoint = "*",
+                        Period = "1m",
+                        Limit = 10,
+                    }
+                };
+            });
+
+            //services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            //services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+            services.AddInMemoryRateLimiting();
+
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
 
 
             services.AddLogging(options =>
@@ -277,6 +296,8 @@ namespace OdhApiCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseIpRateLimiting();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
