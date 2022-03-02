@@ -319,7 +319,7 @@ namespace Helper
         public static Query ArticleWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
-            IReadOnlyCollection<string> smgtaglist, bool? highlight, bool? activefilter, bool? smgactivefilter, DateTime? articledate, DateTime? articledateto,
+            IReadOnlyCollection<string> smgtaglist, bool? highlight, bool? activefilter, bool? smgactivefilter, DateTime? articledate, DateTime? articledateto, IReadOnlyCollection<string> sourcelist,
             IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
@@ -349,6 +349,7 @@ namespace Helper
                 .EventDateFilterBegin_GeneratedColumn(articledate, articledateto)
                 .EventDateFilterBeginEnd_GeneratedColumn(articledate, articledateto)
                 .PublishedOnFilter(publishedonlist)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 .LastChangedFilter(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);

@@ -22,20 +22,21 @@ namespace OdhApiCore.Controllers.api
         public DateTime? articledateto;
         //New Publishedonlist
         public List<string> publishedonlist;
+        public List<string> sourcelist;
 
         public static ArticleHelper Create(
             string? typefilter, string? subtypefilter, string? idfilter,
             string? languagefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? articledate, string? articledateto, string? lastchange, string? publishedonfilter)
+            string? smgtags, string? articledate, string? articledateto, string? source, string? lastchange, string? publishedonfilter)
         {
             return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, 
-                smgtags, articledate, articledateto, lastchange, publishedonfilter);
+                smgtags, articledate, articledateto, source, lastchange, publishedonfilter);
         }
 
         private ArticleHelper(
             string? typefilter, string? subtypefilter, string? idfilter, string? languagefilter,
             bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags,
-            string? articledate, string? articledateto, string? lastchange, string? publishedonfilter)
+            string? articledate, string? articledateto, string? source, string? lastchange, string? publishedonfilter)
         {
             typelist = new List<string>();
             int typeinteger = 0;
@@ -78,7 +79,7 @@ namespace OdhApiCore.Controllers.api
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
-
+            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(source);
             smgtaglist = Helper.CommonListCreator.CreateIdList(smgtags);
 
             //highlight
