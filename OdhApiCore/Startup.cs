@@ -108,7 +108,7 @@ namespace OdhApiCore
                             new RateLimitRule()
                             {
                                 Endpoint = "get:/v1",
-                                Period = "1m",
+                                Period = "5m",
                                 Limit = 10,
                             }
                         }
