@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
 {
-    public class STAImportHelper
+    public class STAImportHelper //: ImportHelper, IImportHelper
     {
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
