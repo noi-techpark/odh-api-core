@@ -94,15 +94,6 @@ namespace OdhApiCore
                 options.EnableEndpointRateLimiting = false;
                 options.StackBlockedRequests = false;
                 options.HttpStatusCode = 429;
-                options.GeneralRules = new List<RateLimitRule>()
-                {
-                    new RateLimitRule()
-                    {
-                        Endpoint = "*",
-                        Period = "1m",
-                        Limit = 10,
-                    }
-                };
             });
 
             services.Configure<ClientRateLimitPolicies>(options =>
