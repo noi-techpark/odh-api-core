@@ -327,7 +327,7 @@ namespace OdhApiCore
         {
             app.UseForwardedHeaders();
             // TOOD: Move to Production
-            //app.UseIpRateLimiting();
+            app.UseIpRateLimiting();
             app.UseClientRateLimiting();
            
             if (env.IsDevelopment())
