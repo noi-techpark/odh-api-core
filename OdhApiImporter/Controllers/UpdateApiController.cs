@@ -94,9 +94,9 @@ namespace OdhApiImporter.Controllers
         {
             try
             {
-                EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(settings, QueryFactory);
+                EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(settings, QueryFactory, "eventeuracnoi");
 
-                var result = await ebmsimporthelper.ImportEbmsEventsToDB(cancellationToken);
+                var result = await ebmsimporthelper.SaveDataToODH(null, cancellationToken);
 
                 return Ok(new UpdateResult
                 {

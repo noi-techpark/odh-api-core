@@ -15,7 +15,7 @@ namespace OdhApiImporter.Helpers
         Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete);
     }
 
-    public class ImportHelper : IImportHelper
+    public class ImportHelper
     {
         protected readonly QueryFactory QueryFactory;
         protected readonly ISettings settings;
@@ -26,12 +26,6 @@ namespace OdhApiImporter.Helpers
             this.QueryFactory = queryfactory;
             this.settings = settings;
             this.table = table;
-        }
-
-        //GETs the data from the various sources and saves it to ODH
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete)
