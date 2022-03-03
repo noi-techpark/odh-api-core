@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -40,6 +41,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace OdhApiCore
 {
@@ -85,28 +87,55 @@ namespace OdhApiCore
 
             //Adding Quota Service in Memory https://github.com/stefanprodan/AspNetCoreRateLimit
             services.AddMemoryCache();
-         
-            services.Configure<IpRateLimitOptions>(options =>
-            {                
-                options.GeneralRules = new List<RateLimitRule>
-                {                     
-                    new RateLimitRule
+
+            services.Configure<ClientRateLimitOptions>(options =>
+            {
+                // Enable "global" limit, not per endpoint
+                options.EnableEndpointRateLimiting = false;
+                options.StackBlockedRequests = false;
+                options.HttpStatusCode = 429;
+            });
+
+            services.Configure<ClientRateLimitPolicies>(options =>
+            {
+                options.ClientRules = new List<ClientRateLimitPolicy>
+                {
+                    new ClientRateLimitPolicy()
                     {
-                        Endpoint = "*",
-                        Period = "1m",
-                        Limit = 10,
+                        ClientId = "Anonymous",
+                        Rules = new List<RateLimitRule>()
+                        {
+                            new RateLimitRule()
+                            {
+                                Endpoint = "*",
+                                Period = "1m",
+                                Limit = 10,
+                            }
+                        }
+                    },
+                    new ClientRateLimitPolicy()
+                    {
+                        ClientId = "Authenticated",
+                        Rules = {
+                            new RateLimitRule()
+                            {
+                                Endpoint = "*",
+                                Period = "1m",
+                                Limit = 1000,
+                            }
+                        }
                     }
                 };
             });
 
-            //services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
-            //services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 
             services.AddInMemoryRateLimiting();
 
-            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-
-
+            services.AddSingleton<IRateLimitConfiguration, Middleware.OdhRateLimitConfiguration>();
 
             services.AddLogging(options =>
             {
@@ -296,16 +325,17 @@ namespace OdhApiCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseIpRateLimiting();
-
+            app.UseForwardedHeaders();
+            // TOOD: Move to Production
+            //app.UseIpRateLimiting();
+            app.UseClientRateLimiting();
+           
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseForwardedHeaders();
             }
             else
             {
-                app.UseForwardedHeaders();
                 app.UseHsts();
             }
 
