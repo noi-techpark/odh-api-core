@@ -91,7 +91,7 @@ namespace OdhApiCore
             services.Configure<ClientRateLimitOptions>(options =>
             {
                 // Enable "global" limit, not per endpoint
-                options.EnableEndpointRateLimiting = false;
+                options.EnableEndpointRateLimiting = true;
                 options.StackBlockedRequests = false;
                 options.HttpStatusCode = 429;
             });
@@ -107,7 +107,7 @@ namespace OdhApiCore
                         {
                             new RateLimitRule()
                             {
-                                Endpoint = "*",
+                                Endpoint = "get:/v1",
                                 Period = "1m",
                                 Limit = 10,
                             }
@@ -119,7 +119,7 @@ namespace OdhApiCore
                         Rules = {
                             new RateLimitRule()
                             {
-                                Endpoint = "*",
+                                Endpoint = "get:/v1",
                                 Period = "1m",
                                 Limit = 1000,
                             }
