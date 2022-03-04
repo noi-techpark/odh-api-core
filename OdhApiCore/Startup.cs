@@ -148,6 +148,7 @@ namespace OdhApiCore
                 options.StackBlockedRequests = false;
                 options.HttpStatusCode = 429;
                 options.ClientIdHeader = "Referer";
+                options.ClientWhitelist = new List<string> { "Anonymous", "Authenticated" };
                 //General Rule from 
                 options.GeneralRules = new List<RateLimitRule>
                 {

@@ -24,7 +24,6 @@ namespace OdhApiCore.Middleware
         public override void RegisterResolvers()
         {
             base.RegisterResolvers();
-
             //ClientResolvers.Add(new OdhResolveContributor(_httpContextAccessor));
         }
     }
