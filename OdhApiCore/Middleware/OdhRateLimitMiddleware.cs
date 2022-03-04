@@ -1,6 +1,9 @@
 ﻿using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Middleware
@@ -20,7 +23,8 @@ namespace OdhApiCore.Middleware
 
         public override void RegisterResolvers()
         {
-            ClientResolvers.Add(new OdhResolveContributor(_httpContextAccessor));
+            base.RegisterResolvers();
+            //ClientResolvers.Add(new OdhResolveContributor(_httpContextAccessor));
         }
     }
 
@@ -36,8 +40,25 @@ namespace OdhApiCore.Middleware
         public Task<string> ResolveClientAsync(HttpContext httpContext)
         {
             var request = httpContextAccessor.HttpContext?.Request;
-            string clientId = request?.Headers.Authorization.ToString() != "" ? "Authenticated" : "Anonymous";
-            return Task.FromResult(clientId);
+            var authorization = request!.Headers.Authorization.ToString();
+            if (authorization != "")
+            {
+                //if (AuthenticationHeaderValue.TryParse(authorization, out var auth))
+                //{
+                //    var handler = new JwtSecurityTokenHandler();
+                //    var token = handler.ReadJwtToken(auth.Parameter);
+                //}
+                return Task.FromResult("Authenticated");
+            }
+
+            var referer = request!.Headers.Referer.ToString();
+
+            if (referer != "")
+            {
+                return Task.FromResult(referer);
+            }
+
+            return Task.FromResult("Anonymous");
         }
     }
 }

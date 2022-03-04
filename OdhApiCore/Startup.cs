@@ -88,14 +88,26 @@ namespace OdhApiCore
             //Adding Quota Service in Memory https://github.com/stefanprodan/AspNetCoreRateLimit
             services.AddMemoryCache();
 
+            //ClientRateLimit
             services.Configure<ClientRateLimitOptions>(options =>
             {
                 // Enable "global" limit, not per endpoint
                 options.EnableEndpointRateLimiting = true;
                 options.StackBlockedRequests = false;
                 options.HttpStatusCode = 429;
+                options.ClientIdHeader = "Referer";
+                //NOT Overwritten by ClientRateLimitPolicies
+                //options.GeneralRules = new List<RateLimitRule>
+                //{
+                //    new RateLimitRule()
+                //    {
+                //        Endpoint = "get:/v1",
+                //                Period = "1m",
+                //                Limit = 10
+                //    }
+                //};
             });
-
+            //ClientRateLimitPolicies
             services.Configure<ClientRateLimitPolicies>(options =>
             {
                 options.ClientRules = new List<ClientRateLimitPolicy>
@@ -108,8 +120,8 @@ namespace OdhApiCore
                             new RateLimitRule()
                             {
                                 Endpoint = "get:/v1",
-                                Period = "5m",
-                                Limit = 10,
+                                Period = "1m",
+                                Limit = 20
                             }
                         }
                     },
@@ -121,21 +133,78 @@ namespace OdhApiCore
                             {
                                 Endpoint = "get:/v1",
                                 Period = "1m",
-                                Limit = 1000,
+                                Limit = 30
                             }
                         }
                     }
                 };
             });
 
+
+            services.Configure<IpRateLimitOptions>(options =>
+            {
+                // Enable "global" limit, not per endpoint
+                options.EnableEndpointRateLimiting = true;
+                options.StackBlockedRequests = false;
+                options.HttpStatusCode = 429;
+                options.ClientIdHeader = "Referer";
+                options.ClientWhitelist = new List<string> { "Anonymous", "Authenticated" };
+                //General Rule from 
+                options.GeneralRules = new List<RateLimitRule>
+                {
+                    new RateLimitRule()
+                    {
+                        Endpoint = "get:/v1",
+                                Period = "1m",
+                                Limit = 10
+                    }
+                };
+            });
+
+            ////IpRateLimitPolicies
+            //services.Configure<IpRateLimitPolicies>(options =>
+            //{
+            //    options.IpRules = new List<IpRateLimitPolicy>
+            //    {
+            //        new IpRateLimitPolicy()
+            //        {
+            //            Ip = "127.0.0.1",
+            //            Rules = new List<RateLimitRule>()
+            //            {
+            //                new RateLimitRule()
+            //                {
+            //                    Endpoint = "get:/v1",
+            //                    Period = "5m",
+            //                    Limit = 10
+            //                }
+            //            }
+            //        }
+            //        //new IpRateLimitPolicy()
+            //        //{
+            //        //    Ip = "Authenticated",
+            //        //    Rules = {
+            //        //        new RateLimitRule()
+            //        //        {
+            //        //            Endpoint = "get:/v1",
+            //        //            Period = "10m",
+            //        //            Limit = 10
+            //        //        }
+            //        //    }
+            //        //}
+            //    };
+            //});
+
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            //services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            //services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
 
             services.AddInMemoryRateLimiting();
 
-            services.AddSingleton<IRateLimitConfiguration, Middleware.OdhRateLimitConfiguration>();
+            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();                        
+            services.AddSingleton<IRateLimitConfiguration, Middleware.OdhRateLimitConfiguration>();            
 
             services.AddLogging(options =>
             {
@@ -210,7 +279,7 @@ namespace OdhApiCore
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(jwtBearerOptions =>
+                    .AddJwtBearer(jwtBearerOptions =>
                 {
                     jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");                    
                     //jwtBearerOptions.Audience = "account";                
@@ -326,9 +395,9 @@ namespace OdhApiCore
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseForwardedHeaders();
-            // TOOD: Move to Production
-            app.UseIpRateLimiting();
+            // TODO: Move to Production
             app.UseClientRateLimiting();
+            app.UseIpRateLimiting();
            
             if (env.IsDevelopment())
             {

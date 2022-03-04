@@ -14,11 +14,17 @@ namespace OdhApiCore
 
             using (var scope = host.Services.CreateScope())
             {
-                 // get the ClientPolicyStore instance
-                 var clientPolicyStore = scope.ServiceProvider.GetRequiredService<IClientPolicyStore>();
+                // get the ClientPolicyStore instance
+                var clientPolicyStore = scope.ServiceProvider.GetRequiredService<IClientPolicyStore>();
 
-                 // seed client data from appsettings
-                 await clientPolicyStore.SeedAsync();
+                // seed client data from appsettings
+                await clientPolicyStore.SeedAsync();
+
+                // get the IpPolicyStore instance
+                var ipPolicyStore = scope.ServiceProvider.GetRequiredService<IIpPolicyStore>();
+
+                //// seed client data from appsettings
+                await ipPolicyStore.SeedAsync();
             }
 
             await host.RunAsync();
