@@ -3,6 +3,7 @@ using SqlKata.Execution;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DSS;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -24,6 +25,8 @@ namespace OdhApiImporter.Helpers.DSS
 
         public Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
         {
+            //GetDSSData.GetDSSDataAsync(DSSRequestType.slopebase, settings.)
+
             throw new NotImplementedException();
         }
     }

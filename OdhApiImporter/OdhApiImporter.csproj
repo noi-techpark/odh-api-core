@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DSS\DSS.csproj" />
     <ProjectReference Include="..\EBMS\EBMS.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />
     <ProjectReference Include="..\LCS\LCS.csproj" />

@@ -21,7 +21,6 @@ namespace DSS
         public const string serviceurlslopestatus = @"http://dss.dev.tinext.net/.rest/json-export/export/pistenstatus";
         
 
-
         public const string serviceurlawards = @"https://suedtirolwein.secure.consisto.net/awards.ashx";
 
         private static async Task<HttpResponseMessage> RequestDSSInfo(DSSRequestType dssRequestType,  string dssuser, string dsspswd)
