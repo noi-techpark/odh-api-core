@@ -22,6 +22,7 @@ using System.Net.Http;
 using RAVEN;
 using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers;
+using OdhApiImporter.Helpers.DSS;
 
 namespace OdhApiImporter.Controllers
 {
@@ -299,7 +300,7 @@ namespace OdhApiImporter.Controllers
 
         #region SIAG DATA SYNC MUSEUMS
 
-        [HttpGet, Route("Siag/Museum/Import")]
+        [HttpGet, Route("Siag/Museum/UpdateAll")]
         public async Task<IActionResult> ImportMuseum(CancellationToken cancellationToken = default)
         {
             try
@@ -378,7 +379,7 @@ namespace OdhApiImporter.Controllers
         #region STA POI DATA SYNC
 
         [Authorize(Roles = "DataWriter,STAPoiImport")]
-        [HttpPost, Route("STA/ImportVendingPoints")]
+        [HttpPost, Route("STA/VendingPoints/UpdateAll")]
         public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
         {
             try
@@ -421,5 +422,87 @@ namespace OdhApiImporter.Controllers
 
 
         #endregion
+
+        #region EBMS DATA SYNC (EventShort)
+
+        [HttpGet, Route("DSS/{dssentity}/UpdateAll")]
+        public async Task<IActionResult> UpdateAllDSSLifts(string dssentity, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "odhactivitypoi");
+
+                var result = await dssimporthelper.SaveDataToODH(null, cancellationToken);
+
+                return Ok(new UpdateResult
+                {
+                    operation = "Update DSS",
+                    updatetype = "all",
+                    otherinfo = dssentity,
+                    message = "DSS " + dssentity + " update succeeded",
+                    recordsmodified = (result.created + result.updated + result.deleted),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UpdateResult
+                {
+                    operation = "Update EBMS",
+                    updatetype = "all",
+                    otherinfo = "",
+                    message = "EBMS Eventshorts update failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                });
+            }
+        }
+
+        [HttpGet, Route("DSS/{dssentity}/UpdateSingle/{id}")]
+        public IActionResult UpdateSingleDSS(string dssentity, string id, CancellationToken cancellationToken = default)
+        {
+            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
+
+            //try
+            //{               
+            //    return Ok(new UpdateResult
+            //    {
+            //        operation = "Update EBMS",
+            //        id = id,
+            //        updatetype = "single",
+            //        otherinfo = "",
+            //        message = "EBMS Eventshorts update succeeded",
+            //        recordsmodified = 1,
+            //        created = 0,
+            //        updated = 0,
+            //        deleted = 0,
+            //        success = true
+            //    });
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest(new UpdateResult
+            //    {
+            //        operation = "Update EBMS",
+            //        updatetype = "all",
+            //        otherinfo = "",
+            //        message = "EBMS Eventshorts update failed: " + ex.Message,
+            //        recordsmodified = 0,
+            //        created = 0,
+            //        updated = 0,
+            //        deleted = 0,
+            //        success = false
+            //    });
+            //}
+        }
+
+        #endregion
+
     }
 }
