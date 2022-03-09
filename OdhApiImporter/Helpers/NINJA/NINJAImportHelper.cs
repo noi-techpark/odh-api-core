@@ -185,16 +185,28 @@ namespace OdhApiImporter.Helpers
 
                 var data = await query.GetFirstOrDefaultAsObject<EventLinked>();
 
-                if (data != null)
+                if (data != null)                
                 {
-                    if(data.Active != false || data.SmgActive != false)
-                    {
-                        data.Active = false;
-                        data.SmgActive = false;
+                    //Temporary reset license info and Metadata
+                    //Set LicenseInfo
+                    data.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(data, Helper.LicenseHelper.GetLicenseforEvent);                    
+                    //Setting MetaInfo
+                    data._Meta = MetadataHelper.GetMetadataobject<EventLinked>(data);
+                    data.Active = false;
+                    data.SmgActive = false;
 
-                        updateresult = await QueryFactory.Query("events").Where("id", eventid)
-                                        .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
-                    }                
+                    updateresult = await QueryFactory.Query("events").Where("id", eventid)
+                                    .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+
+
+                    //if (data.Active != false || data.SmgActive != false)
+                    //{
+                    //    data.Active = false;
+                    //    data.SmgActive = false;
+
+                    //    updateresult = await QueryFactory.Query("events").Where("id", eventid)
+                    //                    .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+                    //}                
                 }
             }
 
