@@ -114,7 +114,10 @@ namespace Helper
             //Source DRIN and CentroTrevi
             if(data.Source.ToLower() != "lts")
             {
-                if(data.Source.ToLower() == "trevilab")
+                isopendata = true;
+                licensetype = "CC0";
+
+                if (data.Source.ToLower() == "trevilab")
                     licenseholder = @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
                 if (data.Source.ToLower() == "drin")
                     licenseholder = @"https://www.provincia.bz.it/arte-cultura/giovani/drin.asp";
