@@ -12,7 +12,7 @@ using Helper;
 
 namespace OdhApiImporter.Helpers
 {
-    public class SIAGImportHelper : ImportHelper
+    public class SIAGImportHelper : ImportHelper, IImportHelper
     {
         //private readonly QueryFactory QueryFactory;
         //private readonly ISettings settings;

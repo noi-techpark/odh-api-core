@@ -11,20 +11,25 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
 {
-    public class EBMSImportHelper
+    public class EBMSImportHelper : ImportHelper, IImportHelper
     {
-        private readonly QueryFactory QueryFactory;
-        private readonly ISettings settings;
+        //private readonly QueryFactory QueryFactory;
+        //private readonly ISettings settings;
 
-        public EBMSImportHelper(ISettings settings, QueryFactory queryfactory)
+        //public EBMSImportHelper(ISettings settings, QueryFactory queryfactory)
+        //{
+        //    this.QueryFactory = queryfactory;
+        //    this.settings = settings;
+        //}
+
+        public EBMSImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
-            this.QueryFactory = queryfactory;
-            this.settings = settings;
+
         }
 
         #region EBMS Helpers
 
-        public async Task<UpdateDetail> ImportEbmsEventsToDB(CancellationToken cancellationToken)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, CancellationToken cancellationToken)
         {
             var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
             var resulttuplesorted = resulttuple.OrderBy(x => x.Item1.StartDate);
@@ -231,6 +236,8 @@ namespace OdhApiImporter.Helpers
 
             return await query.GetAllAsObject<EventShortLinked>();
         }
+
+        
 
         #endregion
 

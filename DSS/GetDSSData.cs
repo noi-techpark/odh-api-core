@@ -14,38 +14,33 @@ namespace DSS
 
     public class GetDSSData
     {
-        public const string serviceurlliftbase = @"http://dss.dev.tinext.net/.rest/json-export/export/liftbasis";
-        public const string serviceurlliftstatus = @"http://dss.dev.tinext.net/.rest/json-export/export/liftstatus";
+        //http://dss.dev.tinext.net/.rest/json-export/export/
 
-        public const string serviceurlslopebase = @"http://dss.dev.tinext.net/.rest/json-export/export/pistebasis";
-        public const string serviceurlslopestatus = @"http://dss.dev.tinext.net/.rest/json-export/export/pistenstatus";
-        
+        public const string serviceurlliftbase = "liftbasis";
+        public const string serviceurlliftstatus = "liftstatus";
 
-
-        public const string serviceurlawards = @"https://suedtirolwein.secure.consisto.net/awards.ashx";
-
-        private static async Task<HttpResponseMessage> RequestDSSInfo(DSSRequestType dssRequestType,  string dssuser, string dsspswd)
+        public const string serviceurlslopebase = "pistebasis";
+        public const string serviceurlslopestatus = "pistenstatus";
+                
+        private static async Task<HttpResponseMessage> RequestDSSInfo(DSSRequestType dssRequestType,  string dssuser, string dsspswd, string serviceurl)
         {
             try
-            {
-                var serviceurl = "";
-
+            {             
                 switch(dssRequestType)
                 {
                     case DSSRequestType.liftbase: 
-                        serviceurl = serviceurlliftbase;
+                        serviceurl = serviceurl + serviceurlliftbase;
                         break;
                     case DSSRequestType.liftstatus:
-                        serviceurl = serviceurlliftstatus;
+                        serviceurl = serviceurl + serviceurlliftstatus;
                         break;
                     case DSSRequestType.slopebase:
-                        serviceurl = serviceurlslopebase;
+                        serviceurl = serviceurl + serviceurlslopebase;
                         break;
                     case DSSRequestType.slopestatus:
-                        serviceurl = serviceurlslopestatus;
+                        serviceurl = serviceurl + serviceurlslopestatus;
                         break;
                 }
-
 
                 if (String.IsNullOrEmpty(serviceurl))
                     throw new Exception("no service url set");
@@ -66,10 +61,10 @@ namespace DSS
 
         }
         
-        public static async Task<dynamic> GetDSSDataAsync(DSSRequestType dssRequestType, string dssuser, string dsspswd)
+        public static async Task<dynamic> GetDSSDataAsync(DSSRequestType dssRequestType, string dssuser, string dsspswd, string serviceurl)
         {
             //Request
-            HttpResponseMessage response = await RequestDSSInfo(dssRequestType, dssuser, dsspswd);
+            HttpResponseMessage response = await RequestDSSInfo(dssRequestType, dssuser, dsspswd, serviceurl);
             //Parse JSON Response to
             var responsetask = await response.Content.ReadAsStringAsync();
             dynamic responseobject = JsonConvert.DeserializeObject(responsetask);

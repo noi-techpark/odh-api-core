@@ -41,7 +41,7 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.hgv.it";
 
-            if (data.Source == "LTS")
+            if (data.Source.ToLower() == "lts")
             {
                 isopendata = false;
                 licensetype = "Closed";
@@ -111,6 +111,17 @@ namespace Helper
                 licensetype = "CC0";
             }
 
+            //Source DRIN and CentroTrevi
+            if(data.Source.ToLower() != "lts")
+            {
+                if(data.Source.ToLower() == "trevilab")
+                    licenseholder = @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
+                if (data.Source.ToLower() == "drin")
+                    licenseholder = @"https://www.provincia.bz.it/arte-cultura/giovani/drin.asp";
+                else
+                    licenseholder = "unknown";
+            }
+
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
@@ -118,7 +129,23 @@ namespace Helper
         {
             var isopendata = false;
             var licensetype = "Closed";
-            string licenseholder = @"https://www.lts.it";
+            var licenseholder = data.Source ?? "";
+
+            if (data.Source == null)
+                data.Source = "Content";
+
+            if (data.Source.ToLower() == "content" || data.Source.ToLower() == "magnolia" || data.Source.ToLower() == "common")
+                licenseholder = @"https://www.idm-suedtirol.com";
+            if (data.Source.ToLower() == "siag")
+                licenseholder = "http://www.provinz.bz.it/kunst-kultur/museen";
+            if (data.Source.ToLower() == "archapp")
+                licenseholder = "https://stiftung.arch.bz.it";
+            if (data.Source.ToLower() == "suedtirolwein")
+                licenseholder = "https://www.suedtirolwein.com";
+            if (data.Source.ToLower() == "sta")
+                licenseholder = "https://www.sta.bz.it/";
+            if (data.Source.ToLower() == "lts")
+                licenseholder = @"https://www.lts.it";
 
             List<string?> allowedsources = new List<string?>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common","sta" };
 
@@ -128,20 +155,6 @@ namespace Helper
                 {
                     isopendata = true;
                     licensetype = "CC0";
-
-                    licenseholder = data.Source ?? "";
-
-                    if (data.Source == "Content" || data.Source == "Magnolia" || data.Source == "Common")
-                        licenseholder = @"https://www.idm-suedtirol.com";
-                    if (data.Source == "SIAG")
-                        licenseholder = "http://www.provinz.bz.it/kunst-kultur/museen";
-                    if (data.Source == "ArchApp")
-                        licenseholder = "https://stiftung.arch.bz.it";
-                    if (data.Source == "Suedtirol Wein")
-                        licenseholder = "https://www.suedtirolwein.com";
-                    if (data.Source == "STA")
-                        licenseholder = "https://www.sta.bz.it/";
-
                 }
             }
 
@@ -184,7 +197,7 @@ namespace Helper
                 licensetype = ""; //licensetype = "CC0";
             }
 
-            if(data.Source == "Content")
+            if(data.Source.ToLower() == "content")
             {
                 licenseholder = @"https://www.idm-suedtirol.com";
             }
@@ -229,13 +242,13 @@ namespace Helper
             var licenseholder = @"http://www.eurac.edu";
             var author = "";
 
-            if (data.Source == "Content")
+            if (data.Source.ToLower() == "content")
             {
                 licenseholder = @"https://noi.bz.it";
                 isopendata = true;
                 licensetype = "CC0";
             }
-            else if (data.Source != "Content" && data.Source != "EBMS")
+            else if (data.Source.ToLower() != "content" && data.Source.ToLower() != "ebms")
             {
                 licenseholder = @"https://noi.bz.it";
                 isopendata = true;

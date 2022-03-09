@@ -8,11 +8,14 @@
 
   <ItemGroup>
     <Folder Include="Model\" />
-    <Folder Include="Parser\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataModel\DataModel.csproj" />
   </ItemGroup>
 
 </Project>

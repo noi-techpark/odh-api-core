@@ -108,6 +108,20 @@ namespace OdhApiImporter
         public string ServiceUrl { get; private set; }
     }
 
+    public class DSSConfig
+    {
+        public DSSConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -119,6 +133,7 @@ namespace OdhApiImporter
         S3ImageresizerConfig S3ImageresizerConfig { get; }
         EBMSConfig EbmsConfig { get; }
         RavenConfig RavenConfig { get; }
+        DSSConfig DSSConfig { get; }
     }
 
     public class Settings : ISettings
@@ -133,6 +148,7 @@ namespace OdhApiImporter
         private readonly S3ImageresizerConfig s3imageresizerConfig;
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
+        private readonly DSSConfig dssConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -155,6 +171,8 @@ namespace OdhApiImporter
             this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
             var raven = this.configuration.GetSection("RavenConfig");
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
+            var dss = this.configuration.GetSection("DSSConfig");
+            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -167,5 +185,6 @@ namespace OdhApiImporter
         public EBMSConfig EbmsConfig => this.ebmsConfig;
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
+        public DSSConfig DSSConfig => this.dssConfig;
     }
 }
