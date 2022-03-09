@@ -67,32 +67,39 @@ namespace OdhApiImporter.Helpers
 
                         var eventtosave = ParseNinjaData.ParseNinjaEventToODHEvent(kvp.Key, kvp.Value, place, room);
 
-                        //Setting Location Info
-                        //Location Info (by GPS Point)
-                        if (eventtosave.Latitude != 0 && eventtosave.Longitude != 0)
+                        if(eventtosave != null)
                         {
-                            await SetLocationInfo(eventtosave);
+                            //Setting Location Info
+                            //Location Info (by GPS Point)
+                            if (eventtosave.Latitude != 0 && eventtosave.Longitude != 0)
+                            {
+                                await SetLocationInfo(eventtosave);
+                            }
+
+                            eventtosave.Active = true;
+                            eventtosave.SmgActive = false;
+
+                            var idtocheck = kvp.Key;
+
+                            if (idtocheck.Length > 50)
+                                idtocheck = idtocheck.Substring(0, 50);
+
+                            var result = await InsertDataToDB(eventtosave, idtocheck, kvp);
+
+                            newimportcounter = newimportcounter + result.created.Value;
+                            updateimportcounter = updateimportcounter + result.updated.Value;
+                            errorimportcounter = errorimportcounter + result.error.Value;
+
+                            idlistspreadsheet.Add(idtocheck.ToUpper());
+                            if (!sourcelist.Contains(eventtosave.Source))
+                                sourcelist.Add(eventtosave.Source);
+
+                            WriteLog.LogToConsole(idtocheck.ToUpper(), "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtocheck.ToUpper(), sourceinterface = "mobility.culture", success = true, error = "" });
+                        }                        
+                        else
+                        {
+                            WriteLog.LogToConsole(kvp.Key, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = kvp.Key, sourceinterface = "mobility.culture", success = false, error = "Event could not be parsed" });
                         }
-
-                        eventtosave.Active = true;
-                        eventtosave.SmgActive = false;
-
-                        var idtocheck = kvp.Key;
-
-                        if (idtocheck.Length > 50)
-                            idtocheck = idtocheck.Substring(0, 50);
-
-                        var result = await InsertDataToDB(eventtosave, idtocheck, kvp);
-
-                        newimportcounter = newimportcounter + result.created.Value;
-                        updateimportcounter = updateimportcounter + result.updated.Value;
-                        errorimportcounter = errorimportcounter + result.error.Value;
-
-                        idlistspreadsheet.Add(idtocheck.ToUpper());
-                        if (!sourcelist.Contains(eventtosave.Source))
-                            sourcelist.Add(eventtosave.Source);
-
-                        WriteLog.LogToConsole(idtocheck.ToUpper(), "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtocheck.ToUpper(), sourceinterface = "mobility.culture", success = true, error = "" });
                     }
                 }               
             }
