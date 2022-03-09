@@ -25,7 +25,10 @@ namespace OdhApiImporter.Helpers.DSS
 
         public Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
         {
-            //GetDSSData.GetDSSDataAsync(DSSRequestType.slopebase, settings.)
+            //Get DSS data
+            var result = GetDSSData.GetDSSDataAsync(DSSRequestType.slopebase, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl);
+
+
 
             throw new NotImplementedException();
         }
