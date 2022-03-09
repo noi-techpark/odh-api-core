@@ -23,10 +23,12 @@ namespace OdhApiImporter.Helpers.DSS
 
         }
 
+        public DSSRequestType requesttype { get; set; }
+
         public Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
         {
             //Get DSS data
-            var result = GetDSSData.GetDSSDataAsync(DSSRequestType.slopebase, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl);
+            var result = GetDSSData.GetDSSDataAsync(requesttype, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl);
 
 
 

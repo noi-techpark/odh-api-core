@@ -431,6 +431,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "odhactivitypoi");
+                dssimporthelper.requesttype = DSS.DSSRequestType.liftbase;
 
                 var result = await dssimporthelper.SaveDataToODH(null, cancellationToken);
 
