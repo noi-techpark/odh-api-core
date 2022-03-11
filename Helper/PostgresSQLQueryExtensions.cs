@@ -1113,6 +1113,16 @@ namespace Helper
                 )
             );
 
+
+        //Both Begin and Enddate given
+        public static Query ArticleDateFilterBeginEndWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin != null && end != null,
+                query => query.WhereRaw(
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
+                )
+            );
+
         //Filter on Generated Field gen_eventtopic OR
         public static Query EventTopicFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
         query.Where(q =>

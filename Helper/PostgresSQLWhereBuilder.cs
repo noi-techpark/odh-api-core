@@ -345,9 +345,9 @@ namespace Helper
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //Articledate+ Articledatetofilter
-                .EventDateFilterEnd_GeneratedColumn(articledate, articledateto)
-                .EventDateFilterBegin_GeneratedColumn(articledate, articledateto)
-                .EventDateFilterBeginEnd_GeneratedColumn(articledate, articledateto)
+                //.EventDateFilterEnd_GeneratedColumn(articledate, articledateto)
+                //.EventDateFilterBegin_GeneratedColumn(articledate, articledateto)
+                .ArticleDateFilterBeginEndWithIN_GeneratedColumn(articledate, articledateto)
                 .PublishedOnFilter(publishedonlist)
                 .SourceFilter_GeneratedColumn(sourcelist)
                 .LastChangedFilter(lastchange)
