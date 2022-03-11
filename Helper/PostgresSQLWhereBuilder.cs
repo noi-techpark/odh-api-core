@@ -325,10 +325,10 @@ namespace Helper
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
-                idlist, typelist,
-                subtypelist, languagelist, smgtaglist,
-                highlight, activefilter,
-                smgactivefilter, searchfilter,
+                idlist, typelist, subtypelist, languagelist, smgtaglist,
+                highlight, activefilter, smgactivefilter, 
+                articledate, articledateto, sourcelist, publishedonlist, 
+                searchfilter,
                 language, lastchange
             );
 

@@ -1091,7 +1091,7 @@ namespace Helper
             query.When(
                 begin != DateTime.MinValue && end == DateTime.MaxValue,
                 query => query.WhereRaw(
-                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "'))"
                 )
             );
 
