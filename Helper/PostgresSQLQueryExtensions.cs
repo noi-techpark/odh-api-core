@@ -1119,7 +1119,7 @@ namespace Helper
             query.When(
                 begin != null && end != null,
                 query => query.WhereRaw(
-                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "' AND gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "')"
                 )
             );
 
