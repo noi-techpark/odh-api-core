@@ -334,6 +334,9 @@ namespace OdhApiCore.Controllers.api
                 article.Id = !String.IsNullOrEmpty(article.Id) ? article.Id.ToUpper() : "noId";
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
+                if(article.ArticleDateTo == null)
+                    article.ArticleDateTo = DateTime.MaxValue;
+
                 return await UpsertData<ArticlesLinked>(article, "articles", true);
             });
         }
@@ -354,6 +357,9 @@ namespace OdhApiCore.Controllers.api
             {
                 article.Id = id.ToUpper();
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                if (article.ArticleDateTo == null)
+                    article.ArticleDateTo = DateTime.MaxValue;
 
                 return await UpsertData<ArticlesLinked>(article, "articles");
             });
