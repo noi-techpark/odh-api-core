@@ -1793,6 +1793,8 @@ namespace DataModel
         public string? Key { get; set; }
 
         public Dictionary<string, string> TypeDesc { get; set; }
+
+        public string? CustomId { get; set; }
     }
 
     //Für Types Api
