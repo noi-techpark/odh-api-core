@@ -774,8 +774,12 @@ namespace OdhApiCore.Controllers.api
         /// <param name="articletype">Type of the Article ('null' = Filter disabled, possible values: BITMASK values: 1 = basearticle, 2 = book article, 4 = contentarticle, 8 = eventarticle, 16 = pressarticle, 32 = recipe, 64 = touroperator , 128 = b2b), (also possible for compatibily reasons: basisartikel, buchtippartikel, contentartikel, veranstaltungsartikel, presseartikel, rezeptartikel, reiseveranstalter, b2bartikel ) (default:'255' == ALL), REFERENCE TO: GET /api/ArticleTypes</param>
         /// <param name="articlesubtype">Sub Type of the Article (depends on the Maintype of the Article 'null' = Filter disabled)</param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=article'), (default:'null')</param>                
+        /// <param name="startdate">Filter by ArticleDate Format (yyyy-MM-dd HH:mm)</param>
+        /// <param name="enddate">Filter by ArticleDate Format (yyyy-MM-dd HH:mm)</param>
+        /// <param name="sortbyarticledate">Sort By Articledate ('true' sorts Articles by Articledate)</param>
         /// <param name="active">Active Articles Filter (possible Values: 'true' only Active Articles, 'false' only Disabled Articles</param>
         /// <param name="odhactive">ODH Active (Published) Activities Filter (Refers to field SmgActive) Article Filter (possible Values: 'true' only published Article, 'false' only not published Articles, (default:'null')</param>        
+        /// <param name="source">Filter by Source (Separator ','), (Sources available 'idm','noi'...),(default: 'null')</param>
         /// <returns>Collection of Article Objects</returns>        
         [ProducesResponseType(typeof(IEnumerable<ArticleReduced>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -785,6 +789,10 @@ namespace OdhApiCore.Controllers.api
             string? language = "en",
             string? articletype = "255",
             string? articlesubtype = null,
+            string? startdate = null,
+            string? enddate = null,
+            string? publishedon = null,
+            string? source = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
@@ -797,6 +805,7 @@ namespace OdhApiCore.Controllers.api
            )
         {
             return GetArticleReduced(language, articletype, articlesubtype,
+                startdate, enddate, source, null, publishedon,
                 active?.Value, odhactive?.Value, odhtagfilter,
                 fields: fields ?? Array.Empty<string>(), rawfilter,
                 rawsort, searchfilter,
@@ -804,6 +813,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         private Task<IActionResult> GetArticleReduced(string? language, string? articletype, string? articlesubtype,
+            string? articledate, string? articledateto, string? source, bool? sortbyarticledate, string? publishedon,
             bool? active, bool? smgactive, string? smgtags,
             string[] fields, string? rawfilter, string? rawsort, string? searchfilter,
             CancellationToken cancellationToken)
@@ -811,7 +821,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 ArticleHelper helper = ArticleHelper.Create(
-                    articletype, articlesubtype, null, language, null, active, smgactive, smgtags, null, null, null, null, null);
+                    articletype, articlesubtype, null, language, null, active, smgactive, smgtags, articledate, articledateto, source, null, publishedon);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
