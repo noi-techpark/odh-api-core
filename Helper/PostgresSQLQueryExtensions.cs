@@ -1114,12 +1114,30 @@ namespace Helper
             );
 
 
-        //Both Begin and Enddate given
-        public static Query ArticleDateFilterBeginEndWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        //Only Begindate given
+        public static Query ArticleDateNewsFilterBeginWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
             query.When(
-                begin != null && end != null,
+                begin != DateTime.MinValue && end == DateTime.MaxValue,
                 query => query.WhereRaw(
-                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "' AND gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "')"
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", begin) + "')"
+                )
+            );
+
+        //Only Enddate given
+        public static Query ArticleDateNewsFilterEndWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin == DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
+                )
+            );
+
+        //Only Begindate given
+        public static Query ArticleDateNewsFilterBeginEndWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin != DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
                 )
             );
 

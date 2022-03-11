@@ -347,7 +347,9 @@ namespace Helper
                 //Articledate+ Articledatetofilter
                 //.EventDateFilterEnd_GeneratedColumn(articledate, articledateto)
                 //.EventDateFilterBegin_GeneratedColumn(articledate, articledateto)
-                .ArticleDateFilterBeginEndWithIN_GeneratedColumn(articledate, articledateto)
+                .ArticleDateNewsFilterBeginWithIN_GeneratedColumn(articledate, articledateto)
+                .ArticleDateNewsFilterEndWithIN_GeneratedColumn(articledate, articledateto)
+                .ArticleDateNewsFilterBeginEndWithIN_GeneratedColumn(articledate, articledateto)
                 .PublishedOnFilter(publishedonlist)
                 .SourceFilter_GeneratedColumn(sourcelist)
                 .LastChangedFilter(lastchange)
