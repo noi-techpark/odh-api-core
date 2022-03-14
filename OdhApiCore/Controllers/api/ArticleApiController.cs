@@ -202,7 +202,8 @@ namespace OdhApiCore.Controllers.api
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
                     active, smgactive, smgtags, articledate, articledateto, source, lastchange, publishedon);
 
-                //TODO orderby = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') DESC";
+                if(sortbyarticledate == true)
+                    rawsort = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') ASC";
 
                 var query =
                     QueryFactory.Query()
@@ -212,12 +213,13 @@ namespace OdhApiCore.Controllers.api
                             idlist: myarticlehelper.idlist, typelist: myarticlehelper.typelist,
                             subtypelist: myarticlehelper.subtypelist, smgtaglist: myarticlehelper.smgtaglist, languagelist: myarticlehelper.languagelist,
                             highlight: myarticlehelper.highlight, activefilter: myarticlehelper.active, smgactivefilter: myarticlehelper.smgactive,
-                            articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, sourcelist: myarticlehelper.sourcelist, 
+                            articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, sourcelist: myarticlehelper.sourcelist,
                             publishedonlist: myarticlehelper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange, 
+                            searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange,
                             filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                      
 
                 // Get paginated data
                 var data =
