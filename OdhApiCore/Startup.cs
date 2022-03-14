@@ -121,7 +121,7 @@ namespace OdhApiCore
                             {
                                 Endpoint = "get:/v1",
                                 Period = "1m",
-                                Limit = 20
+                                Limit = 30
                             }
                         }
                     },
@@ -133,7 +133,7 @@ namespace OdhApiCore
                             {
                                 Endpoint = "get:/v1",
                                 Period = "1m",
-                                Limit = 30
+                                Limit = 60
                             }
                         }
                     }
