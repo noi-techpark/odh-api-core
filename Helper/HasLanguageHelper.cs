@@ -67,6 +67,8 @@ namespace Helper
                         if (!String.IsNullOrEmpty(detailvalues.Title))
                             if (!String.IsNullOrEmpty(detailvalues.Title.Trim()))
                                 removelang = false;
+
+                        myarticle.Detail[language].Language = language;
                     }
                     if (myarticle.ContactInfos.ContainsKey(language) && myarticle.ContactInfos[language] != null)
                     {
@@ -104,6 +106,8 @@ namespace Helper
                             removelang = false;
                         if (!String.IsNullOrEmpty(contactvalues.ZipCode))
                             removelang = false;
+
+                        myarticle.ContactInfos[language].Language = language;
                     }
 
                     if (myarticle.AdditionalArticleInfos.ContainsKey(language))
