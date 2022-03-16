@@ -20,6 +20,8 @@ namespace DataModel
         public int? deleted { get; init; }
 
         public string id { get; init; }
+
+        public string exception { get; init; }
     }
 
     public struct UpdateDetail
@@ -56,6 +58,40 @@ namespace DataModel
             }
 
             return new UpdateDetail() { created = created, updated = updated, deleted = deleted };
+        }
+
+        public static UpdateResult GetSuccessUpdateResult(string operation, string updatetype, string message, string otherinfo, UpdateDetail detail)
+        {
+            return new UpdateResult()
+            {
+                operation = operation,
+                updatetype = updatetype,
+                otherinfo = otherinfo,
+                message = message,
+                recordsmodified = (detail.created + detail.updated + detail.deleted),
+                created = detail.created,
+                updated = detail.updated,
+                deleted = detail.deleted,
+                success = true,
+                exception = null
+            };
+        }
+
+        public static UpdateResult GetErrorUpdateResult(string operation, string updatetype, string message, UpdateDetail detail, Exception ex)
+        {
+            return new UpdateResult()
+            {
+                operation = "Update Ninja Events",
+                updatetype = "all",
+                otherinfo = "",
+                message = "Ninja Events update succeeded",
+                recordsmodified = (detail.created + detail.updated + detail.deleted),
+                created = detail.created,
+                updated = detail.updated,
+                deleted = detail.deleted,
+                success = false,
+                exception = ex.Message
+            };
         }
     }
 }
