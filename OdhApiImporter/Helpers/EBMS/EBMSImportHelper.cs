@@ -118,7 +118,7 @@ namespace OdhApiImporter.Helpers
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 
-                    var queryresult = await InsertDataToDB(eventshort, eventshort.Id, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
+                    var queryresult = await InsertDataToDB(eventshort, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
 
                     newcounter = newcounter + queryresult.created.Value;
                     updatecounter = updatecounter + queryresult.updated.Value;               
@@ -131,7 +131,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(EventShortLinked eventshort, string idtocheck, KeyValuePair<string, EBMSEventREST> ebmsevent)
+        private async Task<PGCRUDResult> InsertDataToDB(EventShortLinked eventshort, KeyValuePair<string, EBMSEventREST> ebmsevent)
         {
             try
             {                

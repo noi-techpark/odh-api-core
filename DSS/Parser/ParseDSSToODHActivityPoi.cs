@@ -21,7 +21,7 @@ namespace DSS.Parser
                 myodhactivitypoilinked = new ODHActivityPoiLinked();
 
             myodhactivitypoilinked.Source = "dss";
-            myodhactivitypoilinked.SyncSourceInterface = "liftbase";
+            myodhactivitypoilinked.SyncSourceInterface = "dssliftbase";
 
             myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
             myodhactivitypoilinked.CustomId = dssitem.pid;
@@ -37,6 +37,9 @@ namespace DSS.Parser
                 myodhactivitypoilinked.LastChange = Helper.DateTimeHelper.UnixTimeStampToDateTime(updatedate);
 
             //name
+            var namede = (string)dssitem["name"]["de"];
+            var nameit = (string)dssitem["name"]["it"];
+            var nameen = (string)dssitem["name"]["en"];
 
             //description
 

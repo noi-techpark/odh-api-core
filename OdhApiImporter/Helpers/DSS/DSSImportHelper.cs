@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using DSS.Parser;
 using System.Globalization;
 using Helper;
+using Newtonsoft.Json;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -28,9 +29,23 @@ namespace OdhApiImporter.Helpers.DSS
         }
 
         public List<DSSRequestType> requesttypelist { get; set; }
+        public string entitytype { get; set; }
 
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
         {
+            requesttypelist = new List<DSSRequestType>();
+
+            if (entitytype.ToLower() == "lift")
+            {
+                requesttypelist.Add(DSSRequestType.liftbase);
+                requesttypelist.Add(DSSRequestType.liftstatus);
+            }
+            else if (entitytype.ToLower() == "slope")
+            {
+                requesttypelist.Add(DSSRequestType.slopebase);
+                requesttypelist.Add(DSSRequestType.slopestatus);
+            }
+
             List<dynamic> dssdata = new List<dynamic>();
 
             foreach (var requesttype in requesttypelist)
@@ -39,42 +54,103 @@ namespace OdhApiImporter.Helpers.DSS
                 dssdata.Add(await GetDSSData.GetDSSDataAsync(requesttype, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl));
             }
 
-            //Parse DSS Data
-            var parsedresuld = await ParseDSSDataToODHActivityPoi(dssdata[0], dssdata[1]);
+            var updateresult = ImportData(dssdata, cancellationToken);
 
-            //Insert in DB
 
             throw new NotImplementedException();
         }
 
-        //Parse the dss interface content
-        public async Task<IEnumerable<Tuple<ODHActivityPoiLinked, dynamic>>> ParseDSSDataToODHActivityPoi(dynamic dssinputbase, dynamic dssinputstatus)
+        public async Task<UpdateDetail> ImportData(List<dynamic> dssinput, CancellationToken cancellationToken)
         {
-            List<Tuple<ODHActivityPoiLinked, dynamic>> myparseddatalist = new List<Tuple<ODHActivityPoiLinked, dynamic>>();
+            int updatecounter = 0;
+            int newcounter = 0;
 
-            string lastupdatestr = dssinputbase.lastUpdate;
-
+            string lastupdatestr = dssinput[0].lastUpdate;
             //interface lastupdate
             DateTime.TryParseExact(lastupdatestr, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastupdate);
 
             //loop trough items
-            foreach (var item in dssinputbase.items)
+            foreach (var item in dssinput[0].items)
             {
-                //id
-                string odhdssid = "dss_" + item.rid;
 
-                //Get the ODH Item
-                var mydssquery = QueryFactory.Query("smgpois")
-                  .Select("data")
-                  .Where("id", odhdssid);
+                //Parse DSS Data
+                ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
 
-                var odhactivitypoiindb = await mydssquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+                if (parsedobject != null)
+                {
+                
+                    //Save parsedobject to DB + Save Rawdata to DB
+                    PGCRUDResult pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(item.rid, item));
 
-                var odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSDataToODHActivityPoi(odhactivitypoiindb, item);
-                myparseddatalist.Add(Tuple.Create(odhactivitypoi, item));
+                    newcounter = newcounter + pgcrudresult.created.Value;
+                    updatecounter = updatecounter + pgcrudresult.updated.Value;
+
+                    WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = true, error = "" });
+                }
+                else
+                {
+                    WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = false, error = entitytype + " could not be parsed" });
+                }
             }
 
-            return myparseddatalist;
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };
+        }
+
+        //Parse the dss interface content
+        public async Task<ODHActivityPoiLinked> ParseDSSDataToODHActivityPoi(dynamic dssinput)
+        {
+            //id
+            string odhdssid = "dss_" + dssinput.rid;
+
+            //Get the ODH Item
+            var mydssquery = QueryFactory.Query("smgpois")
+              .Select("data")
+              .Where("id", odhdssid);
+
+            var odhactivitypoiindb = await mydssquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+
+            var odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSDataToODHActivityPoi(odhactivitypoiindb, dssinput);
+
+            //Setting LicenseInfo
+            odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(odhactivitypoi Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+
+            //TODOS all of this stuff, Tags, Categories etc....
+
+            return odhactivitypoi;
+        }
+
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, KeyValuePair<string, dynamic> dssdata)
+        {
+            try
+            {
+                odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
+
+                //Set LicenseInfo
+                odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+
+                var rawdataid = await InsertInRawDataDB(dssdata);
+
+                return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, dynamic> dssdata)
+        {
+            return await QueryFactory.InsertInRawtableAndGetIdAsync(
+                        new RawDataStore()
+                        {
+                            datasource = "dss",
+                            importdate = DateTime.Now,
+                            raw = JsonConvert.SerializeObject(dssdata.Value),
+                            sourceinterface = entitytype + "base",
+                            sourceid = dssdata.Key,
+                            sourceurl = "http://dss.dev.tinext.net/.rest/json-export/export/",
+                            type = "odhactivitypoi-museum"
+                        });
         }
     }
 }

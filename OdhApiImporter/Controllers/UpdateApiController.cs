@@ -360,23 +360,9 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "odhactivitypoi");
-
-                dssimporthelper.requesttypelist = new List<DSS.DSSRequestType>();
-
-                if (dssentity.ToLower() == "lift")
-                {
-                    dssimporthelper.requesttypelist.Add(DSS.DSSRequestType.liftbase);
-                    dssimporthelper.requesttypelist.Add(DSS.DSSRequestType.liftstatus);
-                }
-                else if (dssentity.ToLower() == "slope")
-                {
-                    dssimporthelper.requesttypelist.Add(DSS.DSSRequestType.slopebase);
-                    dssimporthelper.requesttypelist.Add(DSS.DSSRequestType.slopestatus);
-                }
-
-
-
+                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "odhactivitypoi");                
+                dssimporthelper.entitytype = dssentity;
+                
                 updatedetail = await dssimporthelper.SaveDataToODH(null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update succeeded", "", updatedetail, true);

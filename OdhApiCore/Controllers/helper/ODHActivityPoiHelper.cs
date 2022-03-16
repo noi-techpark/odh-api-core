@@ -286,6 +286,13 @@ namespace OdhApiCore.Controllers.api
                     if (!sourcelistnew.Contains("museumdata"))
                         sourcelistnew.Add("museumdata");
                 }
+                else if (source == "dss")
+                {
+                    if (!sourcelistnew.Contains("dssliftbase"))
+                        sourcelistnew.Add("dssliftbase");
+                    if (!sourcelistnew.Contains("dssslopebase"))
+                        sourcelistnew.Add("dssslopebase");
+                }
             }
 
             return sourcelistnew;
