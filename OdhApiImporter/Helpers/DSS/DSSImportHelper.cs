@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using DSS;
 using System.Collections.Generic;
 using DSS.Parser;
+using System.Globalization;
+using Helper;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -50,20 +52,25 @@ namespace OdhApiImporter.Helpers.DSS
         {
             List<Tuple<ODHActivityPoiLinked, dynamic>> myparseddatalist = new List<Tuple<ODHActivityPoiLinked, dynamic>>();
 
+            string lastupdatestr = dssinputbase.lastUpdate;
+
             //interface lastupdate
-            var lastupdate = Convert.ToDateTime(dssinputbase.lastUpdate);
+            DateTime.TryParseExact(lastupdatestr, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastupdate);
 
             //loop trough items
             foreach (var item in dssinputbase.items)
             {
+                //id
+                string odhdssid = "dss_" + item.rid;
+
                 //Get the ODH Item
                 var mydssquery = QueryFactory.Query("smgpois")
                   .Select("data")
-                  .Where("id", "dss_" + item.rid.ToLower());
+                  .Where("id", odhdssid);
 
                 var odhactivitypoiindb = await mydssquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
 
-                var odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSDataToODHActivityPoi(item, odhactivitypoiindb);
+                var odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSDataToODHActivityPoi(odhactivitypoiindb, item);
                 myparseddatalist.Add(Tuple.Create(odhactivitypoi, item));
             }
 
