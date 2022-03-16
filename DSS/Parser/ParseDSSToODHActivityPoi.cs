@@ -62,7 +62,7 @@ namespace DSS.Parser
             myodhactivitypoilinked.Detail.Add("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
 
             //lifttype TODO Mapping
-            List<string> lifftype = ParseDSSTypeToODHType(dssitem["lifftype"]);
+            List<string> lifftype = ParseDSSTypeToODHType(dssitem["lifttype"]);
             foreach(var tag in lifftype)
             {
                 myodhactivitypoilinked.SmgTags.Add(tag);
