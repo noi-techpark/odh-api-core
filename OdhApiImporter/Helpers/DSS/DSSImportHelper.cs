@@ -80,7 +80,7 @@ namespace OdhApiImporter.Helpers.DSS
                 {
                 
                     //Save parsedobject to DB + Save Rawdata to DB
-                    PGCRUDResult pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(item.rid, item));
+                    var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(item.rid, item));
 
                     newcounter = newcounter + pgcrudresult.created.Value;
                     updatecounter = updatecounter + pgcrudresult.updated.Value;
@@ -110,9 +110,6 @@ namespace OdhApiImporter.Helpers.DSS
             var odhactivitypoiindb = await mydssquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
 
             var odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSDataToODHActivityPoi(odhactivitypoiindb, dssinput);
-
-            //Setting LicenseInfo
-            odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(odhactivitypoi Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
             //TODOS all of this stuff, Tags, Categories etc....
 
