@@ -53,9 +53,9 @@ namespace DSS.Parser
             var descit = (string)dssitem["description"]["it"];
             var descen = (string)dssitem["description"]["en"];
 
-            //info-text
+            //info-text TODO
 
-            //info-text-summer
+            //info-text-summer TODO
 
             myodhactivitypoilinked.Detail.Add("de", new Detail() { Language = "de", Title= namede, BaseText = descde });
             myodhactivitypoilinked.Detail.Add("it", new Detail() { Language = "it", Title = nameit, BaseText = descit });
@@ -78,9 +78,16 @@ namespace DSS.Parser
 
             //Properties (length, capacity, capacity-per-hour, altitude-start, altitude-end, height-difference, summercard-points, bike-transport, duration)
             var length = (double)dssitem["data"]["length"];
+            myodhactivitypoilinked.DistanceLength = length;
+
             var altitudestart = (int)dssitem["data"]["altitude-start"];
+            myodhactivitypoilinked.AltitudeLowestPoint = altitudestart;
+
             var altitudeend = (int)dssitem["data"]["altitude-end"];
+            myodhactivitypoilinked.AltitudeHighestPoint = altitudeend;
+
             var heightdifference = (int)dssitem["data"]["height-difference"];
+            myodhactivitypoilinked.AltitudeDifference = heightdifference;
 
             var biketransport = (bool)dssitem["data"]["bike-transport"];
             myodhactivitypoilinked.BikeTransport = biketransport;
@@ -91,24 +98,32 @@ namespace DSS.Parser
             var duration = (string)dssitem["data"]["duration"];            
             myodhactivitypoilinked.DistanceDuration = ConvertToDistanceDuration(duration);
 
-            var number = (int)dssitem["data"]["number"];
-            myodhactivitypoilinked.Number = number.ToString();
+            var number = (string)dssitem["data"]["number"];
+            myodhactivitypoilinked.Number = number;
 
 
             var regionid = (int)dssitem["data"]["regionId"];
+            //isopen?
             var statewinter = (int)dssitem["data"]["state-winter"];
+            //isopen?
             var statesummer = (int)dssitem["data"]["state-summer"];
+            //?
             var datacenterId = (int)dssitem["data"]["datacenterId"];
+
             var winterOperation = (bool)dssitem["data"]["winterOperation"];
             var summerOperation = (bool)dssitem["data"]["summerOperation"];
 
             var sorterSummer = (bool)dssitem["data"]["sorterSummer"];
 
 
-            //Location (location, locationMountain, gePositionFile)
+            //TODO LOCATIONINFO
+
+            //TODO SKIAREAINFO
+
+            
             myodhactivitypoilinked.GpsTrack = ParseToODHGpsTrack((string)dssitem["geoPositionFile"]);
 
-            List<GpsInfo> gpsinfolist = ParseToODHGpsInfo(dssitem["location"], dssitem["locationMountain"]);
+            List<GpsInfo> gpsinfolist = ParseToODHGpsInfo(dssitem["location"], dssitem["locationMountain"], altitudestart, altitudeend);
 
             myodhactivitypoilinked.GpsInfo = gpsinfolist;
             myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
@@ -188,7 +203,7 @@ namespace DSS.Parser
             return operationSchedule;
         }
 
-        private static List<GpsInfo> ParseToODHGpsInfo(dynamic location, dynamic locationMountain)
+        private static List<GpsInfo> ParseToODHGpsInfo(dynamic location, dynamic locationMountain, int altitudestart = 0, int altitudeend = 0)
         {
             List<GpsInfo> gpsinfolist = new List<GpsInfo>();
 
@@ -199,8 +214,8 @@ namespace DSS.Parser
 
                 if(lat != null && lon != null)
                 {
-                    gpsinfolist.Add(new GpsInfo() { AltitudeUnitofMeasure = "m", Altitude = null, Gpstype = "position", Latitude = lat.Value, Longitude = lon.Value });
-                    gpsinfolist.Add(new GpsInfo() { AltitudeUnitofMeasure = "m", Altitude = null, Gpstype = "valleystationpoint", Latitude = lat.Value, Longitude = lon.Value });
+                    gpsinfolist.Add(new GpsInfo() { AltitudeUnitofMeasure = "m", Altitude = altitudestart, Gpstype = "position", Latitude = lat.Value, Longitude = lon.Value });
+                    gpsinfolist.Add(new GpsInfo() { AltitudeUnitofMeasure = "m", Altitude = altitudestart, Gpstype = "valleystationpoint", Latitude = lat.Value, Longitude = lon.Value });
                 }
             }
 
@@ -211,7 +226,7 @@ namespace DSS.Parser
 
                 if (lat != null && lon != null)
                 {
-                    gpsinfolist.Add(new GpsInfo() { AltitudeUnitofMeasure = "m", Altitude = null, Gpstype = "mountainstationpoint", Latitude = lat.Value, Longitude = lon.Value });
+                    gpsinfolist.Add(new GpsInfo() { AltitudeUnitofMeasure = "m", Altitude = altitudeend, Gpstype = "mountainstationpoint", Latitude = lat.Value, Longitude = lon.Value });
                 }
             }
 
@@ -238,7 +253,7 @@ namespace DSS.Parser
 
             int lifttyperid = (int)lifttype["rid"];
 
-            DSSTypeAufstiegsanlagen flag = (DSSTypeAufstiegsanlagen)FlagsHelper.GetFlagofType<DSSTypeAufstiegsanlagen>(lifttyperid.ToString());
+            DSSTypeAufstiegsanlagen flag = (DSSTypeAufstiegsanlagen)lifttyperid;
             var flagstring = flag.GetDescription<DSSTypeAufstiegsanlagen>();
 
             if(flagstring != null)
