@@ -2302,11 +2302,11 @@ namespace Helper
         [Description("Förderband")]
         Foerderband = 19,
         [Description("4er Sessellift kuppelbar")]
-        4erSesselliftkuppelbar = 21,
+        ViererSesselliftkuppelbar = 21,
         [Description("6er Sessellift kuppelbar")]
-        6erSesselliftkuppelbar = 22,
+        SechserSesselliftkuppelbar = 22,
         [Description("8er Sessellift kuppelbar")]
-        8erSesselliftkuppelbar = 23
+        AchtererSesselliftkuppelbar = 23
     }
 
     #endregion
