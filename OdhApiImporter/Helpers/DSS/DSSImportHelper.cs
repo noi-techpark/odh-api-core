@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using DSS;
+using System.Collections.Generic;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -23,13 +24,19 @@ namespace OdhApiImporter.Helpers.DSS
 
         }
 
-        public DSSRequestType requesttype { get; set; }
+        public List<DSSRequestType> requesttypelist { get; set; }
 
-        public Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
         {
-            //Get DSS data
-            var result = GetDSSData.GetDSSDataAsync(requesttype, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl);
+            List<dynamic> dssdata = new List<dynamic>();
 
+            foreach (var requesttype in requesttypelist)
+            {
+                //Get DSS data
+                dssdata.Add(await GetDSSData.GetDSSDataAsync(requesttype, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl));
+            }
+
+            //TODO Parse DSS Data
 
 
             throw new NotImplementedException();
