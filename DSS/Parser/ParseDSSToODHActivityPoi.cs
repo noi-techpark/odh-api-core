@@ -118,6 +118,7 @@ namespace DSS.Parser
 
             //TODO LOCATIONINFO
 
+
             //TODO SKIAREAINFO
 
             
@@ -309,16 +310,48 @@ namespace DSS.Parser
 //lifttype rid: 22, Sessellift 8 mit Kuppel --> 8er Sessellift kuppelbar
 
 
-//Skiresort rid 1 
-//Skiresort rid 2 
-//Skiresort rid 3 
-//Skiresort rid 4 
-//Skiresort rid 5 
+//Skiresort rid 1 Falzarego
+//Skiresort rid 8 Auronzo 
+//Skiresort rid 7 San Vito di Cadore
+//Skiresort rid 4 Faloria 
+//Skiresort rid 2 Tofana 
+//Skiresort rid 5 Cristallo 
 //Skiresort rid 6 Misurina
-//Skiresort rid 7 
-//Skiresort rid 8 
+//Skiresort rid 76 Fedare 
 //Skiresort rid 9 Kronplatz
+//Skiresort rid 10 Corvara 
+//Skiresort rid 11 Colfosco 
 //Skiresort rid 12 Stern
-//Skiresort rid 20 St.Cristina - Ciampinoi - Wolkenstein
+//Skiresort rid 13 San Cassiano 
+//Skiresort rid 14 Badia 
+//Skiresort rid 19 Wolkenstein - Dantercepies 
+//Skiresort rid 21 Wolkenstein - Plan de Gralba 
+//Skiresort rid 22 Wolkenstein - Sellajoch
+//Skiresort rid 20 St. Cristina - Ciampinoi - Wolkenstein 
+//Skiresort rid 18 St. Cristina - Monte Pana 
+//Skiresort rid 16 St. Ulrich - Resciesa - Seceda - Col Raiser - St. Cristina 
+//Skiresort rid 17 St. Ulrich - Palmer - Furdenan
+//Skiresort rid 23 Seiser Alm 
+//Skiresort rid 26 Canazei - Belvedere
+//Skiresort rid 27 Campitello Col Rodella
+//Skiresort rid 25 Alba - Ciampac 
+//Skiresort rid 28 Pozza - Buffaure 
+//Skiresort rid 29 Vigo - Catinaccio
+//Skiresort rid 31 Passo Fedaia - Marmolada 
+//Skiresort rid 30 Karerpass 
+//Skiresort rid 
+//Skiresort rid  
+//Skiresort rid  
+//Skiresort rid 
+//Skiresort rid  
+//Skiresort rid  
+//Skiresort rid 
+//Skiresort rid  
+//Skiresort rid  
+//Skiresort rid 
+//Skiresort rid  
+//Skiresort rid  
+//Skiresort rid 
+//Skiresort rid 27 Campitello Col Rodella
 //Skiresort rid 69 Plose - Brixen 
 //Skiresort rid 70 Gitschberg - Jochtal 
