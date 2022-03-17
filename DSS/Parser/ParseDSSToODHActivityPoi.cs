@@ -87,7 +87,7 @@ namespace DSS.Parser
             myodhactivitypoilinked.OperationSchedule.Add(ParseToODHOperationScheduleFormat("summer", dssitem.data));
 
             //Properties (length, capacity, capacity-per-hour, altitude-start, altitude-end, height-difference, summercard-points, bike-transport, duration)
-            var length = (double)dssitem["data"]["length"];
+            var length = (double?)dssitem["data"]["length"];
             myodhactivitypoilinked.DistanceLength = length;
 
             var altitudestart = (int?)dssitem["data"]["altitude-start"];
