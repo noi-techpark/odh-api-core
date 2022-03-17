@@ -90,16 +90,16 @@ namespace DSS.Parser
             var length = (double)dssitem["data"]["length"];
             myodhactivitypoilinked.DistanceLength = length;
 
-            var altitudestart = (int)dssitem["data"]["altitude-start"];
+            var altitudestart = (int?)dssitem["data"]["altitude-start"];
             myodhactivitypoilinked.AltitudeLowestPoint = altitudestart;
 
-            var altitudeend = (int)dssitem["data"]["altitude-end"];
+            var altitudeend = (int?)dssitem["data"]["altitude-end"];
             myodhactivitypoilinked.AltitudeHighestPoint = altitudeend;
 
-            var heightdifference = (int)dssitem["data"]["height-difference"];
+            var heightdifference = (int?)dssitem["data"]["height-difference"];
             myodhactivitypoilinked.AltitudeDifference = heightdifference;
 
-            var biketransport = (bool)dssitem["data"]["bike-transport"];
+            var biketransport = (bool?)dssitem["data"]["bike-transport"];
             myodhactivitypoilinked.BikeTransport = biketransport;
 
 
@@ -112,23 +112,20 @@ namespace DSS.Parser
             myodhactivitypoilinked.Number = number;
 
 
-            var regionid = (int)dssitem["data"]["regionId"];
+            var regionid = (int?)dssitem["data"]["regionId"];
             //isopen?
-            var statewinter = (int)dssitem["data"]["state-winter"];
+            var statewinter = (int?)dssitem["data"]["state-winter"];
             //isopen?
-            var statesummer = (int)dssitem["data"]["state-summer"];
+            var statesummer = (int?)dssitem["data"]["state-summer"];
             //?
-            var datacenterId = (int)dssitem["data"]["datacenterId"];
+            var datacenterId = (int?)dssitem["data"]["datacenterId"];
 
-            var winterOperation = (bool)dssitem["data"]["winterOperation"];
-            var summerOperation = (bool)dssitem["data"]["summerOperation"];
+            var winterOperation = (bool?)dssitem["data"]["winterOperation"];
+            var summerOperation = (bool?)dssitem["data"]["summerOperation"];
 
-            var sorterSummer = (bool)dssitem["data"]["sorterSummer"];
+            var sorterSummer = (bool?)dssitem["data"]["sorterSummer"];
 
-
-          
             //TODO SKIAREAINFO
-
             
             myodhactivitypoilinked.GpsTrack = ParseToODHGpsTrack((string)dssitem["geoPositionFile"]);
 
@@ -264,16 +261,18 @@ namespace DSS.Parser
         {
             List<string> odhtagstoadd = new List<string>();
 
-            int lifttyperid = (int)lifttype["rid"];
+            int? lifttyperid = (int?)lifttype["rid"];
 
-            DSSTypeAufstiegsanlagen flag = (DSSTypeAufstiegsanlagen)lifttyperid;
-            var flagstring = flag.GetDescription<DSSTypeAufstiegsanlagen>();
+            if (lifttyperid != null)
+            {
+                DSSTypeAufstiegsanlagen flag = (DSSTypeAufstiegsanlagen)lifttyperid.Value;
+                var flagstring = flag.GetDescription<DSSTypeAufstiegsanlagen>();
 
-            if(flagstring != null)
-                odhtagstoadd.Add(flagstring);
+                if (flagstring != null)
+                    odhtagstoadd.Add(flagstring);
 
-            //TODO Add Sessellift if it is of type 
-
+                //TODO Add Sessellift if it is of type 
+            }
             return odhtagstoadd;
         }
 
