@@ -339,19 +339,40 @@ namespace DSS.Parser
 //Skiresort rid 29 Vigo - Catinaccio
 //Skiresort rid 31 Passo Fedaia - Marmolada 
 //Skiresort rid 30 Karerpass 
-//Skiresort rid 
-//Skiresort rid  
-//Skiresort rid  
-//Skiresort rid 
-//Skiresort rid  
-//Skiresort rid  
-//Skiresort rid 
-//Skiresort rid  
-//Skiresort rid  
-//Skiresort rid 
-//Skiresort rid  
-//Skiresort rid  
-//Skiresort rid 
-//Skiresort rid 27 Campitello Col Rodella
-//Skiresort rid 69 Plose - Brixen 
+//Skiresort rid 55 Arabba
+//Skiresort rid 65 Marmolada
+//Skiresort rid 32 Helm - Stiergarten - Rotwand
+//Skiresort rid 33 Monte Baranci
+//Skiresort rid 35 Toblach - Rienz
+//Skiresort rid 36 Waldheim
+//Skiresort rid 37 Kreuzbergpass
+//Skiresort rid 38 Prags
+//Skiresort rid 77 Padola
+//Skiresort rid 39 Alpe Cermis
+//Skiresort rid 43 Bellamonte  
+//Skiresort rid 79 Alpe Lusia
+//Skiresort rid 28624570 Jochgrimm
+//Skiresort rid 44 Passo Lavazé
+//Skiresort rid 78 Passo Rolle
+//Skiresort rid 46 Passo Rolle  ??
+//Skiresort rid 40 Pampeago
+//Skiresort rid 42 Predazzo
+//Skiresort rid 41 Obereggen
+//Skiresort rid 45 Deutschnofen - Petersberg
+//Skiresort rid 47 San Martino di Castrozza - Carosello delle Malghe
+//Skiresort rid 48 San Martino di Castrozza - Colverde
+//Skiresort rid 49 San Martino di Castrozza - Pra delle Nasse
 //Skiresort rid 70 Gitschberg - Jochtal 
+//Skiresort rid 69 Plose - Brixen 
+//Skiresort rid 72 Feldthurns
+//Skiresort rid 73 Lüsen
+//Skiresort rid 74 Vilnösstal
+//Skiresort rid 62 San Pellegrino
+//Skiresort rid 67 Lusia
+//Skiresort rid 68 Bellamonte
+//Skiresort rid 27 Campitello Col Rodella
+//Skiresort rid 51 Alleghe
+//Skiresort rid 52 Zoldo
+//Skiresort rid 53 Palafavera
+//Skiresort rid 54 Selva di Cadore
+
