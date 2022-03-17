@@ -72,11 +72,15 @@ namespace DSS.Parser
             myodhactivitypoilinked.Detail.TryAddOrUpdate("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
 
             //lifttype TODO Mapping
-            List<string> lifftype = ParseDSSTypeToODHType(dssitem["lifttype"]);
-            foreach(var tag in lifftype)
+            if(dssitem["lifttype"] != null)
             {
-                myodhactivitypoilinked.SmgTags.Add(tag);
+                List<string> lifftype = ParseDSSTypeToODHType(dssitem["lifttype"]);
+                foreach (var tag in lifftype)
+                {
+                    myodhactivitypoilinked.SmgTags.Add(tag);
+                }
             }
+            
             
 
             //skiresort TODO Mapping 
@@ -129,7 +133,7 @@ namespace DSS.Parser
             
             myodhactivitypoilinked.GpsTrack = ParseToODHGpsTrack((string)dssitem["geoPositionFile"]);
 
-            List<GpsInfo> gpsinfolist = ParseToODHGpsInfo(dssitem["location"], dssitem["locationMountain"], altitudestart.Value, altitudeend.Value);
+            List<GpsInfo> gpsinfolist = ParseToODHGpsInfo(dssitem["location"], dssitem["locationMountain"], altitudestart, altitudeend);
 
             myodhactivitypoilinked.GpsInfo = gpsinfolist;
             myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
@@ -224,7 +228,7 @@ namespace DSS.Parser
             return null;
         }
 
-        private static List<GpsInfo> ParseToODHGpsInfo(dynamic location, dynamic locationMountain, int altitudestart = 0, int altitudeend = 0)
+        private static List<GpsInfo> ParseToODHGpsInfo(dynamic location, dynamic locationMountain, int? altitudestart = 0, int? altitudeend = 0)
         {
             List<GpsInfo> gpsinfolist = new List<GpsInfo>();
 
