@@ -55,10 +55,9 @@ namespace OdhApiImporter.Helpers.DSS
                 dssdata.Add(await GetDSSData.GetDSSDataAsync(requesttype, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl));
             }
 
-            var updateresult = ImportData(dssdata, cancellationToken);
+            var updateresult = await ImportData(dssdata, cancellationToken);
 
-
-            throw new NotImplementedException();
+            return updateresult;
         }
 
         public async Task<UpdateDetail> ImportData(List<dynamic> dssinput, CancellationToken cancellationToken)
@@ -77,8 +76,6 @@ namespace OdhApiImporter.Helpers.DSS
                 //Parse DSS Data
                 ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
 
-                
-                
                 if (parsedobject != null)
                 {
                     //Add the LocationInfo
