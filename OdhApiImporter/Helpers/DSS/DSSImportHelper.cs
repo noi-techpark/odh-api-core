@@ -9,6 +9,7 @@ using DSS.Parser;
 using System.Globalization;
 using Helper;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -76,9 +77,29 @@ namespace OdhApiImporter.Helpers.DSS
                 //Parse DSS Data
                 ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
 
+                
+                
                 if (parsedobject != null)
                 {
-                
+                    //Add the LocationInfo
+                    //TODO if Area can be mapped return locationinfo
+                    if (parsedobject.GpsInfo != null && parsedobject.GpsInfo.Count > 0)
+                    {
+                        if (parsedobject.GpsInfo.FirstOrDefault().Latitude != 0 && parsedobject.GpsInfo.FirstOrDefault().Longitude != 0)
+                        {
+                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault().Latitude, parsedobject.GpsInfo.FirstOrDefault().Longitude, 30000);
+
+                            if (district != null)
+                            {
+                                var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+
+                                parsedobject.LocationInfo = locinfo;
+                                parsedobject.TourismorganizationId = locinfo.TvInfo.Id;
+                            }
+                        }
+                    }
+
+
                     //Save parsedobject to DB + Save Rawdata to DB
                     var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(item.rid, item));
 

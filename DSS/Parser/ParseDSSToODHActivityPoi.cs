@@ -54,10 +54,20 @@ namespace DSS.Parser
             var descen = (string)dssitem["description"]["en"];
 
             //info-text TODO
+            var infotextwinterde = (string)dssitem["info-text"]["de"];
+            var infotextwinterit = (string)dssitem["info-text"]["it"];
+            var infotextwinteren = (string)dssitem["info-text"]["en"];
 
             //info-text-summer TODO
+            var infotextsummerde = (string)dssitem["info-text-summer"]["de"];
+            var infotextsummerit = (string)dssitem["info-text-summer"]["it"];
+            var infotextsummeren = (string)dssitem["info-text-summer"]["en"];
 
-            myodhactivitypoilinked.Detail.Add("de", new Detail() { Language = "de", Title= namede, BaseText = descde });
+            var additionaltextde = !String.IsNullOrEmpty(infotextwinterde) ? infotextwinterde : !String.IsNullOrEmpty(infotextsummerde) ? infotextsummerde : null;
+            var additionaltextit = !String.IsNullOrEmpty(infotextwinterit) ? infotextwinterit : !String.IsNullOrEmpty(infotextsummerit) ? infotextsummerit : null;
+            var additionaltexten = !String.IsNullOrEmpty(infotextwinteren) ? infotextwinteren : !String.IsNullOrEmpty(infotextsummeren) ? infotextsummeren : null;
+
+            myodhactivitypoilinked.Detail.Add("de", new Detail() { Language = "de", Title= namede, BaseText = descde, AdditionalText = additionaltextde });
             myodhactivitypoilinked.Detail.Add("it", new Detail() { Language = "it", Title = nameit, BaseText = descit });
             myodhactivitypoilinked.Detail.Add("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
 
@@ -116,9 +126,7 @@ namespace DSS.Parser
             var sorterSummer = (bool)dssitem["data"]["sorterSummer"];
 
 
-            //TODO LOCATIONINFO
-
-
+          
             //TODO SKIAREAINFO
 
             
@@ -128,6 +136,10 @@ namespace DSS.Parser
 
             myodhactivitypoilinked.GpsInfo = gpsinfolist;
             myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
+
+            //TODO LOCATIONINFO DONE OUTSIDE
+            //var skiresort = MapSkiresort(dssitem["skiresort"]);
+
 
             return myodhactivitypoilinked;
         }
@@ -282,6 +294,7 @@ namespace DSS.Parser
             else
                 return 0;
         }
+                      
     }
 }
 
