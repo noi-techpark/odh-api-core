@@ -24,6 +24,8 @@ namespace DataModel
 
         public string exception { get; init; }
 
+        public string stacktrace { get; init; }
+
         public string source { get; init; }
     }
 
@@ -78,7 +80,8 @@ namespace DataModel
                 updated = detail.updated,
                 deleted = detail.deleted,
                 success = true,
-                exception = null
+                exception = null,
+                stacktrace = null
             };
 
             if(createlog)
@@ -102,7 +105,8 @@ namespace DataModel
                 updated = detail.updated,
                 deleted = detail.deleted,
                 success = false,
-                exception = ex.Message
+                exception = ex.Message,
+                stacktrace = ex.StackTrace
             };
 
             if (createlog)
