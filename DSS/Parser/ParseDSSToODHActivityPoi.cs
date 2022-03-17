@@ -67,9 +67,9 @@ namespace DSS.Parser
             var additionaltextit = !String.IsNullOrEmpty(infotextwinterit) ? infotextwinterit : !String.IsNullOrEmpty(infotextsummerit) ? infotextsummerit : null;
             var additionaltexten = !String.IsNullOrEmpty(infotextwinteren) ? infotextwinteren : !String.IsNullOrEmpty(infotextsummeren) ? infotextsummeren : null;
 
-            myodhactivitypoilinked.Detail.Add("de", new Detail() { Language = "de", Title= namede, BaseText = descde, AdditionalText = additionaltextde });
-            myodhactivitypoilinked.Detail.Add("it", new Detail() { Language = "it", Title = nameit, BaseText = descit });
-            myodhactivitypoilinked.Detail.Add("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
+            myodhactivitypoilinked.Detail.TryAddOrUpdate("de", new Detail() { Language = "de", Title= namede, BaseText = descde, AdditionalText = additionaltextde });
+            myodhactivitypoilinked.Detail.TryAddOrUpdate("it", new Detail() { Language = "it", Title = nameit, BaseText = descit });
+            myodhactivitypoilinked.Detail.TryAddOrUpdate("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
 
             //lifttype TODO Mapping
             List<string> lifftype = ParseDSSTypeToODHType(dssitem["lifttype"]);
