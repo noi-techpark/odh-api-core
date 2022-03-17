@@ -129,7 +129,7 @@ namespace DSS.Parser
             
             myodhactivitypoilinked.GpsTrack = ParseToODHGpsTrack((string)dssitem["geoPositionFile"]);
 
-            List<GpsInfo> gpsinfolist = ParseToODHGpsInfo(dssitem["location"], dssitem["locationMountain"], altitudestart, altitudeend);
+            List<GpsInfo> gpsinfolist = ParseToODHGpsInfo(dssitem["location"], dssitem["locationMountain"], altitudestart.Value, altitudeend.Value);
 
             myodhactivitypoilinked.GpsInfo = gpsinfolist;
             myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
@@ -178,22 +178,26 @@ namespace DSS.Parser
 
             operationSchedule.OperationScheduleTime = new List<OperationScheduleTime>();
 
-            OperationScheduleTime operationScheduleTime = new OperationScheduleTime();
-            operationScheduleTime.Timecode = 1;
-            operationScheduleTime.Monday = true;
-            operationScheduleTime.Tuesday = true;
-            operationScheduleTime.Wednesday = true;
-            operationScheduleTime.Friday = true;
-            operationScheduleTime.Saturday = true;
-            operationScheduleTime.Sunday = true;
+            if(!String.IsNullOrEmpty(openingtimestart) && !String.IsNullOrEmpty(openingtimeend))
+            {
+                OperationScheduleTime operationScheduleTime = new OperationScheduleTime();
+                operationScheduleTime.Timecode = 1;
+                operationScheduleTime.Monday = true;
+                operationScheduleTime.Tuesday = true;
+                operationScheduleTime.Wednesday = true;
+                operationScheduleTime.Friday = true;
+                operationScheduleTime.Saturday = true;
+                operationScheduleTime.Sunday = true;
 
-            operationScheduleTime.Start = TimeSpan.Parse(openingtimestart);
-            operationScheduleTime.End = TimeSpan.Parse(openingtimeend);
+                operationScheduleTime.Start = TimeSpan.Parse(openingtimestart);
+                operationScheduleTime.End = TimeSpan.Parse(openingtimeend);
 
-            operationSchedule.OperationScheduleTime.Add(operationScheduleTime);
+                operationSchedule.OperationScheduleTime.Add(operationScheduleTime);
+            }
+           
 
             //Check if there is one or two openingtimes
-            if (openingtimestartafternoon != "" && openingtimestartafternoon != "00:00")
+            if (!String.IsNullOrEmpty(openingtimestartafternoon) && !String.IsNullOrEmpty(openingtimeendafternoon) && openingtimestartafternoon != "00:00" && openingtimestartafternoon != "00:00")
             {
                 OperationScheduleTime operationScheduleTimeafternoon = new OperationScheduleTime();
                 operationScheduleTimeafternoon.Timecode = 1;
@@ -207,7 +211,7 @@ namespace DSS.Parser
                 operationScheduleTimeafternoon.Start = TimeSpan.Parse(openingtimestartafternoon);
                 operationScheduleTimeafternoon.End = TimeSpan.Parse(openingtimeendafternoon);
 
-                operationSchedule.OperationScheduleTime.Add(operationScheduleTime);
+                operationSchedule.OperationScheduleTime.Add(operationScheduleTimeafternoon);
             }            
 
             return operationSchedule;

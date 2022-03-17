@@ -98,7 +98,7 @@ namespace OdhApiImporter.Helpers.DSS
 
 
                     //Save parsedobject to DB + Save Rawdata to DB
-                    var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(item.rid, item));
+                    var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.rid, item));
 
                     newcounter = newcounter + pgcrudresult.created.Value;
                     updatecounter = updatecounter + pgcrudresult.updated.Value;
