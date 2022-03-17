@@ -197,7 +197,7 @@ namespace DSS.Parser
            
 
             //Check if there is one or two openingtimes
-            if (!String.IsNullOrEmpty(openingtimestartafternoon) && !String.IsNullOrEmpty(openingtimeendafternoon) && openingtimestartafternoon != "00:00" && openingtimestartafternoon != "00:00")
+            if (!String.IsNullOrEmpty(openingtimestartafternoon) && !String.IsNullOrEmpty(openingtimeendafternoon) && openingtimestartafternoon != "00:00" && openingtimeendafternoon != "00:00")
             {
                 OperationScheduleTime operationScheduleTimeafternoon = new OperationScheduleTime();
                 operationScheduleTimeafternoon.Timecode = 1;
