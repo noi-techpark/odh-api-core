@@ -161,60 +161,67 @@ namespace DSS.Parser
             }
 
 
-            var seasonstart = (double)data["season-" + season]["start"];
-            var seasonend = (double)data["season-" + season]["end"];
+            var seasonstart = (double?)data["season-" + season]["start"];
+            var seasonend = (double?)data["season-" + season]["end"];
 
-            var openingtimestart = (string)data["opening-times" + summer]["start"];
-            var openingtimeend = (string)data["opening-times" + summer]["end"];
-            var openingtimestartafternoon = (string)data["opening-times" + summer]["startAfternoon"];
-            var openingtimeendafternoon = (string)data["opening-times" + summer]["endAfternoon"];
-
-            //Season
-            OperationSchedule operationSchedule = new OperationSchedule();
-            operationSchedule.Type = "1";
-            operationSchedule.OperationscheduleName = seasonname;
-            operationSchedule.Start = Helper.DateTimeHelper.UnixTimeStampToDateTime(seasonstart);
-            operationSchedule.Stop = Helper.DateTimeHelper.UnixTimeStampToDateTime(seasonend);
-
-            operationSchedule.OperationScheduleTime = new List<OperationScheduleTime>();
-
-            if(!String.IsNullOrEmpty(openingtimestart) && !String.IsNullOrEmpty(openingtimeend))
+            if (seasonstart != null & seasonend != null)
             {
-                OperationScheduleTime operationScheduleTime = new OperationScheduleTime();
-                operationScheduleTime.Timecode = 1;
-                operationScheduleTime.Monday = true;
-                operationScheduleTime.Tuesday = true;
-                operationScheduleTime.Wednesday = true;
-                operationScheduleTime.Friday = true;
-                operationScheduleTime.Saturday = true;
-                operationScheduleTime.Sunday = true;
+                //Season
+                OperationSchedule operationSchedule = new OperationSchedule();
+                operationSchedule.Type = "1";
+                operationSchedule.OperationscheduleName = seasonname;
+                operationSchedule.Start = Helper.DateTimeHelper.UnixTimeStampToDateTime(seasonstart.Value);
+                operationSchedule.Stop = Helper.DateTimeHelper.UnixTimeStampToDateTime(seasonend.Value);
 
-                operationScheduleTime.Start = TimeSpan.Parse(openingtimestart);
-                operationScheduleTime.End = TimeSpan.Parse(openingtimeend);
 
-                operationSchedule.OperationScheduleTime.Add(operationScheduleTime);
+                var openingtimestart = (string)data["opening-times" + summer]["start"];
+                var openingtimeend = (string)data["opening-times" + summer]["end"];
+                var openingtimestartafternoon = (string)data["opening-times" + summer]["startAfternoon"];
+                var openingtimeendafternoon = (string)data["opening-times" + summer]["endAfternoon"];
+
+
+                operationSchedule.OperationScheduleTime = new List<OperationScheduleTime>();
+
+                if (!String.IsNullOrEmpty(openingtimestart) && !String.IsNullOrEmpty(openingtimeend))
+                {
+                    OperationScheduleTime operationScheduleTime = new OperationScheduleTime();
+                    operationScheduleTime.Timecode = 1;
+                    operationScheduleTime.Monday = true;
+                    operationScheduleTime.Tuesday = true;
+                    operationScheduleTime.Wednesday = true;
+                    operationScheduleTime.Friday = true;
+                    operationScheduleTime.Saturday = true;
+                    operationScheduleTime.Sunday = true;
+
+                    operationScheduleTime.Start = TimeSpan.Parse(openingtimestart);
+                    operationScheduleTime.End = TimeSpan.Parse(openingtimeend);
+
+                    operationSchedule.OperationScheduleTime.Add(operationScheduleTime);
+                }
+
+
+                //Check if there is one or two openingtimes
+                if (!String.IsNullOrEmpty(openingtimestartafternoon) && !String.IsNullOrEmpty(openingtimeendafternoon) && openingtimestartafternoon != "00:00" && openingtimeendafternoon != "00:00")
+                {
+                    OperationScheduleTime operationScheduleTimeafternoon = new OperationScheduleTime();
+                    operationScheduleTimeafternoon.Timecode = 1;
+                    operationScheduleTimeafternoon.Monday = true;
+                    operationScheduleTimeafternoon.Tuesday = true;
+                    operationScheduleTimeafternoon.Wednesday = true;
+                    operationScheduleTimeafternoon.Friday = true;
+                    operationScheduleTimeafternoon.Saturday = true;
+                    operationScheduleTimeafternoon.Sunday = true;
+
+                    operationScheduleTimeafternoon.Start = TimeSpan.Parse(openingtimestartafternoon);
+                    operationScheduleTimeafternoon.End = TimeSpan.Parse(openingtimeendafternoon);
+
+                    operationSchedule.OperationScheduleTime.Add(operationScheduleTimeafternoon);
+                }
+
+                return operationSchedule;
             }
-           
 
-            //Check if there is one or two openingtimes
-            if (!String.IsNullOrEmpty(openingtimestartafternoon) && !String.IsNullOrEmpty(openingtimeendafternoon) && openingtimestartafternoon != "00:00" && openingtimeendafternoon != "00:00")
-            {
-                OperationScheduleTime operationScheduleTimeafternoon = new OperationScheduleTime();
-                operationScheduleTimeafternoon.Timecode = 1;
-                operationScheduleTimeafternoon.Monday = true;
-                operationScheduleTimeafternoon.Tuesday = true;
-                operationScheduleTimeafternoon.Wednesday = true;
-                operationScheduleTimeafternoon.Friday = true;
-                operationScheduleTimeafternoon.Saturday = true;
-                operationScheduleTimeafternoon.Sunday = true;
-
-                operationScheduleTimeafternoon.Start = TimeSpan.Parse(openingtimestartafternoon);
-                operationScheduleTimeafternoon.End = TimeSpan.Parse(openingtimeendafternoon);
-
-                operationSchedule.OperationScheduleTime.Add(operationScheduleTimeafternoon);
-            }            
-
-            return operationSchedule;
+            return null;
         }
 
         private static List<GpsInfo> ParseToODHGpsInfo(dynamic location, dynamic locationMountain, int altitudestart = 0, int altitudeend = 0)
