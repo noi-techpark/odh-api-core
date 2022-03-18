@@ -126,8 +126,16 @@ namespace OdhApiImporter.Helpers.DSS
               .Where("id", odhdssid);
 
             var odhactivitypoiindb = await mydssquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+            var odhactivitypoi = default(ODHActivityPoiLinked);
 
-            var odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSDataToODHActivityPoi(odhactivitypoiindb, dssinput);
+            if (entitytype.ToLower() == "lift")
+            {
+                odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSLiftDataToODHActivityPoi(odhactivitypoiindb, dssinput);
+            }
+            else if (entitytype.ToLower() == "slope")
+            {
+                odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSSlopeDataToODHActivityPoi(odhactivitypoiindb, dssinput);
+            }
 
             //TODOS all of this stuff, Tags, Categories etc....
 
