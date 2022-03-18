@@ -73,6 +73,8 @@ namespace SuedtirolWein.Parser
             //ImageGallery
             List<ImageGallery> myimagegallerylist = new List<ImageGallery>();
 
+            string imageurlmedia = "";
+
             if (companydata["de"].Element("media") != null)
             {
                 ImageGallery myimagegallery = new ImageGallery();
@@ -93,6 +95,7 @@ namespace SuedtirolWein.Parser
                 if (companydata["de"].Element("imagemetaalt") != null)
                     myimagegallery.ImageAltText.TryAddOrUpdate("de", companydata["de"].Element("imagemetaalt").Value);
 
+                imageurlmedia = myimagegallery.ImageUrl;
 
                 myimagegallerylist.Add(myimagegallery);
             }
@@ -146,6 +149,7 @@ namespace SuedtirolWein.Parser
                 }
             }
 
+            //Fix add mediadetail only if url differs from media
 
             if (companydata["de"].Element("mediadetail") != null)
             {
@@ -156,7 +160,8 @@ namespace SuedtirolWein.Parser
                 myimagegallery2.ListPosition = 1;
                 myimagegallery2.CopyRight = "Suedtirol Wein";
 
-                myimagegallerylist.Add(myimagegallery2);
+                if(imageurlmedia != myimagegallery2.ImageUrl)
+                    myimagegallerylist.Add(myimagegallery2);
             }
             if (companydata["de"].Element("logo") != null)
             {
@@ -166,7 +171,9 @@ namespace SuedtirolWein.Parser
                 myimagegallery3.IsInGallery = true;
                 myimagegallery3.ListPosition = 2;
                 myimagegallery3.CopyRight = "Suedtirol Wein";
-                myimagegallerylist.Add(myimagegallery3);
+
+                if (imageurlmedia != myimagegallery3.ImageUrl)
+                    myimagegallerylist.Add(myimagegallery3);
             }
 
             mywinecompany.ImageGallery = myimagegallerylist;

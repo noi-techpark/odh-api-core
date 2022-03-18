@@ -11,7 +11,7 @@ namespace DSS.Parser
 {
     public class ParseDSSToODHActivityPoi
     {        
-        public static ODHActivityPoiLinked ParseDSSDataToODHActivityPoi(ODHActivityPoiLinked? myodhactivitypoilinked, dynamic dssitem)
+        public static ODHActivityPoiLinked ParseDSSLiftDataToODHActivityPoi(ODHActivityPoiLinked? myodhactivitypoilinked, dynamic dssitem)
         {            
             if (myodhactivitypoilinked == null)
                 myodhactivitypoilinked = new ODHActivityPoiLinked();
@@ -144,6 +144,141 @@ namespace DSS.Parser
 
             return myodhactivitypoilinked;
         }
+
+        public static ODHActivityPoiLinked ParseDSSSlopeDataToODHActivityPoi(ODHActivityPoiLinked? myodhactivitypoilinked, dynamic dssitem)
+        {
+            if (myodhactivitypoilinked == null)
+                myodhactivitypoilinked = new ODHActivityPoiLinked();
+
+            myodhactivitypoilinked.Active = true;
+            myodhactivitypoilinked.SmgActive = true;
+
+            myodhactivitypoilinked.Source = "dss";
+            myodhactivitypoilinked.SyncSourceInterface = "dssliftbase";
+            myodhactivitypoilinked.SyncUpdateMode = "full";
+
+            myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
+            myodhactivitypoilinked.CustomId = dssitem.pid;
+
+            myodhactivitypoilinked.Type = "Anderes";
+            myodhactivitypoilinked.SubType = "Aufstiegsanlagen";
+
+            myodhactivitypoilinked.SmgTags = new List<string>();
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type);
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType);
+
+            myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
+
+            if (myodhactivitypoilinked.FirstImport == null)
+                myodhactivitypoilinked.FirstImport = DateTime.Now;
+
+            var lastchangeobj = (string)dssitem["update-date"];
+
+            if (double.TryParse(lastchangeobj, out double updatedate))
+                myodhactivitypoilinked.LastChange = Helper.DateTimeHelper.UnixTimeStampToDateTime(updatedate);
+
+            //name
+            var namede = (string)dssitem["name"]["de"];
+            var nameit = (string)dssitem["name"]["it"];
+            var nameen = (string)dssitem["name"]["en"];
+
+            //description
+            var descde = (string)dssitem["description"]["de"];
+            var descit = (string)dssitem["description"]["it"];
+            var descen = (string)dssitem["description"]["en"];
+
+            //info-text TODO
+            var infotextwinterde = (string)dssitem["info-text"]["de"];
+            var infotextwinterit = (string)dssitem["info-text"]["it"];
+            var infotextwinteren = (string)dssitem["info-text"]["en"];
+
+            //info-text-summer TODO
+            var infotextsummerde = (string)dssitem["info-text-summer"]["de"];
+            var infotextsummerit = (string)dssitem["info-text-summer"]["it"];
+            var infotextsummeren = (string)dssitem["info-text-summer"]["en"];
+
+            var additionaltextde = !String.IsNullOrEmpty(infotextwinterde) ? infotextwinterde : !String.IsNullOrEmpty(infotextsummerde) ? infotextsummerde : null;
+            var additionaltextit = !String.IsNullOrEmpty(infotextwinterit) ? infotextwinterit : !String.IsNullOrEmpty(infotextsummerit) ? infotextsummerit : null;
+            var additionaltexten = !String.IsNullOrEmpty(infotextwinteren) ? infotextwinteren : !String.IsNullOrEmpty(infotextsummeren) ? infotextsummeren : null;
+
+            myodhactivitypoilinked.Detail.TryAddOrUpdate("de", new Detail() { Language = "de", Title = namede, BaseText = descde, AdditionalText = additionaltextde });
+            myodhactivitypoilinked.Detail.TryAddOrUpdate("it", new Detail() { Language = "it", Title = nameit, BaseText = descit });
+            myodhactivitypoilinked.Detail.TryAddOrUpdate("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
+
+            //lifttype TODO Mapping
+            if (dssitem["lifttype"] != null)
+            {
+                List<string> lifftype = ParseDSSTypeToODHType(dssitem["lifttype"]);
+                foreach (var tag in lifftype)
+                {
+                    myodhactivitypoilinked.SmgTags.Add(tag);
+                }
+            }
+
+
+
+            //skiresort TODO Mapping 
+
+            //Operationschedule (opening-times, opening-times-summer, season-summer, season-winter)
+            myodhactivitypoilinked.OperationSchedule = new List<OperationSchedule>();
+            myodhactivitypoilinked.OperationSchedule.Add(ParseToODHOperationScheduleFormat("winter", dssitem.data));
+            myodhactivitypoilinked.OperationSchedule.Add(ParseToODHOperationScheduleFormat("summer", dssitem.data));
+
+            //Properties (length, capacity, capacity-per-hour, altitude-start, altitude-end, height-difference, summercard-points, bike-transport, duration)
+            var length = (double?)dssitem["data"]["length"];
+            myodhactivitypoilinked.DistanceLength = length;
+
+            var altitudestart = (int?)dssitem["data"]["altitude-start"];
+            myodhactivitypoilinked.AltitudeLowestPoint = altitudestart;
+
+            var altitudeend = (int?)dssitem["data"]["altitude-end"];
+            myodhactivitypoilinked.AltitudeHighestPoint = altitudeend;
+
+            var heightdifference = (int?)dssitem["data"]["height-difference"];
+            myodhactivitypoilinked.AltitudeDifference = heightdifference;
+
+            var biketransport = (bool?)dssitem["data"]["bike-transport"];
+            myodhactivitypoilinked.BikeTransport = biketransport;
+
+
+            //Other (regionId, duration, state-winter, state-summer, datacenterId, number, winterOperation, sorter, summerOperation, sorterSummer)
+
+            var duration = (string)dssitem["data"]["duration"];
+            myodhactivitypoilinked.DistanceDuration = ConvertToDistanceDuration(duration);
+
+            var number = (string)dssitem["data"]["number"];
+            myodhactivitypoilinked.Number = number;
+
+
+            var regionid = (int?)dssitem["data"]["regionId"];
+            //isopen?
+            var statewinter = (int?)dssitem["data"]["state-winter"];
+            //isopen?
+            var statesummer = (int?)dssitem["data"]["state-summer"];
+            //?
+            var datacenterId = (int?)dssitem["data"]["datacenterId"];
+
+            var winterOperation = (bool?)dssitem["data"]["winterOperation"];
+            var summerOperation = (bool?)dssitem["data"]["summerOperation"];
+
+            var sorterSummer = (bool?)dssitem["data"]["sorterSummer"];
+
+            //TODO SKIAREAINFO
+
+            myodhactivitypoilinked.GpsTrack = ParseToODHGpsTrack((string)dssitem["geoPositionFile"]);
+
+            List<GpsInfo> gpsinfolist = ParseToODHGpsInfo(dssitem["location"], dssitem["locationMountain"], altitudestart, altitudeend);
+
+            myodhactivitypoilinked.GpsInfo = gpsinfolist;
+            myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
+
+            //TODO LOCATIONINFO DONE OUTSIDE
+            //var skiresort = MapSkiresort(dssitem["skiresort"]);
+
+
+            return myodhactivitypoilinked;
+        }
+
 
         private static OperationSchedule ParseToODHOperationScheduleFormat(string season, dynamic data)
         {
