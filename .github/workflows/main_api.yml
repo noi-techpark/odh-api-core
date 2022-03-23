@@ -151,6 +151,7 @@ jobs:
           docker-username: ${{ github.actor }}
           docker-password: ${{ secrets.GITHUB_TOKEN }}
           working-directory: OdhApiCore
+          docker-compose-file: docker-compose.yml
 
       - name: Deploy application
         uses: noi-techpark/github-actions/docker-deploy@v2
