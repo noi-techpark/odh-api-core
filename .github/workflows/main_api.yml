@@ -79,6 +79,7 @@ jobs:
           docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
           docker-username: ${{ github.actor }}
           docker-password: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: OdhApiCore
 
       - name: Deploy application
         uses: noi-techpark/github-actions/docker-deploy@v2
@@ -149,6 +150,7 @@ jobs:
           docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
           docker-username: ${{ github.actor }}
           docker-password: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: OdhApiCore
 
       - name: Deploy application
         uses: noi-techpark/github-actions/docker-deploy@v2
