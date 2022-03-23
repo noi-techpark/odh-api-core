@@ -1,0 +1,168 @@
+name: CI/CD API
+
+on:
+  push:
+  pull_request:
+
+env:
+  PROJECT_NAME: odh-tourism-api
+  DOCKER_REGISTRY_HOST: ghcr.io
+  DOCKER_IMAGE: ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}
+  DOCKER_TAG: ${{ github.sha }}
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore OdhApiCore.sln
+    - name: Build OdhApiCore Solution
+      run: dotnet build OdhApiCore.sln --no-restore
+    - name: Test
+      run: dotnet test OdhApiCore --filter Category!=Integration
+
+  deploy-test:
+    runs-on: ubuntu-20.04
+    if: github.ref == 'refs/heads/main'
+    env:
+      API_URL: "https://api.tourism.testingmachine.eu/v1/"
+    needs: test
+    concurrency: deploy-test
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Create .env file
+        uses: noi-techpark/github-actions/env-file@v2
+        env:
+          X_PROJECT_NAME: ${{ env.PROJECT_NAME }}
+          X_DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
+          X_DOCKER_TAG: ${{ env.DOCKER_TAG }}
+          X_SERVER_PORT: 1011
+
+          X_ASPNETCORE_ENVIRONMENT: "Development"
+          X_PG_CONNECTION: ${{ secrets.PG_CONNECTION_TEST }}
+          X_MSS_USER: ${{ secrets.MSS_USER_TEST }}
+          X_MSS_PSWD: ${{ secrets.MSS_PSWD_TEST }}
+          X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
+          X_LCS_PSWD: ${{ secrets.LCS_PSWD_TEST }}
+          X_LCS_MSGPSWD: ${{ secrets.LCS_MSGPSWD_TEST }}
+          X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
+          X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
+          X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
+          X_IMG_URL: "https://images.tourism.testingmachine.eu/api/Image/GetImage?imageurl="
+          X_DOC_URL: "https://images.tourism.testingmachine.eu/api/File/GetFile/"
+          X_S3_BUCKET_ACCESSPOINT: ${{ secrets.S3_BUCKET_ACCESSPOINT_TEST }}
+          X_S3_IMAGEUPLOADER_ACCESSKEY: ${{ secrets.S3_IMAGEUPLOADER_ACCESSKEY_TEST }}
+          X_S3_IMAGEUPLOADER_SECRETKEY: ${{ secrets.S3_IMAGEUPLOADER_SECRETKEY_TEST }}
+          X_OAUTH_AUTORITY: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/"
+          X_ELK_URL: ${{ secrets.ELK_URL_TEST }}
+          X_ELK_TOKEN: ${{ secrets.ELK_TOKEN_TEST }}
+          X_JSONPATH: "./wwwroot/json/"
+          X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
+          X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
+          X_DATABROWSER_URL: "https://frontend.tourism.testingmachine.eu/"
+          X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
+          X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
+          X_RAVEN_PSWD: ${{ secrets.RAVEN_PSWD_TEST }}
+          X_API_URL: ${{ env.API_URL }}
+
+      - name: Build and push 
+        uses: noi-techpark/github-actions/docker-build-and-push@v2
+        with:
+          docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
+          docker-username: ${{ github.actor }}
+          docker-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy application
+        uses: noi-techpark/github-actions/docker-deploy@v2
+        with:
+          hosts: 'test'
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
+          docker-username: 'noi-techpark-bot'
+          docker-password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          project-name: ${{ env.PROJECT_NAME }}
+
+      - name: Generate Json
+        run: |
+          curl "${{ env.API_URL }}STA/JsonPoi"
+          curl "${{ env.API_URL }}STA/JsonAccommodation"
+          curl "${{ env.API_URL }}ODH/AccommodationBooklist"
+          curl "${{ env.API_URL }}ODH/AccommodationFulllist"
+
+  deploy-prod:
+    runs-on: ubuntu-20.04
+    if: github.ref == 'refs/heads/prod'
+    env:
+      API_URL: "https://tourism.api.opendatahub.bz.it/v1/"
+    needs: test
+    concurrency: deploy-prod
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Create .env file
+        uses: noi-techpark/github-actions/env-file@v2
+        env:
+          X_PROJECT_NAME: ${{ env.PROJECT_NAME }}
+          X_DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
+          X_DOCKER_TAG: ${{ env.DOCKER_TAG }}
+          X_SERVER_PORT: 1011
+
+          X_ASPNETCORE_ENVIRONMENT: "Production"
+          X_PG_CONNECTION: ${{ secrets.PG_CONNECTION_TEST }}
+          X_MSS_USER: ${{ secrets.MSS_USER_TEST }}
+          X_MSS_PSWD: ${{ secrets.MSS_PSWD_TEST }}
+          X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
+          X_LCS_PSWD: ${{ secrets.LCS_PSWD_TEST }}
+          X_LCS_MSGPSWD: ${{ secrets.LCS_MSGPSWD_TEST }}
+          X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
+          X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
+          X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
+          X_IMG_URL: "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl="
+          X_DOC_URL: "https://tourism.images.opendatahub.bz.it/api/File/GetFile/"
+          X_S3_BUCKET_ACCESSPOINT: ${{ secrets.S3_BUCKET_ACCESSPOINT_TEST }}
+          X_S3_IMAGEUPLOADER_ACCESSKEY: ${{ secrets.S3_IMAGEUPLOADER_ACCESSKEY_TEST }}
+          X_S3_IMAGEUPLOADER_SECRETKEY: ${{ secrets.S3_IMAGEUPLOADER_SECRETKEY_TEST }}
+          X_OAUTH_AUTORITY: "https://auth.opendatahub.bz.it/auth/realms/noi/"
+          X_ELK_URL: ${{ secrets.ELK_URL_TEST }}
+          X_ELK_TOKEN: ${{ secrets.ELK_TOKEN_TEST }}
+          X_JSONPATH: "./wwwroot/json/"
+          X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
+          X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
+          X_DATABROWSER_URL: "https://databrowser.opendatahub.bz.it/"
+          X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
+          X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
+          X_RAVEN_PSWD: ${{ secrets.RAVEN_PSWD_TEST }}
+          X_API_URL: ${{ env.API_URL }}
+
+      - name: Build and push 
+        uses: noi-techpark/github-actions/docker-build-and-push@v2
+        with:
+          docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
+          docker-username: ${{ github.actor }}
+          docker-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy application
+        uses: noi-techpark/github-actions/docker-deploy@v2
+        with:
+          hosts: 'prod'
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
+          docker-username: 'noi-techpark-bot'
+          docker-password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          project-name: ${{ env.PROJECT_NAME }}
+
+      - name: Generate Json
+        run: |
+          curl "${{ env.API_URL }}STA/JsonPoi"
+          curl "${{ env.API_URL }}STA/JsonAccommodation"
+          curl "${{ env.API_URL }}ODH/AccommodationBooklist"
+          curl "${{ env.API_URL }}ODH/AccommodationFulllist"
