@@ -5,10 +5,12 @@ on:
     paths:
       - "OdhApiImporter/**"
       - "DataModel/**"
+      - ".github/workflows/main_importer.yml"
   pull_request:
     paths:
       - "OdhApiImporter/**"
       - "DataModel/**"
+      - ".github/workflows/main_importer.yml"
 
 env:
   PROJECT_NAME: odh-tourism-importer
