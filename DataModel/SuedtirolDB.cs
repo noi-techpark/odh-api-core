@@ -3409,11 +3409,13 @@ namespace DataModel
 
     #region EBMS
 
-    public class EventShort : IIdentifiable, IImportDateassigneable, ISource
+    public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware
     {
         public EventShort()
         {
             GpsPoints = new Dictionary<string, GpsInfo>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public LicenseInfo? LicenseInfo { get; set; }
@@ -3556,6 +3558,9 @@ namespace DataModel
         public bool? ActiveCommunityApp { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class RoomBooked

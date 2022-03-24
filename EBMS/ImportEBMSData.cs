@@ -59,6 +59,11 @@ namespace EBMS
                     eventtosave.Id = "eventshort-" + myevent.EventId;
                     eventtosave.Source = "EBMS";
 
+                    //ADD MAPPING
+                    var dssrid = new Dictionary<string, string>() { { "rid", myevent.EventId.ToString() } };
+                    eventtosave.Mapping.TryAddOrUpdate("ebms", dssrid);
+
+
                     //Interface Props
 
                     eventtosave.EventId = myevent.EventId;
