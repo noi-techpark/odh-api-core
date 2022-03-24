@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Helper;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -60,8 +61,8 @@ namespace EBMS
                     eventtosave.Source = "EBMS";
 
                     //ADD MAPPING
-                    var dssrid = new Dictionary<string, string>() { { "rid", myevent.EventId.ToString() } };
-                    eventtosave.Mapping.TryAddOrUpdate("ebms", dssrid);
+                    var ebmsrid = new Dictionary<string, string>() { { "id", myevent.EventId.ToString() } };
+                    eventtosave.Mapping.TryAddOrUpdate("ebms", ebmsrid);
 
 
                     //Interface Props
