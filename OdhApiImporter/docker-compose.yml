@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   importer:
-    image: ${DOCKER_IMAGE:-odh-tourism-importer}:${DOCKER_TAG:-latest}
+    image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     build:
       context: ../
       dockerfile: OdhApiImporter/Dockerfile

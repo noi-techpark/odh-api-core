@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   api:
-    image: ${DOCKER_IMAGE:-odh-tourism-api}:${DOCKER_TAG:-latest}
+    image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     build:
       context: ../
       dockerfile: OdhApiCore/Dockerfile
