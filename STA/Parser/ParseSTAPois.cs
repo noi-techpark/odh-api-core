@@ -36,6 +36,11 @@ namespace STA
             var id = "salespoint_sta_" + vendingpoint.STA_ID;
             mypoi.Id = id;
 
+            //ADD MAPPING
+            var staid = new Dictionary<string, string>() { { "sta_id", vendingpoint.STA_ID } };
+            mypoi.Mapping.TryAddOrUpdate("sta", staid);
+
+
             //GPSData
             var commaCulture = new CultureInfo("en")
             {
