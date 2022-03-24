@@ -69,6 +69,16 @@ namespace OdhApiImporter.Helpers.DSS
             //interface lastupdate
             DateTime.TryParseExact(lastupdatestr, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastupdate);
 
+            var areaquery = QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From("area");
+
+            // Get paginated data
+            var arealist =
+                await areaquery
+                    .GetAllAsObject<AreaLinked>();
+
+
             //loop trough items
             foreach (var item in dssinput[0].items)
             {
@@ -101,9 +111,27 @@ namespace OdhApiImporter.Helpers.DSS
                     if(dssskiarearid != null)
                     {
                         //TODO Select Area which has the mapping to dss/rid and fill AreaId Array and LocationInfo.Area
-                        //var area = QueryFactory.
-                    }
+                        var area = arealist.Where(x => x.Mapping["dss"]["rid"] == dssskiarearid.ToString()).FirstOrDefault();
 
+                        if(area != null)
+                        {
+                            parsedobject.AreaId = new List<string>() { area.Id };
+                            if (parsedobject.LocationInfo == null)
+                                parsedobject.LocationInfo = new LocationInfoLinked();
+
+                            Dictionary<string, string> areanames = new Dictionary<string, string>();
+                            areanames.Add("de", area.Shortname);
+                            areanames.Add("it", area.Shortname);
+                            areanames.Add("en", area.Shortname);
+                            areanames.Add("nl", area.Shortname);
+                            areanames.Add("cs", area.Shortname);
+                            areanames.Add("pl", area.Shortname);
+                            areanames.Add("fr", area.Shortname);
+                            areanames.Add("ru", area.Shortname);
+
+                            parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
+                        }
+                    }
 
                     //Save parsedobject to DB + Save Rawdata to DB
                     var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.rid, item));
