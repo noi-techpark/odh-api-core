@@ -212,6 +212,10 @@ namespace OdhApiImporter.Helpers
 
                     SIAG.Parser.ParseMuseum.ParseMuseumToPG(mymuseum, mymuseumxml, plz);
 
+                    //ADD MAPPING
+                    var museummuseId = new Dictionary<string, string>() { { "museId", siagid } };
+                    mymuseum.Mapping.TryAddOrUpdate("siag", museummuseId);
+
                     mymuseum.Shortname = mymuseum.Detail["de"].Title.Trim();
 
                     //Suedtirol Type laden
