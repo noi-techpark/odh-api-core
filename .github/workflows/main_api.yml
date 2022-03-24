@@ -7,7 +7,7 @@ on:
 env:
   PROJECT_NAME: odh-tourism-api
   DOCKER_REGISTRY_HOST: ghcr.io
-  DOCKER_IMAGE: ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}
+  DOCKER_IMAGE: ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}-api
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
       - name: Create .env file
         uses: noi-techpark/github-actions/env-file@v2
         env:
-          X_PROJECT_NAME: ${{ env.PROJECT_NAME }}
+          X_COMPOSE_PROJECT_NAME: ${{ env.PROJECT_NAME }}
           X_DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
           X_DOCKER_TAG: ${{ env.DOCKER_TAG }}
           X_SERVER_PORT: 1011
@@ -113,7 +113,7 @@ jobs:
       - name: Create .env file
         uses: noi-techpark/github-actions/env-file@v2
         env:
-          X_PROJECT_NAME: ${{ env.PROJECT_NAME }}
+          X_COMPOSE_PROJECT_NAME: ${{ env.PROJECT_NAME }}
           X_DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
           X_DOCKER_TAG: ${{ env.DOCKER_TAG }}
           X_SERVER_PORT: 1011
