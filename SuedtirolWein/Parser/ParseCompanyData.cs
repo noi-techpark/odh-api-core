@@ -498,6 +498,10 @@ namespace SuedtirolWein.Parser
             mywinecompany.Id = companydata["de"].Element("id").Value;
             mywinecompany.CustomId = companydata["de"].Element("id").Value;
 
+            //ADD MAPPING
+            var suedtirolweinid = new Dictionary<string, string>() { { "id", mywinecompany.Id } };
+            mywinecompany.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
+
             mywinecompany.Source = "SuedtirolWein";
             mywinecompany.SyncSourceInterface = "SuedtirolWein";
             mywinecompany.SyncUpdateMode = "Full";

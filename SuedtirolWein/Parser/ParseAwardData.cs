@@ -33,6 +33,11 @@ namespace SuedtirolWein.Parser
 
             mywine.Id = myawardde.Element("id").Value;
 
+            //ADD MAPPING
+            var suedtirolweinid = new Dictionary<string, string>() { { "id", mywine.Id } };
+            mywine.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
+
+
             string titlede = myawardde.Element("title").Value;
             string winenamede = myawardde.Element("wine").Value;
 
