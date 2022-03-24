@@ -5,8 +5,14 @@ using System.Text;
 
 namespace DataModel
 {
-    public class DDVenue : IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, ISource
+    public class DDVenue : IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware
     {
+        public DDVenue()
+        {
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
+        }
+
         public string Self
         {
             get
@@ -40,6 +46,10 @@ namespace DataModel
 
         [JsonIgnore]
         public string? Source { get; set; }
+
+        [JsonIgnore]
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class ODHData
@@ -47,6 +57,8 @@ namespace DataModel
         public ODHData()
         {
             GpsPoints = new Dictionary<string, GpsInfo>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public LicenseInfo LicenseInfo { get; set; }
@@ -75,6 +87,9 @@ namespace DataModel
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
 
         public List<string> PublishedOn { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class VenueType

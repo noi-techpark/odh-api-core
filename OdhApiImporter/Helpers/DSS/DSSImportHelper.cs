@@ -96,6 +96,14 @@ namespace OdhApiImporter.Helpers.DSS
                         }
                     }
 
+                    //Add AreaInfo from DSS skiarea
+                    var dssskiarearid = (int?)item["skiresort"]["rid"];
+                    if(dssskiarearid != null)
+                    {
+                        //TODO Select Area which has the mapping to dss/rid and fill AreaId Array and LocationInfo.Area
+                        //var area = QueryFactory.
+                    }
+
 
                     //Save parsedobject to DB + Save Rawdata to DB
                     var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.rid, item));

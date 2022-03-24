@@ -26,6 +26,9 @@ namespace DSS.Parser
             myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
             myodhactivitypoilinked.CustomId = dssitem.pid;
 
+            //TODO ADD MAPPING
+
+
             myodhactivitypoilinked.Type = "Anderes";
             myodhactivitypoilinked.SubType = "Aufstiegsanlagen";
 
@@ -81,9 +84,7 @@ namespace DSS.Parser
                     myodhactivitypoilinked.SmgTags.Add(tag);
                 }
             }
-            
-            
-
+                        
             //skiresort TODO Mapping 
 
             //Operationschedule (opening-times, opening-times-summer, season-summer, season-winter)
@@ -530,7 +531,7 @@ namespace DSS.Parser
 
 //Skiresort rid 1 Falzarego
 //Skiresort rid 8 Auronzo 
-//Skiresort rid 7 San Vito di Cadore
+//Skiresort rid 7 San Vito di Cadore  --> not found
 //Skiresort rid 4 Faloria 
 //Skiresort rid 2 Tofana 
 //Skiresort rid 5 Cristallo 
