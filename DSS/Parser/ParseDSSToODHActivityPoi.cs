@@ -130,10 +130,16 @@ namespace DSS.Parser
 
 
             var regionid = (int?)dssitem["regionId"];
-            //isopen?
-            var statewinter = (int?)dssitem["state-winter"];
+            //Isopen
+            var statewinter = (int?)dssitem["state-winter"];            
             //isopen?
             var statesummer = (int?)dssitem["state-summer"];
+
+            if (statewinter == 1 || statesummer == 1)
+                myodhactivitypoilinked.IsOpen = true;
+            else
+                myodhactivitypoilinked.IsOpen = false;                
+
             //?
             var datacenterId = (int?)dssitem["datacenterId"];
 
@@ -276,6 +282,7 @@ namespace DSS.Parser
             var regionid = (int?)dssitem["regionId"];
             //isopen?
             var state = (int?)dssitem["state"];
+            myodhactivitypoilinked.IsOpen = Convert.ToBoolean(state);
              //?
             var datacenterId = (int?)dssitem["data"]["datacenterId"];
 
@@ -296,7 +303,6 @@ namespace DSS.Parser
 
             return myodhactivitypoilinked;
         }
-
 
         private static OperationSchedule ParseDSSLiftToODHOperationScheduleFormat(string season, dynamic data)
         {
@@ -407,7 +413,6 @@ namespace DSS.Parser
             return null;
         }
 
-
         private static List<GpsInfo> ParseDSSLiftToODHGpsInfo(dynamic location, dynamic locationMountain, int? altitudestart = 0, int? altitudeend = 0)
         {
             List<GpsInfo> gpsinfolist = new List<GpsInfo>();
@@ -455,7 +460,6 @@ namespace DSS.Parser
 
             return gpsinfolist;
         }
-
 
         private static List<GpsTrack> ParseToODHGpsTrack(dynamic geoPositionFile)
         {
