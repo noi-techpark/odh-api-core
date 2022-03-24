@@ -26,7 +26,12 @@ namespace DSS.Parser
             myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
             myodhactivitypoilinked.CustomId = dssitem.pid;
 
-            //TODO ADD MAPPING
+            //ADD MAPPING
+            var dssrid = new Dictionary<string, string>() { { "rid", dssitem.rid } };
+            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssrid);
+
+            var dsspid = new Dictionary<string, string>() { { "pid", dssitem.pid } };
+            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dsspid);
 
 
             myodhactivitypoilinked.Type = "Anderes";
@@ -168,6 +173,14 @@ namespace DSS.Parser
 
             myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
             myodhactivitypoilinked.CustomId = dssitem.pid;
+
+            //ADD MAPPING
+            var dssrid = new Dictionary<string, string>() { { "rid", dssitem.rid } };
+            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssrid);
+
+            var dsspid = new Dictionary<string, string>() { { "pid", dssitem.pid } };
+            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dsspid);
+
 
             myodhactivitypoilinked.Type = "Winter";
             myodhactivitypoilinked.SubType = "Skirundtouren Pisten";
