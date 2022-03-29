@@ -90,6 +90,8 @@ namespace DataModel
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
     }
 
     public class VenueType

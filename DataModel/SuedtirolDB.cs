@@ -2459,7 +2459,7 @@ namespace DataModel
     }
 
     //Erweiterte Baseinfos für ARticles
-    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware
+    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2543,6 +2543,8 @@ namespace DataModel
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
