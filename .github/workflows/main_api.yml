@@ -119,7 +119,7 @@ jobs:
           X_SERVER_PORT: 1011
 
           X_ASPNETCORE_ENVIRONMENT: "Production"
-          X_PG_CONNECTION: ${{ secrets.PG_CONNECTION_TEST }}
+          X_PG_CONNECTION: ${{ secrets.PG_CONNECTION_PROD }}
           X_MSS_USER: ${{ secrets.MSS_USER_TEST }}
           X_MSS_PSWD: ${{ secrets.MSS_PSWD_TEST }}
           X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
