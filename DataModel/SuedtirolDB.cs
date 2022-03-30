@@ -41,6 +41,11 @@ namespace DataModel
         DateTime? LastChange { get; set; }
     }
 
+    public interface IMappingAware
+    {
+        IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+    }
+
     public interface IActivateable
     {
         bool Active { get; set; }
@@ -135,8 +140,25 @@ namespace DataModel
         string? Gpstype { get; set; }
         double Latitude { get; set; }
         double Longitude { get; set; }
-        Nullable<double> Altitude { get; set; }
-        string? AltitudeUnitofMeasure { get; set; }
+        double? Altitude { get; set; }
+        string? AltitudeUnitofMeasure { get; set; }        
+    }
+
+    public interface IGPSInfoAware
+    {
+        ICollection<GpsInfo> GpsInfo { get; set; }
+    }
+
+    public interface IDistanceInfoAware
+    {
+        DistanceInfo DistanceInfo { get; set; }
+    }
+
+    public interface IDistanceInfo
+    {
+        Nullable<double> DistanceToDistrict { get; set; }
+
+        Nullable<double> DistanceToMunicipality { get; set; }
     }
 
     public interface IGpsTrack
@@ -421,8 +443,13 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class Area : IIdentifiable, IActivateable, IImportDateassigneable
+    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware
     {
+        public Area()
+        {
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
+        }
         public LicenseInfo LicenseInfo { get; set; }
 
         public string? Id { get; set; }
@@ -444,6 +471,8 @@ namespace DataModel
 
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class GeneralGroup : BaseInfos
@@ -872,7 +901,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource
+    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -880,6 +909,8 @@ namespace DataModel
         {
             AccoDetail = new Dictionary<string, AccoDetail>();
             MssResponseShort = new List<MssResponseShort>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public string? Id { get; set; }
@@ -907,6 +938,9 @@ namespace DataModel
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
+
 
         public string? AccoCategoryId { get; set; }
         public string? AccoTypeId { get; set; }
@@ -967,6 +1001,9 @@ namespace DataModel
         public List<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class AccoRoomInfo
@@ -1026,13 +1063,15 @@ namespace DataModel
         public int TrustYouState { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource
+    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
         public AccoRoom()
         {
             AccoRoomDetail = new Dictionary<string, AccoRoomDetail>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public string Id { get; set; }
@@ -1068,6 +1107,9 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -1565,8 +1607,14 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource
+    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware
     {
+        public Measuringpoint()
+        {
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
+        }
+
         public LicenseInfo LicenseInfo { get; set; }
 
         //IIdentifiable
@@ -1587,6 +1635,8 @@ namespace DataModel
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
+        public DistanceInfo DistanceInfo { get; set; }
+
 
         //Observation
         public string? SnowHeight { get; set; }
@@ -1626,6 +1676,9 @@ namespace DataModel
         public List<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class WeatherObservation
@@ -2118,13 +2171,15 @@ namespace DataModel
     /// </summary>
     #region CommonInfos
 
-    public class Wine : IIdentifiable, IImportDateassigneable,ILicenseInfo, ISource
+    public class Wine : IIdentifiable, IImportDateassigneable,ILicenseInfo, ISource, IMappingAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
         public Wine()
         {
             Detail = new Dictionary<string, Detail>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public string? Id { get; set; }
@@ -2154,6 +2209,9 @@ namespace DataModel
         public ICollection<string>? HasLanguage { get; set; }
 
         public string? Source { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class SuedtirolType : ISuedtirolType
@@ -2192,7 +2250,7 @@ namespace DataModel
     }
 
     //BaseInfos für Districts / Regions / Municipalities
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2200,6 +2258,8 @@ namespace DataModel
         {
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public string Id { get; set; }
@@ -2264,10 +2324,16 @@ namespace DataModel
         public List<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
+
     }
 
     //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
-    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource
+    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2276,6 +2342,8 @@ namespace DataModel
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
             AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public string? Id { get; set; }
@@ -2383,10 +2451,15 @@ namespace DataModel
         public List<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
-    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource
+    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2396,6 +2469,8 @@ namespace DataModel
             ContactInfos = new Dictionary<string, ContactInfos>();
             AdditionalArticleInfos = new Dictionary<string, AdditionalArticleInfos>();
             ArticleLinkInfo = new Dictionary<string, ArticleLinkInfo>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public string? Id { get; set; }
@@ -2465,10 +2540,15 @@ namespace DataModel
         public List<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2476,6 +2556,8 @@ namespace DataModel
         {
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public string? Id { get; set; }
@@ -2542,10 +2624,15 @@ namespace DataModel
         public List<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
-    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource
+    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2560,6 +2647,8 @@ namespace DataModel
             //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
             Hashtag = new Dictionary<string, ICollection<string>>();
             EventDescAdditional = new Dictionary<string, EventDescAdditional>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         //IIdentifiable
@@ -2669,6 +2758,12 @@ namespace DataModel
 
         public ICollection<EventCrossSelling> EventCrossSelling { get; set; }
         public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
+
     }
 
     public class Topic
@@ -2734,6 +2829,12 @@ namespace DataModel
         public string? AltitudeUnitofMeasure { get; set; }
     }
 
+    public class DistanceInfo : IDistanceInfo
+    {
+        public Nullable<double> DistanceToMunicipality { get; set; }
+        public Nullable<double> DistanceToDistrict { get; set; }
+    }
+
     public class GpsTrack : IGpsTrack
     {
         public GpsTrack()
@@ -2793,8 +2894,14 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo
+    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware
     {
+        public WebcamInfo()
+        {
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
+        }
+
         public LicenseInfo? LicenseInfo { get; set; }
 
         //NEW Webcam Properties
@@ -2836,6 +2943,9 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class PublishedonObject
@@ -3339,11 +3449,13 @@ namespace DataModel
 
     #region EBMS
 
-    public class EventShort : IIdentifiable, IImportDateassigneable, ISource
+    public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware
     {
         public EventShort()
         {
             GpsPoints = new Dictionary<string, GpsInfo>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public LicenseInfo? LicenseInfo { get; set; }
@@ -3486,6 +3598,9 @@ namespace DataModel
         public bool? ActiveCommunityApp { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class RoomBooked

@@ -149,8 +149,10 @@ namespace Helper
                 licenseholder = "https://www.sta.bz.it/";
             if (data.Source.ToLower() == "lts")
                 licenseholder = @"https://www.lts.it";
+            if (data.Source.ToLower() == "dss")
+                licenseholder = @"https://www.dolomitisuperski.com/";
 
-            List<string?> allowedsources = new List<string?>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common","sta" };
+            List<string?> allowedsources = new List<string?>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common","sta", "dssliftbase", "dssslopebase" };
 
             if (data.Active)
             {

@@ -93,39 +93,24 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]
         public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken = default)
         {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update EBMS";
+            string updatetype = "all";
+            string source = "ebms";
+
             try
             {
                 EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(settings, QueryFactory, "eventeuracnoi");
 
-                var result = await ebmsimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await ebmsimporthelper.SaveDataToODH(null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "EBMS Eventshorts update succeeded", "", updatedetail, true);
 
-                return Ok(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update succeeded",
-                    recordsmodified = (result.created + result.updated + result.deleted),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
+                return Ok(updateResult);
             }
             catch(Exception ex)
             {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "EBMS Eventshorts update failed", "", updatedetail, ex, true);
+                return BadRequest(updateResult);
             }
         }
 
@@ -174,38 +159,23 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("NINJA/Events/UpdateAll")]
         public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
         {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update Ninja Events";
+            string updatetype = "all";
+            string source = "mobilityapi";
+
             try
             {              
                 NINJAImportHelper ninjaimporthelper = new NINJAImportHelper(settings, QueryFactory);
-                var result = await ninjaimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await ninjaimporthelper.SaveDataToODH(null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja Events update succeeded", "", updatedetail, true);
 
-                return Ok(new UpdateResult
-                {
-                    operation = "Update Ninja Events",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "Ninja Events update succeeded",
-                    recordsmodified = (result.created + result.updated + result.deleted),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update Ninja Events",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "Update Ninja Events failed: " + ex.Message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja Events update failed", "", updatedetail, ex, true);
+                return BadRequest(updateResult);
             }
         }
 
@@ -222,77 +192,46 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("Siag/Weather/Import")]
         public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken = default)
         {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import Weather data";
+            string updatetype = "all";
+            string source = "siag";
+
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
-                var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
+                updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Weather data succeeded", "actual", updatedetail, true);
 
-                return Ok(new UpdateResult
-                {
-                    operation = "Import Weather data",
-                    updatetype = "single",
-                    otherinfo = "actual",
-                    message = "Import Weather data succeeded",
-                    recordsmodified = result.created + result.updated + result.deleted,                    
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
+                return Ok(updateResult);     
             }
             catch (Exception ex)
             {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Import Weather data",
-                    updatetype = "single",
-                    otherinfo = "actual",
-                    message = "Import Weather data failed: " + ex.Message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed", "actual", updatedetail, ex, true);
+                return BadRequest(updateResult);                
             }
         }
 
         [HttpGet, Route("Siag/Weather/Import/{id}")]
         public async Task<IActionResult> ImportWeatherByID(string id, CancellationToken cancellationToken = default)
         {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import Weather data";
+            string updatetype = "single";
+            string source = "siag";
+
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
-                var result = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
+                updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(id, source, operation, updatetype, "Import Weather data succeeded id:" + id.ToString(), "byid", updatedetail, true);
 
-                return Ok(new UpdateResult
-                {
-                    operation = "Import Weather data",
-                    updatetype = "single",
-                    otherinfo = "byid",
-                    id = id,
-                    message = "Import Weather data succeeded id:" + id.ToString(),
-                    recordsmodified = (result.created + result.updated + result.deleted),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
+                return Ok(updateResult);                
             }
             catch (Exception ex)
             {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Import Weather data",
-                    updatetype = "single",
-                    otherinfo = "byid",
-                    message = "Import Weather data failed: id:" + id.ToString() + " error:" + ex.Message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed id:" + id.ToString(), "byid", updatedetail, ex, true);
+                return BadRequest(updateResult);
             }
         }
 
@@ -303,38 +242,24 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("Siag/Museum/UpdateAll")]
         public async Task<IActionResult> ImportMuseum(CancellationToken cancellationToken = default)
         {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import SIAG Museum data";
+            string updatetype = "all";
+            string source = "siag";
+
             try
             {
                 SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "smgpois");
-                var result = await siagimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await siagimporthelper.SaveDataToODH(null, cancellationToken);
 
-                return Ok(new UpdateResult
-                {
-                    operation = "Import SIAG Museum data",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "Import SIAG Museum data succeeded",
-                    recordsmodified = result.created + result.updated + result.deleted,
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data succeeded", "actual", updatedetail, true);
+
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Import Weather data",
-                    updatetype = "single",
-                    otherinfo = "actual",
-                    message = "Import Weather data failed: " + ex.Message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data failed", "actual", updatedetail, ex, true);
+                return BadRequest(updateResult);                
             }
         }
 
@@ -423,45 +348,31 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
-        #region EBMS DATA SYNC (EventShort)
+        #region DSS DATA SYNC
 
         [HttpGet, Route("DSS/{dssentity}/UpdateAll")]
         public async Task<IActionResult> UpdateAllDSSLifts(string dssentity, CancellationToken cancellationToken = default)
         {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update DSS " + dssentity;
+            string updatetype = "all";
+            string source = "siag";            
+
             try
             {
-                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "odhactivitypoi");
-                dssimporthelper.requesttype = DSS.DSSRequestType.liftbase;
+                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "odhactivitypoi");                
+                dssimporthelper.entitytype = dssentity;
+                
+                updatedetail = await dssimporthelper.SaveDataToODH(null, cancellationToken);
 
-                var result = await dssimporthelper.SaveDataToODH(null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update succeeded", "", updatedetail, true);
 
-                return Ok(new UpdateResult
-                {
-                    operation = "Update DSS",
-                    updatetype = "all",
-                    otherinfo = dssentity,
-                    message = "DSS " + dssentity + " update succeeded",
-                    recordsmodified = (result.created + result.updated + result.deleted),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update EBMS",
-                    updatetype = "all",
-                    otherinfo = "",
-                    message = "EBMS Eventshorts update failed: " + ex.Message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update failed", "", updatedetail, ex, true);
+                return BadRequest(updateResult);
             }
         }
 

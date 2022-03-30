@@ -130,6 +130,11 @@ namespace NINJA.Parser
                 EventLinked myevent = new EventLinked();
                 myevent.Id = id.ToUpper();
 
+                //ADD MAPPING
+                var ninjaid = new Dictionary<string, string>() { { "id", id } };
+                myevent.Mapping.TryAddOrUpdate("culture", ninjaid);
+
+
                 string source = !String.IsNullOrEmpty(place.sname) ? place.sname.ToLower() : "ninja";
 
                 Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "event" };

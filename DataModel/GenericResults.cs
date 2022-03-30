@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,12 @@ namespace DataModel
         public int? deleted { get; init; }
 
         public string id { get; init; }
+
+        public string exception { get; init; }
+
+        public string stacktrace { get; init; }
+
+        public string source { get; init; }
     }
 
     public struct UpdateDetail
@@ -56,6 +63,56 @@ namespace DataModel
             }
 
             return new UpdateDetail() { created = created, updated = updated, deleted = deleted };
+        }
+
+        public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
+        {
+            var result = new UpdateResult()
+            {
+                id = id,
+                source = source,
+                operation = operation,
+                updatetype = updatetype,
+                otherinfo = otherinfo,
+                message = message,
+                recordsmodified = (detail.created + detail.updated + detail.deleted),
+                created = detail.created,
+                updated = detail.updated,
+                deleted = detail.deleted,
+                success = true,
+                exception = null,
+                stacktrace = null
+            };
+
+            if(createlog)
+                Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            return result;
+        }
+
+        public static UpdateResult GetErrorUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, Exception ex, bool createlog)
+        {    
+            var result = new UpdateResult()
+            {
+                id = id,
+                source = source,
+                operation = operation,
+                updatetype = updatetype,
+                otherinfo = "",
+                message = message,
+                recordsmodified = (detail.created + detail.updated + detail.deleted),
+                created = detail.created,
+                updated = detail.updated,
+                deleted = detail.deleted,
+                success = false,
+                exception = ex.Message,
+                stacktrace = ex.StackTrace
+            };
+
+            if (createlog)
+                Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            return result;
         }
     }
 }

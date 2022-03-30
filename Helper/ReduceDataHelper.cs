@@ -103,6 +103,7 @@ namespace Helper
             reduced.HasFreeEntrance = mypoi.HasFreeEntrance; //Features/HasFreeEntrance
             //Position/Longitude,Latitude,Altitude
             reduced.GpsInfo = mypoi.GpsInfo;
+            reduced.GpsPoints = mypoi.GpsPoints;            
 
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
             reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForPoi(mypoi.ContactInfos);

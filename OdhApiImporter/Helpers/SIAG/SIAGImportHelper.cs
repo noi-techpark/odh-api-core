@@ -212,6 +212,10 @@ namespace OdhApiImporter.Helpers
 
                     SIAG.Parser.ParseMuseum.ParseMuseumToPG(mymuseum, mymuseumxml, plz);
 
+                    //ADD MAPPING
+                    var museummuseId = new Dictionary<string, string>() { { "museId", siagid } };
+                    mymuseum.Mapping.TryAddOrUpdate("siag", museummuseId);
+
                     mymuseum.Shortname = mymuseum.Detail["de"].Title.Trim();
 
                     //Suedtirol Type laden
@@ -420,7 +424,7 @@ namespace OdhApiImporter.Helpers
                 //Setting LicenseInfo
                 mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
-                var result = await InsertDataToDB(mymuseum, mymuseum.Id, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
+                var result = await InsertDataToDB(mymuseum, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
                 newcounter = newcounter + result.created.Value;
                 updatecounter = updatecounter + result.updated.Value;
 
@@ -458,11 +462,10 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, string idtocheck, KeyValuePair<string, XElement> siagmuseumdata)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, KeyValuePair<string, XElement> siagmuseumdata)
         {
             try
-            {
-                idtocheck = idtocheck.ToUpper();
+            {                
                 odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
 
                 //Set LicenseInfo

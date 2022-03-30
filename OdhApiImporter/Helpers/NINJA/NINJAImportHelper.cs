@@ -84,7 +84,7 @@ namespace OdhApiImporter.Helpers
                             if (idtocheck.Length > 50)
                                 idtocheck = idtocheck.Substring(0, 50);
 
-                            var result = await InsertDataToDB(eventtosave, idtocheck, kvp);
+                            var result = await InsertDataToDB(eventtosave, kvp);
 
                             newimportcounter = newimportcounter + result.created.Value;
                             updateimportcounter = updateimportcounter + result.updated.Value;
@@ -131,11 +131,10 @@ namespace OdhApiImporter.Helpers
             
         //}
 
-        private async Task<PGCRUDResult> InsertDataToDB(EventLinked eventtosave, string idtocheck, KeyValuePair<string, NinjaEvent> ninjaevent)
+        private async Task<PGCRUDResult> InsertDataToDB(EventLinked eventtosave, KeyValuePair<string, NinjaEvent> ninjaevent)
         {
             try
             {
-                idtocheck = idtocheck.ToUpper();
                 eventtosave.Id = eventtosave.Id?.ToUpper();
 
                 //Set LicenseInfo
