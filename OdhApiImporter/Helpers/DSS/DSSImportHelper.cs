@@ -80,6 +80,10 @@ namespace OdhApiImporter.Helpers.DSS
                     await areaquery
                         .GetAllAsObject<AreaLinked>();
 
+                // Get all valid categories
+
+
+
                 //loop trough dss items
                 foreach (var item in dssinput[0].items)
                 {
@@ -133,6 +137,11 @@ namespace OdhApiImporter.Helpers.DSS
                             }
                         }
 
+                        //Add the Categorization Info
+
+                        //Add the AdditionalPoi Info (include Novelty)
+                        //Load Type/Subtype ODHTag and assign 
+
                         //Save parsedobject to DB + Save Rawdata to DB
                         var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
 
@@ -175,10 +184,6 @@ namespace OdhApiImporter.Helpers.DSS
             }
 
             //TODOS all of this stuff, Tags, Categories etc....
-
-            //Categories to display
-
-
 
             return odhactivitypoi;
         }
