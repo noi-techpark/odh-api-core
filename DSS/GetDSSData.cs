@@ -11,11 +11,8 @@ namespace DSS
         slopestatus
     };
 
-
     public class GetDSSData
     {
-        //http://dss.dev.tinext.net/.rest/json-export/export/
-
         public const string serviceurlliftbase = "liftbasis";
         public const string serviceurlliftstatus = "liftstatus";
 
@@ -58,7 +55,6 @@ namespace DSS
             {
                 return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
             }
-
         }
         
         public static async Task<dynamic> GetDSSDataAsync(DSSRequestType dssRequestType, string dssuser, string dsspswd, string serviceurl)
