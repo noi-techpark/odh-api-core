@@ -141,7 +141,7 @@ namespace DSS.Parser
                 myodhactivitypoilinked.IsOpen = false;                
 
             //?
-            var datacenterId = (int?)dssitem["datacenterId"];
+            var datacenterId = (string?)dssitem["datacenterId"];
 
             var winterOperation = (bool?)dssitem["winterOperation"];
             var summerOperation = (bool?)dssitem["summerOperation"];
@@ -284,7 +284,7 @@ namespace DSS.Parser
             var state = (int?)dssitem["state"];
             myodhactivitypoilinked.IsOpen = Convert.ToBoolean(state);
              //?
-            var datacenterId = (int?)dssitem["data"]["datacenterId"];
+            var datacenterId = (string?)dssitem["data"]["datacenterId"];
 
             var sorterSummer = (bool?)dssitem["sorter"];
 

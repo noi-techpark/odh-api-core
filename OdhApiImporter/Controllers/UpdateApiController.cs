@@ -356,7 +356,7 @@ namespace OdhApiImporter.Controllers
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update DSS " + dssentity;
             string updatetype = "all";
-            string source = "siag";            
+            string source = "dss";            
 
             try
             {

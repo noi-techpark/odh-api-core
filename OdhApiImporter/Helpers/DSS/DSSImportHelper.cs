@@ -65,85 +65,88 @@ namespace OdhApiImporter.Helpers.DSS
             int updatecounter = 0;
             int newcounter = 0;
 
-            string lastupdatestr = dssinput[0].lastUpdate;
-            //interface lastupdate
-            DateTime.TryParseExact(lastupdatestr, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastupdate);
-
-            var areaquery = QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From("areas");
-
-            // Get all Areas
-            var arealist =
-                await areaquery
-                    .GetAllAsObject<AreaLinked>();
-
-            //loop trough dss items
-            foreach (var item in dssinput[0].items)
+            if(dssinput != null && dssinput.Count > 0)
             {
-                //Parse DSS Data
-                ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
+                string lastupdatestr = dssinput[0].lastUpdate;
+                //interface lastupdate
+                DateTime.TryParseExact(lastupdatestr, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastupdate);
 
-                if (parsedobject != null)
+                var areaquery = QueryFactory.Query()
+                            .SelectRaw("data")
+                            .From("areas");
+
+                // Get all Areas
+                var arealist =
+                    await areaquery
+                        .GetAllAsObject<AreaLinked>();
+
+                //loop trough dss items
+                foreach (var item in dssinput[0].items)
                 {
-                    //Add the LocationInfo
-                    //TODO if Area can be mapped return locationinfo
-                    if (parsedobject.GpsInfo != null && parsedobject.GpsInfo.Count > 0)
+                    //Parse DSS Data
+                    ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
+
+                    if (parsedobject != null)
                     {
-                        if (parsedobject.GpsInfo.FirstOrDefault().Latitude != 0 && parsedobject.GpsInfo.FirstOrDefault().Longitude != 0)
+                        //Add the LocationInfo
+                        //TODO if Area can be mapped return locationinfo
+                        if (parsedobject.GpsInfo != null && parsedobject.GpsInfo.Count > 0)
                         {
-                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault().Latitude, parsedobject.GpsInfo.FirstOrDefault().Longitude, 30000);
-
-                            if (district != null)
+                            if (parsedobject.GpsInfo.FirstOrDefault().Latitude != 0 && parsedobject.GpsInfo.FirstOrDefault().Longitude != 0)
                             {
-                                var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+                                var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault().Latitude, parsedobject.GpsInfo.FirstOrDefault().Longitude, 30000);
 
-                                parsedobject.LocationInfo = locinfo;
-                                parsedobject.TourismorganizationId = locinfo.TvInfo.Id;
+                                if (district != null)
+                                {
+                                    var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+
+                                    parsedobject.LocationInfo = locinfo;
+                                    parsedobject.TourismorganizationId = locinfo.TvInfo.Id;
+                                }
                             }
                         }
-                    }
 
-                    //Add AreaInfo from DSS skiarea
-                    var dssskiarearid = (int?)item["skiresort"]["rid"];
-                    if(dssskiarearid != null)
-                    {
-                        //TODO Select Area which has the mapping to dss/rid and fill AreaId Array and LocationInfo.Area
-                        var area = arealist.Where(x => x.Mapping.ContainsKey("dss") && x.Mapping["dss"].ContainsKey("rid") && x.Mapping["dss"]["rid"] == dssskiarearid.ToString()).FirstOrDefault();
-
-                        if(area != null)
+                        //Add AreaInfo from DSS skiarea
+                        var dssskiarearid = (int?)item["skiresort"]["rid"];
+                        if (dssskiarearid != null)
                         {
-                            parsedobject.AreaId = new List<string>() { area.Id };
-                            if (parsedobject.LocationInfo == null)
-                                parsedobject.LocationInfo = new LocationInfoLinked();
+                            //TODO Select Area which has the mapping to dss/rid and fill AreaId Array and LocationInfo.Area
+                            var area = arealist.Where(x => x.Mapping.ContainsKey("dss") && x.Mapping["dss"].ContainsKey("rid") && x.Mapping["dss"]["rid"] == dssskiarearid.ToString()).FirstOrDefault();
 
-                            Dictionary<string, string> areanames = new Dictionary<string, string>();
-                            areanames.Add("de", area.Shortname);
-                            areanames.Add("it", area.Shortname);
-                            areanames.Add("en", area.Shortname);
-                            areanames.Add("nl", area.Shortname);
-                            areanames.Add("cs", area.Shortname);
-                            areanames.Add("pl", area.Shortname);
-                            areanames.Add("fr", area.Shortname);
-                            areanames.Add("ru", area.Shortname);
+                            if (area != null)
+                            {
+                                parsedobject.AreaId = new List<string>() { area.Id };
+                                if (parsedobject.LocationInfo == null)
+                                    parsedobject.LocationInfo = new LocationInfoLinked();
 
-                            parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
+                                Dictionary<string, string> areanames = new Dictionary<string, string>();
+                                areanames.Add("de", area.Shortname);
+                                areanames.Add("it", area.Shortname);
+                                areanames.Add("en", area.Shortname);
+                                areanames.Add("nl", area.Shortname);
+                                areanames.Add("cs", area.Shortname);
+                                areanames.Add("pl", area.Shortname);
+                                areanames.Add("fr", area.Shortname);
+                                areanames.Add("ru", area.Shortname);
+
+                                parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
+                            }
                         }
+
+                        //Save parsedobject to DB + Save Rawdata to DB
+                        var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.rid, item));
+
+                        newcounter = newcounter + pgcrudresult.created.Value;
+                        updatecounter = updatecounter + pgcrudresult.updated.Value;
+
+                        WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = true, error = "" });
                     }
-
-                    //Save parsedobject to DB + Save Rawdata to DB
-                    var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.rid, item));
-
-                    newcounter = newcounter + pgcrudresult.created.Value;
-                    updatecounter = updatecounter + pgcrudresult.updated.Value;
-
-                    WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = true, error = "" });
+                    else
+                    {
+                        WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = false, error = entitytype + " could not be parsed" });
+                    }
                 }
-                else
-                {
-                    WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = false, error = entitytype + " could not be parsed" });
-                }
-            }
+            }            
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };
         }
