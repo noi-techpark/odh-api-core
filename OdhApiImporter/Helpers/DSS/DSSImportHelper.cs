@@ -107,11 +107,11 @@ namespace OdhApiImporter.Helpers.DSS
                         }
 
                         //Add AreaInfo from DSS skiarea
-                        var dssskiarearid = (int?)item["skiresort"]["rid"];
+                        var dssskiarearid = (int?)item["skiresort"]["pid"];
                         if (dssskiarearid != null)
                         {
                             //TODO Select Area which has the mapping to dss/rid and fill AreaId Array and LocationInfo.Area
-                            var area = arealist.Where(x => x.Mapping.ContainsKey("dss") && x.Mapping["dss"].ContainsKey("rid") && x.Mapping["dss"]["rid"] == dssskiarearid.ToString()).FirstOrDefault();
+                            var area = arealist.Where(x => x.Mapping.ContainsKey("dss") && x.Mapping["dss"].ContainsKey("pid") && x.Mapping["dss"]["pid"] == dssskiarearid.ToString()).FirstOrDefault();
 
                             if (area != null)
                             {
@@ -134,7 +134,7 @@ namespace OdhApiImporter.Helpers.DSS
                         }
 
                         //Save parsedobject to DB + Save Rawdata to DB
-                        var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.rid, item));
+                        var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
 
                         newcounter = newcounter + pgcrudresult.created.Value;
                         updatecounter = updatecounter + pgcrudresult.updated.Value;
@@ -155,7 +155,7 @@ namespace OdhApiImporter.Helpers.DSS
         public async Task<ODHActivityPoiLinked> ParseDSSDataToODHActivityPoi(dynamic dssinput)
         {
             //id
-            string odhdssid = "dss_" + dssinput.rid;
+            string odhdssid = "dss_" + dssinput.pid;
 
             //Get the ODH Item
             var mydssquery = QueryFactory.Query("smgpois")

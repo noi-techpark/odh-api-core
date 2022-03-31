@@ -23,8 +23,8 @@ namespace DSS.Parser
             myodhactivitypoilinked.SyncSourceInterface = "dssliftbasis";
             myodhactivitypoilinked.SyncUpdateMode = "full";
 
-            myodhactivitypoilinked.Id = "dss_" + (string)dssitem.rid;
-            myodhactivitypoilinked.CustomId = (string)dssitem.pid;
+            myodhactivitypoilinked.Id = "dss_" + (string)dssitem.pid;
+            myodhactivitypoilinked.CustomId = (string)dssitem.rid;
 
             //ADD MAPPING
             var dssrid = new Dictionary<string, string>() { { "rid", (string)dssitem.rid } };
@@ -177,8 +177,8 @@ namespace DSS.Parser
             myodhactivitypoilinked.SyncSourceInterface = "dsspistebasis";
             myodhactivitypoilinked.SyncUpdateMode = "full";
 
-            myodhactivitypoilinked.Id = "dss_" + (string)dssitem.rid;
-            myodhactivitypoilinked.CustomId = (string)dssitem.pid;
+            myodhactivitypoilinked.Id = "dss_" + (string)dssitem.pid;
+            myodhactivitypoilinked.CustomId = (string)dssitem.rid;
 
             //ADD MAPPING
             var dssrid = new Dictionary<string, string>() { { "rid", (string)dssitem.rid } };
