@@ -71,7 +71,7 @@ namespace OdhApiImporter.Helpers.DSS
 
             var areaquery = QueryFactory.Query()
                         .SelectRaw("data")
-                        .From("area");
+                        .From("areas");
 
             // Get all Areas
             var arealist =
