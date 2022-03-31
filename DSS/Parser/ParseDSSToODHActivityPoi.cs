@@ -23,14 +23,14 @@ namespace DSS.Parser
             myodhactivitypoilinked.SyncSourceInterface = "dssliftbasis";
             myodhactivitypoilinked.SyncUpdateMode = "full";
 
-            myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
-            myodhactivitypoilinked.CustomId = dssitem.pid;
+            myodhactivitypoilinked.Id = "dss_" + (string)dssitem.rid;
+            myodhactivitypoilinked.CustomId = (string)dssitem.pid;
 
             //ADD MAPPING
-            var dssrid = new Dictionary<string, string>() { { "rid", dssitem.rid } };
+            var dssrid = new Dictionary<string, string>() { { "rid", (string)dssitem.rid } };
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssrid);
 
-            var dsspid = new Dictionary<string, string>() { { "pid", dssitem.pid } };
+            var dsspid = new Dictionary<string, string>() { { "pid", (string)dssitem.pid } };
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dsspid);
 
 
@@ -177,14 +177,14 @@ namespace DSS.Parser
             myodhactivitypoilinked.SyncSourceInterface = "dsspistebasis";
             myodhactivitypoilinked.SyncUpdateMode = "full";
 
-            myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
-            myodhactivitypoilinked.CustomId = dssitem.pid;
+            myodhactivitypoilinked.Id = "dss_" + (string)dssitem.rid;
+            myodhactivitypoilinked.CustomId = (string)dssitem.pid;
 
             //ADD MAPPING
-            var dssrid = new Dictionary<string, string>() { { "rid", dssitem.rid } };
+            var dssrid = new Dictionary<string, string>() { { "rid", (string)dssitem.rid } };
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssrid);
 
-            var dsspid = new Dictionary<string, string>() { { "pid", dssitem.pid } };
+            var dsspid = new Dictionary<string, string>() { { "pid", (string)dssitem.pid } };
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dsspid);
 
 
