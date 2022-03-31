@@ -35,6 +35,6 @@ services:
       ASPNETCORE_RavenConfig__MessagePassword: ${RAVEN_SERVICEURL}   
       ASPNETCORE_DSSConfig__Username: ${DSS_USER}
       ASPNETCORE_DSSConfig__Password: ${DSS_PSWD}
-      ASPNETCORE_DSSConfig__MessagePassword: ${DSS_SERVICEURL}   
+      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}   
     ports:
       - "60210:80"
