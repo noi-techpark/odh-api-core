@@ -5,7 +5,17 @@ on:
     paths:
       - "OdhApiImporter/**"
       - "DataModel/**"
+      - "DSS/**"
+      - "EBMS/**"
+      - "LCS/**"
+      - "NINJA/**"
+      - "RAVEN/**"
+      - "SIAG/**"
+      - "STA/**"
+      - "SuedtirolWein/**"
+      - "Helper/**"
       - ".github/workflows/main_importer.yml"
+      - "infrastructure/docker-compose.run.yml"
   pull_request:
     paths:
       - "OdhApiImporter/**"
