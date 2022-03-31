@@ -176,6 +176,10 @@ namespace OdhApiImporter.Helpers.DSS
 
             //TODOS all of this stuff, Tags, Categories etc....
 
+            //Categories to display
+
+
+
             return odhactivitypoi;
         }
 

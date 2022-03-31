@@ -38,9 +38,9 @@ namespace DSS.Parser
             myodhactivitypoilinked.SubType = "Aufstiegsanlagen";
 
             myodhactivitypoilinked.SmgTags = new List<string>();
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type);
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType);
-            myodhactivitypoilinked.SmgTags.Add("Weitere Aufstiegsanlagen"); //?
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
+            myodhactivitypoilinked.SmgTags.Add("weitere aufstiegsanlagen"); //?
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 
@@ -192,12 +192,12 @@ namespace DSS.Parser
             myodhactivitypoilinked.SubType = "Skirundtouren Pisten";
 
             myodhactivitypoilinked.SmgTags = new List<string>();
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type);
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType);
-            myodhactivitypoilinked.SmgTags.Add("Pisten");
-            myodhactivitypoilinked.SmgTags.Add("Ski Alpin");
-            myodhactivitypoilinked.SmgTags.Add("Piste");
-            myodhactivitypoilinked.SmgTags.Add("Weitere Pisten"); //?
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
+            myodhactivitypoilinked.SmgTags.Add("pisten");
+            myodhactivitypoilinked.SmgTags.Add("ski alpin");
+            myodhactivitypoilinked.SmgTags.Add("piste");
+            myodhactivitypoilinked.SmgTags.Add("weitere pisten"); //?
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 
@@ -487,7 +487,7 @@ namespace DSS.Parser
                 var flagstring = flag.GetDescription<DSSTypeAufstiegsanlagen>();
 
                 if (flagstring != null)
-                    odhtagstoadd.Add(flagstring);
+                    odhtagstoadd.Add(flagstring.ToLower());
 
                 //TODO Add Sessellift if it is of type 
             }
