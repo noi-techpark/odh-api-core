@@ -109,7 +109,7 @@ namespace OdhApiImporter.Helpers.DSS
                     if(dssskiarearid != null)
                     {
                         //TODO Select Area which has the mapping to dss/rid and fill AreaId Array and LocationInfo.Area
-                        var area = arealist.Where(x => x.Mapping["dss"]["rid"] == dssskiarearid.ToString()).FirstOrDefault();
+                        var area = arealist.Where(x => x.Mapping.ContainsKey("dss") && x.Mapping["dss"].ContainsKey("rid") && x.Mapping["dss"]["rid"] == dssskiarearid.ToString()).FirstOrDefault();
 
                         if(area != null)
                         {
