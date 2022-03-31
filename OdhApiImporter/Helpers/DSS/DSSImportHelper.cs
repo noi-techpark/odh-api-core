@@ -73,16 +73,14 @@ namespace OdhApiImporter.Helpers.DSS
                         .SelectRaw("data")
                         .From("area");
 
-            // Get paginated data
+            // Get all Areas
             var arealist =
                 await areaquery
                     .GetAllAsObject<AreaLinked>();
 
-
-            //loop trough items
+            //loop trough dss items
             foreach (var item in dssinput[0].items)
             {
-
                 //Parse DSS Data
                 ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
 
