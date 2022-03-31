@@ -75,6 +75,9 @@ jobs:
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
           X_RAVEN_PSWD: ${{ secrets.RAVEN_PSWD_TEST }}
+          X_DSS_SERVICEURL: "http://dss.dev.tinext.net/.rest/json-export/export/"
+          X_DSS_USER: ${{ secrets.DSS_USER_TEST }}
+          X_DSS_PSWD: ${{ secrets.DSS_PSWD_TEST }}
           X_API_URL: ${{ env.API_URL }}
 
       - name: Build and push 
@@ -140,6 +143,9 @@ jobs:
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
           X_RAVEN_PSWD: ${{ secrets.RAVEN_PSWD_TEST }}
+          X_DSS_SERVICEURL: "http://dss.dev.tinext.net/.rest/json-export/export/"
+          X_DSS_USER: ${{ secrets.DSS_USER_TEST }}
+          X_DSS_PSWD: ${{ secrets.DSS_PSWD_TEST }}
           X_API_URL: ${{ env.API_URL }}
 
       - name: Build and push 
