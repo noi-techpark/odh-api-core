@@ -288,10 +288,10 @@ namespace OdhApiCore.Controllers.api
                 }
                 else if (source == "dss")
                 {
-                    if (!sourcelistnew.Contains("dssliftbase"))
-                        sourcelistnew.Add("dssliftbase");
-                    if (!sourcelistnew.Contains("dssslopebase"))
-                        sourcelistnew.Add("dssslopebase");
+                    if (!sourcelistnew.Contains("dssliftbasis"))
+                        sourcelistnew.Add("dssliftbasis");
+                    if (!sourcelistnew.Contains("dsspistebasis"))
+                        sourcelistnew.Add("dsspistebasis");
                 }
             }
 
