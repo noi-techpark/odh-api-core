@@ -20,17 +20,17 @@ namespace DSS.Parser
             myodhactivitypoilinked.SmgActive = true;
 
             myodhactivitypoilinked.Source = "dss";
-            myodhactivitypoilinked.SyncSourceInterface = "dssliftbasis";
+            myodhactivitypoilinked.SyncSourceInterface = "dssliftbase";
             myodhactivitypoilinked.SyncUpdateMode = "full";
 
-            myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
-            myodhactivitypoilinked.CustomId = dssitem.pid;
+            myodhactivitypoilinked.Id = "dss_" + (string)dssitem.pid;
+            myodhactivitypoilinked.CustomId = (string)dssitem.rid;
 
             //ADD MAPPING
-            var dssrid = new Dictionary<string, string>() { { "rid", dssitem.rid } };
+            var dssrid = new Dictionary<string, string>() { { "rid", (string)dssitem.rid } };
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssrid);
 
-            var dsspid = new Dictionary<string, string>() { { "pid", dssitem.pid } };
+            var dsspid = new Dictionary<string, string>() { { "pid", (string)dssitem.pid } };
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dsspid);
 
 
@@ -38,9 +38,9 @@ namespace DSS.Parser
             myodhactivitypoilinked.SubType = "Aufstiegsanlagen";
 
             myodhactivitypoilinked.SmgTags = new List<string>();
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type);
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType);
-            myodhactivitypoilinked.SmgTags.Add("Weitere Aufstiegsanlagen"); //?
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
+            myodhactivitypoilinked.SmgTags.Add("weitere aufstiegsanlagen"); //?
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 
@@ -141,7 +141,7 @@ namespace DSS.Parser
                 myodhactivitypoilinked.IsOpen = false;                
 
             //?
-            var datacenterId = (int?)dssitem["datacenterId"];
+            var datacenterId = (string?)dssitem["datacenterId"];
 
             var winterOperation = (bool?)dssitem["winterOperation"];
             var summerOperation = (bool?)dssitem["summerOperation"];
@@ -174,17 +174,17 @@ namespace DSS.Parser
             myodhactivitypoilinked.SmgActive = true;
 
             myodhactivitypoilinked.Source = "dss";
-            myodhactivitypoilinked.SyncSourceInterface = "dsspistebasis";
+            myodhactivitypoilinked.SyncSourceInterface = "dssslopebase";
             myodhactivitypoilinked.SyncUpdateMode = "full";
 
-            myodhactivitypoilinked.Id = "dss_" + dssitem.rid;
-            myodhactivitypoilinked.CustomId = dssitem.pid;
+            myodhactivitypoilinked.Id = "dss_" + (string)dssitem.pid;
+            myodhactivitypoilinked.CustomId = (string)dssitem.rid;
 
             //ADD MAPPING
-            var dssrid = new Dictionary<string, string>() { { "rid", dssitem.rid } };
+            var dssrid = new Dictionary<string, string>() { { "rid", (string)dssitem.rid } };
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssrid);
 
-            var dsspid = new Dictionary<string, string>() { { "pid", dssitem.pid } };
+            var dsspid = new Dictionary<string, string>() { { "pid", (string)dssitem.pid } };
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dsspid);
 
 
@@ -192,12 +192,12 @@ namespace DSS.Parser
             myodhactivitypoilinked.SubType = "Skirundtouren Pisten";
 
             myodhactivitypoilinked.SmgTags = new List<string>();
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type);
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType);
-            myodhactivitypoilinked.SmgTags.Add("Pisten");
-            myodhactivitypoilinked.SmgTags.Add("Ski Alpin");
-            myodhactivitypoilinked.SmgTags.Add("Piste");
-            myodhactivitypoilinked.SmgTags.Add("Weitere Pisten"); //?
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
+            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
+            myodhactivitypoilinked.SmgTags.Add("pisten");
+            myodhactivitypoilinked.SmgTags.Add("ski alpin");
+            myodhactivitypoilinked.SmgTags.Add("piste");
+            myodhactivitypoilinked.SmgTags.Add("weitere pisten"); //?
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 
@@ -284,7 +284,7 @@ namespace DSS.Parser
             var state = (int?)dssitem["state"];
             myodhactivitypoilinked.IsOpen = Convert.ToBoolean(state);
              //?
-            var datacenterId = (int?)dssitem["data"]["datacenterId"];
+            var datacenterId = (string?)dssitem["data"]["datacenterId"];
 
             var sorterSummer = (bool?)dssitem["sorter"];
 
@@ -487,7 +487,7 @@ namespace DSS.Parser
                 var flagstring = flag.GetDescription<DSSTypeAufstiegsanlagen>();
 
                 if (flagstring != null)
-                    odhtagstoadd.Add(flagstring);
+                    odhtagstoadd.Add(flagstring.ToLower());
 
                 //TODO Add Sessellift if it is of type 
             }

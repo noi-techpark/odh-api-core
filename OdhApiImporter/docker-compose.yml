@@ -30,5 +30,11 @@ services:
       ASPNETCORE_EBMSConfig__EBMSUser: ${EBMS_USER}
       ASPNETCORE_EBMSConfig__EBMSPassword: ${EBMS_PASS}
       ASPNETCORE_DataBrowserConfig__Url: ${DATABROWSER_URL}
+      ASPNETCORE_RavenConfig__Username: ${RAVEN_USER}
+      ASPNETCORE_RavenConfig__Password: ${RAVEN_PSWD}
+      ASPNETCORE_RavenConfig__MessagePassword: ${RAVEN_SERVICEURL}   
+      ASPNETCORE_DSSConfig__Username: ${DSS_USER}
+      ASPNETCORE_DSSConfig__Password: ${DSS_PSWD}
+      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}   
     ports:
       - "60210:80"

@@ -31,6 +31,9 @@ services:
       ASPNETCORE_RavenConfig__ServiceUrl: ${RAVEN_SERVICEURL}
       ASPNETCORE_RavenConfig__Username: ${RAVEN_USER}
       ASPNETCORE_RavenConfig__Password: ${RAVEN_PSWD}
+      ASPNETCORE_DSSConfig__Username: ${DSS_USER}
+      ASPNETCORE_DSSConfig__Password: ${DSS_PSWD}
+      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}   
     restart: unless-stopped
     ports:
       - "${SERVER_PORT}:80"

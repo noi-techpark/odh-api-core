@@ -1363,8 +1363,10 @@ namespace DataModel
         public string? t { get; set; }
         public string? vaxcode { get; set; }
         public string? w { get; set; }
-        public string? wmax { get; set; }
+        public string? wMax { get; set; }
         public string? sd { get; set; }
+        public string? gs { get; set; }
+        public string? wt { get; set; }
         public string? visibility { get; set; }
         public string? zoomLevel { get; set; }
 

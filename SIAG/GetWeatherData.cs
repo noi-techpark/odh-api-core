@@ -163,11 +163,13 @@ namespace SIAG
                     myrealtimeweather.q = row.q;
                     myrealtimeweather.rh = row.rh;
                     myrealtimeweather.sd = row.sd;
+                    myrealtimeweather.gs = row.gs;
+                    myrealtimeweather.wt = row.wt;
                     myrealtimeweather.t = row.t;
                     myrealtimeweather.vaxcode = row.vaxcode;
                     myrealtimeweather.visibility = row.visibility;
                     myrealtimeweather.w = row.w;
-                    myrealtimeweather.wmax = row.wmax;
+                    myrealtimeweather.wMax = row.wMax;
                     myrealtimeweather.zoomLevel = row.zoomlevel;
 
                     List<RealTimeMeasurements> myrealtimemeasurments = new List<RealTimeMeasurements>();
@@ -229,11 +231,13 @@ namespace SIAG
                 myrealtimeweather.q = row.q;
                 myrealtimeweather.rh = row.rh;
                 myrealtimeweather.sd = row.sd;
+                myrealtimeweather.gs = row.gs;
+                myrealtimeweather.wt = row.wt;
                 myrealtimeweather.t = row.t;
                 myrealtimeweather.vaxcode = row.vaxcode;
                 myrealtimeweather.visibility = row.visibility;
                 myrealtimeweather.w = row.w;
-                myrealtimeweather.wmax = row.wmax;
+                myrealtimeweather.wMax = row.wMax;
                 myrealtimeweather.zoomLevel = row.zoomlevel;
 
                 List<RealTimeMeasurements> myrealtimemeasurments = new List<RealTimeMeasurements>();
