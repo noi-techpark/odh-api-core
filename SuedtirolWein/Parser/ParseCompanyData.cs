@@ -163,18 +163,18 @@ namespace SuedtirolWein.Parser
                 if(imageurlmedia != myimagegallery2.ImageUrl)
                     myimagegallerylist.Add(myimagegallery2);
             }
-            if (companydata["de"].Element("logo") != null)
-            {
-                ImageGallery myimagegallery3 = new ImageGallery();
-                myimagegallery3.ImageUrl = companydata["de"].Element("logo").Value;
-                myimagegallery3.ImageSource = "SuedtirolWein";
-                myimagegallery3.IsInGallery = true;
-                myimagegallery3.ListPosition = 2;
-                myimagegallery3.CopyRight = "Suedtirol Wein";
+            //if (companydata["de"].Element("logo") != null)
+            //{
+            //    ImageGallery myimagegallery3 = new ImageGallery();
+            //    myimagegallery3.ImageUrl = companydata["de"].Element("logo").Value;
+            //    myimagegallery3.ImageSource = "SuedtirolWein";
+            //    myimagegallery3.IsInGallery = true;
+            //    myimagegallery3.ListPosition = 2;
+            //    myimagegallery3.CopyRight = "Suedtirol Wein";
 
-                if (imageurlmedia != myimagegallery3.ImageUrl)
-                    myimagegallerylist.Add(myimagegallery3);
-            }
+            //    if (imageurlmedia != myimagegallery3.ImageUrl)
+            //        myimagegallerylist.Add(myimagegallery3);
+            //}
 
             mywinecompany.ImageGallery = myimagegallerylist;
         }
