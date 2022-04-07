@@ -129,7 +129,7 @@ namespace OdhApiCore.Controllers
 
 
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
-                var maintypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
                 var query = 
                     QueryFactory.Query()

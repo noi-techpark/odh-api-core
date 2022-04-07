@@ -146,16 +146,37 @@ namespace OdhApiImporter.Helpers.DSS
                             }
                         }
 
-                        //Add the Categorization Info
-                        foreach(var lang in parsedobject.HasLanguage)
+                        //Setting Categorization by Valid Tags
+                        var currentcategories = validcategories.Where(x => parsedobject.SmgTags.Select(y => y.ToLower()).Contains(x.Id.ToLower()));
+
+                        foreach (var languagecategory in parsedobject.HasLanguage)
                         {
 
+                            if (parsedobject.AdditionalPoiInfos == null)
+                                parsedobject.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
+
+                            //Set MainType, SubType, PoiType
+                            var additionalpoiinfo = new AdditionalPoiInfos();
+                            additionalpoiinfo.Language = languagecategory;
+                            additionalpoiinfo.MainType = currentcategories.Where(x => x.Id == parsedobject.Type).FirstOrDefault().TagName[languagecategory];
+                            additionalpoiinfo.SubType = currentcategories.Where(x => x.Id == parsedobject.SubType).FirstOrDefault().TagName[languagecategory];
+
+                            //Add the AdditionalPoi Info (include Novelty)
+                            additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
+                            
+                            foreach (var smgtagtotranslate in currentcategories)
+                            {
+                                if (additionalpoiinfo.Categories == null)
+                                    additionalpoiinfo.Categories = new List<string>();
+
+                                if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && !additionalpoiinfo.Categories.Contains(smgtagtotranslate.TagName[languagecategory].Trim()))
+                                    additionalpoiinfo.Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
+                            }
+
+                            parsedobject.AdditionalPoiInfos.TryAddOrUpdate(languagecategory, additionalpoiinfo);
                         }
-
-
-                        //Add the AdditionalPoi Info (include Novelty)
-                        //Load Type/Subtype ODHTag and assign 
-
+                        
+                        
                         //Save parsedobject to DB + Save Rawdata to DB
                         var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
 
