@@ -84,6 +84,7 @@ namespace OdhApiImporter.Helpers.DSS
                             .SelectRaw("data")
                             .From("smgtags")
                             .ODHTagValidForEntityFilter(new List<string>() { "winter" })
+                            .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
                             .ODHTagDisplayAsCategoryFilter(true);
 
                 // Get all valid categories
@@ -146,7 +147,10 @@ namespace OdhApiImporter.Helpers.DSS
                         }
 
                         //Add the Categorization Info
+                        foreach(var lang in parsedobject.HasLanguage)
+                        {
 
+                        }
 
 
                         //Add the AdditionalPoi Info (include Novelty)

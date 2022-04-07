@@ -467,13 +467,17 @@ namespace OdhApiCore.Controllers.api
             {
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{TagName,{language}\\}}' as \"Name\"";
 
-                //TODO is this needed or better to not filter?
-                //string where = $"data#>>'\\{{TagName,{language}\\}}' NOT LIKE ''";
+            //Hack
+            if (validforentity == "odhactivitypoi")
+            {
+                validforentity.Replace("odhactivitypoi", "smgpoi");
+            }            
 
-                var mysmgtagtypelist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+            //var maintypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-                //Custom Fields filter
-                if (fields.Length > 0)
+            //Custom Fields filter
+            if (fields.Length > 0)
                     select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
@@ -482,7 +486,9 @@ namespace OdhApiCore.Controllers.api
                        .From("smgtags")
                         .ODHTagWhereExpression(
                             languagelist: new List<string>(),
-                            smgtagtypelist: mysmgtagtypelist,
+                            mainentitylist: new List<string>(),
+                            validforentitylist: validforentitytypeslist,
+                            displayascategory: null,
                             searchfilter: searchfilter,
                             language: language,
                             filterClosedData: FilterClosedData
