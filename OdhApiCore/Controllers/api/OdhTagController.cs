@@ -115,9 +115,13 @@ namespace OdhApiCore.Controllers
             {
                 //Hack
                 if (smgtagtype == "odhactivitypoi")
-                    smgtagtype = "smgpoi";
+                {
+                    smgtagtype.Replace("odhactivitypoi", "smgpoi");
+                }                    
 
                 var mysmgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                //TODO on ValidForEntity there is not everytime the Main category assigned?
 
                 var query = 
                     QueryFactory.Query()
