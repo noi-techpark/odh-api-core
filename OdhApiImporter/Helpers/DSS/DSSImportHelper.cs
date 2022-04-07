@@ -80,8 +80,16 @@ namespace OdhApiImporter.Helpers.DSS
                     await areaquery
                         .GetAllAsObject<AreaLinked>();
 
-                // Get all valid categories
+                var categoriesquery = QueryFactory.Query()
+                            .SelectRaw("data")
+                            .From("smgtags")
+                            .ODHTagValidForEntityFilter(new List<string>() { "winter" })
+                            .ODHTagDisplayAsCategoryFilter(true);
 
+                // Get all valid categories
+                var validcategories =
+                    await categoriesquery
+                            .GetAllAsObject<ODHTagLinked>();
 
 
                 //loop trough dss items
@@ -138,6 +146,8 @@ namespace OdhApiImporter.Helpers.DSS
                         }
 
                         //Add the Categorization Info
+
+
 
                         //Add the AdditionalPoi Info (include Novelty)
                         //Load Type/Subtype ODHTag and assign 

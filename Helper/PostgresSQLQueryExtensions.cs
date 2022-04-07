@@ -778,6 +778,15 @@ namespace Helper
                smgtagtype => new { ValidForEntity = new[] { smgtagtype.ToLower() } }
            );
 
+        public static Query ODHTagDisplayAsCategoryFilter(this Query query, bool? displayascategory) =>
+           query.When(
+                displayascategory != null,
+                query => query.WhereJsonb(
+                    "DisplayAsCategory",
+                    displayascategory ?? false
+                )
+            );
+
         //AlpineBits
         public static Query AlpineBitsAccommodationIdFilter(this Query query, IReadOnlyCollection<string> accommodationids) =>
             query.WhereInJsonb(

@@ -714,7 +714,7 @@ namespace Helper
 
         //Return Where and Parameters for Wine
         public static Query ODHTagWhereExpression(
-            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> smgtagtypelist,
+            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> smgtagtypelist, bool? displayascategory,
             string? searchfilter, string? language, bool filterClosedData)
         {
             LogMethodInfo(
@@ -726,6 +726,7 @@ namespace Helper
             return query
                 .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
                 .ODHTagValidForEntityFilter(smgtagtypelist)
+                .ODHTagDisplayAsCategoryFilter(displayascategory)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
