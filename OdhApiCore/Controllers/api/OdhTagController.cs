@@ -53,6 +53,8 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetODHTagsAsync(
             string? language = null,
             string? validforentity = null,
+            string? mainentity = null,
+            bool? displayascategory = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -67,7 +69,7 @@ namespace OdhApiCore.Controllers
                 language = localizationlanguage;
 
 
-            return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(), 
+            return await Get(language, mainentity, validforentity, displayascategory, fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
         }
@@ -107,21 +109,25 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> Get(string? language, string? smgtagtype, string[] fields,
+        private Task<IActionResult> Get(string? language, string? maintype, string? validforentity, bool? displayascategory, string[] fields,
             string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 //Hack
-                if (smgtagtype == "odhactivitypoi")
+                if (validforentity == "odhactivitypoi")
                 {
-                    smgtagtype.Replace("odhactivitypoi", "smgpoi");
-                }                    
+                    validforentity.Replace("odhactivitypoi", "smgpoi");
+                }
+                if (maintype == "odhactivitypoi")
+                {
+                    maintype.Replace("odhactivitypoi", "smgpoi");
+                }
 
-                var mysmgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-                //TODO on ValidForEntity there is not everytime the Main category assigned?
+                var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var maintypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
                 var query = 
                     QueryFactory.Query()
@@ -129,7 +135,9 @@ namespace OdhApiCore.Controllers
                     .From("smgtags")
                     .ODHTagWhereExpression(
                         languagelist: new List<string>(), 
-                        smgtagtypelist: mysmgtagtypelist,
+                        mainentitylist: maintypeslist,
+                        validforentitylist: validforentitytypeslist,
+                        displayascategory: displayascategory,
                         searchfilter: searchfilter,
                         language: language,
                         filterClosedData: FilterClosedData
@@ -221,4 +229,6 @@ namespace OdhApiCore.Controllers
 
         #endregion
     }
+
+
 }

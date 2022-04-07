@@ -772,10 +772,17 @@ namespace Helper
                 )
             );
 
-        public static Query ODHTagValidForEntityFilter(this Query query, IReadOnlyCollection<string> smgtagtypelist) =>
+        public static Query ODHTagMainEntityFilter(this Query query, IReadOnlyCollection<string> mainentitylist) =>
            query.WhereInJsonb(
-               smgtagtypelist,
-               smgtagtype => new { ValidForEntity = new[] { smgtagtype.ToLower() } }
+               list: mainentitylist,
+               "MainEntity",
+               id => id.ToLower()
+           );
+
+        public static Query ODHTagValidForEntityFilter(this Query query, IReadOnlyCollection<string> validforentitylist) =>
+           query.WhereInJsonb(
+               validforentitylist,
+               validforentity => new { ValidForEntity = new[] { validforentity.ToLower() } }
            );
 
         public static Query ODHTagDisplayAsCategoryFilter(this Query query, bool? displayascategory) =>
