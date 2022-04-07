@@ -80,10 +80,21 @@ namespace OdhApiImporter.Helpers.DSS
                     await areaquery
                         .GetAllAsObject<AreaLinked>();
 
+                var validforentity = new List<string>();
+
+                if (entitytype.ToLower() == "lift")
+                {
+                    validforentity.Add("anderes");                    
+                }
+                else if (entitytype.ToLower() == "slope")
+                {
+                    validforentity.Add("winter");
+                }
+
                 var categoriesquery = QueryFactory.Query()
                             .SelectRaw("data")
                             .From("smgtags")
-                            .ODHTagValidForEntityFilter(new List<string>() { "winter" })
+                            .ODHTagValidForEntityFilter(validforentity)
                             .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
                             .ODHTagDisplayAsCategoryFilter(true);
 
@@ -158,8 +169,8 @@ namespace OdhApiImporter.Helpers.DSS
                             //Set MainType, SubType, PoiType
                             var additionalpoiinfo = new AdditionalPoiInfos();
                             additionalpoiinfo.Language = languagecategory;
-                            additionalpoiinfo.MainType = currentcategories.Where(x => x.Id == parsedobject.Type).FirstOrDefault().TagName[languagecategory];
-                            additionalpoiinfo.SubType = currentcategories.Where(x => x.Id == parsedobject.SubType).FirstOrDefault().TagName[languagecategory];
+                            additionalpoiinfo.MainType = validcategories.Where(x => x.Id == parsedobject.Type).FirstOrDefault().TagName[languagecategory];
+                            additionalpoiinfo.SubType = validcategories.Where(x => x.Id == parsedobject.SubType).FirstOrDefault().TagName[languagecategory];
 
                             //Add the AdditionalPoi Info (include Novelty)
                             additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
