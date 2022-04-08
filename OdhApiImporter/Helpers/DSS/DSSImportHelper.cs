@@ -162,10 +162,22 @@ namespace OdhApiImporter.Helpers.DSS
                                 areanames.Add("ru", area.Shortname);
 
                                 parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
+
+                                //Use RegionId, TVId from Area
+                                if(!String.IsNullOrEmpty(area.RegionId))
+                                    parsedobject.LocationInfo.RegionInfo = new RegionInfoLinked() { Id = area.RegionId, Name = null };
+                                if (!String.IsNullOrEmpty(area.TourismvereinId))
+                                    parsedobject.LocationInfo.TvInfo = new TvInfoLinked() { Id = area.TourismvereinId, Name = null };
+                                if (!String.IsNullOrEmpty(area.MunicipalityId))
+                                    parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = area.MunicipalityId, Name = null };
+
                             }
 
-                            //TODO Use RegionId, TVId from Area?
+
                         }
+
+                        
+
 
                         //Setting Categorization by Valid Tags
                         var currentcategories = validcategories.Where(x => parsedobject.SmgTags.Select(y => y.ToLower()).Contains(x.Id.ToLower()));
@@ -192,7 +204,7 @@ namespace OdhApiImporter.Helpers.DSS
                             if (entitytype.ToLower() == "slope")
                                 additionalpoiinfo.Novelty = (string)item["info-text-winter"][languagecategory];
 
-                            foreach (var smgtagtotranslate in currentcategories)
+                            foreach (var smgtagtotranslate in currentcategories.Where(x => x.DisplayAsCategory == true))
                             {
                                 if (additionalpoiinfo.Categories == null)
                                     additionalpoiinfo.Categories = new List<string>();
