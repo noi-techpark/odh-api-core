@@ -164,12 +164,21 @@ namespace OdhApiImporter.Helpers.DSS
                                 parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
 
                                 //Use RegionId, TVId from Area
-                                if(!String.IsNullOrEmpty(area.RegionId))
-                                    parsedobject.LocationInfo.RegionInfo = new RegionInfoLinked() { Id = area.RegionId, Name = null };
-                                if (!String.IsNullOrEmpty(area.TourismvereinId))
-                                    parsedobject.LocationInfo.TvInfo = new TvInfoLinked() { Id = area.TourismvereinId, Name = null };
-                                if (!String.IsNullOrEmpty(area.MunicipalityId))
-                                    parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = area.MunicipalityId, Name = null };
+                                if (parsedobject.LocationInfo.RegionInfo == null)
+                                    if (!String.IsNullOrEmpty(area.RegionId))
+                                        parsedobject.LocationInfo.RegionInfo = new RegionInfoLinked() { Id = area.RegionId, Name = null };
+                                
+                                if (parsedobject.LocationInfo.TvInfo == null)
+                                    if (!String.IsNullOrEmpty(area.TourismvereinId))
+                                    {
+                                        parsedobject.LocationInfo.TvInfo = new TvInfoLinked() { Id = area.TourismvereinId, Name = null };
+                                        parsedobject.TourismorganizationId = area.TourismvereinId;
+                                    }
+                                        
+
+                                if (parsedobject.LocationInfo.MunicipalityInfo == null)
+                                    if (!String.IsNullOrEmpty(area.MunicipalityId))
+                                        parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = area.MunicipalityId, Name = null };
 
                             }
                         }
