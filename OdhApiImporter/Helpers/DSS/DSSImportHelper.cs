@@ -84,25 +84,33 @@ namespace OdhApiImporter.Helpers.DSS
 
                 if (entitytype.ToLower() == "lift")
                 {
-                    validforentity.Add("anderes");                    
+                    validforentity.Add("anderes");
                 }
                 else if (entitytype.ToLower() == "slope")
                 {
                     validforentity.Add("winter");
                 }
 
-                var categoriesquery = QueryFactory.Query()
+                var validcategories = new List<ODHTagLinked>();
+
+                // Get all valid categories
+
+                var subcategories = await QueryFactory.Query()
                             .SelectRaw("data")
                             .From("smgtags")
                             .ODHTagValidForEntityFilter(validforentity)
                             .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
-                            .ODHTagDisplayAsCategoryFilter(true);
-
-                // Get all valid categories
-                var validcategories =
-                    await categoriesquery
                             .GetAllAsObject<ODHTagLinked>();
 
+                //Temporary get winter/anderes tag and add it to validcategories
+                var maincategories = await QueryFactory.Query()
+                            .SelectRaw("data")
+                            .From("smgtags")
+                            .IdIlikeFilter(new List<string>() { "winter","anderes" })
+                            .GetAllAsObject<ODHTagLinked>();
+
+                validcategories.AddRange(maincategories);
+                validcategories.AddRange(subcategories);
 
                 //loop trough dss items
                 foreach (var item in dssinput[0].items)
