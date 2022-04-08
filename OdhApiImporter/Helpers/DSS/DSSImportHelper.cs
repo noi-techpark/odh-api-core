@@ -187,8 +187,11 @@ namespace OdhApiImporter.Helpers.DSS
                             additionalpoiinfo.SubType = subtypeobj != null && subtypeobj.TagName != null && subtypeobj.TagName.ContainsKey(languagecategory) ? subtypeobj.TagName[languagecategory] : "";
 
                             //Add the AdditionalPoi Info (include Novelty)
-                            additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
-                            
+                            if (entitytype.ToLower() == "lift")
+                                additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
+                            if (entitytype.ToLower() == "slope")
+                                additionalpoiinfo.Novelty = (string)item["info-text-winter"][languagecategory];
+
                             foreach (var smgtagtotranslate in currentcategories)
                             {
                                 if (additionalpoiinfo.Categories == null)
