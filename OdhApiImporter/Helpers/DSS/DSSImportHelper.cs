@@ -155,6 +155,8 @@ namespace OdhApiImporter.Helpers.DSS
 
                                 parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
                             }
+
+                            //TODO Use RegionId, TVId from Area?
                         }
 
                         //Setting Categorization by Valid Tags
