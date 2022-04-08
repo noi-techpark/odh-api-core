@@ -84,25 +84,33 @@ namespace OdhApiImporter.Helpers.DSS
 
                 if (entitytype.ToLower() == "lift")
                 {
-                    validforentity.Add("anderes");                    
+                    validforentity.Add("anderes");
                 }
                 else if (entitytype.ToLower() == "slope")
                 {
                     validforentity.Add("winter");
                 }
 
-                var categoriesquery = QueryFactory.Query()
+                var validcategories = new List<ODHTagLinked>();
+
+                // Get all valid categories
+
+                var subcategories = await QueryFactory.Query()
                             .SelectRaw("data")
                             .From("smgtags")
                             .ODHTagValidForEntityFilter(validforentity)
                             .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
-                            .ODHTagDisplayAsCategoryFilter(true);
-
-                // Get all valid categories
-                var validcategories =
-                    await categoriesquery
                             .GetAllAsObject<ODHTagLinked>();
 
+                //Temporary get winter/anderes tag and add it to validcategories
+                var maincategories = await QueryFactory.Query()
+                            .SelectRaw("data")
+                            .From("smgtags")
+                            .IdIlikeFilter(new List<string>() { "winter","anderes" })
+                            .GetAllAsObject<ODHTagLinked>();
+
+                validcategories.AddRange(maincategories);
+                validcategories.AddRange(subcategories);
 
                 //loop trough dss items
                 foreach (var item in dssinput[0].items)
@@ -154,9 +162,16 @@ namespace OdhApiImporter.Helpers.DSS
                                 areanames.Add("ru", area.Shortname);
 
                                 parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
-                            }
 
-                            //TODO Use RegionId, TVId from Area?
+                                //Use RegionId, TVId from Area
+                                if(!String.IsNullOrEmpty(area.RegionId))
+                                    parsedobject.LocationInfo.RegionInfo = new RegionInfoLinked() { Id = area.RegionId, Name = null };
+                                if (!String.IsNullOrEmpty(area.TourismvereinId))
+                                    parsedobject.LocationInfo.TvInfo = new TvInfoLinked() { Id = area.TourismvereinId, Name = null };
+                                if (!String.IsNullOrEmpty(area.MunicipalityId))
+                                    parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = area.MunicipalityId, Name = null };
+
+                            }
                         }
 
                         //Setting Categorization by Valid Tags
@@ -164,20 +179,26 @@ namespace OdhApiImporter.Helpers.DSS
 
                         foreach (var languagecategory in parsedobject.HasLanguage)
                         {
-
                             if (parsedobject.AdditionalPoiInfos == null)
                                 parsedobject.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
 
                             //Set MainType, SubType, PoiType
                             var additionalpoiinfo = new AdditionalPoiInfos();
                             additionalpoiinfo.Language = languagecategory;
-                            additionalpoiinfo.MainType = validcategories.Where(x => x.Id == parsedobject.Type).FirstOrDefault().TagName[languagecategory];
-                            additionalpoiinfo.SubType = validcategories.Where(x => x.Id == parsedobject.SubType).FirstOrDefault().TagName[languagecategory];
+
+                            var maintypeobj = validcategories.Where(x => x.Id == parsedobject.Type.ToLower()).FirstOrDefault();
+                            var subtypeobj = validcategories.Where(x => x.Id == parsedobject.SubType.ToLower()).FirstOrDefault();
+
+                            additionalpoiinfo.MainType = maintypeobj != null && maintypeobj.TagName != null && maintypeobj.TagName.ContainsKey(languagecategory) ? maintypeobj.TagName[languagecategory] : "";
+                            additionalpoiinfo.SubType = subtypeobj != null && subtypeobj.TagName != null && subtypeobj.TagName.ContainsKey(languagecategory) ? subtypeobj.TagName[languagecategory] : "";
 
                             //Add the AdditionalPoi Info (include Novelty)
-                            additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
-                            
-                            foreach (var smgtagtotranslate in currentcategories)
+                            if (entitytype.ToLower() == "lift")
+                                additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
+                            if (entitytype.ToLower() == "slope")
+                                additionalpoiinfo.Novelty = (string)item["info-text-winter"][languagecategory];
+
+                            foreach (var smgtagtotranslate in currentcategories.Where(x => x.DisplayAsCategory == true))
                             {
                                 if (additionalpoiinfo.Categories == null)
                                     additionalpoiinfo.Categories = new List<string>();
@@ -188,8 +209,15 @@ namespace OdhApiImporter.Helpers.DSS
 
                             parsedobject.AdditionalPoiInfos.TryAddOrUpdate(languagecategory, additionalpoiinfo);
                         }
-                        
-                        
+
+                        //Set shortname
+                        if (!String.IsNullOrEmpty(parsedobject.Detail["de"].Title))
+                            parsedobject.Shortname = parsedobject.Detail["de"].Title;
+                        else if (!String.IsNullOrEmpty(parsedobject.Detail["it"].Title))
+                            parsedobject.Shortname = parsedobject.Detail["it"].Title;
+                        else if (!String.IsNullOrEmpty(parsedobject.Detail["en"].Title))
+                            parsedobject.Shortname = parsedobject.Detail["en"].Title;
+
                         //Save parsedobject to DB + Save Rawdata to DB
                         var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
 
