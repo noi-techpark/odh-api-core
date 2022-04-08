@@ -170,7 +170,11 @@ namespace OdhApiImporter.Helpers.DSS
                                 
                                 if (parsedobject.LocationInfo.TvInfo == null)
                                     if (!String.IsNullOrEmpty(area.TourismvereinId))
+                                    {
                                         parsedobject.LocationInfo.TvInfo = new TvInfoLinked() { Id = area.TourismvereinId, Name = null };
+                                        parsedobject.TourismorganizationId = area.TourismvereinId;
+                                    }
+                                        
 
                                 if (parsedobject.LocationInfo.MunicipalityInfo == null)
                                     if (!String.IsNullOrEmpty(area.MunicipalityId))
