@@ -179,8 +179,12 @@ namespace OdhApiImporter.Helpers.DSS
                             //Set MainType, SubType, PoiType
                             var additionalpoiinfo = new AdditionalPoiInfos();
                             additionalpoiinfo.Language = languagecategory;
-                            additionalpoiinfo.MainType = validcategories.Where(x => x.Id == parsedobject.Type).FirstOrDefault().TagName[languagecategory];
-                            additionalpoiinfo.SubType = validcategories.Where(x => x.Id == parsedobject.SubType).FirstOrDefault().TagName[languagecategory];
+
+                            var maintypeobj = validcategories.Where(x => x.Id == parsedobject.Type.ToLower()).FirstOrDefault();
+                            var subtypeobj = validcategories.Where(x => x.Id == parsedobject.SubType.ToLower()).FirstOrDefault();
+
+                            additionalpoiinfo.MainType = maintypeobj != null && maintypeobj.TagName != null && maintypeobj.TagName.ContainsKey(languagecategory) ? maintypeobj.TagName[languagecategory] : "";
+                            additionalpoiinfo.SubType = subtypeobj != null && subtypeobj.TagName != null && subtypeobj.TagName.ContainsKey(languagecategory) ? subtypeobj.TagName[languagecategory] : "";
 
                             //Add the AdditionalPoi Info (include Novelty)
                             additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
