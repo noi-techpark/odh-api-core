@@ -172,19 +172,13 @@ namespace OdhApiImporter.Helpers.DSS
                                     parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = area.MunicipalityId, Name = null };
 
                             }
-
-
                         }
-
-                        
-
 
                         //Setting Categorization by Valid Tags
                         var currentcategories = validcategories.Where(x => parsedobject.SmgTags.Select(y => y.ToLower()).Contains(x.Id.ToLower()));
 
                         foreach (var languagecategory in parsedobject.HasLanguage)
                         {
-
                             if (parsedobject.AdditionalPoiInfos == null)
                                 parsedobject.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
 
@@ -215,8 +209,15 @@ namespace OdhApiImporter.Helpers.DSS
 
                             parsedobject.AdditionalPoiInfos.TryAddOrUpdate(languagecategory, additionalpoiinfo);
                         }
-                        
-                        
+
+                        //Set shortname
+                        if (!String.IsNullOrEmpty(parsedobject.Detail["de"].Title))
+                            parsedobject.Shortname = parsedobject.Detail["de"].Title;
+                        else if (!String.IsNullOrEmpty(parsedobject.Detail["it"].Title))
+                            parsedobject.Shortname = parsedobject.Detail["it"].Title;
+                        else if (!String.IsNullOrEmpty(parsedobject.Detail["en"].Title))
+                            parsedobject.Shortname = parsedobject.Detail["en"].Title;
+
                         //Save parsedobject to DB + Save Rawdata to DB
                         var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
 
