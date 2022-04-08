@@ -33,6 +33,8 @@ namespace OdhApiCore.Controllers
         /// GET ODHTag List
         /// </summary>
         /// <param name="validforentity">Filter on Tags valid on Entities (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="mainentity">Filter on Tags with MainEntity set to (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="displayascategory">true = returns only Tags which are marked as DisplayAsCategory true</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="localizationlanguage">here for Compatibility Reasons, replaced by language parameter</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -53,6 +55,8 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetODHTagsAsync(
             string? language = null,
             string? validforentity = null,
+            string? mainentity = null,
+            bool? displayascategory = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -67,7 +71,7 @@ namespace OdhApiCore.Controllers
                 language = localizationlanguage;
 
 
-            return await Get(language, validforentity, fields: fields ?? Array.Empty<string>(), 
+            return await Get(language, mainentity, validforentity, displayascategory, fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
         }
@@ -107,17 +111,25 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> Get(string? language, string? smgtagtype, string[] fields,
+        private Task<IActionResult> Get(string? language, string? maintype, string? validforentity, bool? displayascategory, string[] fields,
             string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 //Hack
-                if (smgtagtype == "odhactivitypoi")
-                    smgtagtype = "smgpoi";
+                if (validforentity == "odhactivitypoi")
+                {
+                    validforentity.Replace("odhactivitypoi", "smgpoi");
+                }
+                if (maintype == "odhactivitypoi")
+                {
+                    maintype.Replace("odhactivitypoi", "smgpoi");
+                }
 
-                var mysmgtagtypelist = (smgtagtype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
                 var query = 
                     QueryFactory.Query()
@@ -125,7 +137,9 @@ namespace OdhApiCore.Controllers
                     .From("smgtags")
                     .ODHTagWhereExpression(
                         languagelist: new List<string>(), 
-                        smgtagtypelist: mysmgtagtypelist,
+                        mainentitylist: maintypeslist,
+                        validforentitylist: validforentitytypeslist,
+                        displayascategory: displayascategory,
                         searchfilter: searchfilter,
                         language: language,
                         filterClosedData: FilterClosedData
@@ -217,4 +231,6 @@ namespace OdhApiCore.Controllers
 
         #endregion
     }
+
+
 }

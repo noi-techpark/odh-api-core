@@ -27,11 +27,12 @@ namespace DSS.Parser
             myodhactivitypoilinked.CustomId = (string)dssitem.rid;
 
             //ADD MAPPING
-            var dssrid = new Dictionary<string, string>() { { "rid", (string)dssitem.rid } };
-            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssrid);
+            var dssidmap = new Dictionary<string, string>();
 
-            var dsspid = new Dictionary<string, string>() { { "pid", (string)dssitem.pid } };
-            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dsspid);
+            dssidmap.TryAddOrUpdate("rid", (string)dssitem.rid);
+            dssidmap.TryAddOrUpdate("pid", (string)dssitem.pid);
+
+            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssidmap);
 
 
             myodhactivitypoilinked.Type = "Anderes";
@@ -181,11 +182,13 @@ namespace DSS.Parser
             myodhactivitypoilinked.CustomId = (string)dssitem.rid;
 
             //ADD MAPPING
-            var dssrid = new Dictionary<string, string>() { { "rid", (string)dssitem.rid } };
-            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssrid);
+            //ADD MAPPING
+            var dssidmap = new Dictionary<string, string>();
 
-            var dsspid = new Dictionary<string, string>() { { "pid", (string)dssitem.pid } };
-            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dsspid);
+            dssidmap.TryAddOrUpdate("rid", (string)dssitem.rid);
+            dssidmap.TryAddOrUpdate("pid", (string)dssitem.pid);
+
+            myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssidmap);
 
 
             myodhactivitypoilinked.Type = "Winter";

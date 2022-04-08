@@ -151,7 +151,7 @@ namespace DataModel
 
     public interface IDistanceInfoAware
     {
-        DistanceInfo DistanceInfo { get; set; }
+        DistanceInfo? DistanceInfo { get; set; }
     }
 
     public interface IDistanceInfo
@@ -939,7 +939,7 @@ namespace DataModel
         public Nullable<double> Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
 
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
 
 
         public string? AccoCategoryId { get; set; }
@@ -1637,7 +1637,7 @@ namespace DataModel
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
 
 
         //Observation
@@ -2330,7 +2330,7 @@ namespace DataModel
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
 
     }
 
@@ -2457,7 +2457,7 @@ namespace DataModel
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
@@ -2546,7 +2546,7 @@ namespace DataModel
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
     }
 
     //Erweiterte Baseinfos für Gastronomy
@@ -2630,7 +2630,7 @@ namespace DataModel
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
     }
 
     //Erweiterte BaseInfo für Events
@@ -2764,7 +2764,7 @@ namespace DataModel
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
 
     }
 

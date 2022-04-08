@@ -80,8 +80,28 @@ namespace OdhApiImporter.Helpers.DSS
                     await areaquery
                         .GetAllAsObject<AreaLinked>();
 
-                // Get all valid categories
+                var validforentity = new List<string>();
 
+                if (entitytype.ToLower() == "lift")
+                {
+                    validforentity.Add("anderes");                    
+                }
+                else if (entitytype.ToLower() == "slope")
+                {
+                    validforentity.Add("winter");
+                }
+
+                var categoriesquery = QueryFactory.Query()
+                            .SelectRaw("data")
+                            .From("smgtags")
+                            .ODHTagValidForEntityFilter(validforentity)
+                            .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
+                            .ODHTagDisplayAsCategoryFilter(true);
+
+                // Get all valid categories
+                var validcategories =
+                    await categoriesquery
+                            .GetAllAsObject<ODHTagLinked>();
 
 
                 //loop trough dss items
@@ -135,13 +155,41 @@ namespace OdhApiImporter.Helpers.DSS
 
                                 parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
                             }
+
+                            //TODO Use RegionId, TVId from Area?
                         }
 
-                        //Add the Categorization Info
+                        //Setting Categorization by Valid Tags
+                        var currentcategories = validcategories.Where(x => parsedobject.SmgTags.Select(y => y.ToLower()).Contains(x.Id.ToLower()));
 
-                        //Add the AdditionalPoi Info (include Novelty)
-                        //Load Type/Subtype ODHTag and assign 
+                        foreach (var languagecategory in parsedobject.HasLanguage)
+                        {
 
+                            if (parsedobject.AdditionalPoiInfos == null)
+                                parsedobject.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
+
+                            //Set MainType, SubType, PoiType
+                            var additionalpoiinfo = new AdditionalPoiInfos();
+                            additionalpoiinfo.Language = languagecategory;
+                            additionalpoiinfo.MainType = validcategories.Where(x => x.Id == parsedobject.Type).FirstOrDefault().TagName[languagecategory];
+                            additionalpoiinfo.SubType = validcategories.Where(x => x.Id == parsedobject.SubType).FirstOrDefault().TagName[languagecategory];
+
+                            //Add the AdditionalPoi Info (include Novelty)
+                            additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
+                            
+                            foreach (var smgtagtotranslate in currentcategories)
+                            {
+                                if (additionalpoiinfo.Categories == null)
+                                    additionalpoiinfo.Categories = new List<string>();
+
+                                if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && !additionalpoiinfo.Categories.Contains(smgtagtotranslate.TagName[languagecategory].Trim()))
+                                    additionalpoiinfo.Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
+                            }
+
+                            parsedobject.AdditionalPoiInfos.TryAddOrUpdate(languagecategory, additionalpoiinfo);
+                        }
+                        
+                        
                         //Save parsedobject to DB + Save Rawdata to DB
                         var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
 

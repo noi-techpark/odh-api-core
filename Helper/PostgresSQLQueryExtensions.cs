@@ -772,11 +772,27 @@ namespace Helper
                 )
             );
 
-        public static Query ODHTagValidForEntityFilter(this Query query, IReadOnlyCollection<string> smgtagtypelist) =>
+        public static Query ODHTagMainEntityFilter(this Query query, IReadOnlyCollection<string> mainentitylist) =>
            query.WhereInJsonb(
-               smgtagtypelist,
-               smgtagtype => new { ValidForEntity = new[] { smgtagtype.ToLower() } }
+               list: mainentitylist,
+               "MainEntity",
+               id => id.ToLower()
            );
+
+        public static Query ODHTagValidForEntityFilter(this Query query, IReadOnlyCollection<string> validforentitylist) =>
+           query.WhereInJsonb(
+               validforentitylist,
+               validforentity => new { ValidForEntity = new[] { validforentity.ToLower() } }
+           );
+
+        public static Query ODHTagDisplayAsCategoryFilter(this Query query, bool? displayascategory) =>
+           query.When(
+                displayascategory != null,
+                query => query.WhereJsonb(
+                    "DisplayAsCategory",
+                    displayascategory ?? false
+                )
+            );
 
         //AlpineBits
         public static Query AlpineBitsAccommodationIdFilter(this Query query, IReadOnlyCollection<string> accommodationids) =>
@@ -1250,7 +1266,7 @@ namespace Helper
            {
                foreach (var item in accommodationids)
                {
-                   q = q.OrWhere("gen_accommodation_id", "ILIKE", item);
+                   q = q.OrWhere("gen_accommodation_id", "=", item);
                }
                return q;
            });
