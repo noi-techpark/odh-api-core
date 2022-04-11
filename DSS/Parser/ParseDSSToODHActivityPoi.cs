@@ -21,7 +21,7 @@ namespace DSS.Parser
 
             myodhactivitypoilinked.Source = "dss";
             myodhactivitypoilinked.SyncSourceInterface = "dssliftbase";
-            myodhactivitypoilinked.SyncUpdateMode = "full";
+            myodhactivitypoilinked.SyncUpdateMode = "Full";
 
             myodhactivitypoilinked.Id = "dss_" + (string)dssitem.pid;
             myodhactivitypoilinked.CustomId = (string)dssitem.rid;
@@ -176,7 +176,7 @@ namespace DSS.Parser
 
             myodhactivitypoilinked.Source = "dss";
             myodhactivitypoilinked.SyncSourceInterface = "dssslopebase";
-            myodhactivitypoilinked.SyncUpdateMode = "full";
+            myodhactivitypoilinked.SyncUpdateMode = "Full";
 
             myodhactivitypoilinked.Id = "dss_" + (string)dssitem.pid;
             myodhactivitypoilinked.CustomId = (string)dssitem.rid;
