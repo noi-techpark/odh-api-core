@@ -1266,7 +1266,7 @@ namespace Helper
            {
                foreach (var item in accommodationids)
                {
-                   q = q.OrWhere("gen_accommodation_id", "=", item);
+                   q = q.OrWhere("gen_accommodation_id", "ILIKE", item);
                }
                return q;
            });
