@@ -170,6 +170,19 @@ namespace OdhApiCore
         public string SenderId { get; private set; }        
     }
 
+    public class RateLimitConfig
+    {
+        public RateLimitConfig(string type, int timewindow, int maxrequests)
+        {
+            this.Type = type;
+            this.TimeWindow = timewindow;
+            this.MaxRequests = maxrequests;
+        }
+
+        public string Type { get; private set; }
+        public int TimeWindow { get; private set; }
+        public int MaxRequests { get; private set; }
+    }
 
     public interface ISettings
     {
@@ -186,6 +199,7 @@ namespace OdhApiCore
         FCMConfig FCMConfig { get; }
         List<Field2HideConfig> Field2HideConfig { get; }
         List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
+        List<RateLimitConfig> RateLimitConfig { get; }
     }
 
     public class Settings : ISettings
@@ -204,6 +218,7 @@ namespace OdhApiCore
         private readonly FCMConfig fcmConfig;
         private readonly List<Field2HideConfig> field2hideConfig;
         private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
+        private readonly List<RateLimitConfig> rateLimitConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -245,6 +260,13 @@ namespace OdhApiCore
                 this.requestInterceptorConfig.Add(new RequestInterceptorConfig(requestinterceptor.GetValue<string>("Action", ""), requestinterceptor.GetValue<string>("Controller", ""), requestinterceptor.GetValue<string>("QueryStrings", ""), 
                     requestinterceptor.GetValue<string>("RedirectAction", ""), requestinterceptor.GetValue<string>("RedirectController", ""), requestinterceptor.GetValue<string>("RedirectQueryStrings", "")));
             }
+
+            var ratelimitlist = this.configuration.GetSection("RateLimitConfig").GetChildren();
+            this.rateLimitConfig = new List<RateLimitConfig>();
+            foreach (var ratelimitconfig in ratelimitlist)
+            {
+                this.rateLimitConfig.Add(new RateLimitConfig(ratelimitconfig.GetValue<string>("Type", ""), ratelimitconfig.GetValue<int>("TimeWindow", 0), ratelimitconfig.GetValue<int>("MaxRequests", 0)));
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -261,5 +283,6 @@ namespace OdhApiCore
         public FCMConfig FCMConfig => this.fcmConfig;
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
+        public List<RateLimitConfig> RateLimitConfig => this.rateLimitConfig;
     }
 }
