@@ -451,6 +451,7 @@ namespace OdhApiCore
                 c.EnableDeepLinking();
             });
 
+            app.UseRateLimiting();
 
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);
@@ -478,8 +479,6 @@ namespace OdhApiCore
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");                
             });
-
-            app.UseRateLimiting();
         }
     }
 
