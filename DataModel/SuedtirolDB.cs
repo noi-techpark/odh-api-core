@@ -443,12 +443,13 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware
+    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource
     {
         public Area()
         {
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            Detail = new Dictionary<string, Detail>();
         }
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -473,6 +474,8 @@ namespace DataModel
         public DateTime? FirstImport { get; set; }
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public string Source { get; set; }
+        public IDictionary<string, Detail> Detail { get; set; }
     }
 
     public class GeneralGroup : BaseInfos
