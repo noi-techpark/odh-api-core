@@ -22,12 +22,6 @@ namespace OdhApiCore
         public async static Task<T?> GetCacheValueAsync<T>(this IDistributedCache distributedCache, string key, CancellationToken token = default(CancellationToken)) where T : class
         {
             var result = await distributedCache.GetAsync(key, token);
-
-            if(result != null)
-            {
-
-            }
-
             return result.FromByteArray<T>();
         }
     }
