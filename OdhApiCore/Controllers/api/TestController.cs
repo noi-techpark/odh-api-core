@@ -46,6 +46,13 @@ namespace OdhApiCore.Controllers.api
             return Ok(JsonConvert.SerializeObject(settings.Field2HideConfig));
         }
 
+        [HttpGet, Route("TesQuotasettings")]
+        public IActionResult GetTestquotasettings()
+        {
+
+            return Ok(JsonConvert.SerializeObject(settings.RateLimitConfig));
+        }
+
         [HttpGet, Route("TestField2Hide")]
         public IActionResult GetFieldToHide()
         {
