@@ -14,13 +14,20 @@ namespace OdhApiCore
 
         public async static Task SetCacheValueAsync<T>(this IDistributedCache distributedCache, string key, TimeSpan timewindow, T value, CancellationToken token = default) where T : notnull
         {
-            var options = new DistributedCacheEntryOptions { AbsoluteExpiration = DateTimeOffset.Now.Add(timewindow) };
+            //var options = new DistributedCacheEntryOptions {  AbsoluteExpiration = DateTimeOffset.Now.Add(timewindow) };
+            var options = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = timewindow };
             await distributedCache.SetAsync(key, value.ToByteArray(), options, token);
         }
 
         public async static Task<T?> GetCacheValueAsync<T>(this IDistributedCache distributedCache, string key, CancellationToken token = default(CancellationToken)) where T : class
         {
             var result = await distributedCache.GetAsync(key, token);
+
+            if(result != null)
+            {
+
+            }
+
             return result.FromByteArray<T>();
         }
     }

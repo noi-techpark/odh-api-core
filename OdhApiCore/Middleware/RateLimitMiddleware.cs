@@ -53,7 +53,7 @@ namespace OdhApiCore
                     //context.Response.Headers.Add("Content-Type", "application/json");                  
                     context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
 
-                    await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "quota exceeded", RequestorType = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.NumberOfRequestsCompletedSuccessfully });
+                    await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "quota exceeded", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.NumberOfRequestsCompletedSuccessfully });
 
 
                     return;
@@ -181,21 +181,21 @@ namespace OdhApiCore
 
     public class ClientStatistics
     {
-        public DateTime LastSuccessfulResponseTime { get; set; }
+        public DateTime LastSuccessfulResponseTime { get; set; }        
         public int NumberOfRequestsCompletedSuccessfully { get; set; }
     }
 
     public class QuotaExceededMessage
     {
         public string? Message { get; set; }
-        public string? MoreInfos
+        public string? Hint
         {
             get
             {
                 return "https://github.com/noi-techpark/odh-docs/wiki/Api-Quota";
             }
         }
-        public string? RequestorType { get; set; }
+        public string? Policy { get; set; }
 
         public int RetryAfter { get; set; }
 
