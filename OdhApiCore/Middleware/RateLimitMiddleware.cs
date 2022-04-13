@@ -45,15 +45,15 @@ namespace OdhApiCore
             {
                 var clientStatistics = await GetClientStatisticsByKey(key);
 
-                await context.AddRateLimitHeaders(rlConfig.MaxRequests, clientStatistics == null ? 0 : clientStatistics.NumberOfRequestsCompletedSuccessfully, rlConfig.TimeWindow);
+                await context.AddRateLimitHeaders(rlConfig.MaxRequests, clientStatistics == null ? 0 : clientStatistics.LastSuccessfulResponseTimeList.Count, rlConfig.TimeWindow);
 
-                if (clientStatistics != null && DateTime.UtcNow < clientStatistics.LastSuccessfulResponseTime.AddSeconds(rlConfig.TimeWindow) && clientStatistics.NumberOfRequestsCompletedSuccessfully == rlConfig.MaxRequests)
+                if (clientStatistics != null && clientStatistics.LastSuccessfulResponseTimeList.Count >= rlConfig.MaxRequests)
                 {
                     //done by WriteasJson
                     //context.Response.Headers.Add("Content-Type", "application/json");                  
                     context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
 
-                    await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "quota exceeded", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.NumberOfRequestsCompletedSuccessfully });
+                    await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "quota exceeded", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count });
 
 
                     return;
@@ -150,13 +150,10 @@ namespace OdhApiCore
 
             if (clientStat != null)
             {
-                clientStat.LastSuccessfulResponseTime = DateTime.UtcNow;
+                var now = DateTime.UtcNow;
 
-                if (clientStat.NumberOfRequestsCompletedSuccessfully == maxRequests)
-                    clientStat.NumberOfRequestsCompletedSuccessfully = 1;
-
-                else
-                    clientStat.NumberOfRequestsCompletedSuccessfully++;
+                clientStat.LastSuccessfulResponseTimeList.Add(now);
+                clientStat.LastSuccessfulResponseTimeList = RemoveAllExpiredResponseDateTimes(clientStat.LastSuccessfulResponseTimeList, timeWindow, now);
 
                 await _cache.SetCacheValueAsync<ClientStatistics>(key, timeWindow, clientStat);
             }
@@ -164,13 +161,20 @@ namespace OdhApiCore
             {
                 var clientStatistics = new ClientStatistics
                 {
-                    LastSuccessfulResponseTime = DateTime.UtcNow,
-                    NumberOfRequestsCompletedSuccessfully = 1
+                    LastSuccessfulResponseTimeList = new List<DateTime>() { DateTime.UtcNow }
                 };
 
                 await _cache.SetCacheValueAsync(key, timeWindow, clientStatistics);
             }
 
+        }
+
+        private static List<DateTime> RemoveAllExpiredResponseDateTimes(List<DateTime> list, TimeSpan timeWindow, DateTime dateto)
+        {
+            var validfrom = dateto.Subtract(timeWindow);
+
+            //Remove all no more valid Requests                      
+            return list.Where(x => x >= validfrom).ToList();
         }
 
         public static MemoryStream GenerateStreamFromString(string value)
@@ -181,8 +185,12 @@ namespace OdhApiCore
 
     public class ClientStatistics
     {
-        public DateTime LastSuccessfulResponseTime { get; set; }        
-        public int NumberOfRequestsCompletedSuccessfully { get; set; }
+        public ClientStatistics()
+        {
+            LastSuccessfulResponseTimeList = new List<DateTime>();
+        }
+
+        public List<DateTime> LastSuccessfulResponseTimeList { get; set; }
     }
 
     public class QuotaExceededMessage
