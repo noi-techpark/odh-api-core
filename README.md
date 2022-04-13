@@ -20,7 +20,29 @@ Port of ODH Tourim Api to .Net Core.
 * Advanced api operation 2/2 (raw sorting, raw filtering)
 * Compatibility tourism api
 
-## Database Info
+## Project Structure
+
+### DataModel
+
+Definition of all ODH Tourism Models
+
+### OdhApiCore
+
+Api to retrieve ODH Tourism Data
+
+### OdhApiImporter
+
+Workerservice which is importing the Data with help of the Data Collectors
+
+### Helper
+
+Class Library with Extension Methods and other ODH Helper Methods
+
+### CDB, DSS, EBMS, LCS, MSS, NINJA, RAVEN, SIAG, STA, SuedtirolWein
+
+Data Collectors used by Api and Importer, usually containing classes that retrieve Data, and classes that parse the data to ODH Objects (defined in DataModel)
+
+## Database
 
 Postgres 12 
 Extensions active on DB
@@ -55,19 +77,29 @@ Clone the repository
 * SIAG_USER; (Optional User to retrieve data from Siag)
 * SIAG_PSWD; (Optional Pswd to retrieve data from Siag)
 * XMLDIR; (Directory where xml config file is stored)
-* S3_BUCKET_ACCESSPOINT (S3 Bucket for Image Upload accesspoint)
-* S3_IMAGEUPLOADER_ACCESSKEY (S3 Bucket for Image Upload accesskey)
-* S3_IMAGEUPLOADER_SECRETKEY (S3 Bucket for Image Upload secretkey)
-* OAUTH_AUTORITY (Oauth Server Authority URL)
-* ELK_URL (Serilog Elasticsearch Sink Elastic URL)
-* ELK_TOKEN (Serilog Elasticsearch Access Token)
-* EBMS_USER (Optional User to access EBMS interface)
-* EBMS_PASS (Optional Pswd to access EBMS interface)
+* JSONPATH; (Directory where json files are stored)
+* S3_BUCKET_ACCESSPOINT; (S3 Bucket for Image Upload accesspoint)
+* S3_IMAGEUPLOADER_ACCESSKEY; (S3 Bucket for Image Upload accesskey)
+* S3_IMAGEUPLOADER_SECRETKEY; (S3 Bucket for Image Upload secretkey)
+* OAUTH_AUTORITY; (Oauth Server Authority URL)
+* ELK_URL; (Serilog Elasticsearch Sink Elastic URL)
+* ELK_TOKEN; (Serilog Elasticsearch Access Token)
+* EBMS_USER; (Optional User to access EBMS interface)
+* EBMS_PASS; (Optional Pswd to access EBMS interface)
+* DSS_USER; (Optional User to access DSS interface)
+* DSS_PSWD; (Optional Pswd to access DSS interface)
+* DSS_SERVICEURL; (Optional DSS interface serviceurl)
+* RAVEN_USER; (Optional User to access Raven interface)
+* RAVEN_PSWD; (Optional Pswd to access Raven interface)
+* RAVEN_SERVICEURL; (Optional Raven interface serviceurl)
 
 ### using Docker
 
 go into \OdhApiCore\ folder \
 `docker-compose up` starts the odh-api appliaction on http://localhost:60209/
+
+go into \OdhApiImporter\ folder \
+`docker-compose up` starts the odh-api appliaction on http://localhost:60210/
 
 ### using .Net Core CLI
 
