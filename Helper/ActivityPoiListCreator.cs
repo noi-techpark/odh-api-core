@@ -1394,7 +1394,17 @@ namespace Helper
 
                             break;
 
+                        case "Vereine":
+                            PoiTypeVereine mypoitypeflag11 = (PoiTypeVereine)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag11.GetFlags().GetDescriptionList());
 
+                            break;
+
+                        case "Unternehmen":
+                            PoiTypeUnternehmen mypoitypeflag12 = (PoiTypeUnternehmen)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag12.GetFlags().GetDescriptionList());
+
+                            break;
                     }
                 }
                 else
@@ -1668,6 +1678,18 @@ namespace Helper
                         case "Guides Schulen":
                             SmgPoiPoiTypeFlagGuidesSchulen mypoitypeflag26 = (SmgPoiPoiTypeFlagGuidesSchulen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag26.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Vereine":
+                            SmgPoiPoiTypeFlagVereine mypoitypeflag30 = (SmgPoiPoiTypeFlagVereine)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag30.GetFlags().GetDescriptionList());
+
+                            break;
+
+                        case "Unternehmen":
+                            SmgPoiPoiTypeFlagUnternehmen mypoitypeflag29 = (SmgPoiPoiTypeFlagUnternehmen)typefilterint;
+                            subtypelist.AddRange(mypoitypeflag29.GetFlags().GetDescriptionList());
 
                             break;
                     }
