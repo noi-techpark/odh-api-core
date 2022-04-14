@@ -53,7 +53,7 @@ namespace OdhApiCore
                     //context.Response.Headers.Add("Content-Type", "application/json");                  
                     context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
 
-                    await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "quota exceeded", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count });
+                    await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "You have exhausted your API Request Quota", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count });
 
 
                     return;
@@ -131,7 +131,7 @@ namespace OdhApiCore
             else if (!String.IsNullOrEmpty(loggeduser))
             {
                 ratelimitcachekey = $"{loggeduser}";
-                ratelimitconfig = rlsettings.Where(x => x.Type == "Logged").FirstOrDefault();
+                ratelimitconfig = rlsettings.Where(x => x.Type == "Authenticated").FirstOrDefault();
             }
             //No rate limit
             else
