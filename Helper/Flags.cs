@@ -671,7 +671,11 @@ namespace Helper
         [Description("Kulturzentren und Theater")]
         KulturzentrenundTheater = 1 << 10,
         [Description("Weitere Kultur und Sehenswürdigkeiten")]
-        WeitereKultur = 1 << 11
+        WeitereKultur = 1 << 11,
+        [Description("Vereine")]
+        Vereine = 1 << 12,
+        [Description("Unternehmen")]
+        Unternehmen = 1 << 13
     }
     
     [Flags]
@@ -1264,6 +1268,42 @@ namespace Helper
         WeitereAufstiegsanlagen = 1 << 20
     }
 
+    [Flags]
+    public enum SmgPoiPoiTypeFlagVereine
+    {
+        [Description("Sport")]
+        Sport = 1,
+        [Description("Kultur, Musik, Theater")]
+        KulturMusikTheater = 1 << 1,
+        [Description("Tier, Natur, Wissenschaft")]
+        TierNaturWissenschaft = 1 << 2,
+        [Description("Gesellschaft, Politisch")]
+        GesellschaftPolitisch = 1 << 3,
+        [Description("Sozial, Rettung, gemeinnützig")]
+        SozialRettungGemeinnuetzig = 1 << 4,
+        [Description("Freizeitverein")]
+        Freizeitverein = 1 << 5,
+        [Description("weitere Vereine")]
+        WeitereVereine = 1 << 6
+    }
+
+    [Flags]
+    public enum SmgPoiPoiTypeFlagUnternehmen
+    {
+        [Description("Industrie")]
+        Industrie = 1,
+        [Description("Produktion")]
+        Produktion = 1 << 1,
+        [Description("Baugewerbe")]
+        Baugewerbe = 1 << 2,
+        [Description("Handwerk")]
+        Handwerk = 1 << 3,
+        [Description("Energie")]
+        Energie = 1 << 4,
+        [Description("weitere Unternehmen")]
+        WeitereUnternehmen = 1 << 5
+    }
+
     #endregion
 
     #region Articles
@@ -1801,7 +1841,11 @@ namespace Helper
         [Description("Dienstleister")]
         Dienstleister = 1 << 7,
         [Description("Kunsthandwerker")]
-        Handwerk = 1 << 8
+        Handwerk = 1 << 8,
+        [Description("Vereine")]
+        Vereine = 1 << 9,
+        [Description("Unternehmen")]
+        Unternehmen = 1 << 10
     }
 
     [Flags]
@@ -2260,6 +2304,42 @@ namespace Helper
         Bikepark = 1L << 50,
         [Description("Pumptracks und mehr")]
         Pumptracksundmehr = 1L << 51
+    }
+
+    [Flags]
+    public enum PoiTypeVereine
+    {
+        [Description("Sport")]
+        Sport = 1,
+        [Description("Kultur, Musik, Theater")]
+        KulturMusikTheater = 1 << 1,
+        [Description("Tier, Natur, Wissenschaft")]
+        TierNaturWissenschaft = 1 << 2,
+        [Description("Gesellschaft, Politisch")]
+        GesellschaftPolitisch = 1 << 3,
+        [Description("Sozial, Rettung, gemeinnützig")]
+        SozialRettungGemeinnuetzig = 1 << 4,
+        [Description("Freizeitverein")]
+        Freizeitverein = 1 << 5,
+        [Description("weitere Vereine")]
+        WeitereVereine = 1 << 6
+    }
+
+    [Flags]
+    public enum PoiTypeUnternehmen
+    {
+        [Description("Industrie")]
+        Industrie = 1,
+        [Description("Produktion")]
+        Produktion = 1 << 1,
+        [Description("Baugewerbe")]
+        Baugewerbe = 1 << 2,
+        [Description("Handwerk")]
+        Handwerk = 1 << 3,
+        [Description("Energie")]
+        Energie = 1 << 4,
+        [Description("weitere Unternehmen")]
+        WeitereUnternehmen = 1 << 5
     }
 
     #endregion
