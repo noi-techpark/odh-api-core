@@ -239,15 +239,14 @@ namespace DSS.Parser
             var slopetypecolor = dssitem["slopeType"];
 
 
-            //Slopetype TODO Mapping
-            //if (dssitem["slopetype"] != null)
-            //{
-            //    List<string> lifftype = ParseDSSSlopeTypeToODHType(dssitem["slopetype"]);
-            //    foreach (var tag in lifftype)
-            //    {
-            //        myodhactivitypoilinked.SmgTags.Add(tag);
-            //    }
-            //}
+            //Slopetype Mapping
+            if (dssitem["slopetype"] != null)
+            {
+                string parseddifficulty = ParseDSSSlopeTypeToODHDifficulty(slopetypecolor, slopetype);
+
+                myodhactivitypoilinked.Difficulty = parseddifficulty;
+                myodhactivitypoilinked.Ratings = new Ratings() { Difficulty = parseddifficulty };
+            }
 
             //skiresort TODO Mapping 
 
@@ -516,10 +515,29 @@ namespace DSS.Parser
         }
                       
 
-        private static string ConvertDSSSlopeTypeToODHDifficulty(string slopetype)
+        private static string ParseDSSSlopeTypeToODHDifficulty(string slopeType, string slopediff)
         {
-            //TODO
-            return "";
+            if(!String.IsNullOrEmpty(slopeType))
+            {
+                switch (slopeType)
+                {
+                    case "blue": return "2";
+                    case "red": return "4";
+                    case "black": return "6";
+                    default: return "4";
+                }
+            }
+            else
+            {
+                switch (slopediff)
+                {
+                    case "easy": return "2";
+                    case "medium": return "4";
+                    case "hard": return "6";
+                    default: return "4";
+                }
+            }
+            
         }
     }
 }
