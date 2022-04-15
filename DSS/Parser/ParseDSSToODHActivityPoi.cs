@@ -235,12 +235,12 @@ namespace DSS.Parser
             myodhactivitypoilinked.Detail.TryAddOrUpdate("it", new Detail() { Language = "it", Title = nameit, BaseText = descit });
             myodhactivitypoilinked.Detail.TryAddOrUpdate("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
 
-            var slopetype = dssitem["slopetype"];
-            var slopetypecolor = dssitem["slopeType"];
+            var slopetype = (string)dssitem["slopetype"];
+            var slopetypecolor = (string)dssitem["slopeType"];
 
 
             //Slopetype Mapping
-            if (dssitem["slopetype"] != null)
+            if (slopetype != null || slopetypecolor != null)
             {
                 string parseddifficulty = ParseDSSSlopeTypeToODHDifficulty(slopetypecolor, slopetype);
 
