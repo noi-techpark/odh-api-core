@@ -467,7 +467,7 @@ namespace DSS.Parser
         {
             List<GpsTrack> gpstracklist = new List<GpsTrack>();
             
-            if(geoPositionFile != null && String.IsNullOrEmpty(geoPositionFile))
+            if(geoPositionFile != null && !String.IsNullOrEmpty(geoPositionFile))
             {
                 GpsTrack track = new GpsTrack();
                 track.GpxTrackUrl = geoPositionFile;
