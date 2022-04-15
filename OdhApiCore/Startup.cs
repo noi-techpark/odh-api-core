@@ -451,8 +451,10 @@ namespace OdhApiCore
                 c.EnableDeepLinking();
             });
 
-            app.UseRateLimiting();
-
+            if (env.IsDevelopment())
+            {
+                app.UseRateLimiting();
+            }
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);
 
