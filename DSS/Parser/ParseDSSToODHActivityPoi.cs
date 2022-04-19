@@ -471,6 +471,7 @@ namespace DSS.Parser
             {
                 GpsTrack track = new GpsTrack();
                 track.GpxTrackUrl = geoPositionFile;
+                track.Type = "detailed";
                 gpstracklist.Add(track);
             }
 
