@@ -86,6 +86,8 @@ namespace OdhApiCore
 
             var bearertoken = "";
             var loggeduser = "";
+            var userrole = "";
+
             //Check Referer
             if (context.Request.Headers.ContainsKey("Authorization"))
                 bearertoken = context.Request.Headers["Authorization"].ToString();
@@ -106,6 +108,13 @@ namespace OdhApiCore
 
                     if (usernameClaim != null)
                         loggeduser = usernameClaim.Value;
+
+                    var roleClaim = jwttoken.Claims
+                        .Where(x => x.Type == ClaimTypes.Name || x.Type == "role")
+                        .FirstOrDefault();
+
+                    if (roleClaim != null)
+                        userrole = roleClaim.Value;
                 }
             }
 
@@ -132,6 +141,9 @@ namespace OdhApiCore
             {
                 ratelimitcachekey = $"{loggeduser}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Authenticated").FirstOrDefault();
+
+                //TODO if user is in Role 
+
             }
             //No rate limit
             else
