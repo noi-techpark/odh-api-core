@@ -140,7 +140,7 @@ namespace OdhApiCore
             else if (!String.IsNullOrEmpty(loggeduser))
             {
                 ratelimitcachekey = $"{loggeduser}";
-                ratelimitconfig = rlsettings.Where(x => x.Type == "Authenticated").FirstOrDefault();
+                ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
 
                 //If user is in Role 
                 if(!String.IsNullOrEmpty(userrole))
@@ -150,7 +150,7 @@ namespace OdhApiCore
 
                 //Fallback if ratelimitconfig by Role is null
                 if(ratelimitconfig == null)
-                    ratelimitconfig = rlsettings.Where(x => x.Type == "Authenticated").FirstOrDefault();
+                    ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
             }
             //No rate limit
             else
