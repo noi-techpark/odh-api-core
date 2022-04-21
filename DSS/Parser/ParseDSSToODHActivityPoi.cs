@@ -433,8 +433,8 @@ namespace DSS.Parser
 
             if (locationMountain != null)
             {
-                var lat = (double?)location["lat"];
-                var lon = (double?)location["lon"];
+                var lat = (double?)locationMountain["lat"];
+                var lon = (double?)locationMountain["lon"];
 
                 if (lat != null && lon != null)
                 {
