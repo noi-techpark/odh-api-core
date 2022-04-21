@@ -1,5 +1,6 @@
 ﻿using AspNetCore.Proxy;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers.other
@@ -12,17 +13,28 @@ namespace OdhApiCore.Controllers.other
         [HttpGet, Route("v1/ODHProxy/{*url}")]        
         public Task GetODHProxy(string url)
         {
-            var parameter = "?";
-
-            foreach (var paramdict in HttpContext.Request.Query)
+            try
             {
-                parameter = parameter + paramdict.Key + "=" + paramdict.Value;
+                var parameter = "?";
+
+                foreach (var paramdict in HttpContext.Request.Query)
+                {
+                    parameter = parameter + paramdict.Key + "=" + paramdict.Value;
+                }                
+
+                var fullurl = url + parameter;
+
+                //Quick production fix
+                fullurl = fullurl.Replace("https:/", "https://");
+
+                Console.WriteLine("Url to proxy: " + fullurl);
+
+                return this.HttpProxyAsync(fullurl);
             }
-
-
-            var fullurl = url + parameter;
-
-            return this.HttpProxyAsync(fullurl);
+            catch(Exception ex)
+            {                
+                return Task.FromException(ex);
+            }
         }
     }
 }

@@ -64,8 +64,11 @@ namespace OdhApiImporter.Helpers.DSS
         {
             int updatecounter = 0;
             int newcounter = 0;
+            int deletecounter = 0;
 
-            if(dssinput != null && dssinput.Count > 0)
+            List<string> idlistdssinterface = new List<string>();
+
+            if (dssinput != null && dssinput.Count > 0)
             {
                 string lastupdatestr = dssinput[0].lastUpdate;
                 //interface lastupdate
@@ -117,6 +120,9 @@ namespace OdhApiImporter.Helpers.DSS
                 {
                     //Parse DSS Data
                     ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
+
+                    //Add to list
+                    idlistdssinterface.Add(parsedobject.Id);
 
                     if (parsedobject != null)
                     {
@@ -240,9 +246,28 @@ namespace OdhApiImporter.Helpers.DSS
                         WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = false, error = entitytype + " could not be parsed" });
                     }
                 }
-            }            
+            }
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };
+            //Begin SetDataNotinListToInactive
+            var idlistdb = await GetAllDSSDataByInterface(new List<string>() { "dss" + entitytype + "base" });
+
+            var idstodelete = idlistdb.Where(p => !idlistdssinterface.Any(p2 => p2 == p));
+
+            foreach (var idtodelete in idstodelete)
+            {
+                var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+
+                if (deletedisableresult.Item1 > 0)
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                else if (deletedisableresult.Item2 > 0)
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+
+
+                deletecounter = deletecounter + deletedisableresult.Item1 + deletedisableresult.Item2;
+            }
+
+
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
         }
 
         //Parse the dss interface content
@@ -252,7 +277,7 @@ namespace OdhApiImporter.Helpers.DSS
             string odhdssid = "dss_" + dssinput.pid;
 
             //Get the ODH Item
-            var mydssquery = QueryFactory.Query("smgpois")
+            var mydssquery = QueryFactory.Query(table)
               .Select("data")
               .Where("id", odhdssid);
 
@@ -284,7 +309,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                 var rawdataid = await InsertInRawDataDB(dssdata);
 
-                return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid);
+                return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid);
             }
             catch (Exception ex)
             {
@@ -303,8 +328,22 @@ namespace OdhApiImporter.Helpers.DSS
                             sourceinterface = entitytype + "base",
                             sourceid = dssdata.Key,
                             sourceurl = "http://dss.dev.tinext.net/.rest/json-export/export/",
-                            type = "odhactivitypoi-museum"
+                            type = "odhactivitypoi-" + entitytype  
                         });
         }
+
+        private async Task<List<string>> GetAllDSSDataByInterface(List<string> syncsourceinterfacelist)
+        {
+
+            var query =
+               QueryFactory.Query(table)
+                   .Select("id")
+                   .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
+
+            var idlist = await query.GetAsync<string>();
+
+            return idlist.ToList();
+        }
+
     }
 }
