@@ -64,8 +64,11 @@ namespace OdhApiImporter.Helpers.DSS
         {
             int updatecounter = 0;
             int newcounter = 0;
+            int deletecounter = 0;
 
-            if(dssinput != null && dssinput.Count > 0)
+            List<string> idlistdssinterface = new List<string>();
+
+            if (dssinput != null && dssinput.Count > 0)
             {
                 string lastupdatestr = dssinput[0].lastUpdate;
                 //interface lastupdate
@@ -117,6 +120,9 @@ namespace OdhApiImporter.Helpers.DSS
                 {
                     //Parse DSS Data
                     ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
+
+                    //Add to list
+                    idlistdssinterface.Add(parsedobject.Id);
 
                     if (parsedobject != null)
                     {
@@ -240,9 +246,28 @@ namespace OdhApiImporter.Helpers.DSS
                         WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = false, error = entitytype + " could not be parsed" });
                     }
                 }
-            }            
+            }
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };
+            //Begin SetDataNotinListToInactive
+            var idlistdb = await GetAllDSSDataByInterface(new List<string>() { "dss" + entitytype + "base" });
+
+            var idstodelete = idlistdb.Where(p => !idlistdssinterface.Any(p2 => p2 == p));
+
+            foreach (var idtodelete in idstodelete)
+            {
+                var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+
+                if (deletedisableresult.Item1 > 0)
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                else if (deletedisableresult.Item2 > 0)
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+
+
+                deletecounter = deletecounter + deletedisableresult.Item1 + deletedisableresult.Item2;
+            }
+
+
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
         }
 
         //Parse the dss interface content
@@ -306,5 +331,19 @@ namespace OdhApiImporter.Helpers.DSS
                             type = "odhactivitypoi-museum"
                         });
         }
+
+        private async Task<List<string>> GetAllDSSDataByInterface(List<string> syncsourceinterfacelist)
+        {
+
+            var query =
+               QueryFactory.Query("smgpois")
+                   .Select("id")
+                   .SyncSourceInterfaceFilter(syncsourceinterfacelist);
+
+            var idlist = await query.GetAsync<string>();
+
+            return idlist.ToList();
+        }
+
     }
 }
