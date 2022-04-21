@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Middleware\OdhRateLimitMiddleware.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="xml\RequestInterceptor.xml" />
   </ItemGroup>
 

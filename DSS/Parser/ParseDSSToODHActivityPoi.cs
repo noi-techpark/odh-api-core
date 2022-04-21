@@ -472,6 +472,7 @@ namespace DSS.Parser
                 GpsTrack track = new GpsTrack();
                 track.GpxTrackUrl = geoPositionFile;
                 track.Type = "detailed";
+                track.Format = "kml";
                 gpstracklist.Add(track);
             }
 

@@ -167,6 +167,8 @@ namespace DataModel
         IDictionary<string, string> GpxTrackDesc { get; set; }
         string? GpxTrackUrl { get; set; }
         string? Type { get; set; }
+
+        string? Format { get; set; }
     }
 
     public interface IGpsPolygon
@@ -2851,6 +2853,7 @@ namespace DataModel
         public IDictionary<string, string> GpxTrackDesc { get; set; }
         public string? GpxTrackUrl { get; set; }
         public string? Type { get; set; }
+        public string? Format { get; set; }
     }
 
     public class GpsPolygon : IGpsPolygon
