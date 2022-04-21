@@ -20,17 +20,16 @@ namespace OdhApiCore.Controllers.other
                 foreach (var paramdict in HttpContext.Request.Query)
                 {
                     parameter = parameter + paramdict.Key + "=" + paramdict.Value;
-                }
-
+                }                
 
                 var fullurl = url + parameter;
+
+                Console.WriteLine("Url to proxy: " + fullurl);
 
                 return this.HttpProxyAsync(fullurl);
             }
             catch(Exception ex)
-            {
-                ex.HelpLink = url;
-
+            {                
                 return Task.FromException(ex);
             }
         }
