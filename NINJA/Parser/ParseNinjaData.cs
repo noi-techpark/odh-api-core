@@ -203,6 +203,8 @@ namespace NINJA.Parser
                 //Console.WriteLine("Parsing: " + ninjaevent.begin_date + " " + ninjaevent.begin_time);
 
                 //TODO PARSING FAILS IF format of datetime is not exactly as described
+                //TODO Resolve this "exception": "String '04/04/2022 9:00' was not recognized as a valid DateTime.",
+
                 //Date Info
                 myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
                 myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
