@@ -277,7 +277,7 @@ namespace OdhApiImporter.Helpers.DSS
             string odhdssid = "dss_" + dssinput.pid;
 
             //Get the ODH Item
-            var mydssquery = QueryFactory.Query("smgpois")
+            var mydssquery = QueryFactory.Query(table)
               .Select("data")
               .Where("id", odhdssid);
 
@@ -309,7 +309,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                 var rawdataid = await InsertInRawDataDB(dssdata);
 
-                return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid);
+                return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid);
             }
             catch (Exception ex)
             {
@@ -336,7 +336,7 @@ namespace OdhApiImporter.Helpers.DSS
         {
 
             var query =
-               QueryFactory.Query("smgpois")
+               QueryFactory.Query(table)
                    .Select("id")
                    .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
 

@@ -360,7 +360,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "odhactivitypoi");                
+                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois");                
                 dssimporthelper.entitytype = dssentity;
                 
                 updatedetail = await dssimporthelper.SaveDataToODH(null, cancellationToken);
