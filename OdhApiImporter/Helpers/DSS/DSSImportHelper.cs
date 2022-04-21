@@ -328,7 +328,7 @@ namespace OdhApiImporter.Helpers.DSS
                             sourceinterface = entitytype + "base",
                             sourceid = dssdata.Key,
                             sourceurl = "http://dss.dev.tinext.net/.rest/json-export/export/",
-                            type = "odhactivitypoi-museum"
+                            type = "odhactivitypoi-" + entitytype  
                         });
         }
 
@@ -338,7 +338,7 @@ namespace OdhApiImporter.Helpers.DSS
             var query =
                QueryFactory.Query("smgpois")
                    .Select("id")
-                   .SyncSourceInterfaceFilter(syncsourceinterfacelist);
+                   .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
 
             var idlist = await query.GetAsync<string>();
 
