@@ -23,7 +23,7 @@ namespace Helper
             // Filter out all data where the LicenseInfo does not contain `CC0`
             if (checkCC0) token = JsonTransformerMethods.FilterImagesByCC0License(token);
             // Filter out all data where the LicenseInfo contains `hgv` as source.
-            if (checkCC0) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
+            if (filterClosedData) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
 
             //Filter out all Data 
             //var rolefilter = FilterOutPropertiesByRole(userroles);

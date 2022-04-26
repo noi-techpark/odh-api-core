@@ -35,7 +35,17 @@ namespace OdhApiCore.Controllers
 
         protected QueryFactory QueryFactory { get; }
 
-        protected bool FilterCC0License => FilterClosedData;
+        protected bool FilterCC0License
+        {
+            get
+            {
+                var roles = new[] {
+                    "IDM",
+                    "AllImages"
+                };
+                return !roles.Any(User.IsInRole);
+            }
+        }
 
         //TODO EXTEND THIS ALSO TO ODHActivityPoiReader etc...
         /// <summary>
