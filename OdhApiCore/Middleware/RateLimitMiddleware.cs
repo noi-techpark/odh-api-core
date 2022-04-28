@@ -145,7 +145,10 @@ namespace OdhApiCore
                 //If user is in Role 
                 if(!String.IsNullOrEmpty(userrole))
                 {
-                    ratelimitconfig = rlsettings.Where(x => x.Type.ToLower() == userrole).FirstOrDefault();
+                    if(userrole == "ODH_ROLE_ADVANCED")
+                        ratelimitconfig = rlsettings.Where(x => x.Type == "Advanced").FirstOrDefault();
+                    if (userrole == "ODH_ROLE_PREMIUM")
+                        ratelimitconfig = rlsettings.Where(x => x.Type == "Premium").FirstOrDefault();
                 }
 
                 //Fallback if ratelimitconfig by Role is null
