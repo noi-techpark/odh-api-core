@@ -82,6 +82,8 @@ namespace OdhApiCore
                     //Request Length                    
                     requesttime.Stop();
 
+                    //TODO Add Response Size?
+
                     HttpRequestLog httplog = new HttpRequestLog()
                     {
                         host = context.Request.Host.ToString(),
