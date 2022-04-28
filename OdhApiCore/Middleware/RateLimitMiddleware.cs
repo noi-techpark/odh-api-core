@@ -41,7 +41,7 @@ namespace OdhApiCore
 
             //var key = GenerateClientKey(context);
             var (rlConfig, key) = GenerateClientKeyExtended(context, settings.RateLimitConfig);
-            if (rlConfig is not null)
+            if (rlConfig is not null && rlConfig.Type != "Admin")
             {
                 var clientStatistics = await GetClientStatisticsByKey(key);
 
@@ -149,6 +149,8 @@ namespace OdhApiCore
                         ratelimitconfig = rlsettings.Where(x => x.Type == "Advanced").FirstOrDefault();
                     if (userrole == "ODH_ROLE_PREMIUM")
                         ratelimitconfig = rlsettings.Where(x => x.Type == "Premium").FirstOrDefault();
+                    if (userrole == "ODH_ROLE_ADMIN")
+                        ratelimitconfig = rlsettings.Where(x => x.Type == "Admin").FirstOrDefault();
                 }
 
                 //Fallback if ratelimitconfig by Role is null
