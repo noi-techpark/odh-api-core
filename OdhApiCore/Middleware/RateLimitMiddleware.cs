@@ -132,14 +132,14 @@ namespace OdhApiCore
             //Case 2 Referer passed generate key with Referer
             else if (!String.IsNullOrEmpty(referer) && String.IsNullOrEmpty(loggeduser))
             {
-                ratelimitcachekey = $"{referer}";
+                ratelimitcachekey = $"{context.Request.Path}_{context.Connection.RemoteIpAddress}_{referer}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Referer").FirstOrDefault();
             }
 
             //Case 3 Logged user, decode token and use username as key
             else if (!String.IsNullOrEmpty(loggeduser))
             {
-                ratelimitcachekey = $"{loggeduser}";
+                ratelimitcachekey = $"{context.Request.Path}_{context.Connection.RemoteIpAddress}_{loggeduser}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
 
                 //If user is in Role 
