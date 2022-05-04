@@ -16,6 +16,7 @@ namespace OdhApiCore.Controllers.api
         public List<string> idlist;
         public List<string> arealist;
         public List<string> smgtaglist;
+        public List<string> smgtaglistand;
         public List<string> sourcelist;
         public List<string> languagelist;
         public List<string> districtlist;
@@ -64,7 +65,8 @@ namespace OdhApiCore.Controllers.api
             bool? highlightfilter, 
             bool? activefilter, 
             bool? smgactivefilter,
-            string? smgtags, 
+            string? smgtags,
+            string? smgtagsand,
             string? lastchange,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter,
@@ -82,7 +84,7 @@ namespace OdhApiCore.Controllers.api
             }
 
             return new ODHActivityPoiHelper(typefilter, subtypefilter, level3typefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, 
-                highlightfilter, activefilter, smgactivefilter, smgtags, 
+                highlightfilter, activefilter, smgactivefilter, smgtags, smgtagsand,
                 categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
                 activitytypefilter, poitypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter,
                 publishedonfilter,
@@ -102,6 +104,7 @@ namespace OdhApiCore.Controllers.api
             bool? activefilter, 
             bool? smgactivefilter, 
             string? smgtags,
+            string? smgtagsand,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter,  string? facilitycodefilter,  string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
             string? publishedonfilter,
@@ -151,6 +154,8 @@ namespace OdhApiCore.Controllers.api
             this.arealist = arealist.ToList();
 
             smgtaglist = Helper.CommonListCreator.CreateIdList(smgtags);
+
+            smgtaglistand = Helper.CommonListCreator.CreateIdList(smgtagsand);
 
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();

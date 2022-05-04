@@ -585,7 +585,7 @@ namespace OdhApiCore.Controllers.api
             {
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
                     queryFactory: QueryFactory, typefilter: type, subtypefilter: subtype, level3typefilter: level3type, idfilter: null, locfilter: locfilter, areafilter: areafilter,
-                    languagefilter: language, sourcefilter: source, highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: null,
+                    languagefilter: language, sourcefilter: source, highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, smgtagsand: null, lastchange: null,
                     categorycodefilter: null, dishcodefilter: null, ceremonycodefilter: null, facilitycodefilter: null, cuisinecodefilter: null, activitytypefilter: null, poitypefilter: null, distancefilter: null, 
                     altitudefilter: null, durationfilter: null, difficultyfilter: null, publishedonfilter: null, cancellationToken);
 
@@ -602,7 +602,7 @@ namespace OdhApiCore.Controllers.api
                         .From("smgpois")
                         .ODHActivityPoiWhereExpression(
                             idlist: helper.idlist, typelist: helper.typelist, subtypelist: helper.subtypelist, level3typelist: helper.level3typelist,
-                            smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
+                            smgtaglist: helper.smgtaglist, smgtaglistand: helper.smgtaglistand, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             arealist: helper.arealist, highlight: helper.highlight, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, sourcelist: helper.sourcelist, languagelist: helper.languagelist,

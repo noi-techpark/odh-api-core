@@ -53,7 +53,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
-        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
+        /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible (OR FILTER), available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
+        /// <param name="odhtagfilterand">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible (AND FILTER), available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
         /// <param name="active">Active ODHActivityPoi Filter (possible Values: 'true' only active ODHActivityPoi, 'false' only not active ODHActivityPoi), (default:'null')</param>        
         /// <param name="odhactive">ODH Active (Published) ODHActivityPoi Filter (Refers to field OdhActive) (possible Values: 'true' only published ODHActivityPoi, 'false' only not published ODHActivityPoi), (default:'null')</param>        
         /// <param name="categorycodefilter">CategoryCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes?rawfilter=eq(Type,\"CategoryCodes\")' target="_blank">GastronomyTypes</a>, Type: CategoryCodes</param>
@@ -99,6 +100,7 @@ namespace OdhApiCore.Controllers.api
             LegacyBool highlight = null!,
             string? source = null,
             string? odhtagfilter = null,
+            string? odhtagfilterand = null,
             LegacyBool odhactive = null!,
             LegacyBool active = null!,
             string? categorycodefilter = null,
@@ -229,7 +231,7 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize,
             string? type, string? subtypefilter, string? level3typefilter, string? searchfilter, string? idfilter, string? languagefilter, string? sourcefilter, string? locfilter,
-            string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, 
+            string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? smgtagsand,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? difficultyfilter, string? distancefilter, string? altitudefilter, string? durationfilter,
             string? publishedon,
@@ -241,7 +243,7 @@ namespace OdhApiCore.Controllers.api
                 ODHActivityPoiHelper myodhactivitypoihelper = await ODHActivityPoiHelper.CreateAsync(
                     queryFactory: QueryFactory,typefilter: type, subtypefilter: subtypefilter, level3typefilter: level3typefilter, 
                     idfilter: idfilter, locfilter: locfilter, areafilter: areafilter,  languagefilter: languagefilter, sourcefilter: sourcefilter, 
-                    highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: lastchange, 
+                    highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, smgtagsand: smgtagsand, lastchange: lastchange, 
                     categorycodefilter : categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                     activitytypefilter: activitytypefilter, poitypefilter: poitypefilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter, difficultyfilter: difficultyfilter,
                     publishedonfilter: publishedon,
@@ -254,7 +256,7 @@ namespace OdhApiCore.Controllers.api
                         .ODHActivityPoiWhereExpression(
                             idlist: myodhactivitypoihelper.idlist, typelist: myodhactivitypoihelper.typelist,
                             subtypelist: myodhactivitypoihelper.subtypelist, level3typelist: myodhactivitypoihelper.level3typelist,
-                            smgtaglist: myodhactivitypoihelper.smgtaglist, districtlist: myodhactivitypoihelper.districtlist,
+                            smgtaglist: myodhactivitypoihelper.smgtaglist, smgtaglistand: myodhactivitypoihelper.smgtaglistand, districtlist: myodhactivitypoihelper.districtlist,
                             municipalitylist: myodhactivitypoihelper.municipalitylist, tourismvereinlist: myodhactivitypoihelper.tourismvereinlist,
                             regionlist: myodhactivitypoihelper.regionlist, arealist: myodhactivitypoihelper.arealist,
                             sourcelist: myodhactivitypoihelper.sourcelist, languagelist: myodhactivitypoihelper.languagelist,

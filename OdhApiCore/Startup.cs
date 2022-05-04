@@ -290,7 +290,7 @@ namespace OdhApiCore
                     {
                         NameClaimType = "preferred_username",
                         ValidateAudience = false,
-                        ValidateLifetime = true,
+                        ValidateLifetime = true,                        
                         ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
                         ValidateIssuer = true
                     };

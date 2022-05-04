@@ -532,6 +532,18 @@ namespace Helper
     #region ODHActivityPois
 
     [Flags]
+    public enum SmgPoiMainTypeFlag
+    {
+        [Description("Activity")]
+        Activity = 1,
+        [Description("Poi")]
+        Poi = 1 << 1,
+        [Description("Gastronomy")]
+        Gastronomy = 1 << 2        
+    }
+
+
+    [Flags]
     public enum SmgPoiTypeFlag
     {
         [Description("Wellness Entspannung")]
