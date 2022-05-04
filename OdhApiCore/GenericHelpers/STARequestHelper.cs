@@ -106,7 +106,7 @@ namespace OdhApiCore.GenericHelpers
                         .ODHActivityPoiWhereExpression(
                             idlist: new List<string>(), typelist: new List<string>(),
                             subtypelist: new List<string>(), level3typelist: new List<string>(),
-                            smgtaglist: categoriestoretrieve, districtlist: new List<string>(),
+                            smgtaglist: categoriestoretrieve, smgtaglistand: new List<string>(), districtlist: new List<string>(),
                             municipalitylist: new List<string>(), tourismvereinlist: new List<string>(),
                             regionlist: new List<string>(), arealist: new List<string>(),
                             sourcelist: new List<string>(), languagelist: new List<string>() { language },
