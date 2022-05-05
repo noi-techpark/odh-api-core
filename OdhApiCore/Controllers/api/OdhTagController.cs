@@ -32,8 +32,8 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET ODHTag List
         /// </summary>
-        /// <param name="validforentity">Filter on Tags valid on Entities (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>
-        /// <param name="mainentity">Filter on Tags with MainEntity set to (accommodation, activity, poi, smgpoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="validforentity">Filter on Tags valid on Entities (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="mainentity">Filter on Tags with MainEntity set to (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..)</param>
         /// <param name="displayascategory">true = returns only Tags which are marked as DisplayAsCategory true</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="localizationlanguage">here for Compatibility Reasons, replaced by language parameter</param>
@@ -118,15 +118,14 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Hack
-                if (validforentity == "odhactivitypoi")
-                {
-                    validforentity.Replace("odhactivitypoi", "smgpoi");
-                }
-                if (maintype == "odhactivitypoi")
-                {
-                    maintype.Replace("odhactivitypoi", "smgpoi");
-                }
-
+                //if (validforentity != null && validforentity.Contains("odhactivitypoi"))
+                //{
+                //    validforentity = validforentity.Replace("odhactivitypoi", "smgpoi");
+                //}
+                //if (maintype != null && maintype.Contains("odhactivitypoi"))
+                //{
+                //    maintype = maintype.Replace("odhactivitypoi", "smgpoi");
+                //}
 
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
