@@ -60,43 +60,48 @@ namespace OdhApiImporter.Helpers
                     //Parse to ODHActivityPoi
                     var odhactivitypoi = STA.ParseSTAPois.ParseSTAVendingPointToODHActivityPoi(vendingpoint);
 
-                    //MetaData
-                    //odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<ODHActivityPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
-                    //LicenseInfo                                                                                                                                    //License
-                    odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
-
-                    if (odhactivitypoi.GpsPoints.ContainsKey("position"))
+                    if (odhactivitypoi != null)
                     {
-                        //Get Nearest District
-                        var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(odhactivitypoi.GpsPoints["position"].Latitude, odhactivitypoi.GpsPoints["position"].Longitude, 10000);
-                        var nearestdistrict = await GetLocationInfo.GetNearestDistrict(QueryFactory, geosearchresult, 1);
+                        //MetaData
+                        //odhactivitypoi._Meta = MetadataHelper.GetMetadataobject<ODHActivityPoiLinked>(odhactivitypoi, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
+                        //LicenseInfo                                                                                                                                    //License
+                        odhactivitypoi.LicenseInfo = LicenseHelper.GetLicenseforOdhActivityPoi(odhactivitypoi);
 
-                        if (nearestdistrict != null && nearestdistrict.Count() > 0)
+                        if (odhactivitypoi.GpsPoints.ContainsKey("position"))
                         {
-                            //Get LocationInfo Object
-                            var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault()?.Id);
+                            //Get Nearest District
+                            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(odhactivitypoi.GpsPoints["position"].Latitude, odhactivitypoi.GpsPoints["position"].Longitude, 10000);
+                            var nearestdistrict = await GetLocationInfo.GetNearestDistrict(QueryFactory, geosearchresult, 1);
 
-                            if (locationinfo != null)
-                                odhactivitypoi.LocationInfo = locationinfo;
+                            if (nearestdistrict != null && nearestdistrict.Count() > 0)
+                            {
+                                //Get LocationInfo Object
+                                var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault()?.Id);
+
+                                if (locationinfo != null)
+                                    odhactivitypoi.LocationInfo = locationinfo;
+                            }
                         }
+
+                        //Adding TypeInfo Additional
+                        odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi?.SubType, new List<string>() { "de", "it", "en" });
+
+                        ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+
+                        //Save to Rawdatatable
+                        var rawdataid = await InsertInRawDataDB(vendingpoint);
+
+                        //Save to PG
+                        //Check if data exists                    
+                        var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois", rawdataid);
+
+                        if (result.updated != null)
+                            updatecounter = updatecounter + result.updated.Value;
+                        if (result.created != null)
+                            newcounter = newcounter + result.created.Value;
+                        if (result.deleted != null)
+                            deletecounter = deletecounter + result.deleted.Value;
                     }
-
-                    //Adding TypeInfo Additional
-                    odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi?.SubType, new List<string>() { "de", "it", "en" });
-
-                    //Save to Rawdatatable
-                    var rawdataid = await InsertInRawDataDB(vendingpoint);
-
-                    //Save to PG
-                    //Check if data exists                    
-                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois", rawdataid);
-
-                    if (result.updated != null)
-                        updatecounter = updatecounter + result.updated.Value;
-                    if (result.created != null)
-                        newcounter = newcounter + result.created.Value;
-                    if (result.deleted != null)
-                        deletecounter = deletecounter + result.deleted.Value;
                 }
 
                 return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };

@@ -117,6 +117,8 @@ namespace RAVEN
             data._Meta = MetadataHelper.GetMetadataobject<ODHActivityPoiLinked>(data, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
             data.PublishedOn = PublishedOnHelper.GetPublishenOnList("odhactivitypoi", data.SmgActive);
 
+            ODHTagHelper.SetMainCategorizationForODHActivityPoi(data);
+
             return data;
         }
 
@@ -656,7 +658,10 @@ namespace RAVEN
             List<string> validforentitynew = new List<string>();
             foreach (var validforentity in data.ValidForEntity)
             {
-                validforentitynew.Add(validforentity.ToLower());
+                if (validforentity.ToLower() == "smgpoi")
+                    validforentitynew.Add("odhactivitypoi");
+                else
+                    validforentitynew.Add(validforentity.ToLower());
             }
 
             data.ValidForEntity = validforentitynew;

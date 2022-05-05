@@ -773,8 +773,6 @@ namespace DataModel
         }
 
         public string? CustomId { get; set; }
-
-
         public ICollection<Webcam>? Webcam { get; set; }
 
         public IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }

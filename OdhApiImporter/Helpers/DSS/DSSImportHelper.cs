@@ -233,6 +233,8 @@ namespace OdhApiImporter.Helpers.DSS
                         else if (!String.IsNullOrEmpty(parsedobject.Detail["en"].Title))
                             parsedobject.Shortname = parsedobject.Detail["en"].Title;
 
+                        ODHTagHelper.SetMainCategorizationForODHActivityPoi(parsedobject);
+
                         //Save parsedobject to DB + Save Rawdata to DB
                         var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
 
