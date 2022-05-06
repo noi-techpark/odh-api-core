@@ -54,7 +54,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible (OR FILTER), available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
-        /// <param name="odhtagfilterand">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible (AND FILTER), available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
+        /// <param name="odhtagfilter_and">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible (AND FILTER), available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
         /// <param name="active">Active ODHActivityPoi Filter (possible Values: 'true' only active ODHActivityPoi, 'false' only not active ODHActivityPoi), (default:'null')</param>        
         /// <param name="odhactive">ODH Active (Published) ODHActivityPoi Filter (Refers to field OdhActive) (possible Values: 'true' only published ODHActivityPoi, 'false' only not published ODHActivityPoi), (default:'null')</param>        
         /// <param name="categorycodefilter">CategoryCode Filter (Only for ODHActivityTypes of type Gastronomy) (BITMASK) refers to <a href='https://tourism.opendatahub.bz.it/v1/GastronomyTypes?rawfilter=eq(Type,\"CategoryCodes\")' target="_blank">GastronomyTypes</a>, Type: CategoryCodes</param>
@@ -100,7 +100,7 @@ namespace OdhApiCore.Controllers.api
             LegacyBool highlight = null!,
             string? source = null,
             string? odhtagfilter = null,
-            string? odhtagfilterand = null,
+            string? odhtagfilter_and = null,
             LegacyBool odhactive = null!,
             LegacyBool active = null!,
             string? categorycodefilter = null,
@@ -132,7 +132,7 @@ namespace OdhApiCore.Controllers.api
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 type: type, subtypefilter: subtype, level3typefilter: level3type, searchfilter: searchfilter, idfilter: idlist, languagefilter: langfilter,
                 sourcefilter: source, locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight?.Value, active: active?.Value,
-                smgactive: odhactive?.Value, smgtags: odhtagfilter, smgtagsand: odhtagfilterand,
+                smgactive: odhactive?.Value, smgtags: odhtagfilter, smgtagsand: odhtagfilter_and,
                 categorycodefilter: categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                 activitytypefilter: activitytype, poitypefilter: poitype, difficultyfilter: difficultyfilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
                 publishedon: publishedon,
