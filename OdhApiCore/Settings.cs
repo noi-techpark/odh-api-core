@@ -272,9 +272,11 @@ namespace OdhApiCore
 
             var noratelimitroutes = this.configuration.GetSection("NoRateLimitRoutesConfig").GetChildren();
             this.noRateLimitRoutesConfig = new List<string>();
+            int i = 0;
             foreach (var routepath in noratelimitroutes)
             {
-                this.noRateLimitRoutesConfig.Add(routepath.GetValue<string>(""));
+                this.noRateLimitRoutesConfig.Add(routepath.GetValue<string>("Path",""));
+                i++;
             }
         }
 
