@@ -65,6 +65,8 @@ Production Server on https://tourism.api.opendatahub.bz.it
 ## Getting started:
 
 Clone the repository
+Copy `.env.example` to `.env`
+Set the needed environment variables
 
 ### Environment Variables
 
