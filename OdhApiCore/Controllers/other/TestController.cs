@@ -53,6 +53,13 @@ namespace OdhApiCore.Controllers.api
             return Ok(JsonConvert.SerializeObject(settings.RateLimitConfig));
         }
 
+        [HttpGet, Route("TestQuotaRoutes")]
+        public IActionResult GetTestQuotaRoutes()
+        {
+
+            return Ok(JsonConvert.SerializeObject(settings.NoRateLimitRoutesConfig));
+        }
+
         [HttpGet, Route("TestField2Hide")]
         public IActionResult GetFieldToHide()
         {
