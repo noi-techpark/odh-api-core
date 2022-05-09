@@ -40,7 +40,7 @@ namespace OdhApiCore
             }
 
             //If route is listed in NoRateLimitRoutesConfig do nothing
-            if (settings.NoRateLimitRoutesConfig != null && ComparePathString(context.Request.Path, settings))
+            if (ComparePathString(context.Request.Path, settings))
             {
                 await _next(context);
                 return;
@@ -215,7 +215,7 @@ namespace OdhApiCore
         {
             bool toreturn = false;
             
-            if (settings.NoRateLimitRoutesConfig != null && settings.NoRateLimitRoutesConfig.Contains(currentpath))
+            if (settings.NoRateLimitRoutesConfig != null && settings.NoRateLimitRoutesConfig.Contains(currentpath.Value))
                 return true;
 
 

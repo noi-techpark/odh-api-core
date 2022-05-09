@@ -271,12 +271,10 @@ namespace OdhApiCore
             }
 
             var noratelimitroutes = this.configuration.GetSection("NoRateLimitRoutesConfig").GetChildren();
-            this.noRateLimitRoutesConfig = new List<string>();
-            int i = 0;
+            this.noRateLimitRoutesConfig = new List<string>();            
             foreach (var routepath in noratelimitroutes)
             {
-                this.noRateLimitRoutesConfig.Add(routepath.GetValue<string>("Path",""));
-                i++;
+                this.noRateLimitRoutesConfig.Add(routepath.GetValue<string>("Path",""));                
             }
         }
 
@@ -295,6 +293,6 @@ namespace OdhApiCore
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
         public List<RateLimitConfig> RateLimitConfig => this.rateLimitConfig;
-        public List<string>? NoRateLimitRoutesConfig => this.NoRateLimitRoutesConfig;
+        public List<string>? NoRateLimitRoutesConfig => this.noRateLimitRoutesConfig;
     }
 }
