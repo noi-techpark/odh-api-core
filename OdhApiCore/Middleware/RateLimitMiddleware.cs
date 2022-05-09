@@ -39,7 +39,13 @@ namespace OdhApiCore
                 return;
             }
 
-            //var key = GenerateClientKey(context);
+            //If route is listed in NoRateLimitRoutesConfig do nothing
+            if (settings.NoRateLimitRoutesConfig.RoutesToPass != null && ComparePathString(context.Request.Path, settings))
+            {
+                await _next(context);
+                return;
+            }
+
             var (rlConfig, key) = GenerateClientKeyExtended(context, settings.RateLimitConfig);
             if (rlConfig is not null && rlConfig.Type != "Admin")
             {
@@ -54,7 +60,6 @@ namespace OdhApiCore
                     context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
 
                     await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "You have exhausted your API Request Quota", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count });
-
 
                     return;
                 }
@@ -204,6 +209,17 @@ namespace OdhApiCore
         public static MemoryStream GenerateStreamFromString(string value)
         {
             return new MemoryStream(Encoding.UTF8.GetBytes(value ?? ""));
+        }
+
+        private static bool ComparePathString(PathString currentpath, ISettings settings)
+        {
+            bool toreturn = false;
+            
+            if (settings.NoRateLimitRoutesConfig.RoutesToPass != null && settings.NoRateLimitRoutesConfig.RoutesToPass.Contains(currentpath))
+                return true;
+
+
+            return toreturn;
         }
     }
 
