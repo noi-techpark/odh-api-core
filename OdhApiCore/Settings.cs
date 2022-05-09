@@ -182,17 +182,7 @@ namespace OdhApiCore
         public string Type { get; private set; }
         public int TimeWindow { get; private set; }
         public int MaxRequests { get; private set; }
-    }
-
-    public class NoRateLimitRoutesConfig
-    {
-        public NoRateLimitRoutesConfig(string routes)
-        {
-            this.RoutesToPass = routes != null ? routes.Split(',').ToList() : null;
-        }
-
-        public List<string>? RoutesToPass { get; private set; }
-    }
+    }    
 
     public interface ISettings
     {
@@ -210,7 +200,7 @@ namespace OdhApiCore
         List<Field2HideConfig> Field2HideConfig { get; }
         List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
         List<RateLimitConfig> RateLimitConfig { get; }
-        NoRateLimitRoutesConfig NoRateLimitRoutesConfig { get; }
+        List<string>? NoRateLimitRoutesConfig { get; }
     }
 
     public class Settings : ISettings
@@ -230,7 +220,7 @@ namespace OdhApiCore
         private readonly List<Field2HideConfig> field2hideConfig;
         private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
         private readonly List<RateLimitConfig> rateLimitConfig;
-        private readonly NoRateLimitRoutesConfig noRateLimitRoutesConfig;
+        private readonly List<string>? noRateLimitRoutesConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -280,9 +270,12 @@ namespace OdhApiCore
                 this.rateLimitConfig.Add(new RateLimitConfig(ratelimitconfig.GetValue<string>("Type", ""), ratelimitconfig.GetValue<int>("TimeWindow", 0), ratelimitconfig.GetValue<int>("MaxRequests", 0)));
             }
 
-            var noratelimitroutes = this.configuration.GetSection("NoRateLimitRoutes");
-            this.noRateLimitRoutesConfig = new NoRateLimitRoutesConfig(noratelimitroutes.GetValue<string>("RoutesToPass", ""));
-
+            var noratelimitroutes = this.configuration.GetSection("NoRateLimitRoutesConfig").GetChildren();
+            this.noRateLimitRoutesConfig = new List<string>();
+            foreach (var routepath in noratelimitroutes)
+            {
+                this.noRateLimitRoutesConfig.Add(routepath.GetValue<string>(""));
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -300,6 +293,6 @@ namespace OdhApiCore
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
         public List<RateLimitConfig> RateLimitConfig => this.rateLimitConfig;
-        public NoRateLimitRoutesConfig NoRateLimitRoutesConfig => this.NoRateLimitRoutesConfig;
+        public List<string>? NoRateLimitRoutesConfig => this.NoRateLimitRoutesConfig;
     }
 }
