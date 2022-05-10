@@ -917,6 +917,8 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
+
+        [SwaggerSchema("Data is marked as Active by the data provider")]
         public bool Active { get; set; }
         public string? HgvId { get; set; }
         public string? Shortname { get; set; }
@@ -1002,7 +1004,7 @@ namespace DataModel
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
-
+        
         public string? Source { get; set; }
 
         //New Mapping
