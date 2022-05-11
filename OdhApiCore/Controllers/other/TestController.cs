@@ -57,7 +57,7 @@ namespace OdhApiCore.Controllers.api
         public IActionResult GetTestQuotaRoutes()
         {
 
-            return Ok(JsonConvert.SerializeObject(settings.NoRateLimitRoutesConfig));
+            return Ok(JsonConvert.SerializeObject(settings.NoRateLimitConfig));
         }
 
         [HttpGet, Route("TestField2Hide")]
