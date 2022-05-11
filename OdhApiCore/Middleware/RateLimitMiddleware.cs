@@ -40,7 +40,14 @@ namespace OdhApiCore
             }
 
             //If route is listed in NoRateLimitRoutesConfig do nothing
-            if (ComparePathString(context.Request.Path, settings))
+            if (CheckNoRestrictionRoutes(context.Request.Path, settings))
+            {
+                await _next(context);
+                return;
+            }
+
+            //If Referer is listed in NoRateLimitRefererConfig do nothing
+            if (CheckNoRestricionReferer(context, settings))
             {
                 await _next(context);
                 return;
@@ -211,11 +218,33 @@ namespace OdhApiCore
             return new MemoryStream(Encoding.UTF8.GetBytes(value ?? ""));
         }
 
-        private static bool ComparePathString(PathString currentpath, ISettings settings)
+        private static bool CheckNoRestrictionRoutes(PathString currentpath, ISettings settings)
         {
             bool toreturn = false;
             
-            if (settings.NoRateLimitRoutesConfig != null && settings.NoRateLimitRoutesConfig.Contains(currentpath.Value))
+            if (settings.NoRateLimitConfig.NoRateLimitRoutes != null && settings.NoRateLimitConfig.NoRateLimitRoutes.Contains(currentpath.Value))
+                return true;
+
+
+            return toreturn;
+        }
+
+        private static bool CheckNoRestricionReferer(HttpContext context, ISettings settings)
+        {
+            bool toreturn = false;
+
+            string currentreferer = "";
+            //Check Referer
+            if (context.Request.Headers.ContainsKey("Referer"))
+                currentreferer = context.Request.Headers["Referer"].ToString();
+            else
+            {
+                //Search the QS for Referer
+                if (context.Request.Query.ContainsKey("Referer"))
+                    currentreferer = context.Request.Query["Referer"].ToString();
+            }
+
+            if (settings.NoRateLimitConfig.NoRateLimitReferer != null && settings.NoRateLimitConfig.NoRateLimitReferer.Contains(currentreferer))
                 return true;
 
 

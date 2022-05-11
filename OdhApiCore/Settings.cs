@@ -184,6 +184,17 @@ namespace OdhApiCore
         public int MaxRequests { get; private set; }
     }    
 
+    public class NoRateLimitConfig
+    {
+        public NoRateLimitConfig(List<string> noratelimitroutes, List<string> noratelimitrefers)
+        {
+            NoRateLimitRoutes = noratelimitroutes;
+            NoRateLimitReferer = noratelimitrefers;
+        }
+        public List<string> NoRateLimitRoutes { get; private set; }
+        public List<string> NoRateLimitReferer { get; private set; }
+    }
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -200,7 +211,7 @@ namespace OdhApiCore
         List<Field2HideConfig> Field2HideConfig { get; }
         List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
         List<RateLimitConfig> RateLimitConfig { get; }
-        List<string>? NoRateLimitRoutesConfig { get; }
+        NoRateLimitConfig NoRateLimitConfig { get; }
     }
 
     public class Settings : ISettings
@@ -220,7 +231,7 @@ namespace OdhApiCore
         private readonly List<Field2HideConfig> field2hideConfig;
         private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
         private readonly List<RateLimitConfig> rateLimitConfig;
-        private readonly List<string>? noRateLimitRoutesConfig;
+        private readonly NoRateLimitConfig noRateLimitConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -270,11 +281,16 @@ namespace OdhApiCore
                 this.rateLimitConfig.Add(new RateLimitConfig(ratelimitconfig.GetValue<string>("Type", ""), ratelimitconfig.GetValue<int>("TimeWindow", 0), ratelimitconfig.GetValue<int>("MaxRequests", 0)));
             }
 
-            var noratelimitroutes = this.configuration.GetSection("NoRateLimitRoutesConfig").GetChildren();
-            this.noRateLimitRoutesConfig = new List<string>();            
+            var noratelimitroutes = this.configuration.GetSection("NoRateLimitConfig").GetSection("NoRateLimitRoutesConfig").GetChildren();
+            var noratelimitreferers = this.configuration.GetSection("NoRateLimitConfig").GetSection("NoRateLimitRefererConfig").GetChildren();
+            this.noRateLimitConfig = new NoRateLimitConfig(new List<string>(), new List<string>());            
             foreach (var routepath in noratelimitroutes)
             {
-                this.noRateLimitRoutesConfig.Add(routepath.GetValue<string>("Path",""));                
+                this.noRateLimitConfig.NoRateLimitRoutes.Add(routepath.GetValue<string>("Path",""));                
+            }
+            foreach (var referer in noratelimitreferers)
+            {
+                this.noRateLimitConfig.NoRateLimitReferer.Add(referer.GetValue<string>("Referer", ""));
             }
         }
 
@@ -293,6 +309,6 @@ namespace OdhApiCore
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
         public List<RateLimitConfig> RateLimitConfig => this.rateLimitConfig;
-        public List<string>? NoRateLimitRoutesConfig => this.noRateLimitRoutesConfig;
+        public NoRateLimitConfig NoRateLimitConfig => this.noRateLimitConfig;
     }
 }
