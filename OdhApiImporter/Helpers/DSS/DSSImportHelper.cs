@@ -310,8 +310,13 @@ namespace OdhApiImporter.Helpers.DSS
                 odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
                 var rawdataid = await InsertInRawDataDB(dssdata);
+                
+                var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid);
 
-                return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid);
+                //Hack insert also in Activity table
+                //await InsertInLegacyActivityTable(odhactivitypoi);
+
+                return pgcrudresult;
             }
             catch (Exception ex)
             {
@@ -347,5 +352,27 @@ namespace OdhApiImporter.Helpers.DSS
             return idlist.ToList();
         }
 
+
+        private async Task<PGCRUDResult> InsertInLegacyActivityTable(ODHActivityPoiLinked odhactivitypoi)
+        {
+
+            //Transform to LTSActivityLinked
+            var activity = TransformODHActivityPoiToActivity(odhactivitypoi);
+            
+            //Insert in Table
+            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, table);
+
+            return null;
+        }
+
+        private LTSActivityLinked TransformODHActivityPoiToActivity(ODHActivityPoiLinked odhactivitypoi)
+        {
+            //TODO Transform class
+
+            //Update Categorization
+
+
+            return new LTSActivityLinked();
+        }
     }
 }
