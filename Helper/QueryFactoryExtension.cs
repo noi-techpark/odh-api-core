@@ -60,10 +60,11 @@ namespace Helper
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
 
-            if (queryresult == null || queryresult.Count() == 0)
-            {
+            if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
-                
+
+            if (queryresult == null || queryresult.Count() == 0)
+            {               
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
@@ -140,10 +141,11 @@ namespace Helper
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
 
+            if(data.FirstImport == null)
+                data.FirstImport = DateTime.Now;
+
             if (queryresult == null || queryresult.Count() == 0)
             {
-                data.FirstImport = DateTime.Now;                
-
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
                 operation = "INSERT";
