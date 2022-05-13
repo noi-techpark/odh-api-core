@@ -110,6 +110,8 @@ namespace OdhApiImporter.Helpers
                 {
                     myarticle.ArticleDateTo = DateTime.Now.AddMonths(i);
                 }
+                else
+                    myarticle.ArticleDateTo = DateTime.MaxValue;
 
                 myarticle.SmgActive = true;
                 myarticle.Source = "noi";
