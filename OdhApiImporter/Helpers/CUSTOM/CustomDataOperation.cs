@@ -84,24 +84,49 @@ namespace OdhApiImporter.Helpers
 
         public async Task<int> FillDBWithDummyNews()
         {
-            int i = 0;
+            int crudcount = 0;
 
-            //for (int i=0; i )
-            //{
-            //    //Setting MetaInfo
-            //    stapoi._Meta.Reduced = false;
-            //    stapoi.Source = "sta";
+            for (int i = 1; i <= 120; i++)
+            {
+                ArticlesLinked myarticle  = new ArticlesLinked();
+                myarticle.Id = Guid.NewGuid().ToString();
+                myarticle.Type = "newsfeednoi";
+                myarticle.Active = true;
+                myarticle.Detail.TryAddOrUpdate("de", new Detail() { Title = "TesttitleDE" + i, BaseText = "testtextDE " + i, Language = "de", AdditionalText = "additionaltextde" + i });
+                myarticle.Detail.TryAddOrUpdate("it", new Detail() { Title = "TesttitleIT" + i, BaseText = "testtextIT " + i, Language = "it", AdditionalText = "additionaltextit" + i });
+                myarticle.Detail.TryAddOrUpdate("en", new Detail() { Title = "TesttitleEN" + i, BaseText = "testtextEN " + i, Language = "en", AdditionalText = "additionaltexten" + i });
 
-            //    //Save tp DB
-            //    //TODO CHECK IF THIS WORKS     
-            //    var queryresult = await QueryFactory.Query("smgpois").Where("id", stapoi.Id)
-            //        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-            //        .UpdateAsync(new JsonBData() { id = stapoi.Id?.ToLower() ?? "", data = new JsonRaw(stapoi) });
+                myarticle.HasLanguage = new List<string>() { "de", "it", "en" };
 
-            //    i++;
-            //}
+                myarticle.LicenseInfo = new LicenseInfo() { Author = "", License = "CC0", ClosedData = false, LicenseHolder= "https://noi.bz.it" };
 
-            return i;
+                myarticle.ContactInfos.TryAddOrUpdate("de", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "de", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("it", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "it", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "en", CompanyName = "NOI Techpark" });
+
+                myarticle.ArticleDate = DateTime.Now.AddDays(i);
+
+                if (i % 5 == 0)
+                {
+                    myarticle.ArticleDateTo = DateTime.Now.AddMonths(i);
+                }
+
+                myarticle.SmgActive = true;
+                myarticle.Source = "noi";
+
+                if(i % 3 == 0)
+                {
+                    myarticle.SmgTags = new List<string>() { "important" };
+                }
+
+                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, "articles");
+
+                if(pgcrudresult.created != null)
+                    crudcount = crudcount + pgcrudresult.created.Value;
+
+            }
+
+            return crudcount;
         }
 
         
