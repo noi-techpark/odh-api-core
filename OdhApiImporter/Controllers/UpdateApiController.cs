@@ -303,7 +303,7 @@ namespace OdhApiImporter.Controllers
 
         #region STA POI DATA SYNC
 
-        [Authorize(Roles = "DataWriter,STAPoiImport")]
+        //[Authorize(Roles = "DataWriter,STAPoiImport")]
         [HttpPost, Route("STA/VendingPoints/UpdateAll")]
         public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
         {

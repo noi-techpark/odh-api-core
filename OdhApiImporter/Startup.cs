@@ -19,6 +19,8 @@ namespace OdhApiImporter
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
 
+            //TODO CONFIGURATION for Keycloak
+
             services.AddMvc();
         }
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -33,6 +35,8 @@ namespace OdhApiImporter
             }
 
             app.UseRouting();
+
+            //TODO CONFIGURATION for Using Authentication and Authorization
 
             app.UseEndpoints(endpoints =>
             {
