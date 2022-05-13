@@ -81,5 +81,29 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        public async Task<int> FillDBWithDummyNews()
+        {
+            int i = 0;
+
+            //for (int i=0; i )
+            //{
+            //    //Setting MetaInfo
+            //    stapoi._Meta.Reduced = false;
+            //    stapoi.Source = "sta";
+
+            //    //Save tp DB
+            //    //TODO CHECK IF THIS WORKS     
+            //    var queryresult = await QueryFactory.Query("smgpois").Where("id", stapoi.Id)
+            //        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+            //        .UpdateAsync(new JsonBData() { id = stapoi.Id?.ToLower() ?? "", data = new JsonRaw(stapoi) });
+
+            //    i++;
+            //}
+
+            return i;
+        }
+
+        
     }
 }
