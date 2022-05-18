@@ -352,6 +352,9 @@ namespace OdhApiImporter.Helpers.DSS
             return idlist.ToList();
         }
 
+        #region ActivityHackDestinationdata
+
+        //TODO before each import clear activity table data
 
         private async Task<PGCRUDResult> InsertInLegacyActivityTable(ODHActivityPoiLinked odhactivitypoi)
         {
@@ -364,7 +367,7 @@ namespace OdhApiImporter.Helpers.DSS
 
             return pgcrudresult;
         }
-
+     
         private LTSActivityLinked TransformODHActivityPoiToActivity(ODHActivityPoiLinked odhactivitypoi)
         {
             //TODO Transform class
@@ -415,7 +418,11 @@ namespace OdhApiImporter.Helpers.DSS
             if (myactivity.SmgTags.Contains("winter"))
                 myactivity.SmgTags.Remove("winter");
             if (myactivity.SmgTags.Contains("skirundtouren pisten"))
-                myactivity.SmgTags.Remove("skirundtouren pisten");            
+                myactivity.SmgTags.Remove("skirundtouren pisten");
+            if (myactivity.SmgTags.Contains("activity"))
+                myactivity.SmgTags.Remove("activity");
+            if (myactivity.SmgTags.Contains("poi"))
+                myactivity.SmgTags.Remove("poi");
 
             //Update GPS points position/valleystation/mountainstation
             if (odhactivitypoi.GpsInfo != null)
@@ -492,7 +499,7 @@ namespace OdhApiImporter.Helpers.DSS
             myactivity.Exposition = odhactivitypoi.Exposition;
             myactivity.FeetClimb = odhactivitypoi.FeetClimb;
             myactivity.FirstImport  = odhactivitypoi.FirstImport;
-            //myactivity.GpsInfo = odhactivitypoi.GpsInfo;
+            myactivity.GpsInfo = new List<GpsInfo>();
             //myactivity.GpsPoints = odhactivitypoi.GpsPoints;
             myactivity.GpsTrack = odhactivitypoi.GpsTrack;
             myactivity.HasFreeEntrance = odhactivitypoi.HasFreeEntrance;
@@ -548,5 +555,7 @@ namespace OdhApiImporter.Helpers.DSS
 
             return Tuple.Create(gpstypekey, gpstoreturn);
         }
+
+        #endregion
     }
 }
