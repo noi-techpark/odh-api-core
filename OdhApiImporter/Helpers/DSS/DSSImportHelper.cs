@@ -368,11 +368,76 @@ namespace OdhApiImporter.Helpers.DSS
         private LTSActivityLinked TransformODHActivityPoiToActivity(ODHActivityPoiLinked odhactivitypoi)
         {
             //TODO Transform class
+            LTSActivityLinked myactivity = (LTSActivityLinked)((PoiBaseInfos)odhactivitypoi);
 
-            //Update Categorization
+            if(odhactivitypoi.SyncSourceInterface == "dssliftbase")
+            {
+                myactivity.Type = "Aufstiegsanlagen";
+
+                var types = GetSubTypeAndPoiTypeFromFlagDescription(myactivity.SmgTags.ToList());
+
+                myactivity.SubType = types.Item1;
+                myactivity.PoiType = types.Item1;
+
+                //AdditionalPoiInfos setting
+
+            }
+            else if(odhactivitypoi.SyncSourceInterface == "dssslopebase")
+            {
+
+            }
+                //myactivity.Active = odhactivitypoi.Active;
+                //myactivity.AdditionalPoiInfos = odhactivitypoi.AdditionalPoiInfos;
+                //myactivity.AltitudeDifference = odhactivitypoi.AltitudeDifference;
+                //myactivity.AltitudeHighestPoint = odhactivitypoi.AltitudeHighestPoint;
+                //myactivity.AltitudeLowestPoint = odhactivitypoi.AltitudeLowestPoint;
+                //myactivity.AltitudeSumDown = odhactivitypoi.AltitudeSumDown;
+                //myactivity.AltitudeSumUp =  odhactivitypoi.AltitudeSumUp;
+                //myactivity.AreaId = odhactivitypoi.AreaId;
+                //myactivity.ContactInfos = odhactivitypoi.ContactInfos;
+                //myactivity.CopyrightChecked = odhactivitypoi.CopyrightChecked;
+                //myactivity.BikeTransport = odhactivitypoi.BikeTransport;
+                //myactivity.
 
 
-            return new LTSActivityLinked();
+                //Update Categorization
+
+
+                return myactivity;
+        }
+
+        private Tuple<string,string> GetSubTypeAndPoiTypeFromFlagDescription(List<string> odhtags)
+        {
+            List<string> validtags = new List<string>();
+
+            List<string> dsslifttypes = new List<string>()
+            {
+                "Seilbahn","Kabinenbahn","Unterirdische Bahn","Sessellift","Sessellift","Skilift","Schrägaufzug","Klein-Skilift","Telemix","Standseilbahn/Zahnradbahn",
+                "Skibus","Zug","Sessellift","Sessellift","Sessellift","Förderband","4er Sessellift kuppelbar","6er Sessellift kuppelbar","8er Sessellift kuppelbar"
+            };
+
+            foreach(var odhtag in odhtags)
+            {
+                if(odhtag != "activity" && odhtag != "poi" && 
+                    odhtag != "aufstiegsanlagen" && odhtag != "weitere aufstiegsanlagen" && 
+                    odhtag != "winter" && odhtag != "skirundtouren pisten" && odhtag != "pisten" && odhtag != "ski alpin" && odhtag != "piste" && odhtag != "weitere pisten")
+                {
+                    validtags.Add(odhtag);
+                }
+            }
+
+            string subtype = "";
+            string poitype = "";
+
+            if(validtags.Count > 0)
+            {
+                foreach(var validtag in validtags)
+                {
+                     var 
+                }
+            }
+
+            return Tuple.Create(subtype, poitype);
         }
     }
 }

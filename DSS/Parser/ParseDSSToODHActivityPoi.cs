@@ -41,7 +41,7 @@ namespace DSS.Parser
             myodhactivitypoilinked.SmgTags = new List<string>();
             myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
             myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
-            myodhactivitypoilinked.SmgTags.Add("weitere aufstiegsanlagen"); //?            
+            myodhactivitypoilinked.SmgTags.Add("weitere aufstiegsanlagen"); //?                        
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 

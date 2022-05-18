@@ -99,7 +99,11 @@ namespace Helper
             if (data._Meta != null)
                 reduced = (bool)data._Meta.Reduced;
 
-            return GetMetadata(data, "lts", data.LastChange, reduced);
+            var sourcemeta = "lts";
+            if(data.Source != null) 
+                sourcemeta = data.Source.ToLower();
+
+            return GetMetadata(data, sourcemeta, data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforPoi(LTSPoiLinked data)
