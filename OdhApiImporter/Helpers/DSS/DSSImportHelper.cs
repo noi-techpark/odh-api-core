@@ -409,7 +409,14 @@ namespace OdhApiImporter.Helpers.DSS
                 myactivity.SmgTags.Add(myactivity.SubType.ToLower());
             if (!myactivity.SmgTags.Contains(myactivity.PoiType.ToLower()))
                 myactivity.SmgTags.Add(myactivity.PoiType.ToLower());
-       
+
+            if (myactivity.SmgTags.Contains("anderes"))
+                myactivity.SmgTags.Remove("anderes");
+            if (myactivity.SmgTags.Contains("winter"))
+                myactivity.SmgTags.Remove("winter");
+            if (myactivity.SmgTags.Contains("skirundtouren pisten"))
+                myactivity.SmgTags.Remove("skirundtouren pisten");            
+
             //Update GPS points position/valleystation/mountainstation
             if (odhactivitypoi.GpsInfo != null)
             {
