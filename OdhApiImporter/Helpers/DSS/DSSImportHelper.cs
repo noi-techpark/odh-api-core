@@ -314,7 +314,7 @@ namespace OdhApiImporter.Helpers.DSS
                 var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid);
 
                 //Hack insert also in Activity table
-                //await InsertInLegacyActivityTable(odhactivitypoi);
+                await InsertInLegacyActivityTable(odhactivitypoi);
 
                 return pgcrudresult;
             }
@@ -368,9 +368,10 @@ namespace OdhApiImporter.Helpers.DSS
         private LTSActivityLinked TransformODHActivityPoiToActivity(ODHActivityPoiLinked odhactivitypoi)
         {
             //TODO Transform class
-            LTSActivityLinked myactivity = (LTSActivityLinked)((PoiBaseInfos)odhactivitypoi);
+            LTSActivityLinked myactivity = CastODHActivityTOLTSActivity(odhactivitypoi);
 
-            if(odhactivitypoi.SyncSourceInterface == "dssliftbase")
+            //Update Categorization
+            if (odhactivitypoi.SyncSourceInterface == "dssliftbase")
             {
                 myactivity.Type = "Aufstiegsanlagen";
 
@@ -386,24 +387,14 @@ namespace OdhApiImporter.Helpers.DSS
             {
 
             }
-                //myactivity.Active = odhactivitypoi.Active;
-                //myactivity.AdditionalPoiInfos = odhactivitypoi.AdditionalPoiInfos;
-                //myactivity.AltitudeDifference = odhactivitypoi.AltitudeDifference;
-                //myactivity.AltitudeHighestPoint = odhactivitypoi.AltitudeHighestPoint;
-                //myactivity.AltitudeLowestPoint = odhactivitypoi.AltitudeLowestPoint;
-                //myactivity.AltitudeSumDown = odhactivitypoi.AltitudeSumDown;
-                //myactivity.AltitudeSumUp =  odhactivitypoi.AltitudeSumUp;
-                //myactivity.AreaId = odhactivitypoi.AreaId;
-                //myactivity.ContactInfos = odhactivitypoi.ContactInfos;
-                //myactivity.CopyrightChecked = odhactivitypoi.CopyrightChecked;
-                //myactivity.BikeTransport = odhactivitypoi.BikeTransport;
-                //myactivity.
+                
 
+            //Update GPS points position/valleystation/mountainstation
 
-                //Update Categorization
+            //LicenseInfo
+          
 
-
-                return myactivity;
+            return myactivity;
         }
 
         private Tuple<string,string> GetSubTypeAndPoiTypeFromFlagDescription(List<string> odhtags)
@@ -440,6 +431,68 @@ namespace OdhApiImporter.Helpers.DSS
             }
 
             return Tuple.Create(subtype, poitype);
+        }
+
+        private LTSActivityLinked CastODHActivityTOLTSActivity(ODHActivityPoiLinked odhactivitypoi)
+        {
+            var myactivity = new LTSActivityLinked();
+
+            myactivity.Active = odhactivitypoi.Active;
+            myactivity.AdditionalPoiInfos = odhactivitypoi.AdditionalPoiInfos;
+            myactivity.AltitudeDifference = odhactivitypoi.AltitudeDifference;
+            myactivity.AltitudeHighestPoint = odhactivitypoi.AltitudeHighestPoint;
+            myactivity.AltitudeLowestPoint = odhactivitypoi.AltitudeLowestPoint;
+            myactivity.AltitudeSumDown = odhactivitypoi.AltitudeSumDown;
+            myactivity.AltitudeSumUp = odhactivitypoi.AltitudeSumUp;
+            myactivity.AreaId = odhactivitypoi.AreaId;
+            myactivity.ContactInfos = odhactivitypoi.ContactInfos;
+            myactivity.CopyrightChecked = odhactivitypoi.CopyrightChecked;
+            myactivity.BikeTransport = odhactivitypoi.BikeTransport;
+            myactivity.ChildPoiIds = odhactivitypoi.ChildPoiIds;
+            myactivity.Detail = odhactivitypoi.Detail;
+            myactivity.Difficulty = odhactivitypoi.Difficulty;
+            myactivity.DistanceDuration = odhactivitypoi.DistanceDuration;
+            myactivity.DistanceInfo = odhactivitypoi.DistanceInfo;
+            myactivity.DistanceLength = odhactivitypoi.DistanceLength;
+            myactivity.Exposition = odhactivitypoi.Exposition;
+            myactivity.FeetClimb = odhactivitypoi.FeetClimb;
+            myactivity.FirstImport  = odhactivitypoi.FirstImport;
+            myactivity.GpsInfo = odhactivitypoi.GpsInfo;
+            myactivity.GpsPoints = odhactivitypoi.GpsPoints;
+            myactivity.GpsTrack = odhactivitypoi.GpsTrack;
+            myactivity.HasFreeEntrance = odhactivitypoi.HasFreeEntrance;
+            myactivity.HasLanguage = odhactivitypoi.HasLanguage;
+            myactivity.HasRentals = odhactivitypoi.HasRentals;
+            myactivity.Highlight = odhactivitypoi.Highlight;
+            myactivity.Id = odhactivitypoi.Id;
+            myactivity.ImageGallery = odhactivitypoi.ImageGallery;
+            myactivity.IsOpen = odhactivitypoi.IsOpen;
+            myactivity.IsPrepared = odhactivitypoi.IsPrepared;
+            myactivity.IsWithLigth = odhactivitypoi.IsWithLigth;
+            myactivity.LastChange = odhactivitypoi.LastChange;
+            myactivity.LiftAvailable = odhactivitypoi.LiftAvailable;
+            myactivity.LicenseInfo = odhactivitypoi.LicenseInfo;
+            myactivity.LocationInfo = odhactivitypoi.LocationInfo;
+            myactivity.LTSTags = odhactivitypoi.LTSTags;
+            myactivity.Mapping = odhactivitypoi.Mapping;
+            myactivity.MasterPoiIds = odhactivitypoi.MasterPoiIds;
+            myactivity.Number = odhactivitypoi.Number;
+            myactivity.OperationSchedule = odhactivitypoi.OperationSchedule;
+            myactivity.OutdooractiveElevationID = odhactivitypoi.OutdooractiveElevationID;
+            myactivity.OutdooractiveID = odhactivitypoi.OutdooractiveID;
+            myactivity.OwnerRid = odhactivitypoi.OwnerRid;
+            myactivity.PublishedOn = odhactivitypoi.PublishedOn;
+            myactivity.Ratings = odhactivitypoi.Ratings;
+            myactivity.RunToValley = odhactivitypoi.RunToValley;
+            myactivity.Shortname = odhactivitypoi.Shortname;
+            myactivity.SmgActive = odhactivitypoi.SmgActive;
+            myactivity.SmgId = odhactivitypoi.SmgId;
+            myactivity.SmgTags = odhactivitypoi.SmgTags;
+            myactivity.Source = odhactivitypoi.Source;
+            myactivity.TourismorganizationId = odhactivitypoi.TourismorganizationId;
+            myactivity.WayNumber = odhactivitypoi.WayNumber;            
+
+            return myactivity;
         }
     }
 }
