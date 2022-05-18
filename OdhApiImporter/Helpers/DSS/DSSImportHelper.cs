@@ -429,11 +429,13 @@ namespace OdhApiImporter.Helpers.DSS
             string subtype = "";
             string poitype = "";
 
-            if(validtags.Count > 0)
+            if (validtags.Count > 0)
             {
-                foreach(var validtag in validtags)
+                subtype = dsslifttypes.Where(x => x.ToLower() == validtags[0]).FirstOrDefault();
+
+                if (validtags.Count > 1)
                 {
-                     var 
+                    poitype = dsslifttypes.Where(x => x.ToLower() == validtags[1]).FirstOrDefault();
                 }
             }
 
