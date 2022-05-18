@@ -380,35 +380,47 @@ namespace OdhApiImporter.Helpers.DSS
                 myactivity.SubType = types.Item1;
                 myactivity.PoiType = types.Item2;
 
-                if(!myactivity.SmgTags.Contains(types.Item1.ToLower()))
-                    myactivity.SmgTags.Add(types.Item1.ToLower());
-                if (!myactivity.SmgTags.Contains(types.Item2.ToLower()))
-                    myactivity.SmgTags.Add(types.Item2.ToLower());
-
-                //AdditionalPoiInfos setting
-
-                //Update GPS points position/valleystation/mountainstation
-                if (odhactivitypoi.GpsInfo != null)
-                {
-                    foreach (var gpsinfo in odhactivitypoi.GpsInfo)
-                    {
-                        var gpsresult = ReturnGpsInfoActivityKey(gpsinfo);
-
-                        myactivity.GpsInfo.Add(gpsresult.Item2);
-                        myactivity.GpsPoints.TryAddOrUpdate(gpsresult.Item1, gpsresult.Item2);
-                    }
-                }
+                myactivity.AdditionalPoiInfos.TryAddOrUpdate("de", new AdditionalPoiInfos() { Language = "de", MainType = "Aufstiegsanlagen", SubType = "" });
+                myactivity.AdditionalPoiInfos.TryAddOrUpdate("it", new AdditionalPoiInfos() { Language = "it", MainType = "lifts", SubType = "" });
+                myactivity.AdditionalPoiInfos.TryAddOrUpdate("en", new AdditionalPoiInfos() { Language = "en", MainType = "ascensioni", SubType = "" });
 
             }
             else if(odhactivitypoi.SyncSourceInterface == "dssslopebase")
             {
+                myactivity.Type = "Piste";                
+                myactivity.SubType = "Ski Alpin";
 
+                if(myactivity.Difficulty == "2")
+                    myactivity.PoiType = "blau";
+                if (myactivity.Difficulty == "4")
+                    myactivity.PoiType = "rot";
+                if (myactivity.Difficulty == "6")
+                    myactivity.PoiType = "schwarz";
+
+                myactivity.AdditionalPoiInfos.TryAddOrUpdate("de", new AdditionalPoiInfos() { Language = "de", MainType = "Ski alpin", SubType = "Piste" });
+                myactivity.AdditionalPoiInfos.TryAddOrUpdate("it", new AdditionalPoiInfos() { Language = "it", MainType = "Sci alpino", SubType = "piste" });
+                myactivity.AdditionalPoiInfos.TryAddOrUpdate("en", new AdditionalPoiInfos() { Language = "en", MainType = "Ski alpin", SubType = "slopes" });
             }
-                
 
-      
-            //LicenseInfo
-          
+            //Type to Tag
+            if (!myactivity.SmgTags.Contains(myactivity.Type.ToLower()))
+                myactivity.SmgTags.Add(myactivity.Type.ToLower());
+            if (!myactivity.SmgTags.Contains(myactivity.SubType.ToLower()))
+                myactivity.SmgTags.Add(myactivity.SubType.ToLower());
+            if (!myactivity.SmgTags.Contains(myactivity.PoiType.ToLower()))
+                myactivity.SmgTags.Add(myactivity.PoiType.ToLower());
+       
+            //Update GPS points position/valleystation/mountainstation
+            if (odhactivitypoi.GpsInfo != null)
+            {
+                foreach (var gpsinfo in odhactivitypoi.GpsInfo)
+                {
+                    var gpsresult = ReturnGpsInfoActivityKey(gpsinfo);
+
+                    myactivity.GpsInfo.Add(gpsresult.Item2);
+                    myactivity.GpsPoints.TryAddOrUpdate(gpsresult.Item1, gpsresult.Item2);
+                }
+            }           
 
             return myactivity;
         }
@@ -454,7 +466,7 @@ namespace OdhApiImporter.Helpers.DSS
             var myactivity = new LTSActivityLinked();
 
             myactivity.Active = odhactivitypoi.Active;
-            myactivity.AdditionalPoiInfos = odhactivitypoi.AdditionalPoiInfos;
+            //myactivity.AdditionalPoiInfos = odhactivitypoi.AdditionalPoiInfos;
             myactivity.AltitudeDifference = odhactivitypoi.AltitudeDifference;
             myactivity.AltitudeHighestPoint = odhactivitypoi.AltitudeHighestPoint;
             myactivity.AltitudeLowestPoint = odhactivitypoi.AltitudeLowestPoint;
