@@ -363,7 +363,7 @@ namespace OdhApiImporter.Helpers.DSS
             var activity = TransformODHActivityPoiToActivity(odhactivitypoi);
             
             //Insert in Table
-            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, table);
+            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, "activities");
 
             return pgcrudresult;
         }
