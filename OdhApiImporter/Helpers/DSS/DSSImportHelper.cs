@@ -378,9 +378,26 @@ namespace OdhApiImporter.Helpers.DSS
                 var types = GetSubTypeAndPoiTypeFromFlagDescription(myactivity.SmgTags.ToList());
 
                 myactivity.SubType = types.Item1;
-                myactivity.PoiType = types.Item1;
+                myactivity.PoiType = types.Item2;
+
+                if(!myactivity.SmgTags.Contains(types.Item1.ToLower()))
+                    myactivity.SmgTags.Add(types.Item1.ToLower());
+                if (!myactivity.SmgTags.Contains(types.Item2.ToLower()))
+                    myactivity.SmgTags.Add(types.Item2.ToLower());
 
                 //AdditionalPoiInfos setting
+
+                //Update GPS points position/valleystation/mountainstation
+                if (odhactivitypoi.GpsInfo != null)
+                {
+                    foreach (var gpsinfo in odhactivitypoi.GpsInfo)
+                    {
+                        var gpsresult = ReturnGpsInfoActivityKey(gpsinfo);
+
+                        myactivity.GpsInfo.Add(gpsresult.Item2);
+                        myactivity.GpsPoints.TryAddOrUpdate(gpsresult.Item1, gpsresult.Item2);
+                    }
+                }
 
             }
             else if(odhactivitypoi.SyncSourceInterface == "dssslopebase")
@@ -389,8 +406,7 @@ namespace OdhApiImporter.Helpers.DSS
             }
                 
 
-            //Update GPS points position/valleystation/mountainstation
-
+      
             //LicenseInfo
           
 
@@ -409,8 +425,8 @@ namespace OdhApiImporter.Helpers.DSS
 
             foreach(var odhtag in odhtags)
             {
-                if(odhtag != "activity" && odhtag != "poi" && 
-                    odhtag != "aufstiegsanlagen" && odhtag != "weitere aufstiegsanlagen" && 
+                if(odhtag != "activity" && odhtag != "poi" &&
+                    odhtag != "anderes" && odhtag != "aufstiegsanlagen" && odhtag != "weitere aufstiegsanlagen" && 
                     odhtag != "winter" && odhtag != "skirundtouren pisten" && odhtag != "pisten" && odhtag != "ski alpin" && odhtag != "piste" && odhtag != "weitere pisten")
                 {
                     validtags.Add(odhtag);
@@ -457,14 +473,14 @@ namespace OdhApiImporter.Helpers.DSS
             myactivity.Exposition = odhactivitypoi.Exposition;
             myactivity.FeetClimb = odhactivitypoi.FeetClimb;
             myactivity.FirstImport  = odhactivitypoi.FirstImport;
-            myactivity.GpsInfo = odhactivitypoi.GpsInfo;
-            myactivity.GpsPoints = odhactivitypoi.GpsPoints;
+            //myactivity.GpsInfo = odhactivitypoi.GpsInfo;
+            //myactivity.GpsPoints = odhactivitypoi.GpsPoints;
             myactivity.GpsTrack = odhactivitypoi.GpsTrack;
             myactivity.HasFreeEntrance = odhactivitypoi.HasFreeEntrance;
             myactivity.HasLanguage = odhactivitypoi.HasLanguage;
             myactivity.HasRentals = odhactivitypoi.HasRentals;
             myactivity.Highlight = odhactivitypoi.Highlight;
-            myactivity.Id = odhactivitypoi.Id;
+            myactivity.Id = odhactivitypoi.Id.ToUpper();
             myactivity.ImageGallery = odhactivitypoi.ImageGallery;
             myactivity.IsOpen = odhactivitypoi.IsOpen;
             myactivity.IsPrepared = odhactivitypoi.IsPrepared;
@@ -493,6 +509,25 @@ namespace OdhApiImporter.Helpers.DSS
             myactivity.WayNumber = odhactivitypoi.WayNumber;            
 
             return myactivity;
+        }
+
+        private Tuple<string, GpsInfo> ReturnGpsInfoActivityKey(GpsInfo gpsinfo)
+        {
+
+            string activitygpstypevalue = "";
+            string gpstypekey = "";
+
+            switch(gpsinfo.Gpstype)
+            {
+                case "valleystationpoint": activitygpstypevalue = "Talstation"; gpstypekey = "position"; break;
+                case "middlestationpoint" : activitygpstypevalue = "Mittelstation"; gpstypekey = "middleposition"; break;
+                case "mountainstationpoint" : activitygpstypevalue = "Bergstation"; gpstypekey = "endposition"; break;
+                case "position": activitygpstypevalue = "Startpunkt"; gpstypekey = "position"; break;                
+            };
+
+            GpsInfo gpstoreturn = new GpsInfo() { Gpstype = activitygpstypevalue, Altitude = gpsinfo.Altitude, AltitudeUnitofMeasure = gpsinfo.AltitudeUnitofMeasure, Latitude = gpsinfo.Latitude, Longitude = gpsinfo.Longitude };
+
+            return Tuple.Create(gpstypekey, gpstoreturn);
         }
     }
 }
