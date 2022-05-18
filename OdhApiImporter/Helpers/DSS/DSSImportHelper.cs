@@ -403,11 +403,11 @@ namespace OdhApiImporter.Helpers.DSS
             }
 
             //Type to Tag
-            if (!myactivity.SmgTags.Contains(myactivity.Type.ToLower()))
+            if (!String.IsNullOrEmpty(myactivity.Type) && !myactivity.SmgTags.Contains(myactivity.Type.ToLower()))
                 myactivity.SmgTags.Add(myactivity.Type.ToLower());
-            if (!myactivity.SmgTags.Contains(myactivity.SubType.ToLower()))
+            if (!String.IsNullOrEmpty(myactivity.SubType) && !myactivity.SmgTags.Contains(myactivity.SubType.ToLower()))
                 myactivity.SmgTags.Add(myactivity.SubType.ToLower());
-            if (!myactivity.SmgTags.Contains(myactivity.PoiType.ToLower()))
+            if (!String.IsNullOrEmpty(myactivity.PoiType) && !myactivity.SmgTags.Contains(myactivity.PoiType.ToLower()))
                 myactivity.SmgTags.Add(myactivity.PoiType.ToLower());
 
             if (myactivity.SmgTags.Contains("anderes"))
