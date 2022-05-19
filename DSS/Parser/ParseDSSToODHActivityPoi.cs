@@ -95,8 +95,16 @@ namespace DSS.Parser
 
             //Operationschedule (opening-times, opening-times-summer, season-summer, season-winter)
             myodhactivitypoilinked.OperationSchedule = new List<OperationSchedule>();
-            myodhactivitypoilinked.OperationSchedule.Add(ParseDSSLiftToODHOperationScheduleFormat("winter", dssitem.data));
-            myodhactivitypoilinked.OperationSchedule.Add(ParseDSSLiftToODHOperationScheduleFormat("summer", dssitem.data));
+
+            var winteroperationschedule = ParseDSSLiftToODHOperationScheduleFormat("winter", dssitem.data);
+
+            if(winteroperationschedule != null)
+                myodhactivitypoilinked.OperationSchedule.Add(winteroperationschedule);
+
+            var summeroperationschedule = ParseDSSLiftToODHOperationScheduleFormat("summer", dssitem.data);
+
+            if(summeroperationschedule != null)
+                myodhactivitypoilinked.OperationSchedule.Add(summeroperationschedule);
 
             //Properties (length, capacity, capacity-per-hour, altitude-start, altitude-end, height-difference, summercard-points, bike-transport, duration)
             var length = (double?)dssitem["data"]["length"];
@@ -252,7 +260,11 @@ namespace DSS.Parser
 
             //Operationschedule (opening-times, opening-times-summer, season-summer, season-winter)
             myodhactivitypoilinked.OperationSchedule = new List<OperationSchedule>();
-            myodhactivitypoilinked.OperationSchedule.Add(ParseDSSSlopeToODHOperationScheduleFormat(dssitem));
+
+            var operationschedule = ParseDSSSlopeToODHOperationScheduleFormat(dssitem);
+
+            if(operationschedule != null)
+                myodhactivitypoilinked.OperationSchedule.Add(operationschedule);
 
             //Properties (length, capacity, capacity-per-hour, altitude-start, altitude-end, height-difference, summercard-points, bike-transport, duration)
             var length = (double?)dssitem["data"]["length"];
