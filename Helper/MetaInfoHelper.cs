@@ -186,8 +186,16 @@ namespace Helper
         }
 
         public static Metadata GetMetadataforArticle(ArticlesLinked data)
-        {            
-            return GetMetadata(data, "idm", data.LastChange, false);
+        {
+            string sourcemeta = "noi";
+            
+            if(!String.IsNullOrEmpty(data.Source))
+                sourcemeta = data.Source.ToLower();
+
+            if (sourcemeta == "content")
+                sourcemeta = "idm";
+
+            return GetMetadata(data, sourcemeta, data.LastChange, false);
         }
 
         public static Metadata GetMetadataforVenue(DDVenue data)
