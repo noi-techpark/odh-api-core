@@ -24,7 +24,6 @@ on:
 
 env:
   PROJECT_NAME: odh-tourism-importer
-  DOCKER_REGISTRY_HOST: ghcr.io
   DOCKER_IMAGE: ghcr.io/${{ github.repository }}/${{ github.event.repository.name }}-importer
   DOCKER_TAG: ${{ github.sha }}
 
@@ -93,7 +92,6 @@ jobs:
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
         with:
-          docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
           docker-username: ${{ github.actor }}
           docker-password: ${{ secrets.GITHUB_TOKEN }}
           working-directory: OdhApiImporter
@@ -104,7 +102,6 @@ jobs:
         with:
           hosts: 'test'
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
           docker-username: 'noi-techpark-bot'
           docker-password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           project-name: ${{ env.PROJECT_NAME }}
@@ -161,7 +158,6 @@ jobs:
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
         with:
-          docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
           docker-username: ${{ github.actor }}
           docker-password: ${{ secrets.GITHUB_TOKEN }}
           working-directory: OdhApiImporter
@@ -172,7 +168,6 @@ jobs:
         with:
           hosts: 'prod'
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          docker-host: ${{ env.DOCKER_REGISTRY_HOST }}
           docker-username: 'noi-techpark-bot'
           docker-password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           project-name: ${{ env.PROJECT_NAME }}
