@@ -89,7 +89,7 @@ namespace OdhApiImporter.Helpers
             for (int i = 1; i <= 120; i++)
             {
                 ArticlesLinked myarticle  = new ArticlesLinked();
-                myarticle.Id = Guid.NewGuid().ToString();
+                myarticle.Id = Guid.NewGuid().ToString().ToUpper();
                 myarticle.Type = "newsfeednoi";
                 myarticle.Active = true;
                 myarticle.Detail.TryAddOrUpdate("de", new Detail() { Title = "TesttitleDE" + i, BaseText = "testtextDE " + i, Language = "de", AdditionalText = "additionaltextde" + i });
