@@ -104,11 +104,11 @@ namespace OdhApiImporter.Helpers
                 myarticle.ContactInfos.TryAddOrUpdate("it", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "it", CompanyName = "NOI Techpark" });
                 myarticle.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "en", CompanyName = "NOI Techpark" });
 
-                myarticle.ArticleDate = DateTime.Now.AddDays(i);
-
+                myarticle.ArticleDate = DateTime.Now.Date.AddDays(i);
+                
                 if (i % 5 == 0)
                 {
-                    myarticle.ArticleDateTo = DateTime.Now.AddMonths(i);
+                    myarticle.ArticleDateTo = DateTime.Now.Date.AddMonths(i);
                 }
                 else
                     myarticle.ArticleDateTo = DateTime.MaxValue;
