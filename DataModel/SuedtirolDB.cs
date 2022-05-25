@@ -566,26 +566,39 @@ namespace DataModel
         {
             TagName = new Dictionary<string, string>();
             ValidForEntity = new List<string>();
+
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public string? Id { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, refer to TagName")]
         public string? Shortname { get; set; }
 
         public IDictionary<string, string> TagName { get; set; }
         public ICollection<string> ValidForEntity { get; set; }
-
-        public string? MainEntity { get; set; }
+        
 
         public ICollection<string> Source { get; set; }
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
 
-        //IDM Mapping
-        public IDictionary<string, string> IDMCategoryMapping { get; set; }
         public Nullable<bool> DisplayAsCategory { get; set; }
 
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use Mapping")]
+        public IDictionary<string, string> IDMCategoryMapping { get; set; }
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use Mapping")]        
         public LTSTaggingInfo LTSTaggingInfo { get; set; }
+
+        [Obsolete]
+        [SwaggerSchema("Deprecated, use ValidForEntity")]
+        public string? MainEntity { get; set; }
+
+        //Generic Mapping Object
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
     public class LTSTaggingInfo
