@@ -726,7 +726,8 @@ namespace Helper
 
             return query
                 .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
-                .ODHTagMainEntityFilter(mainentitylist)
+                //.ODHTagMainEntityFilter(mainentitylist)
+                .ODHTagValidForEntityFilter(mainentitylist)
                 .ODHTagValidForEntityFilter(validforentitylist)
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
