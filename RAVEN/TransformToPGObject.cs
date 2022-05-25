@@ -654,7 +654,9 @@ namespace RAVEN
         public static ODHTagLinked GetODHTagPGObject(ODHTagLinked data)
         {
             data.Id = data.Id.ToLower();
+
             data.MainEntity = data.MainEntity.ToLower();
+            
             List<string> validforentitynew = new List<string>();
             foreach (var validforentity in data.ValidForEntity)
             {
@@ -665,6 +667,9 @@ namespace RAVEN
             }
 
             data.ValidForEntity = validforentitynew;
+
+            if (!data.ValidForEntity.Contains(data.MainEntity))
+                data.ValidForEntity.Add(data.MainEntity);
 
             data._Meta = MetadataHelper.GetMetadataobject<ODHTagLinked>(data, MetadataHelper.GetMetadataforOdhTag);  //GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
 
