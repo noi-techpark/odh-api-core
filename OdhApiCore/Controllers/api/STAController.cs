@@ -44,7 +44,6 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {
-
                 var checkedlanguage = CheckLanguages(language);
 
                 string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAOdhActivitiesPois_{checkedlanguage}.json");
