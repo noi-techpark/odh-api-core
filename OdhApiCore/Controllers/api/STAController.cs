@@ -44,7 +44,10 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {
-                string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAOdhActivitiesPois_{language}.json");
+
+                var checkedlanguage = CheckLanguages(language);
+
+                string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAOdhActivitiesPois_{checkedlanguage}.json");
 
                 using (StreamReader r = new StreamReader(fileName))
                 {
@@ -67,8 +70,10 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {
+                var checkedlanguage = CheckLanguages(language);
+
                 //DOCKER ERROR Could not find a part of the path '/app/.\wwwroot\json\/STAAccommodations_de.json'.
-                string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAAccommodations_{language}.json");
+                string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAAccommodations_{checkedlanguage}.json");
 
                 using (StreamReader r = new StreamReader(fileName))
                 {
@@ -204,6 +209,14 @@ namespace OdhApiCore.Controllers.api
         #endregion
 
         #region HELPERS
+
+        private string CheckLanguages(string lang)
+        {
+            if (lang == "de" || lang == "it" || lang == "en")
+                return lang.ToLower();
+            else
+                return "en";
+        }
 
         private static async Task<string> ReadStringDataManual(HttpRequest request)
         {
