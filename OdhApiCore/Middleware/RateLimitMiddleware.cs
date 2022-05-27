@@ -68,6 +68,8 @@ namespace OdhApiCore
 
                     await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "You have exhausted your API Request Quota", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count });
 
+                    HttpRequestExtensions.GenerateLogResponse(context);
+
                     return;
                 }
 

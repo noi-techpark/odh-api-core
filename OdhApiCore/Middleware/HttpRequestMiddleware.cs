@@ -105,7 +105,63 @@ namespace OdhApiCore
                 }
             });
         }
+
+        public static void GenerateLogResponse(Microsoft.AspNetCore.Http.HttpContext context)
+        {
+            //TODO Make a Referer Class/Method for the logic
+            var referer = "not provided";
+
+            if (context.Request.Headers.ContainsKey("Referer"))
+                referer = context.Request.Headers["Referer"].ToString();
+            else
+            {
+                //Search the QS for Referer
+                if (context.Request.Query.ContainsKey("Referer"))
+                    referer = context.Request.Query["Referer"].ToString();
+            }
+
+            //Quick Fix, Android is passing http://localhost/ as referer
+            if (referer == "http://localhost/" && context.Request.Query.ContainsKey("Referer"))
+                referer = context.Request.Query["Referer"].ToString();
+
+            //Origin
+            var origin = "not provided";
+            if (context.Request.Query.ContainsKey("Origin"))
+                origin = context.Request.Query["Origin"].ToString();
+
+            //User Agent
+            var useragent = "not provided";
+            if (context.Request.Headers.ContainsKey("User-Agent"))
+                useragent = context.Request.Headers["User-Agent"].ToString();
+
+            var urlparameters = context.Request.QueryString.Value != null ? context.Request.QueryString.HasValue ? context.Request.QueryString.Value.Replace("?", "") : "" : "";
+
+            //To check
+            var remoteip = RemoteIpHelper.GetRequestIP(context, true);
+
+            //TODO Add Response Size?
+
+            HttpRequestLog httplog = new HttpRequestLog()
+            {
+                host = context.Request.Host.ToString(),
+                path = context.Request.Path.ToString(),
+                urlparams = urlparameters, //.Replace("&", "-"),  //Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
+                referer = referer,
+                schema = context.Request.Scheme,
+                useragent = useragent,
+                username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous",
+                ipaddress = remoteip,
+                statuscode = context.Response.StatusCode,
+                origin = origin,
+                elapsedtime = 0
+            };
+            LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
+
+            Console.WriteLine(JsonConvert.SerializeObject(logoutput));
+        }
+
     }
 
-  
+
+
 }
