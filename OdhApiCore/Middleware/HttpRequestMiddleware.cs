@@ -96,7 +96,8 @@ namespace OdhApiCore
                         ipaddress = remoteip,
                         statuscode = context.Response.StatusCode,
                         origin = origin,
-                        elapsedtime = requesttime.ElapsedMilliseconds
+                        elapsedtime = requesttime.ElapsedMilliseconds,
+                        appliedquota = ""
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 
@@ -106,7 +107,7 @@ namespace OdhApiCore
             });
         }
 
-        public static void GenerateLogResponse(Microsoft.AspNetCore.Http.HttpContext context)
+        public static void GenerateLogResponse(Microsoft.AspNetCore.Http.HttpContext context, int? elapsedtime = 0, string? quotaapplied = "")
         {
             //TODO Make a Referer Class/Method for the logic
             var referer = "not provided";
@@ -153,7 +154,8 @@ namespace OdhApiCore
                 ipaddress = remoteip,
                 statuscode = context.Response.StatusCode,
                 origin = origin,
-                elapsedtime = 0
+                elapsedtime = elapsedtime,
+                appliedquota = quotaapplied
             };
             LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 
