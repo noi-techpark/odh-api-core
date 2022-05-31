@@ -111,7 +111,8 @@ namespace OdhApiCore
                 var handler = new JwtSecurityTokenHandler();
                 var token = bearertoken.Replace("Bearer", "").Trim();
 
-                var jwttoken = handler.ReadJwtToken(token);
+                var jwttoken = ReadMyJWTSecurityToken(token, handler);
+
 
                 if (jwttoken != null)
                 {
@@ -178,6 +179,20 @@ namespace OdhApiCore
             }
 
             return (ratelimitconfig, ratelimitcachekey);
+        }
+
+        private static JwtSecurityToken? ReadMyJWTSecurityToken(string token, JwtSecurityTokenHandler handler)
+        {
+            try
+            {
+                var jwttoken = handler.ReadJwtToken(token);
+
+                return jwttoken;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private async Task<ClientStatistics?> GetClientStatisticsByKey(string key) => await _cache.GetCacheValueAsync<ClientStatistics>(key);
