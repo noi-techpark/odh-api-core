@@ -97,7 +97,8 @@ namespace OdhApiCore
                         statuscode = context.Response.StatusCode,
                         origin = origin,
                         elapsedtime = requesttime.ElapsedMilliseconds,
-                        appliedquota = ""
+                        appliedquota = "",
+                        ratelimitkey = ""
                     };
                     LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 
@@ -107,7 +108,7 @@ namespace OdhApiCore
             });
         }
 
-        public static void GenerateLogResponse(Microsoft.AspNetCore.Http.HttpContext context, int? elapsedtime = 0, string? quotaapplied = "")
+        public static void GenerateLogResponse(Microsoft.AspNetCore.Http.HttpContext context, int? elapsedtime = 0, string? quotaapplied = "", string? cachekey = "")
         {
             //TODO Make a Referer Class/Method for the logic
             var referer = "not provided";
@@ -155,7 +156,8 @@ namespace OdhApiCore
                 statuscode = context.Response.StatusCode,
                 origin = origin,
                 elapsedtime = elapsedtime,
-                appliedquota = quotaapplied
+                appliedquota = quotaapplied,
+                ratelimitkey = cachekey
             };
             LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
 

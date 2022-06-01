@@ -54,6 +54,7 @@ namespace OdhApiCore
             }
 
             var (rlConfig, key) = GenerateClientKeyExtended(context, settings.RateLimitConfig);
+
             if (rlConfig is not null && rlConfig.Type != "Admin")
             {
                 var clientStatistics = await GetClientStatisticsByKey(key);
@@ -68,7 +69,7 @@ namespace OdhApiCore
 
                     await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "You have exhausted your API Request Quota", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count });
 
-                    HttpRequestExtensions.GenerateLogResponse(context, clientStatistics.LastSuccessfulResponseTimeList.Count, rlConfig.Type);
+                    HttpRequestExtensions.GenerateLogResponse(context, clientStatistics.LastSuccessfulResponseTimeList.Count, rlConfig.Type, key);
 
                     return;
                 }

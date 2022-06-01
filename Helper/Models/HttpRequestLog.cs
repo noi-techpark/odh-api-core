@@ -20,6 +20,9 @@ namespace Helper
         public string? ipaddress { get; init; }
         public int? statuscode { get; init; }
         public long? elapsedtime { get; init; }
-        public string? appliedquota { get; set; }        
+        public string? appliedquota { get; set; }
+
+        //used for debugging
+        public string? ratelimitkey { get; set; }
     }
 }
