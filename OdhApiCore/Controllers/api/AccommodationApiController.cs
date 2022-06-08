@@ -307,6 +307,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Accommodation Feature List (LTS Features)
         /// </summary>
+        /// <param name="ltst0idfilter">Filtering by LTS T0ID, filter behaviour is "startswith" so it is possible to send only one character, (default: blank)</param>
         /// <param name="source">IF source = "lts" the Features list is returned in XML Format directly from LTS, (default: blank)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language, possible values: 'de|it|en|nl|cs|pl|fr|ru' only one language supported (default:'null' all languages are displayed)</param>
@@ -326,6 +327,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("AccommodationFeatures")]
         public async Task<IActionResult> GetAllAccommodationFeaturesList(
             string? language,
+            string? ltst0idfilter = null,
             string? source = null,            
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -339,7 +341,7 @@ namespace OdhApiCore.Controllers
                 return await Task.FromResult<IActionResult>(Ok());
             //return GetFeatureList(cancellationToken); TODO
             else
-                return await GetAccoFeatureList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
+                return await GetAccoFeatureList(language, ltst0idfilter, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -842,7 +844,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodationtypes")
                         .Select("data")
                          //.WhereJsonb("Key", "ilike", id)
-                         .Where("id", id.ToLower())
+                        .Where("id", id.ToLower())
                         .When(FilterClosedData, q => q.FilterClosedData());
                 //.Where("Key", "ILIKE", id);
 
@@ -853,13 +855,14 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private Task<IActionResult> GetAccoFeatureList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetAccoFeatureList(string? language, string? ltst0filter, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("accommodationfeatures")
                         .SelectRaw("data")
+                        .When(!String.IsNullOrEmpty(ltst0filter), q => q.WhereJsonb("CustomId", "like", ltst0filter + "%"))
                         .When(FilterClosedData, q => q.FilterClosedData())
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
