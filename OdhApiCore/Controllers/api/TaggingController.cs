@@ -90,7 +90,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(SmgTags), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Tagging/{id}", Name = "SingleODHTag")]
+        [HttpGet, Route("Tagging/{id}", Name = "SingleTagging")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetTaggingSingle(string id,
             string? language = null,
