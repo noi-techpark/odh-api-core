@@ -268,7 +268,7 @@ namespace OdhApiCore.Controllers.api
                             difficultylist: myodhactivitypoihelper.difficultylist, distance: myodhactivitypoihelper.distance,
                             distancemin: myodhactivitypoihelper.distancemin, distancemax: myodhactivitypoihelper.distancemax, duration: myodhactivitypoihelper.duration, durationmin: myodhactivitypoihelper.durationmin, 
                             durationmax: myodhactivitypoihelper.durationmax, altitude: myodhactivitypoihelper.altitude, altitudemin: myodhactivitypoihelper.altitudemin, altitudemax: myodhactivitypoihelper.altitudemax,
-                            tagbehaviour: helper.tagfilterbehaviour, taglist: helper.taglist, publishedonlist: myodhactivitypoihelper.publishedonlist,
+                            tagbehaviour: myodhactivitypoihelper.tagfilterbehaviour, taglist: myodhactivitypoihelper.taglist, publishedonlist: myodhactivitypoihelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
