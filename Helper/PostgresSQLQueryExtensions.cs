@@ -956,13 +956,13 @@ namespace Helper
         public static Query TaggingFilter_OR(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
                query.WhereInJsonb(
                 taglist,
-                tag => new { Tagging = new { tagkey = new[] { tag.ToLower() } } }
+                tag => new { Tagging = new { idm = new[] { tag.ToLower() } } }
             );
 
         public static Query TaggingFilter_AND(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
                query.WhereAllInJsonb(
                 taglist,
-                tag => new { Tagging = new { tagkey = new[] { tag.ToLower() } } }
+                tag => new { Tagging = new { idm = new[] { tag.ToLower() } } }
             );
 
         #endregion
