@@ -52,6 +52,9 @@ jobs:
           X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
           X_LCS_PSWD: ${{ secrets.LCS_PSWD_TEST }}
           X_LCS_MSGPSWD: ${{ secrets.LCS_MSGPSWD_TEST }}
+          X_CDB_USER: ${{ secrets.CDB_USER_TEST }}
+          X_CDB_PSWD: ${{ secrets.CDB_PSWD_TEST }}
+          X_CDB_URL: ${{ secrets.CDB_URL_TEST }}       
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
           X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
@@ -122,6 +125,9 @@ jobs:
           X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
           X_LCS_PSWD: ${{ secrets.LCS_PSWD_TEST }}
           X_LCS_MSGPSWD: ${{ secrets.LCS_MSGPSWD_TEST }}
+          X_CDB_USER: ${{ secrets.CDB_USER_TEST }}
+          X_CDB_PSWD: ${{ secrets.CDB_PSWD_TEST }}
+          X_CDB_URL: ${{ secrets.CDB_URL_TEST }}
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
           X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
