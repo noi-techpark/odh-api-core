@@ -29,7 +29,7 @@ namespace PushServer
 
 				//myclient.DefaultRequestHeaders.Add("","");
 
-				var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+				//var json = JsonConvert.SerializeObject(data, Formatting.Indented);
 
 				var myresponse = await myclient.PostAsync(serviceurl, new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json"));
 

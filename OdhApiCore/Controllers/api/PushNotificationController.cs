@@ -75,5 +75,25 @@ namespace OdhApiCore.Controllers.api
             return Ok(result);
         }
 
+
+        /// <summary>
+        /// POST Send a PushMessage to NOI Pushserver
+        /// </summary>
+        /// <param name="message">PushServerMessage Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate")]
+        [HttpPost, Route("FCMMessage/{identifier}")]
+        public async Task<IActionResult> PostFCMMessage(string identifier, [FromBody] FCMModels message)
+        {
+            //TODO add configurable FCM setting where config can be accessed by identifier
+            //var pushserverconfig = settings.PushServerConfig;
+            //Complete the message            
+
+            var result = await FCMPushNotification.SendNotification(message, "fcmurl", "fcmsenderid", "fcmauthkey");
+
+            return Ok(result);
+        }
+
     }
 }
