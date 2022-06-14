@@ -53,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CDB\CDB.csproj" />
     <ProjectReference Include="..\EBMS\EBMS.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />
     <ProjectReference Include="..\JsonLDTransformer\JsonLDTransformer.csproj" />

@@ -7,18 +7,18 @@ namespace CDB
     public class GetAccommodationDataCDB
     {
         public static CDBDataSoapClient.EndpointConfiguration GetEndpointConfig()
-        {
+        {            
             //TODO CHECK IF THIS WORKS
-            CDBDataSoapClient.EndpointConfiguration myconfig = new CDBDataSoapClient.EndpointConfiguration();            
+            CDBDataSoapClient.EndpointConfiguration myconfig = new CDBDataSoapClient.EndpointConfiguration();                        
 
             return myconfig;
         }
 
         //Hotel Daten S4 Methode 
         public static XDocument GetHotelDatafromCDB(string A0RIDList, string user, string pswd)
-        {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
-
+        {            
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig());
+            
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
 
@@ -33,7 +33,7 @@ namespace CDB
         //Hotel Daten S4 Methode mit Sprache
         public static XDocument GetHotelDatafromCDB(string A0RIDList, string language, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -49,7 +49,7 @@ namespace CDB
         //Hotel Kategorieen 
         public static XDocument GetHotelCategoryfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -65,7 +65,7 @@ namespace CDB
         //Hotel Address Koord
         public static XDocument GetHotelAddressCoordfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -81,7 +81,7 @@ namespace CDB
         //Hotel Addresse
         public static XDocument GetHotelAddressfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -97,7 +97,7 @@ namespace CDB
         //Hotel Webdata
         public static XDocument GetHotelWebdatafromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -113,7 +113,7 @@ namespace CDB
         //Hotel Werbetexte 
         public static XDocument GetHotelPublicityfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -129,7 +129,7 @@ namespace CDB
         //Hotel Position
         public static XDocument GetHotelPositionfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -145,7 +145,7 @@ namespace CDB
         //Hotel Overview
         public static XDocument GetHotelOverviewfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -161,7 +161,7 @@ namespace CDB
         //Hotel Features TINS
         public static XDocument GetHotelTinfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -177,7 +177,7 @@ namespace CDB
         //Hotel Foto
         public static XDocument GetHotelFotofromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -193,7 +193,7 @@ namespace CDB
         //Hotel Toursimverein?
         public static XDocument GetHotelVGfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -209,7 +209,7 @@ namespace CDB
         //Hotel POS Data
         public static XDocument GetHotelPOSfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -225,7 +225,7 @@ namespace CDB
         //Hotel TV PAy
         public static XDocument GetHotelTVPayfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -241,7 +241,7 @@ namespace CDB
         //Hotel Iban
         public static XDocument GetHotelIbanfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -257,7 +257,7 @@ namespace CDB
         //Hotel BAnkcoordinaten
         public static XDocument GetHotelBankdatafromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -273,7 +273,7 @@ namespace CDB
         //HotelAdresstype
         public static XDocument GetHotelTypeOfAddressfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -289,7 +289,7 @@ namespace CDB
         //Hotelgallery
         public static XDocument GetHotelGalleryfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -305,7 +305,7 @@ namespace CDB
         //Hotel AstatDaten
         public static XDocument GetHotelAstatBaseDatafromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -321,7 +321,7 @@ namespace CDB
         //Hotel GroupBase Data ??
         public static XDocument GetHotelGroupBaseDatafromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -337,7 +337,7 @@ namespace CDB
         //Hotel GroupName ??
         public static XDocument GetHotelGroupNamefromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -353,7 +353,7 @@ namespace CDB
         //Hotel Group Definition
         public static XDocument GetHotelGroupDefinitionfromCDB(string A0RIDList, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -369,7 +369,7 @@ namespace CDB
         //Alle Districts
         public static XDocument GetDistrictfromCDB(string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -385,7 +385,7 @@ namespace CDB
         //Booking POS
         public static XDocument GetBookingPosfromCDB(string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -401,7 +401,7 @@ namespace CDB
         //Alle TINS
         public static XDocument GetTinfromCDB(string showall, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -417,7 +417,7 @@ namespace CDB
         //Tin Gruppen?
         public static XDocument GetTinGroupfromCDB(string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -433,7 +433,7 @@ namespace CDB
         //Geänderte Hotels
         public static XDocument GetHotelChangedfromCDB(DateTime startdate, string A0Ene, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -449,7 +449,7 @@ namespace CDB
         //Hotel Categories (alle kategorien)
         public static XDocument GetHotelCategorysfromCDB(string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -465,7 +465,7 @@ namespace CDB
         //Alle VGroupData
         public static XDocument GetVGroupDatafromCDB(string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -481,7 +481,7 @@ namespace CDB
         //Alle VGroupData
         public static XDocument GetVGroupBaseDatafromCDB(string G0RIDs, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -502,7 +502,7 @@ namespace CDB
         //(touristisch relevanter Ort) 
         public static XDocument GetVGroupHierarchyfromCDB(string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -518,7 +518,7 @@ namespace CDB
         //VGroup NAme mit G0RID
         public static XDocument GetVGroupNamefromCDB(string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -534,7 +534,7 @@ namespace CDB
         //Group DAta
         public static XDocument GetGroupDatafromCDB(string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;
@@ -550,7 +550,7 @@ namespace CDB
         //Independent
         public static XDocument GetIndependentDatafromCDB(string A0RID, string user, string pswd)
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "CDBDataSoap");
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), "https://lcs.lts.it/data/cdbdata.asmx");
 
             proxy.ClientCredentials.UserName.UserName = user;
             proxy.ClientCredentials.UserName.Password = pswd;

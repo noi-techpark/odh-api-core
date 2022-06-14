@@ -1,4 +1,5 @@
 ﻿using AspNetCore.CacheOutput;
+using CDB;
 using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +18,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OdhApiCore.Controllers
 {
@@ -28,11 +30,13 @@ namespace OdhApiCore.Controllers
     public class AccommodationController : OdhController
     {
         private readonly IHttpClientFactory httpClientFactory;
-     
+        private readonly ISettings settings;
+
         public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
             : base(env, settings, logger, queryFactory)
         {
-            this.httpClientFactory = httpClientFactory;            
+            this.httpClientFactory = httpClientFactory;
+            this.settings = settings;
         }
 
         //Duplicate on AVailabilitySearchInterceptorAttribute
@@ -337,9 +341,8 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            if (!String.IsNullOrEmpty(source) && source == "lts")
-                return await Task.FromResult<IActionResult>(Ok());
-            //return GetFeatureList(cancellationToken); TODO
+            if (!String.IsNullOrEmpty(source) && source == "lts")                
+                return GetFeatureListXML(cancellationToken); 
             else
                 return await GetAccoFeatureList(language, ltst0idfilter, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
         }
@@ -896,6 +899,15 @@ namespace OdhApiCore.Controllers
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
             });
+        }
+
+        private IActionResult GetFeatureListXML(CancellationToken cancellationToken)
+        {
+            XDocument mytins = GetAccommodationDataCDB.GetTinfromCDB("1", settings.LcsConfig.Username, settings.LcsConfig.Password);
+
+            //return new ContentResult { Content = mytins.ToString(), ContentType = "text/xml", StatusCode = 200 };
+
+            return Ok(mytins);
         }
 
         #endregion
