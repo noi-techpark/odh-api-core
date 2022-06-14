@@ -32,6 +32,21 @@ namespace OdhApiCore
         public string MessagePassword { get; private set; }
     }
 
+    public class CDBConfig
+    {
+        public CDBConfig(string username, string password, string url)
+        {
+            this.Username = username;
+            this.Password = password;
+            this.Url = url;
+        }
+
+        public string Username { get; private set; }
+        public string Password { get; private set; }
+
+        public string Url { get; private set; }
+    }
+
     public class SiagConfig
     {
         public SiagConfig(string username, string password)
@@ -200,6 +215,7 @@ namespace OdhApiCore
         string PostgresConnectionString { get; }
         MssConfig MssConfig { get; }
         LcsConfig LcsConfig { get; }
+        CDBConfig CDBConfig { get; }
         SiagConfig SiagConfig { get; }
         XmlConfig XmlConfig { get; }
         JsonConfig JsonConfig { get; }
@@ -220,6 +236,7 @@ namespace OdhApiCore
         private readonly Lazy<string> connectionString;
         private readonly MssConfig mssConfig;
         private readonly LcsConfig lcsConfig;
+        private readonly CDBConfig cdbConfig;        
         private readonly SiagConfig siagConfig;
         private readonly XmlConfig xmlConfig;
         private readonly JsonConfig jsonConfig;
@@ -242,6 +259,8 @@ namespace OdhApiCore
             this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
             var lcs = this.configuration.GetSection("LcsConfig");
             this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""));
+            var cdb = this.configuration.GetSection("CDBConfig");
+            this.cdbConfig = new CDBConfig(cdb.GetValue<string>("Username", ""), cdb.GetValue<string>("Password", ""), cdb.GetValue<string>("Url", ""));
             var siag = this.configuration.GetSection("SiagConfig");
             this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
             var xml = this.configuration.GetSection("XmlConfig");
@@ -298,6 +317,7 @@ namespace OdhApiCore
 
         public MssConfig MssConfig => this.mssConfig;
         public LcsConfig LcsConfig => this.lcsConfig;
+        public CDBConfig CDBConfig => this.cdbConfig;
         public SiagConfig SiagConfig => this.siagConfig;
         public XmlConfig XmlConfig => this.xmlConfig;
         public JsonConfig JsonConfig => this.jsonConfig;

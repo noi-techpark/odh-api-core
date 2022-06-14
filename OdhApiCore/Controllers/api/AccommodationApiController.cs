@@ -903,7 +903,7 @@ namespace OdhApiCore.Controllers
 
         private IActionResult GetFeatureListXML(CancellationToken cancellationToken)
         {
-            XDocument mytins = GetAccommodationDataCDB.GetTinfromCDB("1", settings.LcsConfig.Username, settings.LcsConfig.Password);
+            XDocument mytins = GetAccommodationDataCDB.GetTinfromCDB("1", settings.CDBConfig.Username, settings.CDBConfig.Password, settings.CDBConfig.Url);
 
             //return new ContentResult { Content = mytins.ToString(), ContentType = "text/xml", StatusCode = 200 };
 
