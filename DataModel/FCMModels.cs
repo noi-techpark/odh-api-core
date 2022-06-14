@@ -20,7 +20,5 @@ namespace DataModel
         public string sound { get; set; }
         public string link { get; set; }
         public string icon { get; set; }
-    }
-
-    #region
+    }    
 }
