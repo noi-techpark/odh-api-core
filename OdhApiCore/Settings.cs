@@ -175,12 +175,14 @@ namespace OdhApiCore
 
     public class FCMConfig
     {
-        public FCMConfig(string serverkey, string senderid)
+        public FCMConfig(string identifier, string serverkey, string senderid)
         {
+            this.Identifier = identifier;
             this.ServerKey = serverkey;
             this.SenderId = senderid;            
         }
 
+        public string Identifier { get; private set; }
         public string ServerKey { get; private set; }
         public string SenderId { get; private set; }        
     }
@@ -223,11 +225,13 @@ namespace OdhApiCore
         EBMSConfig EbmsConfig { get; }
         RavenConfig RavenConfig { get; }
         PushServerConfig PushServerConfig { get; }
-        FCMConfig FCMConfig { get; }
+        //FCMConfig FCMConfig { get; }
         List<Field2HideConfig> Field2HideConfig { get; }
         List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
         List<RateLimitConfig> RateLimitConfig { get; }
         NoRateLimitConfig NoRateLimitConfig { get; }
+
+        List<FCMConfig> FCMConfig { get; }
     }
 
     public class Settings : ISettings
@@ -244,11 +248,12 @@ namespace OdhApiCore
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
         private readonly PushServerConfig pushserverConfig;
-        private readonly FCMConfig fcmConfig;
+        //private readonly FCMConfig fcmConfig;
         private readonly List<Field2HideConfig> field2hideConfig;
         private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
         private readonly List<RateLimitConfig> rateLimitConfig;
         private readonly NoRateLimitConfig noRateLimitConfig;
+        private readonly List<FCMConfig> fcmConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -275,9 +280,7 @@ namespace OdhApiCore
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
             var pushserver = this.configuration.GetSection("PushServerConfig");
             this.pushserverConfig = new PushServerConfig(pushserver.GetValue<string>("Username", ""), pushserver.GetValue<string>("Password", ""), pushserver.GetValue<string>("ServiceUrl", ""));
-            var fcm = this.configuration.GetSection("FCMConfig");
-            this.fcmConfig = new FCMConfig(fcm.GetValue<string>("ServerKey", ""), fcm.GetValue<string>("SenderId", ""));
-            var field2hidelist = this.configuration.GetSection("Field2HideConfig").GetChildren();
+             var field2hidelist = this.configuration.GetSection("Field2HideConfig").GetChildren();
             this.field2hideConfig = new List<Field2HideConfig>();
             foreach (var field2hide in field2hidelist)
             {
@@ -311,6 +314,16 @@ namespace OdhApiCore
             {
                 this.noRateLimitConfig.NoRateLimitReferer.Add(referer.GetValue<string>("Referer", ""));
             }
+
+            this.fcmConfig = new List<FCMConfig>();
+
+            var fcmlist = this.configuration.GetSection("FCMConfig").GetChildren();
+            foreach (var fcm in fcmlist)
+            {
+                var fcmconfigobj = new FCMConfig(fcm.GetValue<string>("Identifier", ""), fcm.GetValue<string>("ServerKey", ""), fcm.GetValue<string>("SenderId", ""));
+                this.fcmConfig.Add(fcmconfigobj);
+            }
+
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -325,7 +338,7 @@ namespace OdhApiCore
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
         public PushServerConfig PushServerConfig => this.pushserverConfig;
-        public FCMConfig FCMConfig => this.fcmConfig;
+        public List<FCMConfig> FCMConfig => this.fcmConfig;
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
         public List<RateLimitConfig> RateLimitConfig => this.rateLimitConfig;
