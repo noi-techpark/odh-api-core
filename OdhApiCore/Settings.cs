@@ -317,13 +317,15 @@ namespace OdhApiCore
 
             this.fcmConfig = new List<FCMConfig>();
 
-            var fcmlist = this.configuration.GetSection("FCMConfig").GetChildren();
-            foreach (var fcm in fcmlist)
+            var fcmdict = this.configuration.GetSection("FCMConfig").GetChildren();
+            if(fcmdict != null)
             {
-                var fcmconfigobj = new FCMConfig(fcm.GetValue<string>("Identifier", ""), fcm.GetValue<string>("ServerKey", ""), fcm.GetValue<string>("SenderId", ""));
-                this.fcmConfig.Add(fcmconfigobj);
-            }
-
+                foreach (var fcmkey in fcmdict)
+                {
+                    var fcmconfigobj = new FCMConfig(fcmkey.Key, fcmkey.GetValue<string>("ServerKey", ""), fcmkey.GetValue<string>("SenderId", ""));
+                    this.fcmConfig.Add(fcmconfigobj);
+                }
+            }          
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
