@@ -13,7 +13,7 @@ namespace PushServer
 
 	public class FCMPushNotificationResponse
     {
-		public bool Successful { get; set; }
+		public bool Success { get; set; }
 		public string Response { get; set; }
 		public Exception Error { get; set; }
 	}
@@ -34,11 +34,11 @@ namespace PushServer
 
 				var myresponseparsed = await myresponse.Content.ReadAsStringAsync();
 
-				return new FCMPushNotificationResponse() { Error = null, Response = myresponseparsed, Successful = true };
+				return new FCMPushNotificationResponse() { Error = null, Response = myresponseparsed, Success = true };
 			}
 			catch (Exception ex)
 			{
-				return new FCMPushNotificationResponse() { Error = ex, Response = "Error", Successful = false };
+				return new FCMPushNotificationResponse() { Error = ex, Response = "Error", Success = false };
 			}			
 		}
 	}
