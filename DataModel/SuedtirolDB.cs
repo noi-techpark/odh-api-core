@@ -1074,6 +1074,7 @@ namespace DataModel
 
     public abstract class TrustYouInfos
     {
+        [SwaggerSchema("Id Accommodation has on Trust You")]
         public string? TrustYouID { get; set; }
         public double TrustYouScore { get; set; }
         public int TrustYouResults { get; set; }
