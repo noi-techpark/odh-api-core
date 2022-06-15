@@ -1076,7 +1076,9 @@ namespace DataModel
     {
         [SwaggerSchema("Id Accommodation has on Trust You")]
         public string? TrustYouID { get; set; }
+        [SwaggerSchema("Review Score on Trust You")]
         public double TrustYouScore { get; set; }
+        [SwaggerSchema("Number of Ratings in Trust You")]
         public int TrustYouResults { get; set; }
         public bool TrustYouActive { get; set; }
         public int TrustYouState { get; set; }
