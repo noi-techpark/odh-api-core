@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PushServer;
 using SqlKata.Execution;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers.api
@@ -87,12 +88,19 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> PostFCMMessage(string identifier, [FromBody] FCMModels message)
         {
             //TODO add configurable FCM setting where config can be accessed by identifier
-            //var pushserverconfig = settings.PushServerConfig;
-            //Complete the message            
+            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == identifier).FirstOrDefault();
 
-            var result = await FCMPushNotification.SendNotification(message, "fcmurl", "fcmsenderid", "fcmauthkey");
+            if (pushserverconfig != null)
+            {
+                //Complete the message
+                
 
-            return Ok(result);
+                var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
+
+                return Ok(result);
+            }
+            else
+                return BadRequest("not found");
         }
 
     }
