@@ -27,8 +27,8 @@ namespace PushServer
 			{				
 				HttpClient myclient = new HttpClient();
 				
-				myclient.DefaultRequestHeaders.Add("Authorization", string.Format("key={0}", fcmauthkey));
-				myclient.DefaultRequestHeaders.Add("Sender", string.Format("id={0}", fcmsenderid));
+				myclient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "key=" + fcmauthkey);
+				myclient.DefaultRequestHeaders.TryAddWithoutValidation("Sender", string.Format("id={0}", fcmsenderid));
 			
 				var myresponse = await myclient.PostAsync(fcmurl, new StringContent(JsonConvert.SerializeObject(fcmmessage), Encoding.UTF8, "application/json"));
 
