@@ -3158,7 +3158,8 @@ namespace DataModel
         public string? CurrencyCode { get; set; }
         //public string Language { get; set; }
     }
-    
+
+    [SwaggerSchema("Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>")]
     public class OperationSchedule : IOperationSchedules
     {
         public OperationSchedule()
@@ -3171,6 +3172,7 @@ namespace DataModel
         /// <summary>
         /// Type: 1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider)
         /// </summary>        
+        [SwaggerSchema("1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider), Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>")]
         public string? Type { get; set; }
         
         public ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
