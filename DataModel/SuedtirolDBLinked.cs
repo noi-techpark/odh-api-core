@@ -144,11 +144,11 @@ namespace DataModel
 
     public class LocationInfoLinked : LocationInfo
     {
-        public new RegionInfoLinked RegionInfo { get; set; }
-        public new TvInfoLinked TvInfo { get; set; }
-        public new MunicipalityInfoLinked MunicipalityInfo { get; set; }
-        public new DistrictInfoLinked DistrictInfo { get; set; }
-        public new AreaInfoLinked AreaInfo { get; set; }
+        public new RegionInfoLinked? RegionInfo { get; set; }
+        public new TvInfoLinked? TvInfo { get; set; }
+        public new MunicipalityInfoLinked? MunicipalityInfo { get; set; }
+        public new DistrictInfoLinked? DistrictInfo { get; set; }
+        public new AreaInfoLinked? AreaInfo { get; set; }
     }
 
     public class LTSTagsLinked : LTSTags
@@ -289,10 +289,10 @@ namespace DataModel
         }
 
         //Overwriting Categorycodes etc...
-        public new ICollection<CategoryCodesLinked> CategoryCodes { get; set; }
-        public new ICollection<DishRatesLinked> DishRates { get; set; }
-        public new ICollection<CapacityCeremonyLinked> CapacityCeremony { get; set; }
-        public new ICollection<FacilitiesLinked> Facilities { get; set; }
+        public new ICollection<CategoryCodesLinked>? CategoryCodes { get; set; }
+        public new ICollection<DishRatesLinked>? DishRates { get; set; }
+        public new ICollection<CapacityCeremonyLinked>? CapacityCeremony { get; set; }
+        public new ICollection<FacilitiesLinked>? Facilities { get; set; }
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked LocationInfo { get; set; }
@@ -376,13 +376,13 @@ namespace DataModel
         }
 
         //Overwrites The Features
-        public new ICollection<AccoFeatureLinked> Features { get; set; }
+        public new ICollection<AccoFeatureLinked>? Features { get; set; }
 
         //Overwrites The Features
-        public new ICollection<AccoRoomInfoLinked> AccoRoomInfo { get; set; }
+        public new ICollection<AccoRoomInfoLinked>? AccoRoomInfo { get; set; }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class AccommodationRoomLinked : AccoRoom, IMetaData
@@ -563,13 +563,13 @@ namespace DataModel
             }
         }
 
-        public new ICollection<CategoryCodesLinked> CategoryCodes { get; set; }
-        public new ICollection<DishRatesLinked> DishRates { get; set; }
-        public new ICollection<CapacityCeremonyLinked> CapacityCeremony { get; set; }
-        public new ICollection<FacilitiesLinked> Facilities { get; set; }
+        public new ICollection<CategoryCodesLinked>? CategoryCodes { get; set; }
+        public new ICollection<DishRatesLinked>? DishRates { get; set; }
+        public new ICollection<CapacityCeremonyLinked>? CapacityCeremony { get; set; }
+        public new ICollection<FacilitiesLinked>? Facilities { get; set; }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }

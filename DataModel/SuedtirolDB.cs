@@ -809,7 +809,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
         //new for Wine Importers
-        public IDictionary<string, List<AdditionalContact>> AdditionalContact { get; set; }
+        public IDictionary<string, List<AdditionalContact>>? AdditionalContact { get; set; }
 
         //NEU LISTE Suggestions
         //public IDictionary<string, string> LinkedAppSuggestions { get; set; }
@@ -990,9 +990,9 @@ namespace DataModel
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
 
         //Independent Data
-        public IndependentData IndependentData { get; set; }
+        public IndependentData? IndependentData { get; set; }
 
-        public ICollection<AccoRoomInfo> AccoRoomInfo { get; set; }
+        public ICollection<AccoRoomInfo>? AccoRoomInfo { get; set; }
 
         //new Add GPS Points from Root Representation
         public IDictionary<string, GpsInfo> GpsPoints

@@ -920,13 +920,13 @@ namespace OdhApiCore.Controllers
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationManager,AccommodationCreate")]
+        [Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationWriter,AccommodationManager,AccommodationCreate")]
         [HttpPost, Route("Accommodation")]
         public Task<IActionResult> Post([FromBody] AccommodationLinked accommodation)
         {
             return DoAsyncReturn(async () =>
             {
-                accommodation.Id = !String.IsNullOrEmpty(accommodation.Id) ? accommodation.Id.ToUpper() : "noId";
+                accommodation.Id = !String.IsNullOrEmpty(accommodation.Id) ? accommodation.Id.ToUpper() : "NOID";
                 return await UpsertData<AccommodationLinked>(accommodation, "accommodations");
             });
         }
@@ -938,7 +938,7 @@ namespace OdhApiCore.Controllers
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationManager,AccommodationModify")]
+        [Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationWriter,AccommodationManager,AccommodationModify")]
         [HttpPut, Route("Accommodation/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] AccommodationLinked accommodation)
         {
@@ -955,7 +955,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Accommodation Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,AccoManager,AccoDelete,AccommodationManager,AccommodationDelete")]
+        [Authorize(Roles = "DataWriter,DataDelete,AccoManager,AccoDelete,AccommodationWriter,AccommodationManager,AccommodationDelete")]
         [HttpDelete, Route("Accommodation/{id}")]
         public Task<IActionResult> Delete(string id)
         {

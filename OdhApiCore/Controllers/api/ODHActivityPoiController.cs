@@ -379,13 +379,13 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactivitypoi">ODHActivityPoi Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
+        [Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
         [HttpPost, Route("ODHActivityPoi")]
         public Task<IActionResult> Post([FromBody] ODHActivityPoiLinked odhactivitypoi)
         {
             return DoAsyncReturn(async () =>
             {
-                odhactivitypoi.Id = !String.IsNullOrEmpty(odhactivitypoi.Id) ? odhactivitypoi.Id.ToUpper() : "noId";
+                odhactivitypoi.Id = !String.IsNullOrEmpty(odhactivitypoi.Id) ? odhactivitypoi.Id.ToLower() : "noid";
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois");
             });
         }
@@ -397,13 +397,13 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactivitypoi">ODHActivityPoi Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiManager,ODHActivityPoiModify,SmgPoiManager,SmgPoiModify")]
+        [Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiModify,SmgPoiManager,SmgPoiModify")]
         [HttpPut, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHActivityPoiLinked odhactivitypoi)
         {
             return DoAsyncReturn(async () =>
             {
-                odhactivitypoi.Id = id.ToUpper();
+                odhactivitypoi.Id = id.ToLower();
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois");
             });
         }
@@ -414,13 +414,13 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ODHActivityPoi Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
+        [Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
         [HttpDelete, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = id.ToLower();
                 return await DeleteData(id, "smgpois");
             });
         }
