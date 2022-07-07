@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
-        [HttpGet, Route("PushNotification/{type}/{id}/{identifier}")]
+        [HttpGet, Route("FCMMessage/{type}/{id}/{identifier}")]
         public async Task<IActionResult> GetFCM(string type, string id, string identifier)
         {
             //Get the object
@@ -107,9 +107,12 @@ namespace OdhApiCore.Controllers.api
             var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
 
             //Construct the message
-            var message = ConstructMyMessage(myobject);
+            var message = ConstructMyMessage(identifier, myobject);
 
-            return await PostFCMMessage(identifier, message);
+            if (message != null)
+                return await PostFCMMessage(identifier, message);
+            else
+                return BadRequest("Message could not be created");
         }
 
 
@@ -143,12 +146,41 @@ namespace OdhApiCore.Controllers.api
 
         #region Helpers
 
-        public static FCMModels ConstructMyMessage(IIdentifiable myobject)
+        public static FCMModels ConstructMyMessage(string identifier, IIdentifiable myobject)
         {
-            return new FCMModels();
+            var message = default(FCMModels);
+
+            if(identifier == "it.bz.noi.community" && myobject is ArticlesLinked)
+            {
+                //todo create topic
+
+                string deeplink = "noi-community://it.bz.noi.community/newsDetails/" + myobject.Id;
+
+                message = new FCMModels();
+                message.data = new { deep_link = deeplink };
+                FCMNotification notification = new FCMNotification();
+
+                message.notification = notification;
+            }
+
+            return message;
         }
 
+        //{
+        //    "to": "/topics/newsfeednoi_it",
+	       // "notification": {        
+		      //  "title": "News Push",
+		      //  "body": "Check out the news feed test",
+		      //  "sound": "default",
+		      //  "link": "noi-community://it.bz.noi.community/newsDetails/B5159512-A6E7-42C6-8792-1E947B3531A7",
+        //        "icon": "ic_notification"
+	       // },
+	       // "data": {
+		      //  "deep_link": "noi-community://it.bz.noi.community/newsDetails/B5159512-A6E7-42C6-8792-1E947B3531A7"
+	       // }
+        //}
 
-        #endregion
-    }
+
+    #endregion
+}
 }
