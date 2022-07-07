@@ -87,8 +87,8 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
-        [HttpGet, Route("FCMMessage/{type}/{id}/{identifier}")]
-        public async Task<IActionResult> GetFCM(string type, string id, string identifier)
+        [HttpGet, Route("FCMMessage/{type}/{id}/{identifier}/{language}")]
+        public async Task<IActionResult> GetFCM(string type, string id, string identifier, string language)
         {
             //Get the object
             var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
@@ -107,7 +107,7 @@ namespace OdhApiCore.Controllers.api
             var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
 
             //Construct the message
-            var message = ConstructMyMessage(identifier, myobject);
+            var message = ConstructMyMessage(identifier, language, myobject);
 
             if (message != null)
                 return await PostFCMMessage(identifier, message);
@@ -146,13 +146,13 @@ namespace OdhApiCore.Controllers.api
 
         #region Helpers
 
-        public static FCMModels ConstructMyMessage(string identifier, IIdentifiable myobject)
+        public static FCMModels ConstructMyMessage(string identifier, string language, IIdentifiable myobject)
         {
             var message = default(FCMModels);
 
             if(identifier == "it.bz.noi.community" && myobject is ArticlesLinked)
             {
-                //todo create topic
+                message.to = "/topics/newsfeednoi_" + language.ToLower();
 
                 string deeplink = "noi-community://it.bz.noi.community/newsDetails/" + myobject.Id;
 
