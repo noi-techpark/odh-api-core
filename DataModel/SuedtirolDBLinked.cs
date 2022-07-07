@@ -295,7 +295,7 @@ namespace DataModel
         public new ICollection<FacilitiesLinked>? Facilities { get; set; }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class AccommodationLinked : Accommodation, IMetaData
@@ -474,7 +474,7 @@ namespace DataModel
         public new ICollection<TopicLinked> Topics { get; set; }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
@@ -510,7 +510,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData
@@ -627,7 +627,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
@@ -685,7 +685,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
@@ -1138,7 +1138,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class SkiRegionLinked : SkiRegion, IMetaData
@@ -1236,7 +1236,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }       
+        public new LocationInfoLinked? LocationInfo { get; set; }       
     }
 
     public class WineLinked : Wine, IMetaData
