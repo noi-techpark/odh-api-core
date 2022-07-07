@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PushServer;
 using SqlKata.Execution;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -90,29 +92,61 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("FCMMessage/{type}/{id}/{identifier}/{language}")]
         public async Task<IActionResult> GetFCM(string type, string id, string identifier, string language)
         {
-            //Get the object
-            var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
-            var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
+            try
+            {
+                //Get the object
+                var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
+                var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
 
-            var query =
-              QueryFactory.Query(mytable)
-                  .Select("data")
-                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
-                  .When(FilterClosedData, q => q.FilterClosedData());
+                var query =
+                  QueryFactory.Query(mytable)
+                      .Select("data")
+                      .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
+                      .When(FilterClosedData, q => q.FilterClosedData());
 
-            var fieldsTohide = FieldsToHide;
+                var fieldsTohide = FieldsToHide;
 
-            var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-            var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
+                var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
 
-            //Construct the message
-            var message = ConstructMyMessage(identifier, language, myobject);
+                //Multilanguage support
+                var langarr = language.Split(',');
 
-            if (message != null)
-                return await PostFCMMessage(identifier, message);
-            else
-                return BadRequest("Message could not be created");
+                List<FCMModels> messages = new List<FCMModels>();
+
+                foreach (var lang in langarr)
+                {
+                    //Construct the message
+                    var message = ConstructMyMessage(identifier, lang.ToLower(), myobject);
+
+                    if (message != null)
+                        messages.Add(message);
+                    else
+                        throw new Exception("Message could not be constructed");
+                }
+
+                var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == identifier).FirstOrDefault();
+
+                if (pushserverconfig == null)
+                    throw new Exception("PushserverConfig could not be found");
+
+                Dictionary<string, FCMPushNotificationResponse> resultlist = new Dictionary<string, FCMPushNotificationResponse>();
+
+                foreach(var message in messages)
+                {
+                     var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
+
+                    resultlist.Add(message.to, result);
+                }
+
+                return Ok(resultlist);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Error: " + ex.Message);
+            }
+            
         }
 
 
@@ -131,9 +165,6 @@ namespace OdhApiCore.Controllers.api
 
             if (pushserverconfig != null)
             {
-                //Complete the message
-                
-
                 var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
 
                 return Ok(result);
