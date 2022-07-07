@@ -21,15 +21,16 @@ namespace OdhApiCore.Controllers.api
             this.settings = settings;
         }
 
+        #region Using NOI PushServer
+
         /// <summary>
         /// GET Send a PushMessage to NOI Pushserver
         /// </summary>
-        /// <param name="message">PushServerMessage Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataWriter,DataCreate")]
+        [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpGet, Route("PushNotification/{type}/{id}")]
-        public async Task<IActionResult> Get(string type, string id)
+        public async Task<IActionResult> Get(string type, string id )
         {
             //Get the object
             var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
@@ -65,7 +66,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="message">PushServerMessage Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate")]        
+        [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]        
         [HttpPost, Route("PushNotification")]
         public async Task<IActionResult> Post([FromBody] PushServerMessage message)
         {
@@ -76,14 +77,49 @@ namespace OdhApiCore.Controllers.api
             return Ok(result);
         }
 
+        #endregion
+
+        #region Using FCM Google Api
 
         /// <summary>
-        /// POST Send a PushMessage to NOI Pushserver
+        /// GET Send a PushMessage to FCM Google Api
         /// </summary>
-        /// <param name="message">PushServerMessage Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate")]
+        [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
+        [HttpGet, Route("PushNotification/{type}/{id}/{identifier}")]
+        public async Task<IActionResult> GetFCM(string type, string id, string identifier)
+        {
+            //Get the object
+            var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
+            var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
+
+            var query =
+              QueryFactory.Query(mytable)
+                  .Select("data")
+                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
+                  .When(FilterClosedData, q => q.FilterClosedData());
+
+            var fieldsTohide = FieldsToHide;
+
+            var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+            var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
+
+            //Construct the message
+            var message = ConstructMyMessage(myobject);
+
+            return await PostFCMMessage(identifier, message);
+        }
+
+
+        /// <summary>
+        /// POST Send a PushMessage directly to Google Api
+        /// </summary>
+        /// <param name="message">FCMModels Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpPost, Route("FCMMessage/{identifier}")]
         public async Task<IActionResult> PostFCMMessage(string identifier, [FromBody] FCMModels message)
         {
@@ -103,5 +139,16 @@ namespace OdhApiCore.Controllers.api
                 return BadRequest("not found");
         }
 
+        #endregion
+
+        #region Helpers
+
+        public static FCMModels ConstructMyMessage(IIdentifiable myobject)
+        {
+            return new FCMModels();
+        }
+
+
+        #endregion
     }
 }
