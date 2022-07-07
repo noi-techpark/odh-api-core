@@ -183,11 +183,12 @@ namespace OdhApiCore.Controllers.api
 
             if(identifier == "it.bz.noi.community" && myobject is ArticlesLinked)
             {
+                message = new FCMModels();
+
                 message.to = "/topics/newsfeednoi_" + language.ToLower();
 
                 string deeplink = "noi-community://it.bz.noi.community/newsDetails/" + myobject.Id;
-
-                message = new FCMModels();
+         
                 message.data = new { deep_link = deeplink };
                 FCMNotification notification = new FCMNotification();
 
