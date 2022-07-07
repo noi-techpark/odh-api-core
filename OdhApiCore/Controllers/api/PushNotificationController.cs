@@ -160,6 +160,12 @@ namespace OdhApiCore.Controllers.api
                 message.data = new { deep_link = deeplink };
                 FCMNotification notification = new FCMNotification();
 
+                notification.icon = "ic_notification";
+                notification.link = deeplink;
+                notification.title = "News push test";
+                notification.body = "Check out the news feed test";
+                notification.sound = "default";
+
                 message.notification = notification;
             }
 
