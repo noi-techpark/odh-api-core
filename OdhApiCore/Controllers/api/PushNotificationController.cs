@@ -181,7 +181,7 @@ namespace OdhApiCore.Controllers.api
         {
             var message = default(FCMModels);
 
-            if(identifier == "it.bz.noi.community" && myobject is ArticlesLinked)
+            if(identifier == "noicommunityapp" && myobject is ArticlesLinked)
             {
                 message = new FCMModels();
 
