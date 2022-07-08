@@ -665,9 +665,12 @@ namespace OdhApiCore.Controllers.api
         #region POST PUT DELETE
 
         // POST: api/EventShort
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         //[EnableCors("DataBrowserCorsPolicy")]
         [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        [ProducesResponseType(typeof(GenericResultExtended), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPost, Route("EventShort")]
         //[InvalidateCacheOutput("GetReducedAsync")]
@@ -797,8 +800,11 @@ namespace OdhApiCore.Controllers.api
         }
 
         // PUT: api/EventShort/5
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
+        [ProducesResponseType(typeof(GenericResultExtended), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPut, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
@@ -865,10 +871,13 @@ namespace OdhApiCore.Controllers.api
 
         // DELETE: api/EventShort/5
         [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        [ProducesResponseType(typeof(GenericResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpDelete, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Delete(string id)
         {
             try
