@@ -30,7 +30,7 @@ services:
       ASPNETCORE_EBMSConfig__EBMSUser: ${EBMS_USER}
       ASPNETCORE_EBMSConfig__EBMSPassword: ${EBMS_PASS}
       ASPNETCORE_DataBrowserConfig__Url: ${DATABROWSER_URL}
-      ASPNETCORE_FCMConfig__it.bz.noi.community__ServerKey: ${NOICOMMUNITY_SERVERKEY}
-      ASPNETCORE_FCMConfig__it.bz.noi.community__SenderId: ${NOICOMMUNITY_SENDERID}
+      ASPNETCORE_FCMConfig__noicommunityapp__ServerKey: ${NOICOMMUNITY_SERVERKEY}
+      ASPNETCORE_FCMConfig__noicommunityapp__SenderId: ${NOICOMMUNITY_SENDERID}
     ports:
       - "60209:80"
