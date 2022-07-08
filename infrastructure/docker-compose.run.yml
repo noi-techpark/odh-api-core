@@ -33,7 +33,9 @@ services:
       ASPNETCORE_RavenConfig__Password: ${RAVEN_PSWD}
       ASPNETCORE_DSSConfig__Username: ${DSS_USER}
       ASPNETCORE_DSSConfig__Password: ${DSS_PSWD}
-      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}   
+      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}
+      ASPNETCORE_FCMConfig__it.bz.noi.community__ServerKey: ${NOICOMMUNITY_SERVERKEY}
+      ASPNETCORE_FCMConfig__it.bz.noi.community__SenderId: ${NOICOMMUNITY_SENDERID}
     restart: unless-stopped
     ports:
       - "${SERVER_PORT}:80"
