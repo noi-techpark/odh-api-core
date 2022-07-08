@@ -32,7 +32,7 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpGet, Route("PushNotification/{type}/{id}")]
-        public async Task<IActionResult> Get(string type, string id )
+        public async Task<IActionResult> Get(string type, string id)
         {
             //Get the object
             var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
@@ -41,7 +41,7 @@ namespace OdhApiCore.Controllers.api
             var query =
               QueryFactory.Query(mytable)
                   .Select("data")
-                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type,id))
+                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
                   .When(FilterClosedData, q => q.FilterClosedData());
 
             var fieldsTohide = FieldsToHide;
@@ -68,7 +68,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="message">PushServerMessage Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]        
+        [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpPost, Route("PushNotification")]
         public async Task<IActionResult> Post([FromBody] PushServerMessage message)
         {
@@ -118,7 +118,7 @@ namespace OdhApiCore.Controllers.api
                 foreach (var lang in langarr)
                 {
                     //Construct the message
-                    var message = ConstructMyMessage(identifier, lang.ToLower(), myobject);
+                    var message = FCMMessageConstructor.ConstructMyMessage(identifier, lang.ToLower(), myobject);
 
                     if (message != null)
                         messages.Add(message);
@@ -133,20 +133,20 @@ namespace OdhApiCore.Controllers.api
 
                 Dictionary<string, FCMPushNotificationResponse> resultlist = new Dictionary<string, FCMPushNotificationResponse>();
 
-                foreach(var message in messages)
+                foreach (var message in messages)
                 {
-                     var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
+                    var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
 
                     resultlist.Add(message.to, result);
                 }
 
                 return Ok(resultlist);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest("Error: " + ex.Message);
             }
-            
+
         }
 
 
@@ -174,51 +174,5 @@ namespace OdhApiCore.Controllers.api
         }
 
         #endregion
-
-        #region Helpers
-
-        public static FCMModels ConstructMyMessage(string identifier, string language, IIdentifiable myobject)
-        {
-            var message = default(FCMModels);
-
-            if(identifier == "noicommunityapp" && myobject is ArticlesLinked)
-            {
-                message = new FCMModels();
-
-                message.to = "/topics/newsfeednoi_" + language.ToLower();
-
-                string deeplink = "noi-community://it.bz.noi.community/newsDetails/" + myobject.Id;
-         
-                message.data = new { deep_link = deeplink };
-                FCMNotification notification = new FCMNotification();
-
-                notification.icon = "ic_notification";
-                notification.link = deeplink;
-                notification.title = "News push test";
-                notification.body = "Check out the news feed test";
-                notification.sound = "default";
-
-                message.notification = notification;
-            }
-
-            return message;
-        }
-
-        //{
-        //    "to": "/topics/newsfeednoi_it",
-	       // "notification": {        
-		      //  "title": "News Push",
-		      //  "body": "Check out the news feed test",
-		      //  "sound": "default",
-		      //  "link": "noi-community://it.bz.noi.community/newsDetails/B5159512-A6E7-42C6-8792-1E947B3531A7",
-        //        "icon": "ic_notification"
-	       // },
-	       // "data": {
-		      //  "deep_link": "noi-community://it.bz.noi.community/newsDetails/B5159512-A6E7-42C6-8792-1E947B3531A7"
-	       // }
-        //}
-
-
-    #endregion
-}
+    }
 }
