@@ -149,7 +149,6 @@ namespace OdhApiCore.Controllers.api
 
         }
 
-
         /// <summary>
         /// POST Send a PushMessage directly to Google Api
         /// </summary>
