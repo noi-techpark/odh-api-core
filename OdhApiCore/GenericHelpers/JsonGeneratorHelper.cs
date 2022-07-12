@@ -58,6 +58,27 @@ namespace OdhApiCore.GenericHelpers
 
             //}
         }
+
+        public static async Task GenerateJSONTaglist(QueryFactory queryFactory, string jsondir, string jsonName)
+        {
+            var serializer = new JsonSerializer();
+
+            string select = "*";            
+            
+            var query =
+                queryFactory.Query()
+                  .SelectRaw(select)
+                  .From("tags");
+
+            var data = await query.GetAllAsObject<ODHTagLinked>();
+
+            //Save json
+            string fileName = Path.Combine(jsondir, $"{jsonName}.json");
+            using (var writer = File.CreateText(fileName))
+            {
+                serializer.Serialize(writer, data);
+            }            
+        }
     }
 
     public struct AccoBooklist
