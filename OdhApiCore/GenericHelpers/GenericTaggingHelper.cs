@@ -8,7 +8,8 @@ namespace OdhApiCore.GenericHelpers
 {
     public class GenericTaggingHelper
     {
-        public async Task<List<ODHTagLinked>> GetAllGenericTagsfromJson(string jsondir)
+        //GETS all generic tags from json as object
+        public static async Task<List<ODHTagLinked>> GetAllGenericTagsfromJson(string jsondir)
         {
             using (StreamReader r = new StreamReader(Path.Combine(jsondir, $"GenericTags.json")))
             {
@@ -17,7 +18,80 @@ namespace OdhApiCore.GenericHelpers
                 return JsonConvert.DeserializeObject<List<ODHTagLinked>>(json);
             }
         }
-        
-        //TODO: Add all logic with the new tags here
+
+        //Translates 
+        public static IDictionary<string, List<Tagging>> GenerateNewTagging(List<string> currenttags, List<ODHTagLinked> alltaglist)
+        {
+            var returnDict = new Dictionary<string, List<Tagging>>();
+
+            foreach (var tag in currenttags)
+            {
+                var resultdict = TranslateMappingKey(tag, alltaglist);
+
+                foreach (var kvp in resultdict)
+                {
+                    var listtoadd = new List<Tagging>();
+
+                    if (returnDict.ContainsKey(kvp.Key))
+                        listtoadd = returnDict[kvp.Key];
+
+                    listtoadd.Add(new Tagging() { Id = kvp.Value, Source = kvp.Key });
+
+                    returnDict.TryAddOrUpdate(kvp.Key, listtoadd);
+                }
+            }
+
+            return returnDict;
+        }
+
+        private static IDictionary<string, string> TranslateMappingKey(string germankey, List<ODHTagLinked> alltaglist)
+        {
+            var returnDict = new Dictionary<string, string>();
+
+            var tagen = alltaglist.Where(x => RemoveSpecialCharsRegex(x.TagName["de"].ToLower()) == germankey).FirstOrDefault();
+
+            if (tagen != null)
+            {
+                if (tagen.Source.Contains("ODHCategory"))
+                {
+                    returnDict.Add("idm", tagen.Id);
+                }
+
+                if (tagen.Source.Contains("LTSCategory"))
+                {
+                    returnDict.Add("lts", tagen.Id);
+                }
+            }
+
+            return returnDict;
+        }
+
+        private static void RemoveAllSpecialCharsFromID(ODHTagLinked odhtag)
+        {
+            odhtag.Id = RemoveSpecialCharsRegex(odhtag.Id);
+        }
+
+        private static string RemoveSpecialCharsRegex(string id)
+        {
+            var toreturn = id;
+
+            //Change special chars hack
+            toreturn = toreturn.Replace("é", "e");
+            toreturn = toreturn.Replace("á", "a");
+            toreturn = toreturn.Replace("í", "i");
+            toreturn = toreturn.Replace("ó", "o");
+            toreturn = toreturn.Replace("ú", "u");
+
+            toreturn = toreturn.Replace("ä", "a");
+            toreturn = toreturn.Replace("ö", "o");
+            toreturn = toreturn.Replace("ü", "u");
+
+            //Exclude all characters that does not match this pattern
+            toreturn = Regex.Replace(toreturn, @"[^0-9a-zA-Z_ ]+", "");
+            //Hack replace all double spaces
+            toreturn = Regex.Replace(toreturn, @"  +", " ");
+
+            return toreturn;
+        }
     }
 }

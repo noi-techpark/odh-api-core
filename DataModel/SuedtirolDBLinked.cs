@@ -168,6 +168,22 @@ namespace DataModel
         public string Self { get; set; }
     }
 
+    //NEW TAGGING GENERIC
+    public class Tagging
+    {
+        public string Id { get; set; }
+
+        public string Source { get; set; }
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Tagging/" + this.Id;
+            }
+        }
+    }
+
+
     public class ODHActivityPoiTypesLink
     {
         public string Id { get; set; }

@@ -206,16 +206,19 @@ namespace OdhApiCore.Controllers.api
 
                     break;
 
-                case "odhactivitypoi":
-
-                    //Special get all Taglist and traduce it on import
-
+                case "odhactivitypoi":                    
 
                     mydata = await GetDataFromRaven.GetRavenData<ODHActivityPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<ODHActivityPoiLinked, ODHActivityPoiLinked>((ODHActivityPoiLinked)mydata, TransformToPGObject.GetODHActivityPoiPGObject);
                     else
                         throw new Exception("No data found!");
+
+                    //Special get all Taglist and traduce it on import
+                    //var myalltaglist = GenericTaggingHelper.GetAllGenericTagsfromJson(settings.JsonConfig.Jsondir);
+                    //if (myalltaglist != null)
+                    //     GenericTaggingHelper.GenerateNewTagging(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
+                    
 
                     myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
 
