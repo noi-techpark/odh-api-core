@@ -17,7 +17,7 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly ISettings settings;
 
-        public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
+        public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
             this.settings = settings;

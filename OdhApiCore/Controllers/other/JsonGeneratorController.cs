@@ -96,7 +96,7 @@ namespace OdhApiCore.Controllers.other
         {
             try
             {
-                await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "Tags");
+                await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
 
                 return Ok(new
                 {

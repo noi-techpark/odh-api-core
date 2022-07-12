@@ -61,13 +61,11 @@ namespace OdhApiCore.GenericHelpers
 
         public static async Task GenerateJSONTaglist(QueryFactory queryFactory, string jsondir, string jsonName)
         {
-            var serializer = new JsonSerializer();
-
-            string select = "*";            
+            var serializer = new JsonSerializer();                      
             
             var query =
                 queryFactory.Query()
-                  .SelectRaw(select)
+                  .SelectRaw("data")
                   .From("tags");
 
             var data = await query.GetAllAsObject<ODHTagLinked>();

@@ -18,7 +18,7 @@ using AspNetCore.CacheOutput;
 using System.IO;
 using OdhApiCore.GenericHelpers;
 
-namespace OdhApiCore.Controllers.api
+namespace OdhApiCore.Controllers.sta
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]

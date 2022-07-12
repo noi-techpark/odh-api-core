@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SqlKata.Execution;
 
-namespace OdhApiCore.Controllers.api
+namespace OdhApiCore.Controllers.alpinebits
 {
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
