@@ -203,7 +203,7 @@ namespace OdhApiCore.Controllers.api
                     active, smgactive, smgtags, articledate, articledateto, source, lastchange, publishedon);
 
                 if(sortbyarticledate == true)
-                    rawsort = "to_date(data#>>'\\{ArticleDate\\}', 'YYYY-MM-DD') ASC";
+                    rawsort = "ArticleDate";
 
                 var query =
                     QueryFactory.Query()
