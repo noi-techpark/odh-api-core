@@ -264,8 +264,8 @@ namespace OdhApiCore.Controllers.api
                 else
                     tagfilterbehaviour = "or";
 
-                taggingfilter.Replace("and_", "");
-                taggingfilter.Replace("or_", "");
+                taggingfilter = taggingfilter.Replace("and_", "");
+                taggingfilter = taggingfilter.Replace("or_", "");
             }
 
             taglist = Helper.CommonListCreator.CreateIdList(taggingfilter);
