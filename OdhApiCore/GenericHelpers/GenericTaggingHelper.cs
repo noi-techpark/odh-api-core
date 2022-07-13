@@ -11,7 +11,7 @@ namespace OdhApiCore.GenericHelpers
 {
     public class GenericTaggingHelper
     {
-        //GETS all generic tags from json as object
+        //GETS all generic tags from json as object to avoid DB call on each Tag update
         public static async Task<List<ODHTagLinked>> GetAllGenericTagsfromJson(string jsondir)
         {
             using (StreamReader r = new StreamReader(Path.Combine(jsondir, $"GenericTags.json")))
@@ -22,7 +22,7 @@ namespace OdhApiCore.GenericHelpers
             }
         }
 
-        //Translates 
+        //Translates OLD Tags with german keys to new English Tags
         public static IDictionary<string, List<Tagging>> GenerateNewTagging(List<string> currenttags, List<ODHTagLinked> alltaglist)
         {
             var returnDict = new Dictionary<string, List<Tagging>>();
@@ -69,11 +69,7 @@ namespace OdhApiCore.GenericHelpers
             return returnDict;
         }
 
-        private static void RemoveAllSpecialCharsFromID(ODHTagLinked odhtag)
-        {
-            odhtag.Id = RemoveSpecialCharsRegex(odhtag.Id);
-        }
-
+        //Removes all special chars for the tag id
         private static string RemoveSpecialCharsRegex(string id)
         {
             var toreturn = id;
