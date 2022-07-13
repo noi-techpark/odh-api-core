@@ -258,11 +258,15 @@ namespace OdhApiCore.Controllers.api
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
             if (!String.IsNullOrEmpty(taggingfilter))
-                if (taggingfilter.ToLower().StartsWith("and"))
+            {
+                if (taggingfilter.ToLower().StartsWith("and_"))
                     tagfilterbehaviour = "and";
                 else
                     tagfilterbehaviour = "or";
 
+                taggingfilter.Replace("and_", "");
+                taggingfilter.Replace("or_", "");
+            }
 
             taglist = Helper.CommonListCreator.CreateIdList(taggingfilter);
 
