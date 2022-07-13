@@ -951,6 +951,22 @@ namespace Helper
                 )
             );
 
+        #region Tagging
+
+        public static Query TaggingFilter_OR(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
+               query.WhereInJsonb(
+                taglist,
+                tag => new { Tagging = new { idm = new[] { new { Id = tag.ToLower() } } } }
+            );
+
+        public static Query TaggingFilter_AND(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
+               query.WhereAllInJsonb(
+                taglist,
+                tag => new { Tagging = new { idm = new[] { new { Id = tag.ToLower() } } } }
+            );
+
+        #endregion
+
         #region Generated Columns Basic
 
         public static Query WhereArrayInListOr(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
