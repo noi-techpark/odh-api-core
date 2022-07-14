@@ -368,7 +368,7 @@ namespace OdhApiCore
                     BearerFormat = "JWT",
                     Scheme = "Bearer"
                 });
-                //c.OperationFilter<AuthenticationRequirementsOperationFilter>();
+                c.OperationFilter<AuthenticationRequirementsOperationFilter>();
                 c.EnableAnnotations();                       
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{
