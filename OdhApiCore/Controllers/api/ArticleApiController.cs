@@ -365,7 +365,9 @@ namespace OdhApiCore.Controllers.api
         {            
             return DoAsyncReturn(async () =>
             {
-                article.Id = id.ToUpper();
+                //Check ID uppercase lowercase
+                Helper.IdGenerator.CheckIdFromType(article);
+
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 if (article.ArticleDateTo == null)
@@ -391,7 +393,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                //Check ID uppercase lowercase
+                Helper.IdGenerator.CheckIdFromType(article);
+
                 return await DeleteData(id, "articles");
             });
         }

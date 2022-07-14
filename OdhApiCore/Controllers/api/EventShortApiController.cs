@@ -768,8 +768,7 @@ namespace OdhApiCore.Controllers.api
 
                     //TraceSource tracesource = new TraceSource("CustomData");
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
-                    eventshort.Id = System.Guid.NewGuid().ToString();
-
+                   
                     string author = "unknown";
                     if (User.Identity != null && User.Identity.Name != null)
                         author = User.Identity.Name;
@@ -783,10 +782,14 @@ namespace OdhApiCore.Controllers.api
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
 
                     //check if this works
-                    var query = await QueryFactory.Query("eventeuracnoi").InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                    //var query = await QueryFactory.Query("eventeuracnoi").InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                    //return Ok(new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
 
-                    return Ok(new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
-                        //new CreatedAtActionResult(nameof(GetById), "Products", new { id = product.Id }, product); ; //Request.CreateResponse(HttpStatusCode.Created, new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
+                    //GENERATE ID
+                    eventshort.Id = Helper.IdGenerator.GenerateIDFromType(eventshort);
+
+                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true);
+
                 }
                 else
                 {
@@ -853,10 +856,14 @@ namespace OdhApiCore.Controllers.api
                         eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
 
                     //TODO CHECK IF THIS WORKS     
-                    var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
-                        .UpdateAsync(new JsonBData() { id = eventshort.Id ?? "", data = eventshort != null ? new JsonRaw(eventshort) : null });
+                    //var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
+                    //    .UpdateAsync(new JsonBData() { id = eventshort.Id ?? "", data = eventshort != null ? new JsonRaw(eventshort) : null });
 
-                    return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort?.Id), Id = eventshort?.Id });
+                    //return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort?.Id), Id = eventshort?.Id });
+
+                    //Check ID uppercase lowercase
+                    Helper.IdGenerator.CheckIdFromType(eventshort);
+                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi");
                 }
                 else
                 {
@@ -911,9 +918,11 @@ namespace OdhApiCore.Controllers.api
                             if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
                             {
                                 //TODO CHECK IF THIS WORKS     
-                                var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
+                                //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
-                                return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+                                //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+
+                                return await DeleteData(id, "eventeuracnoi");
                             }
                             else
                             {
