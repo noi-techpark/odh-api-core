@@ -373,7 +373,7 @@ namespace OdhApiCore.Controllers.api
                 if (article.ArticleDateTo == null)
                     article.ArticleDateTo = DateTime.MaxValue;
 
-                return await UpsertData<ArticlesLinked>(article, "articles");
+                return await UpsertData<ArticlesLinked>(article, "articles", false, true);
             });
         }
 

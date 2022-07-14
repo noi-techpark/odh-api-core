@@ -789,7 +789,6 @@ namespace OdhApiCore.Controllers.api
                     eventshort.Id = Helper.IdGenerator.GenerateIDFromType(eventshort);
 
                     return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true);
-
                 }
                 else
                 {
@@ -831,7 +830,7 @@ namespace OdhApiCore.Controllers.api
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
                     eventshort.CheckMyInsertedLanguages();
-                    eventshort._Meta.LastUpdate = eventshort.LastChange;
+                    //eventshort._Meta.LastUpdate = eventshort.LastChange;
 
                     eventshort.AnchorVenueShort = eventshort.AnchorVenue;
 
@@ -862,8 +861,8 @@ namespace OdhApiCore.Controllers.api
                     //return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort?.Id), Id = eventshort?.Id });
 
                     //Check ID uppercase lowercase
-                    Helper.IdGenerator.CheckIdFromType(eventshort);
-                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi");
+                    eventshort.Id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
+                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", false, true);
                 }
                 else
                 {
@@ -909,9 +908,11 @@ namespace OdhApiCore.Controllers.api
                                 throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
 
                             //TODO CHECK IF THIS WORKS     
-                            var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
+                            //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
-                            return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+                            //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+
+                            return await DeleteData(id, "eventeuracnoi");
                         }
                         else
                         {
