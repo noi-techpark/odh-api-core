@@ -29,6 +29,7 @@ using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.File;
 using SqlKata.Compilers;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -368,6 +369,7 @@ namespace OdhApiCore
                     BearerFormat = "JWT",
                     Scheme = "Bearer"
                 });
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
                 c.EnableAnnotations();                       
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
