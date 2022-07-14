@@ -709,7 +709,7 @@ namespace DataModel
 
     public class ArticlesLinked : ArticleBaseInfos, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string? Self
         {
@@ -1286,7 +1286,7 @@ namespace DataModel
 
     public class EventShortLinked : EventShort, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
