@@ -394,7 +394,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Check ID uppercase lowercase
-                Helper.IdGenerator.CheckIdFromType(article);
+                id = Helper.IdGenerator.CheckIdFromType<ArticlesLinked>(id);
 
                 return await DeleteData(id, "articles");
             });
