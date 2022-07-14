@@ -19,6 +19,8 @@ namespace OdhApiCore.Controllers
 {
     //[Route("ODHTag")]
     [EnableCors("CorsPolicy")]
+    //Do not show in Swagger for now
+    [ApiExplorerSettings(IgnoreApi = true)]
     [NullStringParameterActionFilter]
     public class TaggingController : OdhController
     {

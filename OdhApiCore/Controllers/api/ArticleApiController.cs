@@ -325,15 +325,20 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="article">Article Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
-        [InvalidateCacheOutput(nameof(GetArticleList))]        
+        [InvalidateCacheOutput(nameof(GetArticleList))]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost, Route("Article")]
         public Task<IActionResult> Post([FromBody] ArticlesLinked article)
         {            
             return DoAsyncReturn(async () =>
             {
-                article.Id = !String.IsNullOrEmpty(article.Id) ? article.Id.ToUpper() : "noId";
+                //GENERATE ID
+                article.Id = Helper.IdGenerator.GenerateIDFromType(article);
+
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 if(article.ArticleDateTo == null)
@@ -349,9 +354,12 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Article Id</param>
         /// <param name="article">Article Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify")]
         [InvalidateCacheOutput(nameof(GetArticleList))]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut, Route("Article/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ArticlesLinked article)
         {            
@@ -372,9 +380,12 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">Article Id</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataDelete,ArticleManager,ArticleDelete")]
         [InvalidateCacheOutput(nameof(GetArticleList))]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete, Route("Article/{id}")]
         public Task<IActionResult> Delete(string id)
         {
