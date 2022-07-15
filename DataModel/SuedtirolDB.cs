@@ -3479,7 +3479,7 @@ namespace DataModel
     {
         public EventShort()
         {
-            GpsPoints = new Dictionary<string, GpsInfo>();
+            //GpsPoints = new Dictionary<string, GpsInfo>();
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
@@ -3596,8 +3596,8 @@ namespace DataModel
 
         public string? Shortname { get; set; }
 
-        //new Add GPS Points from Root Representation
-        public IDictionary<string, GpsInfo>? GpsPoints { get; set; }
+        ////new Add GPS Points from Root Representation
+        //public IDictionary<string, GpsInfo>? GpsPoints { get; set; }
 
         //New published on List
         public List<string>? PublishedOn { get; set; }
@@ -3627,6 +3627,26 @@ namespace DataModel
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
+                {
+                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
     }
 
     public class RoomBooked
