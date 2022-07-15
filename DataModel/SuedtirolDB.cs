@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataModel
 {
@@ -3521,7 +3522,10 @@ namespace DataModel
         public string? WebAddress { get; set; }
         //Spezialfelder
 
-        //Eurac Videowall (Y / N) Wenn hier N wird ganzes Event nicht angezeigt
+        //Eurac Videowall
+        //(Y / N) Wenn hier N wird ganzes Event nicht angezeigt
+        //[StringRangeAttribute(AllowableValues = new[] { "M", "F" }, ErrorMessage = "Gender must be either 'M' or 'F'.")]
+        [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
         public string? Display1 { get; set; }
         //Intranet Eurac (Y / N)
         public string? Display2 { get; set; }
