@@ -35,9 +35,9 @@ namespace OdhApiCore.Controllers.api
 
         //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
-        [HttpPost, Route("v1/FileUpload/{type}/{directory}")]
+        //[HttpPost, Route("v1/FileUpload/{type}/{directory}")]
         [HttpPost, Route("v1/FileUpload")]
-        public async Task<IActionResult> PostFormData(string? type, string? directory, IFormCollection form)
+        public async Task<IActionResult> PostFormData(IFormCollection form)
         {
             var filenames = new List<string>();
 
