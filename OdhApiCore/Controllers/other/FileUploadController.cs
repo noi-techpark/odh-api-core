@@ -17,7 +17,7 @@ using Amazon.S3.Model;
 
 namespace OdhApiCore.Controllers.api
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     //[Route("api/[controller]")]
     [ApiController]
     public class FileUploadController : ControllerBase
