@@ -21,6 +21,7 @@ using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
 using OdhApiCore.Factories;
+using OdhApiCore.Swagger;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -488,21 +489,4 @@ namespace OdhApiCore
             });
         }
     }
-
-    public class AuthenticationRequirementsOperationFilter : IOperationFilter
-    {
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            if (operation.Security == null)
-                operation.Security = new List<OpenApiSecurityRequirement>();
-
-
-            var scheme = new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" } };
-            operation.Security.Add(new OpenApiSecurityRequirement
-            {
-                [scheme] = new List<string>()
-            });
-        }
-    }
-
 }

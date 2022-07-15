@@ -33,7 +33,7 @@ namespace OdhApiCore.Controllers.api
             this.Logger = logger;
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
         [HttpPost, Route("v1/FileUpload/{type}/{directory}")]
         [HttpPost, Route("v1/FileUpload")]
@@ -111,7 +111,7 @@ namespace OdhApiCore.Controllers.api
                 return Ok(filenames);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataMofify,DataCreate,DataDelete,ODHPoiCreate,ODHPoiModify,ODHPoiManager,ODHPoiUpdate,CommonCreate,CommonModify,CommonManager,CommonDelete,ArticleCreate,ArticleModify,ArticleManager,ArticleDelete")]
         [HttpDelete, Route("v1/FileDelete/{filepath}")]
         public async Task<IActionResult> Delete(string filepath)
