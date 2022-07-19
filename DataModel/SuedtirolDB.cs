@@ -3539,6 +3539,7 @@ namespace DataModel
         public string? Display7 { get; set; }
         public string? Display8 { get; set; }
 
+        [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
         [JsonConverter(typeof(StringEnumConverter))]
         public EventShortDisplay? Display9 { get; set; }
 
@@ -3660,6 +3661,14 @@ namespace DataModel
     {
         Y,
         N
+    }
+
+    public enum EventShortEventLocation
+    {
+        NOI,
+        EC,
+        VV,
+        OUT
     }
 
     public class RoomBooked

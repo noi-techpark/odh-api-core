@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Npgsql;
 using OdhApiCore.Responses;
 using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -73,8 +75,10 @@ namespace OdhApiCore.Controllers.api
             string? startdate = null, 
             string? enddate = null, 
             string? datetimeformat = null, 
-            string? source = null, 
-            string? eventlocation = null, 
+            string? source = null,
+            //[RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
+            [JsonConverter(typeof(StringEnumConverter))]
+            EventShortEventLocation? eventlocation = null, 
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
@@ -99,7 +103,7 @@ namespace OdhApiCore.Controllers.api
             return await GetEventShortList(
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
-                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
+                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation.ToString(),
                    webaddressfilter: webaddress, active: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, optimizedates: optimizedates,
                    sortorder: sortorder, seed: seed, lastchange: lastchange, publishedon: publishedon, 
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
