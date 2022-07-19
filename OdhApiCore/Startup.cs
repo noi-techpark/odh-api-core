@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
@@ -271,6 +272,10 @@ namespace OdhApiCore
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                //{
+                //    CamelCaseText = true
+                //});
             });
 
             services.AddRazorPages();

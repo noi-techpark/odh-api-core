@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json.Converters;
 
 namespace DataModel
 {
@@ -3537,7 +3538,9 @@ namespace DataModel
         public string? Display6 { get; set; }
         public string? Display7 { get; set; }
         public string? Display8 { get; set; }
-        public string? Display9 { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EventShortDisplay? Display9 { get; set; }
 
         //CRM Modul Account (Firma) interessiert uns nicht
         public string? CompanyName { get; set; }
@@ -3651,6 +3654,12 @@ namespace DataModel
                 }
             }
         }
+    }
+
+    public enum EventShortDisplay
+    {
+        Y,
+        N
     }
 
     public class RoomBooked
