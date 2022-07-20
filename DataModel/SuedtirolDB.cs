@@ -3601,10 +3601,7 @@ namespace DataModel
         public bool? ExternalOrganizer { get; set; }
 
         public string? Shortname { get; set; }
-
-        ////new Add GPS Points from Root Representation
-        //public IDictionary<string, GpsInfo>? GpsPoints { get; set; }
-
+     
         //New published on List
         public List<string>? PublishedOn { get; set; }
 
@@ -3654,19 +3651,19 @@ namespace DataModel
             }
         }
     }
-
-    /// <summary>
-    /// EventShort Display Property (Y = Yes/true, N = No/false)
-    /// </summary>    
+    
     public enum EventShortDisplay
     {    
-        Y,     
+        /// <summary>
+        /// NO / no
+        /// </summary>
+        Y,  
+        /// <summary>
+        /// YES / true
+        /// </summary>
         N
     }
-
-    /// <summary>
-    /// EventShort Event Location (NOI = NOI Techpark, EC = Eurac, VV = Virtual Village, OUT = Other Location)
-    /// </summary>
+    
     public enum EventShortEventLocation
     {
         /// <summary>
