@@ -3480,9 +3480,7 @@ namespace DataModel
     public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware
     {
         public EventShort()
-        {
-            //GpsPoints = new Dictionary<string, GpsInfo>();
-            //Mapping New
+        {            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
@@ -3523,9 +3521,6 @@ namespace DataModel
         public string? WebAddress { get; set; }
         //Spezialfelder
 
-        //Eurac Videowall
-        //(Y / N) Wenn hier N wird ganzes Event nicht angezeigt
-        //[StringRangeAttribute(AllowableValues = new[] { "M", "F" }, ErrorMessage = "Gender must be either 'M' or 'F'.")]
         /// <summary>
         /// Display1 used as active info
         /// </summary>
@@ -3661,22 +3656,16 @@ namespace DataModel
     }
 
     /// <summary>
-    /// EventShort Display Property
-    /// </summary>
+    /// EventShort Display Property (Y = Yes/true, N = No/false)
+    /// </summary>    
     public enum EventShortDisplay
-    {
-        /// <summary>
-        /// Yes = true
-        /// </summary>
-        Y,
-        /// <summary>
-        /// No = false
-        /// </summary>
+    {    
+        Y,     
         N
     }
 
     /// <summary>
-    /// EventShort Event Location
+    /// EventShort Event Location (NOI = NOI Techpark, EC = Eurac, VV = Virtual Village, OUT = Other Location)
     /// </summary>
     public enum EventShortEventLocation
     {
