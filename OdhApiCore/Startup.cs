@@ -355,7 +355,7 @@ namespace OdhApiCore
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);                
+                c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);               
 
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
@@ -378,6 +378,7 @@ namespace OdhApiCore
                 c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
                 c.SchemaFilter<EnumTypesSchemaFilter>(xmlPath);
+                c.DocumentFilter<EnumTypesDocumentFilter>();
                 c.EnableAnnotations();                       
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{
