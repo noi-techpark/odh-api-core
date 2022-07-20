@@ -377,6 +377,7 @@ namespace OdhApiCore
                 });
                 c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
+                c.SchemaFilter<EnumTypesSchemaFilter>(xmlPath);
                 c.EnableAnnotations();                       
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{

@@ -3526,6 +3526,9 @@ namespace DataModel
         //Eurac Videowall
         //(Y / N) Wenn hier N wird ganzes Event nicht angezeigt
         //[StringRangeAttribute(AllowableValues = new[] { "M", "F" }, ErrorMessage = "Gender must be either 'M' or 'F'.")]
+        /// <summary>
+        /// Display1 used as active info
+        /// </summary>
         [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
         public string? Display1 { get; set; }
         //Intranet Eurac (Y / N)
@@ -3657,17 +3660,41 @@ namespace DataModel
         }
     }
 
+    /// <summary>
+    /// EventShort Display Property
+    /// </summary>
     public enum EventShortDisplay
     {
+        /// <summary>
+        /// Yes = true
+        /// </summary>
         Y,
+        /// <summary>
+        /// No = false
+        /// </summary>
         N
     }
 
+    /// <summary>
+    /// EventShort Event Location
+    /// </summary>
     public enum EventShortEventLocation
     {
+        /// <summary>
+        /// NOI Techpark
+        /// </summary>
         NOI,
+        /// <summary>
+        /// Eurac
+        /// </summary>
         EC,
+        /// <summary>
+        /// Virtual Village
+        /// </summary>
         VV,
+        /// <summary>
+        /// Other Location
+        /// </summary>
         OUT
     }
 
