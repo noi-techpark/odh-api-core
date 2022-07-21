@@ -51,7 +51,7 @@ namespace OdhApiCore.GenericHelpers
         {
             var returnDict = new Dictionary<string, string>();
 
-            var tagen = alltaglist.Where(x => RemoveSpecialCharsRegex(x.TagName["de"].ToLower()) == germankey).FirstOrDefault();
+            var tagen = alltaglist.Where(x => RemoveSpecialCharsSimple(x.TagName["de"].ToLower()) == germankey).FirstOrDefault();
 
             if (tagen != null)
             {
@@ -92,5 +92,22 @@ namespace OdhApiCore.GenericHelpers
 
             return toreturn;
         }
+
+        private static string RemoveSpecialCharsSimple(string id)
+        {
+            var toreturn = id;
+
+            //Change special chars hack
+            toreturn = toreturn.Replace(" /", "");
+            toreturn = toreturn.Replace("/ ", "");
+            toreturn = toreturn.Replace("/", "");
+
+            toreturn = toreturn.Replace(" &", "");
+            toreturn = toreturn.Replace("& ", "");
+            toreturn = toreturn.Replace("&", "");
+
+            return toreturn;
+        }
+
     }
 }

@@ -46,14 +46,15 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {
-                var result = await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+                var resulttuple = await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+                var result = resulttuple.Item2;
 
                 var updateresult = new UpdateResult
                 {
                     operation = "Update Raven",
                     updatetype = "single",
                     otherinfo = datatype,
-                    id = id,
+                    id = resulttuple.Item1,
                     message = "",
                     recordsmodified = (result.created + result.updated + result.deleted),
                     created = result.created,
@@ -107,7 +108,7 @@ namespace OdhApiCore.Controllers.api
 
         #region ODHRAVEN Helpers
 
-        private async Task<UpdateDetail> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
+        private async Task<Tuple<string, UpdateDetail>> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
         {
             var mydata = default(IIdentifiable);
             var mypgdata = default(IIdentifiable);
@@ -281,7 +282,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions");
+                    myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions");
+
+                    break;
 
                 case "region":
                     mydata = await GetDataFromRaven.GetRavenData<RegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -290,7 +293,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions");
+                    myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions");
+
+                    break;
 
                 case "tv":
                     mydata = await GetDataFromRaven.GetRavenData<TourismvereinLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "TourismAssociation/");
@@ -299,7 +304,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs");
+                    myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs");
+
+                    break;
 
                 case "municipality":
                     mydata = await GetDataFromRaven.GetRavenData<MunicipalityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -308,7 +315,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities");
+                    myupdateresult = await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities");
+
+                    break;
 
                 case "district":
                     mydata = await GetDataFromRaven.GetRavenData<DistrictLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -317,7 +326,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts");
+                    myupdateresult = await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts");
+
+                    break;
 
                 case "experiencearea":
                     mydata = await GetDataFromRaven.GetRavenData<ExperienceAreaLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -326,7 +337,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas");
+                    myupdateresult = await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas");
+
+                    break;
 
                 case "skiarea":
                     mydata = await GetDataFromRaven.GetRavenData<SkiAreaLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -335,7 +348,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas");
+                    myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas");
+
+                    break;
 
                 case "skiregion":
                     mydata = await GetDataFromRaven.GetRavenData<SkiRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -344,7 +359,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");
+                    myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");
+
+                    break;
 
                 case "article":
                     mydata = await GetDataFromRaven.GetRavenData<ArticlesLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -353,7 +370,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles");
+                    myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles");
+
+                    break;
 
                 case "odhtag":
                     mydata = await GetDataFromRaven.GetRavenData<ODHTagLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
@@ -362,7 +381,9 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags");
+                    myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags");
+
+                    break;
 
                 case "measuringpoint":
                     mydata = await GetDataFromRaven.GetRavenData<MeasuringpointLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "Weather/Measuringpoint/");
@@ -409,15 +430,15 @@ namespace OdhApiCore.Controllers.api
                     else
                         throw new Exception("No data found!");
 
-                    return await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines");
+                    myupdateresult = await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines");
+
+                    break;
 
                 default:
                     throw new Exception("no match found");
             }
-
-            var mycompleteupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, updateresultreduced });
-
-            return mycompleteupdateresult;
+            
+            return Tuple.Create<string,UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, updateresultreduced }));
         }
 
         private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
