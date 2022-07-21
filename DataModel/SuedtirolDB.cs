@@ -2366,9 +2366,9 @@ namespace DataModel
         {
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
-            AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
-            //Mapping New
+            AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            Tagging = new Dictionary<string, List<Tagging>>();
         }
 
         public string? Id { get; set; }
@@ -2398,12 +2398,16 @@ namespace DataModel
         [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
         public string? PoiType { get; set; }
 
-        //NEU SMG Infos
+        /// <summary>
+        /// First Import date
+        /// </summary>
         public DateTime? FirstImport { get; set; }
+        /// <summary>
+        /// Last Change date
+        /// </summary>
         public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
-
-        //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
+        
         public LocationInfo? LocationInfo { get; set; }
 
         public string? TourismorganizationId { get; set; }
@@ -2456,8 +2460,7 @@ namespace DataModel
 
         public ICollection<string>? SmgTags { get; set; }
         public ICollection<string>? HasLanguage { get; set; }
-
-        //neu LTSUpdate 11.16
+        
         public Ratings? Ratings { get; set; }
         public ICollection<string>? Exposition { get; set; }
 
@@ -2472,15 +2475,27 @@ namespace DataModel
 
         public List<LTSTags>? LTSTags { get; set; }
 
-        //New published on List
+        /// <summary>
+        /// Published on URL List
+        /// </summary>
         public List<string>? PublishedOn { get; set; }
 
+        /// <summary>
+        /// Source of the dataset
+        /// </summary>
         public string? Source { get; set; }
 
-        //New Mapping
+        /// <summary>
+        /// Generic Mapping object, contains at example original Id of the source provider or mapped Id to other providers
+        /// </summary>
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
+
+        /// <summary>
+        /// Generic Tagging object
+        /// </summary>
+        public IDictionary<string, List<Tagging>> Tagging { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
