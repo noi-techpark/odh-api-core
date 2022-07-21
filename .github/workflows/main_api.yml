@@ -100,6 +100,7 @@ jobs:
           curl "${{ env.API_URL }}STA/JsonAccommodation"
           curl "${{ env.API_URL }}ODH/AccommodationBooklist"
           curl "${{ env.API_URL }}ODH/AccommodationFulllist"
+          curl "${{ env.API_URL }}ODH/Taglist"
 
   deploy-prod-api:
     runs-on: ubuntu-20.04
