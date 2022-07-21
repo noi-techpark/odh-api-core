@@ -73,7 +73,7 @@ namespace OdhApiImporter.Controllers
                 return BadRequest(new UpdateResult
                 {
                     operation = "Update Raven",
-                    updatetype = "all",
+                    updatetype = "single",
                     otherinfo = datatype,
                     id = id,
                     message = "Update Raven failed: " + ex.Message,

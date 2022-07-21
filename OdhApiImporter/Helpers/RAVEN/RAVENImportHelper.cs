@@ -24,6 +24,9 @@ namespace OdhApiImporter.Helpers
 
         #region ODHRAVEN Helpers
 
+        //TODO Check if passed id has to be tranformed to lowercase or uppercase
+
+
         public async Task<UpdateDetail> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
         {
             var mydata = default(IIdentifiable);
