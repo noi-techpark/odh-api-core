@@ -219,9 +219,9 @@ namespace OdhApiCore.Controllers.api
                         throw new Exception("No data found!");
 
                     //Special get all Taglist and traduce it on import
-                    //var myalltaglist = GenericTaggingHelper.GetAllGenericTagsfromJson(settings.JsonConfig.Jsondir);
-                    //if (myalltaglist != null)
-                    //     GenericTaggingHelper.GenerateNewTagging(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
+                    var myalltaglist = await GenericTaggingHelper.GetAllGenericTagsfromJson(settings.JsonConfig.Jsondir);
+                    if (myalltaglist != null && ((ODHActivityPoiLinked)mypgdata).SmgTags != null)
+                        GenericTaggingHelper.GenerateNewTagging(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
                     
 
                     myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");

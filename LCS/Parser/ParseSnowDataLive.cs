@@ -34,6 +34,7 @@ namespace LCS
                 mymeasuringpoint.newSnowHeight = measuringpoint.Observation.Snow.NewHeight != null ? measuringpoint.Observation.Snow.NewHeight.ToString() : "-";
                 mymeasuringpoint.Temperature = measuringpoint.Observation.Temperature != null ? measuringpoint.Observation.Temperature.ToString() + " °" : "-";
                 mymeasuringpoint.LastSnowDate = measuringpoint.Observation.Snow.DateLastSnow != null ? Convert.ToDateTime(measuringpoint.Observation.Snow.DateLastSnow) : DateTime.MinValue;
+                mymeasuringpoint.Source = "lts";
 
                 List<WeatherObservation> myweatherobservationlist = new List<WeatherObservation>();
 

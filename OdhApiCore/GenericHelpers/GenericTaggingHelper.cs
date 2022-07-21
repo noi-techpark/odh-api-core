@@ -23,7 +23,7 @@ namespace OdhApiCore.GenericHelpers
         }
 
         //Translates OLD Tags with german keys to new English Tags
-        public static IDictionary<string, List<Tagging>> GenerateNewTagging(List<string> currenttags, List<ODHTagLinked> alltaglist)
+        public static IDictionary<string, List<Tagging>> GenerateNewTagging(ICollection<string> currenttags, List<ODHTagLinked> alltaglist)
         {
             var returnDict = new Dictionary<string, List<Tagging>>();
 
