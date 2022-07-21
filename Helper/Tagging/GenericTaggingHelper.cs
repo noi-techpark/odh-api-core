@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace OdhApiCore.GenericHelpers
+namespace Helper
 {
     public class GenericTaggingHelper
     {
