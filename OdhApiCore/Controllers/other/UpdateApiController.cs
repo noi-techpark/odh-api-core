@@ -221,7 +221,7 @@ namespace OdhApiCore.Controllers.api
                     //Special get all Taglist and traduce it on import
                     var myalltaglist = await GenericTaggingHelper.GetAllGenericTagsfromJson(settings.JsonConfig.Jsondir);
                     if (myalltaglist != null && ((ODHActivityPoiLinked)mypgdata).SmgTags != null)
-                        (((ODHActivityPoiLinked)mypgdata).Tagging = GenericTaggingHelper.GenerateNewTagging(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
+                        ((ODHActivityPoiLinked)mypgdata).Tagging = GenericTaggingHelper.GenerateNewTagging(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
                     
 
                     myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
