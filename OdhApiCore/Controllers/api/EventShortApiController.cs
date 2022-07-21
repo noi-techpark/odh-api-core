@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers.api
 {
     /// <summary>
-    /// Articles Api (data provided by IDM) SOME DATA Available as OPENDATA 
+    /// EventShort Api (data provided by NOI/EURAC) ALL DATA Available as OPENDATA 
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
