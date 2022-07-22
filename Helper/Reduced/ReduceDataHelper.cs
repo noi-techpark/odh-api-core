@@ -433,7 +433,7 @@ namespace Helper
             reduced.odhdata.Active = venue.odhdata.Active;
             reduced.odhdata.ODHActive = venue.odhdata.ODHActive;
             reduced.odhdata.Shortname = venue.odhdata.Shortname;
-            reduced.odhdata.ODHTags = venue.odhdata.ODHTags;
+            reduced.odhdata.SmgTags = venue.odhdata.SmgTags;
             reduced.odhdata.HasLanguage = venue.odhdata.HasLanguage;
             reduced.odhdata.Source = venue.odhdata.Source;
             reduced.odhdata.GpsInfo = ReducedDataHelper.ReduceGpsInfo(venue.odhdata.GpsInfo);
