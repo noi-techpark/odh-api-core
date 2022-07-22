@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace DataModel
 {
@@ -67,7 +68,17 @@ namespace DataModel
 
         public bool Active { get; set; }
         public bool ODHActive { get; set; }
-        public ICollection<ODHTags> ODHTags { get; set; }
+        //public ICollection<ODHTags> ODHTags { get; set; }
+
+        public ICollection<ODHTags> ODHTags
+        {
+            get
+            {
+                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+            }
+        }
+
+        public ICollection<string> SmgTags { get; set; }
 
         public LocationInfoLinked LocationInfo { get; set; }
         public ICollection<string> HasLanguage { get; set; }
