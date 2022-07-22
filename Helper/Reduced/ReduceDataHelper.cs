@@ -219,6 +219,8 @@ namespace Helper
             reduced.SmgTags = mypoi.SmgTags;
             reduced.LTSTags = mypoi.LTSTags != null ? ReducedDataHelper.ReduceLtsTags(mypoi.LTSTags).ToList() : null;
 
+            //Tagging
+            reduced.Tagging = mypoi.Tagging;
 
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
             reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForODHActivityPoi(mypoi.ContactInfos, mypoi.SyncSourceInterface);
