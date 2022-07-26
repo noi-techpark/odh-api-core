@@ -25,7 +25,7 @@ namespace Helper
             {                
                 Console.WriteLine(JsonConvert.SerializeObject(new UpdateResult
                 {
-                    operation = "Update Raven",
+                    operation = "Tagging object creation",
                     updatetype = "single",
                     otherinfo = "",
                     id = mypgdata.Id,

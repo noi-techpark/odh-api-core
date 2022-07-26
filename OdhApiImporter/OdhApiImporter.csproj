@@ -30,5 +30,6 @@
     <Folder Include="Helpers\CDB\" />
     <Folder Include="Helpers\LCS\" />
     <Folder Include="Models\" />
+    <Folder Include="json\" />
   </ItemGroup>
 </Project>
