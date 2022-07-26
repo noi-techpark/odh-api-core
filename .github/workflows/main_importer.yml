@@ -45,6 +45,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     env:
       API_URL: "https://api.tourism.testingmachine.eu/v1/"
+      API_URL_IMPORTER: "https://importer.tourism.testingmachine.eu/"
     needs: test
     concurrency: deploy-test-importer
     steps:
@@ -108,6 +109,10 @@ jobs:
           docker-username: 'noi-techpark-bot'
           docker-password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           project-name: ${{ env.PROJECT_NAME }}
+          
+      - name: Generate Json
+        run: |
+          curl "${{ env.API_URL_IMPORTER }}ODH/Taglist"
 
   deploy-prod-importer:
     runs-on: ubuntu-20.04
