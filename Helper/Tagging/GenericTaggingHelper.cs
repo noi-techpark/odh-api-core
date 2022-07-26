@@ -1,6 +1,7 @@
 ﻿using DataModel;
 using Helper;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,34 @@ namespace Helper
 {
     public class GenericTaggingHelper
     {
+        public static async Task AddMappingToODHActivityPoi(IIdentifiable mypgdata, string jsondir)
+        {
+            try
+            {
+                //Special get all Taglist and traduce it on import
+                var myalltaglist = await GetAllGenericTagsfromJson(jsondir);
+                if (myalltaglist != null && ((ODHActivityPoiLinked)mypgdata).SmgTags != null)
+                    ((ODHActivityPoiLinked)mypgdata).Tagging = GenerateNewTagging(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
+            }
+            catch(Exception ex)
+            {                
+                Console.WriteLine(JsonConvert.SerializeObject(new UpdateResult
+                {
+                    operation = "Update Raven",
+                    updatetype = "single",
+                    otherinfo = "",
+                    id = mypgdata.Id,
+                    message = "Tagging conversion failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                }));
+            }
+        }
+
+
         //GETS all generic tags from json as object to avoid DB call on each Tag update
         public static async Task<List<ODHTagLinked>> GetAllGenericTagsfromJson(string jsondir)
         {
