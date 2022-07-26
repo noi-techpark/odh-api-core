@@ -52,7 +52,8 @@ namespace OdhApiImporter.Controllers
             try
             {
                 RAVENImportHelper ravenimporthelper = new RAVENImportHelper(settings, QueryFactory);
-                var result = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+                var resulttuple = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+                var result = resulttuple.Item2;
 
                 return Ok(new UpdateResult
                 {
@@ -60,7 +61,7 @@ namespace OdhApiImporter.Controllers
                     updatetype = "single",
                     otherinfo = datatype,
                     message = "",
-                    id = id,
+                    id = resulttuple.Item1,
                     recordsmodified = (result.created + result.updated + result.deleted),
                     created = result.created,
                     updated = result.updated,
