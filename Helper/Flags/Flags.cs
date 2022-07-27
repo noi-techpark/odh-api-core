@@ -856,7 +856,7 @@ namespace Helper
         AutoundMotor = 1L,
         [Description("Bausektor, Handwerk")]
         BausektorHandwerk = 1L << 1,
-        [Description("Kinderbetreuung & Animation")]
+        [Description("Kinderbetreuung Animation")]
         KinderbetreuungAnimation = 1L << 2,
         [Description("Werbung und Grafik")]
         WerbungundGrafik = 1L << 3,
@@ -1251,7 +1251,7 @@ namespace Helper
         Skilift = 1 << 6,
         [Description("Schrägaufzug")]
         Schraegaufzug = 1 << 7,
-        [Description("Standseilbahn/Zahnradbahn")]
+        [Description("Standseilbahn Zahnradbahn")]
         StandseilbahnZahnradbahn = 1 << 8,
         [Description("Telemix")]
         Telemix = 1 << 9,
@@ -1660,7 +1660,7 @@ namespace Helper
         Skilift = 1 << 6,
         [Description("Schrägaufzug")]
         Schraegaufzug = 1 << 7,
-        [Description("Standseilbahn/Zahnradbahn")]
+        [Description("Standseilbahn Zahnradbahn")]
         StandseilbahnZahnradbahn = 1 << 8,
         [Description("Telemix")]
         Telemix = 1 << 9,
@@ -1783,7 +1783,7 @@ namespace Helper
         WeitereRadfahren = 1 << 7,
         [Description("Pumptrack")]
         Pumptrack = 1 << 8,
-        [Description("Singletrail / Freeride")]
+        [Description("Singletrail Freeride")]
         SingleTrailFreeride = 1 << 9,
         [Description("E-MTB")]
         EMtb = 1 << 10
@@ -1957,7 +1957,7 @@ namespace Helper
         AutoundMotor = 1L,
         [Description("Bausektor, Handwerk")]
         BausektorHandwerk = 1L << 1,
-        [Description("Kinderbetreuung & Animation")]
+        [Description("Kinderbetreuung Animation")]
         KinderbetreuungAnimation = 1L << 2,
         [Description("Werbung und Grafik")]
         WerbungundGrafik = 1L << 3,
@@ -2051,9 +2051,9 @@ namespace Helper
         Bushaltestellen = 1,
         [Description("Parkplätze")]
         Parkplaetze = 1 << 1,
-        [Description("Tankstellen Benzin/Diesel")]
+        [Description("Tankstellen Benzin Diesel")]
         TankstellenBenzinDiesel = 1 << 2,
-        [Description("E-Tankstellen/Ladestationen")]
+        [Description("E-Tankstellen Ladestationen")]
         ETankstellenLadestationen = 1 << 3,
         [Description("Taxi, Mietwagen mit Fahrer, Bus")]
         TaxiMietwagenmitFahrerBus = 1 << 4,
@@ -2242,7 +2242,7 @@ namespace Helper
         SpielundSportanlagen = 1L << 13,
         [Description("Badeseen")]
         Badeseen = 1L << 14,
-        [Description("Bogenschießanlagen")]
+        [Description("Bogenschiessanlagen")]
         Bogenschiessanlagen = 1L << 15,
         [Description("Eisklettern")]
         Eisklettern = 1L << 16,
@@ -2252,7 +2252,7 @@ namespace Helper
         Fitnesscenter = 1L << 18,
         [Description("Freibäder")]
         Freibaeder = 1L << 19,
-        [Description("Fußballplätze")]
+        [Description("Fussballplätze")]
         Fußballplaetze = 1L << 20,
         [Description("Golfplätze")]
         Golfplaetze = 1L << 21,
@@ -2379,7 +2379,7 @@ namespace Helper
         Kleinskilift = 11,
         [Description("Telemix")]
         Telemix = 12,
-        [Description("Standseilbahn/Zahnradbahn")]
+        [Description("Standseilbahn Zahnradbahn")]
         StandseilbahnZahnradbahn = 13,
         [Description("Skibus")]
         Skibus = 14,

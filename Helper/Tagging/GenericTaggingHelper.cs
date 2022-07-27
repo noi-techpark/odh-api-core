@@ -119,7 +119,7 @@ namespace Helper
             //Hack replace all double spaces
             toreturn = Regex.Replace(toreturn, @"  +", " ");
 
-            return toreturn;
+            return toreturn.Trim();
         }
 
         private static string RemoveSpecialCharsSimple(string id)
@@ -135,7 +135,7 @@ namespace Helper
             toreturn = toreturn.Replace("& ", "");
             toreturn = toreturn.Replace("&", "");
 
-            return toreturn;
+            return toreturn.Trim();
         }
 
     }
