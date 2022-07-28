@@ -19,7 +19,7 @@ namespace Helper
                 //Special get all Taglist and traduce it on import
                 var myalltaglist = await GetAllGenericTagsfromJson(jsondir);
                 if (myalltaglist != null && ((ODHActivityPoiLinked)mypgdata).SmgTags != null)
-                    ((ODHActivityPoiLinked)mypgdata).Tagging = GenerateNewTagging(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
+                    ((ODHActivityPoiLinked)mypgdata).Tags = GenerateNewTags(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
             }
             catch(Exception ex)
             {                
@@ -41,20 +41,20 @@ namespace Helper
 
 
         //GETS all generic tags from json as object to avoid DB call on each Tag update
-        public static async Task<List<ODHTagLinked>> GetAllGenericTagsfromJson(string jsondir)
+        public static async Task<List<TagLinked>> GetAllGenericTagsfromJson(string jsondir)
         {
             using (StreamReader r = new StreamReader(Path.Combine(jsondir, $"GenericTags.json")))
             {
                 string json = await r.ReadToEndAsync();
 
-                return JsonConvert.DeserializeObject<List<ODHTagLinked>>(json);
+                return JsonConvert.DeserializeObject<List<TagLinked>>(json);
             }
         }
 
         //Translates OLD Tags with german keys to new English Tags
-        public static IDictionary<string, List<Tagging>> GenerateNewTagging(ICollection<string> currenttags, List<ODHTagLinked> alltaglist)
+        public static IDictionary<string, List<Tags>> GenerateNewTags(ICollection<string> currenttags, List<TagLinked> alltaglist)
         {
-            var returnDict = new Dictionary<string, List<Tagging>>();
+            var returnDict = new Dictionary<string, List<Tags>>();
 
             foreach (var tag in currenttags)
             {
@@ -62,12 +62,12 @@ namespace Helper
 
                 foreach (var kvp in resultdict)
                 {
-                    var listtoadd = new List<Tagging>();
+                    var listtoadd = new List<Tags>();
 
                     if (returnDict.ContainsKey(kvp.Key))
                         listtoadd = returnDict[kvp.Key];
 
-                    listtoadd.Add(new Tagging() { Id = kvp.Value, Source = kvp.Key });
+                    listtoadd.Add(new Tags() { Id = kvp.Value, Source = kvp.Key });
 
                     returnDict.TryAddOrUpdate(kvp.Key, listtoadd);
                 }
@@ -76,7 +76,7 @@ namespace Helper
             return returnDict;
         }
 
-        private static IDictionary<string, string> TranslateMappingKey(string germankey, List<ODHTagLinked> alltaglist)
+        private static IDictionary<string, string> TranslateMappingKey(string germankey, List<TagLinked> alltaglist)
         {
             var returnDict = new Dictionary<string, string>();
 

@@ -168,8 +168,8 @@ namespace DataModel
         public string Self { get; set; }
     }
 
-    //NEW TAGGING GENERIC
-    public class Tagging
+    //NEW Tags GENERIC
+    public class Tags
     {
         public string Id { get; set; }
 
@@ -178,7 +178,7 @@ namespace DataModel
         {
             get
             {
-                return ODHConstant.ApplicationURL + "Tagging/" + this.Id;
+                return ODHConstant.ApplicationURL + "Tag/" + this.Id;
             }
         }
     }
@@ -1306,6 +1306,19 @@ namespace DataModel
             get
             {
                 return ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
+            }
+        }
+    }
+
+    public class TagLinked : SmgTags, IMetaData
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Tag/" + this.Id;
             }
         }
     }

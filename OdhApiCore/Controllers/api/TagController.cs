@@ -16,15 +16,14 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
-{
-    //[Route("ODHTag")]
+{    
     [EnableCors("CorsPolicy")]
     //Do not show in Swagger for now
     [ApiExplorerSettings(IgnoreApi = true)]
     [NullStringParameterActionFilter]
-    public class TaggingController : OdhController
+    public class TagController : OdhController
     {
-        public TaggingController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
+        public TagController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory)
             : base(env, settings, logger, queryFactory)
         {
         }
@@ -32,7 +31,7 @@ namespace OdhApiCore.Controllers
         #region SWAGGER Exposed API
 
         /// <summary>
-        /// GET Tagging List
+        /// GET Tag List
         /// </summary>
         /// <param name="validforentity">Filter on Tags valid on Entities (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..)</param>
         /// <param name="mainentity">Filter on Tags with MainEntity set to (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..)</param>
@@ -44,17 +43,17 @@ namespace OdhApiCore.Controllers
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of ODHTag Objects</returns>        
+        /// <returns>Collection of Tag Objects</returns>        
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<SmgTags>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<TagLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
-        [HttpGet, Route("Tagging")]
+        [HttpGet, Route("Tag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetTaggingAsync(
+        public async Task<IActionResult> GetTagAsync(
             string? language = null,
             string? validforentity = null,
             string? mainentity = null,
@@ -79,22 +78,22 @@ namespace OdhApiCore.Controllers
         }
 
         /// <summary>
-        /// GET ODHTag Single
+        /// GET Tag Single
         /// </summary>
-        /// <param name="id">ID of the Odhtags</param>
+        /// <param name="id">ID of the Tag</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>ODHTag Object</returns>
+        /// <returns>TagLinked Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(SmgTags), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TagLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Tagging/{id}", Name = "SingleTagging")]
+        [HttpGet, Route("Tag/{id}", Name = "SingleTag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetTaggingSingle(string id,
+        public async Task<IActionResult> GetTagSingle(string id,
             string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -168,48 +167,48 @@ namespace OdhApiCore.Controllers
         #region POST PUT DELETE
 
         /// <summary>
-        /// POST Insert new ODHTag
+        /// POST Insert new Tag
         /// </summary>
-        /// <param name="odhtag">ODHTag Object</param>
+        /// <param name="tag">Tag Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
-        [HttpPost, Route("Tagging")]
-        public Task<IActionResult> Post([FromBody] ODHTagLinked tag)
+        [Authorize(Roles = "DataWriter,DataCreate,TagManager,TagCreate")]
+        [HttpPost, Route("Tag")]
+        public Task<IActionResult> Post([FromBody] TagLinked tag)
         {
             return DoAsyncReturn(async () =>
             {
                 tag.Id = !String.IsNullOrEmpty(tag.Id) ? tag.Id.ToUpper() : "noId";
-                return await UpsertData<ODHTagLinked>(tag, "smgtags");
+                return await UpsertData<TagLinked>(tag, "tags");
             });
         }
 
         /// <summary>
-        /// PUT Modify existing ODHTag
+        /// PUT Modify existing Tag
         /// </summary>
-        /// <param name="id">ODHTag Id</param>
-        /// <param name="odhtag">ODHTag Object</param>
+        /// <param name="id">Tag Id</param>
+        /// <param name="tag">Tag Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify")]
-        [HttpPut, Route("Tagging/{id}")]
-        public Task<IActionResult> Put(string id, [FromBody] ODHTagLinked tag)
+        [Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify")]
+        [HttpPut, Route("Tag/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] TagLinked tag)
         {
             return DoAsyncReturn(async () =>
             {
                 tag.Id = id.ToUpper();
-                return await UpsertData<ODHTagLinked>(tag, "tags");
+                return await UpsertData<TagLinked>(tag, "tags");
             });
         }
 
         /// <summary>
-        /// DELETE ODHTag by Id
+        /// DELETE Tag by Id
         /// </summary>
-        /// <param name="id">ODHTag Id</param>
+        /// <param name="id">Tag Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,ODHTagManager,ODHTagDelete")]
-        [HttpDelete, Route("Tagging/{id}")]
+        [Authorize(Roles = "DataWriter,DataDelete,TagManager,TagDelete")]
+        [HttpDelete, Route("Tag/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>

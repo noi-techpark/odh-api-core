@@ -2368,7 +2368,7 @@ namespace DataModel
             ContactInfos = new Dictionary<string, ContactInfos>();
             AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
-            Tagging = new Dictionary<string, List<Tagging>>();
+            Tags = new Dictionary<string, List<Tags>>();
         }
 
         public string? Id { get; set; }
@@ -2493,9 +2493,9 @@ namespace DataModel
         public DistanceInfo? DistanceInfo { get; set; }
 
         /// <summary>
-        /// Generic Tagging object
+        /// Generic Tags object
         /// </summary>
-        public IDictionary<string, List<Tagging>> Tagging { get; set; }
+        public IDictionary<string, List<Tags>> Tags { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles

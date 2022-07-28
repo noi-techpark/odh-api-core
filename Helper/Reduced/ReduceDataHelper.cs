@@ -220,7 +220,7 @@ namespace Helper
             reduced.LTSTags = mypoi.LTSTags != null ? ReducedDataHelper.ReduceLtsTags(mypoi.LTSTags).ToList() : null;
 
             //Tagging
-            reduced.Tagging = mypoi.Tagging;
+            reduced.Tags = mypoi.Tags;
 
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
             reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForODHActivityPoi(mypoi.ContactInfos, mypoi.SyncSourceInterface);
