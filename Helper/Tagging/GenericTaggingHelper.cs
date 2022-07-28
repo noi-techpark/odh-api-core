@@ -80,7 +80,7 @@ namespace Helper
         {
             var returnDict = new Dictionary<string, string>();
 
-            var tagen = alltaglist.Where(x => RemoveSpecialCharsSimple(x.TagName["de"].ToLower()) == germankey).FirstOrDefault();
+            var tagen = alltaglist.Where(x => x.ODHTagIds.Any(y => y == germankey)).FirstOrDefault();
 
             if (tagen != null)
             {
@@ -122,27 +122,27 @@ namespace Helper
             return toreturn.Trim();
         }
 
-        private static string RemoveSpecialCharsSimple(string id)
-        {
-            var toreturn = id;
+        //private static string RemoveSpecialCharsSimple(string id)
+        //{
+        //    var toreturn = id;
 
-            //Change special chars hack
-            toreturn = toreturn.Replace(" /", "");
-            toreturn = toreturn.Replace("/ ", "");
-            toreturn = toreturn.Replace("/", " ");
+        //    //Change special chars hack
+        //    toreturn = toreturn.Replace(" /", "");
+        //    toreturn = toreturn.Replace("/ ", "");
+        //    toreturn = toreturn.Replace("/", " ");
 
-            toreturn = toreturn.Replace(" &", "");
-            toreturn = toreturn.Replace("& ", "");
-            toreturn = toreturn.Replace("&", "");
+        //    toreturn = toreturn.Replace(" &", "");
+        //    toreturn = toreturn.Replace("& ", "");
+        //    toreturn = toreturn.Replace("&", "");
 
-            //Exceptions where german key was not used, activity/gastronomy/tourismassociation
-            toreturn = toreturn.Replace("aktivität", "activity");
-            toreturn = toreturn.Replace("restaurant", "gastronomy");
-            toreturn = toreturn.Replace("tourismusverein", "tourismassociation");
+        //    //Exceptions where german key was not used, activity/gastronomy/tourismassociation
+        //    toreturn = toreturn.Replace("aktivität", "activity");
+        //    toreturn = toreturn.Replace("restaurant", "gastronomy");
+        //    toreturn = toreturn.Replace("tourismusverein", "tourismassociation");
 
 
-            return toreturn.Trim();
-        }
+        //    return toreturn.Trim();
+        //}
 
     }
 }

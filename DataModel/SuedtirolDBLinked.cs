@@ -1321,6 +1321,7 @@ namespace DataModel
                 return ODHConstant.ApplicationURL + "Tag/" + this.Id;
             }
         }
+        public List<string> ODHTagIds { get; set; }
     }
 
     //TODO ADD Linked + Meta 
