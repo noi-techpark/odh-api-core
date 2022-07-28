@@ -129,11 +129,17 @@ namespace Helper
             //Change special chars hack
             toreturn = toreturn.Replace(" /", "");
             toreturn = toreturn.Replace("/ ", "");
-            toreturn = toreturn.Replace("/", "");
+            toreturn = toreturn.Replace("/", " ");
 
             toreturn = toreturn.Replace(" &", "");
             toreturn = toreturn.Replace("& ", "");
             toreturn = toreturn.Replace("&", "");
+
+            //Exceptions where german key was not used, activity/gastronomy/tourismassociation
+            toreturn = toreturn.Replace("aktivität", "activity");
+            toreturn = toreturn.Replace("restaurant", "gastronomy");
+            toreturn = toreturn.Replace("tourismusverein", "tourismassociation");
+
 
             return toreturn.Trim();
         }
