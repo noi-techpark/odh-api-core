@@ -168,6 +168,22 @@ namespace DataModel
         public string Self { get; set; }
     }
 
+    //NEW Tags GENERIC
+    public class Tags
+    {
+        public string Id { get; set; }
+
+        public string Source { get; set; }
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Tag/" + this.Id;
+            }
+        }
+    }
+
+
     public class ODHActivityPoiTypesLink
     {
         public string Id { get; set; }
@@ -693,7 +709,7 @@ namespace DataModel
 
     public class ArticlesLinked : ArticleBaseInfos, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string? Self
         {
@@ -1270,7 +1286,7 @@ namespace DataModel
 
     public class EventShortLinked : EventShort, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1292,6 +1308,20 @@ namespace DataModel
                 return ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
             }
         }
+    }
+
+    public class TagLinked : SmgTags, IMetaData
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Tag/" + this.Id;
+            }
+        }
+        public List<string> ODHTagIds { get; set; }
     }
 
     //TODO ADD Linked + Meta 

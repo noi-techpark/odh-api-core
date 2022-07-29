@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Npgsql;
 using OdhApiCore.Responses;
 using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -21,7 +23,7 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers.api
 {
     /// <summary>
-    /// Articles Api (data provided by IDM) SOME DATA Available as OPENDATA 
+    /// EventShort Api (data provided by NOI/EURAC) ALL DATA Available as OPENDATA 
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
@@ -73,8 +75,10 @@ namespace OdhApiCore.Controllers.api
             string? startdate = null, 
             string? enddate = null, 
             string? datetimeformat = null, 
-            string? source = null, 
-            string? eventlocation = null, 
+            string? source = null,
+            //[RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
+            [JsonConverter(typeof(StringEnumConverter))]
+            EventShortEventLocation? eventlocation = null, 
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
@@ -99,7 +103,7 @@ namespace OdhApiCore.Controllers.api
             return await GetEventShortList(
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
-                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
+                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation.ToString(),
                    webaddressfilter: webaddress, active: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, optimizedates: optimizedates,
                    sortorder: sortorder, seed: seed, lastchange: lastchange, publishedon: publishedon, 
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
@@ -665,10 +669,10 @@ namespace OdhApiCore.Controllers.api
         #region POST PUT DELETE
 
         // POST: api/EventShort
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         //[EnableCors("DataBrowserCorsPolicy")]
         [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
-        [ProducesResponseType(typeof(GenericResultExtended), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
@@ -768,8 +772,7 @@ namespace OdhApiCore.Controllers.api
 
                     //TraceSource tracesource = new TraceSource("CustomData");
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
-                    eventshort.Id = System.Guid.NewGuid().ToString();
-
+                   
                     string author = "unknown";
                     if (User.Identity != null && User.Identity.Name != null)
                         author = User.Identity.Name;
@@ -783,10 +786,13 @@ namespace OdhApiCore.Controllers.api
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
 
                     //check if this works
-                    var query = await QueryFactory.Query("eventeuracnoi").InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                    //var query = await QueryFactory.Query("eventeuracnoi").InsertAsync(new JsonBData() { id = eventshort.Id, data = new JsonRaw(eventshort) });
+                    //return Ok(new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
 
-                    return Ok(new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id });
-                        //new CreatedAtActionResult(nameof(GetById), "Products", new { id = product.Id }, product); ; //Request.CreateResponse(HttpStatusCode.Created, new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
+                    //GENERATE ID
+                    eventshort.Id = Helper.IdGenerator.GenerateIDFromType(eventshort);
+
+                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true);
                 }
                 else
                 {
@@ -800,9 +806,9 @@ namespace OdhApiCore.Controllers.api
         }
 
         // PUT: api/EventShort/5
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
-        [ProducesResponseType(typeof(GenericResultExtended), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
@@ -828,7 +834,7 @@ namespace OdhApiCore.Controllers.api
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
                     eventshort.CheckMyInsertedLanguages();
-                    eventshort._Meta.LastUpdate = eventshort.LastChange;
+                    //eventshort._Meta.LastUpdate = eventshort.LastChange;
 
                     eventshort.AnchorVenueShort = eventshort.AnchorVenue;
 
@@ -853,10 +859,14 @@ namespace OdhApiCore.Controllers.api
                         eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
 
                     //TODO CHECK IF THIS WORKS     
-                    var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
-                        .UpdateAsync(new JsonBData() { id = eventshort.Id ?? "", data = eventshort != null ? new JsonRaw(eventshort) : null });
+                    //var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
+                    //    .UpdateAsync(new JsonBData() { id = eventshort.Id ?? "", data = eventshort != null ? new JsonRaw(eventshort) : null });
 
-                    return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort?.Id), Id = eventshort?.Id });
+                    //return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort?.Id), Id = eventshort?.Id });
+
+                    //Check ID uppercase lowercase
+                    eventshort.Id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
+                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", false, true);
                 }
                 else
                 {
@@ -870,9 +880,9 @@ namespace OdhApiCore.Controllers.api
         }
 
         // DELETE: api/EventShort/5
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
-        [ProducesResponseType(typeof(GenericResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
@@ -902,18 +912,22 @@ namespace OdhApiCore.Controllers.api
                                 throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
 
                             //TODO CHECK IF THIS WORKS     
-                            var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
+                            //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
-                            return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+                            //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+
+                            return await DeleteData(id, "eventeuracnoi");
                         }
                         else
                         {
                             if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
                             {
                                 //TODO CHECK IF THIS WORKS     
-                                var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
+                                //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
-                                return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+                                //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+
+                                return await DeleteData(id, "eventeuracnoi");
                             }
                             else
                             {

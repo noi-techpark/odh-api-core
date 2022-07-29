@@ -1,33 +1,114 @@
 ﻿using DataModel;
-using Helper;
-using Microsoft.AspNetCore.Mvc;
-using RAVEN;
-using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Helper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+using SqlKata.Execution;
+using OdhApiCore.Filters;
+using OdhApiCore.GenericHelpers;
+using EBMS;
+using NINJA;
+using NINJA.Parser;
+using System.Net.Http;
+using RAVEN;
+using Microsoft.Extensions.Hosting;
 
-namespace OdhApiImporter.Helpers
+namespace OdhApiCore.Controllers.api
 {
-    public class RAVENImportHelper
+    [ApiExplorerSettings(IgnoreApi = true)]    
+    [ApiController]
+    public class UpdateApiController : OdhController
     {
-        private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
+        private readonly IWebHostEnvironment env;
 
-        public RAVENImportHelper(ISettings settings, QueryFactory queryfactory)
+        public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<UpdateApiController> logger, QueryFactory queryFactory)
+            : base(env, settings, logger, queryFactory)
         {
-            this.QueryFactory = queryfactory;
+            this.env = env;
             this.settings = settings;
         }
 
+        #region ODH RAVEN exposed
+
+        [HttpGet, Route("Raven/{datatype}/Update/{id}")]
+        //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
+        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var resulttuple = await GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+                var result = resulttuple.Item2;
+
+                var updateresult = new UpdateResult
+                {
+                    operation = "Update Raven",
+                    updatetype = "single",
+                    otherinfo = datatype,
+                    id = resulttuple.Item1,
+                    message = "",
+                    recordsmodified = (result.created + result.updated + result.deleted),
+                    created = result.created,
+                    updated = result.updated,
+                    deleted = result.deleted,
+                    success = true
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(updateresult));
+                //Trying with logger not working
+                //Logger.LogInformation(JsonConvert.SerializeObject(updateresult));
+
+
+                ////TODO Invalidate the cache based on what was updated like in this doc
+                ////https://github.com/filipw/Strathweb.CacheOutput
+                //// now get cache instance
+                //var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+
+                //// and invalidate cache for method "Get" of "TeamsController"
+                //cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((TeamsController t) => t.Get()));
+
+                //We use https://github.com/Iamcerba/AspNetCore.CacheOutput it seems there is only the Attribute solution in the docs
+
+
+                return Ok(updateresult);
+            }
+            catch (Exception ex)
+            {
+                var updateerror = new UpdateResult
+                {
+                    operation = "Update Raven",
+                    updatetype = "single",
+                    otherinfo = "",
+                    id = id,
+                    message = "Update Raven failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                };
+
+                //Logger.LogError(JsonConvert.SerializeObject(updateerror));
+                Console.WriteLine(JsonConvert.SerializeObject(updateerror));
+
+                return BadRequest(updateerror);
+            }
+        }
+
+        #endregion
+
         #region ODHRAVEN Helpers
 
-        //TODO Check if passed id has to be tranformed to lowercase or uppercase
-
-
-        public async Task<Tuple<string, UpdateDetail>> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
+        private async Task<Tuple<string, UpdateDetail>> GetFromRavenAndTransformToPGObject(string id, string datatype, CancellationToken cancellationToken)
         {
             var mydata = default(IIdentifiable);
             var mypgdata = default(IIdentifiable);
@@ -45,14 +126,14 @@ namespace OdhApiImporter.Helpers
                         throw new Exception("No data found!");
 
                     myupdateresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
-
+                    
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<AccommodationLinked>((AccommodationLinked)mypgdata) == true)
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((AccommodationLinked)mypgdata, ReduceDataTransformer.CopyLTSAccommodationToReducedObject);
 
                         updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations");
-                    }
+                    }                    
 
                     //UPDATE ACCOMMODATIONROOMS
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
@@ -71,7 +152,7 @@ namespace OdhApiImporter.Helpers
                     }
                     else
                         throw new Exception("No data found!");
-
+                    
                     break;
 
                 case "gastronomy":
@@ -84,7 +165,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
 
                     //Check if data has to be reduced and save it
-                    if (ReduceDataTransformer.ReduceDataCheck<GastronomyLinked>((GastronomyLinked)mypgdata) == true)
+                    if(ReduceDataTransformer.ReduceDataCheck<GastronomyLinked>((GastronomyLinked)mypgdata) == true)
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((GastronomyLinked)mypgdata, ReduceDataTransformer.CopyLTSGastronomyToReducedObject);
 
@@ -92,7 +173,6 @@ namespace OdhApiImporter.Helpers
                     }
 
                     break;
-
                 case "activity":
                     mydata = await GetDataFromRaven.GetRavenData<LTSActivityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
@@ -131,14 +211,13 @@ namespace OdhApiImporter.Helpers
 
                     break;
 
-                case "odhactivitypoi":
+                case "odhactivitypoi":                    
+
                     mydata = await GetDataFromRaven.GetRavenData<ODHActivityPoiLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<ODHActivityPoiLinked, ODHActivityPoiLinked>((ODHActivityPoiLinked)mydata, TransformToPGObject.GetODHActivityPoiPGObject);
                     else
                         throw new Exception("No data found!");
-
-                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
 
                     //Special get all Taglist and traduce it on import
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
@@ -163,7 +242,7 @@ namespace OdhApiImporter.Helpers
                         throw new Exception("No data found!");
 
                     myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
-                    
+
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<EventLinked>((EventLinked)mypgdata) == true)
                     {
@@ -175,13 +254,13 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "webcam":
-                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "WebcamInfo/");
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<WebcamInfoLinked, WebcamInfoLinked>((WebcamInfoLinked)mydata, TransformToPGObject.GetWebcamInfoPGObject);
                     else
                         throw new Exception("No data found!");
 
-                    myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+                    myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams");
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<WebcamInfoLinked>((WebcamInfoLinked)mypgdata) == true)
@@ -216,7 +295,7 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "tv":
-                    mydata = await GetDataFromRaven.GetRavenData<TourismvereinLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<TourismvereinLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "TourismAssociation/");
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<TourismvereinLinked, TourismvereinLinked>((TourismvereinLinked)mydata, TransformToPGObject.GetTourismAssociationPGObject);
                     else
@@ -330,7 +409,7 @@ namespace OdhApiImporter.Helpers
                         throw new Exception("No data found!");
 
                     myupdateresult = await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venues");
-
+                    
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<DDVenue>((DDVenue)mypgdata) == true)
                     {
@@ -355,18 +434,20 @@ namespace OdhApiImporter.Helpers
                 default:
                     throw new Exception("no match found");
             }
-
-            return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, updateresultreduced }));
+            
+            return Tuple.Create<string,UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, updateresultreduced }));
         }
 
         private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
+            //Temporary Hack will be moved to the importer workerservice
+
             var result = await QueryFactory.UpsertData<T>(datatosave, table);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
-        }
+        }        
 
         #endregion
     }

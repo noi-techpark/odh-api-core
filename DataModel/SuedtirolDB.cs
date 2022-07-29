@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json.Converters;
 
 namespace DataModel
 {
@@ -2364,9 +2366,9 @@ namespace DataModel
         {
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
-            AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
-            //Mapping New
+            AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            Tags = new Dictionary<string, List<Tags>>();
         }
 
         public string? Id { get; set; }
@@ -2396,12 +2398,16 @@ namespace DataModel
         [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
         public string? PoiType { get; set; }
 
-        //NEU SMG Infos
+        /// <summary>
+        /// First Import date
+        /// </summary>
         public DateTime? FirstImport { get; set; }
+        /// <summary>
+        /// Last Change date
+        /// </summary>
         public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
-
-        //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
+        
         public LocationInfo? LocationInfo { get; set; }
 
         public string? TourismorganizationId { get; set; }
@@ -2454,8 +2460,7 @@ namespace DataModel
 
         public ICollection<string>? SmgTags { get; set; }
         public ICollection<string>? HasLanguage { get; set; }
-
-        //neu LTSUpdate 11.16
+        
         public Ratings? Ratings { get; set; }
         public ICollection<string>? Exposition { get; set; }
 
@@ -2470,15 +2475,27 @@ namespace DataModel
 
         public List<LTSTags>? LTSTags { get; set; }
 
-        //New published on List
+        /// <summary>
+        /// Published on URL List
+        /// </summary>
         public List<string>? PublishedOn { get; set; }
 
+        /// <summary>
+        /// Source of the dataset
+        /// </summary>
         public string? Source { get; set; }
 
-        //New Mapping
+        /// <summary>
+        /// Generic Mapping object, contains at example original Id of the source provider or mapped Id to other providers
+        /// </summary>
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
+
+        /// <summary>
+        /// Generic Tags object
+        /// </summary>
+        public IDictionary<string, List<Tags>> Tags { get; set; }
     }
 
     //Erweiterte Baseinfos für ARticles
@@ -3478,9 +3495,7 @@ namespace DataModel
     public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware
     {
         public EventShort()
-        {
-            GpsPoints = new Dictionary<string, GpsInfo>();
-            //Mapping New
+        {            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
@@ -3521,7 +3536,10 @@ namespace DataModel
         public string? WebAddress { get; set; }
         //Spezialfelder
 
-        //Eurac Videowall (Y / N) Wenn hier N wird ganzes Event nicht angezeigt
+        /// <summary>
+        /// Display1 used as active info
+        /// </summary>
+        [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
         public string? Display1 { get; set; }
         //Intranet Eurac (Y / N)
         public string? Display2 { get; set; }
@@ -3533,7 +3551,10 @@ namespace DataModel
         public string? Display6 { get; set; }
         public string? Display7 { get; set; }
         public string? Display8 { get; set; }
-        public string? Display9 { get; set; }
+
+        [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EventShortDisplay? Display9 { get; set; }
 
         //CRM Modul Account (Firma) interessiert uns nicht
         public string? CompanyName { get; set; }
@@ -3595,10 +3616,7 @@ namespace DataModel
         public bool? ExternalOrganizer { get; set; }
 
         public string? Shortname { get; set; }
-
-        //new Add GPS Points from Root Representation
-        public IDictionary<string, GpsInfo>? GpsPoints { get; set; }
-
+     
         //New published on List
         public List<string>? PublishedOn { get; set; }
 
@@ -3627,6 +3645,58 @@ namespace DataModel
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
+
+        //new Add GPS Points from Root Representation
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
+                {
+                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
+    }
+    
+    public enum EventShortDisplay
+    {    
+        /// <summary>
+        /// NO / no
+        /// </summary>
+        Y,  
+        /// <summary>
+        /// YES / true
+        /// </summary>
+        N
+    }
+    
+    public enum EventShortEventLocation
+    {
+        /// <summary>
+        /// NOI Techpark
+        /// </summary>
+        NOI,
+        /// <summary>
+        /// Eurac
+        /// </summary>
+        EC,
+        /// <summary>
+        /// Virtual Village
+        /// </summary>
+        VV,
+        /// <summary>
+        /// Other Location
+        /// </summary>
+        OUT
     }
 
     public class RoomBooked

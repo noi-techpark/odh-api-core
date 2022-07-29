@@ -424,6 +424,9 @@ namespace OdhApiImporter.Helpers
                 //Setting LicenseInfo
                 mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
+                //Special get all Taglist and traduce it on import
+                await GenericTaggingHelper.AddMappingToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
+
                 var result = await InsertDataToDB(mymuseum, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
                 newcounter = newcounter + result.created.Value;
                 updatecounter = updatecounter + result.updated.Value;

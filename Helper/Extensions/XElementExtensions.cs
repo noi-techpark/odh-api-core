@@ -14,5 +14,12 @@ namespace Helper
             doc.Load(el.CreateReader());
             return doc.DocumentElement!;
         }
+
+        public static string InnerXML(this XElement el)
+        {
+            var reader = el.CreateReader();
+            reader.MoveToContent();
+            return reader.ReadInnerXml();
+        }
     }
 }

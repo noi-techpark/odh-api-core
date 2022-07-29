@@ -124,7 +124,8 @@ namespace EBMS
                     eventtosave.Display6 = myevent.Display6;
                     eventtosave.Display7 = myevent.Display7;
                     eventtosave.Display8 = myevent.Display8;
-                    eventtosave.Display9 = myevent.Display9;
+                    //eventtosave.Display9 = myevent.Display9;
+                    eventtosave.Display9 = (EventShortDisplay)Enum.Parse(typeof(EventShortDisplay), myevent.Display9);
 
                     if (myevent.Company != null)
                     {

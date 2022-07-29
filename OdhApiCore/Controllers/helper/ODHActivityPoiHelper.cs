@@ -47,7 +47,10 @@ namespace OdhApiCore.Controllers.api
         public bool duration;
         public int durationmin;
         public int durationmax;
-        
+
+        public string tagfilterbehaviour;
+        public List<string> taglist;
+
         //New Publishedonlist
         public List<string> publishedonlist;
 
@@ -71,6 +74,7 @@ namespace OdhApiCore.Controllers.api
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter,
             string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
+            string? tagfilter,
             string? publishedonfilter,
             CancellationToken cancellationToken)
         {
@@ -87,7 +91,7 @@ namespace OdhApiCore.Controllers.api
                 highlightfilter, activefilter, smgactivefilter, smgtags, smgtagsand,
                 categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
                 activitytypefilter, poitypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter,
-                publishedonfilter,
+                tagfilter, publishedonfilter,
                 lastchange, tourismusvereinids);
         }
 
@@ -107,7 +111,7 @@ namespace OdhApiCore.Controllers.api
             string? smgtagsand,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter,  string? facilitycodefilter,  string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
-            string? publishedonfilter,
+            string? tagfilter, string? publishedonfilter,
             string? lastchange,             
             IEnumerable<string>? tourismusvereinids)
         {
@@ -252,6 +256,19 @@ namespace OdhApiCore.Controllers.api
 
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
+
+            if (!String.IsNullOrEmpty(tagfilter))
+            {
+                if (tagfilter.ToLower().StartsWith("and_"))
+                    tagfilterbehaviour = "and";
+                else
+                    tagfilterbehaviour = "or";
+
+                tagfilter = tagfilter.Replace("and_", "");
+                tagfilter = tagfilter.Replace("or_", "");
+            }
+
+            taglist = Helper.CommonListCreator.CreateIdList(tagfilter);
 
             this.lastchange = lastchange;
         }

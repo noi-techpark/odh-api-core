@@ -39,9 +39,9 @@ namespace OdhApiCore.Controllers.api
         /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, not provided disables Random Sorting, (default:'null') </param>
-        /// <param name="type">Type of the ODHActivityPoi ('null' = Filter disabled, possible values: BITMASK: 1 = Wellness, 2 = Winter, 4 = Summer, 8 = Culture, 16 = Other, 32 = Gastronomy, 64 = Mobility, 128 = Shops and services), (default: 63 == ALL), refers to <a href='https://tourism.opendatahub.bz.it/v1/ODHActivityPoiTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">ODHActivityPoi Types</a>, Type: Type</param>
-        /// <param name="activitytype">Filtering by Activity Type defined by LTS ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'511' == ALL), , refers to <a href='https://tourism.opendatahub.bz.it/v1/ActivityTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">ActivityTypes</a>, Type: Type</param>
-        /// <param name="poitype">Filtering by Poi Type defined by LTS ('null' = Filter disabled, possible values: BITMASK 'Doctors, Pharmacies = 1','Shops = 2','Culture and sights= 4','Nightlife and entertainment = 8','Public institutions = 16','Sports and leisure = 32','Traffic and transport = 64', 'Service providers' = 128, 'Craft' = 256), (default:'1023' == ALL), , refers to <a href='https://tourism.opendatahub.bz.it/v1/PoiTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">PoiTypes</a>, Type: Type</param>
+        /// <param name="type">Type of the ODHActivityPoi ('null' = Filter disabled, possible values: BITMASK: 1 = Wellness, 2 = Winter, 4 = Summer, 8 = Culture, 16 = Other, 32 = Gastronomy, 64 = Mobility, 128 = Shops and services), (default: 255 == ALL), refers to <a href='https://tourism.opendatahub.bz.it/v1/ODHActivityPoiTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">ODHActivityPoi Types</a>, Type: Type</param>
+        /// <param name="activitytype">Filtering by Activity Type defined by LTS ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), , refers to <a href='https://tourism.opendatahub.bz.it/v1/ActivityTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">ActivityTypes</a>, Type: Type</param>
+        /// <param name="poitype">Filtering by Poi Type defined by LTS ('null' = Filter disabled, possible values: BITMASK 'Doctors, Pharmacies = 1','Shops = 2','Culture and sights= 4','Nightlife and entertainment = 8','Public institutions = 16','Sports and leisure = 32','Traffic and transport = 64', 'Service providers' = 128, 'Craft' = 256), (default:'511' == ALL), , refers to <a href='https://tourism.opendatahub.bz.it/v1/PoiTypes?rawfilter=eq(Type,%27Type%27)' target="_blank">PoiTypes</a>, Type: Type</param>
         /// <param name="subtype">Subtype of the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype) <a href='https://tourism.opendatahub.bz.it/v1/ODHActivityPoiTypes?rawfilter=eq(Type,%27SubType%27)' target="_blank">ODHActivityPoi SubTypes</a>, or <a href='https://tourism.opendatahub.bz.it/v1/ActivityTypes?rawfilter=eq(Type,%27SubType%27)' target="_blank">Activity SubTypes</a>, or <a href='https://tourism.opendatahub.bz.it/v1/PoiTypes?rawfilter=eq(Type,%27SubType%27)' target="_blank">Poi SubTypes</a>, Type: SubType</param>
         /// <param name="level3type">Additional Type of Level 3 the ODHActivityPoi ('null' = Filter disabled, BITMASK Filter, available SubTypes depends on the selected Maintype, SubType reference to ODHActivityPoiTypes)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of ODHActivityPoi IDs), (default:'null')</param>
@@ -112,7 +112,8 @@ namespace OdhApiCore.Controllers.api
             string? distancefilter = null,
             string? altitudefilter = null,
             string? durationfilter = null,
-            string? publishedon = null,
+            string? tagfilter = null,
+            string? publishedon = null,            
             string? updatefrom = null,
             string? seed = null,
             string? latitude = null,
@@ -135,8 +136,7 @@ namespace OdhApiCore.Controllers.api
                 smgactive: odhactive?.Value, smgtags: odhtagfilter, smgtagsand: odhtagfilter_and,
                 categorycodefilter: categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                 activitytypefilter: activitytype, poitypefilter: poitype, difficultyfilter: difficultyfilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
-                publishedon: publishedon,
-                seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
+                tagfilter: tagfilter, publishedon: publishedon, seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
                 removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -234,7 +234,7 @@ namespace OdhApiCore.Controllers.api
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? smgtagsand,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? difficultyfilter, string? distancefilter, string? altitudefilter, string? durationfilter,
-            string? publishedon,
+            string? tagfilter, string? publishedon,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
@@ -246,7 +246,7 @@ namespace OdhApiCore.Controllers.api
                     highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, smgtagsand: smgtagsand, lastchange: lastchange, 
                     categorycodefilter : categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                     activitytypefilter: activitytypefilter, poitypefilter: poitypefilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter, difficultyfilter: difficultyfilter,
-                    publishedonfilter: publishedon,
+                    tagfilter: tagfilter, publishedonfilter: publishedon,
                     cancellationToken);
 
                 var query =
@@ -268,7 +268,7 @@ namespace OdhApiCore.Controllers.api
                             difficultylist: myodhactivitypoihelper.difficultylist, distance: myodhactivitypoihelper.distance,
                             distancemin: myodhactivitypoihelper.distancemin, distancemax: myodhactivitypoihelper.distancemax, duration: myodhactivitypoihelper.duration, durationmin: myodhactivitypoihelper.durationmin, 
                             durationmax: myodhactivitypoihelper.durationmax, altitude: myodhactivitypoihelper.altitude, altitudemin: myodhactivitypoihelper.altitudemin, altitudemax: myodhactivitypoihelper.altitudemax,
-                            publishedonlist: myodhactivitypoihelper.publishedonlist,
+                            tagbehaviour: myodhactivitypoihelper.tagfilterbehaviour, taglist: myodhactivitypoihelper.taglist, publishedonlist: myodhactivitypoihelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)

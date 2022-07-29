@@ -17,10 +17,12 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
 using OdhApiCore.Factories;
+using OdhApiCore.Swagger;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -29,6 +31,7 @@ using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.File;
 using SqlKata.Compilers;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -269,6 +272,10 @@ namespace OdhApiCore
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                //{
+                //    CamelCaseText = true
+                //});
             });
 
             services.AddRazorPages();
@@ -348,8 +355,9 @@ namespace OdhApiCore
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);                
-
+                var xmlPathdatamodel = Path.Combine(AppContext.BaseDirectory, $"DataModel.xml");
+                c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+                c.IncludeXmlComments(xmlPathdatamodel, includeControllerXmlComments: true);
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -368,7 +376,10 @@ namespace OdhApiCore
                     BearerFormat = "JWT",
                     Scheme = "Bearer"
                 });
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
+                c.SchemaFilter<EnumTypesSchemaFilter>(xmlPathdatamodel);
+                c.DocumentFilter<EnumTypesDocumentFilter>();
                 c.EnableAnnotations();                       
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{
@@ -486,21 +497,4 @@ namespace OdhApiCore
             });
         }
     }
-
-    public class AuthenticationRequirementsOperationFilter : IOperationFilter
-    {
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            if (operation.Security == null)
-                operation.Security = new List<OpenApiSecurityRequirement>();
-
-
-            var scheme = new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" } };
-            operation.Security.Add(new OpenApiSecurityRequirement
-            {
-                [scheme] = new List<string>()
-            });
-        }
-    }
-
 }
