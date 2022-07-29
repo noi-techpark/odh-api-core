@@ -74,7 +74,7 @@ namespace OdhApiCore.Controllers.api
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter,
             string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
-            string? taggingfilter,
+            string? tagfilter,
             string? publishedonfilter,
             CancellationToken cancellationToken)
         {
@@ -91,7 +91,7 @@ namespace OdhApiCore.Controllers.api
                 highlightfilter, activefilter, smgactivefilter, smgtags, smgtagsand,
                 categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
                 activitytypefilter, poitypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter,
-                taggingfilter, publishedonfilter,
+                tagfilter, publishedonfilter,
                 lastchange, tourismusvereinids);
         }
 
@@ -111,7 +111,7 @@ namespace OdhApiCore.Controllers.api
             string? smgtagsand,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter,  string? facilitycodefilter,  string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
-            string? taggingfilter, string? publishedonfilter,
+            string? tagfilter, string? publishedonfilter,
             string? lastchange,             
             IEnumerable<string>? tourismusvereinids)
         {
@@ -257,18 +257,18 @@ namespace OdhApiCore.Controllers.api
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
-            if (!String.IsNullOrEmpty(taggingfilter))
+            if (!String.IsNullOrEmpty(tagfilter))
             {
-                if (taggingfilter.ToLower().StartsWith("and_"))
+                if (tagfilter.ToLower().StartsWith("and_"))
                     tagfilterbehaviour = "and";
                 else
                     tagfilterbehaviour = "or";
 
-                taggingfilter = taggingfilter.Replace("and_", "");
-                taggingfilter = taggingfilter.Replace("or_", "");
+                tagfilter = tagfilter.Replace("and_", "");
+                tagfilter = tagfilter.Replace("or_", "");
             }
 
-            taglist = Helper.CommonListCreator.CreateIdList(taggingfilter);
+            taglist = Helper.CommonListCreator.CreateIdList(tagfilter);
 
             this.lastchange = lastchange;
         }
