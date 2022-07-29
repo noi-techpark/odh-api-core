@@ -79,6 +79,7 @@ namespace OdhApiCore.Controllers.api
             //[RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
             [JsonConverter(typeof(StringEnumConverter))]
             EventShortEventLocation? eventlocation = null, 
+            //string? eventlocation = null,
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
