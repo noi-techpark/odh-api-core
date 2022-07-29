@@ -338,7 +338,7 @@ namespace OdhApiImporter.Helpers.DSS
                             raw = JsonConvert.SerializeObject(dssdata.Value),
                             sourceinterface = entitytype + "base",
                             sourceid = dssdata.Key,
-                            sourceurl = "http://dss.dev.tinext.net/.rest/json-export/export/",
+                            sourceurl = settings.DSSConfig.ServiceUrl,
                             type = "odhactivitypoi-" + entitytype  
                         });
         }
