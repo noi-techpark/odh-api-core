@@ -67,7 +67,10 @@ namespace Helper
                     if (returnDict.ContainsKey(kvp.Key))
                         listtoadd = returnDict[kvp.Key];
 
-                    listtoadd.Add(new Tags() { Id = kvp.Value, Source = kvp.Key });
+                    var tagtoadd = new Tags() { Id = kvp.Value, Source = kvp.Key };
+
+                    if (!listtoadd.Select(x => x.Id).Contains(tagtoadd.Id))
+                        listtoadd.Add(tagtoadd);
 
                     returnDict.TryAddOrUpdate(kvp.Key, listtoadd);
                 }
