@@ -55,35 +55,16 @@ namespace OdhApiImporter.Controllers
                 var resulttuple = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
                 var result = resulttuple.Item2;
 
-                return Ok(new UpdateResult
-                {
-                    operation = "Update Raven",
-                    updatetype = "single",
-                    otherinfo = datatype,
-                    message = "",
-                    id = resulttuple.Item1,
-                    recordsmodified = (result.created + result.updated + result.deleted),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(resulttuple.Item1, "service.suedtirol.info", "Update Raven", "single", "", datatype, result, true);
+
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Update Raven",
-                    updatetype = "single",
-                    otherinfo = datatype,
-                    id = id,
-                    message = "Update Raven failed: " + ex.Message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, "service.suedtirol.info", "Update Raven", "single", "Update Raven failed: ", datatype, new UpdateDetail(), ex, true);
+
+                return BadRequest(errorResult);
             }
         }
 
@@ -175,8 +156,8 @@ namespace OdhApiImporter.Controllers
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja Events update failed", "", updatedetail, ex, true);
-                return BadRequest(updateResult);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja Events update failed", "", updatedetail, ex, true);
+                return BadRequest(errorResult);
             }
         }
 
@@ -208,8 +189,8 @@ namespace OdhApiImporter.Controllers
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed", "actual", updatedetail, ex, true);
-                return BadRequest(updateResult);                
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed", "actual", updatedetail, ex, true);
+                return BadRequest(errorResult);                
             }
         }
 
@@ -371,8 +352,9 @@ namespace OdhApiImporter.Controllers
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update failed", "", updatedetail, ex, true);
-                return BadRequest(updateResult);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update failed", "", updatedetail, ex, true);
+
+                return BadRequest(errorResult);
             }
         }
 
