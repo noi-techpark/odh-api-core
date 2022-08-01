@@ -49,20 +49,25 @@ namespace OdhApiImporter.Controllers
         //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
         public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
         {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update Raven";
+            string updatetype = "single";
+            string source = "api";
+            string otherinfo = datatype;
+
             try
             {
                 RAVENImportHelper ravenimporthelper = new RAVENImportHelper(settings, QueryFactory);
                 var resulttuple = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
-                var result = resulttuple.Item2;
+                updatedetail = resulttuple.Item2;
 
-
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(resulttuple.Item1, "service.suedtirol.info", "Update Raven", "single", "", datatype, result, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(resulttuple.Item1, source, operation, updatetype, "Update Raven succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, "service.suedtirol.info", "Update Raven", "single", "Update Raven failed: ", datatype, new UpdateDetail(), ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Update Raven failed", otherinfo, updatedetail, ex, true);
 
                 return BadRequest(errorResult);
             }
@@ -289,41 +294,27 @@ namespace OdhApiImporter.Controllers
         [HttpPost, Route("STA/VendingPoints/UpdateAll")]
         public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
         {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import Vendingpoints";
+            string updatetype = "all";
+            string source = "xls";
+            string otherinfo = "STA";
+
             try
             {
                 STAImportHelper staimporthelper = new STAImportHelper(settings, QueryFactory);
 
-                var result = await staimporthelper.PostVendingPointsFromSTA(Request, cancellationToken);
+                updatedetail = await staimporthelper.PostVendingPointsFromSTA(Request, cancellationToken);
 
-                return Ok(new
-                {
-                    operation = "Import Vendingpoints",
-                    updatetype = "all",
-                    otherinfo = "STA",
-                    id = "",
-                    message = "Import Vendingpoints succeeded",
-                    recordsmodified = (result.created + result.updated + result.deleted),
-                    created = result.created,
-                    updated = result.updated,
-                    deleted = result.deleted,
-                    success = true
-                });
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Import Vendingpoints succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                return BadRequest(new UpdateResult
-                {
-                    operation = "Import Vendingpoints",
-                    updatetype = "all",
-                    otherinfo = "STA",
-                    id = "",
-                    message = "Import Vendingpoints failed: " + ex.Message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    success = false
-                });
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Import Vendingpoints failed", otherinfo, updatedetail, ex, true);
+
+                return BadRequest(errorResult);
             }
         }
 
