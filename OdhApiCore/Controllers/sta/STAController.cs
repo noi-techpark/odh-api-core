@@ -17,6 +17,7 @@ using OdhApiCore.Filters;
 using AspNetCore.CacheOutput;
 using System.IO;
 using OdhApiCore.GenericHelpers;
+using OdhApiCore.Controllers.helper;
 
 namespace OdhApiCore.Controllers.sta
 {
@@ -36,7 +37,7 @@ namespace OdhApiCore.Controllers.sta
 
         #region GETTER
 
-        [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
+        [OdhCacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
         [HttpGet, Route("STA/ODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiListSTA(
             string language,
@@ -61,7 +62,7 @@ namespace OdhApiCore.Controllers.sta
             }
         }
 
-        [CacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
+        [OdhCacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
         [HttpGet, Route("STA/Accommodation")]
         public async Task<IActionResult> GetAccommodationsSTA(
            string language,
