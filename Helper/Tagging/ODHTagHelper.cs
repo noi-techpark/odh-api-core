@@ -24,7 +24,7 @@ namespace Helper
                             tag => new { ValidForEntity = new[] { tag.ToLower() } }
                         ))
                         .When(idlist != null, w => w.WhereIn("id", idlist?.Select(x => x.ToLower()) ?? Enumerable.Empty<string>()))
-                        .WhereRaw("data->>'DisplayAsCategory' = ?", "true");
+                        .WhereRaw("data->>'DisplayAsCategory' = $$", "true");
 
                 var validtagdata =
                     await validtagquery

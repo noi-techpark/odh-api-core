@@ -755,7 +755,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("accommodationrooms")
                         .Select("data")
-                        //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE ?", id)
+                        //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE $$", id)
                         .Where("gen_a0rid", "ILIKE", id)
                         //.When(FilterClosedData, q => q.FilterClosedData())
                         .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))

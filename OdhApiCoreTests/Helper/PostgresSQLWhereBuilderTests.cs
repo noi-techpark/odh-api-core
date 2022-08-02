@@ -50,7 +50,7 @@ namespace OdhApiCoreTests.Helper
 
             var result = compiler.Compile(query);
 
-            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts') OR (gen_source = 'lts' AND gen_reduced = ?))", result.RawSql);
+            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts') OR (gen_source = 'lts' AND gen_reduced = $$))", result.RawSql);
             //Assert.Empty(result.Bindings);
         }
 
@@ -93,7 +93,7 @@ namespace OdhApiCoreTests.Helper
 
             var result = compiler.Compile(query);
 
-            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = ?)) OR (gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = ?))))", result.RawSql);
+            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$)) OR (gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$))))", result.RawSql);
             //Assert.Empty(result.Bindings);
         }
 
@@ -135,7 +135,7 @@ namespace OdhApiCoreTests.Helper
 
             var result = compiler.Compile(query);
 
-            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts') OR (gen_source = 'lts' AND gen_reduced = ?))", result.RawSql);
+            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts') OR (gen_source = 'lts' AND gen_reduced = $$))", result.RawSql);
             //Assert.Empty(result.Bindings);
         }
 
@@ -179,7 +179,7 @@ namespace OdhApiCoreTests.Helper
         //    var result = compiler.Compile(query);
 
         //    Assert.Equal(
-        //        "SELECT * FROM \"activities\" WHERE (\"id\" = ? OR \"id\" = ?) AND data#>>'{LocationInfo,RegionInfo,Id}' = ANY(?) AND (data @> jsonb(?)) AND (data @> jsonb(?)) AND data#>>'{Highlight}' = ?",
+        //        "SELECT * FROM \"activities\" WHERE (\"id\" = $$ OR \"id\" = $$) AND data#>>'{LocationInfo,RegionInfo,Id}' = ANY($$) AND (data @> jsonb($$)) AND (data @> jsonb($$)) AND data#>>'{Highlight}' = $$",
         //        result.RawSql
         //    );
 

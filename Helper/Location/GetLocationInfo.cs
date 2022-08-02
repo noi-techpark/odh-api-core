@@ -98,7 +98,7 @@ namespace Helper
             
             var districtquery = QueryFactory.Query("districts")
                          .Select("data")
-                         .WhereRaw("data->>'SiagId' = ?", districtid_siag);
+                         .WhereRaw("data->>'SiagId' = $$", districtid_siag);
 
             var district = await districtquery.GetFirstOrDefaultAsObject<District>();
 
@@ -151,7 +151,7 @@ namespace Helper
 
             var municipalityquery = QueryFactory.Query("municipalities")
                          .Select("data")
-                         .WhereRaw("data->>'SiagId' = ?", municipalityid_siag);
+                         .WhereRaw("data->>'SiagId' = $$", municipalityid_siag);
 
             var municipality = await municipalityquery.GetFirstOrDefaultAsObject<District>();
 
