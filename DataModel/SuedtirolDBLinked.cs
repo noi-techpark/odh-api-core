@@ -144,11 +144,11 @@ namespace DataModel
 
     public class LocationInfoLinked : LocationInfo
     {
-        public new RegionInfoLinked RegionInfo { get; set; }
-        public new TvInfoLinked TvInfo { get; set; }
-        public new MunicipalityInfoLinked MunicipalityInfo { get; set; }
-        public new DistrictInfoLinked DistrictInfo { get; set; }
-        public new AreaInfoLinked AreaInfo { get; set; }
+        public new RegionInfoLinked? RegionInfo { get; set; }
+        public new TvInfoLinked? TvInfo { get; set; }
+        public new MunicipalityInfoLinked? MunicipalityInfo { get; set; }
+        public new DistrictInfoLinked? DistrictInfo { get; set; }
+        public new AreaInfoLinked? AreaInfo { get; set; }
     }
 
     public class LTSTagsLinked : LTSTags
@@ -167,6 +167,22 @@ namespace DataModel
         public string Id { get; set; }
         public string Self { get; set; }
     }
+
+    //NEW Tags GENERIC
+    public class Tags
+    {
+        public string Id { get; set; }
+
+        public string Source { get; set; }
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Tag/" + this.Id;
+            }
+        }
+    }
+
 
     public class ODHActivityPoiTypesLink
     {
@@ -289,13 +305,13 @@ namespace DataModel
         }
 
         //Overwriting Categorycodes etc...
-        public new ICollection<CategoryCodesLinked> CategoryCodes { get; set; }
-        public new ICollection<DishRatesLinked> DishRates { get; set; }
-        public new ICollection<CapacityCeremonyLinked> CapacityCeremony { get; set; }
-        public new ICollection<FacilitiesLinked> Facilities { get; set; }
+        public new ICollection<CategoryCodesLinked>? CategoryCodes { get; set; }
+        public new ICollection<DishRatesLinked>? DishRates { get; set; }
+        public new ICollection<CapacityCeremonyLinked>? CapacityCeremony { get; set; }
+        public new ICollection<FacilitiesLinked>? Facilities { get; set; }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class AccommodationLinked : Accommodation, IMetaData
@@ -376,13 +392,13 @@ namespace DataModel
         }
 
         //Overwrites The Features
-        public new ICollection<AccoFeatureLinked> Features { get; set; }
+        public new ICollection<AccoFeatureLinked>? Features { get; set; }
 
         //Overwrites The Features
-        public new ICollection<AccoRoomInfoLinked> AccoRoomInfo { get; set; }
+        public new ICollection<AccoRoomInfoLinked>? AccoRoomInfo { get; set; }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class AccommodationRoomLinked : AccoRoom, IMetaData
@@ -474,7 +490,7 @@ namespace DataModel
         public new ICollection<TopicLinked> Topics { get; set; }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
@@ -510,7 +526,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData
@@ -563,13 +579,13 @@ namespace DataModel
             }
         }
 
-        public new ICollection<CategoryCodesLinked> CategoryCodes { get; set; }
-        public new ICollection<DishRatesLinked> DishRates { get; set; }
-        public new ICollection<CapacityCeremonyLinked> CapacityCeremony { get; set; }
-        public new ICollection<FacilitiesLinked> Facilities { get; set; }
+        public new ICollection<CategoryCodesLinked>? CategoryCodes { get; set; }
+        public new ICollection<DishRatesLinked>? DishRates { get; set; }
+        public new ICollection<CapacityCeremonyLinked>? CapacityCeremony { get; set; }
+        public new ICollection<FacilitiesLinked>? Facilities { get; set; }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
@@ -627,7 +643,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
@@ -685,7 +701,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
@@ -693,7 +709,7 @@ namespace DataModel
 
     public class ArticlesLinked : ArticleBaseInfos, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string? Self
         {
@@ -1138,7 +1154,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class SkiRegionLinked : SkiRegion, IMetaData
@@ -1236,7 +1252,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked LocationInfo { get; set; }       
+        public new LocationInfoLinked? LocationInfo { get; set; }       
     }
 
     public class WineLinked : Wine, IMetaData
@@ -1270,7 +1286,7 @@ namespace DataModel
 
     public class EventShortLinked : EventShort, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1292,6 +1308,20 @@ namespace DataModel
                 return ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
             }
         }
+    }
+
+    public class TagLinked : SmgTags, IMetaData
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Tag/" + this.Id;
+            }
+        }
+        public List<string> ODHTagIds { get; set; }
     }
 
     //TODO ADD Linked + Meta 

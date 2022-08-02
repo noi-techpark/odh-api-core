@@ -88,6 +88,9 @@ namespace OdhApiImporter.Helpers
 
                         ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
 
+                        //Special get all Taglist and traduce it on import
+                        await GenericTaggingHelper.AddMappingToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+
                         //Save to Rawdatatable
                         var rawdataid = await InsertInRawDataDB(vendingpoint);
 

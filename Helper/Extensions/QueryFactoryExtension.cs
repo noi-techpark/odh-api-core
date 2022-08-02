@@ -34,7 +34,7 @@ namespace Helper
 
         #region PG Helpers
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, bool errorwhendataexists = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             //TODO: What if no id is passed? Generate ID
             //TODO: Id Uppercase or Lowercase depending on table
@@ -64,7 +64,10 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             if (queryresult == null || queryresult.Count() == 0)
-            {               
+            {
+                if (errorwhendataisnew)
+                    throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
+
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
@@ -72,7 +75,7 @@ namespace Helper
             else
             {   
                 if(errorwhendataexists)
-                    throw new ArgumentNullException(nameof(data), "Id exists already");
+                    throw new ArgumentNullException(nameof(data.Id), "Id exists already");
 
                 updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });

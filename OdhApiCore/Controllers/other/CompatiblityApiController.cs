@@ -587,7 +587,7 @@ namespace OdhApiCore.Controllers.api
                     queryFactory: QueryFactory, typefilter: type, subtypefilter: subtype, level3typefilter: level3type, idfilter: null, locfilter: locfilter, areafilter: areafilter,
                     languagefilter: language, sourcefilter: source, highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, smgtagsand: null, lastchange: null,
                     categorycodefilter: null, dishcodefilter: null, ceremonycodefilter: null, facilitycodefilter: null, cuisinecodefilter: null, activitytypefilter: null, poitypefilter: null, distancefilter: null, 
-                    altitudefilter: null, durationfilter: null, difficultyfilter: null, publishedonfilter: null, cancellationToken);
+                    altitudefilter: null, durationfilter: null, difficultyfilter: null, null, publishedonfilter: null, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
                 //string orderby = "data#>>'\\{Shortname\\}' ASC";
@@ -611,7 +611,7 @@ namespace OdhApiCore.Controllers.api
                             activitytypelist: helper.activitytypelist, poitypelist: helper.poitypelist, difficultylist: helper.difficultylist, distance: helper.distance,
                             distancemin: helper.distancemin, distancemax: helper.distancemax, duration: helper.duration, durationmin: helper.durationmin,
                             durationmax: helper.durationmax, altitude: helper.altitude, altitudemin: helper.altitudemin, altitudemax: helper.altitudemax,
-                            publishedonlist: helper.publishedonlist,
+                            tagbehaviour: helper.tagfilterbehaviour, taglist: helper.taglist, publishedonlist: helper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData
                         )
                         .ApplyRawFilter(rawfilter)

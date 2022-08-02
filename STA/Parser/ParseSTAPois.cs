@@ -246,8 +246,8 @@ namespace STA
                     { "it", "orario d'apertura" },
                     { "en", "Opening time" }
                 };
-                myoperationschedule.Start = new DateTime(2021, 1, 1);
-                myoperationschedule.Stop = new DateTime(2021, 12, 31);
+                myoperationschedule.Start = new DateTime(DateTime.Now.Year, 1, 1);
+                myoperationschedule.Stop = new DateTime(DateTime.Now.Year, 12, 31);
                 myoperationschedule.Type = "2";
 
                 ////Try Parsing Columns
@@ -526,7 +526,7 @@ namespace STA
                 return myoperationschedule;
             }
             else
-                return new OperationSchedule();
+                return null;
         }
     }
 }

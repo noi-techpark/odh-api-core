@@ -2,9 +2,6 @@
 using Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using OdhApiCore.Controllers;
-using OdhApiCore.Controllers.api;
-using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -14,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace OdhApiCore.GenericHelpers
+namespace Helper
 {
     public class JsonGeneratorHelper
     {
@@ -57,6 +54,25 @@ namespace OdhApiCore.GenericHelpers
             }
 
             //}
+        }
+
+        public static async Task GenerateJSONTaglist(QueryFactory queryFactory, string jsondir, string jsonName)
+        {
+            var serializer = new JsonSerializer();                      
+            
+            var query =
+                queryFactory.Query()
+                  .SelectRaw("data")
+                  .From("tags");
+
+            var data = await query.GetAllAsObject<TagLinked>();
+
+            //Save json
+            string fileName = Path.Combine(jsondir, $"{jsonName}.json");
+            using (var writer = File.CreateText(fileName))
+            {
+                serializer.Serialize(writer, data);
+            }            
         }
     }
 

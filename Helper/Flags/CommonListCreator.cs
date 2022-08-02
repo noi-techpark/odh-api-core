@@ -10,7 +10,7 @@ namespace Helper
         {
             List<string> activityIds = new List<string>();
 
-            if (activityidstring != null)
+            if (!String.IsNullOrEmpty(activityidstring))
             {
                 if (activityidstring.Substring(activityidstring.Length - 1, 1) == ",")
                     activityidstring = activityidstring.Substring(0, activityidstring.Length - 1);

@@ -19,7 +19,7 @@ using System.IO;
 using OdhApiCore.GenericHelpers;
 using OdhApiCore.Controllers.helper;
 
-namespace OdhApiCore.Controllers.api
+namespace OdhApiCore.Controllers.sta
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
@@ -90,66 +90,6 @@ namespace OdhApiCore.Controllers.api
 
         #endregion       
 
-        #region GENERATEJSON
-
-        [InvalidateCacheOutput(typeof(STAController), nameof(GetODHActivityPoiListSTA))] // this will invalidate Get in a different controller
-        [HttpGet, Route("STA/JsonPoi")]
-        public async Task<IActionResult> ProducePoiSTAJson(CancellationToken cancellationToken)
-        {
-            try
-            {
-                await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
-            
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "ODHActivityPoi",
-                    message = "Generate Json ODHActivityPoi for STA succeeded",
-                    success = true
-                });
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "ODHActivityPoi",
-                    message = "Generate Json ODHActivityPoi for STA failed error:" + ex.Message,
-                    success = false
-                });
-            }
-        }
-
-        [InvalidateCacheOutput(typeof(STAController), nameof(GetAccommodationsSTA))] // this will invalidate Get in a different controller
-        [HttpGet, Route("STA/JsonAccommodation")]
-        public async Task<IActionResult> ProduceAccoSTAJson(CancellationToken cancellationToken)
-        {
-            try
-            {
-                await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
-
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "Accommodation",
-                    message = "Generate Json Accommodation for STA succeeded",
-                    success = true
-                });
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "Accommodation",
-                    message = "Generate Json Accommodation for STA failed error:" + ex.Message,
-                    success = false
-                });
-            }
-        }
-
-        #endregion
-
         #region IMPORTER
 
         //[Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
@@ -166,6 +106,8 @@ namespace OdhApiCore.Controllers.api
         //    }
         //}
 
+        //TODO REMOVE THIS
+        [Obsolete("Moved to ODHImporter")]
         [Authorize(Roles = "DataWriter,STAPoiImport")]
         [HttpPost, Route("STA/ImportVendingPoints")]
         public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)

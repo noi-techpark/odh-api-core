@@ -74,6 +74,8 @@ jobs:
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
           X_RAVEN_PSWD: ${{ secrets.RAVEN_PSWD_TEST }}
           X_API_URL: ${{ env.API_URL }}
+          X_NOICOMMUNITY_SERVERKEY: ${{ secrets.NOICOMMUNITY_SERVERKEY_TEST }}
+          X_NOICOMMUNITY_SENDERID: ${{ secrets.NOICOMMUNITY_SENDERID_TEST }}
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -98,6 +100,7 @@ jobs:
           curl "${{ env.API_URL }}STA/JsonAccommodation"
           curl "${{ env.API_URL }}ODH/AccommodationBooklist"
           curl "${{ env.API_URL }}ODH/AccommodationFulllist"
+          curl "${{ env.API_URL }}ODH/Taglist"
 
   deploy-prod-api:
     runs-on: ubuntu-20.04
@@ -147,6 +150,8 @@ jobs:
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
           X_RAVEN_PSWD: ${{ secrets.RAVEN_PSWD_TEST }}
           X_API_URL: ${{ env.API_URL }}
+          X_NOICOMMUNITY_SERVERKEY: ${{ secrets.NOICOMMUNITY_SERVERKEY_TEST }}
+          X_NOICOMMUNITY_SENDERID: ${{ secrets.NOICOMMUNITY_SENDERID_TEST }}
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -171,3 +176,4 @@ jobs:
           curl "${{ env.API_URL }}STA/JsonAccommodation"
           curl "${{ env.API_URL }}ODH/AccommodationBooklist"
           curl "${{ env.API_URL }}ODH/AccommodationFulllist"
+          curl "${{ env.API_URL }}ODH/Taglist"

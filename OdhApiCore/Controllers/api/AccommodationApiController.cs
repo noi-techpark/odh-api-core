@@ -66,7 +66,7 @@ namespace OdhApiCore.Controllers
         /// <param name="boardfilter">Boardfilter BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = (No Filter), (default:'null')</param>
         /// <param name="featurefilter">FeatureFilter BITMASK values: 1 = (Group-friendly), 2 = (Meeting rooms), 4 = (Swimming pool), 8 = (Sauna), 16 = (Garage), 32 = (Pick-up service), 64 = (WLAN), 128 = (Barrier-free), 256 = (Special menus for allergy sufferers), 512 = (Pets welcome), 'null' = (No Filter), (default:'null')</param>
         /// <param name="featureidfilter">Feature Id Filter, LIST filter over ALL Features available. Separator ',' List of Feature IDs, 'null' = (No Filter), (default:'null')</param>
-        /// <param name="themefilter">Themefilter BITMASK values: 1 = (Gourmet), 2 = (At altitude), 4 = (Regional wellness offerings), 8 = (on the wheels), 16 = (With family), 32 = (Hiking), 64 = (In the vineyards), 128 = (Urban vibe), 256 = (At the ski resort), 512 = (Mediterranean), 1024 = (In the Dolomites), 2048 = (Alpine), 4096 = (Small and charming), 8192 = (Huts and mountain inns), 16384 = (Rural way of life), 32768 = (Balance), 65536 = (Christmas markets), 'null' = (No Filter), (default:'null')</param>
+        /// <param name="themefilter">Themefilter BITMASK values: 1 = (Gourmet), 2 = (At altitude), 4 = (Regional wellness offerings), 8 = (on the wheels), 16 = (With family), 32 = (Hiking), 64 = (In the vineyards), 128 = (Urban vibe), 256 = (At the ski resort), 512 = (Mediterranean), 1024 = (In the Dolomites), 2048 = (Alpine), 4096 = (Small and charming), 8192 = (Huts and mountain inns), 16384 = (Rural way of life), 32768 = (Balance), 65536 = (Christmas markets), 131072 = (Sustainability), 'null' = (No Filter), (default:'null')</param>
         /// <param name="badgefilter">BadgeFilter BITMASK values: 1 = (Belvita Wellness Hotel), 2 = (Familyhotel), 4 = (Bikehotel), 8 = (Red Rooster Farm), 16 = (Barrier free certificated), 32 = (Vitalpina Hiking Hotel), 64 = (Private Rooms in South Tyrol), 128 = (Vinum Hotels), 'null' = (No Filter), (default:'null')</param>        
         /// <param name="idfilter">IDFilter LIST Separator ',' List of Accommodation IDs, 'null' = (No Filter), (default:'null')</param>
         /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
@@ -920,13 +920,13 @@ namespace OdhApiCore.Controllers
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationManager,AccommodationCreate")]
+        [Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationWriter,AccommodationManager,AccommodationCreate")]
         [HttpPost, Route("Accommodation")]
         public Task<IActionResult> Post([FromBody] AccommodationLinked accommodation)
         {
             return DoAsyncReturn(async () =>
             {
-                accommodation.Id = !String.IsNullOrEmpty(accommodation.Id) ? accommodation.Id.ToUpper() : "noId";
+                accommodation.Id = !String.IsNullOrEmpty(accommodation.Id) ? accommodation.Id.ToUpper() : "NOID";
                 return await UpsertData<AccommodationLinked>(accommodation, "accommodations");
             });
         }
@@ -938,7 +938,7 @@ namespace OdhApiCore.Controllers
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationManager,AccommodationModify")]
+        [Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationWriter,AccommodationManager,AccommodationModify")]
         [HttpPut, Route("Accommodation/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] AccommodationLinked accommodation)
         {
@@ -955,7 +955,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Accommodation Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,AccoManager,AccoDelete,AccommodationManager,AccommodationDelete")]
+        [Authorize(Roles = "DataWriter,DataDelete,AccoManager,AccoDelete,AccommodationWriter,AccommodationManager,AccommodationDelete")]
         [HttpDelete, Route("Accommodation/{id}")]
         public Task<IActionResult> Delete(string id)
         {
