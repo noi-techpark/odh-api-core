@@ -954,16 +954,14 @@ namespace Helper
         #region Tagging
 
         public static Query TaggingFilter_OR(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
-               query.WhereInJsonb(
-                taglist,
-                tag => new { Tagging = new { idm = new[] { new { Id = tag.ToLower() } } } }
-            );
+            query.Where(q =>
+                taglist.Aggregate(q, (q, tag) =>
+                    q.OrWhereRaw(@$"(data->>'Tagging')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
 
         public static Query TaggingFilter_AND(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
-               query.WhereAllInJsonb(
-                taglist,
-                tag => new { Tagging = new { idm = new[] { new { Id = tag.ToLower() } } } }
-            );
+            query.Where(q =>
+                taglist.Aggregate(q, (q, tag) =>
+                    q.WhereRaw(@$"(data->>'Tagging')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
 
         #endregion
 
