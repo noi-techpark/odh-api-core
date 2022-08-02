@@ -956,12 +956,12 @@ namespace Helper
         public static Query TaggingFilter_OR(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
             query.Where(q =>
                 taglist.Aggregate(q, (q, tag) =>
-                    q.OrWhereRaw(@$"(data->>'Tagging')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
+                    q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
 
         public static Query TaggingFilter_AND(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
             query.Where(q =>
                 taglist.Aggregate(q, (q, tag) =>
-                    q.WhereRaw(@$"(data->>'Tagging')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
+                    q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
 
         #endregion
 
