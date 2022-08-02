@@ -1,0 +1,3 @@
+[submodule "sqlkata"]
+	path = sqlkata
+	url = https://github.com/toburger/querybuilder
