@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OdhApiCore.Controllers.helper;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace OdhApiCore.Controllers.other
         [ProducesResponseType(typeof(LicenseCountResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 36000)]
+        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 36000)]
         [HttpGet, Route("LicenseCount")]
         public async Task<IActionResult> GetLicenseCount(
             CancellationToken cancellationToken = default)
