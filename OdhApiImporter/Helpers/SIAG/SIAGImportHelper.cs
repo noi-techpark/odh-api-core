@@ -187,7 +187,7 @@ namespace OdhApiImporter.Helpers
 
                 var mymuseumquery = QueryFactory.Query("smgpois")
                     .Select("data")
-                    .WhereRaw("data->>'CustomId' = ?", museumid.ToLower());
+                    .WhereRaw("data->>'CustomId' = $$", museumid.ToLower());
 
                 var mymuseum = await mymuseumquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
 

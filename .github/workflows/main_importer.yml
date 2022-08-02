@@ -33,6 +33,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
 
     - name: Build docker
       uses: noi-techpark/github-actions/docker-build@v2
