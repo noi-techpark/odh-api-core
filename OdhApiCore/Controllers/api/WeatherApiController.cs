@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Npgsql;
-using OdhApiCore.Controllers.helper;
+using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using SIAG;
 using SqlKata.Execution;

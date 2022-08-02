@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OdhApiCore.Controllers.helper;
+using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;

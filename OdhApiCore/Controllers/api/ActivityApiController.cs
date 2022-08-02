@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using Serilog.Context;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
-using OdhApiCore.Controllers.helper;
+using OdhApiCore.Filters;
 
 namespace OdhApiCore.Controllers
 {

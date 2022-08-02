@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace OdhApiCore.Controllers.helper
+namespace OdhApiCore.Filters
 {
     public class OdhCacheOutputAttribute : CacheOutputAttribute
     {
