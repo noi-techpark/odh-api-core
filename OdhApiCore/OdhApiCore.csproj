@@ -65,8 +65,11 @@
     <ProjectReference Include="..\RAVEN\RAVEN.csproj" />
     <ProjectReference Include="..\SIAG\SIAG.csproj" />
     <ProjectReference Include="..\STA\STA.csproj" />
-    <ProjectReference Include="..\..\querybuilder\SqlKata.Execution\SqlKata.Execution.csproj" />
-    <ProjectReference Include="..\..\querybuilder\QueryBuilder\QueryBuilder.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\sqlkata\SqlKata.Execution\SqlKata.Execution.csproj" />
+    <ProjectReference Include="..\sqlkata\QueryBuilder\QueryBuilder.csproj" />
   </ItemGroup>
 
 </Project>

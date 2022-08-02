@@ -27,8 +27,8 @@
   <ItemGroup>
     <ProjectReference Include="..\DataModel\DataModel.csproj" />
     <ProjectReference Include="..\RawQueryParser\RawQueryParser.fsproj" />
-    <ProjectReference Include="..\..\querybuilder\QueryBuilder\QueryBuilder.csproj" />
-    <ProjectReference Include="..\..\querybuilder\SqlKata.Execution\SqlKata.Execution.csproj" />
+    <ProjectReference Include="..\sqlkata\QueryBuilder\QueryBuilder.csproj" />
+    <ProjectReference Include="..\sqlkata\SqlKata.Execution\SqlKata.Execution.csproj" />
   </ItemGroup>
 
   <ItemGroup>
