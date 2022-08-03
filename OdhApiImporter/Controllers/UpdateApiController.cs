@@ -167,7 +167,7 @@ namespace OdhApiImporter.Controllers
         }
 
         [HttpGet, Route("NINJA/Events/UpdateSingle/{id}")]
-        public async Task<IActionResult> UpdateSingleNinjaEvents(string id, CancellationToken cancellationToken = default)
+        public IActionResult UpdateSingleNinjaEvents(string id, CancellationToken cancellationToken = default)
         {           
             return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
         }

@@ -2747,7 +2747,7 @@ namespace DataModel
         public string Source { get; set; }
         public bool? GrpEvent { get; set; }
         public bool? EventBenefit { get; set; }
-        public EventBooking EventBooking { get; set; }
+        public EventBooking? EventBooking { get; set; }
         public ICollection<LTSTags> LTSTags { get; set; }
 
         public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
@@ -3253,11 +3253,11 @@ namespace DataModel
         //NEW Properties
         public double? InscriptionTill { get; set; }
         public bool? Active { get; set; }
-        public string DayRID { get; set; }
+        public string? DayRID { get; set; }
 
-        public Dictionary<string, EventDateAdditionalInfo> EventDateAdditionalInfo { get; set; }
-        public ICollection<EventDateAdditionalTime> EventDateAdditionalTime { get; set; }
-        public EventDateCalculatedDay EventCalculatedDay { get; set; }
+        public Dictionary<string, EventDateAdditionalInfo>? EventDateAdditionalInfo { get; set; }
+        public ICollection<EventDateAdditionalTime>? EventDateAdditionalTime { get; set; }
+        public EventDateCalculatedDay? EventCalculatedDay { get; set; }
 
         //New
         public string PriceFrom { get; set; }
@@ -3785,7 +3785,7 @@ namespace DataModel
         public DateTime? LastUpdate { get; set; }
 
         //New
-        public string Source { get; set; }
+        public string? Source { get; set; }
         public bool Reduced { get; set; }
     }
 

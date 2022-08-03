@@ -9,7 +9,7 @@ namespace PushServer
 {
     public class FCMMessageConstructor
     {
-        public static FCMModels ConstructMyMessage(string identifier, string language, IIdentifiable myobject)
+        public static FCMModels? ConstructMyMessage(string identifier, string language, IIdentifiable myobject)
         {
             var message = default(FCMModels);
 

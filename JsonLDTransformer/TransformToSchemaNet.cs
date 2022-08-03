@@ -153,7 +153,7 @@ namespace JsonLDTransformer
             //New Trust You infos Display only if State = 2 and Active = true
             if (acco.TrustYouActive)
             {
-                if (acco.TrustYouState != null && acco.TrustYouState == 2)
+                if (acco.TrustYouState == 2)
                 {
                     AggregateRating aggregaterating = new AggregateRating();
                     aggregaterating.RatingValue = acco.TrustYouScore / 10;

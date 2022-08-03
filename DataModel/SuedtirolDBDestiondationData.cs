@@ -22,28 +22,28 @@ namespace DataModel
             }
         }
 
-        public Metadata _Meta { get; set; }
-        public string type { get; set; }
+        public Metadata? _Meta { get; set; }
+        public string? type { get; set; }
         //public string id { get; set; }
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
-        public DDMeta meta { get; set; }
-        public DDLinks links { get; set; }
+        public DDMeta? meta { get; set; }
+        public DDLinks? links { get; set; }
         public DDAttributes attributes { get; set; }
-        public DDRelationships relationships { get; set; }
+        public DDRelationships? relationships { get; set; }
 
         //Additional ODH Data for Venues
-        public ODHData odhdata { get; set; }
+        public ODHData? odhdata { get; set; }
 
         [JsonIgnore]
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
         [JsonIgnore]
         public DateTime? FirstImport { get; set; }
         [JsonIgnore]        
         public DateTime? LastChange { get; set; }
         [JsonIgnore]
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         [JsonIgnore]
         public string? Source { get; set; }
@@ -62,9 +62,9 @@ namespace DataModel
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
 
         public bool Active { get; set; }
         public bool ODHActive { get; set; }
@@ -97,7 +97,7 @@ namespace DataModel
         //added
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
 
-        public List<string> PublishedOn { get; set; }
+        public List<string>? PublishedOn { get; set; }
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -136,7 +136,7 @@ namespace DataModel
 
     public class VenueRoomDetails
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public string Shortname { get; set; }
 
         public int? SquareMeters { get; set; }
@@ -144,7 +144,7 @@ namespace DataModel
 
         public bool? Indoor { get; set; }
 
-        public ICollection<VenueType> VenueFeatures { get; set; }
+        public ICollection<VenueType>? VenueFeatures { get; set; }
         public ICollection<VenueSetup> VenueSetup { get; set; }
     }
 
@@ -167,37 +167,37 @@ namespace DataModel
     public class DDAttributes
     {
         [JsonProperty("abstract")]
-        public IDictionary<string, string> _abstract { get; set; }
-        public ICollection<string> categories { get; set; }
-        public IDictionary<string, string> description { get; set; }
-        public ICollection<DDGeometry> geometries { get; set; }
-        public IDictionary<string, string> howToArrive { get; set; }
+        public IDictionary<string, string>? _abstract { get; set; }
+        public ICollection<string>? categories { get; set; }
+        public IDictionary<string, string>? description { get; set; }
+        public ICollection<DDGeometry>? geometries { get; set; }
+        public IDictionary<string, string>? howToArrive { get; set; }
         public IDictionary<string, string> name { get; set; }
-        public IDictionary<string, string> shortName { get; set; }
-        public IDictionary<string, string> url { get; set; }
-        public ICollection<DDAddress> address { get; set; }
+        public IDictionary<string, string>? shortName { get; set; }
+        public IDictionary<string, string>? url { get; set; }
+        public ICollection<DDAddress>? address { get; set; }
 
-        public DDOpeninghours openingHours { get; set; }
+        public DDOpeninghours? openingHours { get; set; }
 
-        public Nullable<Int32> beds { get; set; }
+        public int? beds { get; set; }
     }
 
     public class DDAttributesSubVenues : DDAttributes
     {
         public ICollection<DDAvailablesetup> availableSetups { get; set; }
-        public DDDimension dimension { get; set; }
+        public DDDimension? dimension { get; set; }
     }
 
     public class DDAddress
     {
         public IDictionary<string, string> street { get; set; }
         public IDictionary<string, string> city { get; set; }
-        public string region { get; set; }
+        public string? region { get; set; }
         public string country { get; set; }
-        public IDictionary<string, string> complement { get; set; }
-        public string[] categories { get; set; }
-        public string zipcode { get; set; }
-        public DDContactpoint contactPoint { get; set; }
+        public IDictionary<string, string>? complement { get; set; }
+        public string[]? categories { get; set; }
+        public string? zipcode { get; set; }
+        public DDContactpoint? contactPoint { get; set; }
     }
 
     public class DDContactpoint
@@ -240,8 +240,8 @@ namespace DataModel
 
     public class DDRelationships
     {
-        public IDictionary<string, ICollection<DDMultimediadescriptions>> multimediaDescriptions { get; set; }
-        public ICollection<DDSubVenue> subVenues { get; set; }
+        public IDictionary<string, ICollection<DDMultimediadescriptions>>? multimediaDescriptions { get; set; }
+        public ICollection<DDSubVenue>? subVenues { get; set; }
     }
 
     public class DDMultimediadescriptions

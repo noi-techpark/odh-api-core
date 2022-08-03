@@ -10,17 +10,17 @@ namespace Helper
     public class MetadataHelper
     {
         //Simple Method to reset the Metainfo
-        public static Metadata GetMetadata(string id, string type, string source, Nullable<DateTime> lastupdated = null, bool reduced = false)
+        public static Metadata GetMetadata(string id, string type, string? source, DateTime? lastupdated = null, bool reduced = false)
         {
             return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
 
-        public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
+        public static Metadata GetMetadata<T>(T data, string source, DateTime? lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
         {
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
             //If source is already set use the old source
-            if (data._Meta != null && !String.IsNullOrEmpty(data._Meta.Source))
+            if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
                 source = data._Meta.Source;            
 
             return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
@@ -174,7 +174,7 @@ namespace Helper
 
         public static Metadata GetMetadataforWebcam(WebcamInfoLinked data)
         {
-            string sourcemeta = data.Source.ToLower();
+            string sourcemeta = data.Source?.ToLower() ?? "";
             if (sourcemeta == "content")
                 sourcemeta = "idm";
 
@@ -204,7 +204,7 @@ namespace Helper
             if (data._Meta != null)
                 reduced = (bool)data._Meta.Reduced;
 
-            return data._Meta = GetMetadata(data, "lts", data.meta.lastUpdate, reduced);
+            return data._Meta = GetMetadata(data, "lts", data.meta?.lastUpdate, reduced);
         }
 
         public static Metadata GetMetadataforEventShort(EventShortLinked data)

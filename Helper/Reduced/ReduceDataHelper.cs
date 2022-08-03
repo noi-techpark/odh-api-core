@@ -251,7 +251,7 @@ namespace Helper
 
             //License + Meta
             reduced.LicenseInfo = mypoi.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "odhactivitypoi", reduced.Source.ToLower(), reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "odhactivitypoi", reduced.Source?.ToLower(), reduced.LastChange, true);
             reduced.PublishedOn = mypoi.PublishedOn;
 
             return reduced;
@@ -264,7 +264,7 @@ namespace Helper
 
             reduced.Id = myacco.Id + "_REDUCED";
 
-            reduced.AccoDetail = ReducedDataHelper.ReduceAccoDetail(myacco.AccoDetail);
+            reduced.AccoDetail = ReducedDataHelper.ReduceAccoDetail(myacco.AccoDetail ?? new Dictionary<string, AccoDetail>());
 
             //A1GEP, A1GNP, A0Alt
             reduced.Gpstype = myacco.Gpstype;
@@ -339,7 +339,7 @@ namespace Helper
             reduced.EventBooking = myevent.EventBooking != null ? ReducedDataHelper.ReduceEventBooking(myevent.EventBooking) : null;
 
             //Evendate
-            reduced.EventDate = ReducedDataHelper.ReduceEventDateCollection(myevent.EventDate);
+            reduced.EventDate = ReducedDataHelper.ReduceEventDateCollection(myevent.EventDate ?? new List<EventDate>());
 
             //ODH Fields
             reduced.Active = myevent.Active;
@@ -418,38 +418,41 @@ namespace Helper
             reduced.meta = venue.meta;
             reduced.LastChange = venue.LastChange;
             reduced.Source = venue.Source;
-            reduced.LicenseInfo = venue.odhdata.LicenseInfo;
+            reduced.LicenseInfo = venue.odhdata?.LicenseInfo;
             reduced.links = venue.links;
 
             if (reduced.relationships != null)
             {
                 reduced.relationships.multimediaDescriptions = null;
-                reduced.relationships.subVenues = venue.relationships.subVenues != null ? ReducedDataHelper.ReduceSubVenues(venue.relationships.subVenues) : null;
+                reduced.relationships.subVenues = venue.relationships?.subVenues != null ? ReducedDataHelper.ReduceSubVenues(venue.relationships.subVenues) : null;
             }
 
             reduced.odhdata = new ODHData();
 
-            //ODH Fields TODO
-            reduced.odhdata.Active = venue.odhdata.Active;
-            reduced.odhdata.ODHActive = venue.odhdata.ODHActive;
-            reduced.odhdata.Shortname = venue.odhdata.Shortname;
-            reduced.odhdata.SmgTags = venue.odhdata.SmgTags;
-            reduced.odhdata.HasLanguage = venue.odhdata.HasLanguage;
-            reduced.odhdata.Source = venue.odhdata.Source;
-            reduced.odhdata.GpsInfo = ReducedDataHelper.ReduceGpsInfo(venue.odhdata.GpsInfo);
-            reduced.odhdata.GpsPoints = venue.odhdata.GpsPoints;
-            reduced.odhdata.RoomCount = venue.odhdata.RoomCount;
-            reduced.odhdata.SyncSourceInterface = venue.odhdata.SyncSourceInterface;
-            reduced.odhdata.VenueCategory = venue.odhdata.VenueCategory;
-            reduced.odhdata.RoomDetails = ReducedDataHelper.ReduceVenueRoomDetails(venue.odhdata.RoomDetails);
+            if (venue.odhdata is { })
+            {
+                //ODH Fields TODO
+                reduced.odhdata.Active = venue.odhdata.Active;
+                reduced.odhdata.ODHActive = venue.odhdata.ODHActive;
+                reduced.odhdata.Shortname = venue.odhdata.Shortname;
+                reduced.odhdata.SmgTags = venue.odhdata.SmgTags;
+                reduced.odhdata.HasLanguage = venue.odhdata.HasLanguage;
+                reduced.odhdata.Source = venue.odhdata.Source;
+                reduced.odhdata.GpsInfo = ReducedDataHelper.ReduceGpsInfo(venue.odhdata.GpsInfo);
+                reduced.odhdata.GpsPoints = venue.odhdata.GpsPoints;
+                reduced.odhdata.RoomCount = venue.odhdata.RoomCount;
+                reduced.odhdata.SyncSourceInterface = venue.odhdata.SyncSourceInterface;
+                reduced.odhdata.VenueCategory = venue.odhdata.VenueCategory;
+                reduced.odhdata.RoomDetails = ReducedDataHelper.ReduceVenueRoomDetails(venue.odhdata.RoomDetails);
+            }
 
             ///LocationInfo, ODH Object calculated with
             reduced.odhdata.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(reduced.odhdata.LocationInfo);
 
             //License + Meta
-            reduced.odhdata.LicenseInfo = venue.odhdata.LicenseInfo;
+            reduced.odhdata.LicenseInfo = venue.odhdata?.LicenseInfo;
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "venue", "lts", reduced.LastChange, true);
-            reduced.odhdata.PublishedOn = venue.odhdata.PublishedOn;
+            reduced.odhdata.PublishedOn = venue.odhdata?.PublishedOn;
 
             return reduced;
         }
@@ -564,7 +567,7 @@ namespace Helper
             return mycontactinfo;
         }
 
-        public static IDictionary<string, ContactInfos> ReduceContactInfoForODHActivityPoi(IDictionary<string, ContactInfos> mycontactinfo, string source)
+        public static IDictionary<string, ContactInfos> ReduceContactInfoForODHActivityPoi(IDictionary<string, ContactInfos> mycontactinfo, string? source)
         {
             foreach (var value in mycontactinfo.Values)
             {
@@ -675,7 +678,7 @@ namespace Helper
             return gpsinfos;
         }
 
-        public static ICollection<LTSTagsLinked> ReduceLtsTags(ICollection<LTSTagsLinked> ltstags)
+        public static ICollection<LTSTagsLinked> ReduceLtsTags(ICollection<LTSTagsLinked>? ltstags)
         {
             if (ltstags != null)
             {
@@ -685,15 +688,15 @@ namespace Helper
                     ltstag.LTSTins = null;
                 }
             }
-            return ltstags;
+            return ltstags ?? new List<LTSTagsLinked>();
         }
 
-        public static LocationInfoLinked RemoveAreafromLocationInfo(LocationInfoLinked locinfo)
+        public static LocationInfoLinked RemoveAreafromLocationInfo(LocationInfoLinked? locinfo)
         {
             if (locinfo != null)
                 locinfo.AreaInfo = null;
 
-            return locinfo;
+            return locinfo ?? new();
         }
 
         public static EventBooking ReduceEventBooking(EventBooking eventBooking)
@@ -734,11 +737,11 @@ namespace Helper
 
         public static DDAttributes ReduceVenueAttributes(DDAttributes attributes)
         {
-            attributes.address = ReduceVenueAttributesAddress(attributes.address);
+            attributes.address = ReduceVenueAttributesAddress(attributes.address ?? new List<DDAddress>());
             attributes.beds = null;
             //attributes.categories = null; //attributes.categories
             attributes.description = null;
-            attributes.geometries = ReduceVenueAttributesGeometries(attributes.geometries);
+            attributes.geometries = ReduceVenueAttributesGeometries(attributes.geometries ?? new List<DDGeometry>());
             attributes.howToArrive = null;
 
             //attributes.name = null;   attributes.name

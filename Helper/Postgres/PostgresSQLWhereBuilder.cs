@@ -310,8 +310,8 @@ namespace Helper
                 .DurationFilter(duration, durationmin, durationmax)
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
                 .PublishedOnFilter(publishedonlist)
-                .When(taglist != null && taglist.Count > 0 && tagbehaviour == "and", q => q.TaggingFilter_AND("idm", taglist))
-                .When(taglist != null && taglist.Count > 0 && tagbehaviour == "or", q => q.TaggingFilter_OR("idm", taglist))
+                .When(taglist is { } && taglist.Count > 0 && tagbehaviour == "and", q => q.TaggingFilter_AND("idm", taglist!))
+                .When(taglist is { } && taglist.Count > 0 && tagbehaviour == "or", q => q.TaggingFilter_OR("idm", taglist!))
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
