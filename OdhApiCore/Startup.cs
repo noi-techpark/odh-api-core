@@ -379,6 +379,7 @@ namespace OdhApiCore
                 c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
                 c.SchemaFilter<EnumTypesSchemaFilter>(xmlPathdatamodel);
+                c.SchemaFilter<ObsoleteMemberSchemaFilter>();
                 c.DocumentFilter<EnumTypesDocumentFilter>();
                 c.EnableAnnotations();                       
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement

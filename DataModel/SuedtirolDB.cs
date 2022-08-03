@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Converters;
+using DataModel.Annotations;
 
 namespace DataModel
 {
@@ -573,8 +574,7 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, refer to TagName")]
+        [SwaggerObsoleteMember("Deprecated, refer to TagName")]
         public string? Shortname { get; set; }
 
         public IDictionary<string, string> TagName { get; set; }
@@ -588,15 +588,12 @@ namespace DataModel
 
         public Nullable<bool> DisplayAsCategory { get; set; }
 
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use Mapping")]
+        [SwaggerObsoleteMember("Deprecated, use Mapping")]
         public IDictionary<string, string> IDMCategoryMapping { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use Mapping")]        
+        [SwaggerObsoleteMember("Deprecated, use Mapping")]
         public LTSTaggingInfo LTSTaggingInfo { get; set; }
 
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use ValidForEntity")]
+        [SwaggerObsoleteMember("Deprecated, use ValidForEntity")]
         public string? MainEntity { get; set; }
 
         //Generic Mapping Object
@@ -2292,20 +2289,15 @@ namespace DataModel
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
         
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerObsoleteMember("Deprecated, use GpsPoints")]
         public string? Gpstype { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerObsoleteMember("Deprecated, use GpsPoints")]
         public double Latitude { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerObsoleteMember("Deprecated, use GpsPoints")]
         public double Longitude { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerObsoleteMember("Deprecated, use GpsPoints")]
         public Nullable<double> Altitude { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerObsoleteMember("Deprecated, use GpsPoints")]
         public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -2388,14 +2380,11 @@ namespace DataModel
         public string? Difficulty { get; set; }
 
         //Activity SubType
-        [Obsolete]
-        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
+        [SwaggerObsoleteMember("Use AdditionalPoiInfos.Categories instead")]
         public string? Type { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
+        [SwaggerObsoleteMember("Use AdditionalPoiInfos.Categories instead")]
         public string? SubType { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
+        [SwaggerObsoleteMember("Use AdditionalPoiInfos.Categories instead")]
         public string? PoiType { get; set; }
 
         /// <summary>
@@ -2906,8 +2895,7 @@ namespace DataModel
         public IDictionary<string, string> Webcamname { get; set; }
         public string? Webcamurl { get; set; }
 
-        [Obsolete]
-        [SwaggerSchema("Use GpsPoints instead")]
+        [SwaggerObsoleteMember("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
         public int? ListPosition { get; set; }       
         public string? Streamurl { get; set; }
@@ -3073,14 +3061,11 @@ namespace DataModel
         //public string Difficulty { get; set; }
         public string? Novelty { get; set; }
 
-        [Obsolete]
-        [SwaggerSchema("Use Categories instead")]
+        [SwaggerObsoleteMember("Use Categories instead")]
         public string? MainType { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Use Categories instead")]
+        [SwaggerObsoleteMember("Use Categories instead")]
         public string? SubType { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Use Categories instead")]
+        [SwaggerObsoleteMember("Use Categories instead")]
         public string? PoiType { get; set; }
 
         public string? Language { get; set; }
@@ -3206,8 +3191,7 @@ namespace DataModel
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
         // Here for compatibility reasons
-        [SwaggerSchema("Will be removed withhin 2021-12-31")]
-        [Obsolete]
+        [SwaggerObsoleteMember("Will be removed within 2021-12-31")]
         public bool Thuresday { get; set; }
         public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }

@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 public class EnumTypesSchemaFilter : ISchemaFilter
 {
-    private readonly XDocument _xmlComments;
+    private readonly XDocument? _xmlComments;
 
     public EnumTypesSchemaFilter(string xmlPath)
     {
@@ -35,8 +35,8 @@ public class EnumTypesSchemaFilter : ISchemaFilter
                 var fullEnumMemberName = $"F:{fullTypeName}.{enumMemberName}";
 
                 var enumMemberComments = _xmlComments.Descendants("member")
-                    .FirstOrDefault(m => m.Attribute("name").Value.Equals
-                    (fullEnumMemberName, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(m => m?.Attribute("name")?.Value.Equals
+                    (fullEnumMemberName, StringComparison.OrdinalIgnoreCase) ?? false);
 
                 if (enumMemberComments == null) continue;
 

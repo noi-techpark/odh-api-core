@@ -19,6 +19,7 @@ using Microsoft.Extensions.Primitives;
 using System.Globalization;
 using System.Net.Http;
 using Swashbuckle.AspNetCore.Annotations;
+using DataModel.Annotations;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -260,8 +261,7 @@ namespace OdhApiCore.Controllers.api
     public class ObjectwithDeprecated
     {       
         public string name { get; set; }
-        [SwaggerSchema("Will be removed on 12-05-22")]
-        [Obsolete("name2 is deprecated, please use name instead.")]
+        [SwaggerObsoleteMember("Will be removed on 12-05-22")]
         public string name2 { get; set; }
         public ICollection<string> namecol { get; set; }
     }
