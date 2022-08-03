@@ -3667,26 +3667,6 @@ namespace DataModel
         N
     }
     
-    public enum EventShortEventLocation
-    {
-        /// <summary>
-        /// NOI Techpark
-        /// </summary>
-        NOI,
-        /// <summary>
-        /// Eurac
-        /// </summary>
-        EC,
-        /// <summary>
-        /// Virtual Village
-        /// </summary>
-        VV,
-        /// <summary>
-        /// Other Location
-        /// </summary>
-        OUT
-    }
-
     public class RoomBooked
     {
         public string? Space { get; set; }
