@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace OdhApiCore.Swagger
 {
-    public class EnumAttributeFilter : ISchemaFilter
+    public class EnumAttributeSchemaFilter : ISchemaFilter
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {

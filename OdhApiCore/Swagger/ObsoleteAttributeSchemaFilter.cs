@@ -7,7 +7,7 @@ using System.Reflection;
 namespace OdhApiCore.Swagger
 {
 
-    public class ObsoleteMemberSchemaFilter : ISchemaFilter
+    public class ObsoleteAttributeSchemaFilter : ISchemaFilter
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
