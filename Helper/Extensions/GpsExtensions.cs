@@ -14,7 +14,8 @@ namespace Helper
             Dictionary<string, GpsInfo> gpspoints = new Dictionary<string, GpsInfo>();
             foreach (var gpsinfo in gpsinfolist)
             {
-                gpspoints.Add(gpsinfo.Gpstype, gpsinfo);
+                if (gpsinfo.Gpstype != null)
+                    gpspoints.Add(gpsinfo.Gpstype, gpsinfo);
             }
 
             //TODO LINQ SELECT
@@ -25,7 +26,10 @@ namespace Helper
         public static Dictionary<string, GpsInfo> ConvertGpsInfoToGpsPointsLinq(this List<GpsInfo> gpsinfolist)
         {
             if (gpsinfolist != null && gpsinfolist.Count > 0)
-                return gpsinfolist.Distinct().ToDictionary(x => x.Gpstype, x => x);
+                return gpsinfolist
+                    .Distinct()
+                    .Where(x => x.Gpstype != null)
+                    .ToDictionary(x => x.Gpstype!, x => x);
             else
                 return new Dictionary<string, GpsInfo>();
         }

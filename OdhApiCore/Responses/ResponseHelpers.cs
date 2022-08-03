@@ -178,7 +178,6 @@ namespace OdhApiCore.Responses
         public static JsonResultWithBookingInfo<T> GetResult<T>(
             uint pagenumber, uint totalpages, uint totalcount, int accosrequested, int availableonline, int availableonrequest,
             string resultid, string? seed, IEnumerable<T> data, IUrlHelper url)
-            where T : notnull
         {
             var (previouspage, nextpage) = GetPreviousAndNextPage(pagenumber, totalpages, url, seed);
             return new JsonResultWithBookingInfo<T>
