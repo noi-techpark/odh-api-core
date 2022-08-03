@@ -209,23 +209,14 @@ namespace Helper
 
         public static Metadata GetMetadataforEventShort(EventShortLinked data)
         {
-            string sourcestr = "";
-
             string sourcemeta = data.Source != null ? data.Source.ToLower() : "ebms";
 
-            switch (sourcemeta)
+            string sourcestr = sourcemeta switch
             {
-                case "content":
-                    sourcestr = "noi";
-                    break;
-                case "ebms":
-                    sourcestr = "eurac";
-                    break;
-                default:
-                    sourcestr = sourcemeta;
-                    break;                
-            }                
-
+                "content" => "noi",
+                "ebms" => "eurac",
+                _ => sourcemeta,
+            };
             return GetMetadata(data, sourcestr, data.LastChange, false);
         }
 
