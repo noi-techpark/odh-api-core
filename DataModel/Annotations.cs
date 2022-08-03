@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace DataModel.Annotations
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
-    public class SwaggerObsoleteAttribute : Attribute
+    public class SwaggerDeprecatedAttribute : Attribute
     {
-        public SwaggerObsoleteAttribute(string? description = null)
+        public SwaggerDeprecatedAttribute(string? description = null)
         {
             Description = description;
         }

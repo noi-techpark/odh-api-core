@@ -574,7 +574,7 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-        [SwaggerObsolete("Deprecated, refer to TagName")]
+        [SwaggerDeprecated("Deprecated, refer to TagName")]
         public string? Shortname { get; set; }
 
         public IDictionary<string, string> TagName { get; set; }
@@ -588,12 +588,12 @@ namespace DataModel
 
         public Nullable<bool> DisplayAsCategory { get; set; }
 
-        [SwaggerObsolete("Deprecated, use Mapping")]
+        [SwaggerDeprecated("Deprecated, use Mapping")]
         public IDictionary<string, string> IDMCategoryMapping { get; set; }
-        [SwaggerObsolete("Deprecated, use Mapping")]
+        [SwaggerDeprecated("Deprecated, use Mapping")]
         public LTSTaggingInfo LTSTaggingInfo { get; set; }
 
-        [SwaggerObsolete("Deprecated, use ValidForEntity")]
+        [SwaggerDeprecated("Deprecated, use ValidForEntity")]
         public string? MainEntity { get; set; }
 
         //Generic Mapping Object
@@ -2289,15 +2289,15 @@ namespace DataModel
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
         
-        [SwaggerObsolete("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public string? Gpstype { get; set; }
-        [SwaggerObsolete("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public double Latitude { get; set; }
-        [SwaggerObsolete("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public double Longitude { get; set; }
-        [SwaggerObsolete("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public Nullable<double> Altitude { get; set; }
-        [SwaggerObsolete("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -2380,11 +2380,11 @@ namespace DataModel
         public string? Difficulty { get; set; }
 
         //Activity SubType
-        [SwaggerObsolete("Use AdditionalPoiInfos.Categories instead")]
+        [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? Type { get; set; }
-        [SwaggerObsolete("Use AdditionalPoiInfos.Categories instead")]
+        [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? SubType { get; set; }
-        [SwaggerObsolete("Use AdditionalPoiInfos.Categories instead")]
+        [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? PoiType { get; set; }
 
         /// <summary>
@@ -2895,7 +2895,7 @@ namespace DataModel
         public IDictionary<string, string> Webcamname { get; set; }
         public string? Webcamurl { get; set; }
 
-        [SwaggerObsolete("Use GpsPoints instead")]
+        [SwaggerDeprecated("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
         public int? ListPosition { get; set; }       
         public string? Streamurl { get; set; }
@@ -3061,11 +3061,11 @@ namespace DataModel
         //public string Difficulty { get; set; }
         public string? Novelty { get; set; }
 
-        [SwaggerObsolete("Use Categories instead")]
+        [SwaggerDeprecated("Use Categories instead")]
         public string? MainType { get; set; }
-        [SwaggerObsolete("Use Categories instead")]
+        [SwaggerDeprecated("Use Categories instead")]
         public string? SubType { get; set; }
-        [SwaggerObsolete("Use Categories instead")]
+        [SwaggerDeprecated("Use Categories instead")]
         public string? PoiType { get; set; }
 
         public string? Language { get; set; }
@@ -3191,7 +3191,7 @@ namespace DataModel
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
         // Here for compatibility reasons
-        [SwaggerObsolete("Will be removed within 2021-12-31")]
+        [SwaggerDeprecated("Will be removed within 2021-12-31")]
         public bool Thuresday { get; set; }
         public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }
