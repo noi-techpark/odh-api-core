@@ -21,13 +21,9 @@ namespace OdhApiCore.Swagger
                     if (!string.IsNullOrEmpty(deprecated.Description))
                     {
                         if (string.IsNullOrEmpty(schema.Description))
-                        {
                             schema.Description = deprecated.Description;
-                        }
                         else
-                        {
                             schema.Description += $"\n{deprecated.Description}";
-                        }
                     }
                 }
             }
