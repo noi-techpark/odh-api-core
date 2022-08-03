@@ -6,7 +6,6 @@ using System.Reflection;
 
 namespace OdhApiCore.Swagger
 {
-
     public class DeprecatedAttributeSchemaFilter : ISchemaFilter
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
