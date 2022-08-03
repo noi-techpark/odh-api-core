@@ -44,12 +44,17 @@ namespace OdhApiCore.Controllers.api
                   .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
                   .When(FilterClosedData, q => q.FilterClosedData());
 
-            // TODO: Create a logic that constructs a message out of the object
+            var fieldsTohide = FieldsToHide;
+
+            var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+            var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
+
+            //TODO Create a logic that constructs a message out of the object
 
             var pushserverconfig = settings.PushServerConfig;
 
-            // TODO: Construct the message
-
+            //TODO Construct the message
             var message = new PushServerMessage();
 
             var result = await SendToPushServer.SendMessageToPushServer(pushserverconfig.ServiceUrl, message, pushserverconfig.User, pushserverconfig.Password, message.destination.language);
@@ -103,15 +108,12 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                if (data is not { })
-                    return NotFound();
-
                 var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
 
                 //Multilanguage support
                 var langarr = language.Split(',');
 
-                List<FCMModels> messages = new();
+                List<FCMModels> messages = new List<FCMModels>();
 
                 foreach (var lang in langarr)
                 {
@@ -129,7 +131,7 @@ namespace OdhApiCore.Controllers.api
                 if (pushserverconfig == null)
                     throw new Exception("PushserverConfig could not be found");
 
-                Dictionary<string, FCMPushNotificationResponse> resultlist = new();
+                Dictionary<string, FCMPushNotificationResponse> resultlist = new Dictionary<string, FCMPushNotificationResponse>();
 
                 foreach (var message in messages)
                 {

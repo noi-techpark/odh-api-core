@@ -140,12 +140,22 @@ namespace OdhApiCore.Controllers.api
 
             if (myobject != null)
             {
-                var myparsedobject = JsonConvert.DeserializeObject<T>(myobject.Value);
-                if (myparsedobject is { })
-                    return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(myparsedobject, type, language, null, idtoshow, urltoshow, imagetoshow, showid);               
-            }
+                //if (myobject.GetType() == typeof(SkiArea))
+                //{
+                //    var myparentobject = await RavenSession.LoadAsync<SkiRegion>(((SkiArea)(object)myobject).SkiRegionId);
 
-            return new();
+                //    var myresult = TransformToSchemaNet.TransformDataToSchemaNet<T>(myobject, myparentobject, language, idtoshow, urltoshow, imagetoshow, type, showid);
+
+                //    return myresult;
+                //}
+                //else
+                //{
+                var myparsedobject = JsonConvert.DeserializeObject<T>(myobject.Value);
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(myparsedobject, type, language, null, idtoshow, urltoshow, imagetoshow, showid);               
+                //}
+            }
+            else
+                return null;
         }
 
     }

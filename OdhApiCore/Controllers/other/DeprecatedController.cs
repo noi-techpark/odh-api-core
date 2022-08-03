@@ -28,7 +28,7 @@ namespace OdhApiCore.Controllers.other
                 var response = await client.GetAsync(requesturl);
                 var responsecontent = await response.Content.ReadAsStringAsync();                
 
-                JObject? obj = JsonConvert.DeserializeObject<JObject>(responsecontent);
+                JObject obj = JsonConvert.DeserializeObject<JObject>(responsecontent);
 
                 //obj["dialog"]["prompt"]
 
@@ -39,8 +39,8 @@ namespace OdhApiCore.Controllers.other
 
     public class DeprecatedInfo
     {
-        public string? Name { get; set; }
-        public string? Type { get; set; }
-        public string? Description { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Description { get; set; }
     }
 }

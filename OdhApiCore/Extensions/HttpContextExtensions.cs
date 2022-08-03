@@ -6,7 +6,7 @@ namespace OdhApiCore
 {
     public static class HttpContextExtensions
     {
-        public static void AddRateLimitHeaders(this HttpContext context, int maxrequests, int requestsdone, int timewindow, string policy, CancellationToken token = default)
+        public async static Task AddRateLimitHeaders(this HttpContext context, int maxrequests, int requestsdone, int timewindow, string policy, CancellationToken token = default)
         {
             var remainingrequests = maxrequests - requestsdone;
 

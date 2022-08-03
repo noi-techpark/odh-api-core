@@ -259,10 +259,10 @@ namespace OdhApiCore.Controllers.api
     }
     
     public class ObjectwithDeprecated
-    {
-        public string? name { get; set; }
+    {       
+        public string name { get; set; }
         [SwaggerDeprecated("Will be removed on 12-05-22, please use name instead.")]
-        public string? name2 { get; set; }
-        public ICollection<string>? namecol { get; set; }
+        public string name2 { get; set; }
+        public ICollection<string> namecol { get; set; }
     }
 }
