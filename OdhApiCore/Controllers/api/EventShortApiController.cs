@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using DataModel.Annotations;
 using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -12,6 +13,7 @@ using Npgsql;
 using OdhApiCore.Responses;
 using SqlKata;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -77,8 +79,11 @@ namespace OdhApiCore.Controllers.api
             string? datetimeformat = null, 
             string? source = null,
             //[RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
-            [JsonConverter(typeof(StringEnumConverter))]
-            EventShortEventLocation? eventlocation = null, 
+            //[JsonConverter(typeof(StringEnumConverter))]
+            //EventShortEventLocation? eventlocation = null, 
+            [SwaggerEnum(new[] { "NOI", "EV", "VV", "OUT" })]
+            [SwaggerParameter("<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>")]
+            string? eventlocation = null, 
             //string? eventlocation = null,
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,

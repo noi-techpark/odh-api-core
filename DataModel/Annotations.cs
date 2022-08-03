@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataModel.Annotations
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class SwaggerObsoleteMemberAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+    public class SwaggerObsoleteAttribute : Attribute
     {
-        public SwaggerObsoleteMemberAttribute(string? description = null)
+        public SwaggerObsoleteAttribute(string? description = null)
         {
             Description = description;
         }
@@ -17,10 +17,10 @@ namespace DataModel.Annotations
         public string Description { get; }
     }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class SwaggerEnumMemberAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+    public class SwaggerEnumAttribute : Attribute
     {
-        public SwaggerEnumMemberAttribute(string[] enumValues)
+        public SwaggerEnumAttribute(string[] enumValues)
         {
             EnumValues = enumValues;
         }

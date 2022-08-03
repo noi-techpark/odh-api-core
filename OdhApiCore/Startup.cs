@@ -377,7 +377,7 @@ namespace OdhApiCore
                     Scheme = "Bearer"
                 });
                 c.SchemaFilter<ObsoleteMemberSchemaFilter>();
-                c.SchemaFilter<EnumMemberAttributeFilter>();
+                c.SchemaFilter<EnumAttributeFilter>();
                 c.EnableAnnotations();                       
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{

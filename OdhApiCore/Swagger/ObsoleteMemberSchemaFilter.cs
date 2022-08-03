@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
+using System.Reflection;
 
 namespace OdhApiCore.Swagger
 {
@@ -10,12 +11,12 @@ namespace OdhApiCore.Swagger
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            if (context.MemberInfo is { } memberInfo)
+            if ((context.ParameterInfo as ICustomAttributeProvider ?? context.MemberInfo) is { } info)
             {
-                var obsoleteMemberAttribute = memberInfo
+                var obsoleteMemberAttribute = info
                     .GetCustomAttributes(false)
-                    .FirstOrDefault(attribute => attribute.GetType() == typeof(SwaggerObsoleteMemberAttribute));
-                if (obsoleteMemberAttribute is SwaggerObsoleteMemberAttribute obsoleteMember)
+                    .FirstOrDefault(attribute => attribute.GetType() == typeof(SwaggerObsoleteAttribute));
+                if (obsoleteMemberAttribute is SwaggerObsoleteAttribute obsoleteMember)
                 {
                     schema.Deprecated = true;
                     if (!string.IsNullOrEmpty(obsoleteMember.Description))

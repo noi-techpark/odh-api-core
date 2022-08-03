@@ -261,7 +261,7 @@ namespace OdhApiCore.Controllers.api
     public class ObjectwithDeprecated
     {       
         public string name { get; set; }
-        [SwaggerObsoleteMember("Will be removed on 12-05-22, please use name instead.")]
+        [SwaggerObsolete("Will be removed on 12-05-22, please use name instead.")]
         public string name2 { get; set; }
         public ICollection<string> namecol { get; set; }
     }

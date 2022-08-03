@@ -4,19 +4,20 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace OdhApiCore.Swagger
 {
-    public class EnumMemberAttributeFilter : ISchemaFilter
+    public class EnumAttributeFilter : ISchemaFilter
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            if (context.MemberInfo is { } memberInfo)
+            if ((context.MemberInfo as ICustomAttributeProvider ?? context.ParameterInfo) is { } info)
             {
-                var obsoleteMemberAttribute = memberInfo
+                var obsoleteMemberAttribute = info
                     .GetCustomAttributes(false)
-                    .FirstOrDefault(attribute => attribute.GetType() == typeof(SwaggerEnumMemberAttribute));
-                if (obsoleteMemberAttribute is SwaggerEnumMemberAttribute obsoleteMember)
+                    .FirstOrDefault(attribute => attribute.GetType() == typeof(SwaggerEnumAttribute));
+                if (obsoleteMemberAttribute is SwaggerEnumAttribute obsoleteMember)
                 {
                     var enumValues = new List<IOpenApiAny>();
                     foreach (var enumValue in obsoleteMember.EnumValues)
