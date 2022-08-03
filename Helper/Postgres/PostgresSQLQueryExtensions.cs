@@ -963,15 +963,15 @@ namespace Helper
                 taglist.Aggregate(q, (q, tag) =>
                     q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
 
-        public static Query TaggingFilter_OR(this Query query, IReadOnlyDictionary<string,string> tagdict) =>
+        public static Query TaggingFilter_OR(this Query query, IDictionary<string,string> tagdict) =>
            query.Where(q =>
                tagdict.Aggregate(q, (q, tag) =>
-                   q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Key}\[*\] ? (@.Id == ""{tag.Value}"")'")));
+                   q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
 
-        public static Query TaggingFilter_AND(this Query query, IReadOnlyDictionary<string,string> tagdict) =>
+        public static Query TaggingFilter_AND(this Query query, IDictionary<string,string> tagdict) =>
             query.Where(q =>
                 tagdict.Aggregate(q, (q, tag) =>
-                    q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Key}\[*\] ? (@.Id == ""{tag.Value}"")'")));
+                    q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
 
         #endregion
 

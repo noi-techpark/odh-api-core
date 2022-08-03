@@ -3487,6 +3487,7 @@ namespace DataModel
 
         public string? Id { get; set; }
         public string? Source { get; set; }
+
         [SwaggerEnum(new[] { "NOI", "EC" })]
         public string? EventLocation { get; set; }
 
