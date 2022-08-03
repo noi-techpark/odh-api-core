@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using DataModel.Annotations;
 using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -12,6 +13,7 @@ using Npgsql;
 using OdhApiCore.Responses;
 using SqlKata;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -76,10 +78,9 @@ namespace OdhApiCore.Controllers.api
             string? enddate = null, 
             string? datetimeformat = null, 
             string? source = null,
-            //[RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
-            [JsonConverter(typeof(StringEnumConverter))]
-            EventShortEventLocation? eventlocation = null, 
-            //string? eventlocation = null,
+            [SwaggerEnum(new[] { "NOI", "EV", "VV", "OUT" })]
+            [SwaggerParameter("<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>")]
+            string? eventlocation = null, 
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
@@ -104,7 +105,7 @@ namespace OdhApiCore.Controllers.api
             return await GetEventShortList(
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
-                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation.ToString(),
+                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, active: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, optimizedates: optimizedates,
                    sortorder: sortorder, seed: seed, lastchange: lastchange, publishedon: publishedon, 
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 

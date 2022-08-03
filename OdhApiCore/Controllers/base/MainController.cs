@@ -77,7 +77,7 @@ namespace OdhApiCore.Controllers
         private string swaggerUrl = default!;
         public string SwaggerUrl
         {
-            get { return Uri.EscapeUriString(ApplicationURL + "swagger/index.html#/" + swaggerUrl); }
+            get { return Uri.EscapeDataString(ApplicationURL + "swagger/index.html#/" + swaggerUrl); }
             set { swaggerUrl = value; }
         }
 
@@ -85,8 +85,8 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                return Uri.EscapeUriString(ApplicationURL + "v1/" + Uri.EscapeUriString(this.ApiIdentifier));
-                //return Uri.EscapeUriString(MyHttpContext.AppBaseUrl + "api/" + Uri.EscapeUriString(this.ApiIdentifier));
+                return Uri.EscapeDataString(ApplicationURL + "v1/" + Uri.EscapeDataString(this.ApiIdentifier));
+                //return Uri.EscapeDataString(MyHttpContext.AppBaseUrl + "api/" + Uri.EscapeDataString(this.ApiIdentifier));
             }
         }
     }
