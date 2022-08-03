@@ -50,6 +50,8 @@ namespace OdhApiCore.Controllers.api
 
         public string tagfilterbehaviour;
         public List<string> taglist;
+        
+        public IDictionary<string, IDictionary<string,string>> tagdict;
 
         //New Publishedonlist
         public List<string> publishedonlist;
@@ -269,6 +271,8 @@ namespace OdhApiCore.Controllers.api
             }
 
             taglist = Helper.CommonListCreator.CreateIdList(tagfilter);
+
+            tagdict = GenericHelper.RetrieveTagFilter(tagfilter);
 
             this.lastchange = lastchange;
         }
