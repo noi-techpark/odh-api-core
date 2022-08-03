@@ -265,7 +265,7 @@ namespace Helper
             IReadOnlyCollection<string> categorycodeslist, IReadOnlyCollection<string> dishcodeslist, IReadOnlyCollection<string> ceremonycodeslist, IReadOnlyCollection<string> facilitycodeslist,
             IReadOnlyCollection<string> activitytypelist, IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> difficultylist, 
             bool distance, int distancemin, int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin, int altitudemax,
-            string tagbehaviour, IReadOnlyCollection<string> taglist,
+            string tagbehaviour, IReadOnlyDictionary<string,string> tagdict,
             IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
@@ -310,8 +310,8 @@ namespace Helper
                 .DurationFilter(duration, durationmin, durationmax)
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
                 .PublishedOnFilter(publishedonlist)
-                .When(taglist != null && taglist.Count > 0 && tagbehaviour == "and", q => q.TaggingFilter_AND("idm", taglist))
-                .When(taglist != null && taglist.Count > 0 && tagbehaviour == "or", q => q.TaggingFilter_OR("idm", taglist))
+                .When(tagdict != null && tagdict.Count > 0 && tagbehaviour == "and", q => q.TaggingFilter_AND(tagdict))
+                .When(tagdict != null && tagdict.Count > 0 && tagbehaviour == "or", q => q.TaggingFilter_OR(tagdict))
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());

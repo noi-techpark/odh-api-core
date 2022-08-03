@@ -50,6 +50,7 @@ namespace OdhApiCore.Controllers.api
 
         public string tagfilterbehaviour;
         public List<string> taglist;
+        public Dictionary<string, string> tagdict;
 
         //New Publishedonlist
         public List<string> publishedonlist;
