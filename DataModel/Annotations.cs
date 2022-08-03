@@ -16,4 +16,15 @@ namespace DataModel.Annotations
 
         public string Description { get; }
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class SwaggerEnumMemberAttribute : Attribute
+    {
+        public SwaggerEnumMemberAttribute(string[] enumValues)
+        {
+            EnumValues = enumValues;
+        }
+
+        public IEnumerable<string> EnumValues { get; }
+    }
 }
