@@ -48,8 +48,10 @@ namespace OdhApiCore.Controllers.api
         public int durationmin;
         public int durationmax;
 
-        public string tagfilterbehaviour = "";
+        public string tagfilterbehaviour;
         public List<string> taglist;
+        
+        public IDictionary<string, IDictionary<string,string>> tagdict;
 
         //New Publishedonlist
         public List<string> publishedonlist;
@@ -115,11 +117,12 @@ namespace OdhApiCore.Controllers.api
             string? lastchange,             
             IEnumerable<string>? tourismusvereinids)
         {
-            typelist = new();
+            typelist = new List<string>();
+            int typeinteger = 0;
 
             if (!String.IsNullOrEmpty(typefilter))
             {
-                if (int.TryParse(typefilter, out int typeinteger))
+                if (int.TryParse(typefilter, out typeinteger))
                 {
                     //Sonderfall wenn alles abgefragt wird um keine unnötige Where zu erzeugen
                     if (typeinteger != 255)
@@ -139,12 +142,12 @@ namespace OdhApiCore.Controllers.api
             if (typelist.Count > 0)
                 subtypelist = Helper.ActivityPoiListCreator.CreateSmgPoiSubTypefromFlag(typelist.FirstOrDefault(), subtypefilter);
             else
-                subtypelist = new();
+                subtypelist = new List<string>();
 
             if (subtypelist.Count > 0)
                 level3typelist = Helper.ActivityPoiListCreator.CreateSmgPoiPoiTypefromFlag(subtypelist.FirstOrDefault(), level3typefilter);
             else
-                level3typelist = new();
+                level3typelist = new List<string>();
             
 
 
@@ -160,10 +163,10 @@ namespace OdhApiCore.Controllers.api
 
             smgtaglistand = Helper.CommonListCreator.CreateIdList(smgtagsand);
 
-            tourismvereinlist = new();
-            regionlist = new();
-            municipalitylist = new();
-            districtlist = new();
+            tourismvereinlist = new List<string>();
+            regionlist = new List<string>();
+            municipalitylist = new List<string>();
+            districtlist = new List<string>();
 
             if (locfilter != null && locfilter.Contains("reg"))
                 regionlist = Helper.CommonListCreator.CreateDistrictIdList(locfilter, "reg");
@@ -193,9 +196,9 @@ namespace OdhApiCore.Controllers.api
             facilitycodesids.AddRange(cuisinecodesids);
 
             //using Activity Filters
-            activitytypelist = new();
+            activitytypelist = new List<string>();
             //using Poi Filters
-            poitypelist = new();
+            poitypelist = new List<string>();
 
             if (activitytypefilter != null)
             {
@@ -215,7 +218,7 @@ namespace OdhApiCore.Controllers.api
                 subtypelist = Helper.ActivityPoiListCreator.CreateActivitySubTypefromFlag(activitytypelist.FirstOrDefault(), subtypefilter);
 
             //using Poi Filters
-            poitypelist = new();
+            poitypelist = new List<string>();
             if (poitypefilter != null)
             {
                 if (int.TryParse(poitypefilter, out int typeintegerpoi))
@@ -269,12 +272,14 @@ namespace OdhApiCore.Controllers.api
 
             taglist = Helper.CommonListCreator.CreateIdList(tagfilter);
 
+            tagdict = GenericHelper.RetrieveTagFilter(tagfilter);
+
             this.lastchange = lastchange;
         }
 
         private List<string> ExtendSourceFilterODHActivityPois(List<string> sourcelist)
         {
-            List<string> sourcelistnew = new();
+            List<string> sourcelistnew = new List<string>();
 
             foreach(var source in sourcelist)
             {

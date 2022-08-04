@@ -54,7 +54,7 @@ namespace OdhApiCore.Controllers.api
             string? locfilter = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetLocationInfoFiltered(language ?? "en", locfilter, showall, type, cancellationToken);
+            return await GetLocationInfoFiltered(language, locfilter, showall, type, cancellationToken);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace OdhApiCore.Controllers.api
             string? locfilter = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetSkiAreaInfoFiltered(language ?? "en", locfilter, cancellationToken);
+            return await GetSkiAreaInfoFiltered(language, locfilter, cancellationToken);
         }
 
         #endregion
@@ -137,7 +137,7 @@ namespace OdhApiCore.Controllers.api
 
                         if (mymetaregionlist != null && mymetaregionlist.Count() > 0)
                         {
-                            var regionlist = mymetaregionlist.FirstOrDefault()?.RegionIds ?? Enumerable.Empty<string>();
+                            var regionlist = mymetaregionlist.FirstOrDefault().RegionIds ?? Enumerable.Empty<string>();
 
                             string regionlistwhere = "data->>'Id' IN (" + Helper.StringHelpers.JoinStringListForPG(",", regionlist, "'") + ") AND " + defaultmunfrafilter;
                             var myregionlist = await GetLocationFromDB<Region>("regions", regionlistwhere);
@@ -386,7 +386,7 @@ namespace OdhApiCore.Controllers.api
 
         #region HelperMethods
 
-        private async Task<IEnumerable<T>> GetLocationFromDB<T>(string table, string whereraw) where T : notnull
+        private async Task<IEnumerable<T>?> GetLocationFromDB<T>(string table, string whereraw) where T : notnull
         {
             return await QueryFactory.Query()
                    .Select("data")
@@ -394,7 +394,7 @@ namespace OdhApiCore.Controllers.api
                    .WhereRaw(whereraw)
                    .GetObjectListAsync<T>();
         }
-        private async Task<IEnumerable<T>> GetLocationFromDB<T>(string table, Tuple<string, string> where) where T : notnull
+        private async Task<IEnumerable<T>?> GetLocationFromDB<T>(string table, Tuple<string, string> where) where T : notnull
         {
             return await QueryFactory.Query()
                    .Select("data")

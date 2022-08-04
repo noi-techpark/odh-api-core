@@ -31,7 +31,7 @@ namespace OdhApiCore.Filters
 
             if (matchedactiontointercept != null)
             {
-                RouteValueDictionary redirectTargetDictionary = new();
+                RouteValueDictionary redirectTargetDictionary = new RouteValueDictionary();
 
                 redirectTargetDictionary.Add("action", matchedactiontointercept.RedirectAction);
                 redirectTargetDictionary.Add("controller", matchedactiontointercept.RedirectController);
@@ -52,7 +52,7 @@ namespace OdhApiCore.Filters
             await base.OnActionExecutionAsync(context, next);                                  
         }
 
-        public RequestInterceptorConfig? GetActionsToIntercept(string? actionid, string? controller, IDictionary<string, object?> actionarguments)
+        public RequestInterceptorConfig? GetActionsToIntercept(string actionid, string controller, IDictionary<string,object> actionarguments)
         {
             if (settings.RequestInterceptorConfig != null && settings.RequestInterceptorConfig.Where(x => x.Action == actionid && x.Controller == controller).Count() > 0)
             {
@@ -68,10 +68,10 @@ namespace OdhApiCore.Filters
             return null;
         }
 
-        public bool GetQueryStringsToInterceptAndMatch(RequestInterceptorConfig config, IDictionary<string, object?> querystrings)
+        public bool GetQueryStringsToInterceptAndMatch(RequestInterceptorConfig config, IDictionary<string,object> querystrings)
         {
-            // Forget about cancellationtoken and other generated
-            Dictionary<string, string> configdict = new();
+            //Forget about cancellationtoken and other generated
+            Dictionary<string, string> configdict = new Dictionary<string, string>();
 
             if (config.QueryStrings != null)
             {
@@ -86,9 +86,9 @@ namespace OdhApiCore.Filters
                 }
             }
 
-            var actualdict = new Dictionary<string, string?>();
+            var actualdict = new Dictionary<string, string>();
 
-            List<string> toexclude = new() { "cancellationToken" };
+            List<string> toexclude = new List<string> { "cancellationToken" };
 
             foreach(var item in querystrings)
             {
@@ -96,71 +96,71 @@ namespace OdhApiCore.Filters
                 {
                     if (item.Key == "pagesize")
                     {
-                        actualdict.TryAdd(item.Key, ((PageSize?)item.Value)?.Value.ToString());
+                        actualdict.TryAdd(item.Key, ((PageSize)item.Value).Value.ToString());
                     }
                     else if (item.Key == "highlight" || item.Key == "active" || item.Key == "odhactive")
                     {
-                        if (((LegacyBool?)item.Value)?.Value != null)
+                        if (((LegacyBool)item.Value).Value != null)
                             actualdict.TryAdd(item.Key, ((LegacyBool)item.Value).Value.ToString());
                     }
                     else if (item.Key == "fields")
                     {
-                        if (((string[]?)item.Value)?.Count() > 0)
+                        if (((string[])item.Value).Count() > 0)
                             actualdict.TryAdd(item.Key, (String.Join(",", (string[])item.Value)));
                     }
                     else if (item.Key == "pagenumber")
                     {
-                        actualdict.TryAdd(item.Key, ((uint?)item.Value).ToString());
+                        actualdict.TryAdd(item.Key, ((uint)item.Value).ToString());
                     }
                     else if (item.Key == "removenullvalues")
                     {
-                        actualdict.TryAdd(item.Key, ((bool?)item.Value).ToString());
+                        actualdict.TryAdd(item.Key, ((bool)item.Value).ToString());
                     }
                     else
                     {
-                        actualdict.TryAdd(item.Key, ((string?)item.Value));
+                        actualdict.TryAdd(item.Key, ((string)item.Value));
                     }                        
                 }
             }
 
-            // Matching the two Dictionaries
+            //Matching the two Dictionaries
             return MatchDictionaries(configdict, actualdict);               
         }
 
-        private static bool MatchDictionaries(IDictionary<string, string> dict1, IDictionary<string, string?> dict2)
+        private static bool MatchDictionaries(IDictionary<string,string> dict1, IDictionary<string,string> dict2)
         {
-             List<string> validlanguages = new() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
+            List<string> validlanguages = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
 
-            // Return only if there is a 1:1 match
+            //return only if there is a 1:1 match
             foreach(var item in dict1)
             {
-                // If the Request does not contain the configured QS Key exit immediately
+                //if the Request does not contain the configured QS Key exit immediately
                 if (!dict2.ContainsKey(item.Key))
                     return false;
 
 
-                // If the config does not contains a * go on
+                //if the config does not contains a * go on
                 if (!item.Value.Contains("*"))
                 {
-                    // If the values are different exit immediately
-                    if (dict2?[item.Key]?.ToLower() != item.Value.ToLower())
+                    //if the values are different exit immediately
+                    if (dict2[item.Key].ToLower() != item.Value.ToLower())
                         return false;
                 }
                 else
                 {
-                    // Specialcase Language + fields with *
-                    // check if one of the validlanguages matches
+                    //Specialcase Language + fields with *
+                    //check if one of the validlanguages matches
                     int matchcount = 0;
 
                     foreach(var lang in validlanguages)
                     {
                         var newconfigvalue = item.Value.ToLower().Replace("*", lang);
 
-                        if(dict2?[item.Key]?.ToLower() == newconfigvalue.ToLower())
+                        if(dict2[item.Key].ToLower() == newconfigvalue.ToLower())
                              matchcount++;
                     }
 
-                    // If no matches exit immediately
+                    //if no matches exit immediately
                     if (matchcount == 0)
                         return false;
                 }
@@ -168,5 +168,25 @@ namespace OdhApiCore.Filters
 
             return true;
         }
+
+        //public Task GetReturnObject(ActionExecutingContext context, string action, IDictionary<string, object> actionarguments, IHeaderDictionary headerDictionary)
+        //{     
+        //    var language = (string?)actionarguments["language"];
+
+        //    string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"STAAccommodations_{language}.json");
+
+        //    using (StreamReader r = new StreamReader(fileName))
+        //    {
+        //        string json = r.ReadToEndAsync().Result;
+
+        //        //var response = this.Request.CreateResponse(HttpStatusCode.OK);
+        //        //response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+        //        //return ResponseMessage(response);
+
+        //        context.Result = new OkObjectResult(new JsonRaw(json));
+        //    }
+
+        //    return Task.CompletedTask;
+        //}
     }
 }
