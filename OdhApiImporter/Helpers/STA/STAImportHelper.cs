@@ -86,24 +86,27 @@ namespace OdhApiImporter.Helpers
                         //Adding TypeInfo Additional
                         odhactivitypoi.AdditionalPoiInfos = await GetAdditionalTypeInfo.GetAdditionalTypeInfoForPoi(QueryFactory, odhactivitypoi?.SubType, new List<string>() { "de", "it", "en" });
 
-                        ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+                        if (odhactivitypoi is { })
+                        {
+                            ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
 
-                        //Special get all Taglist and traduce it on import
-                        await GenericTaggingHelper.AddMappingToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+                            //Special get all Taglist and traduce it on import
+                            await GenericTaggingHelper.AddMappingToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
 
-                        //Save to Rawdatatable
-                        var rawdataid = await InsertInRawDataDB(vendingpoint);
+                            //Save to Rawdatatable
+                            var rawdataid = await InsertInRawDataDB(vendingpoint);
 
-                        //Save to PG
-                        //Check if data exists                    
-                        var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois", rawdataid);
+                            //Save to PG
+                            //Check if data exists                    
+                            var result = await QueryFactory.UpsertData(odhactivitypoi, "smgpois", rawdataid);
 
-                        if (result.updated != null)
-                            updatecounter = updatecounter + result.updated.Value;
-                        if (result.created != null)
-                            newcounter = newcounter + result.created.Value;
-                        if (result.deleted != null)
-                            deletecounter = deletecounter + result.deleted.Value;
+                            if (result.updated != null)
+                                updatecounter = updatecounter + result.updated.Value;
+                            if (result.created != null)
+                                newcounter = newcounter + result.created.Value;
+                            if (result.deleted != null)
+                                deletecounter = deletecounter + result.deleted.Value;
+                        }
                     }
                 }
 
@@ -124,7 +127,7 @@ namespace OdhApiImporter.Helpers
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(stavendingpoint),
                             sourceinterface = "csv",
-                            sourceid = stavendingpoint.STA_ID,
+                            sourceid = stavendingpoint?.STA_ID ?? "",
                             sourceurl = "csvfile",
                             type = "poi_sta_vendingpoint"
                         });

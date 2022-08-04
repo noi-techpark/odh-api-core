@@ -56,7 +56,7 @@ namespace SIAG
             }
         }
 
-        public static async Task<XDocument> GetMuseumDetail(string museumid)
+        public static async Task<XDocument?> GetMuseumDetail(string museumid)
         {
             try
             {

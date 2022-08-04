@@ -120,8 +120,8 @@ namespace OdhApiImporter.Helpers
 
                     var queryresult = await InsertDataToDB(eventshort, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
 
-                    newcounter = newcounter + queryresult.created.Value;
-                    updatecounter = updatecounter + queryresult.updated.Value;               
+                    newcounter = newcounter + queryresult.created ?? 0;
+                    updatecounter = updatecounter + queryresult.updated ?? 0;               
                 }
             }
 

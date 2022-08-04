@@ -10,17 +10,17 @@ namespace Helper
     public class MetadataHelper
     {
         //Simple Method to reset the Metainfo
-        public static Metadata GetMetadata(string id, string type, string source, Nullable<DateTime> lastupdated = null, bool reduced = false)
+        public static Metadata GetMetadata(string id, string type, string? source, DateTime? lastupdated = null, bool reduced = false)
         {
             return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
 
-        public static Metadata GetMetadata<T>(T data, string source, Nullable<DateTime> lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
+        public static Metadata GetMetadata<T>(T data, string source, DateTime? lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
         {
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
             //If source is already set use the old source
-            if (data._Meta != null && !String.IsNullOrEmpty(data._Meta.Source))
+            if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
                 source = data._Meta.Source;            
 
             return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
@@ -36,30 +36,30 @@ namespace Helper
         {
             return myobject switch
             {
-                Accommodation or AccommodationLinked => GetMetadataforAccommodation(myobject as AccommodationLinked),
-                AccoRoom or AccommodationRoomLinked => GetMetadataforAccommodationRoom(myobject as AccommodationRoomLinked),
-                GBLTSActivity or LTSActivityLinked => GetMetadataforActivity(myobject as LTSActivityLinked),
-                GBLTSPoi or LTSPoiLinked => GetMetadataforPoi(myobject as LTSPoiLinked),
-                Gastronomy or GastronomyLinked => GetMetadataforGastronomy(myobject as GastronomyLinked),
-                Event or EventLinked => GetMetadataforEvent(myobject as EventLinked),
-                ODHActivityPoi or ODHActivityPoiLinked => GetMetadataforOdhActivityPoi(myobject as ODHActivityPoiLinked),
-                Package or PackageLinked => GetMetadataforPackage(myobject as PackageLinked),
-                Measuringpoint or MeasuringpointLinked => GetMetadataforMeasuringpoint(myobject as MeasuringpointLinked),
-                WebcamInfo or WebcamInfoLinked => GetMetadataforWebcam(myobject as WebcamInfoLinked),
-                Article or ArticlesLinked => GetMetadataforArticle(myobject as ArticlesLinked),
-                DDVenue => GetMetadataforVenue(myobject as DDVenue),
-                EventShort or EventShortLinked => GetMetadataforEventShort(myobject as EventShortLinked),
-                ExperienceArea or ExperienceAreaLinked => GetMetadataforExperienceArea(myobject as ExperienceAreaLinked),
-                MetaRegion or MetaRegionLinked => GetMetadataforMetaRegion(myobject as MetaRegionLinked),
-                Region or RegionLinked => GetMetadataforRegion(myobject as RegionLinked),
-                Tourismverein or TourismvereinLinked => GetMetadataforTourismverein(myobject as TourismvereinLinked),
-                Municipality or MunicipalityLinked => GetMetadataforMunicipality(myobject as MunicipalityLinked),
-                District or DistrictLinked => GetMetadataforDistrict(myobject as DistrictLinked),
-                SkiArea or SkiAreaLinked => GetMetadataforSkiArea(myobject as SkiAreaLinked),
-                SkiRegion or SkiRegionLinked => GetMetadataforSkiRegion(myobject as SkiRegionLinked),
-                Area or AreaLinked => GetMetadataforArea(myobject as AreaLinked),
-                Wine or WineLinked => GetMetadataforWineAward(myobject as WineLinked),
-                SmgTags or ODHTagLinked => GetMetadataforOdhTag(myobject as ODHTagLinked),
+                AccommodationLinked al => GetMetadataforAccommodation(al),
+                AccommodationRoomLinked al => GetMetadataforAccommodationRoom(al),
+                LTSActivityLinked ltsal => GetMetadataforActivity(ltsal),
+                LTSPoiLinked ltspl => GetMetadataforPoi(ltspl),
+                GastronomyLinked gl => GetMetadataforGastronomy(gl),
+                EventLinked el => GetMetadataforEvent(el),
+                ODHActivityPoiLinked odhapl => GetMetadataforOdhActivityPoi(odhapl),
+                PackageLinked pl => GetMetadataforPackage(pl),
+                MeasuringpointLinked ml => GetMetadataforMeasuringpoint(ml),
+                WebcamInfoLinked wil => GetMetadataforWebcam(wil),
+                ArticlesLinked al => GetMetadataforArticle(al),
+                DDVenue ddv => GetMetadataforVenue(ddv),
+                EventShortLinked esl => GetMetadataforEventShort(esl),
+                ExperienceAreaLinked eal => GetMetadataforExperienceArea(eal),
+                MetaRegionLinked mrl => GetMetadataforMetaRegion(mrl),
+                RegionLinked rl => GetMetadataforRegion(rl),
+                TourismvereinLinked tvl => GetMetadataforTourismverein(tvl),
+                MunicipalityLinked ml => GetMetadataforMunicipality(ml),
+                DistrictLinked dl => GetMetadataforDistrict(dl),
+                SkiAreaLinked sal => GetMetadataforSkiArea(sal),
+                SkiRegionLinked srl => GetMetadataforSkiRegion(srl),
+                AreaLinked al => GetMetadataforArea(al),
+                WineLinked wl => GetMetadataforWineAward(wl),
+                ODHTagLinked odhtl => GetMetadataforOdhTag(odhtl),
                 _ => throw new Exception("not known odh type")
             };            
         }
@@ -174,7 +174,7 @@ namespace Helper
 
         public static Metadata GetMetadataforWebcam(WebcamInfoLinked data)
         {
-            string sourcemeta = data.Source.ToLower();
+            string sourcemeta = data.Source?.ToLower() ?? "";
             if (sourcemeta == "content")
                 sourcemeta = "idm";
 
@@ -204,28 +204,19 @@ namespace Helper
             if (data._Meta != null)
                 reduced = (bool)data._Meta.Reduced;
 
-            return data._Meta = GetMetadata(data, "lts", data.meta.lastUpdate, reduced);
+            return data._Meta = GetMetadata(data, "lts", data.meta?.lastUpdate, reduced);
         }
 
         public static Metadata GetMetadataforEventShort(EventShortLinked data)
         {
-            string sourcestr = "";
-
             string sourcemeta = data.Source != null ? data.Source.ToLower() : "ebms";
 
-            switch (sourcemeta)
+            string sourcestr = sourcemeta switch
             {
-                case "content":
-                    sourcestr = "noi";
-                    break;
-                case "ebms":
-                    sourcestr = "eurac";
-                    break;
-                default:
-                    sourcestr = sourcemeta;
-                    break;                
-            }                
-
+                "content" => "noi",
+                "ebms" => "eurac",
+                _ => sourcemeta,
+            };
             return GetMetadata(data, sourcestr, data.LastChange, false);
         }
 

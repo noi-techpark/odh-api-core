@@ -38,7 +38,7 @@ namespace Helper
             }
         }
 
-        public static async Task<SmgTags> GeODHTagByID(QueryFactory QueryFactory, string id)
+        public static async Task<SmgTags?> GeODHTagByID(QueryFactory QueryFactory, string id)
         {
             try
             {

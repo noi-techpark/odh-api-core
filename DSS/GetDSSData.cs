@@ -57,13 +57,13 @@ namespace DSS
             }
         }
         
-        public static async Task<dynamic> GetDSSDataAsync(DSSRequestType dssRequestType, string dssuser, string dsspswd, string serviceurl)
+        public static async Task<dynamic?> GetDSSDataAsync(DSSRequestType dssRequestType, string dssuser, string dsspswd, string serviceurl)
         {
             //Request
             HttpResponseMessage response = await RequestDSSInfo(dssRequestType, dssuser, dsspswd, serviceurl);
             //Parse JSON Response to
             var responsetask = await response.Content.ReadAsStringAsync();
-            dynamic responseobject = JsonConvert.DeserializeObject(responsetask);
+            dynamic? responseobject = JsonConvert.DeserializeObject(responsetask);
 
             return responseobject;
         }        

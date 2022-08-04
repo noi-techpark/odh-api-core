@@ -265,7 +265,7 @@ namespace Helper
             IReadOnlyCollection<string> categorycodeslist, IReadOnlyCollection<string> dishcodeslist, IReadOnlyCollection<string> ceremonycodeslist, IReadOnlyCollection<string> facilitycodeslist,
             IReadOnlyCollection<string> activitytypelist, IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> difficultylist, 
             bool distance, int distancemin, int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin, int altitudemax,
-            string tagbehaviour, IDictionary<string, IDictionary<string,string>> tagdict,
+            string tagbehaviour, IDictionary<string, IDictionary<string,string>>? tagdict,
             IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
@@ -310,8 +310,8 @@ namespace Helper
                 .DurationFilter(duration, durationmin, durationmax)
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
                 .PublishedOnFilter(publishedonlist)                                
-                .When(tagdict != null && tagdict.ContainsKey("and") && tagdict["and"].Count > 0, q => q.TaggingFilter_AND(tagdict["and"]))
-                .When(tagdict != null && tagdict.ContainsKey("or") && tagdict["or"].Count > 0, q => q.TaggingFilter_OR(tagdict["or"]))
+                .When(tagdict != null && tagdict.ContainsKey("and") && tagdict["and"].Any(), q => q.TaggingFilter_AND(tagdict!["and"]))
+                .When(tagdict != null && tagdict.ContainsKey("or") && tagdict["or"].Any(), q => q.TaggingFilter_OR(tagdict!["or"]))
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());

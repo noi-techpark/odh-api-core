@@ -318,7 +318,7 @@ namespace DSS.Parser
             return myodhactivitypoilinked;
         }
 
-        private static OperationSchedule ParseDSSLiftToODHOperationScheduleFormat(string season, dynamic data)
+        private static OperationSchedule? ParseDSSLiftToODHOperationScheduleFormat(string season, dynamic data)
         {
             string summer = "";
 
@@ -341,7 +341,7 @@ namespace DSS.Parser
             var seasonstart = (double?)data["season-" + season]["start"];
             var seasonend = (double?)data["season-" + season]["end"];
 
-            if (seasonstart != null & seasonend != null)
+            if (seasonstart != null && seasonend != null)
             {
                 //Season
                 OperationSchedule operationSchedule = new OperationSchedule();
@@ -359,7 +359,7 @@ namespace DSS.Parser
 
                 operationSchedule.OperationScheduleTime = new List<OperationScheduleTime>();
 
-                if (!String.IsNullOrEmpty(openingtimestart) && !String.IsNullOrEmpty(openingtimeend))
+                if (!string.IsNullOrEmpty(openingtimestart) && !string.IsNullOrEmpty(openingtimeend))
                 {
                     OperationScheduleTime operationScheduleTime = new OperationScheduleTime();
                     operationScheduleTime.Timecode = 1;
@@ -378,7 +378,7 @@ namespace DSS.Parser
 
 
                 //Check if there is one or two openingtimes
-                if (!String.IsNullOrEmpty(openingtimestartafternoon) && !String.IsNullOrEmpty(openingtimeendafternoon) && openingtimestartafternoon != "00:00" && openingtimeendafternoon != "00:00")
+                if (!string.IsNullOrEmpty(openingtimestartafternoon) && !string.IsNullOrEmpty(openingtimeendafternoon) && openingtimestartafternoon != "00:00" && openingtimeendafternoon != "00:00")
                 {
                     OperationScheduleTime operationScheduleTimeafternoon = new OperationScheduleTime();
                     operationScheduleTimeafternoon.Timecode = 1;
@@ -401,7 +401,7 @@ namespace DSS.Parser
             return null;
         }
 
-        private static OperationSchedule ParseDSSSlopeToODHOperationScheduleFormat(dynamic data)
+        private static OperationSchedule? ParseDSSSlopeToODHOperationScheduleFormat(dynamic data)
         {
             var seasonstart = (double?)data["seasonStart"];
             var seasonend = (double?)data["seasonEnd"];
@@ -412,7 +412,7 @@ namespace DSS.Parser
             seasonname.Add("it", "stagioneinvernale");
             seasonname.Add("en", "winterseason");
 
-            if (seasonstart != null & seasonend != null)
+            if (seasonstart != null && seasonend != null)
             {
                 //Season
                 OperationSchedule operationSchedule = new OperationSchedule();
@@ -529,9 +529,9 @@ namespace DSS.Parser
         }
                       
 
-        private static string ParseDSSSlopeTypeToODHDifficulty(string slopeType, string slopediff)
+        private static string ParseDSSSlopeTypeToODHDifficulty(string? slopeType, string? slopediff)
         {
-            if(!String.IsNullOrEmpty(slopeType))
+            if(!string.IsNullOrEmpty(slopeType))
             {
                 switch (slopeType)
                 {
