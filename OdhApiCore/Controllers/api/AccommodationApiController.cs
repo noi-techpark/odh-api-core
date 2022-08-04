@@ -486,6 +486,8 @@ namespace OdhApiCore.Controllers
             bool availabilityonly = false,
             CancellationToken cancellationToken = default)
         {
+            bokfilter ??= "hgv";
+
             //if availabilitysearch requested and User not logged
             if (!CheckAvailabilitySearch(User))
             {
@@ -493,7 +495,7 @@ namespace OdhApiCore.Controllers
             }
 
             //For Compatiblity if Route equals AvailabilityCheck return only Availability Response
-            var usedroute = ControllerContext.ActionDescriptor.AttributeRouteInfo.Template;
+            var usedroute = ControllerContext.ActionDescriptor.AttributeRouteInfo?.Template;
 
             if (usedroute == "v1/AvailabilityCheck")
                 availabilityonly = true;
@@ -528,15 +530,15 @@ namespace OdhApiCore.Controllers
                 var toreturn = new List<MssResponseShort>();
 
                 if (bokfilter.Contains("hgv") && accoavailabilitymss != null)
-                    toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.ToList());
+                    toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.ToList() ?? new());
                 if (bokfilter.Contains("lts") && accoavailabilitylcs != null)
-                    toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.ToList());
+                    toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.ToList() ?? new());
 
                 //return immediately the mss response
                 var result = ResponseHelpers.GetResult(
                    1,
                    1,
-                   (UInt32)requestedtotal,
+                   (uint)requestedtotal,
                    requestedtotal,
                    availableonline,
                    availableonrequest,
@@ -652,8 +654,8 @@ namespace OdhApiCore.Controllers
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
 
-                var availableonline = Request.HttpContext.Items["mssavailablity"] != null ? ((MssResult?)Request.HttpContext.Items["mssavailablity"]).MssResponseShort.Count : 0;
-                var availableonrequest = Request.HttpContext.Items["lcsavailablity"] != null ? ((MssResult?)Request.HttpContext.Items["lcsavailablity"]).MssResponseShort.Count : 0;
+                var availableonline = Request.HttpContext.Items["mssavailablity"] != null ? ((MssResult?)Request.HttpContext.Items["mssavailablity"])!.MssResponseShort.Count : 0;
+                var availableonrequest = Request.HttpContext.Items["lcsavailablity"] != null ? ((MssResult?)Request.HttpContext.Items["lcsavailablity"])!.MssResponseShort.Count : 0;
                 var accobooklist = Request.HttpContext.Items["accobooklist"];
                 var accosrequested = accobooklist != null ? ((List<string>)accobooklist).Count : 0;
                 var resultid = ((MssResult?)Request.HttpContext.Items["mssavailablity"])?.ResultId ?? "";
@@ -663,7 +665,7 @@ namespace OdhApiCore.Controllers
                     return ResponseHelpers.GetResult(
                       pagenumber,
                       totalpages,
-                      (UInt32)accosrequested,
+                      (uint)accosrequested,
                       accosrequested,
                       availableonline,
                       availableonrequest,
@@ -693,10 +695,9 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodations")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.When(FilterClosedData, q => q.FilterClosedData());
                         .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
-                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 var fieldsTohide = FieldsToHide;
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
@@ -711,10 +712,9 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodations")
                         .Select("data")
                         .Where("gen_hgvid", "ILIKE", id)
-                        //.When(FilterClosedData, q => q.FilterClosedData());
                         .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
-                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 var fieldsTohide = FieldsToHide;
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
@@ -727,7 +727,6 @@ namespace OdhApiCore.Controllers
                 QueryFactory.Query("accommodations")
                     .Select("id")
                     .Where("gen_hgvid", "ILIKE", id)
-                    //.When(FilterClosedData, q => q.FilterClosedData());
                     .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
             var data = await query.FirstOrDefaultAsync<string?>();
@@ -755,9 +754,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("accommodationrooms")
                         .Select("data")
-                        //.WhereRaw("data#>>'\\{A0RID\\}' ILIKE $$", id)
                         .Where("gen_a0rid", "ILIKE", id)
-                        //.When(FilterClosedData, q => q.FilterClosedData())
                         .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))
                         .When(!String.IsNullOrEmpty(updatefrom), q => q.LastChangedFilter_GeneratedColumn(updatefrom))
                         .SearchFilter(PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor(language), searchfilter)
@@ -765,7 +762,7 @@ namespace OdhApiCore.Controllers
                         .OrderOnlyByRawSortIfNotNull(rawsort)
                         .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
-                var data = await query.GetAsync<JsonRaw?>();
+                var data = await query.GetAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =
@@ -795,10 +792,9 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodationrooms")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.When(FilterClosedData, q => q.FilterClosedData());
                         .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
 
-                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 var fieldsTohide = FieldsToHide;
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);

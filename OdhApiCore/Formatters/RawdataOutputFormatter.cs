@@ -28,25 +28,16 @@ namespace OdhApiCore.Formatters
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
-        //public RawdataOutputFormatter(QueryFactory queryFactory)
-        //{
-            
-
-        //    this.QueryFactory = queryFactory;
-        //}
-
-        //protected QueryFactory QueryFactory { get; }
-
-        private string ConvertToRawdataObject(JsonRaw jsonRaw, QueryFactory QueryFactory)
+        private string? ConvertToRawdataObject(JsonRaw jsonRaw, QueryFactory QueryFactory)
         {
             try
             {
                 if (jsonRaw != null)
                 {
                     //Get Id of jsonRaw
-                    dynamic jsonvalue = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonRaw.Value);
-                    string id = Convert.ToString(jsonvalue.Id);
-                    string odhtype = Convert.ToString(jsonvalue._Meta.Type);
+                    dynamic? jsonvalue = JsonConvert.DeserializeObject(jsonRaw.Value);
+                    string id = Convert.ToString(jsonvalue?.Id);
+                    string odhtype = Convert.ToString(jsonvalue?._Meta.Type);
 
                     string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
@@ -71,7 +62,7 @@ namespace OdhApiCore.Formatters
                     return null;
                 
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return null;
             }                       
@@ -79,14 +70,13 @@ namespace OdhApiCore.Formatters
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            var queryFactory = (QueryFactory)context.HttpContext.RequestServices.GetService(typeof(QueryFactory));
+            var queryFactory = (QueryFactory?)context.HttpContext.RequestServices.GetService(typeof(QueryFactory));
 
-            if (context.Object is JsonRaw jsonRaw)
+            if (context.Object is JsonRaw jsonRaw && queryFactory is { })
             {
                 var transformed = ConvertToRawdataObject(jsonRaw, queryFactory);
                 if (transformed != null)
                 {
-                    //var jsonLD = JsonConvert.SerializeObject(transformed);
                     await context.HttpContext.Response.WriteAsync(transformed);
                 }
                 else
@@ -98,14 +88,6 @@ namespace OdhApiCore.Formatters
             {
                 await OutputFormatterHelper.BadRequest(context);
             }
-        }
-
-        private void GetRawDatafromDB(string rawdataid)
-        {
-
-            //QueryFactory.Query()
-            //            .SelectRaw("data")
-            //            .From("webcams")
         }
     }
 }
