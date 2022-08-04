@@ -46,12 +46,12 @@ namespace OdhApiCore.Controllers
 
         #region Tag Filter
 
-        public static IDictionary<string,IDictionary<string,string>> RetrieveTagFilter(string tagfilter)
+        public static IDictionary<string,IDictionary<string,string>> RetrieveTagFilter(string? tagfilter)
         {            
             try
             {
                 if (tagfilter == null)
-                    return null;
+                    return new Dictionary<string, IDictionary<string, string>>();
 
                 var tagstofilter = new Dictionary<string, IDictionary<string, string>>();
 
@@ -88,9 +88,9 @@ namespace OdhApiCore.Controllers
 
                 return tagstofilter;
             }
-            catch(Exception ex)
+            catch (Exception)
             {
-                return null;
+                return new Dictionary<string, IDictionary<string, string>>();
             }
         }
 
