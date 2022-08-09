@@ -571,7 +571,7 @@ namespace DataModel
             }
         }
 
-        public ICollection<AreaLink> Areas
+        public ICollection<AreaLink>? Areas
         {
             get
             {
