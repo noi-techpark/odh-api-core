@@ -140,25 +140,27 @@ namespace OdhApiCore.Controllers.api
                 Console.WriteLine("Deleting an object");
                 var deleteresult = await client.DeleteObjectAsync(deleteObjectRequest);
 
-                if(deleteresult != null )
-                {
-                    switch(deleteresult.HttpStatusCode)
-                    {
-                        case System.Net.HttpStatusCode.OK:
-                            return Ok(String.Format("Success: '{0}' deleted", filepath));
-                        case System.Net.HttpStatusCode.NotFound:
-                        case System.Net.HttpStatusCode.NoContent:
-                            return NotFound(String.Format("Not found: '{0}'", filepath));
-                        default:
-                            return BadRequest(String.Format("An error occured Http Status: '{0}'", deleteresult.HttpStatusCode.ToString()));
+                //AWS api is always returning nocontent
+                //if(deleteresult != null )
+                //{
+                //    switch(deleteresult.HttpStatusCode)
+                //    {
+                //        case System.Net.HttpStatusCode.OK:
+                //            return Ok(String.Format("Success: '{0}' deleted", filepath));
+                //        case System.Net.HttpStatusCode.NotFound:
+                //        case System.Net.HttpStatusCode.NoContent:
+                //            return NotFound(String.Format("Not found: '{0}'", filepath));
+                //        default:
+                //            return BadRequest(String.Format("An error occured Http Status: '{0}'", deleteresult.HttpStatusCode.ToString()));
 
-                    }
-                }
-                else
-                {
-                    return BadRequest("Generic Error");
-                }
-                
+                //    }
+                //}
+                //else
+                //{
+                //    return BadRequest("Generic Error");
+                //}
+
+                return Ok(String.Format("Success: '{0}' deleted", filepath));
             }
             catch (AmazonS3Exception e)
             {

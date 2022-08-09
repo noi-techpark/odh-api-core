@@ -417,7 +417,7 @@ namespace OdhApiCore.Controllers.api
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
 
                 //odhactivitypoi.Id = id.ToLower();
-                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois");
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true);
             });
         }
 
