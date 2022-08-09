@@ -387,8 +387,14 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                odhactivitypoi.Id = !String.IsNullOrEmpty(odhactivitypoi.Id) ? odhactivitypoi.Id.ToLower() : "noid";
-                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois");
+                //GENERATE ID
+                odhactivitypoi.Id = Helper.IdGenerator.GenerateIDFromType(odhactivitypoi);
+
+                odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it","nl","cs","pl","ru","fr" });
+
+
+                //odhactivitypoi.Id = !String.IsNullOrEmpty(odhactivitypoi.Id) ? odhactivitypoi.Id.ToLower() : "noid";
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true);
             });
         }
 
@@ -405,7 +411,12 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                odhactivitypoi.Id = id.ToLower();
+                //Check ID uppercase lowercase
+                Helper.IdGenerator.CheckIdFromType(odhactivitypoi);
+
+                odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
+
+                //odhactivitypoi.Id = id.ToLower();
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois");
             });
         }
@@ -422,7 +433,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToLower();
+                //Check ID uppercase lowercase
+                id = Helper.IdGenerator.CheckIdFromType<ODHActivityPoiLinked>(id);
+
                 return await DeleteData(id, "smgpois");
             });
         }

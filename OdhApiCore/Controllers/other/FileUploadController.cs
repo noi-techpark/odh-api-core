@@ -140,6 +140,8 @@ namespace OdhApiCore.Controllers.api
                 Console.WriteLine("Deleting an object");
                 await client.DeleteObjectAsync(deleteObjectRequest);
 
+                //TODO IF File is not found throw exception
+
                 return Ok();
             }
             catch (AmazonS3Exception e)
