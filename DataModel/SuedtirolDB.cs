@@ -716,22 +716,17 @@ namespace DataModel
 
     public class GBLTSPoi : LTSPoi
     {
-        public GBLTSPoi()
-        {
-            GpsPoints = new Dictionary<string, GpsInfo>();
-        }
+        //public GBLTSPoi()
+        //{
+        //    GpsPoints = new Dictionary<string, GpsInfo>();
+        //}
 
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+        //public IDictionary<string, GpsInfo> GpsPoints { get; set; }
     }
 
     public class GBLTSActivity : PoiBaseInfos
     {
-        public GBLTSActivity()
-        {
-            GpsPoints = new Dictionary<string, GpsInfo>();
-        }
-
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }        
+                
     }
 
     //End for PG
@@ -820,12 +815,12 @@ namespace DataModel
 
     public class ODHActivityPoi : SmgPoi
     {
-        public ODHActivityPoi()
-        {
-            GpsPoints = new Dictionary<string, GpsInfo>();
-        }
+        //public ODHActivityPoi()
+        //{
+        //    GpsPoints = new Dictionary<string, GpsInfo>();
+        //}
 
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }        
+        //public IDictionary<string, GpsInfo> GpsPoints { get; set; }        
     }
 
     public class PoiProperty
@@ -2440,7 +2435,7 @@ namespace DataModel
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
 
         public ICollection<GpsInfo>? GpsInfo { get; set; }
-        public ICollection<GpsTrack>? GpsTrack { get; set; }
+        public ICollection<GpsTrack>? GpsTrack { get; set; }        
 
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, Detail> Detail { get; set; }

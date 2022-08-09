@@ -171,7 +171,7 @@ namespace RAVEN
             data2.FeetClimb = data.FeetClimb;
             data2.FirstImport = data.FirstImport;
             data2.GpsInfo = data.GpsInfo;
-            data2.GpsPoints = new Dictionary<string, GpsInfo>();
+            //data2.GpsPoints = new Dictionary<string, GpsInfo>();
             data2.GpsTrack = data.GpsTrack;
             data2.HasFreeEntrance = data.HasFreeEntrance;
             data2.HasLanguage = data.HasLanguage;
@@ -220,60 +220,7 @@ namespace RAVEN
                     myltstag.Id = myltstag.Id.ToLower();
                 }
             }
-
-            //Problem
-            if (data2.GpsInfo != null)
-            {
-                //Es gibt hier
-                //Startpunkt
-                //Endpunkt
-                //Start und Ziel
-                //Bergstation
-                //Talstation
-                //Standpunkt
-
-                foreach (var gpsinfo in data2.GpsInfo)
-                {
-                    if (gpsinfo.Gpstype == "Endpunkt")
-                        data2.GpsPoints.Add("endposition", gpsinfo);
-                    if (gpsinfo.Gpstype == "Bergstation")
-                        data2.GpsPoints.Add("endposition", gpsinfo);
-
-                    if (!data2.GpsPoints.ContainsKey("position"))
-                    {
-                        if (gpsinfo.Gpstype == "Standpunkt")
-                            data2.GpsPoints.Add("position", gpsinfo);
-                        if (gpsinfo.Gpstype == "Startpunkt")
-                            data2.GpsPoints.Add("position", gpsinfo);
-                        if (gpsinfo.Gpstype == "Start und Ziel")
-                            data2.GpsPoints.Add("position", gpsinfo);
-                        if (gpsinfo.Gpstype == "Talstation")
-                            data2.GpsPoints.Add("position", gpsinfo);
-                    }
-                    else if (!data2.GpsPoints.ContainsKey("position1"))
-                    {
-                        if (gpsinfo.Gpstype == "Standpunkt")
-                            data2.GpsPoints.Add("position1", gpsinfo);
-                        if (gpsinfo.Gpstype == "Startpunkt")
-                            data2.GpsPoints.Add("position1", gpsinfo);
-                        if (gpsinfo.Gpstype == "Start und Ziel")
-                            data2.GpsPoints.Add("position1", gpsinfo);
-                        if (gpsinfo.Gpstype == "Talstation")
-                            data2.GpsPoints.Add("position1", gpsinfo);
-                    }
-                    else
-                    {
-                        if (gpsinfo.Gpstype == "Standpunkt")
-                            data2.GpsPoints.Add("position2", gpsinfo);
-                        if (gpsinfo.Gpstype == "Startpunkt")
-                            data2.GpsPoints.Add("position2", gpsinfo);
-                        if (gpsinfo.Gpstype == "Start und Ziel")
-                            data2.GpsPoints.Add("position2", gpsinfo);
-                        if (gpsinfo.Gpstype == "Talstation")
-                            data2.GpsPoints.Add("position2", gpsinfo);
-                    }
-                }
-            }
+           
             if (String.IsNullOrEmpty(data2.Source))
                 data2.Source = "lts";
 
@@ -296,53 +243,6 @@ namespace RAVEN
                 foreach (var myltstag in data.LTSTags)
                 {
                     myltstag.Id = myltstag.Id.ToLower();
-                }
-            }
-
-            if (data.GpsInfo != null)
-            {
-                foreach (var gpsinfo in data.GpsInfo)
-                {
-
-                    if (gpsinfo.Gpstype == "Endpunkt")
-                        data.GpsPoints.Add("endposition", gpsinfo);
-                    if (gpsinfo.Gpstype == "Bergstation")
-                        data.GpsPoints.Add("endposition", gpsinfo);
-
-                    if (!data.GpsPoints.ContainsKey("position"))
-                    {
-                        if (gpsinfo.Gpstype == "Standpunkt")
-                            data.GpsPoints.Add("position", gpsinfo);
-                        if (gpsinfo.Gpstype == "Startpunkt")
-                            data.GpsPoints.Add("position", gpsinfo);
-                        if (gpsinfo.Gpstype == "Start und Ziel")
-                            data.GpsPoints.Add("position", gpsinfo);
-                        if (gpsinfo.Gpstype == "Talstation")
-                            data.GpsPoints.Add("position", gpsinfo);
-                    }
-                    else if (!data.GpsPoints.ContainsKey("position1"))
-                    {
-                        if (gpsinfo.Gpstype == "Standpunkt")
-                            data.GpsPoints.Add("position1", gpsinfo);
-                        if (gpsinfo.Gpstype == "Startpunkt")
-                            data.GpsPoints.Add("position1", gpsinfo);
-                        if (gpsinfo.Gpstype == "Start und Ziel")
-                            data.GpsPoints.Add("position1", gpsinfo);
-                        if (gpsinfo.Gpstype == "Talstation")
-                            data.GpsPoints.Add("position1", gpsinfo);
-                    }
-                    else
-                    {
-                        if (gpsinfo.Gpstype == "Standpunkt")
-                            data.GpsPoints.Add("position2", gpsinfo);
-                        if (gpsinfo.Gpstype == "Startpunkt")
-                            data.GpsPoints.Add("position2", gpsinfo);
-                        if (gpsinfo.Gpstype == "Start und Ziel")
-                            data.GpsPoints.Add("position2", gpsinfo);
-                        if (gpsinfo.Gpstype == "Talstation")
-                            data.GpsPoints.Add("position2", gpsinfo);
-                    }
-
                 }
             }
 

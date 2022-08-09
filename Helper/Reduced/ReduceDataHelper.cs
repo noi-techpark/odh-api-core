@@ -55,7 +55,7 @@ namespace Helper
             reduced.IsOpen = myactivity.IsOpen;
 
             //Position/Longitude,Latitude,Altitude
-            reduced.GpsPoints = myactivity.GpsPoints;
+            //reduced.GpsPoints = myactivity.GpsPoints;
             reduced.GpsInfo = myactivity.GpsInfo;
 
             //Name
@@ -103,7 +103,7 @@ namespace Helper
             reduced.HasFreeEntrance = mypoi.HasFreeEntrance; //Features/HasFreeEntrance
             //Position/Longitude,Latitude,Altitude
             reduced.GpsInfo = mypoi.GpsInfo;
-            reduced.GpsPoints = mypoi.GpsPoints;            
+            //reduced.GpsPoints = mypoi.GpsPoints;            
 
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
             reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForPoi(mypoi.ContactInfos);
@@ -226,7 +226,7 @@ namespace Helper
             reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForODHActivityPoi(mypoi.ContactInfos, mypoi.SyncSourceInterface);
 
             //Position/Longitude,Latitude,Altitude
-            reduced.GpsPoints = mypoi.GpsPoints;
+            //reduced.GpsPoints = mypoi.GpsPoints;
             reduced.GpsInfo = mypoi.GpsInfo;
 
             //ODH Fields

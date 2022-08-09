@@ -165,7 +165,7 @@ namespace DSS.Parser
             List<GpsInfo> gpsinfolist = ParseDSSLiftToODHGpsInfo(dssitem["location"], dssitem["locationMountain"], altitudestart, altitudeend);
 
             myodhactivitypoilinked.GpsInfo = gpsinfolist;
-            myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
+            //myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
 
             //TODO LOCATIONINFO DONE OUTSIDE
             //var skiresort = MapSkiresort(dssitem["skiresort"]);
@@ -309,7 +309,7 @@ namespace DSS.Parser
             List<GpsInfo> gpsinfolist = ParseDSSSlopeToODHGpsInfo(dssitem["location"], altitudeend);
 
             myodhactivitypoilinked.GpsInfo = gpsinfolist;
-            myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
+            //myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
 
             //TODO LOCATIONINFO DONE OUTSIDE
             //var skiresort = MapSkiresort(dssitem["skiresort"]);
