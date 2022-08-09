@@ -1308,6 +1308,17 @@ namespace Helper
                 return q;
             });
 
+
+        public static Query TaggingFilter_OR_GeneratedColumn(this Query query, IDictionary<string, string> tagdict) =>
+           query.Where(q =>
+               tagdict.Aggregate(q, (q, tag) =>
+                   q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
+
+        public static Query TaggingFilter_AND_GeneratedColumn(this Query query, IDictionary<string, string> tagdict) =>
+            query.Where(q =>
+                tagdict.Aggregate(q, (q, tag) =>
+                    q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
+
         #endregion
 
         #region Date_Query_Helpers

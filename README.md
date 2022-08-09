@@ -135,7 +135,7 @@ CREATE OR REPLACE FUNCTION text2ts(text)
  RETURNS timestamp without time zone
  LANGUAGE sql
  IMMUTABLE
-AS $function$SELECT CASE WHEN $1 ~'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(?:Z|\+\d{2}:\d{2})?$' THEN CAST($1 AS timestamp without time zone) END$function$;
+AS $function$SELECT CASE WHEN $1 ~'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(?:Z|\+\d{2}:\d{2})?$' THEN CAST($1 AS timestamp without time zone) END; $function$;
 ```
 * json_array_to_pg_array
 
@@ -157,5 +157,29 @@ CREATE OR REPLACE FUNCTION extract_keys_from_jsonb_object_array(jsonarray jsonb,
 AS $function$ begin if jsonarray <> 'null' then return (select array(select data2::jsonb->> key from (select jsonb_array_elements_text(jsonarray) as data2) as subsel)); else return null; end if; end; $function$;
 ```
 
+* extract_tags
 
+```sql
+CREATE OR REPLACE FUNCTION public.extract_tags(jsonarray jsonb)
+ RETURNS text[]
+ LANGUAGE plpgsql
+ IMMUTABLE strict
+AS $function$ begin
+	return
+		(select array(select concat(x.tags->>'Source', '.', x.tags->>'Id') from
+		(select jsonb_path_query(jsonarray, '$.*[*]') tags) x) x);
+end; $function$
+```
+
+* extract_tagkeys
+
+```sql
+CREATE OR REPLACE FUNCTION public.extract_tagkeys(jsonarray jsonb)
+ RETURNS text[]
+ LANGUAGE plpgsql
+ IMMUTABLE strict
+AS $function$ begin
+	return (array(select distinct unnest(json_array_to_pg_array(jsonb_path_query_array(jsonarray, '$.*[*].Id')))));
+end; $function$
+```
 
