@@ -557,7 +557,7 @@ namespace DataModel
             }
         }
 
-        public ICollection<ODHActivityPoiTypesLink> ODHActivityPoiTypes
+        public ICollection<ODHActivityPoiTypesLink>? ODHActivityPoiTypes
         {
             get
             {
