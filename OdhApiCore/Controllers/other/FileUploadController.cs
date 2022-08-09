@@ -138,11 +138,27 @@ namespace OdhApiCore.Controllers.api
                 };
 
                 Console.WriteLine("Deleting an object");
-                await client.DeleteObjectAsync(deleteObjectRequest);
+                var deleteresult = await client.DeleteObjectAsync(deleteObjectRequest);
 
-                //TODO IF File is not found throw exception
+                if(deleteresult != null )
+                {
+                    switch(deleteresult.HttpStatusCode)
+                    {
+                        case System.Net.HttpStatusCode.OK:
+                            return Ok(String.Format("Success: '{0}' deleted", filepath));
+                        case System.Net.HttpStatusCode.NotFound:
+                        case System.Net.HttpStatusCode.NoContent:
+                            return NotFound(String.Format("Not found: '{0}'", filepath));
+                        default:
+                            return BadRequest(String.Format("An error occured Http Status: '{0}'", deleteresult.HttpStatusCode.ToString()));
 
-                return Ok();
+                    }
+                }
+                else
+                {
+                    return BadRequest("Generic Error");
+                }
+                
             }
             catch (AmazonS3Exception e)
             {

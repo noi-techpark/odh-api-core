@@ -531,13 +531,13 @@ namespace DataModel
 
     public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "ODHActivityPoi/" + Uri.EscapeDataString(this.Id));
+                return this.Id != null ? Uri.EscapeDataString(ODHConstant.ApplicationURL + "ODHActivityPoi/" + Uri.EscapeDataString(this.Id)) : null;
             }
         }
 
@@ -715,7 +715,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Article/" + Uri.EscapeDataString(this.Id));
+                return this.Id != null ? Uri.EscapeDataString(ODHConstant.ApplicationURL + "Article/" + Uri.EscapeDataString(this.Id)) : null;
             }
         }
 
