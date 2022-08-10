@@ -1262,12 +1262,23 @@ namespace Helper
             );
 
         //Source Filter (SyncSourceInterface)
-        public static Query SourceFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
+        public static Query SyncSourceInterfaceFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
             query.Where(q =>
             {
                 foreach (var source in sourcelist)
                 {
                     q = q.OrWhere("gen_syncsourceinterface", "ILIKE", source);
+                }
+                return q;
+            });
+
+        //Source Filter (SyncSourceInterface)
+        public static Query SourceFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.Where(q =>
+            {
+                foreach (var source in sourcelist)
+                {
+                    q = q.OrWhere("gen_source", "ILIKE", source);
                 }
                 return q;
             });
@@ -1309,15 +1320,15 @@ namespace Helper
             });
 
 
-        public static Query TaggingFilter_OR_GeneratedColumn(this Query query, IDictionary<string, string> tagdict) =>
-           query.Where(q =>
-               tagdict.Aggregate(q, (q, tag) =>
-                   q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
+        //public static Query TaggingFilter_OR_GeneratedColumn(this Query query, IDictionary<string, string> tagdict) =>
+        //   query.Where(q =>
+        //       tagdict.Aggregate(q, (q, tag) =>
+        //           q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
 
-        public static Query TaggingFilter_AND_GeneratedColumn(this Query query, IDictionary<string, string> tagdict) =>
-            query.Where(q =>
-                tagdict.Aggregate(q, (q, tag) =>
-                    q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
+        //public static Query TaggingFilter_AND_GeneratedColumn(this Query query, IDictionary<string, string> tagdict) =>
+        //    query.Where(q =>
+        //        tagdict.Aggregate(q, (q, tag) =>
+        //            q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
 
         #endregion
 

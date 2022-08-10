@@ -21,26 +21,26 @@ namespace OdhApiCore.Controllers.helper
         public readonly int service;
         public readonly int rooms;
         public readonly string hgvservicecode;
-        public readonly string source;
+        public readonly string requestsource;
         public readonly string mssversion;
 
         public static MssHelper Create(
             List<string> accoidlist, string idsofchannel,
             string bokfilter, string language, string roominfo, string boardfilter,
             string arrival, string departure, int? detail, 
-            string source, string mssversion)
+            string requestsource, string mssversion)
         {
             return new MssHelper(
                 accoidlist: accoidlist, idsofchannel: idsofchannel, bokfilter: bokfilter, language: language,
                 roominfo: roominfo, boardfilter: boardfilter, arrival: arrival, 
                 departure: departure, detail: detail,
-                source: source, mssversion: mssversion);
+                requestsource: requestsource, mssversion: mssversion);
         }
 
         private MssHelper(
             List<string> accoidlist, string idsofchannel,
             string bokfilter, string language, string roominfo, string boardfilter,
-            string arrival, string departure, int? detail, string source,
+            string arrival, string departure, int? detail, string requestsource,
             string mssversion)
         {
             if (bokfilter.EndsWith(","))
@@ -75,7 +75,7 @@ namespace OdhApiCore.Controllers.helper
             this.arrival = DateTime.Parse(arrival);
             this.departure = DateTime.Parse(departure);
 
-            this.source = source;
+            this.requestsource = requestsource;
             this.mssversion = mssversion;
 
             if (language.ToLower() == "nl" || language.ToLower() == "cs" || language.ToLower() == "pl" || language.ToLower() == "fr" || language.ToLower() == "ru")

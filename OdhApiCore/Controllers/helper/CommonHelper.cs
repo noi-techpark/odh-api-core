@@ -14,6 +14,7 @@ namespace OdhApiCore.Controllers
         public List<string> idlist;
         public List<string> languagelist;
         public List<string> smgtaglist;
+        public List<string> sourcelist;
         public bool? visibleinsearch;
         public string? lastchange;
         public bool? active;
@@ -22,24 +23,24 @@ namespace OdhApiCore.Controllers
         public List<string> publishedonlist;
 
         public static Task<CommonHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? languagefilter, bool? visibleinsearch, 
+            QueryFactory queryFactory, string? idfilter, string? languagefilter, bool? visibleinsearch, string? sourcefilter,
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? publishedonfilter,
             CancellationToken cancellationToken)
         {           
             return Task.FromResult(new CommonHelper(
                idfilter: idfilter, languagefilter: languagefilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, 
+                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, sourcefilter: sourcefilter,
                 smgtags: smgtags, lastchange: lastchange, publishedonfilter: publishedonfilter));
         }
 
         private CommonHelper(
-            string? idfilter, string? languagefilter, bool? activefilter, bool? smgactivefilter, bool? visibleinsearch, 
+            string? idfilter, string? languagefilter, bool? activefilter, bool? smgactivefilter, bool? visibleinsearch, string? sourcefilter,
             string? smgtags, string? lastchange, string? publishedonfilter)
         {           
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
 
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter?.ToLower());
-
+            sourcelist = Helper.CommonListCreator.CreateIdList(sourcefilter);
 
             smgtaglist = CommonListCreator.CreateIdList(smgtags);
             //active

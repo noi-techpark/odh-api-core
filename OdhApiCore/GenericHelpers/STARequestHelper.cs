@@ -67,7 +67,7 @@ namespace OdhApiCore.GenericHelpers
                             tourismvereinlist: new List<string>(), regionlist: new List<string>(),
                             apartmentfilter: null, bookable: null, altitude: false,
                             altitudemin: 0, altitudemax: 0,
-                            activefilter: true, smgactivefilter: null, publishedonlist: new List<string>(),
+                            activefilter: true, smgactivefilter: null, publishedonlist: new List<string>(), sourcelist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>() { language },
                             filterClosedData: true, reducedData: true)
                       .OrderByRaw(orderby);

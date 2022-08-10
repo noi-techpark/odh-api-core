@@ -193,6 +193,7 @@ namespace OdhApiCore.Controllers
             string? areafilter = null, 
             string? skiareafilter = null,
             string? language = null,
+            string? source = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
             string? publishedon = null,
@@ -214,7 +215,7 @@ namespace OdhApiCore.Controllers
             return await GetMeasuringPointList(
                 fields: fields ?? Array.Empty<string>(), language: language, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
-                    skiareafilter: skiareafilter, active: active, publishedon: publishedon,
+                    skiareafilter: skiareafilter, source: source, active: active, publishedon: publishedon,
                     smgactive: odhactive, seed: seed, lastchange: updatefrom,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                     removenullvalues: removenullvalues, cancellationToken: cancellationToken);
@@ -256,7 +257,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Weather/SnowReport")]
         public async Task<ActionResult<SnowReportBaseData>> GetSnowReportBase(
             string? skiareaid,
-            string lang = "de",             
+            string? lang = "en",             
             CancellationToken cancellationToken = default)
         {
             try
@@ -478,6 +479,7 @@ namespace OdhApiCore.Controllers
             string? locfilter,
             string? areafilter,
             string? skiareafilter,
+            string? source,
             bool? active,
             bool? smgactive,
             string? lastchange,
@@ -498,7 +500,7 @@ namespace OdhApiCore.Controllers
                 string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
 
                 MeasuringPointsHelper mymeasuringpointshelper = await MeasuringPointsHelper.Create(QueryFactory, idfilter, locfilter,
-                    arefilterwithprefix, skiarefilterwithprefix, active, smgactive, lastchange, publishedon, cancellationToken);
+                    arefilterwithprefix, skiarefilterwithprefix, source, active, smgactive, lastchange, publishedon, cancellationToken);
 
                 var query =
                     QueryFactory.Query()
@@ -507,7 +509,8 @@ namespace OdhApiCore.Controllers
                         .MeasuringpointWhereExpression(
                             idlist: mymeasuringpointshelper.idlist, districtlist: mymeasuringpointshelper.districtlist, municipalitylist: mymeasuringpointshelper.municipalitylist,
                             tourismvereinlist: mymeasuringpointshelper.tourismvereinlist, regionlist: mymeasuringpointshelper.regionlist, arealist: mymeasuringpointshelper.arealist,
-                            activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper. publishedonlist,
+                            activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper.publishedonlist,
+                            sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
                             filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
@@ -561,10 +564,13 @@ namespace OdhApiCore.Controllers
 
         /// GET Snowreport Data by SkiareaID LIVE
          private async Task<SnowReportBaseData> GetSnowReportBaseData(
-             string lang, 
+             string? lang, 
              string skiareaid,
              CancellationToken cancellationToken)
         {
+
+            if(lang == null)
+                throw new Exception("parameter lang is null");
 
             var query = QueryFactory.Query()
                        .SelectRaw("data")

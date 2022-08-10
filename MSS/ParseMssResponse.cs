@@ -11,7 +11,7 @@ namespace MSS
 {
     public class ParseMssResponse
     {
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<Room> myroompersons, string source, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<Room> myroompersons, string requestsource, string version)
         {
             try
             {
@@ -19,7 +19,7 @@ namespace MSS
 
                 var myresult = mssresponse.Root.Elements("root").Elements("result").Elements("hotel");
 
-                return ResponseParser(myresult, servicecode, myroompersons, resultid, source, lang, version);
+                return ResponseParser(myresult, servicecode, myroompersons, resultid, requestsource, lang, version);
             }
             catch (Exception)
             {
@@ -28,7 +28,7 @@ namespace MSS
 
         }
 
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<string> A0Rids, List<Room> myroompersons, string source, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<string> A0Rids, List<Room> myroompersons, string requestsource, string version)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace MSS
                 var myresult = mssresponse.Root.Elements("root").Elements("result").Elements("hotel").Where
                     (x => A0Rids.Contains(x.Element("id_lts").Value.ToLower()) && x.Elements("channel").Count() > 0);
 
-                return ResponseParser(myresult, servicecode, myroompersons, resultid, source, lang, version);
+                return ResponseParser(myresult, servicecode, myroompersons, resultid, requestsource, lang, version);
 
 
             }
@@ -53,7 +53,7 @@ namespace MSS
 
         }
 
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XElement mssresponse, List<string> A0Rids, List<Room> myroompersons, string source, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XElement mssresponse, List<string> A0Rids, List<Room> myroompersons, string requestsource, string version)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace MSS
                 var myresult = mssresponse.Elements("result").Elements("hotel").Where
                     (x => A0Rids.Contains(x.Element("id_lts").Value.ToUpper()) && x.Elements("channel").Count() > 0);
 
-                return ResponseParser(myresult, servicecode, myroompersons, resultid, source, lang, version);
+                return ResponseParser(myresult, servicecode, myroompersons, resultid, requestsource, lang, version);
             }
             catch (Exception)
             {
@@ -76,7 +76,7 @@ namespace MSS
 
         }
 
-        public static MssResult ResponseParser(IEnumerable<XElement> myresult, string servicecode, List<Room> roompersons, string resultid, string source, string lang, string version)
+        public static MssResult ResponseParser(IEnumerable<XElement> myresult, string servicecode, List<Room> roompersons, string resultid, string requestsource, string lang, string version)
         {
             try
             {
@@ -198,7 +198,7 @@ namespace MSS
                                 else if (lang.ToLower() == "en" || lang.ToLower() == "nl" || lang.ToLower() == "fr" || lang.ToLower() == "ru" || lang.ToLower() == "pl" || lang.ToLower() == "cs")
                                     bookingurl = "https://www.bookingsouthtyrol.com";
 
-                                string bookinglink = bookingurl + "/index.php?action=view&src=" + source + "&id=" + myresp.HotelId + "&result_id=" + resultid + "&" + roomstring;
+                                string bookinglink = bookingurl + "/index.php?action=view&src=" + requestsource + "&id=" + myresp.HotelId + "&result_id=" + resultid + "&" + roomstring;
 
                                 myresp.Channellink = bookinglink.Substring(0, bookinglink.Length - 1);
                             }

@@ -5,7 +5,7 @@
     "OdhType": "",
     "Description": "Search through opendatahub datasets",
     "License": "open/reduced/closed",
-    "LicenseType": "CC0/Proprietary",
+    "LicenseType": "",
     "LicenseInfo": "",
     "Source": "various",
     "Deprecated": false,
@@ -18,7 +18,7 @@
     "OdhType": "odhactivitypoi",
     "Description": "Activities Pois and Gastronomies of South Tyrol from various Data Sources (LTS, Suedtirol Wein, Siag, IDM...)",
     "License": "open/reduced",
-    "LicenseType": "CC0/Proprietary",
+    "LicenseType": "",
     "LicenseInfo": "",
     "Source": "various",
     "Deprecated": false,
@@ -162,7 +162,7 @@
     "Description": "Various Articles about South Tyrol",
     "License": "open",
     "LicenseType": "CC0",
-    "LicenseInfo": "Only CC0 Images are shown",
+    "LicenseInfo": "CC0 Images are shown",
     "Source": "",
     "Deprecated": false,
     "ApiFilter": "",
@@ -175,7 +175,7 @@
     "Description": "Various Articles about South Tyrol by IDM (Recipes, Press Articles ...)",
     "License": "open",
     "LicenseType": "CC0",
-    "LicenseInfo": "Only CC0 Images are shown",
+    "LicenseInfo": "CC0 Images are shown",
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "?source=idm",
@@ -273,43 +273,108 @@
     "SingleDataset": false
   },
   {
+    "ApiIdentifier": "EventShort",
+    "Id": "it.bz.opendatahub.noi.eventshort",
+    "OdhType": "eventshort",
+    "Description": "Events at NOI Techpark/Eurac by Eurac & Noi",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "",
+    "Source": "",
+    "Deprecated": false,
+    "ApiFilter": "",
+    "SingleDataset": true
+  },
+  {
+    "ApiIdentifier": "EventShort",
+    "Id": "it.bz.opendatahub.noi.eventshort.noi",
+    "OdhType": "eventshort",
+    "Description": "Events at NOI Techpark by Noi",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "",
+    "Source": "noi",
+    "Deprecated": false,
+    "ApiFilter": "?source=noi",
+    "SingleDataset": true
+  },
+  {
+    "ApiIdentifier": "EventShort",
+    "Id": "it.bz.opendatahub.noi.eventshort.eurac",
+    "OdhType": "eventshort",
+    "Description": "Events at NOI Techpark/Eurac by Eurac",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "",
+    "Source": "eurac",
+    "Deprecated": false,
+    "ApiFilter": "?source=eurac",
+    "SingleDataset": true
+  },
+  {
     "ApiIdentifier": "Weather",
     "Id": "it.bz.opendatahub.tourism.weather",
     "OdhType": "weather",
-    "Description": "Weather and Measuringpoints of South Tyrol by Province BZ",
-    "License": "CC0",
-    "LicenseType": "",
+    "Description": "Current Weather of South Tyrol by Province BZ",
+    "License": "open",
+    "LicenseType": "CC0",
     "LicenseInfo": "",
-    "Source": "",
+    "Source": "siag",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
+  },
+  {
+    "ApiIdentifier": "WeatherHistory",
+    "Id": "it.bz.opendatahub.tourism.weather.history",
+    "OdhType": "weather",
+    "Description": "Weather History of South Tyrol by Province BZ",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "",
+    "Source": "siag",
+    "Deprecated": false,
+    "ApiFilter": "",
+    "SingleDataset": true
+  },
+  {
+    "ApiIdentifier": "Weather/District",
+    "Id": "it.bz.opendatahub.tourism.weather.district",
+    "OdhType": "weatherdistrict",
+    "Description": "Current District Weather South Tyrol by Province BZ",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "",
+    "Source": "siag",
+    "Deprecated": false,
+    "ApiFilter": "",
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "Weather/SnowReport",
-    "Id": "it.bz.opendatahub.snowreport",
+    "Id": "it.bz.opendatahub.tourism.weather.snowreport",
     "OdhType": "snowreport",
-    "Description": "Snow Conditions of South Tyrol by LTS",
-    "License": "",
+    "Description": "Snow Conditions of South Tyrol by LTS and IDM",
+    "License": "reduced",
     "LicenseType": "",
     "LicenseInfo": "",
-    "Source": "",
+    "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "Weather/Measuringpoint",
-    "Id": "it.bz.opendatahub.measuringpoint",
+    "Id": "it.bz.opendatahub.weather.measuringpoint",
     "OdhType": "measuringpoint",
     "Description": "Measuringpoints of South Tyrol by LTS",
-    "License": "",
-    "LicenseType": "",
+    "License": "reduced",
+    "LicenseType": "CC0",
     "LicenseInfo": "",
-    "Source": "",
+    "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "WebcamInfo",
@@ -325,68 +390,95 @@
     "SingleDataset": false
   },
   {
+    "ApiIdentifier": "WebcamInfo",
+    "Id": "it.bz.opendatahub.webcam.lts",
+    "OdhType": "webcam",
+    "Description": "Webcams of South Tyrol by LTS",
+    "License": "reduced",
+    "LicenseType": "",
+    "LicenseInfo": "",
+    "Source": "lts",
+    "Deprecated": false,
+    "ApiFilter": "?source=lts",
+    "SingleDataset": true
+  },
+  {
+    "ApiIdentifier": "WebcamInfo",
+    "Id": "it.bz.opendatahub.webcam",
+    "OdhType": "webcam",
+    "Description": "Webcams of South Tyrol by IDM",
+    "License": "open",
+    "LicenseType": "",
+    "LicenseInfo": "",
+    "Source": "idm",
+    "Deprecated": false,
+    "ApiFilter": "?source=idm",
+    "SingleDataset": true
+  },
+  {
     "ApiIdentifier": "MetaRegion",
     "Id": "it.bz.opendatahub.metaregion",
     "OdhType": "metaregion",
     "Description": "MetaRegions (Region Clusters) of South Tyrol",
-    "License": "CC0",
-    "LicenseType": "",
-    "LicenseInfo": "",
-    "Source": "",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "Images with CC0 License are shown",
+    "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "Region",
     "Id": "it.bz.opendatahub.region",
     "OdhType": "region",
     "Description": "Regions of South Tyrol",
-    "License": "CC0",
-    "LicenseType": "",
-    "LicenseInfo": "",
-    "Source": "",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "Images with CC0 License are shown",
+    "Source": "idm",
     "Deprecated": false,
-    "ApiFilter": ""
+    "ApiFilter": "",
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "ExperienceArea",
     "Id": "it.bz.opendatahub.experiencearea",
     "OdhType": "experiencearea",
     "Description": "ExperienceAreas of South Tyrol by IDM (custom IDM defined Clusters of Locations)",
-    "License": "CC0",
-    "LicenseType": "",
-    "LicenseInfo": "",
-    "Source": "",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "Images with CC0 License are shown",
+    "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "TourismAssociation",
     "Id": "it.bz.opendatahub.tourismassociation",
     "OdhType": "tourismassociation",
     "Description": "TourismAssociations of South Tyrol by IDM",
-    "License": "CC0",
-    "LicenseType": "",
-    "LicenseInfo": "",
-    "Source": "",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "Images with CC0 License are shown",
+    "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "Municipality",
     "Id": "it.bz.opendatahub.municipality",
     "OdhType": "municipality",
     "Description": "Municipalities of South Tyrol by IDM",
-    "License": "CC0",
-    "LicenseType": "",
-    "LicenseInfo": "",
-    "Source": "",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "Images with CC0 License are shown",
+    "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "District",
@@ -399,56 +491,69 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "Area",
     "Id": "it.bz.opendatahub.area",
     "OdhType": "area",
     "Description": "Areas of South Tyrol by LTS (custom Cluster of Locations) ",
-    "License": "",
+    "License": "closed",
     "LicenseType": "",
     "LicenseInfo": "",
-    "Source": "",
+    "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "SkiRegion",
     "Id": "it.bz.opendatahub.skiregion",
     "OdhType": "skiregion",
     "Description": "SkiRegions of South Tyrol by IDM",
-    "License": "CC0",
-    "LicenseType": "",
-    "LicenseInfo": "",
-    "Source": "",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "Images with CC0 License are shown",
+    "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "SkiArea",
     "Id": "it.bz.opendatahub.skiarea",
     "OdhType": "skiarea",
     "Description": "SkiAreas of South Tyrol by IDM",
-    "License": "CC0",
-    "LicenseType": "",
-    "LicenseInfo": "",
-    "Source": "",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "Images with CC0 License are shown",
+    "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "WineAward",
     "Id": "it.bz.opendatahub.wineaward",
     "OdhType": "wineaward",
     "Description": "Wine Awards by Suedtirol Wein",
-    "License": "CC0",
+    "License": "open",
+    "LicenseType": "CC0",
+    "LicenseInfo": "",
+    "Source": "suedtirolwein",
+    "Deprecated": false,
+    "ApiFilter": "",
+    "SingleDataset": true
+  },
+  {
+    "ApiIdentifier": "Tag",
+    "Id": "it.bz.opendatahub.tag",
+    "OdhType": "odhtag",
+    "Description": "Tags used by Open Data Hub in various Datatypes",
+    "License": "",
     "LicenseType": "",
     "LicenseInfo": "",
-    "Source": "",
+    "Source": "various",
     "Deprecated": false,
     "ApiFilter": "",
     "SingleDataset": false
@@ -461,10 +566,10 @@
     "License": "",
     "LicenseType": "",
     "LicenseInfo": "",
-    "Source": "lts",
-    "Deprecated": false,
+    "Source": "various",
+    "Deprecated": true,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "Location",
@@ -474,7 +579,7 @@
     "License": "",
     "LicenseType": "",
     "LicenseInfo": "",
-    "Source": "lts",
+    "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
     "SingleDataset": false
@@ -491,7 +596,7 @@
     "Source": "lts",
     "Deprecated": true,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "Gastronomy",
@@ -504,7 +609,7 @@
     "Source": "lts",
     "Deprecated": true,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   },
   {
     "ApiIdentifier": "Poi",
@@ -517,6 +622,6 @@
     "Source": "lts",
     "Deprecated": true,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": true
   }
 ]

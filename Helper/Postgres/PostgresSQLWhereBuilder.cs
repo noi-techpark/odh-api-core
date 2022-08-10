@@ -290,7 +290,7 @@ namespace Helper
                 .When(typelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(typelist)) //.ODHActivityPoiTypeFilterOnTags(typelist)
                 .When(subtypelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(subtypelist)) //.ODHActivityPoiSubTypeFilterOnTags(subtypelist)
                 .When(level3typelist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(level3typelist)) //.ODHActivityPoiSubTypeFilterOnTags(subtypelist)
-                .SourceFilter_GeneratedColumn(sourcelist) //.SourceFilter(sourcelist)
+                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist) //.SourceFilter(sourcelist)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .HighlightFilter(highlight)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
@@ -354,7 +354,7 @@ namespace Helper
                 .ArticleDateNewsFilterEndWithIN_GeneratedColumn(articledate, articledateto)
                 .ArticleDateNewsFilterBeginEndWithIN_GeneratedColumn(articledate, articledateto)
                 .PublishedOnFilter(publishedonlist)
-                .SourceFilter_GeneratedColumn(sourcelist)
+                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .LastChangedFilter(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
@@ -400,7 +400,7 @@ namespace Helper
                 .EventDateFilterBegin_GeneratedColumn(begindate, enddate)
                 .EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
-                .SourceFilter_GeneratedColumn(sourcelist)
+                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
@@ -420,7 +420,7 @@ namespace Helper
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, bool? apartmentfilter, bool? bookable,
             bool altitude, int altitudemin, int altitudemax, bool? activefilter, bool? smgactivefilter,
-            IReadOnlyCollection<string> publishedonlist,
+            IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
@@ -431,7 +431,7 @@ namespace Helper
                 smgtaglist, districtlist, municipalitylist, tourismvereinlist,
                 regionlist, altitude, altitudemin, altitudemax, activefilter,
                 smgactivefilter, searchfilter, apartmentfilter, bookable,
-                language, lastchange
+                language, lastchange, sourcelist
             );
 
             return query
@@ -458,6 +458,7 @@ namespace Helper
                 .PublishedOnFilter(publishedonlist)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
         }
@@ -466,13 +467,13 @@ namespace Helper
         public static Query CommonWhereExpression(
             this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> languagelist,
             bool? visibleinsearch, IReadOnlyCollection<string> smgtaglist, bool? activefilter, bool? odhactivefilter,
-            IReadOnlyCollection<string> publishedonlist,
+            IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
-                idlist, languagelist, searchfilter, language, lastchange, activefilter, odhactivefilter, lastchange
+                idlist, languagelist, searchfilter, language, lastchange, activefilter, odhactivefilter, lastchange, sourcelist
             );
 
             return query
@@ -485,19 +486,20 @@ namespace Helper
                 .OdhActiveFilter_GeneratedColumn(odhactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
         //Return Where and Parameters for Wine
         public static Query WineWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> companyid, IReadOnlyCollection<string> wineid,
-            bool? activefilter, bool? odhactivefilter,
+            bool? activefilter, bool? odhactivefilter, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
-                searchfilter, language, lastchange
+                searchfilter, language, lastchange, sourcelist
             );
 
             return query
@@ -507,6 +509,7 @@ namespace Helper
                 .WineIdFilter(wineid)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(odhactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
@@ -529,7 +532,7 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .SourceFilter_GeneratedColumn(sourcelist)
+                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .PublishedOnFilter(publishedonlist)
@@ -556,7 +559,7 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .SourceFilter_GeneratedColumn(sourcelist)
+                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist))
                 .SearchFilter(WeatherHistoryFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(begindate, enddate)
@@ -571,7 +574,7 @@ namespace Helper
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist,
             bool? activefilter, bool? smgactivefilter,
-            IReadOnlyCollection<string> publishedonlist, 
+            IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
@@ -595,6 +598,7 @@ namespace Helper
                 .PublishedOnFilter(publishedonlist)
                 .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
                 .LastChangedFilter_GeneratedColumn(lastchange)             //.LastChangedFilter(lastchange)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
         }
@@ -621,7 +625,7 @@ namespace Helper
 
             return query
                 .IdLowerFilter(idlist)
-                .SourceFilter_GeneratedColumn(sourcelist)
+                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .EventShortLocationFilter(eventlocationlist)
                 .EventShortWebaddressFilter(webaddresslist)
                 //.ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.EventShortActiveFilter(activefilter)
@@ -717,7 +721,7 @@ namespace Helper
 
         //Return Where and Parameters for Wine
         public static Query ODHTagWhereExpression(
-            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> mainentitylist, IReadOnlyCollection<string> validforentitylist, bool? displayascategory,
+            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> mainentitylist, IReadOnlyCollection<string> validforentitylist, IReadOnlyCollection<string> sourcelist, bool? displayascategory,
             string? searchfilter, string? language, bool filterClosedData)
         {
             LogMethodInfo(
@@ -729,10 +733,12 @@ namespace Helper
 
             return query
                 .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 //.ODHTagMainEntityFilter(mainentitylist)
                 .ODHTagValidForEntityFilter(mainentitylist)
                 .ODHTagValidForEntityFilter(validforentitylist)
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
