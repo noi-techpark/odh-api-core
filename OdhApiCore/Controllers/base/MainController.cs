@@ -98,8 +98,12 @@ namespace OdhApiCore.Controllers
 
         public string License { get; set; } = default!;
 
-        public string LicenseType { get; set; }        
+        public string LicenseType { get; set; }
+
+        public string LicenseInfo { get; set; }
 
         public bool Deprecated { get; set; }
+
+        public string SingleDataset { get; set; }
     }
 }
