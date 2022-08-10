@@ -10,7 +10,8 @@
     "Source": "various",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "Search"
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
@@ -23,7 +24,8 @@
     "Source": "various",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "ODHActivityPoi"
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
@@ -36,7 +38,8 @@
     "Source": "suedtirolwein",
     "Deprecated": false,
     "ApiFilter": "?source=suedtirolwein",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHActivityPoi"
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
@@ -49,7 +52,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "?source=activitydata",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHActivityPoi"
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
@@ -62,7 +66,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "?source=poidata",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHActivityPoi"
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
@@ -75,7 +80,8 @@
     "Source": "siag",
     "Deprecated": false,
     "ApiFilter": "?source=siag",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHActivityPoi"
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
@@ -88,7 +94,8 @@
     "Source": "sta",
     "Deprecated": false,
     "ApiFilter": "?source=sta",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHActivityPoi"
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
@@ -101,7 +108,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "?source=idm",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHActivityPoi"
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
@@ -114,7 +122,8 @@
     "Source": "dss",
     "Deprecated": false,
     "ApiFilter": "?source=dss",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHActivityPoi"
   },
   {
     "ApiIdentifier": "Accommodation",
@@ -127,7 +136,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Accommodation"
   },
   {
     "ApiIdentifier": "AccommodationRoom",
@@ -140,7 +150,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Accommodation/AccommodationRoomList"
   },
   {
     "ApiIdentifier": "AccommodationRoom",
@@ -153,7 +164,8 @@
     "Source": "hgv",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Accommodation/AccommodationRoomList"
   },
   {
     "ApiIdentifier": "Article",
@@ -166,7 +178,8 @@
     "Source": "",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "Article"
   },
   {
     "ApiIdentifier": "Article",
@@ -179,7 +192,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "?source=idm",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Article"
   },
   {
     "ApiIdentifier": "Article",
@@ -192,7 +206,8 @@
     "Source": "",
     "Deprecated": false,
     "ApiFilter": "?source=noi",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "Article"
   },
   {
     "ApiIdentifier": "Event",
@@ -205,7 +220,8 @@
     "Source": "various",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "Event"
   },
   {
     "ApiIdentifier": "Event",
@@ -218,7 +234,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "?source=lts",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Event"
   },
   {
     "ApiIdentifier": "Event",
@@ -231,7 +248,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "?source=drin",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Event"
   },
   {
     "ApiIdentifier": "Event",
@@ -244,7 +262,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "?source=trevilab",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Event"
   },
   {
     "ApiIdentifier": "Venue",
@@ -257,7 +276,8 @@
     "Source": "",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Venue"
   },
   {
     "ApiIdentifier": "EventShort",
@@ -270,7 +290,8 @@
     "Source": "",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "EventShort"
   },
   {
     "ApiIdentifier": "EventShort",
@@ -283,7 +304,8 @@
     "Source": "",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "EventShort"
   },
   {
     "ApiIdentifier": "EventShort",
@@ -296,7 +318,8 @@
     "Source": "noi",
     "Deprecated": false,
     "ApiFilter": "?source=noi",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "EventShort"
   },
   {
     "ApiIdentifier": "EventShort",
@@ -309,7 +332,8 @@
     "Source": "eurac",
     "Deprecated": false,
     "ApiFilter": "?source=eurac",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "EventShort"
   },
   {
     "ApiIdentifier": "Weather",
@@ -322,7 +346,8 @@
     "Source": "siag",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Weather"
   },
   {
     "ApiIdentifier": "WeatherHistory",
@@ -335,7 +360,8 @@
     "Source": "siag",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Weather/get_v1_WeatherHistory"
   },
   {
     "ApiIdentifier": "Weather/District",
@@ -348,7 +374,8 @@
     "Source": "siag",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Weather/get_v1_Weather_District"
   },
   {
     "ApiIdentifier": "Weather/SnowReport",
@@ -361,7 +388,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Weather/get_v1_Weather_SnowReport"
   },
   {
     "ApiIdentifier": "Weather/Measuringpoint",
@@ -374,7 +402,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Weather/get_v1_Weather_Measuringpoint"
   },
   {
     "ApiIdentifier": "WebcamInfo",
@@ -387,7 +416,8 @@
     "Source": "",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "WebcamInfo/get_v1_WebcamInfo"
   },
   {
     "ApiIdentifier": "WebcamInfo",
@@ -400,7 +430,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "?source=lts",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "WebcamInfo/get_v1_WebcamInfo"
   },
   {
     "ApiIdentifier": "WebcamInfo",
@@ -413,7 +444,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "?source=idm",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "WebcamInfo/get_v1_WebcamInfo"
   },
   {
     "ApiIdentifier": "MetaRegion",
@@ -426,7 +458,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_MetaRegion"
   },
   {
     "ApiIdentifier": "Region",
@@ -439,7 +472,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_Region"
   },
   {
     "ApiIdentifier": "ExperienceArea",
@@ -452,7 +486,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_ExperienceArea\"\""
   },
   {
     "ApiIdentifier": "TourismAssociation",
@@ -465,7 +500,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_TourismAssociation"
   },
   {
     "ApiIdentifier": "Municipality",
@@ -478,7 +514,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_Municipality"
   },
   {
     "ApiIdentifier": "District",
@@ -491,7 +528,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_District"
   },
   {
     "ApiIdentifier": "Area",
@@ -504,7 +542,8 @@
     "Source": "lts",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_Area"
   },
   {
     "ApiIdentifier": "SkiRegion",
@@ -517,7 +556,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_SkiRegion"
   },
   {
     "ApiIdentifier": "SkiArea",
@@ -530,7 +570,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_SkiArea"
   },
   {
     "ApiIdentifier": "WineAward",
@@ -543,7 +584,8 @@
     "Source": "suedtirolwein",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Common/get_v1_WineAward"
   },
   {
     "ApiIdentifier": "Tag",
@@ -556,7 +598,8 @@
     "Source": "various",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "Tag"
   },
   {
     "ApiIdentifier": "ODHTag",
@@ -569,7 +612,8 @@
     "Source": "various",
     "Deprecated": true,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHTag"
   },
   {
     "ApiIdentifier": "Location",
@@ -582,7 +626,8 @@
     "Source": "idm",
     "Deprecated": false,
     "ApiFilter": "",
-    "SingleDataset": false
+    "SingleDataset": false,
+    "SwaggerUrl": "Location"
   },
 
   {
@@ -596,7 +641,8 @@
     "Source": "lts",
     "Deprecated": true,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Activity"
   },
   {
     "ApiIdentifier": "Gastronomy",
@@ -609,7 +655,8 @@
     "Source": "lts",
     "Deprecated": true,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Gastronomy"
   },
   {
     "ApiIdentifier": "Poi",
@@ -622,6 +669,7 @@
     "Source": "lts",
     "Deprecated": true,
     "ApiFilter": "",
-    "SingleDataset": true
+    "SingleDataset": true,
+    "SwaggerUrl": "Poi"
   }
 ]

@@ -90,7 +90,7 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "v1/" + Uri.EscapeDataString(this.ApiIdentifier + this.ApiFilter));                
+                return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "v1/" + this.ApiIdentifier + this.ApiFilter);                
             }
         }
 
@@ -104,6 +104,6 @@ namespace OdhApiCore.Controllers
 
         public bool Deprecated { get; set; }
 
-        public string SingleDataset { get; set; }
+        public bool SingleDataset { get; set; }
     }
 }
