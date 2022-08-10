@@ -40,6 +40,10 @@ namespace OdhApiCore.Controllers.api
         {            
             idlist = Helper.CommonListCreator.CreateIdList(eventids);
             sourcelist = Helper.CommonListCreator.CreateIdList(source);
+
+            //TODO addd source noi + ec
+
+
             eventlocationlist = Helper.CommonListCreator.CreateIdList(eventlocation);
             webaddresslist = Helper.CommonListCreator.CreateIdList(webaddress);
 
