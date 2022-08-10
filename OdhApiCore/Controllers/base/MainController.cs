@@ -72,7 +72,7 @@ namespace OdhApiCore.Controllers
         //private string ApplicationURL { get; set; }
 
         public string ApiIdentifier { get; set; } = default!;
-
+        
         public string ApiFilter { get; set; }
 
         public string Id { get; set; } = default!;
@@ -90,7 +90,7 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "v1/" + this.ApiIdentifier + this.ApiFilter);                
+                return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "v1/") + this.ApiIdentifier + this.ApiFilter;                
             }
         }
 

@@ -71,6 +71,20 @@
   },
   {
     "ApiIdentifier": "ODHActivityPoi",
+    "Id": "it.bz.opendatahub.odhactivitypoi.lts.beaconpoi",
+    "OdhType": "odhactivitypoi",
+    "Description": "Beacon Pois provided by LTS",
+    "License": "reduced",
+    "LicenseType": "CC0",
+    "LicenseInfo": "",
+    "Source": "lts",
+    "Deprecated": false,
+    "ApiFilter": "?source=beacondata",
+    "SingleDataset": true,
+    "SwaggerUrl": "ODHActivityPoi"
+  },
+  {
+    "ApiIdentifier": "ODHActivityPoi",
     "Id": "it.bz.opendatahub.odhactivitypoi.siag.museum",
     "OdhType": "odhactivitypoi",
     "Description": "Museum Pois provided by siag",
@@ -291,20 +305,6 @@
     "Deprecated": false,
     "ApiFilter": "",
     "SingleDataset": false,
-    "SwaggerUrl": "EventShort"
-  },
-  {
-    "ApiIdentifier": "EventShort",
-    "Id": "it.bz.opendatahub.noi.eventshort",
-    "OdhType": "eventshort",
-    "Description": "Events at NOI Techpark/Eurac by Eurac & Noi",
-    "License": "open",
-    "LicenseType": "CC0",
-    "LicenseInfo": "",
-    "Source": "",
-    "Deprecated": false,
-    "ApiFilter": "",
-    "SingleDataset": true,
     "SwaggerUrl": "EventShort"
   },
   {
