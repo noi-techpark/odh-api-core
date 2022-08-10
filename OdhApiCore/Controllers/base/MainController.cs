@@ -18,11 +18,17 @@ namespace OdhApiCore.Controllers
     {
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
+        private static string absoluteUri = ""; 
 
         public MainController(IWebHostEnvironment env, ISettings settings)
         {
             this.env = env;
             this.settings = settings;            
+        }
+
+        public static string GetAbsoluteUri()
+        {
+            return absoluteUri;
         }
 
         //Solved with Redirect
@@ -32,13 +38,14 @@ namespace OdhApiCore.Controllers
         {
             //var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
             var location = new Uri($"{Request.Scheme}://{Request.Host}");
+            absoluteUri = location.AbsoluteUri;
 
-            var result = await GetMainApi(location.AbsoluteUri);
+            var result = await GetMainApi();
 
             return Ok(result);
         }
 
-        private async Task<IEnumerable<TourismData>> GetMainApi(string url)
+        private async Task<IEnumerable<TourismData>> GetMainApi()
         {
             List<TourismData> tourismdatalist = new List<TourismData>();
 
@@ -49,20 +56,20 @@ namespace OdhApiCore.Controllers
                 string json = await r.ReadToEndAsync();
 
                 tourismdatalist = JsonConvert.DeserializeObject<List<TourismData>>(json);                
-            }                       
-           
+            }     
+                        
             return tourismdatalist;
         }
-    }    
+    }
 
     public class TourismData
     {
-        public TourismData(string url)
-        {
-            ApplicationURL = url;
-        }
+        //public TourismData(string url)
+        //{
+        //    ApplicationURL = url;
+        //}
 
-        private string ApplicationURL { get; set; }
+        //private string ApplicationURL { get; set; }
 
         public string ApiIdentifier { get; set; } = default!;
 
@@ -75,7 +82,7 @@ namespace OdhApiCore.Controllers
         private string swaggerUrl = default!;
         public string SwaggerUrl
         {
-            get { return Uri.EscapeDataString(ApplicationURL + "swagger/index.html#/" + swaggerUrl); }
+            get { return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "swagger/index.html#/" + swaggerUrl); }
             set { swaggerUrl = value; }
         }
 
@@ -83,7 +90,7 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                return Uri.EscapeDataString(ApplicationURL + "v1/" + Uri.EscapeDataString(this.ApiIdentifier + this.ApiFilter));                
+                return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "v1/" + Uri.EscapeDataString(this.ApiIdentifier + this.ApiFilter));                
             }
         }
 
