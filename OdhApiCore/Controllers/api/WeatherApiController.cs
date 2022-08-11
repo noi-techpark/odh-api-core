@@ -48,7 +48,9 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Weather")]
-        public async Task<ActionResult<Weather>> GetWeather(
+        public async Task<IActionResult> GetWeather(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
             string? language = "en", 
             string? locfilter = null,
             bool extended = true,
@@ -56,7 +58,7 @@ namespace OdhApiCore.Controllers
         {
             try
             {
-                return await Get(language ?? "en", locfilter, extended, cancellationToken);
+                return await Get(pagenumber, pagesize, language ?? "en", locfilter, extended, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -303,7 +305,7 @@ namespace OdhApiCore.Controllers
         #region SiagWeather
 
         /// GET Current Suedtirol Weather LIVE Request
-        private async Task<ActionResult<Weather>> Get(string language, string? locfilter, bool extended, CancellationToken cancellationToken = default)
+        private async Task<IActionResult> Get(uint? pagenumber, int? pagesize, string language, string? locfilter, bool extended, CancellationToken cancellationToken = default)
         {
             var weatherresult = default(Weather);
 
@@ -347,7 +349,20 @@ namespace OdhApiCore.Controllers
                 weatherresult = await SIAG.GetWeatherData.GetCurrentStationWeatherAsync(language, locfilter, stationidtype, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
             }
 
-            return Ok(weatherresult);
+            if (pagenumber == null)
+            {
+                return Ok(weatherresult);
+            }
+            else
+            {
+                return Ok(ResponseHelpers.GetResult(
+                    pagenumber.Value,
+                    1,
+                    1,
+                    null,
+                    new List<Weather?>() { weatherresult },
+                    Url));
+            }
         }
               
         /// GET Bezirkswetter by LocFilter LIVE Request
