@@ -87,44 +87,63 @@ namespace SIAG
             }
         }
 
-        public static async Task<BezirksWeather?> GetCurrentBezirkWeatherAsync(string lang, string bezirksid, string tvrid, string regid, string xmldir, string siaguser, string siagpswd)
+        public static async Task<IEnumerable<BezirksWeather?>> GetCurrentBezirkWeatherAsync(string lang, string bezirksid, string tvrid, string regid, string xmldir, string siaguser, string siagpswd)
         {
-            string? currentbezirksid = null;
+            var currentbezirksidlist = new List<string>();
 
             if (!String.IsNullOrEmpty(bezirksid))
-                currentbezirksid = bezirksid;
+                currentbezirksidlist.Add(bezirksid);
             else if (!String.IsNullOrEmpty(tvrid))
             {
                 var bezirkweatherinfo = XDocument.Load(xmldir + "BezirkWeather.xml");
 
-                currentbezirksid = (from x in bezirkweatherinfo.Root?.Elements("Bezirk")
+                var currentbezirksid = (from x in bezirkweatherinfo.Root?.Elements("Bezirk")
                                     from y in x.Element("TVList")?.Elements("TV") ?? Enumerable.Empty<XElement>()
                                     where y.Attribute("ID")?.Value == tvrid
                                     select x.Attribute("ID")?.Value).FirstOrDefault();
+
+                if (!String.IsNullOrEmpty(currentbezirksid))
+                    currentbezirksidlist.Add(currentbezirksid);
             }
             else if (!String.IsNullOrEmpty(regid))
             {
                 var bezirkweatherinfo = XDocument.Load(xmldir + "BezirkWeather.xml");
 
-                currentbezirksid = (from x in bezirkweatherinfo.Root?.Elements("Bezirk")
+                var currentbezirksid = (from x in bezirkweatherinfo.Root?.Elements("Bezirk")
                                     from y in x.Element("RegionList")?.Elements("Region") ?? Enumerable.Empty<XElement>()
                                     where y.Attribute("ID")?.Value == regid
                                     select x.Attribute("ID")?.Value).FirstOrDefault();
-            }
 
-            if (!String.IsNullOrEmpty(currentbezirksid))
-            {
-                HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestBezirksWeatherAsync(lang, currentbezirksid, siaguser, siagpswd, source);
-
-                //Content auslesen und XDocument Parsen
-                var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
-                XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
-
-                var myweather = ParseWeather.ParsemyBezirksWeatherResponse(lang, myweatherresponse, source);
-                return myweather;
+                if (!String.IsNullOrEmpty(currentbezirksid))
+                    currentbezirksidlist.Add(currentbezirksid);
             }
             else
-                return null;
+            {
+                var bezirkweatherinfo = XDocument.Load(xmldir + "BezirkWeather.xml");
+
+                currentbezirksidlist = (from x in bezirkweatherinfo.Root?.Elements("Bezirk")                                        
+                                        select x.Attribute("ID")?.Value).ToList();
+            }
+
+
+            var bezirksweatherlist = new List<BezirksWeather>();
+            if (currentbezirksidlist.Count > 0)
+            {
+                foreach (var currentbezirksid in currentbezirksidlist)
+                {
+                    HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestBezirksWeatherAsync(lang, currentbezirksid, siaguser, siagpswd, source);
+
+                    //Content auslesen und XDocument Parsen
+                    var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
+                    XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
+
+                    var myweather = ParseWeather.ParsemyBezirksWeatherResponse(lang, myweatherresponse, source);
+
+                    bezirksweatherlist.Add(myweather);
+                }                
+            }
+
+            return bezirksweatherlist;
         }
 
         public static async Task<IEnumerable<WeatherRealTime>> GetCurrentRealTimeWEatherAsync(string lang)
