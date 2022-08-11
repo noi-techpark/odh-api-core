@@ -599,7 +599,7 @@ namespace DataModel
         }
     }
 
-    public class LTSPoiLinked : GBLTSPoi, IMetaData
+    public class LTSPoiLinked : LTSPoi, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -665,7 +665,7 @@ namespace DataModel
         }
     }
 
-    public class LTSActivityLinked : GBLTSActivity, IMetaData
+    public class LTSActivityLinked : LTSActivity, IMetaData
     {
         public Metadata _Meta { get; set; }
 

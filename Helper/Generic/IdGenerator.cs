@@ -60,8 +60,8 @@ namespace Helper
             {
                 Accommodation or AccommodationLinked => IDStyle.uppercase,
                 AccoRoom or AccommodationRoomLinked => IDStyle.uppercase,
-                GBLTSActivity or LTSActivityLinked => IDStyle.uppercase,
-                GBLTSPoi or LTSPoiLinked => IDStyle.uppercase,
+                LTSActivity or LTSActivityLinked => IDStyle.uppercase,
+                LTSPoi or LTSPoiLinked => IDStyle.uppercase,
                 Gastronomy or GastronomyLinked => IDStyle.uppercase,
                 Event or EventLinked => IDStyle.uppercase,
                 ODHActivityPoi or ODHActivityPoiLinked => IDStyle.lowercase,
@@ -92,8 +92,8 @@ namespace Helper
             {
                 Type _ when odhtype == typeof(Accommodation) || odhtype == typeof(AccommodationLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(AccoRoom) || odhtype == typeof(AccommodationRoomLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(GBLTSActivity) || odhtype == typeof(LTSActivityLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(GBLTSPoi) || odhtype == typeof(LTSPoiLinked) => IDStyle.uppercase,
+                Type _ when odhtype == typeof(LTSActivity) || odhtype == typeof(LTSActivityLinked) => IDStyle.uppercase,
+                Type _ when odhtype == typeof(LTSPoi) || odhtype == typeof(LTSPoiLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(Gastronomy) || odhtype == typeof(GastronomyLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(Event) || odhtype == typeof(EventLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(ODHActivityPoi) || odhtype == typeof(ODHActivityPoiLinked) => IDStyle.lowercase,

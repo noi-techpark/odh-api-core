@@ -24,8 +24,8 @@ namespace Helper
             {
                 Accommodation or AccommodationLinked => "accommodation",
                 AccoRoom or AccommodationRoomLinked => "accommodationroom",
-                GBLTSActivity or LTSActivityLinked => "ltsactivity",
-                GBLTSPoi or LTSPoiLinked => "ltspoi",
+                LTSActivity or LTSActivityLinked => "ltsactivity",
+                LTSPoi or LTSPoiLinked => "ltspoi",
                 Gastronomy or GastronomyLinked => "ltsgastronomy",
                 Event or EventLinked => "event",
                 ODHActivityPoi or ODHActivityPoiLinked => "odhactivitypoi",
@@ -62,8 +62,8 @@ namespace Helper
             {
                 Accommodation or AccommodationLinked => "accommodations",
                 AccoRoom or AccommodationRoomLinked => "accommodationrooms",
-                GBLTSActivity or LTSActivityLinked => "activities",
-                GBLTSPoi or LTSPoiLinked => "pois",
+                LTSActivity or LTSActivityLinked => "activities",
+                LTSPoi or LTSPoiLinked => "pois",
                 Gastronomy or GastronomyLinked => "gastronomies",
                 Event or EventLinked => "events",
                 ODHActivityPoi or ODHActivityPoiLinked => "smgpois",

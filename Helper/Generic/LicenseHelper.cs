@@ -51,7 +51,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforActivity(PoiBaseInfos data)
+        public static LicenseInfo GetLicenseforActivity(LTSActivity data)
         {
             var isopendata = false;
             var licensetype = "Closed";
