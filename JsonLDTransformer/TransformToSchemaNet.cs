@@ -44,7 +44,7 @@ namespace JsonLDTransformer
                     objectlist.Add(TransformPlaceToLD((DataModel.District)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "recipe":
-                    objectlist.Add(TransformRecipeToLD((DataModel.RecipeArticle)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformRecipeToLD((DataModel.Article)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "event":
 
@@ -810,7 +810,7 @@ namespace JsonLDTransformer
 
         #region Recipe
 
-        private static Schema.NET.Recipe TransformRecipeToLD(DataModel.RecipeArticle recipe, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Recipe TransformRecipeToLD(DataModel.Article recipe, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -905,7 +905,7 @@ namespace JsonLDTransformer
             return myrecipe;
         }
 
-        private static RecipeDetails GetRecipeDetails(DataModel.RecipeArticle recipe, string language)
+        private static RecipeDetails GetRecipeDetails(DataModel.Article recipe, string language)
         {
             RecipeDetails myrecipedetail = new RecipeDetails();
 

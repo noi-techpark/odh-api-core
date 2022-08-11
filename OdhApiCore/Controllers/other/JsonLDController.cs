@@ -53,7 +53,7 @@ namespace OdhApiCore.Controllers.api
                         myobject = await LoadFromRavenDBSchemaNet<Event>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "recipe":
-                        myobject = await LoadFromRavenDBSchemaNet<RecipeArticle>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Article>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "poi":
                         myobject = await LoadFromRavenDBSchemaNet<SmgPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);

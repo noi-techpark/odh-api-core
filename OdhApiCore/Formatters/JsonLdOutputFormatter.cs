@@ -82,7 +82,7 @@ namespace OdhApiCore.Formatters
             {
                 //TODO Ensure that the article is of type Recipe or SpecialAnnouncement!
 
-                var recipe = JsonConvert.DeserializeObject<RecipeArticle>(jsonRaw.Value);
+                var recipe = JsonConvert.DeserializeObject<Article>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(recipe, "recipe", "de");
             }

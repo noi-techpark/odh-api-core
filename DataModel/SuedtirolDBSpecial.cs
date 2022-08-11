@@ -283,4 +283,34 @@ namespace DataModel
     }
 
 
+
+    #region Evalanche
+
+    public class EvalancheMailing
+    {
+        public EvalancheMailing()
+        {
+            ArticleIDs = new Dictionary<string, string>();
+        }
+        public string? Name { get; set; }
+        public DateTime CreationDate { get; set; }
+        public string? Type { get; set; }
+
+        //Slot and ID of the Article
+        public IDictionary<string, string> ArticleIDs { get; set; }
+    }
+
+    //Evalanche Spezial
+    public class EvalancheMapping
+    {
+        public EvalancheMapping()
+        {
+            EvalancheArticleID = new Dictionary<string, int>();
+        }
+
+        public IDictionary<string, int> EvalancheArticleID { get; set; }
+
+    }
+
+    #endregion
 }

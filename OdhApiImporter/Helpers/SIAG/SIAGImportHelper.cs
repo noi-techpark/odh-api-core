@@ -79,7 +79,8 @@ namespace OdhApiImporter.Helpers
                 //var insertresulten = await QueryFactory.Query("weatherdatahistory")
                 //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_en", data = new JsonRaw(odhweatherresulten), raw = weatherresponsetasken });
 
-                var myweatherhistory = new WeatherHistory();
+                var myweatherhistory = new WeatherHistoryLinked();
+
                 myweatherhistory.Id = odhweatherresultde.Id.ToString();
                 myweatherhistory.Weather.Add("de", odhweatherresultde);
                 myweatherhistory.Weather.Add("it", odhweatherresultit);
@@ -90,14 +91,17 @@ namespace OdhApiImporter.Helpers
                 myweatherhistory.LastChange = odhweatherresultde.date;
                 myweatherhistory.Shortname = odhweatherresultde.evolutiontitle;
 
-                var insertresult = await QueryFactory.Query("weatherdatahistory")
-                      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });
+
+                var insertresult = await QueryFactory.UpsertData<WeatherHistoryLinked>(myweatherhistory, "weatherdatahistory", insertresultraw, true);
+
+                //var insertresult = await QueryFactory.Query("weatherdatahistory")
+                //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });
 
                 ////Save to PG
                 ////Check if data exists                    
                 //var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "weatherdatahistory", insertresultraw);
 
-                return new UpdateDetail() { created = insertresult, updated = 0, deleted = 0 };                    
+                return new UpdateDetail() { created = insertresult.created, updated = insertresult.updated, deleted = insertresult.deleted };                    
             }
             else
                 throw new Exception("No weatherdata received from source!");

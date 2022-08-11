@@ -60,6 +60,7 @@ namespace Helper
                 AreaLinked al => GetMetadataforArea(al),
                 WineLinked wl => GetMetadataforWineAward(wl),
                 ODHTagLinked odhtl => GetMetadataforOdhTag(odhtl),
+                WeatherHistoryLinked wh => GetMetaDataForWeatherHistory(wh),
                 _ => throw new Exception("not known odh type")
             };            
         }
@@ -268,6 +269,11 @@ namespace Helper
         public static Metadata GetMetadataforWineAward(WineLinked data)
         {
            return GetMetadata(data, "suedtirolwein", data.LastChange, false);
-        }               
+        }
+
+        public static Metadata GetMetaDataForWeatherHistory(WeatherHistoryLinked data)
+        {
+            return GetMetadata(data, "siag", data.LastChange, false);
+        }
     }
 }
