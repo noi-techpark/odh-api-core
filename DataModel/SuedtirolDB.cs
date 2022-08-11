@@ -36,11 +36,8 @@ namespace DataModel
     }
 
     public interface IImportDateassigneable
-    {
-        [SwaggerSchema("First Import Date")]
+    {        
         DateTime? FirstImport { get; set; }
-
-        [SwaggerSchema("Last Change of the data")]
         DateTime? LastChange { get; set; }
     }
 
