@@ -149,7 +149,7 @@ namespace DataModel
 
     public interface IGPSPointsAware
     {
-        IDictionary<string, GpsInfo> GpsPoints { get; set; }
+        IDictionary<string, GpsInfo> GpsPoints { get; }
     }
 
     public interface IDistanceInfoAware
@@ -602,21 +602,33 @@ namespace DataModel
 
     #region Activities & POIs  
 
-    public class LTSPoi : PoiBaseInfos
+    public class LTSPoi : PoiBaseInfos, IGPSPointsAware
     {
-
-    }
-
-    public class LTSActivity : PoiBaseInfos
-    {
-
-    }
-
-    public class SmgPoi : PoiBaseInfos, IWebcamAware, ILicenseInfo
-    {
-        public SmgPoi()
+        public IDictionary<string, GpsInfo> GpsPoints
         {
-            PoiProperty = new Dictionary<string, List<PoiProperty>>();            
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary(true);
+            }
+        }
+    }
+
+    public class LTSActivity : PoiBaseInfos, IGPSPointsAware
+    {
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary(true);
+            }
+        }
+    }
+   
+    public class ODHActivityPoi : PoiBaseInfos, IWebcamAware, ILicenseInfo, IGPSPointsAware
+    {
+        public ODHActivityPoi()
+        {
+            PoiProperty = new Dictionary<string, List<PoiProperty>>();
         }
 
         public string? CustomId { get; set; }
@@ -633,7 +645,6 @@ namespace DataModel
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
 
-        //NEW Gastronomy
         public int? MaxSeatingCapacity { get; set; }
         public ICollection<CategoryCodes>? CategoryCodes { get; set; }
         public ICollection<DishRates>? DishRates { get; set; }
@@ -643,11 +654,13 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
         public IDictionary<string, List<AdditionalContact>>? AdditionalContact { get; set; }
-    }
-
-    public class ODHActivityPoi : SmgPoi
-    {
-        
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
     public class PoiProperty
@@ -696,38 +709,6 @@ namespace DataModel
         public string Self { get { return this.Link; } }
     }
 
-    public class AppSuggestion
-    {
-        public AppSuggestion()
-        {
-            Suggestion = new Dictionary<string, Suggestion>();
-        }
-
-        public string? Id { get; set; }
-        public string? Platform { get; set; }
-
-        public List<AppSuggestionValidFor>? Validfor { get; set; }
-
-        public IDictionary<string, Suggestion> Suggestion { get; set; }
-
-    }
-
-    public class AppSuggestionValidFor
-    {
-        public string? MainEntity { get; set; }
-        public string? Type { get; set; }
-        public string? Value { get; set; }
-    }
-
-    public class Suggestion
-    {
-        public string? Title { get; set; }
-        public string? Icon { get; set; }
-        public string? Package { get; set; }
-        public string? Developer { get; set; }
-        public string? Description { get; set; }
-    }
-
     public class RatingSources
     {
         public string? Source { get; set; }
@@ -738,7 +719,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -984,7 +965,7 @@ namespace DataModel
 
     #region Gastronomy
 
-    public class Gastronomy : GastronomyBaseInfos
+    public class Gastronomy : GastronomyBaseInfos, IGPSPointsAware
     {        
         public IDictionary<string, GpsInfo> GpsPoints
         {
@@ -1243,8 +1224,7 @@ namespace DataModel
         {
             PackageDetail = new Dictionary<string, PackageDetail>();
             Inclusive = new Dictionary<string, Inclusive>();
-            ChannelInfo = new Dictionary<string, string>();
-            GpsPoints = new Dictionary<string, GpsInfo>();
+            ChannelInfo = new Dictionary<string, string>();            
         }
 
         //IIdentifiable
@@ -1313,12 +1293,8 @@ namespace DataModel
         //MSS Result
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
 
-        public EvalancheMapping? EvalancheMapping { get; set; }
-
-        //new Add GPS Points from Root Representation
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
-
-        //New published on List
+        public EvalancheMapping? EvalancheMapping { get; set; }                   
+        
         public List<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; } 
@@ -1387,7 +1363,7 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
         public Measuringpoint()
         {            
@@ -1587,7 +1563,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn
+    public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
     {
         public EventShort()
         {
@@ -1923,7 +1899,6 @@ namespace DataModel
 
     #endregion
 
-
     #region TypeInfos
 
     public class GastronomyTypes
@@ -2062,7 +2037,7 @@ namespace DataModel
     }
 
     //BaseInfos for Districts / Regions / Municipalities ...
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2247,7 +2222,7 @@ namespace DataModel
     }
 
     //BaseInfo Article
-    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware
+    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2305,8 +2280,7 @@ namespace DataModel
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
-
-        //new Add GPS Points from Root Representation
+        
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2323,9 +2297,8 @@ namespace DataModel
                 }
             }
         }
-
-        //New published on List
-        public List<string>? PublishedOn { get; set; }
+        
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
@@ -2420,7 +2393,7 @@ namespace DataModel
     }
 
     //BaseInfo Events
-    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
+    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2668,7 +2641,7 @@ namespace DataModel
         public Nullable<int> ListPosition { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn
+    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware
     {
         public WebcamInfo()
         {            

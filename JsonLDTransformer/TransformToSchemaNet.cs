@@ -23,10 +23,10 @@ namespace JsonLDTransformer
                     objectlist.Add(TransformAccommodationToLD((DataModel.Accommodation)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "gastronomy":
-                    objectlist.Add(TransformGastronomyToLD((DataModel.SmgPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformGastronomyToLD((DataModel.ODHActivityPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "poi":
-                    objectlist.Add(TransformActivityPoiToLD((DataModel.SmgPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformActivityPoiToLD((DataModel.ODHActivityPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "skiarea":
                     objectlist.Add(TransformSkiResortToLD((DataModel.SkiArea)(object)data, (DataModel.SkiRegion)(object)parentobject, language, idtoshow, urltoshow, imageurltoshow, showid));
@@ -226,7 +226,7 @@ namespace JsonLDTransformer
 
         #region Gastronomy
 
-        private static Schema.NET.Restaurant TransformGastronomyToLD(DataModel.SmgPoi gastro, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Restaurant TransformGastronomyToLD(DataModel.ODHActivityPoi gastro, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             Schema.NET.Restaurant mygastro = new Schema.NET.Restaurant();
 
@@ -558,7 +558,7 @@ namespace JsonLDTransformer
 
         #region Tourismattraction
 
-        private static Schema.NET.TouristAttraction TransformActivityPoiToLD(DataModel.SmgPoi poi, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.TouristAttraction TransformActivityPoiToLD(DataModel.ODHActivityPoi poi, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 

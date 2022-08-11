@@ -263,6 +263,38 @@ namespace DataModel
         public DateTime ValidTo { get; set; }
     }
 
+    public class AppSuggestion
+    {
+        public AppSuggestion()
+        {
+            Suggestion = new Dictionary<string, Suggestion>();
+        }
+
+        public string? Id { get; set; }
+        public string? Platform { get; set; }
+
+        public List<AppSuggestionValidFor>? Validfor { get; set; }
+
+        public IDictionary<string, Suggestion> Suggestion { get; set; }
+
+    }
+
+    public class AppSuggestionValidFor
+    {
+        public string? MainEntity { get; set; }
+        public string? Type { get; set; }
+        public string? Value { get; set; }
+    }
+
+    public class Suggestion
+    {
+        public string? Title { get; set; }
+        public string? Icon { get; set; }
+        public string? Package { get; set; }
+        public string? Developer { get; set; }
+        public string? Description { get; set; }
+    }
+
     #endregion
 
 

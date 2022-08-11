@@ -590,13 +590,7 @@ namespace DataModel
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
 
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary();
-            }
-        }
+        
     }
 
     public class LTSPoiLinked : LTSPoi, IMetaData
@@ -654,15 +648,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }
-
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary(true);
-            }
-        }
+        public new List<LTSTagsLinked>? LTSTags { get; set; }        
     }
 
     public class LTSActivityLinked : LTSActivity, IMetaData
@@ -720,15 +706,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }
-
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary(true);
-            }
-        }
+        public new List<LTSTagsLinked>? LTSTags { get; set; }        
     }
 
     public class ArticlesLinked : ArticleBaseInfos, IMetaData

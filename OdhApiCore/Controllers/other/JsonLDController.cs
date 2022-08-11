@@ -47,7 +47,7 @@ namespace OdhApiCore.Controllers.api
                         myobject = await LoadFromRavenDBSchemaNet<Accommodation>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "gastronomy":
-                        myobject = await LoadFromRavenDBSchemaNet<SmgPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "event":
                         myobject = await LoadFromRavenDBSchemaNet<Event>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
@@ -56,7 +56,7 @@ namespace OdhApiCore.Controllers.api
                         myobject = await LoadFromRavenDBSchemaNet<Article>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "poi":
-                        myobject = await LoadFromRavenDBSchemaNet<SmgPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "region":
                         myobject = await LoadFromRavenDBSchemaNet<Region>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);

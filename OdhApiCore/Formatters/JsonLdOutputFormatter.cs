@@ -34,7 +34,7 @@ namespace OdhApiCore.Formatters
             }
             else if (path.StartsWithSegments("/v1/Gastronomy"))
             {
-                var gastro = JsonConvert.DeserializeObject<SmgPoi>(jsonRaw.Value);
+                var gastro = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value);
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(gastro, "gastronomy", "de");
             }
             else if (path.StartsWithSegments("/v1/Event"))
@@ -44,7 +44,7 @@ namespace OdhApiCore.Formatters
             }
             else if (path.StartsWithSegments("/v1/ODHActivityPoi"))
             {
-                var poi = JsonConvert.DeserializeObject<SmgPoi>(jsonRaw.Value);
+                var poi = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(poi, "poi", "de");
             }

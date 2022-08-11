@@ -128,7 +128,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforOdhActivityPoi(SmgPoi data)
+        public static LicenseInfo GetLicenseforOdhActivityPoi(ODHActivityPoi data)
         {
             var isopendata = false;
             var licensetype = "Closed";
