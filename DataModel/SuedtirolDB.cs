@@ -2689,6 +2689,15 @@ namespace DataModel
         public ICollection<string>? PublishedOn { get; set; }
         
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        //Temporary Hack because GpsInfo here is a object instead of object list
+        public ICollection<GpsInfo> GpsInfos
+        {
+            get
+            {
+                return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
+            }
+        }
     }
 
     public class PublishedonObject
