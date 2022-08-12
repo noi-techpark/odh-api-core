@@ -2632,15 +2632,6 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamLocalized
-    {
-        public string? WebcamId { get; set; }
-        public string? Webcamname { get; set; }
-        public string? Webcamurl { get; set; }
-        public GpsInfo? GpsInfo { get; set; }
-        public Nullable<int> ListPosition { get; set; }
-    }
-
     public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware
     {
         public WebcamInfo()
@@ -3127,54 +3118,5 @@ namespace DataModel
     }
 
     #endregion    
-
-    #region Resultset
-
-    //Generic Result für Paging
-    public class Result<T>
-    {
-        public int TotalResults { get; set; }
-        public int TotalPages { get; set; }
-        public int CurrentPage { get; set; }
-        public Nullable<int> OnlineResults { get; set; }
-        public string? ResultId { get; set; }
-        public string? Seed { get; set; }
-
-        public ICollection<T>? Items { get; set; }
-    }
-
-    public class ResultAsync<T>
-    {
-        public int TotalResults { get; set; }
-        public int TotalPages { get; set; }
-        public int CurrentPage { get; set; }
-        public Nullable<int> OnlineResults { get; set; }
-
-        public string? Seed { get; set; }
-
-        public IList<T>? Items { get; set; }
-    }
-
-    #endregion
-
-    #region Specials
-
-    public class PackageAccos : Package
-    {
-        public Accommodation? Accommodation { get; set; }
-    }
-
-    public class MetaInfosOdhActivityPoi
-    {
-        public MetaInfosOdhActivityPoi()
-        {
-            Metainfos = new Dictionary<string, List<Dictionary<string, object>>>();
-        }
-        public string? Id { get; set; }
-
-        public Dictionary<string, List<Dictionary<string, object>>> Metainfos { get; set; }
-    }
-
-    #endregion
 
 }

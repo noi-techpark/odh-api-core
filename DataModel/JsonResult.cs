@@ -65,4 +65,33 @@ namespace DataModel
         public Dictionary<string, uint> detailedResults { get; set; } = new Dictionary<string, uint>();
         public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
     }
+
+    #region Resultset
+
+    //Generic Result für Paging
+    public class Result<T>
+    {
+        public int TotalResults { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public Nullable<int> OnlineResults { get; set; }
+        public string? ResultId { get; set; }
+        public string? Seed { get; set; }
+
+        public ICollection<T>? Items { get; set; }
+    }
+
+    public class ResultAsync<T>
+    {
+        public int TotalResults { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public Nullable<int> OnlineResults { get; set; }
+
+        public string? Seed { get; set; }
+
+        public IList<T>? Items { get; set; }
+    }
+
+    #endregion
 }

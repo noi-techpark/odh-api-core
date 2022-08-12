@@ -3,6 +3,25 @@ using System.Collections.Generic;
 
 namespace DataModel
 {
+    #region Specials
+
+    public class PackageAccos : Package
+    {
+        public Accommodation? Accommodation { get; set; }
+    }
+
+    public class MetaInfosOdhActivityPoi
+    {
+        public MetaInfosOdhActivityPoi()
+        {
+            Metainfos = new Dictionary<string, List<Dictionary<string, object>>>();
+        }
+        public string? Id { get; set; }
+
+        public Dictionary<string, List<Dictionary<string, object>>> Metainfos { get; set; }
+    }
+
+    #endregion
     public class AccoBookList
     {        
         public string? Id { get; set; }
