@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
+using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,8 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("ODHTag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetODHTagsAsync(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? language = null,
             string? validforentity = null,
             string? mainentity = null,
@@ -74,7 +77,7 @@ namespace OdhApiCore.Controllers
                 language = localizationlanguage;
 
 
-            return await Get(language, mainentity, validforentity, displayascategory, source, fields: fields ?? Array.Empty<string>(), 
+            return await Get(pagenumber, pagesize, language, mainentity, validforentity, displayascategory, source, fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
         }
@@ -114,7 +117,9 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> Get(string? language, string? maintype, string? validforentity, bool? displayascategory, string? source, string[] fields,
+        private Task<IActionResult> Get(
+            uint? pagenumber,  int? pagesize, string? language, string? maintype, 
+            string? validforentity, bool? displayascategory, string? source, string[] fields,
             string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
@@ -151,12 +156,40 @@ namespace OdhApiCore.Controllers
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
 
-
-                var data = await query.GetAsync<JsonRaw>();
-
                 var fieldsTohide = FieldsToHide;
 
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
+                if (pagenumber != null)
+                {
+
+                    // Get paginated data
+                    var data =
+                        await query
+                            .PaginateAsync<JsonRaw>(
+                                page: (int)pagenumber,
+                                perPage: pagesize ?? 25);
+
+                    var dataTransformed =
+                        data.List.Select(
+                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        );
+
+                    uint totalpages = (uint)data.TotalPages;
+                    uint totalcount = (uint)data.Count;
+
+                    return ResponseHelpers.GetResult(
+                        (uint)pagenumber,
+                        totalpages,
+                        totalcount,
+                        null,
+                        dataTransformed,
+                        Url);
+                }
+                else
+                {
+                    var data = await query.GetAsync<JsonRaw>();
+
+                    return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
+                }                
             });
         }      
 
