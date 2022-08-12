@@ -18,7 +18,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Venue/" + Uri.EscapeDataString(this.Id));
+                return "Venue/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -114,7 +114,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "VenueTypes/" + Uri.EscapeDataString(this.Id));
+                return "VenueTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -129,7 +129,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "VenueTypes/" + Uri.EscapeDataString(this.Id));
+                return "VenueTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }

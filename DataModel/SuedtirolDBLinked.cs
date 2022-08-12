@@ -16,7 +16,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "AccommodationFeatures/" + Uri.EscapeDataString(this.Id));
+                return "AccommodationFeatures/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -27,7 +27,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "AccommodationRoom/" + Uri.EscapeDataString(this.Id));
+                return "AccommodationRoom/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -38,7 +38,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "EventTopics/" + Uri.EscapeDataString(this.TopicRID));
+                return "EventTopics/" + Uri.EscapeDataString(this.TopicRID);
             }
         }
     }
@@ -49,7 +49,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "GastronomyTypes/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -60,7 +60,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "GastronomyTypes/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -71,7 +71,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "GastronomyTypes/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -82,7 +82,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "GastronomyTypes/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -93,7 +93,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "Region/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -104,7 +104,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "TourismAssociation/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -115,7 +115,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "Municipality/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -126,7 +126,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "District/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "District/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -137,7 +137,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeDataString(ODHConstant.ApplicationURL + "Area/" + Uri.EscapeDataString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "Area/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -283,7 +283,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Gastronomy/" + Uri.EscapeDataString(this.Id));
+                return "Gastronomy/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -322,7 +322,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Accommodation/" + Uri.EscapeDataString(this.Id));
+                return "Accommodation/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -409,7 +409,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "AccommodationRoom/" + Uri.EscapeDataString(this.Id));
+                return "AccommodationRoom/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -457,7 +457,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Event/" + Uri.EscapeDataString(this.Id));
+                return "Event/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -504,7 +504,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Event/" + Uri.EscapeDataString(this.Id));
+                return "Package/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -537,7 +537,7 @@ namespace DataModel
         {
             get
             {
-                return this.Id != null ? Uri.EscapeDataString(ODHConstant.ApplicationURL + "ODHActivityPoi/" + Uri.EscapeDataString(this.Id)) : null;
+                return this.Id != null ? "ODHActivityPoi/" + Uri.EscapeDataString(this.Id) : null;
             }
         }
 
@@ -601,7 +601,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Poi/" + Uri.EscapeDataString(this.Id));
+                return "Poi/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -659,7 +659,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Activity/" + Uri.EscapeUriString(this.Id));
+                return ODHConstant.ApplicationURL + "Activity/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -717,7 +717,7 @@ namespace DataModel
         {
             get
             {
-                return this.Id != null ? Uri.EscapeDataString(ODHConstant.ApplicationURL + "Article/" + Uri.EscapeDataString(this.Id)) : null;
+                return this.Id != null ? "Article/" + Uri.EscapeDataString(this.Id) : null;
             }
         }
 
@@ -772,7 +772,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "District/" + Uri.EscapeDataString(this.Id));
+                return "District/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -825,7 +825,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeDataString(this.Id));
+                return "Municipality/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -870,7 +870,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.Id));
+                return "TourismAssociation/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -915,7 +915,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.Id));
+                return "Region/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -952,7 +952,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "MetaRegion/" + Uri.EscapeDataString(this.Id));
+                return "MetaRegion/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1005,7 +1005,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "ExperienceArea/" + Uri.EscapeDataString(this.Id));
+                return "ExperienceArea/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1050,7 +1050,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Area/" + Uri.EscapeDataString(this.Id));
+                return "Area/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1103,7 +1103,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "SkiArea/" + Uri.EscapeDataString(this.Id));
+                return "SkiArea/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1167,7 +1167,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "SkiRegion/" + Uri.EscapeDataString(this.Id));
+                return "SkiRegion/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1196,7 +1196,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "WebcamInfo/" + Uri.EscapeDataString(this.Id));
+                return "WebcamInfo/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1233,7 +1233,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Weather/Measuringpoint/" + Uri.EscapeDataString(this.Id));
+                return "Weather/Measuringpoint/" + Uri.EscapeDataString(this.Id);
             }
         }
 
