@@ -659,7 +659,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeDataString(ODHConstant.ApplicationURL + "Activity/" + Uri.EscapeDataString(this.Id));
+                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Activity/" + Uri.EscapeUriString(this.Id));
             }
         }
 
