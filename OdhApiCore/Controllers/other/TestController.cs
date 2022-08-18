@@ -32,8 +32,13 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
-            : base(env, settings, logger, queryFactory)
+        public TestController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<AccommodationController> logger,
+            QueryFactory queryFactory,
+            IHttpClientFactory httpClientFactory
+        ) : base(env, settings, logger, queryFactory)
         {
             this.httpClientFactory = httpClientFactory;
             this.settings = settings;
@@ -43,31 +48,26 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestAppsettings")]
         public IActionResult GetTestappsettings()
         {
-
             return Ok(JsonConvert.SerializeObject(settings.Field2HideConfig));
         }
 
         [HttpGet, Route("TestQuotasettings")]
         public IActionResult GetTestquotasettings()
         {
-
             return Ok(JsonConvert.SerializeObject(settings.RateLimitConfig));
         }
 
         [HttpGet, Route("TestQuotaRoutes")]
         public IActionResult GetTestQuotaRoutes()
         {
-
             return Ok(JsonConvert.SerializeObject(settings.NoRateLimitConfig));
         }
 
         [HttpGet, Route("TestField2Hide")]
         public IActionResult GetFieldToHide()
         {
-
             return Ok(JsonConvert.SerializeObject(FieldsToHide));
         }
-
 
         [HttpGet, Route("UrlHelper", Name = "UrlHelperTest")]
         public object GetUrl(CancellationToken cancellationToken)
@@ -75,12 +75,21 @@ namespace OdhApiCore.Controllers.api
             var url = Url.Link("UrlHelperTest", new { });
             var remoteurl = RemoteIpHelper.GetRequestIP(this.HttpContext, true);
 
-            var xforwardedforheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-For", this.HttpContext);
-            var xforwardedprotoheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Proto", this.HttpContext);
-            var xforwardedhostheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Host", this.HttpContext);
+            var xforwardedforheader = RemoteIpHelper.GetHeaderValueAs<string>(
+                "X-Forwarded-For",
+                this.HttpContext
+            );
+            var xforwardedprotoheader = RemoteIpHelper.GetHeaderValueAs<string>(
+                "X-Forwarded-Proto",
+                this.HttpContext
+            );
+            var xforwardedhostheader = RemoteIpHelper.GetHeaderValueAs<string>(
+                "X-Forwarded-Host",
+                this.HttpContext
+            );
 
             var xforwardedproto = this.HttpContext.Request.Scheme;
-            var xforwardedhost = this.HttpContext.Request.Host;            
+            var xforwardedhost = this.HttpContext.Request.Host;
 
             return new
             {
@@ -88,18 +97,21 @@ namespace OdhApiCore.Controllers.api
                 RemoteURL = remoteurl,
                 ForwardedForHeader = xforwardedforheader,
                 ForwardedProtoHeader = xforwardedprotoheader,
-                ForwardedHostHeader = xforwardedhostheader,                
+                ForwardedHostHeader = xforwardedhostheader,
                 ForwardedProtoContext = xforwardedproto,
                 ForwardedHostContext = xforwardedhost
-            }; 
+            };
         }
 
-        
         //Not working
         [HttpGet, Route("TestDateTimeConversion1")]
         public IActionResult GetDatetimeConversion1()
         {
-            var date = DateTime.ParseExact("31/12/2020 18:00", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+            var date = DateTime.ParseExact(
+                "31/12/2020 18:00",
+                "dd/MM/yyyy HH:mm",
+                CultureInfo.InvariantCulture
+            );
 
             return Ok(date);
         }
@@ -149,8 +161,18 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestDeprecated")]
         public IActionResult GetDeprecated()
         {
-            ObjectwithDeprecated test1 = new ObjectwithDeprecated() { name = "test", name2 = "test", namecol = new List<string>() { "test1", "test2" } };
-            ObjectwithDeprecated test2 = new ObjectwithDeprecated() { name = "test2", name2 = "test2", namecol = new List<string>() { "test21", "test22" } };
+            ObjectwithDeprecated test1 = new ObjectwithDeprecated()
+            {
+                name = "test",
+                name2 = "test",
+                namecol = new List<string>() { "test1", "test2" }
+            };
+            ObjectwithDeprecated test2 = new ObjectwithDeprecated()
+            {
+                name = "test2",
+                name2 = "test2",
+                namecol = new List<string>() { "test21", "test22" }
+            };
 
             var toreturn = new List<ObjectwithDeprecated>();
             toreturn.Add(test1);
@@ -162,7 +184,7 @@ namespace OdhApiCore.Controllers.api
         ////Not working
         //[HttpGet, Route("TestDateTimeConversion6")]
         //public IActionResult GetDatetimeConversiont6()
-        //{            
+        //{
         //    var date = Convert.ToDateTime("31/12/2020T18:00:00");
 
         //    return Ok(date);
@@ -203,7 +225,11 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("WithRole2")]
         public IActionResult GetWithRole2(CancellationToken cancellationToken)
         {
-            return this.Content(User.Identity?.Name + " WithRole2 working", "application/json", Encoding.UTF8);
+            return this.Content(
+                User.Identity?.Name + " WithRole2 working",
+                "application/json",
+                Encoding.UTF8
+            );
         }
 
         //[HttpGet, Route("Environment")]
@@ -257,10 +283,11 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
     }
-    
+
     public class ObjectwithDeprecated
     {
         public string? name { get; set; }
+
         [SwaggerDeprecated("Will be removed on 12-05-22, please use name instead.")]
         public string? name2 { get; set; }
         public ICollection<string>? namecol { get; set; }

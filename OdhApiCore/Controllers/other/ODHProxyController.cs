@@ -8,9 +8,8 @@ namespace OdhApiCore.Controllers.other
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ODHProxyController : ControllerBase
     {
-        
-        [ApiExplorerSettings(IgnoreApi = true)]                
-        [HttpGet, Route("v1/ODHProxy/{*url}")]        
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet, Route("v1/ODHProxy/{*url}")]
         public Task GetODHProxy(string url)
         {
             try
@@ -20,7 +19,7 @@ namespace OdhApiCore.Controllers.other
                 foreach (var paramdict in HttpContext.Request.Query)
                 {
                     parameter = parameter + paramdict.Key + "=" + paramdict.Value;
-                }                
+                }
 
                 var fullurl = url + parameter;
 
@@ -31,8 +30,8 @@ namespace OdhApiCore.Controllers.other
 
                 return this.HttpProxyAsync(fullurl);
             }
-            catch(Exception ex)
-            {                
+            catch (Exception ex)
+            {
                 return Task.FromException(ex);
             }
         }

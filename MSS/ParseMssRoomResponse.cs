@@ -11,7 +11,11 @@ namespace MSS
 {
     public class ParseMssRoomResponse
     {
-        public static List<AccoRoom> ParseMyRoomResponse(string lang, XElement mssresponse, XDocument roomamenities)
+        public static List<AccoRoom> ParseMyRoomResponse(
+            string lang,
+            XElement mssresponse,
+            XDocument roomamenities
+        )
         {
             try
             {
@@ -30,11 +34,13 @@ namespace MSS
             {
                 return null;
             }
-
         }
 
-
-        public static List<AccoRoom> ResponseRoomParser(XElement myresult, XDocument roomamenities, string language)
+        public static List<AccoRoom> ResponseRoomParser(
+            XElement myresult,
+            XDocument roomamenities,
+            string language
+        )
         {
             try
             {
@@ -54,20 +60,28 @@ namespace MSS
                     {
                         if (mychannelresult.Element("channel_id").Value == "hgv")
                         {
-                            var myroomlist = mychannelresult.Element("room_description").Elements("room");
+                            var myroomlist = mychannelresult
+                                .Element("room_description")
+                                .Elements("room");
 
                             foreach (var myroom in myroomlist)
                             {
                                 AccoRoom myroomtosave = new AccoRoom();
 
                                 string roomid = myroom.Element("room_id").Value;
-                                string roomidlts = myroom.Element("room_lts_id").Value != null ? myroom.Element("room_lts_id").Value : "";
+                                string roomidlts =
+                                    myroom.Element("room_lts_id").Value != null
+                                        ? myroom.Element("room_lts_id").Value
+                                        : "";
 
                                 myroomtosave.Id = roomid + "hgv" + roomidlts;
                                 myroomtosave.A0RID = A0RID.ToUpper();
                                 myroomtosave.RoomCode = myroom.Element("room_code").Value;
                                 myroomtosave.HGVId = roomid;
-                                myroomtosave.LTSId = myroom.Element("room_lts_id").Value != null ? myroom.Element("room_lts_id").Value : "";
+                                myroomtosave.LTSId =
+                                    myroom.Element("room_lts_id").Value != null
+                                        ? myroom.Element("room_lts_id").Value
+                                        : "";
                                 myroomtosave.Source = "hgv";
 
                                 string roomtyp = myroom.Element("room_type").Value;
@@ -79,7 +93,10 @@ namespace MSS
                                     myroomtosave.Roomtype = "undefined";
 
                                 myroomtosave.RoomtypeInt = Convert.ToInt32(roomtyp);
-                                myroomtosave.RoomClassificationCodes = AlpineBitsHelper.GetRoomClassificationCode(myroomtosave.Roomtype);
+                                myroomtosave.RoomClassificationCodes =
+                                    AlpineBitsHelper.GetRoomClassificationCode(
+                                        myroomtosave.Roomtype
+                                    );
 
                                 string roommax = myroom.Element("occupancy").Element("max").Value;
                                 string roommin = myroom.Element("occupancy").Element("min").Value;
@@ -100,7 +117,6 @@ namespace MSS
                                 else
                                     myroomtosave.Roomstd = null;
 
-
                                 string pricefrom = myroom.Element("price_from").Value;
 
                                 if (!String.IsNullOrEmpty(pricefrom))
@@ -108,18 +124,24 @@ namespace MSS
                                 else
                                     myroomtosave.PriceFrom = null;
 
-
                                 myroomtosave.Shortname = myroom.Element("title").Value;
 
                                 //zimmeranzahl
 
                                 if (myroom.Element("room_numbers") != null)
                                 {
-                                    var myroomcount = myroom.Element("room_numbers").Elements("number").Count();
+                                    var myroomcount = myroom
+                                        .Element("room_numbers")
+                                        .Elements("number")
+                                        .Count();
 
                                     myroomtosave.RoomQuantity = myroomcount;
 
-                                    myroomtosave.RoomNumbers = myroom.Element("room_numbers").Elements("number").Select(x => x.Value).ToList();
+                                    myroomtosave.RoomNumbers = myroom
+                                        .Element("room_numbers")
+                                        .Elements("number")
+                                        .Select(x => x.Value)
+                                        .ToList();
                                 }
 
                                 //Roomdetail
@@ -133,11 +155,13 @@ namespace MSS
 
                                 myroomtosave.AccoRoomDetail.TryAddOrUpdate(language, mydetail);
 
-                                //Features     
+                                //Features
 
                                 if (myroom.Element("features_view") != null)
                                 {
-                                    var myfeatures = myroom.Element("features_view").Elements("feature");
+                                    var myfeatures = myroom
+                                        .Element("features_view")
+                                        .Elements("feature");
 
                                     List<AccoFeature> myroomfeatureslist = new List<AccoFeature>();
                                     foreach (var feature in myfeatures)
@@ -149,16 +173,22 @@ namespace MSS
                                         myroomfeature.HgvId = amenityid;
                                         myroomfeature.Name = feature.Element("title").Value;
 
-                                        //LTS Feature ID + OTA Code                                        
+                                        //LTS Feature ID + OTA Code
                                         string ltsamenityid = "";
                                         string otacodes = "";
 
-                                        var myamenity = roomamenities.Root.Elements("amenity").Where(x => x.Element("hgvid").Value == amenityid).FirstOrDefault();
+                                        var myamenity = roomamenities.Root
+                                            .Elements("amenity")
+                                            .Where(x => x.Element("hgvid").Value == amenityid)
+                                            .FirstOrDefault();
 
                                         if (myamenity != null)
                                         {
                                             ltsamenityid = myamenity.Element("ltsrid").Value;
-                                            otacodes = myamenity.Element("ota_codes") != null ? myamenity.Element("ota_codes").Value : "";
+                                            otacodes =
+                                                myamenity.Element("ota_codes") != null
+                                                    ? myamenity.Element("ota_codes").Value
+                                                    : "";
                                         }
 
                                         myroomfeature.Id = ltsamenityid;
@@ -177,7 +207,6 @@ namespace MSS
                                             myroomfeature.RoomAmenityCodes = amenitycodes;
                                         }
 
-
                                         myroomfeatureslist.Add(myroomfeature);
                                     }
 
@@ -187,7 +216,9 @@ namespace MSS
 
                                 if (myroom.Element("pictures") != null)
                                 {
-                                    var myroompictures = myroom.Element("pictures").Elements("picture");
+                                    var myroompictures = myroom
+                                        .Element("pictures")
+                                        .Elements("picture");
 
                                     int i = 0;
 
@@ -197,7 +228,10 @@ namespace MSS
                                         ImageGallery mainimage = new ImageGallery();
 
                                         mainimage.ImageUrl = picture.Element("url").Value;
-                                        mainimage.ImageName = picture.Element("title").Value != null ? picture.Element("title").Value : "";
+                                        mainimage.ImageName =
+                                            picture.Element("title").Value != null
+                                                ? picture.Element("title").Value
+                                                : "";
                                         mainimage.Height = 0;
                                         mainimage.Width = 0;
                                         mainimage.ImageSource = "HGV";
@@ -213,7 +247,6 @@ namespace MSS
                             }
                         }
                     }
-
                 }
 
                 return myaccorooms;
@@ -223,6 +256,5 @@ namespace MSS
                 return null;
             }
         }
-
     }
 }

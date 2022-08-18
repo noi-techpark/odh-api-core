@@ -18,12 +18,12 @@ namespace OdhApiCore.Controllers
     {
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
-        private static string absoluteUri = ""; 
+        private static string absoluteUri = "";
 
         public MainController(IWebHostEnvironment env, ISettings settings)
         {
             this.env = env;
-            this.settings = settings;            
+            this.settings = settings;
         }
 
         public static string GetAbsoluteUri()
@@ -55,9 +55,9 @@ namespace OdhApiCore.Controllers
             {
                 string json = await r.ReadToEndAsync();
 
-                tourismdatalist = JsonConvert.DeserializeObject<List<TourismData>>(json);                
-            }     
-                        
+                tourismdatalist = JsonConvert.DeserializeObject<List<TourismData>>(json);
+            }
+
             return tourismdatalist;
         }
     }
@@ -72,7 +72,7 @@ namespace OdhApiCore.Controllers
         //private string ApplicationURL { get; set; }
 
         public string ApiIdentifier { get; set; } = default!;
-        
+
         public string ApiFilter { get; set; }
 
         public string Id { get; set; } = default!;
@@ -82,7 +82,12 @@ namespace OdhApiCore.Controllers
         private string swaggerUrl = default!;
         public string SwaggerUrl
         {
-            get { return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "swagger/index.html#/" + swaggerUrl); }
+            get
+            {
+                return Uri.EscapeUriString(
+                    MainController.GetAbsoluteUri() + "swagger/index.html#/" + swaggerUrl
+                );
+            }
             set { swaggerUrl = value; }
         }
 
@@ -90,7 +95,9 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "v1/") + this.ApiIdentifier + this.ApiFilter;                
+                return Uri.EscapeUriString(MainController.GetAbsoluteUri() + "v1/")
+                    + this.ApiIdentifier
+                    + this.ApiFilter;
             }
         }
 

@@ -10,7 +10,10 @@ namespace OdhApiImporter.Helpers
 {
     public interface IImportHelper
     {
-        Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default);
+        Task<UpdateDetail> SaveDataToODH(
+            DateTime? lastchanged = null,
+            CancellationToken cancellationToken = default
+        );
 
         Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete);
     }
@@ -19,7 +22,7 @@ namespace OdhApiImporter.Helpers
     {
         protected readonly QueryFactory QueryFactory;
         protected readonly ISettings settings;
-        protected readonly string table;        
+        protected readonly string table;
 
         public ImportHelper(ISettings settings, QueryFactory queryfactory, string table)
         {
@@ -35,15 +38,11 @@ namespace OdhApiImporter.Helpers
 
             if (delete)
             {
-                deleteresult = await QueryFactory.Query(table).Where("id", id)
-                    .DeleteAsync();
+                deleteresult = await QueryFactory.Query(table).Where("id", id).DeleteAsync();
             }
             else
             {
-                var query =
-               QueryFactory.Query(table)
-                   .Select("data")
-                   .Where("id", id);
+                var query = QueryFactory.Query(table).Select("data").Where("id", id);
 
                 var data = await query.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
 
@@ -54,14 +53,15 @@ namespace OdhApiImporter.Helpers
                         data.Active = false;
                         data.SmgActive = false;
 
-                        updateresult = await QueryFactory.Query(table).Where("id", id)
-                                        .UpdateAsync(new JsonBData() { id = id, data = new JsonRaw(data) });
+                        updateresult = await QueryFactory
+                            .Query(table)
+                            .Where("id", id)
+                            .UpdateAsync(new JsonBData() { id = id, data = new JsonRaw(data) });
                     }
                 }
             }
 
             return Tuple.Create(updateresult, deleteresult);
         }
-
     }
 }

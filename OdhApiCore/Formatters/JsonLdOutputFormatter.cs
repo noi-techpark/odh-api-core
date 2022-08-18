@@ -17,7 +17,7 @@ namespace OdhApiCore.Formatters
         {
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/ld+json"));
             // Hack because Output formatter Mapping does not work with + inside
-            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/ldjson"));            
+            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/ldjson"));
 
             SupportedEncodings.Add(Encoding.UTF8);
             SupportedEncodings.Add(Encoding.Unicode);
@@ -30,53 +30,89 @@ namespace OdhApiCore.Formatters
             if (path.StartsWithSegments("/v1/Accommodation"))
             {
                 var acco = JsonConvert.DeserializeObject<Accommodation>(jsonRaw.Value);
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(acco, "accommodation", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    acco,
+                    "accommodation",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/Gastronomy"))
             {
                 var gastro = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value);
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(gastro, "gastronomy", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    gastro,
+                    "gastronomy",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/Event"))
             {
                 var @event = JsonConvert.DeserializeObject<Event>(jsonRaw.Value);
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(@event, "event", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    @event,
+                    "event",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/ODHActivityPoi"))
             {
                 var poi = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(poi, "poi", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    poi,
+                    "poi",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/Region"))
             {
                 var region = JsonConvert.DeserializeObject<Region>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(region, "region", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    region,
+                    "region",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/TourismAssociation"))
             {
                 var tv = JsonConvert.DeserializeObject<Tourismverein>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(tv, "tv", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    tv,
+                    "tv",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/Municipality"))
             {
                 var municipality = JsonConvert.DeserializeObject<Municipality>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(municipality, "municipality", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    municipality,
+                    "municipality",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/District"))
             {
                 var district = JsonConvert.DeserializeObject<District>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(district, "district", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    district,
+                    "district",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/SkiArea"))
             {
                 var skiarea = JsonConvert.DeserializeObject<SkiArea>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(skiarea, "skiarea", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    skiarea,
+                    "skiarea",
+                    "de"
+                );
             }
             else if (path.StartsWithSegments("/v1/Article"))
             {
@@ -84,7 +120,11 @@ namespace OdhApiCore.Formatters
 
                 var recipe = JsonConvert.DeserializeObject<Article>(jsonRaw.Value);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(recipe, "recipe", "de");
+                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(
+                    recipe,
+                    "recipe",
+                    "de"
+                );
             }
             else
             {
@@ -92,19 +132,25 @@ namespace OdhApiCore.Formatters
             }
         }
 
-        public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+        public override async Task WriteResponseBodyAsync(
+            OutputFormatterWriteContext context,
+            Encoding selectedEncoding
+        )
         {
             if (context.Object is JsonRaw jsonRaw)
             {
                 var transformed = Transform(context.HttpContext.Request.Path, jsonRaw);
                 if (transformed != null)
                 {
-                    var jsonLD = JsonConvert.SerializeObject(transformed, Newtonsoft.Json.Formatting.None,
-                                    new JsonSerializerSettings
-                                    {
-                                        DefaultValueHandling = DefaultValueHandling.Ignore,
-                                        NullValueHandling = NullValueHandling.Ignore
-                                    });
+                    var jsonLD = JsonConvert.SerializeObject(
+                        transformed,
+                        Newtonsoft.Json.Formatting.None,
+                        new JsonSerializerSettings
+                        {
+                            DefaultValueHandling = DefaultValueHandling.Ignore,
+                            NullValueHandling = NullValueHandling.Ignore
+                        }
+                    );
                     await context.HttpContext.Response.WriteAsync(jsonLD);
                 }
                 else

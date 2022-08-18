@@ -14,7 +14,7 @@ namespace OdhApiCore
         }
 
         public string Username { get; private set; }
-        public string Password { get; private set;  }
+        public string Password { get; private set; }
     }
 
     public class LcsConfig
@@ -52,11 +52,11 @@ namespace OdhApiCore
         public SiagConfig(string username, string password)
         {
             this.Username = username;
-            this.Password = password;            
+            this.Password = password;
         }
 
         public string Username { get; private set; }
-        public string Password { get; private set; }        
+        public string Password { get; private set; }
     }
 
     public class XmlConfig
@@ -68,14 +68,14 @@ namespace OdhApiCore
         }
 
         public string Xmldir { get; private set; }
-        public string XmldirWeather { get; private set; }        
+        public string XmldirWeather { get; private set; }
     }
 
     public class JsonConfig
     {
         public JsonConfig(string jsondir)
         {
-            this.Jsondir = jsondir;            
+            this.Jsondir = jsondir;
         }
 
         public string Jsondir { get; private set; }
@@ -83,7 +83,13 @@ namespace OdhApiCore
 
     public class S3ImageresizerConfig
     {
-        public S3ImageresizerConfig(string url, string docurl, string bucketaccesspoint, string accesskey, string secretkey)
+        public S3ImageresizerConfig(
+            string url,
+            string docurl,
+            string bucketaccesspoint,
+            string accesskey,
+            string secretkey
+        )
         {
             this.Url = url;
             this.DocUrl = docurl;
@@ -141,14 +147,22 @@ namespace OdhApiCore
 
     public class RequestInterceptorConfig
     {
-        public RequestInterceptorConfig(string action, string controller, string querystrings, string redirectaction, string redirectcontroller, string redirectquerystrings)
+        public RequestInterceptorConfig(
+            string action,
+            string controller,
+            string querystrings,
+            string redirectaction,
+            string redirectcontroller,
+            string redirectquerystrings
+        )
         {
             this.Action = action;
             this.Controller = controller;
             this.QueryStrings = querystrings != null ? querystrings.Split('&').ToList() : null;
             this.RedirectAction = redirectaction;
             this.RedirectController = redirectcontroller;
-            this.RedirectQueryStrings = redirectquerystrings != null ? redirectquerystrings.Split('&').ToList() : null;
+            this.RedirectQueryStrings =
+                redirectquerystrings != null ? redirectquerystrings.Split('&').ToList() : null;
         }
 
         public string Action { get; private set; }
@@ -179,12 +193,12 @@ namespace OdhApiCore
         {
             this.Identifier = identifier;
             this.ServerKey = serverkey;
-            this.SenderId = senderid;            
+            this.SenderId = senderid;
         }
 
         public string Identifier { get; private set; }
         public string ServerKey { get; private set; }
-        public string SenderId { get; private set; }        
+        public string SenderId { get; private set; }
     }
 
     public class RateLimitConfig
@@ -199,7 +213,7 @@ namespace OdhApiCore
         public string Type { get; private set; }
         public int TimeWindow { get; private set; }
         public int MaxRequests { get; private set; }
-    }    
+    }
 
     public class NoRateLimitConfig
     {
@@ -208,6 +222,7 @@ namespace OdhApiCore
             NoRateLimitRoutes = noratelimitroutes;
             NoRateLimitReferer = noratelimitrefers;
         }
+
         public List<string> NoRateLimitRoutes { get; private set; }
         public List<string> NoRateLimitReferer { get; private set; }
     }
@@ -225,6 +240,7 @@ namespace OdhApiCore
         EBMSConfig EbmsConfig { get; }
         RavenConfig RavenConfig { get; }
         PushServerConfig PushServerConfig { get; }
+
         //FCMConfig FCMConfig { get; }
         List<Field2HideConfig> Field2HideConfig { get; }
         List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
@@ -240,7 +256,7 @@ namespace OdhApiCore
         private readonly Lazy<string> connectionString;
         private readonly MssConfig mssConfig;
         private readonly LcsConfig lcsConfig;
-        private readonly CDBConfig cdbConfig;        
+        private readonly CDBConfig cdbConfig;
         private readonly SiagConfig siagConfig;
         private readonly XmlConfig xmlConfig;
         private readonly JsonConfig jsonConfig;
@@ -248,6 +264,7 @@ namespace OdhApiCore
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
         private readonly PushServerConfig pushserverConfig;
+
         //private readonly FCMConfig fcmConfig;
         private readonly List<Field2HideConfig> field2hideConfig;
         private readonly List<RequestInterceptorConfig> requestInterceptorConfig;
@@ -258,74 +275,145 @@ namespace OdhApiCore
         public Settings(IConfiguration configuration)
         {
             this.configuration = configuration;
-            this.connectionString = new Lazy<string>(() =>
-            this.configuration.GetConnectionString("PGConnection"));
+            this.connectionString = new Lazy<string>(
+                () => this.configuration.GetConnectionString("PGConnection")
+            );
             var mss = this.configuration.GetSection("MssConfig");
-            this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
+            this.mssConfig = new MssConfig(
+                mss.GetValue<string>("Username", ""),
+                mss.GetValue<string>("Password", "")
+            );
             var lcs = this.configuration.GetSection("LcsConfig");
-            this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""));
+            this.lcsConfig = new LcsConfig(
+                lcs.GetValue<string>("Username", ""),
+                lcs.GetValue<string>("Password", ""),
+                lcs.GetValue<string>("MessagePassword", "")
+            );
             var cdb = this.configuration.GetSection("CDBConfig");
-            this.cdbConfig = new CDBConfig(cdb.GetValue<string>("Username", ""), cdb.GetValue<string>("Password", ""), cdb.GetValue<string>("Url", ""));
+            this.cdbConfig = new CDBConfig(
+                cdb.GetValue<string>("Username", ""),
+                cdb.GetValue<string>("Password", ""),
+                cdb.GetValue<string>("Url", "")
+            );
             var siag = this.configuration.GetSection("SiagConfig");
-            this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
+            this.siagConfig = new SiagConfig(
+                siag.GetValue<string>("Username", ""),
+                siag.GetValue<string>("Password", "")
+            );
             var xml = this.configuration.GetSection("XmlConfig");
-            this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
+            this.xmlConfig = new XmlConfig(
+                xml.GetValue<string>("Xmldir", ""),
+                xml.GetValue<string>("XmldirWeather", "")
+            );
             var json = this.configuration.GetSection("JsonConfig");
             this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
-            this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("DocUrl", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
+            this.s3imageresizerConfig = new S3ImageresizerConfig(
+                s3img.GetValue<string>("Url", ""),
+                s3img.GetValue<string>("DocUrl", ""),
+                s3img.GetValue<string>("BucketAccessPoint", ""),
+                s3img.GetValue<string>("AccessKey", ""),
+                s3img.GetValue<string>("SecretKey", "")
+            );
             var ebms = this.configuration.GetSection("EBMSConfig");
-            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
+            this.ebmsConfig = new EBMSConfig(
+                ebms.GetValue<string>("EBMSUser", ""),
+                ebms.GetValue<string>("EBMSPassword", "")
+            );
             var raven = this.configuration.GetSection("RavenConfig");
-            this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
+            this.ravenConfig = new RavenConfig(
+                raven.GetValue<string>("Username", ""),
+                raven.GetValue<string>("Password", ""),
+                raven.GetValue<string>("ServiceUrl", "")
+            );
             var pushserver = this.configuration.GetSection("PushServerConfig");
-            this.pushserverConfig = new PushServerConfig(pushserver.GetValue<string>("Username", ""), pushserver.GetValue<string>("Password", ""), pushserver.GetValue<string>("ServiceUrl", ""));
-             var field2hidelist = this.configuration.GetSection("Field2HideConfig").GetChildren();
+            this.pushserverConfig = new PushServerConfig(
+                pushserver.GetValue<string>("Username", ""),
+                pushserver.GetValue<string>("Password", ""),
+                pushserver.GetValue<string>("ServiceUrl", "")
+            );
+            var field2hidelist = this.configuration.GetSection("Field2HideConfig").GetChildren();
             this.field2hideConfig = new List<Field2HideConfig>();
             foreach (var field2hide in field2hidelist)
             {
-                this.field2hideConfig.Add(new Field2HideConfig(field2hide.GetValue<string>("Entity", ""), field2hide.GetValue<string>("Fields", ""), field2hide.GetValue<string>("DisplayOnRoles", "")));
+                this.field2hideConfig.Add(
+                    new Field2HideConfig(
+                        field2hide.GetValue<string>("Entity", ""),
+                        field2hide.GetValue<string>("Fields", ""),
+                        field2hide.GetValue<string>("DisplayOnRoles", "")
+                    )
+                );
             }
 
-            var requestinterceptorlist = this.configuration.GetSection("RequestInterceptorConfig").GetChildren();
+            var requestinterceptorlist = this.configuration
+                .GetSection("RequestInterceptorConfig")
+                .GetChildren();
             this.requestInterceptorConfig = new List<RequestInterceptorConfig>();
 
             foreach (var requestinterceptor in requestinterceptorlist)
             {
-                this.requestInterceptorConfig.Add(new RequestInterceptorConfig(requestinterceptor.GetValue<string>("Action", ""), requestinterceptor.GetValue<string>("Controller", ""), requestinterceptor.GetValue<string>("QueryStrings", ""), 
-                    requestinterceptor.GetValue<string>("RedirectAction", ""), requestinterceptor.GetValue<string>("RedirectController", ""), requestinterceptor.GetValue<string>("RedirectQueryStrings", "")));
+                this.requestInterceptorConfig.Add(
+                    new RequestInterceptorConfig(
+                        requestinterceptor.GetValue<string>("Action", ""),
+                        requestinterceptor.GetValue<string>("Controller", ""),
+                        requestinterceptor.GetValue<string>("QueryStrings", ""),
+                        requestinterceptor.GetValue<string>("RedirectAction", ""),
+                        requestinterceptor.GetValue<string>("RedirectController", ""),
+                        requestinterceptor.GetValue<string>("RedirectQueryStrings", "")
+                    )
+                );
             }
 
             var ratelimitlist = this.configuration.GetSection("RateLimitConfig").GetChildren();
             this.rateLimitConfig = new List<RateLimitConfig>();
             foreach (var ratelimitconfig in ratelimitlist)
             {
-                this.rateLimitConfig.Add(new RateLimitConfig(ratelimitconfig.GetValue<string>("Type", ""), ratelimitconfig.GetValue<int>("TimeWindow", 0), ratelimitconfig.GetValue<int>("MaxRequests", 0)));
+                this.rateLimitConfig.Add(
+                    new RateLimitConfig(
+                        ratelimitconfig.GetValue<string>("Type", ""),
+                        ratelimitconfig.GetValue<int>("TimeWindow", 0),
+                        ratelimitconfig.GetValue<int>("MaxRequests", 0)
+                    )
+                );
             }
 
-            var noratelimitroutes = this.configuration.GetSection("NoRateLimitConfig").GetSection("NoRateLimitRoutesConfig").GetChildren();
-            var noratelimitreferers = this.configuration.GetSection("NoRateLimitConfig").GetSection("NoRateLimitRefererConfig").GetChildren();
-            this.noRateLimitConfig = new NoRateLimitConfig(new List<string>(), new List<string>());            
+            var noratelimitroutes = this.configuration
+                .GetSection("NoRateLimitConfig")
+                .GetSection("NoRateLimitRoutesConfig")
+                .GetChildren();
+            var noratelimitreferers = this.configuration
+                .GetSection("NoRateLimitConfig")
+                .GetSection("NoRateLimitRefererConfig")
+                .GetChildren();
+            this.noRateLimitConfig = new NoRateLimitConfig(new List<string>(), new List<string>());
             foreach (var routepath in noratelimitroutes)
             {
-                this.noRateLimitConfig.NoRateLimitRoutes.Add(routepath.GetValue<string>("Path",""));                
+                this.noRateLimitConfig.NoRateLimitRoutes.Add(
+                    routepath.GetValue<string>("Path", "")
+                );
             }
             foreach (var referer in noratelimitreferers)
             {
-                this.noRateLimitConfig.NoRateLimitReferer.Add(referer.GetValue<string>("Referer", ""));
+                this.noRateLimitConfig.NoRateLimitReferer.Add(
+                    referer.GetValue<string>("Referer", "")
+                );
             }
 
             this.fcmConfig = new List<FCMConfig>();
 
             var fcmdict = this.configuration.GetSection("FCMConfig").GetChildren();
-            if(fcmdict != null)
+            if (fcmdict != null)
             {
                 foreach (var fcmkey in fcmdict)
                 {
-                    var fcmconfigobj = new FCMConfig(fcmkey.Key, fcmkey.GetValue<string>("ServerKey", ""), fcmkey.GetValue<string>("SenderId", ""));
+                    var fcmconfigobj = new FCMConfig(
+                        fcmkey.Key,
+                        fcmkey.GetValue<string>("ServerKey", ""),
+                        fcmkey.GetValue<string>("SenderId", "")
+                    );
                     this.fcmConfig.Add(fcmconfigobj);
                 }
-            }          
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -342,7 +430,8 @@ namespace OdhApiCore
         public PushServerConfig PushServerConfig => this.pushserverConfig;
         public List<FCMConfig> FCMConfig => this.fcmConfig;
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
-        public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
+        public List<RequestInterceptorConfig> RequestInterceptorConfig =>
+            this.requestInterceptorConfig;
         public List<RateLimitConfig> RateLimitConfig => this.rateLimitConfig;
         public NoRateLimitConfig NoRateLimitConfig => this.noRateLimitConfig;
     }

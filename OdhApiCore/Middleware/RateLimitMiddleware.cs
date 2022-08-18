@@ -56,29 +56,60 @@ namespace OdhApiCore
             {
                 var clientStatistics = await GetClientStatisticsByKey(key);
 
-                context.AddRateLimitHeaders(rlConfig.MaxRequests, clientStatistics == null ? 0 : clientStatistics.LastSuccessfulResponseTimeList.Count, rlConfig.TimeWindow, rlConfig.Type);
+                context.AddRateLimitHeaders(
+                    rlConfig.MaxRequests,
+                    clientStatistics == null
+                        ? 0
+                        : clientStatistics.LastSuccessfulResponseTimeList.Count,
+                    rlConfig.TimeWindow,
+                    rlConfig.Type
+                );
 
-                if (clientStatistics != null && clientStatistics.LastSuccessfulResponseTimeList.Count >= rlConfig.MaxRequests)
+                if (
+                    clientStatistics != null
+                    && clientStatistics.LastSuccessfulResponseTimeList.Count >= rlConfig.MaxRequests
+                )
                 {
                     // Done by WriteasJson
                     context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
 
-                    await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "You have exhausted your API Request Quota", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count });
+                    await context.Response.WriteAsJsonAsync(
+                        new QuotaExceededMessage
+                        {
+                            Message = "You have exhausted your API Request Quota",
+                            Policy = rlConfig.Type,
+                            RetryAfter = rlConfig.TimeWindow,
+                            RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count
+                        }
+                    );
 
-                    HttpRequestExtensions.GenerateLogResponse(context, clientStatistics.LastSuccessfulResponseTimeList.Count, rlConfig.Type, key);
+                    HttpRequestExtensions.GenerateLogResponse(
+                        context,
+                        clientStatistics.LastSuccessfulResponseTimeList.Count,
+                        rlConfig.Type,
+                        key
+                    );
 
                     return;
                 }
 
-                await UpdateClientStatisticsStorage(key, rlConfig.MaxRequests, TimeSpan.FromSeconds(rlConfig.TimeWindow));
+                await UpdateClientStatisticsStorage(
+                    key,
+                    rlConfig.MaxRequests,
+                    TimeSpan.FromSeconds(rlConfig.TimeWindow)
+                );
             }
 
             await _next(context);
         }
 
-        private static string GenerateClientKey(HttpContext context) => $"{context.Request.Path}_{context.Connection.RemoteIpAddress}";
+        private static string GenerateClientKey(HttpContext context) =>
+            $"{context.Request.Path}_{context.Connection.RemoteIpAddress}";
 
-        private static (RateLimitConfig? rlConfig, string key) GenerateClientKeyExtended(HttpContext context, List<RateLimitConfig> rlsettings)
+        private static (RateLimitConfig? rlConfig, string key) GenerateClientKeyExtended(
+            HttpContext context,
+            List<RateLimitConfig> rlsettings
+        )
         {
             RateLimitConfig? ratelimitconfig = default;
             string ratelimitcachekey = "";
@@ -109,7 +140,6 @@ namespace OdhApiCore
                 var token = bearertoken.Replace("Bearer", "").Trim();
 
                 var jwttoken = ReadMyJWTSecurityToken(token, handler);
-
 
                 if (jwttoken != null)
                 {
@@ -143,29 +173,34 @@ namespace OdhApiCore
             // Case 2 Referer passed generate key with Referer
             else if (!String.IsNullOrEmpty(referer) && String.IsNullOrEmpty(loggeduser))
             {
-                ratelimitcachekey = $"{context.Request.Path}_{context.Connection.RemoteIpAddress}_{referer}";
+                ratelimitcachekey =
+                    $"{context.Request.Path}_{context.Connection.RemoteIpAddress}_{referer}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Referer").FirstOrDefault();
             }
-
             // Case 3 Logged user, decode token and use username as key
             else if (!String.IsNullOrEmpty(loggeduser))
             {
-                ratelimitcachekey = $"{context.Request.Path}_{context.Connection.RemoteIpAddress}_{loggeduser}";
+                ratelimitcachekey =
+                    $"{context.Request.Path}_{context.Connection.RemoteIpAddress}_{loggeduser}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
 
-                // If user is in Role 
-                if(!string.IsNullOrEmpty(userrole))
+                // If user is in Role
+                if (!string.IsNullOrEmpty(userrole))
                 {
-                    if(userrole == "ODH_ROLE_ADVANCED")
-                        ratelimitconfig = rlsettings.Where(x => x.Type == "Advanced").FirstOrDefault();
+                    if (userrole == "ODH_ROLE_ADVANCED")
+                        ratelimitconfig = rlsettings
+                            .Where(x => x.Type == "Advanced")
+                            .FirstOrDefault();
                     if (userrole == "ODH_ROLE_PREMIUM")
-                        ratelimitconfig = rlsettings.Where(x => x.Type == "Premium").FirstOrDefault();
+                        ratelimitconfig = rlsettings
+                            .Where(x => x.Type == "Premium")
+                            .FirstOrDefault();
                     if (userrole == "ODH_ROLE_ADMIN")
                         ratelimitconfig = rlsettings.Where(x => x.Type == "Admin").FirstOrDefault();
                 }
 
                 // Fallback if ratelimitconfig by Role is null
-                if(ratelimitconfig == null)
+                if (ratelimitconfig == null)
                     ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
             }
             // No rate limit
@@ -177,7 +212,10 @@ namespace OdhApiCore
             return (ratelimitconfig, ratelimitcachekey);
         }
 
-        private static JwtSecurityToken? ReadMyJWTSecurityToken(string token, JwtSecurityTokenHandler handler)
+        private static JwtSecurityToken? ReadMyJWTSecurityToken(
+            string token,
+            JwtSecurityTokenHandler handler
+        )
         {
             try
             {
@@ -191,9 +229,14 @@ namespace OdhApiCore
             }
         }
 
-        private async Task<ClientStatistics?> GetClientStatisticsByKey(string key) => await _cache.GetCacheValueAsync<ClientStatistics>(key);
+        private async Task<ClientStatistics?> GetClientStatisticsByKey(string key) =>
+            await _cache.GetCacheValueAsync<ClientStatistics>(key);
 
-        private async Task UpdateClientStatisticsStorage(string key, int maxRequests, TimeSpan timeWindow)
+        private async Task UpdateClientStatisticsStorage(
+            string key,
+            int maxRequests,
+            TimeSpan timeWindow
+        )
         {
             var clientStat = await _cache.GetCacheValueAsync<ClientStatistics>(key);
 
@@ -202,7 +245,11 @@ namespace OdhApiCore
                 var now = DateTime.UtcNow;
 
                 clientStat.LastSuccessfulResponseTimeList.Add(now);
-                clientStat.LastSuccessfulResponseTimeList = RemoveAllExpiredResponseDateTimes(clientStat.LastSuccessfulResponseTimeList, timeWindow, now);
+                clientStat.LastSuccessfulResponseTimeList = RemoveAllExpiredResponseDateTimes(
+                    clientStat.LastSuccessfulResponseTimeList,
+                    timeWindow,
+                    now
+                );
 
                 await _cache.SetCacheValueAsync<ClientStatistics>(key, timeWindow, clientStat);
             }
@@ -215,14 +262,17 @@ namespace OdhApiCore
 
                 await _cache.SetCacheValueAsync(key, timeWindow, clientStatistics);
             }
-
         }
 
-        private static List<DateTime> RemoveAllExpiredResponseDateTimes(List<DateTime> list, TimeSpan timeWindow, DateTime dateto)
+        private static List<DateTime> RemoveAllExpiredResponseDateTimes(
+            List<DateTime> list,
+            TimeSpan timeWindow,
+            DateTime dateto
+        )
         {
             var validfrom = dateto.Subtract(timeWindow);
 
-            // Remove all no more valid Requests                      
+            // Remove all no more valid Requests
             return list.Where(x => x >= validfrom).ToList();
         }
 
@@ -234,10 +284,13 @@ namespace OdhApiCore
         private static bool CheckNoRestrictionRoutes(PathString currentpath, ISettings settings)
         {
             bool toreturn = false;
-            
-            if (settings.NoRateLimitConfig.NoRateLimitRoutes != null && currentpath.Value != null && settings.NoRateLimitConfig.NoRateLimitRoutes.Contains(currentpath.Value))
-                return true;
 
+            if (
+                settings.NoRateLimitConfig.NoRateLimitRoutes != null
+                && currentpath.Value != null
+                && settings.NoRateLimitConfig.NoRateLimitRoutes.Contains(currentpath.Value)
+            )
+                return true;
 
             return toreturn;
         }
@@ -257,9 +310,11 @@ namespace OdhApiCore
                     currentreferer = context.Request.Query["Referer"].ToString();
             }
 
-            if (settings.NoRateLimitConfig.NoRateLimitReferer != null && settings.NoRateLimitConfig.NoRateLimitReferer.Contains(currentreferer))
+            if (
+                settings.NoRateLimitConfig.NoRateLimitReferer != null
+                && settings.NoRateLimitConfig.NoRateLimitReferer.Contains(currentreferer)
+            )
                 return true;
-
 
             return toreturn;
         }
@@ -280,10 +335,7 @@ namespace OdhApiCore
         public string? Message { get; set; }
         public string? Hint
         {
-            get
-            {
-                return "https://github.com/noi-techpark/odh-docs/wiki/Api-Quota";
-            }
+            get { return "https://github.com/noi-techpark/odh-docs/wiki/Api-Quota"; }
         }
         public string? Policy { get; set; }
 

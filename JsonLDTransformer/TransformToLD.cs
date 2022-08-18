@@ -13,14 +13,16 @@ namespace JsonLDTransformer
         [Obsolete]
         public static List<object> TransformDataToLD<T>(T data, string language, string idtoshow)
         {
-           var objectlist = new List<object>();
+            var objectlist = new List<object>();
 
             var z = data.GetType();
 
-            switch(z.Name)
+            switch (z.Name)
             {
                 case "Accommodation":
-                    objectlist.Add(TransformAccommodationToLD((Accommodation)(object)data, language));
+                    objectlist.Add(
+                        TransformAccommodationToLD((Accommodation)(object)data, language)
+                    );
                     break;
                 case "Gastronomy":
                     objectlist.Add(TransformGastronomyToLD((Gastronomy)(object)data, language));
@@ -35,10 +37,8 @@ namespace JsonLDTransformer
                     break;
             }
 
-
             return objectlist;
         }
-
 
         public static HotelLD TransformAccommodationToLD(Accommodation acco, string language)
         {
@@ -48,7 +48,6 @@ namespace JsonLDTransformer
             myhotel.id = acco.Id;
             myhotel.type = "Hotel";
 
-          
             myhotel.description = acco.AccoDetail[language].Shortdesc;
             myhotel.email = acco.AccoDetail[language].Email;
             var image = acco.ImageGallery.FirstOrDefault();
@@ -86,7 +85,6 @@ namespace JsonLDTransformer
             mygastro.id = gastro.Id;
             mygastro.type = "Restaurant";
 
-
             mygastro.description = gastro.Detail[language].BaseText;
             mygastro.email = gastro.ContactInfos[language].Email;
             var image = gastro.ImageGallery.FirstOrDefault();
@@ -115,7 +113,8 @@ namespace JsonLDTransformer
 
             personLD founder = new personLD();
             founder.type = "http://schema.org/Person";
-            founder.name = gastro.ContactInfos["de"].Givenname + " " + gastro.ContactInfos[language].Surname;
+            founder.name =
+                gastro.ContactInfos["de"].Givenname + " " + gastro.ContactInfos[language].Surname;
 
             mygastro.founder = founder;
 
@@ -130,7 +129,10 @@ namespace JsonLDTransformer
         {
             var validcuisine = ValidCuisineCodes();
 
-            return facilities.Where(x => validcuisine.Contains(x.Id)).Select(x => x.Shortname).ToList();
+            return facilities
+                .Where(x => validcuisine.Contains(x.Id))
+                .Select(x => x.Shortname)
+                .ToList();
         }
 
         private static List<string> ValidCuisineCodes()
@@ -167,13 +169,19 @@ namespace JsonLDTransformer
             };
         }
 
-        private static List<string> GetOpeningDates(ICollection<OperationSchedule> operationschedules)
+        private static List<string> GetOpeningDates(
+            ICollection<OperationSchedule> operationschedules
+        )
         {
             List<string> openingtime = new List<string>();
             //openingtime.Add("Mo-Sa 11:00-14:30");
             //openingtime.Add("Mo-Th 17:00-21:30");
 
-            foreach(var operationschedule in operationschedules.Where(x => x.Start <= DateTime.Now && x.Stop >= DateTime.Now))
+            foreach (
+                var operationschedule in operationschedules.Where(
+                    x => x.Start <= DateTime.Now && x.Stop >= DateTime.Now
+                )
+            )
             {
                 //Zersch schaugn obs ollaweil offen isch!
 
@@ -183,31 +191,47 @@ namespace JsonLDTransformer
 
                 //Achtung do muassi die richtigen fir heint finden sischt sein mearere!
 
-                if(operationschedule.OperationScheduleTime != null)
+                if (operationschedule.OperationScheduleTime != null)
                 {
-                    foreach(var operationtime in operationschedule.OperationScheduleTime.Where(x => x.State == 2 && x.Timecode == 1))
+                    foreach (
+                        var operationtime in operationschedule.OperationScheduleTime.Where(
+                            x => x.State == 2 && x.Timecode == 1
+                        )
+                    )
                     {
                         if (operationtime.Monday)
-                            openingtime.Add("Mo " + operationtime.Start + " - " + operationtime.End);
+                            openingtime.Add(
+                                "Mo " + operationtime.Start + " - " + operationtime.End
+                            );
                         if (operationtime.Tuesday)
-                            openingtime.Add("Tu " + operationtime.Start + " - " + operationtime.End);
+                            openingtime.Add(
+                                "Tu " + operationtime.Start + " - " + operationtime.End
+                            );
                         if (operationtime.Wednesday)
-                            openingtime.Add("We " + operationtime.Start + " - " + operationtime.End);
+                            openingtime.Add(
+                                "We " + operationtime.Start + " - " + operationtime.End
+                            );
                         if (operationtime.Thuresday)
-                            openingtime.Add("Th " + operationtime.Start + " - " + operationtime.End);
+                            openingtime.Add(
+                                "Th " + operationtime.Start + " - " + operationtime.End
+                            );
                         if (operationtime.Friday)
-                            openingtime.Add("Fr " + operationtime.Start + " - " + operationtime.End);
+                            openingtime.Add(
+                                "Fr " + operationtime.Start + " - " + operationtime.End
+                            );
                         if (operationtime.Saturday)
-                            openingtime.Add("Sa " + operationtime.Start + " - " + operationtime.End);
+                            openingtime.Add(
+                                "Sa " + operationtime.Start + " - " + operationtime.End
+                            );
                         if (operationtime.Sunday)
-                            openingtime.Add("Su " + operationtime.Start + " - " + operationtime.End);
+                            openingtime.Add(
+                                "Su " + operationtime.Start + " - " + operationtime.End
+                            );
                     }
-
                 }
 
                 //Keine Zeiten drinn
             }
-
 
             return openingtime;
         }
@@ -216,7 +240,7 @@ namespace JsonLDTransformer
         {
             List<EventLD> myeventlist = new List<EventLD>();
 
-            foreach(var theeventsingle in theevent.EventDate)
+            foreach (var theeventsingle in theevent.EventDate)
             {
                 EventLD myevent = new EventLD();
 
@@ -241,8 +265,6 @@ namespace JsonLDTransformer
                 myaddress.addressLocality = theevent.ContactInfos["de"].City;
                 myaddress.addressRegion = "Südtirol";
                 myaddress.addressCountry = theevent.ContactInfos["de"].CountryName;
-
-
 
                 PlaceLD location = new PlaceLD();
                 location.address = myaddress;
@@ -284,15 +306,27 @@ namespace JsonLDTransformer
                         myoffer.name = theevent.EventPrice[language].ShortDesc;
                         myoffer.description = theevent.EventPrice[language].Description;
 
-                        myoffer.validFrom = String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm");
-                        myoffer.validTrough = String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm");
+                        myoffer.validFrom =
+                            String.Format("{0:yyyy-MM-dd}", theeventsingle.From)
+                            + "T"
+                            + theeventsingle.Begin.Value.ToString("hh\\:mm");
+                        myoffer.validTrough =
+                            String.Format("{0:yyyy-MM-dd}", theeventsingle.To)
+                            + "T"
+                            + theeventsingle.End.Value.ToString("hh\\:mm");
 
                         myevent.offers = myoffer;
                     }
                 }
 
-                myevent.startDate = String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm");
-                myevent.endDate = String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm");
+                myevent.startDate =
+                    String.Format("{0:yyyy-MM-dd}", theeventsingle.From)
+                    + "T"
+                    + theeventsingle.Begin.Value.ToString("hh\\:mm");
+                myevent.endDate =
+                    String.Format("{0:yyyy-MM-dd}", theeventsingle.To)
+                    + "T"
+                    + theeventsingle.End.Value.ToString("hh\\:mm");
 
                 myeventlist.Add(myevent);
 
@@ -329,13 +363,9 @@ namespace JsonLDTransformer
                 //mygastro.servesCuisine = GetCuisine(gastro.Facilities);
 
                 //mygastro.openingHours = GetOpeningDates(gastro.OperationSchedule);
-
             }
-
-
 
             return myeventlist;
         }
-
     }
 }

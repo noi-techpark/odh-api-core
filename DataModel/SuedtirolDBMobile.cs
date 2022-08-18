@@ -11,7 +11,7 @@ namespace DataModel
     /// </summary>
 
     #region Mobile
-    
+
     public class SmgPoisMobileTypes
     {
         public SmgPoisMobileTypes()
@@ -20,6 +20,7 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
+
         //public int Bitmask { get; set; }
         public string? Key { get; set; }
         public string? Type { get; set; }
@@ -62,25 +63,25 @@ namespace DataModel
             EndDesc = new Dictionary<string, string>();
         }
 
-        public string? Id { get; set; }                                  //Unique Id
+        public string? Id { get; set; } //Unique Id
+
         //public string MainTypeId { get; set; }                          //Reference to Maintype
-        public int SortOrder { get; set; }                              //Sort Order of the Filter
+        public int SortOrder { get; set; } //Sort Order of the Filter
         public int Bitmask { get; set; }
 
-        public string? Filtertype { get; set; }                          //Type of the Filter (checkbox, scroller, rating)
-        public IDictionary<string, string> FilterText { get; set; }    //Values of the Filter, Key is intended to use on the Filter Api, Value is what we want to display.  
+        public string? Filtertype { get; set; } //Type of the Filter (checkbox, scroller, rating)
+        public IDictionary<string, string> FilterText { get; set; } //Values of the Filter, Key is intended to use on the Filter Api, Value is what we want to display.
 
         public string? FilterReference { get; set; }
         public string? FilterString { get; set; }
 
-        public IDictionary<string, string> StartingDesc { get; set; }    //For a scroller Filter, there can be provided a Starting Description (like 1 km)
-        public string? StartingValue { get; set; }                       //For a scroller Filter a startingvalue can be defined
-        public IDictionary<string, string> EndDesc { get; set; }         //For a scroller Filter, there can be provided a Ending Description (like >20 km)
-        public string? EndValue { get; set; }                            //For a scroller Filter a endingvalue can be defined
+        public IDictionary<string, string> StartingDesc { get; set; } //For a scroller Filter, there can be provided a Starting Description (like 1 km)
+        public string? StartingValue { get; set; } //For a scroller Filter a startingvalue can be defined
+        public IDictionary<string, string> EndDesc { get; set; } //For a scroller Filter, there can be provided a Ending Description (like >20 km)
+        public string? EndValue { get; set; } //For a scroller Filter a endingvalue can be defined
 
-        public int RatingItems { get; set; }                            //For a rating Filter there can be set a Rating Items (this well be 6)
-        public string? SelectedValue { get; set; }                       //For a rating Filter the Initially selected Value can be defined
-
+        public int RatingItems { get; set; } //For a rating Filter there can be set a Rating Items (this well be 6)
+        public string? SelectedValue { get; set; } //For a rating Filter the Initially selected Value can be defined
     }
 
     public class MobileHtml
@@ -110,7 +111,6 @@ namespace DataModel
 
         public string? category { get; set; }
         public int sortorder { get; set; }
-
     }
 
     public class AppMessage
@@ -122,7 +122,6 @@ namespace DataModel
             VideoUrl = new Dictionary<string, string>();
             Images = new Dictionary<string, List<AppMessageImage>>();
         }
-
 
         public string? Id { get; set; }
         public string? Type { get; set; }
@@ -164,7 +163,7 @@ namespace DataModel
     //}
 
     //public class SmgPoisMobileFilterDetailLocalized
-    //{       
+    //{
     //    public string Id { get; set; }                                  //Unique Id
     //    public string SubTypeId { get; set; }                           //Reference to SmgPoisMobileFilterListLocalized ID
 
@@ -199,6 +198,7 @@ namespace DataModel
         public string? Key { get; set; }
         public Dictionary<string, string> Name { get; set; }
         public string? ImageURL { get; set; }
+
         //public int AccoCount { get; set; }
         public int SortOrder { get; set; }
         public Nullable<bool> Active { get; set; }
@@ -257,7 +257,7 @@ namespace DataModel
 
     public class AppCustomTipsSettings
     {
-        public int Fixedposition { get; set; }  //position 0 is random
+        public int Fixedposition { get; set; } //position 0 is random
         public bool Randomposition { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
@@ -276,7 +276,6 @@ namespace DataModel
         public List<AppSuggestionValidFor>? Validfor { get; set; }
 
         public IDictionary<string, Suggestion> Suggestion { get; set; }
-
     }
 
     public class AppSuggestionValidFor
@@ -296,6 +295,4 @@ namespace DataModel
     }
 
     #endregion
-
-
 }

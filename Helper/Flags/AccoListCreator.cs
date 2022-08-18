@@ -14,7 +14,6 @@ namespace Helper
             {
                 if (boardfilter != "null")
                 {
-
                     if (boardfilter.Substring(boardfilter.Length - 1, 1) == ",")
                         boardfilter = boardfilter.Substring(0, boardfilter.Length - 1);
 
@@ -56,14 +55,16 @@ namespace Helper
             {
                 if (boardfilter != "null")
                 {
-
                     if (boardfilter.Substring(boardfilter.Length - 1, 1) == ",")
                         boardfilter = boardfilter.Substring(0, boardfilter.Length - 1);
 
                     switch (boardfilter)
                     {
                         case "Board0":
-                            boardidhgv = Tuple.Create<int, string>(0, "price_ws,price_bb,price_hb,price_fb,price_ai");
+                            boardidhgv = Tuple.Create<int, string>(
+                                0,
+                                "price_ws,price_bb,price_hb,price_fb,price_ai"
+                            );
                             break;
                         case "Board1":
                             boardidhgv = Tuple.Create<int, string>(1, "price_ws");
@@ -91,8 +92,9 @@ namespace Helper
         {
             if (!String.IsNullOrEmpty(roominfo) && roominfo != "null")
             {
-                //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18                
-                List<Tuple<string, string, List<string>>> myroominfo = new List<Tuple<string, string, List<string>>>();
+                //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18
+                List<Tuple<string, string, List<string>>> myroominfo =
+                    new List<Tuple<string, string, List<string>>>();
 
                 var zimmerinfos = roominfo.Split('|');
                 int roomseq = 1;
@@ -109,7 +111,11 @@ namespace Helper
                         mypersons.Add(s);
                     }
 
-                    var myroom = new Tuple<string, string, List<string>>(roomseq.ToString(), myspittetzimmerinfo[0].Substring(0), mypersons);
+                    var myroom = new Tuple<string, string, List<string>>(
+                        roomseq.ToString(),
+                        myspittetzimmerinfo[0].Substring(0),
+                        mypersons
+                    );
 
                     myroominfo.Add(myroom);
                     roomseq++;
@@ -120,13 +126,17 @@ namespace Helper
             else
             {
                 //Return standard 2 Person 1 Room
-                List<Tuple<string, string, List<string>>> myroominfostd = new List<Tuple<string, string, List<string>>>();
-                var myroomstd = new Tuple<string, string, List<string>>("1", "0", new List<string>() { "18", "18" });
+                List<Tuple<string, string, List<string>>> myroominfostd =
+                    new List<Tuple<string, string, List<string>>>();
+                var myroomstd = new Tuple<string, string, List<string>>(
+                    "1",
+                    "0",
+                    new List<string>() { "18", "18" }
+                );
                 myroominfostd.Add(myroomstd);
 
                 return myroominfostd;
             }
-
         }
 
         #region Flags
@@ -134,9 +144,9 @@ namespace Helper
         public static List<string> CreateAccoTypeListfromFlag(string? accotypefilter)
         {
             List<string> typeids = new List<string>();
-            
+
             if (!String.IsNullOrEmpty(accotypefilter) && accotypefilter != "null")
-            {                
+            {
                 if (int.TryParse(accotypefilter, out var accotypefilterint))
                 {
                     AccommodationTypeFlag myaccotypeflag = (AccommodationTypeFlag)accotypefilterint;
@@ -147,7 +157,7 @@ namespace Helper
                     {
                         typeids.Add(myflag);
                     }
-                }                                    
+                }
             }
 
             return typeids;
@@ -158,10 +168,11 @@ namespace Helper
             List<string> categoryids = new List<string>();
 
             if (!String.IsNullOrEmpty(categoryfilter) && categoryfilter != "null")
-            {                
+            {
                 if (int.TryParse(categoryfilter, out var accocatfilterint))
-                {                    
-                    AccommodationCategoryFlag myaccotypeflag = (AccommodationCategoryFlag)accocatfilterint;
+                {
+                    AccommodationCategoryFlag myaccotypeflag =
+                        (AccommodationCategoryFlag)accocatfilterint;
 
                     var myflags = myaccotypeflag.GetFlags().GetDescriptionList();
 
@@ -182,7 +193,7 @@ namespace Helper
             if (!String.IsNullOrEmpty(themefilter) && themefilter != "null")
             {
                 if (int.TryParse(themefilter, out var themefilterint))
-                {                    
+                {
                     AccoThemeFlag myaccothemeflag = (AccoThemeFlag)themefilterint;
 
                     var myflags = myaccothemeflag.GetFlags().GetDescriptionList();
@@ -223,7 +234,7 @@ namespace Helper
             if (!String.IsNullOrEmpty(themefilter) && themefilter != "null")
             {
                 if (int.TryParse(themefilter, out var themefilterint))
-                {                    
+                {
                     AccoThemeFlag myaccothemeflag = (AccoThemeFlag)themefilterint;
 
                     var myflags = myaccothemeflag.GetFlags().GetDescriptionList();
@@ -245,7 +256,7 @@ namespace Helper
             if (!String.IsNullOrEmpty(badgefilter) && badgefilter != "null")
             {
                 if (int.TryParse(badgefilter, out var accobadgefilterint))
-                {                    
+                {
                     AccoBadgeFlag myaccobadgeflag = (AccoBadgeFlag)accobadgefilterint;
 
                     var myflags = myaccobadgeflag.GetFlags().GetDescriptionList();
@@ -267,7 +278,7 @@ namespace Helper
             if (!String.IsNullOrEmpty(featurefilter) && featurefilter != "null")
             {
                 if (int.TryParse(featurefilter, out var accofeatfilterint))
-                {                    
+                {
                     AccoFeatureFlag myaccofeatflag = (AccoFeatureFlag)accofeatfilterint;
 
                     var myflags = myaccofeatflag.GetFlags().GetDescriptionList();
@@ -302,7 +313,7 @@ namespace Helper
             if (!String.IsNullOrEmpty(featurefilter) && featurefilter != "null")
             {
                 if (int.TryParse(featurefilter, out var accofeatfilterint))
-                {                    
+                {
                     AccoFeatureFlag myaccofeatflag = (AccoFeatureFlag)accofeatfilterint;
 
                     var myflags = myaccofeatflag.GetFlags().GetDescriptionList();
@@ -324,7 +335,7 @@ namespace Helper
             if (!String.IsNullOrEmpty(boardfilter) && boardfilter != "null")
             {
                 if (int.TryParse(boardfilter, out var boardfilterint))
-                {                 
+                {
                     AccoBoardFlag myaccoboardflag = (AccoBoardFlag)boardfilterint;
 
                     var myflags = myaccoboardflag.GetFlags().GetDescriptionList();
@@ -346,7 +357,7 @@ namespace Helper
             if (!String.IsNullOrEmpty(boardfilter) && boardfilter != "null")
             {
                 if (int.TryParse(boardfilter, out var boardfilterint))
-                {                    
+                {
                     PackageBoardFlag myaccoboardflag = (PackageBoardFlag)boardfilterint;
 
                     var myflags = myaccoboardflag.GetFlags().GetDescriptionList();
@@ -374,7 +385,10 @@ namespace Helper
                 switch (boardfilter)
                 {
                     case "0":
-                        boardidhgv = Tuple.Create<int, string>(0, "price_ws,price_bb,price_hb,price_fb,price_ai");
+                        boardidhgv = Tuple.Create<int, string>(
+                            0,
+                            "price_ws,price_bb,price_hb,price_fb,price_ai"
+                        );
                         break;
                     case "1":
                         boardidhgv = Tuple.Create<int, string>(1, "price_ws");
@@ -392,11 +406,9 @@ namespace Helper
                         boardidhgv = Tuple.Create<int, string>(5, "price_ai");
                         break;
                 }
-
             }
             return boardidhgv;
         }
-
 
         //Board (Mealplans) on LCS Creator
         public static List<string> CreateBoardListLCSfromFlag(string? boardfilter)
@@ -438,6 +450,5 @@ namespace Helper
         }
 
         #endregion
-
     }
 }

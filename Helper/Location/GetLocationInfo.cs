@@ -10,36 +10,47 @@ using System.Threading.Tasks;
 namespace Helper
 {
     public class GetLocationInfo
-    {        
-        public static async Task<IEnumerable<District>> GetNearestDistrict(QueryFactory QueryFactory, PGGeoSearchResult geosearchresult, int limitto)
+    {
+        public static async Task<IEnumerable<District>> GetNearestDistrict(
+            QueryFactory QueryFactory,
+            PGGeoSearchResult geosearchresult,
+            int limitto
+        )
         {
-            var districtquery = QueryFactory.Query("districts")
-                        .Select("data")
-                        .ApplyOrdering_GeneratedColumns(geosearchresult, null)
-                        .Limit(limitto); 
-            
-            var data =
-                await districtquery
-                    .GetAllAsObject<District>();
+            var districtquery = QueryFactory
+                .Query("districts")
+                .Select("data")
+                .ApplyOrdering_GeneratedColumns(geosearchresult, null)
+                .Limit(limitto);
+
+            var data = await districtquery.GetAllAsObject<District>();
 
             return data;
         }
 
-        public static async Task<District?> GetNearestDistrictbyGPS(QueryFactory QueryFactory, double latitude, double longitude, int radius = 30000)
+        public static async Task<District?> GetNearestDistrictbyGPS(
+            QueryFactory QueryFactory,
+            double latitude,
+            double longitude,
+            int radius = 30000
+        )
         {
             string wheregeo = PostgresSQLHelper.GetGeoWhereSimple(latitude, longitude, radius);
             string orderbygeo = PostgresSQLHelper.GetGeoOrderBySimple(latitude, longitude);
 
-            var query =
-                     QueryFactory.Query("districts")
-                         .Select("data")
-                         .WhereRaw(wheregeo)
-                         .OrderByRaw(orderbygeo);
+            var query = QueryFactory
+                .Query("districts")
+                .Select("data")
+                .WhereRaw(wheregeo)
+                .OrderByRaw(orderbygeo);
 
             return await query.GetFirstOrDefaultAsObject<District>();
         }
 
-        public static async Task<LocationInfoLinked> GetTheLocationInfoDistrict(QueryFactory QueryFactory, string? districtid)
+        public static async Task<LocationInfoLinked> GetTheLocationInfoDistrict(
+            QueryFactory QueryFactory,
+            string? districtid
+        )
         {
             if (districtid == null)
                 return new LocationInfoLinked();
@@ -47,144 +58,231 @@ namespace Helper
             LocationInfoLinked mylocinfo = new LocationInfoLinked();
 
             //Wenn nicht District nicht definiert ist oder Livinallongo/Arabba/Gebiet Pieve - Digonera - Pordoijoch - nicht südtirol ;)
-            if (districtid != "79CBD63051C911D18F1400A02427D15E" && districtid != "53DF587C2BF74853B9DF3429089587E3" && districtid != "43C0E6789C4046718B70DAA56CF4332C" && districtid != "52B456D784854FB5A77F87C0CF4AFADF" && districtid != "C17DC9768C1A4DC5BA1592ED5C1D591B" && districtid != "79CBAAA0513331D18F1400A02427D15E")
+            if (
+                districtid != "79CBD63051C911D18F1400A02427D15E"
+                && districtid != "53DF587C2BF74853B9DF3429089587E3"
+                && districtid != "43C0E6789C4046718B70DAA56CF4332C"
+                && districtid != "52B456D784854FB5A77F87C0CF4AFADF"
+                && districtid != "C17DC9768C1A4DC5BA1592ED5C1D591B"
+                && districtid != "79CBAAA0513331D18F1400A02427D15E"
+            )
             {
-                var districtquery = QueryFactory.Query("districts")
-                        .Select("data")
-                        .Where("id", districtid.ToUpper());
+                var districtquery = QueryFactory
+                    .Query("districts")
+                    .Select("data")
+                    .Where("id", districtid.ToUpper());
                 var district = await districtquery.GetFirstOrDefaultAsObject<District>();
 
-                var districtnames = (from x in district?.Detail
-                                     select x).ToDictionary(x => x.Key, x => x.Value.Title);
+                var districtnames = (from x in district?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
 
-                var munquery = QueryFactory.Query("municipalities")
-                        .Select("data")
-                        .Where("id", district?.MunicipalityId?.ToUpper());
+                var munquery = QueryFactory
+                    .Query("municipalities")
+                    .Select("data")
+                    .Where("id", district?.MunicipalityId?.ToUpper());
                 var municipality = await munquery.GetFirstOrDefaultAsObject<Municipality>();
-                
-                var municipalitynames = (from x in municipality?.Detail
-                                         select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
-                var tvquery = QueryFactory.Query("tvs")
-                        .Select("data")
-                        .Where("id", district?.TourismvereinId?.ToUpper());
+                var municipalitynames = (from x in municipality?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
+
+                var tvquery = QueryFactory
+                    .Query("tvs")
+                    .Select("data")
+                    .Where("id", district?.TourismvereinId?.ToUpper());
                 var tourismverein = await tvquery.GetFirstOrDefaultAsObject<Tourismverein>();
-                
-                var tourismvereinnames = (from x in tourismverein?.Detail
-                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
 
-                var regquery = QueryFactory.Query("regions")
-                        .Select("data")
-                        .Where("id", district?.RegionId?.ToUpper());
+                var tourismvereinnames = (from x in tourismverein?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
+
+                var regquery = QueryFactory
+                    .Query("regions")
+                    .Select("data")
+                    .Where("id", district?.RegionId?.ToUpper());
                 var region = await regquery.GetFirstOrDefaultAsObject<Region>();
-                
-                var regionnames = (from x in region?.Detail
-                                   select x).ToDictionary(x => x.Key, x => x.Value.Title);
-                
-                mylocinfo.DistrictInfo = new DistrictInfoLinked() { Id = district?.Id, Name = districtnames };
-                mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality?.Id, Name = municipalitynames };
-                mylocinfo.TvInfo = new TvInfoLinked() { Id = tourismverein?.Id, Name = tourismvereinnames };
-                mylocinfo.RegionInfo = new RegionInfoLinked() { Id = region?.Id, Name = regionnames };
+
+                var regionnames = (from x in region?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
+
+                mylocinfo.DistrictInfo = new DistrictInfoLinked()
+                {
+                    Id = district?.Id,
+                    Name = districtnames
+                };
+                mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked()
+                {
+                    Id = municipality?.Id,
+                    Name = municipalitynames
+                };
+                mylocinfo.TvInfo = new TvInfoLinked()
+                {
+                    Id = tourismverein?.Id,
+                    Name = tourismvereinnames
+                };
+                mylocinfo.RegionInfo = new RegionInfoLinked()
+                {
+                    Id = region?.Id,
+                    Name = regionnames
+                };
             }
             return mylocinfo;
         }
 
-        public static async Task<LocationInfoLinked> GetTheLocationInfoDistrict_Siag(QueryFactory QueryFactory, string? districtid_siag)
+        public static async Task<LocationInfoLinked> GetTheLocationInfoDistrict_Siag(
+            QueryFactory QueryFactory,
+            string? districtid_siag
+        )
         {
             if (districtid_siag == null)
                 return new LocationInfoLinked();
 
             LocationInfoLinked mylocinfo = new LocationInfoLinked();
-            
-            var districtquery = QueryFactory.Query("districts")
-                         .Select("data")
-                         .WhereRaw("data->>'SiagId' = $$", districtid_siag);
+
+            var districtquery = QueryFactory
+                .Query("districts")
+                .Select("data")
+                .WhereRaw("data->>'SiagId' = $$", districtid_siag);
 
             var district = await districtquery.GetFirstOrDefaultAsObject<District>();
 
-
             if (district != null)
             {
-               
-                var districtnames = (from x in district?.Detail
-                                     select x).ToDictionary(x => x.Key, x => x.Value.Title);
+                var districtnames = (from x in district?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
 
-                var munquery = QueryFactory.Query("municipalities")
-                        .Select("data")
-                        .Where("id", district?.MunicipalityId?.ToUpper());
+                var munquery = QueryFactory
+                    .Query("municipalities")
+                    .Select("data")
+                    .Where("id", district?.MunicipalityId?.ToUpper());
                 var municipality = await munquery.GetFirstOrDefaultAsObject<Municipality>();
 
-                var municipalitynames = (from x in municipality?.Detail
-                                         select x).ToDictionary(x => x.Key, x => x.Value.Title);
+                var municipalitynames = (from x in municipality?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
 
-                var tvquery = QueryFactory.Query("tvs")
-                        .Select("data")
-                        .Where("id", district?.TourismvereinId?.ToUpper());
+                var tvquery = QueryFactory
+                    .Query("tvs")
+                    .Select("data")
+                    .Where("id", district?.TourismvereinId?.ToUpper());
                 var tourismverein = await tvquery.GetFirstOrDefaultAsObject<Tourismverein>();
 
-                var tourismvereinnames = (from x in tourismverein?.Detail
-                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
+                var tourismvereinnames = (from x in tourismverein?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
 
-                var regquery = QueryFactory.Query("regions")
-                        .Select("data")
-                        .Where("id", district?.RegionId?.ToUpper());
+                var regquery = QueryFactory
+                    .Query("regions")
+                    .Select("data")
+                    .Where("id", district?.RegionId?.ToUpper());
                 var region = await regquery.GetFirstOrDefaultAsObject<Region>();
 
-                var regionnames = (from x in region?.Detail
-                                   select x).ToDictionary(x => x.Key, x => x.Value.Title);
-                
-                mylocinfo.DistrictInfo = new DistrictInfoLinked() { Id = district?.Id, Name = districtnames };
-                mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality?.Id, Name = municipalitynames };
-                mylocinfo.TvInfo = new TvInfoLinked() { Id = tourismverein?.Id, Name = tourismvereinnames };
-                mylocinfo.RegionInfo = new RegionInfoLinked() { Id = region?.Id, Name = regionnames };
+                var regionnames = (from x in region?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
+
+                mylocinfo.DistrictInfo = new DistrictInfoLinked()
+                {
+                    Id = district?.Id,
+                    Name = districtnames
+                };
+                mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked()
+                {
+                    Id = municipality?.Id,
+                    Name = municipalitynames
+                };
+                mylocinfo.TvInfo = new TvInfoLinked()
+                {
+                    Id = tourismverein?.Id,
+                    Name = tourismvereinnames
+                };
+                mylocinfo.RegionInfo = new RegionInfoLinked()
+                {
+                    Id = region?.Id,
+                    Name = regionnames
+                };
             }
 
             return mylocinfo;
         }
 
-        public static async Task<LocationInfoLinked> GetTheLocationInfoMunicipality_Siag(QueryFactory QueryFactory, string? municipalityid_siag)
+        public static async Task<LocationInfoLinked> GetTheLocationInfoMunicipality_Siag(
+            QueryFactory QueryFactory,
+            string? municipalityid_siag
+        )
         {
             if (municipalityid_siag == null)
                 return new LocationInfoLinked();
 
             LocationInfoLinked mylocinfo = new LocationInfoLinked();
 
-            var municipalityquery = QueryFactory.Query("municipalities")
-                         .Select("data")
-                         .WhereRaw("data->>'SiagId' = $$", municipalityid_siag);
+            var municipalityquery = QueryFactory
+                .Query("municipalities")
+                .Select("data")
+                .WhereRaw("data->>'SiagId' = $$", municipalityid_siag);
 
             var municipality = await municipalityquery.GetFirstOrDefaultAsObject<District>();
 
             if (municipality != null)
-            {              
-                var municipalitynames = (from x in municipality?.Detail
-                                         select x).ToDictionary(x => x.Key, x => x.Value.Title);
+            {
+                var municipalitynames = (from x in municipality?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
 
-                var tvquery = QueryFactory.Query("tvs")
-                        .Select("data")
-                        .Where("id", municipality?.TourismvereinId?.ToUpper());
+                var tvquery = QueryFactory
+                    .Query("tvs")
+                    .Select("data")
+                    .Where("id", municipality?.TourismvereinId?.ToUpper());
                 var tourismverein = await tvquery.GetFirstOrDefaultAsObject<Tourismverein>();
 
-                var tourismvereinnames = (from x in tourismverein?.Detail
-                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
+                var tourismvereinnames = (from x in tourismverein?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
 
-                var regquery = QueryFactory.Query("regions")
-                        .Select("data")
-                        .Where("id", municipality?.RegionId?.ToUpper());
+                var regquery = QueryFactory
+                    .Query("regions")
+                    .Select("data")
+                    .Where("id", municipality?.RegionId?.ToUpper());
                 var region = await regquery.GetFirstOrDefaultAsObject<Region>();
 
-                var regionnames = (from x in region?.Detail
-                                   select x).ToDictionary(x => x.Key, x => x.Value.Title);
+                var regionnames = (from x in region?.Detail select x).ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Title
+                );
 
                 //mylocinfo.DistrictInfo = new DistrictInfoLinked() { Id = district?.Id, Name = districtnames };
-                mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality?.Id, Name = municipalitynames };
-                mylocinfo.TvInfo = new TvInfoLinked() { Id = tourismverein?.Id, Name = tourismvereinnames };
-                mylocinfo.RegionInfo = new RegionInfoLinked() { Id = region?.Id, Name = regionnames };
+                mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked()
+                {
+                    Id = municipality?.Id,
+                    Name = municipalitynames
+                };
+                mylocinfo.TvInfo = new TvInfoLinked()
+                {
+                    Id = tourismverein?.Id,
+                    Name = tourismvereinnames
+                };
+                mylocinfo.RegionInfo = new RegionInfoLinked()
+                {
+                    Id = region?.Id,
+                    Name = regionnames
+                };
             }
 
             return mylocinfo;
         }
-
 
         ////Get Complete Locationinfo for Municipality ID
         //public static LocationInfo GetTheLocationInfoMunicipality(NpgsqlConnection conn, string municipalityid)

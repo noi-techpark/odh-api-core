@@ -9,13 +9,27 @@ namespace Helper
 {
     public class LicenseHelper
     {
-        public static LicenseInfo GetLicenseInfoobject(string licensetype, string author, string licenseholder, bool closeddata)
+        public static LicenseInfo GetLicenseInfoobject(
+            string licensetype,
+            string author,
+            string licenseholder,
+            bool closeddata
+        )
         {
-            return new LicenseInfo() { Author = author, License = licensetype, LicenseHolder = licenseholder, ClosedData = closeddata };
+            return new LicenseInfo()
+            {
+                Author = author,
+                License = licensetype,
+                LicenseHolder = licenseholder,
+                ClosedData = closeddata
+            };
         }
 
         //TODO Make a HOF and apply all the rules
-        public static LicenseInfo GetLicenseInfoobject<T>(T myobject, Func<T, LicenseInfo> licensegenerator)
+        public static LicenseInfo GetLicenseInfoobject<T>(
+            T myobject,
+            Func<T, LicenseInfo> licensegenerator
+        )
         {
             return licensegenerator(myobject);
         }
@@ -30,7 +44,7 @@ namespace Helper
             {
                 isopendata = true;
                 licensetype = "CC0";
-            }           
+            }
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
@@ -112,13 +126,14 @@ namespace Helper
             }
 
             //Source DRIN and CentroTrevi
-            if(data.Source.ToLower() != "lts")
+            if (data.Source.ToLower() != "lts")
             {
                 isopendata = true;
                 licensetype = "CC0";
 
                 if (data.Source.ToLower() == "trevilab")
-                    licenseholder = @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
+                    licenseholder =
+                        @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
                 if (data.Source.ToLower() == "drin")
                     licenseholder = @"https://www.provincia.bz.it/arte-cultura/giovani/drin.asp";
                 else
@@ -137,7 +152,11 @@ namespace Helper
             if (data.Source == null)
                 data.Source = "Content";
 
-            if (data.Source.ToLower() == "content" || data.Source.ToLower() == "magnolia" || data.Source.ToLower() == "common")
+            if (
+                data.Source.ToLower() == "content"
+                || data.Source.ToLower() == "magnolia"
+                || data.Source.ToLower() == "common"
+            )
                 licenseholder = @"https://www.idm-suedtirol.com";
             if (data.Source.ToLower() == "siag")
                 licenseholder = "http://www.provinz.bz.it/kunst-kultur/museen";
@@ -152,7 +171,22 @@ namespace Helper
             if (data.Source.ToLower() == "dss")
                 licenseholder = @"https://www.dolomitisuperski.com/";
 
-            List<string?> allowedsources = new List<string?>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common","sta", "dssliftbase", "dssslopebase" };
+            List<string?> allowedsources = new List<string?>()
+            {
+                "magnolia",
+                "none",
+                "museumdata",
+                "suedtirolwein",
+                "archapp",
+                "activitydata",
+                "poidata",
+                "beacondata",
+                "gastronomicdata",
+                "common",
+                "sta",
+                "dssliftbase",
+                "dssslopebase"
+            };
 
             if (data.Active)
             {
@@ -202,7 +236,7 @@ namespace Helper
                 licensetype = ""; //licensetype = "CC0";
             }
 
-            if(data.Source?.ToLower() == "content")
+            if (data.Source?.ToLower() == "content")
             {
                 licenseholder = @"https://www.idm-suedtirol.com";
             }
@@ -231,7 +265,11 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
 
-            if (data.attributes.categories is { } && !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH"))
+            if (
+                data.attributes.categories is { }
+                && !data.attributes.categories.Contains("lts/visi_unpublishedOnODH")
+                && data.attributes.categories.Contains("lts/visi_publishedOnODH")
+            )
             {
                 isopendata = true;
                 licensetype = "CC0";
@@ -313,7 +351,11 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static void CheckLicenseInfoWithSource(LicenseInfo licenseinfo, string source, bool setcloseddatato)
+        public static void CheckLicenseInfoWithSource(
+            LicenseInfo licenseinfo,
+            string source,
+            bool setcloseddatato
+        )
         {
             if (source == "lts")
             {

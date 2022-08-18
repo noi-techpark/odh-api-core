@@ -15,12 +15,14 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers.api
 {
     public class JsonLDController : OdhController
-    {        
-        public JsonLDController(IWebHostEnvironment env, ISettings settings, ILogger<JsonLDController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
-            : base(env, settings, logger, queryFactory)
-        {
-            
-        }
+    {
+        public JsonLDController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<JsonLDController> logger,
+            QueryFactory queryFactory,
+            IHttpClientFactory httpClientFactory
+        ) : base(env, settings, logger, queryFactory) { }
 
         /// <summary>
         /// GET Detail Data in JSON LD Format (Schema.org Datatypes as output)
@@ -35,7 +37,15 @@ namespace OdhApiCore.Controllers.api
         /// <returns></returns>
         [Authorize(Roles = "DataReader")]
         [HttpGet, Route("api/JsonLD/DetailInLD")]
-        public async Task<IActionResult> GetDetailInLD(string type, string Id, string language = "en", string idtoshow = "", string urltoshow = "", string imageurltoshow = "", bool showid = true)
+        public async Task<IActionResult> GetDetailInLD(
+            string type,
+            string Id,
+            string language = "en",
+            string idtoshow = "",
+            string urltoshow = "",
+            string imageurltoshow = "",
+            bool showid = true
+        )
         {
             try
             {
@@ -44,34 +54,114 @@ namespace OdhApiCore.Controllers.api
                 switch (type.ToLower())
                 {
                     case "accommodation":
-                        myobject = await LoadFromRavenDBSchemaNet<Accommodation>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Accommodation>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "gastronomy":
-                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "event":
-                        myobject = await LoadFromRavenDBSchemaNet<Event>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Event>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "recipe":
-                        myobject = await LoadFromRavenDBSchemaNet<Article>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Article>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "poi":
-                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "region":
-                        myobject = await LoadFromRavenDBSchemaNet<Region>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Region>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "tv":
-                        myobject = await LoadFromRavenDBSchemaNet<Tourismverein>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Tourismverein>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "municipality":
-                        myobject = await LoadFromRavenDBSchemaNet<Municipality>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Municipality>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "district":
-                        myobject = await LoadFromRavenDBSchemaNet<District>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<District>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     case "skiarea":
-                        myobject = await LoadFromRavenDBSchemaNet<SkiArea>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<SkiArea>(
+                            Id,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            type.ToLower(),
+                            showid
+                        );
                         break;
                     default:
                         myobject = new List<object>();
@@ -84,18 +174,23 @@ namespace OdhApiCore.Controllers.api
                 if (myobject != null)
                 {
                     if (type.ToLower() == "event")
-                        myjson = JsonConvert.SerializeObject(myobject, Newtonsoft.Json.Formatting.None,
-                                    new JsonSerializerSettings
-                                    {
-                                        NullValueHandling = NullValueHandling.Ignore
-                                    });
+                        myjson = JsonConvert.SerializeObject(
+                            myobject,
+                            Newtonsoft.Json.Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            }
+                        );
                     else
-                        myjson = JsonConvert.SerializeObject(myobject.FirstOrDefault(), Newtonsoft.Json.Formatting.None,
-                                    new JsonSerializerSettings
-                                    {
-                                        NullValueHandling = NullValueHandling.Ignore
-                                    });
-
+                        myjson = JsonConvert.SerializeObject(
+                            myobject.FirstOrDefault(),
+                            Newtonsoft.Json.Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            }
+                        );
 
                     //switch(myobject.Item1)
                     //{
@@ -116,11 +211,11 @@ namespace OdhApiCore.Controllers.api
                 }
                 else
                     return NotFound();
-                    //return new HttpResponseMessage()
-                    //{
-                    //    StatusCode = HttpStatusCode.NotFound,
-                    //    Content = new StringContent("object not found", Encoding.UTF8, "application/ld+json")
-                    //};
+                //return new HttpResponseMessage()
+                //{
+                //    StatusCode = HttpStatusCode.NotFound,
+                //    Content = new StringContent("object not found", Encoding.UTF8, "application/ld+json")
+                //};
             }
             catch (Exception ex)
             {
@@ -128,13 +223,21 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        private async Task<List<object>> LoadFromRavenDBSchemaNet<T>(string Id, string language, string idtoshow, string urltoshow, string imagetoshow, string type, bool showid)
+        private async Task<List<object>> LoadFromRavenDBSchemaNet<T>(
+            string Id,
+            string language,
+            string idtoshow,
+            string urltoshow,
+            string imagetoshow,
+            string type,
+            bool showid
+        )
         {
-            var query =
-                  QueryFactory.Query(type)
-                      .Select("data")
-                      .Where("id", Id.ToUpper())
-                      .When(FilterClosedData, q => q.FilterClosedData());
+            var query = QueryFactory
+                .Query(type)
+                .Select("data")
+                .Where("id", Id.ToUpper())
+                .When(FilterClosedData, q => q.FilterClosedData());
 
             var myobject = await query.FirstOrDefaultAsync<JsonRaw?>();
 
@@ -142,11 +245,19 @@ namespace OdhApiCore.Controllers.api
             {
                 var myparsedobject = JsonConvert.DeserializeObject<T>(myobject.Value);
                 if (myparsedobject is { })
-                    return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(myparsedobject, type, language, null, idtoshow, urltoshow, imagetoshow, showid);               
+                    return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(
+                        myparsedobject,
+                        type,
+                        language,
+                        null,
+                        idtoshow,
+                        urltoshow,
+                        imagetoshow,
+                        showid
+                    );
             }
 
             return new();
         }
-
     }
 }

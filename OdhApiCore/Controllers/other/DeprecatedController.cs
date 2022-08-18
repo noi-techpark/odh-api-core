@@ -21,19 +21,25 @@ namespace OdhApiCore.Controllers.other
         [HttpGet, Route("v1/Deprecated")]
         public async Task<IActionResult> Deprecated()
         {
-            var requesturl = string.Format("{0}://{1}{2}{3}", HttpContext.Request.Scheme, HttpContext.Request.Host, HttpContext.Request.Path, "swagger/v1/swagger.json");
+            var requesturl = string.Format(
+                "{0}://{1}{2}{3}",
+                HttpContext.Request.Scheme,
+                HttpContext.Request.Host,
+                HttpContext.Request.Path,
+                "swagger/v1/swagger.json"
+            );
 
             using (var client = new HttpClient())
             {
                 var response = await client.GetAsync(requesturl);
-                var responsecontent = await response.Content.ReadAsStringAsync();                
+                var responsecontent = await response.Content.ReadAsStringAsync();
 
                 JObject? obj = JsonConvert.DeserializeObject<JObject>(responsecontent);
 
                 //obj["dialog"]["prompt"]
 
                 return Ok(obj);
-            }                              
+            }
         }
     }
 

@@ -27,7 +27,13 @@ namespace SuedtirolWein.Parser
         //</media>
         //</item>
 
-        public static Wine ParsetheAwardData(Wine mywine, XElement myawardde, XElement myawardit, XElement myawarden, List<string> haslanguage)
+        public static Wine ParsetheAwardData(
+            Wine mywine,
+            XElement myawardde,
+            XElement myawardit,
+            XElement myawarden,
+            List<string> haslanguage
+        )
         {
             mywine.LastChange = DateTime.Now;
 
@@ -36,7 +42,6 @@ namespace SuedtirolWein.Parser
             //ADD MAPPING
             var suedtirolweinid = new Dictionary<string, string>() { { "id", mywine.Id } };
             mywine.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
-
 
             string titlede = myawardde.Element("title").Value;
             string winenamede = myawardde.Element("wine").Value;
@@ -74,19 +79,20 @@ namespace SuedtirolWein.Parser
                 mywine.Detail.TryAddOrUpdate("en", mydetailen);
             }
 
-            mywine.Vintage = !String.IsNullOrEmpty(myawardde.Element("vintage").Value) ? Convert.ToInt32(myawardde.Element("vintage").Value) : 0;
-            mywine.Awardyear = !String.IsNullOrEmpty(myawardde.Element("awardyear").Value) ? Convert.ToInt32(myawardde.Element("awardyear").Value) : 0;
+            mywine.Vintage = !String.IsNullOrEmpty(myawardde.Element("vintage").Value)
+                ? Convert.ToInt32(myawardde.Element("vintage").Value)
+                : 0;
+            mywine.Awardyear = !String.IsNullOrEmpty(myawardde.Element("awardyear").Value)
+                ? Convert.ToInt32(myawardde.Element("awardyear").Value)
+                : 0;
 
             mywine.CompanyId = myawardde.Element("companyid").Value;
             mywine.Awards = myawardde.Element("awards").Value.Split(',').ToList();
 
             mywine.CustomId = myawardde.Element("wineid").Value;
 
-
-
             if (!String.IsNullOrEmpty(myawardde.Element("media").Value))
             {
-
                 List<ImageGallery> myimglist = new List<ImageGallery>();
 
                 if (mywine.ImageGallery != null)
@@ -106,7 +112,10 @@ namespace SuedtirolWein.Parser
 
                 if (myimage.ImageUrl.StartsWith("https://www.suedtirolwein.secure.consisto.net/"))
                 {
-                    myimage.ImageUrl.Replace("https://www.suedtirolwein.secure.consisto.net/", "https://intranet.suedtirolwein.com/");
+                    myimage.ImageUrl.Replace(
+                        "https://www.suedtirolwein.secure.consisto.net/",
+                        "https://intranet.suedtirolwein.com/"
+                    );
                 }
 
                 myimage.Height = 0;
@@ -121,6 +130,5 @@ namespace SuedtirolWein.Parser
 
             return mywine;
         }
-
     }
 }

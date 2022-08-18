@@ -13,55 +13,161 @@ namespace JsonLDTransformer
 {
     public class TransformToSchemaNet
     {
-        public static List<object> TransformDataToSchemaNet<T>(T data, string type,  string language, object parentobject = null, string idtoshow = "", string urltoshow = "", string imageurltoshow = "", bool showid = true)
+        public static List<object> TransformDataToSchemaNet<T>(
+            T data,
+            string type,
+            string language,
+            object parentobject = null,
+            string idtoshow = "",
+            string urltoshow = "",
+            string imageurltoshow = "",
+            bool showid = true
+        )
         {
             var objectlist = new List<object>();
 
             switch (type)
             {
                 case "accommodation":
-                    objectlist.Add(TransformAccommodationToLD((DataModel.Accommodation)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformAccommodationToLD(
+                            (DataModel.Accommodation)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "gastronomy":
-                    objectlist.Add(TransformGastronomyToLD((DataModel.ODHActivityPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformGastronomyToLD(
+                            (DataModel.ODHActivityPoi)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "poi":
-                    objectlist.Add(TransformActivityPoiToLD((DataModel.ODHActivityPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformActivityPoiToLD(
+                            (DataModel.ODHActivityPoi)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "skiarea":
-                    objectlist.Add(TransformSkiResortToLD((DataModel.SkiArea)(object)data, (DataModel.SkiRegion)(object)parentobject, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformSkiResortToLD(
+                            (DataModel.SkiArea)(object)data,
+                            (DataModel.SkiRegion)(object)parentobject,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "region":
-                    objectlist.Add(TransformPlaceToLD((DataModel.Region)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformPlaceToLD(
+                            (DataModel.Region)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "tv":
-                    objectlist.Add(TransformPlaceToLD((DataModel.Tourismverein)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformPlaceToLD(
+                            (DataModel.Tourismverein)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "municipality":
-                    objectlist.Add(TransformPlaceToLD((DataModel.Municipality)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformPlaceToLD(
+                            (DataModel.Municipality)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "district":
-                    objectlist.Add(TransformPlaceToLD((DataModel.District)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformPlaceToLD(
+                            (DataModel.District)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "recipe":
-                    objectlist.Add(TransformRecipeToLD((DataModel.Article)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(
+                        TransformRecipeToLD(
+                            (DataModel.Article)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
                 case "event":
 
                     //Achtung pro EventDate Eintrag 1 Event anlegen
                     //des hoasst i muass a listen zruggeben
 
-                    objectlist.AddRange(TransformEventToLD((DataModel.Event)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.AddRange(
+                        TransformEventToLD(
+                            (DataModel.Event)(object)data,
+                            language,
+                            idtoshow,
+                            urltoshow,
+                            imageurltoshow,
+                            showid
+                        )
+                    );
                     break;
             }
-
 
             return objectlist;
         }
 
         #region Accommodation
 
-        private static Schema.NET.Hotel TransformAccommodationToLD(DataModel.Accommodation acco, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Hotel TransformAccommodationToLD(
+            DataModel.Accommodation acco,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
 
@@ -70,36 +176,56 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    myhotel.Id = new Uri("http://service.suedtirol.info/api/Accommodation/" + acco.Id);
+                    myhotel.Id = new Uri(
+                        "http://service.suedtirol.info/api/Accommodation/" + acco.Id
+                    );
                 else
                     myhotel.Id = new Uri(passedid);
             }
 
-            myhotel.Description = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Shortdesc : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Shortdesc : "";
-            myhotel.Email = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Email : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Email : "";
-            myhotel.Name = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Name : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Name : "";
-            myhotel.Telephone = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Phone : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Phone : "";
-
+            myhotel.Description = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Shortdesc
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Shortdesc
+                    : "";
+            myhotel.Email = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Email
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Email
+                    : "";
+            myhotel.Name = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Name
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Name
+                    : "";
+            myhotel.Telephone = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Phone
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Phone
+                    : "";
 
             if (String.IsNullOrEmpty(passedimage))
             {
                 if (acco.ImageGallery != null)
                     if (acco.ImageGallery.Count > 0)
                         if (!String.IsNullOrEmpty(acco.ImageGallery.FirstOrDefault().ImageUrl))
-                            myhotel.Image = new Uri(acco.ImageGallery.FirstOrDefault().ImageUrl + "&W=800");
+                            myhotel.Image = new Uri(
+                                acco.ImageGallery.FirstOrDefault().ImageUrl + "&W=800"
+                            );
             }
             else
                 myhotel.Image = new Uri(passedimage);
 
-
-
             //URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Website : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Website : "";
+                string url = acco.AccoDetail.ContainsKey(language)
+                    ? acco.AccoDetail[language].Website
+                    : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                        ? acco.AccoDetail[fallbacklanguage].Website
+                        : "";
                 if (CheckURLValid(url))
                     myhotel.Url = new Uri(url);
-
             }
             else if (!String.IsNullOrEmpty(passedurl))
             {
@@ -110,24 +236,59 @@ namespace JsonLDTransformer
                 myhotel.Url = new Uri(passedid);
             }
 
-
             PostalAddress myaddress = new PostalAddress();
             //myaddress.Type = "http://schema.org/PostalAddress";
-            myaddress.StreetAddress = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Street : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Street : "";
-            myaddress.PostalCode = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Zip : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Zip : "";
-            myaddress.AddressLocality = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].City : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].City : "";
+            myaddress.StreetAddress = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Street
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Street
+                    : "";
+            myaddress.PostalCode = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Zip
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Zip
+                    : "";
+            myaddress.AddressLocality = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].City
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].City
+                    : "";
             myaddress.AddressRegion = getRegionDependingonLanguage(language);
             myaddress.AddressCountry = getCountryDependingonLanguage(language);
-            myaddress.Telephone = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Phone : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Phone : "";
+            myaddress.Telephone = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Phone
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Phone
+                    : "";
 
-            string adressurl = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Website : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Website : "";
+            string adressurl = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Website
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Website
+                    : "";
             if (CheckURLValid(adressurl))
                 myhotel.Url = new Uri(adressurl);
 
-            myaddress.Email = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Email : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Email : "";
-            myaddress.FaxNumber = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Fax : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Fax : "";
-            myaddress.AlternateName = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].NameAddition : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].NameAddition : "";
-            myaddress.Name = acco.AccoDetail.ContainsKey(language) ? acco.AccoDetail[language].Name : acco.AccoDetail.ContainsKey(fallbacklanguage) ? acco.AccoDetail[fallbacklanguage].Name : "";
+            myaddress.Email = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Email
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Email
+                    : "";
+            myaddress.FaxNumber = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Fax
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Fax
+                    : "";
+            myaddress.AlternateName = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].NameAddition
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].NameAddition
+                    : "";
+            myaddress.Name = acco.AccoDetail.ContainsKey(language)
+                ? acco.AccoDetail[language].Name
+                : acco.AccoDetail.ContainsKey(fallbacklanguage)
+                    ? acco.AccoDetail[fallbacklanguage].Name
+                    : "";
 
             myhotel.Address = myaddress;
 
@@ -170,7 +331,6 @@ namespace JsonLDTransformer
                 }
             }
 
-
             return myhotel;
         }
 
@@ -198,13 +358,30 @@ namespace JsonLDTransformer
         {
             string comparator = "";
 
-            if (categoryid == "1star" || categoryid == "1flower" || categoryid == "1sun" || categoryid == "2stars" || categoryid == "2flowers" || categoryid == "2suns")
+            if (
+                categoryid == "1star"
+                || categoryid == "1flower"
+                || categoryid == "1sun"
+                || categoryid == "2stars"
+                || categoryid == "2flowers"
+                || categoryid == "2suns"
+            )
                 comparator = "1";
-            else if (categoryid == "3stars" || categoryid == "3flowers" || categoryid == "3suns" || categoryid == "3sstars")
+            else if (
+                categoryid == "3stars"
+                || categoryid == "3flowers"
+                || categoryid == "3suns"
+                || categoryid == "3sstars"
+            )
                 comparator = "2";
             else if (categoryid == "4stars" || categoryid == "4flowers" || categoryid == "4suns")
                 comparator = "3";
-            else if (categoryid == "4sstars" || categoryid == "5stars" || categoryid == "5flowers" || categoryid == "5suns")
+            else if (
+                categoryid == "4sstars"
+                || categoryid == "5stars"
+                || categoryid == "5flowers"
+                || categoryid == "5suns"
+            )
                 comparator = "4";
 
             switch (comparator)
@@ -226,7 +403,14 @@ namespace JsonLDTransformer
 
         #region Gastronomy
 
-        private static Schema.NET.Restaurant TransformGastronomyToLD(DataModel.ODHActivityPoi gastro, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Restaurant TransformGastronomyToLD(
+            DataModel.ODHActivityPoi gastro,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             Schema.NET.Restaurant mygastro = new Schema.NET.Restaurant();
 
@@ -235,19 +419,36 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    mygastro.Id = new Uri("http://service.suedtirol.info/api/GBActivityPoi/" + gastro.Id);
+                    mygastro.Id = new Uri(
+                        "http://service.suedtirol.info/api/GBActivityPoi/" + gastro.Id
+                    );
                 else
                     mygastro.Id = new Uri(passedid);
             }
             //mygastro.type = "Restaurant";
 
 
-            mygastro.Description = gastro.Detail.ContainsKey(language) ? gastro.Detail[language].BaseText : gastro.Detail.ContainsKey(fallbacklanguage) ? gastro.Detail[fallbacklanguage].BaseText : "";
-            mygastro.Name = gastro.Detail.ContainsKey(language) ? gastro.Detail[language].Title : gastro.Detail.ContainsKey(fallbacklanguage) ? gastro.Detail[fallbacklanguage].Title : "";
+            mygastro.Description = gastro.Detail.ContainsKey(language)
+                ? gastro.Detail[language].BaseText
+                : gastro.Detail.ContainsKey(fallbacklanguage)
+                    ? gastro.Detail[fallbacklanguage].BaseText
+                    : "";
+            mygastro.Name = gastro.Detail.ContainsKey(language)
+                ? gastro.Detail[language].Title
+                : gastro.Detail.ContainsKey(fallbacklanguage)
+                    ? gastro.Detail[fallbacklanguage].Title
+                    : "";
 
-            mygastro.Email = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Email : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Email : "";
-            mygastro.Telephone = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Phonenumber : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Phonenumber : "";
-
+            mygastro.Email = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].Email
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].Email
+                    : "";
+            mygastro.Telephone = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].Phonenumber
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
             if (String.IsNullOrEmpty(passedimage))
             {
@@ -259,11 +460,14 @@ namespace JsonLDTransformer
             else
                 mygastro.Image = new Uri(passedimage);
 
-
             //URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Url : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Url : "";
+                string url = gastro.ContactInfos.ContainsKey(language)
+                    ? gastro.ContactInfos[language].Url
+                    : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? gastro.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     mygastro.Url = new Uri(url);
             }
@@ -276,27 +480,64 @@ namespace JsonLDTransformer
                 mygastro.Url = new Uri(passedid);
             }
 
-
-
-
             PostalAddress myaddress = new PostalAddress();
             //myaddress.type = "http://schema.org/PostalAddress";
-            myaddress.StreetAddress = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Address : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Address : "";
-            myaddress.PostalCode = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].ZipCode : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].ZipCode : "";
-            myaddress.AddressLocality = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].City : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].City : "";
+            myaddress.StreetAddress = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].Address
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].Address
+                    : "";
+            myaddress.PostalCode = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].ZipCode
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].ZipCode
+                    : "";
+            myaddress.AddressLocality = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].City
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].City
+                    : "";
             myaddress.AddressRegion = getRegionDependingonLanguage(language);
-            myaddress.AddressCountry = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].CountryName : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].CountryName : "";
+            myaddress.AddressCountry = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].CountryName
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].CountryName
+                    : "";
 
-            myaddress.Telephone = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Phonenumber : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Phonenumber : "";
+            myaddress.Telephone = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].Phonenumber
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
-            string adressurl = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Url : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Url : "";
+            string adressurl = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].Url
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].Url
+                    : "";
             if (CheckURLValid(adressurl))
                 myaddress.Url = new Uri(adressurl);
 
-            myaddress.Email = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Email : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Email : "";
-            myaddress.FaxNumber = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Faxnumber : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Faxnumber : "";
-            myaddress.AlternateName = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].CompanyName : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].CompanyName : "";
-            myaddress.Name = gastro.Detail.ContainsKey(language) ? gastro.Detail[language].Title : gastro.Detail.ContainsKey(fallbacklanguage) ? gastro.Detail[fallbacklanguage].Title : "";
+            myaddress.Email = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].Email
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].Email
+                    : "";
+            myaddress.FaxNumber = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].Faxnumber
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            myaddress.AlternateName = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].CompanyName
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].CompanyName
+                    : "";
+            myaddress.Name = gastro.Detail.ContainsKey(language)
+                ? gastro.Detail[language].Title
+                : gastro.Detail.ContainsKey(fallbacklanguage)
+                    ? gastro.Detail[fallbacklanguage].Title
+                    : "";
 
             mygastro.Address = myaddress;
 
@@ -304,13 +545,22 @@ namespace JsonLDTransformer
             //mygeo.type = "http://schema.org/GeoCoordinates";
 
             mygeo.Latitude = gastro.GpsInfo != null ? gastro.GpsInfo.FirstOrDefault().Latitude : 0;
-            mygeo.Longitude = gastro.GpsInfo != null ? gastro.GpsInfo.FirstOrDefault().Longitude : 0;
+            mygeo.Longitude =
+                gastro.GpsInfo != null ? gastro.GpsInfo.FirstOrDefault().Longitude : 0;
 
             mygastro.Geo = mygeo;
 
             Person founder = new Person();
             //founder.type = "http://schema.org/Person";
-            founder.Name = gastro.ContactInfos.ContainsKey(language) ? gastro.ContactInfos[language].Givenname + " " + gastro.ContactInfos[language].Surname : gastro.ContactInfos.ContainsKey(fallbacklanguage) ? gastro.ContactInfos[fallbacklanguage].Givenname + " " + gastro.ContactInfos[fallbacklanguage].Surname : "";
+            founder.Name = gastro.ContactInfos.ContainsKey(language)
+                ? gastro.ContactInfos[language].Givenname
+                    + " "
+                    + gastro.ContactInfos[language].Surname
+                : gastro.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? gastro.ContactInfos[fallbacklanguage].Givenname
+                        + " "
+                        + gastro.ContactInfos[fallbacklanguage].Surname
+                    : "";
 
             mygastro.Founder = founder;
 
@@ -325,7 +575,10 @@ namespace JsonLDTransformer
             var validcuisine = ValidCuisineCodes();
 
             if (facilities != null)
-                return facilities.Where(x => validcuisine.Contains(x.Id)).Select(x => x.Shortname).ToList();
+                return facilities
+                    .Where(x => validcuisine.Contains(x.Id))
+                    .Select(x => x.Shortname)
+                    .ToList();
             else
                 return new List<string>();
         }
@@ -364,7 +617,9 @@ namespace JsonLDTransformer
             };
         }
 
-        private static List<string> GetOpeningDatesGastronomy(ICollection<OperationSchedule> operationschedules)
+        private static List<string> GetOpeningDatesGastronomy(
+            ICollection<OperationSchedule> operationschedules
+        )
         {
             List<string> openingtime = new List<string>();
             //openingtime.Add("Mo-Sa 11:00-14:30");
@@ -372,7 +627,11 @@ namespace JsonLDTransformer
 
             if (operationschedules != null)
             {
-                foreach (var operationschedule in operationschedules.Where(x => x.Start <= DateTime.Now && x.Stop >= DateTime.Now))
+                foreach (
+                    var operationschedule in operationschedules.Where(
+                        x => x.Start <= DateTime.Now && x.Stop >= DateTime.Now
+                    )
+                )
                 {
                     //Zersch schaugn obs ollaweil offen isch!
 
@@ -384,24 +643,41 @@ namespace JsonLDTransformer
 
                     if (operationschedule.OperationScheduleTime != null)
                     {
-                        foreach (var operationtime in operationschedule.OperationScheduleTime.Where(x => x.State == 2 && x.Timecode == 1))
+                        foreach (
+                            var operationtime in operationschedule.OperationScheduleTime.Where(
+                                x => x.State == 2 && x.Timecode == 1
+                            )
+                        )
                         {
                             if (operationtime.Monday)
-                                openingtime.Add("Mo " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "Mo " + operationtime.Start + " - " + operationtime.End
+                                );
                             if (operationtime.Tuesday)
-                                openingtime.Add("Tu " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "Tu " + operationtime.Start + " - " + operationtime.End
+                                );
                             if (operationtime.Wednesday)
-                                openingtime.Add("We " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "We " + operationtime.Start + " - " + operationtime.End
+                                );
                             if (operationtime.Thuresday)
-                                openingtime.Add("Th " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "Th " + operationtime.Start + " - " + operationtime.End
+                                );
                             if (operationtime.Friday)
-                                openingtime.Add("Fr " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "Fr " + operationtime.Start + " - " + operationtime.End
+                                );
                             if (operationtime.Saturday)
-                                openingtime.Add("Sa " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "Sa " + operationtime.Start + " - " + operationtime.End
+                                );
                             if (operationtime.Sunday)
-                                openingtime.Add("Su " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "Su " + operationtime.Start + " - " + operationtime.End
+                                );
                         }
-
                     }
 
                     //Keine Zeiten drinn
@@ -415,7 +691,14 @@ namespace JsonLDTransformer
 
         #region Event
 
-        private static List<Schema.NET.Event> TransformEventToLD(DataModel.Event theevent, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static List<Schema.NET.Event> TransformEventToLD(
+            DataModel.Event theevent,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
 
@@ -429,31 +712,49 @@ namespace JsonLDTransformer
                 if (showid)
                 {
                     if (String.IsNullOrEmpty(passedid))
-                        myevent.Id = new Uri("http://service.suedtirol.info/api/Event/" + theevent.Id);
+                        myevent.Id = new Uri(
+                            "http://service.suedtirol.info/api/Event/" + theevent.Id
+                        );
                     else
                         myevent.Id = new Uri(passedid);
                     //myevent.type  = "Event";
                 }
 
-                myevent.Description = theevent.Detail.ContainsKey(language) ? theevent.Detail[language].BaseText : theevent.Detail.ContainsKey(fallbacklanguage) ? theevent.Detail[fallbacklanguage].BaseText : "";
-                myevent.Name = theevent.Detail.ContainsKey(language) ? theevent.Detail[language].Title : theevent.Detail.ContainsKey(fallbacklanguage) ? theevent.Detail[fallbacklanguage].Title : "";
-
+                myevent.Description = theevent.Detail.ContainsKey(language)
+                    ? theevent.Detail[language].BaseText
+                    : theevent.Detail.ContainsKey(fallbacklanguage)
+                        ? theevent.Detail[fallbacklanguage].BaseText
+                        : "";
+                myevent.Name = theevent.Detail.ContainsKey(language)
+                    ? theevent.Detail[language].Title
+                    : theevent.Detail.ContainsKey(fallbacklanguage)
+                        ? theevent.Detail[fallbacklanguage].Title
+                        : "";
 
                 if (String.IsNullOrEmpty(passedimage))
                 {
                     if (theevent.ImageGallery != null)
                         if (theevent.ImageGallery.Count > 0)
-                            if (!String.IsNullOrEmpty(theevent.ImageGallery.FirstOrDefault().ImageUrl))
-                                myevent.Image = new Uri(theevent.ImageGallery.FirstOrDefault().ImageUrl + "&W=800");
+                            if (
+                                !String.IsNullOrEmpty(
+                                    theevent.ImageGallery.FirstOrDefault().ImageUrl
+                                )
+                            )
+                                myevent.Image = new Uri(
+                                    theevent.ImageGallery.FirstOrDefault().ImageUrl + "&W=800"
+                                );
                 }
                 else
                     myevent.Image = new Uri(passedimage);
 
-
                 //URL OVERWRITE
                 if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
                 {
-                    string url = theevent.ContactInfos.ContainsKey(language) ? theevent.ContactInfos[language].Url : theevent.ContactInfos.ContainsKey(fallbacklanguage) ? theevent.ContactInfos[fallbacklanguage].Url : "";
+                    string url = theevent.ContactInfos.ContainsKey(language)
+                        ? theevent.ContactInfos[language].Url
+                        : theevent.ContactInfos.ContainsKey(fallbacklanguage)
+                            ? theevent.ContactInfos[fallbacklanguage].Url
+                            : "";
                     if (CheckURLValid(url))
                         myevent.Url = new Uri(url);
                 }
@@ -466,45 +767,93 @@ namespace JsonLDTransformer
                     myevent.Url = new Uri(passedid);
                 }
 
-
-
                 //myevent.email = theevent.ContactInfos[language].Email;
                 //myevent.telephone = theevent.ContactInfos[language].Phonenumber;
 
                 PostalAddress myaddress = new PostalAddress();
                 //myaddress.type = "http://schema.org/PostalAddress";
-                myaddress.StreetAddress = theevent.ContactInfos.ContainsKey(language) ? theevent.ContactInfos[language].Address : theevent.ContactInfos.ContainsKey(fallbacklanguage) ? theevent.ContactInfos[fallbacklanguage].Address : "";
-                myaddress.PostalCode = theevent.ContactInfos.ContainsKey(language) ? theevent.ContactInfos[language].ZipCode : theevent.ContactInfos.ContainsKey(fallbacklanguage) ? theevent.ContactInfos[fallbacklanguage].ZipCode : "";
-                myaddress.AddressLocality = theevent.ContactInfos.ContainsKey(language) ? theevent.ContactInfos[language].City : theevent.ContactInfos.ContainsKey(fallbacklanguage) ? theevent.ContactInfos[fallbacklanguage].City : "";
+                myaddress.StreetAddress = theevent.ContactInfos.ContainsKey(language)
+                    ? theevent.ContactInfos[language].Address
+                    : theevent.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.ContactInfos[fallbacklanguage].Address
+                        : "";
+                myaddress.PostalCode = theevent.ContactInfos.ContainsKey(language)
+                    ? theevent.ContactInfos[language].ZipCode
+                    : theevent.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.ContactInfos[fallbacklanguage].ZipCode
+                        : "";
+                myaddress.AddressLocality = theevent.ContactInfos.ContainsKey(language)
+                    ? theevent.ContactInfos[language].City
+                    : theevent.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.ContactInfos[fallbacklanguage].City
+                        : "";
                 myaddress.AddressRegion = getRegionDependingonLanguage(language);
-                myaddress.AddressCountry = theevent.ContactInfos.ContainsKey(language) ? theevent.ContactInfos[language].CountryName : theevent.ContactInfos.ContainsKey(fallbacklanguage) ? theevent.ContactInfos[fallbacklanguage].CountryName : "";
+                myaddress.AddressCountry = theevent.ContactInfos.ContainsKey(language)
+                    ? theevent.ContactInfos[language].CountryName
+                    : theevent.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.ContactInfos[fallbacklanguage].CountryName
+                        : "";
 
                 Place location = new Place();
                 location.Address = myaddress;
                 //location.type = "Place";
-                location.Name = theevent.ContactInfos.ContainsKey(language) ? theevent.ContactInfos[language].CompanyName : theevent.ContactInfos.ContainsKey(fallbacklanguage) ? theevent.ContactInfos[fallbacklanguage].CompanyName : "";
+                location.Name = theevent.ContactInfos.ContainsKey(language)
+                    ? theevent.ContactInfos[language].CompanyName
+                    : theevent.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.ContactInfos[fallbacklanguage].CompanyName
+                        : "";
                 myevent.Location = location;
 
                 Organization organization = new Organization();
 
-                organization.Name = theevent.OrganizerInfos.ContainsKey(language) ? theevent.OrganizerInfos[language].CompanyName : theevent.OrganizerInfos.ContainsKey(fallbacklanguage) ? theevent.OrganizerInfos[fallbacklanguage].CompanyName : "";
+                organization.Name = theevent.OrganizerInfos.ContainsKey(language)
+                    ? theevent.OrganizerInfos[language].CompanyName
+                    : theevent.OrganizerInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.OrganizerInfos[fallbacklanguage].CompanyName
+                        : "";
 
-
-                string adressurl = theevent.OrganizerInfos.ContainsKey(language) ? theevent.OrganizerInfos[language].Url : theevent.OrganizerInfos.ContainsKey(fallbacklanguage) ? theevent.OrganizerInfos[fallbacklanguage].Url : "";
+                string adressurl = theevent.OrganizerInfos.ContainsKey(language)
+                    ? theevent.OrganizerInfos[language].Url
+                    : theevent.OrganizerInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.OrganizerInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(adressurl))
                     organization.Url = new Uri(adressurl);
 
-
-                organization.Email = theevent.OrganizerInfos.ContainsKey(language) ? theevent.OrganizerInfos[language].Email : theevent.OrganizerInfos.ContainsKey(fallbacklanguage) ? theevent.OrganizerInfos[fallbacklanguage].Email : "";
-                organization.Telephone = theevent.OrganizerInfos.ContainsKey(language) ? theevent.OrganizerInfos[language].Phonenumber : theevent.OrganizerInfos.ContainsKey(fallbacklanguage) ? theevent.OrganizerInfos[fallbacklanguage].Phonenumber : "";
+                organization.Email = theevent.OrganizerInfos.ContainsKey(language)
+                    ? theevent.OrganizerInfos[language].Email
+                    : theevent.OrganizerInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.OrganizerInfos[fallbacklanguage].Email
+                        : "";
+                organization.Telephone = theevent.OrganizerInfos.ContainsKey(language)
+                    ? theevent.OrganizerInfos[language].Phonenumber
+                    : theevent.OrganizerInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.OrganizerInfos[fallbacklanguage].Phonenumber
+                        : "";
 
                 PostalAddress organizeraddress = new PostalAddress();
                 //organizeraddress.type = "http://schema.org/PostalAddress";
-                organizeraddress.StreetAddress = theevent.OrganizerInfos.ContainsKey(language) ? theevent.OrganizerInfos[language].Address : theevent.OrganizerInfos.ContainsKey(fallbacklanguage) ? theevent.OrganizerInfos[fallbacklanguage].Address : "";
-                organizeraddress.PostalCode = theevent.OrganizerInfos.ContainsKey(language) ? theevent.OrganizerInfos[language].ZipCode : theevent.OrganizerInfos.ContainsKey(fallbacklanguage) ? theevent.OrganizerInfos[fallbacklanguage].ZipCode : "";
-                organizeraddress.AddressLocality = theevent.OrganizerInfos.ContainsKey(language) ? theevent.OrganizerInfos[language].City : theevent.OrganizerInfos.ContainsKey(fallbacklanguage) ? theevent.OrganizerInfos[fallbacklanguage].City : "";
+                organizeraddress.StreetAddress = theevent.OrganizerInfos.ContainsKey(language)
+                    ? theevent.OrganizerInfos[language].Address
+                    : theevent.OrganizerInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.OrganizerInfos[fallbacklanguage].Address
+                        : "";
+                organizeraddress.PostalCode = theevent.OrganizerInfos.ContainsKey(language)
+                    ? theevent.OrganizerInfos[language].ZipCode
+                    : theevent.OrganizerInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.OrganizerInfos[fallbacklanguage].ZipCode
+                        : "";
+                organizeraddress.AddressLocality = theevent.OrganizerInfos.ContainsKey(language)
+                    ? theevent.OrganizerInfos[language].City
+                    : theevent.OrganizerInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.OrganizerInfos[fallbacklanguage].City
+                        : "";
                 organizeraddress.AddressRegion = getRegionDependingonLanguage(language);
-                organizeraddress.AddressCountry = theevent.OrganizerInfos.ContainsKey(language) ? theevent.OrganizerInfos[language].CountryName : theevent.OrganizerInfos.ContainsKey(fallbacklanguage) ? theevent.OrganizerInfos[fallbacklanguage].CountryName : "";
+                organizeraddress.AddressCountry = theevent.OrganizerInfos.ContainsKey(language)
+                    ? theevent.OrganizerInfos[language].CountryName
+                    : theevent.OrganizerInfos.ContainsKey(fallbacklanguage)
+                        ? theevent.OrganizerInfos[fallbacklanguage].CountryName
+                        : "";
                 organization.Address = organizeraddress;
                 myevent.Organizer = organization;
 
@@ -522,8 +871,20 @@ namespace JsonLDTransformer
                         myoffer.Name = theevent.EventPrice[language].ShortDesc;
                         myoffer.Description = theevent.EventPrice[language].Description;
 
-                        myoffer.ValidFrom = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm")));
-                        myoffer.ValidThrough = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm")));
+                        myoffer.ValidFrom = new DateTimeOffset(
+                            Convert.ToDateTime(
+                                String.Format("{0:yyyy-MM-dd}", theeventsingle.From)
+                                    + "T"
+                                    + theeventsingle.Begin.Value.ToString("hh\\:mm")
+                            )
+                        );
+                        myoffer.ValidThrough = new DateTimeOffset(
+                            Convert.ToDateTime(
+                                String.Format("{0:yyyy-MM-dd}", theeventsingle.To)
+                                    + "T"
+                                    + theeventsingle.End.Value.ToString("hh\\:mm")
+                            )
+                        );
 
                         myevent.Offers = myoffer;
                     }
@@ -537,19 +898,42 @@ namespace JsonLDTransformer
                         myoffer.Name = theevent.EventPrice[fallbacklanguage].ShortDesc;
                         myoffer.Description = theevent.EventPrice[fallbacklanguage].Description;
 
-                        myoffer.ValidFrom = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm")));
-                        myoffer.ValidThrough = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm")));
+                        myoffer.ValidFrom = new DateTimeOffset(
+                            Convert.ToDateTime(
+                                String.Format("{0:yyyy-MM-dd}", theeventsingle.From)
+                                    + "T"
+                                    + theeventsingle.Begin.Value.ToString("hh\\:mm")
+                            )
+                        );
+                        myoffer.ValidThrough = new DateTimeOffset(
+                            Convert.ToDateTime(
+                                String.Format("{0:yyyy-MM-dd}", theeventsingle.To)
+                                    + "T"
+                                    + theeventsingle.End.Value.ToString("hh\\:mm")
+                            )
+                        );
 
                         myevent.Offers = myoffer;
                     }
                 }
 
-                myevent.StartDate = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.From) + "T" + theeventsingle.Begin.Value.ToString("hh\\:mm")));
-                myevent.EndDate = new DateTimeOffset(Convert.ToDateTime(String.Format("{0:yyyy-MM-dd}", theeventsingle.To) + "T" + theeventsingle.End.Value.ToString("hh\\:mm")));
+                myevent.StartDate = new DateTimeOffset(
+                    Convert.ToDateTime(
+                        String.Format("{0:yyyy-MM-dd}", theeventsingle.From)
+                            + "T"
+                            + theeventsingle.Begin.Value.ToString("hh\\:mm")
+                    )
+                );
+                myevent.EndDate = new DateTimeOffset(
+                    Convert.ToDateTime(
+                        String.Format("{0:yyyy-MM-dd}", theeventsingle.To)
+                            + "T"
+                            + theeventsingle.End.Value.ToString("hh\\:mm")
+                    )
+                );
 
                 myeventlist.Add(myevent);
             }
-
 
             return myeventlist;
         }
@@ -558,7 +942,14 @@ namespace JsonLDTransformer
 
         #region Tourismattraction
 
-        private static Schema.NET.TouristAttraction TransformActivityPoiToLD(DataModel.ODHActivityPoi poi, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.TouristAttraction TransformActivityPoiToLD(
+            DataModel.ODHActivityPoi poi,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
 
@@ -572,13 +963,27 @@ namespace JsonLDTransformer
                     mypoi.Id = new Uri(passedid);
             }
 
-            mypoi.Description = poi.Detail.ContainsKey(language) ? poi.Detail[language].BaseText : poi.Detail.ContainsKey(fallbacklanguage) ? poi.Detail[fallbacklanguage].BaseText : "";
-            mypoi.Name = poi.Detail.ContainsKey(language) ? poi.Detail[language].Title : poi.Detail.ContainsKey(fallbacklanguage) ? poi.Detail[fallbacklanguage].Title : "";
+            mypoi.Description = poi.Detail.ContainsKey(language)
+                ? poi.Detail[language].BaseText
+                : poi.Detail.ContainsKey(fallbacklanguage)
+                    ? poi.Detail[fallbacklanguage].BaseText
+                    : "";
+            mypoi.Name = poi.Detail.ContainsKey(language)
+                ? poi.Detail[language].Title
+                : poi.Detail.ContainsKey(fallbacklanguage)
+                    ? poi.Detail[fallbacklanguage].Title
+                    : "";
 
-            mypoi.FaxNumber = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].Faxnumber : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].Faxnumber : "";
-            mypoi.Telephone = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].Phonenumber : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].Phonenumber : "";
-
-
+            mypoi.FaxNumber = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].Faxnumber
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            mypoi.Telephone = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].Phonenumber
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
             if (String.IsNullOrEmpty(passedimage))
             {
@@ -590,14 +995,14 @@ namespace JsonLDTransformer
             else
                 mypoi.Image = new Uri(passedimage);
 
-
-
-
-
             //URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].Url : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].Url : "";
+                string url = poi.ContactInfos.ContainsKey(language)
+                    ? poi.ContactInfos[language].Url
+                    : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? poi.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     mypoi.Url = new Uri(url);
             }
@@ -610,25 +1015,63 @@ namespace JsonLDTransformer
                 mypoi.Url = new Uri(passedid);
             }
 
-
             PostalAddress myaddress = new PostalAddress();
             //myaddress.Type = "http://schema.org/PostalAddress";
-            myaddress.StreetAddress = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].Address : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].Address : "";
-            myaddress.PostalCode = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].ZipCode : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].ZipCode : "";
-            myaddress.AddressLocality = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].City : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].City : "";
+            myaddress.StreetAddress = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].Address
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].Address
+                    : "";
+            myaddress.PostalCode = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].ZipCode
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].ZipCode
+                    : "";
+            myaddress.AddressLocality = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].City
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].City
+                    : "";
             myaddress.AddressRegion = getRegionDependingonLanguage(language);
-            myaddress.AddressCountry = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].CountryName : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].CountryName : "";
-            myaddress.Telephone = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].Phonenumber : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].Phonenumber : "";
+            myaddress.AddressCountry = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].CountryName
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].CountryName
+                    : "";
+            myaddress.Telephone = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].Phonenumber
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
-            string adressurl = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].Url : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].Url : "";
+            string adressurl = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].Url
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].Url
+                    : "";
             if (CheckURLValid(adressurl))
                 myaddress.Url = new Uri(adressurl);
 
-            myaddress.Email = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].Email : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].Email : "";
-            myaddress.FaxNumber = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].Faxnumber : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].Faxnumber : "";
-            myaddress.AlternateName = poi.ContactInfos.ContainsKey(language) ? poi.ContactInfos[language].CompanyName : poi.ContactInfos.ContainsKey(fallbacklanguage) ? poi.ContactInfos[fallbacklanguage].CompanyName : "";
-            myaddress.Name = poi.Detail.ContainsKey(language) ? poi.Detail[language].Title : poi.Detail.ContainsKey(fallbacklanguage) ? poi.Detail[fallbacklanguage].Title : "";
-
+            myaddress.Email = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].Email
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].Email
+                    : "";
+            myaddress.FaxNumber = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].Faxnumber
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            myaddress.AlternateName = poi.ContactInfos.ContainsKey(language)
+                ? poi.ContactInfos[language].CompanyName
+                : poi.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? poi.ContactInfos[fallbacklanguage].CompanyName
+                    : "";
+            myaddress.Name = poi.Detail.ContainsKey(language)
+                ? poi.Detail[language].Title
+                : poi.Detail.ContainsKey(fallbacklanguage)
+                    ? poi.Detail[fallbacklanguage].Title
+                    : "";
 
             mypoi.Address = myaddress;
 
@@ -653,7 +1096,8 @@ namespace JsonLDTransformer
         {
             var languagetoreturn = new Language();
 
-            List<string> languages = new List<string>(); ;
+            List<string> languages = new List<string>();
+            ;
 
             foreach (var lang in languagelist)
             {
@@ -677,11 +1121,12 @@ namespace JsonLDTransformer
 
             languagetoreturn.Name = languages.ToArray();
 
-
             return languagetoreturn;
         }
 
-        private static List<string> GetOpeningDatesActivityPoi(ICollection<OperationSchedule> operationschedules)
+        private static List<string> GetOpeningDatesActivityPoi(
+            ICollection<OperationSchedule> operationschedules
+        )
         {
             List<string> openingtime = new List<string>();
 
@@ -691,36 +1136,62 @@ namespace JsonLDTransformer
                 //Type 2 Day and Month recurring
                 //Type 3 year and month not to consider (season)
 
-                foreach (var operationschedule in operationschedules.Where(x => x.Start <= DateTime.Now && x.Stop >= DateTime.Now && x.Type == "1"))
+                foreach (
+                    var operationschedule in operationschedules.Where(
+                        x => x.Start <= DateTime.Now && x.Stop >= DateTime.Now && x.Type == "1"
+                    )
+                )
                 {
                     if (operationschedule.OperationScheduleTime != null)
                     {
                         foreach (var operationtime in operationschedule.OperationScheduleTime)
                         {
-                            if (operationtime.Monday && operationtime.Tuesday && operationtime.Wednesday && operationtime.Thuresday && operationtime.Friday && operationtime.Saturday && operationtime.Sunday)
+                            if (
+                                operationtime.Monday
+                                && operationtime.Tuesday
+                                && operationtime.Wednesday
+                                && operationtime.Thuresday
+                                && operationtime.Friday
+                                && operationtime.Saturday
+                                && operationtime.Sunday
+                            )
                             {
-                                openingtime.Add("Mo-Su " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "Mo-Su " + operationtime.Start + " - " + operationtime.End
+                                );
                             }
                             else
                             {
-
                                 if (operationtime.Monday)
-                                    openingtime.Add("Mo " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Mo " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Tuesday)
-                                    openingtime.Add("Tu " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Tu " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Wednesday)
-                                    openingtime.Add("We " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "We " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Thuresday)
-                                    openingtime.Add("Th " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Th " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Friday)
-                                    openingtime.Add("Fr " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Fr " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Saturday)
-                                    openingtime.Add("Sa " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Sa " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Sunday)
-                                    openingtime.Add("Su " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Su " + operationtime.Start + " - " + operationtime.End
+                                    );
                             }
                         }
-
                     }
                     //No opening time defined always open?
                     else
@@ -752,7 +1223,6 @@ namespace JsonLDTransformer
                     else
                         now = new DateTime(operationschedule.Stop.Year, nowmonth, nowday);
 
-
                     //Case 1 normal inside: start 01-05-2018 end 01-10-2018 Now: 03-05-2020		--> 01-05-2018 <= 03-05-2018 && 01-10-2018 >= 03-05-2018 OK
                     //Case 1 normal outside: start 01-05-2019 end 01-10-2019 Now: 05-11-2020	--> 01-05-2018 <= 05-11-2018 && 01-10-2018 >= 05-11-2018 NOT OK
 
@@ -767,32 +1237,53 @@ namespace JsonLDTransformer
                         {
                             foreach (var operationtime in operationschedule.OperationScheduleTime)
                             {
-                                if (operationtime.Monday && operationtime.Tuesday && operationtime.Wednesday && operationtime.Thuresday && operationtime.Friday && operationtime.Saturday && operationtime.Sunday)
+                                if (
+                                    operationtime.Monday
+                                    && operationtime.Tuesday
+                                    && operationtime.Wednesday
+                                    && operationtime.Thuresday
+                                    && operationtime.Friday
+                                    && operationtime.Saturday
+                                    && operationtime.Sunday
+                                )
                                 {
-                                    openingtime.Add("Mo-Su " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Mo-Su " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 }
                                 else
                                 {
-
                                     if (operationtime.Monday)
-                                        openingtime.Add("Mo " + operationtime.Start + " - " + operationtime.End);
+                                        openingtime.Add(
+                                            "Mo " + operationtime.Start + " - " + operationtime.End
+                                        );
                                     if (operationtime.Tuesday)
-                                        openingtime.Add("Tu " + operationtime.Start + " - " + operationtime.End);
+                                        openingtime.Add(
+                                            "Tu " + operationtime.Start + " - " + operationtime.End
+                                        );
                                     if (operationtime.Wednesday)
-                                        openingtime.Add("We " + operationtime.Start + " - " + operationtime.End);
+                                        openingtime.Add(
+                                            "We " + operationtime.Start + " - " + operationtime.End
+                                        );
                                     if (operationtime.Thuresday)
-                                        openingtime.Add("Th " + operationtime.Start + " - " + operationtime.End);
+                                        openingtime.Add(
+                                            "Th " + operationtime.Start + " - " + operationtime.End
+                                        );
                                     if (operationtime.Friday)
-                                        openingtime.Add("Fr " + operationtime.Start + " - " + operationtime.End);
+                                        openingtime.Add(
+                                            "Fr " + operationtime.Start + " - " + operationtime.End
+                                        );
                                     if (operationtime.Saturday)
-                                        openingtime.Add("Sa " + operationtime.Start + " - " + operationtime.End);
+                                        openingtime.Add(
+                                            "Sa " + operationtime.Start + " - " + operationtime.End
+                                        );
                                     if (operationtime.Sunday)
-                                        openingtime.Add("Su " + operationtime.Start + " - " + operationtime.End);
+                                        openingtime.Add(
+                                            "Su " + operationtime.Start + " - " + operationtime.End
+                                        );
                                 }
                             }
-
                         }
-
                         //No opening time defined always open?
                         else
                         {
@@ -805,19 +1296,24 @@ namespace JsonLDTransformer
             return openingtime;
         }
 
-
         #endregion
 
         #region Recipe
 
-        private static Schema.NET.Recipe TransformRecipeToLD(DataModel.Article recipe, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Recipe TransformRecipeToLD(
+            DataModel.Article recipe,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
 
             //Check if data has this fallbacklanguage
             if (!recipe.HasLanguage.Contains(language))
                 language = recipe.HasLanguage.FirstOrDefault();
-
 
             Schema.NET.Recipe myrecipe = new Schema.NET.Recipe();
 
@@ -828,7 +1324,6 @@ namespace JsonLDTransformer
                 else
                     myrecipe.Id = new Uri(passedid);
             }
-
 
             //Image Overwrite
             if (String.IsNullOrEmpty(passedimage))
@@ -841,14 +1336,25 @@ namespace JsonLDTransformer
             else
                 myrecipe.Image = new Uri(passedimage);
 
-
-            myrecipe.Name = recipe.Detail.ContainsKey(language) ? recipe.Detail[language].Title : recipe.Detail.ContainsKey(fallbacklanguage) ? recipe.Detail[fallbacklanguage].Title : "";
-            myrecipe.Description = recipe.Detail.ContainsKey(language) ? recipe.Detail[language].IntroText : recipe.Detail.ContainsKey(fallbacklanguage) ? recipe.Detail[fallbacklanguage].IntroText : "";
+            myrecipe.Name = recipe.Detail.ContainsKey(language)
+                ? recipe.Detail[language].Title
+                : recipe.Detail.ContainsKey(fallbacklanguage)
+                    ? recipe.Detail[fallbacklanguage].Title
+                    : "";
+            myrecipe.Description = recipe.Detail.ContainsKey(language)
+                ? recipe.Detail[language].IntroText
+                : recipe.Detail.ContainsKey(fallbacklanguage)
+                    ? recipe.Detail[fallbacklanguage].IntroText
+                    : "";
 
             //URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = recipe.ContactInfos.ContainsKey(language) ? recipe.ContactInfos[language].Url : recipe.ContactInfos.ContainsKey(fallbacklanguage) ? recipe.ContactInfos[fallbacklanguage].Url : "";
+                string url = recipe.ContactInfos.ContainsKey(language)
+                    ? recipe.ContactInfos[language].Url
+                    : recipe.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? recipe.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     myrecipe.Url = new Uri(url);
             }
@@ -892,7 +1398,6 @@ namespace JsonLDTransformer
             if (recipedetails.aggregateRating != null)
                 myrecipe.AggregateRating = recipedetails.aggregateRating;
 
-
             if (!String.IsNullOrEmpty(recipedetails.recipeCategory))
                 myrecipe.RecipeCategory = recipedetails.recipeCategory;
 
@@ -933,7 +1438,9 @@ namespace JsonLDTransformer
             {
                 if (recipe.AdditionalArticleInfos[languagetouse].Elements != null)
                 {
-                    foreach (var recipeelement in recipe.AdditionalArticleInfos[languagetouse].Elements)
+                    foreach (
+                        var recipeelement in recipe.AdditionalArticleInfos[languagetouse].Elements
+                    )
                     {
                         if (recipeelement.Key == "zubereitungstext")
                         {
@@ -945,7 +1452,10 @@ namespace JsonLDTransformer
                         }
                         if (recipeelement.Key == "personen")
                         {
-                            Tuple<string, string> persons = new Tuple<string, string>("persons", "person");
+                            Tuple<string, string> persons = new Tuple<string, string>(
+                                "persons",
+                                "person"
+                            );
                             if (languagetouse == "de")
                                 persons = new Tuple<string, string>("Personen", "Person");
                             else if (languagetouse == "it")
@@ -965,8 +1475,6 @@ namespace JsonLDTransformer
                             }
                             else
                                 recipeYield = recipeelement.Value;
-
-
                         }
                         if (recipeelement.Key == "zeit")
                         {
@@ -978,7 +1486,6 @@ namespace JsonLDTransformer
                             {
                                 int kochzeithours = 0;
                                 int kochzeitminutes = 0;
-
 
                                 int.TryParse(kochzeit[0], out kochzeithours);
                                 int.TryParse(kochzeit[1], out kochzeitminutes);
@@ -1028,7 +1535,11 @@ namespace JsonLDTransformer
                                 int.TryParse(verbereitungszeit[1], out verbereitungszeitminutes);
 
                                 if (verbereitungszeithours != 0 || verbereitungszeitminutes != 0)
-                                    prepTime = new TimeSpan(verbereitungszeithours, verbereitungszeitminutes, 0);
+                                    prepTime = new TimeSpan(
+                                        verbereitungszeithours,
+                                        verbereitungszeitminutes,
+                                        0
+                                    );
                             }
                         }
                         //"keywords"
@@ -1046,7 +1557,7 @@ namespace JsonLDTransformer
                         {
                             recipetypecuisine = recipeelement.Value;
                         }
-                        //NEW ADDED 
+                        //NEW ADDED
                         //"kalorien"
                         if (recipeelement.Key == "kalorien")
                         {
@@ -1057,7 +1568,6 @@ namespace JsonLDTransformer
                         //"bewertung"
                         if (recipeelement.Key == "bewertung")
                         {
-
                             char[] separator = { '-' };
 
                             var rating = recipeelement.Value.Split(separator, 2);
@@ -1074,12 +1584,11 @@ namespace JsonLDTransformer
                                 aggregaterating.BestRating = 10;
                             }
 
-
                             //Organization trustyou = new Organization();
                             //trustyou.Name = "TrustYou";
                             //trustyou.Url = new Uri("https://www.trustyou.com/");
 
-                            //aggregaterating.Author = trustyou;						
+                            //aggregaterating.Author = trustyou;
                         }
 
                         //"author"
@@ -1089,7 +1598,6 @@ namespace JsonLDTransformer
                             author.Name = recipeelement.Value;
                         }
                     }
-
                 }
             }
 
@@ -1112,7 +1620,15 @@ namespace JsonLDTransformer
 
         #region Skiarea
 
-        private static Schema.NET.SkiResort TransformSkiResortToLD(DataModel.SkiArea skiarea, DataModel.SkiRegion skiregion, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.SkiResort TransformSkiResortToLD(
+            DataModel.SkiArea skiarea,
+            DataModel.SkiRegion skiregion,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
 
@@ -1121,15 +1637,33 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    myskiarea.Id = new Uri("http://service.suedtirol.info/api/Common/SkiArea/" + skiarea.Id);
+                    myskiarea.Id = new Uri(
+                        "http://service.suedtirol.info/api/Common/SkiArea/" + skiarea.Id
+                    );
                 else
                     myskiarea.Id = new Uri(passedid);
             }
 
-            myskiarea.Description = skiarea.Detail.ContainsKey(language) ? skiarea.Detail[language].BaseText : skiarea.Detail.ContainsKey(fallbacklanguage) ? skiarea.Detail[fallbacklanguage].BaseText : "";
-            myskiarea.FaxNumber = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].Faxnumber : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].Faxnumber : "";
-            myskiarea.Name = skiarea.Detail.ContainsKey(language) ? skiarea.Detail[language].Title : skiarea.Detail.ContainsKey(fallbacklanguage) ? skiarea.Detail[fallbacklanguage].Title : "";
-            myskiarea.Telephone = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].Phonenumber : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].Phonenumber : "";
+            myskiarea.Description = skiarea.Detail.ContainsKey(language)
+                ? skiarea.Detail[language].BaseText
+                : skiarea.Detail.ContainsKey(fallbacklanguage)
+                    ? skiarea.Detail[fallbacklanguage].BaseText
+                    : "";
+            myskiarea.FaxNumber = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].Faxnumber
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            myskiarea.Name = skiarea.Detail.ContainsKey(language)
+                ? skiarea.Detail[language].Title
+                : skiarea.Detail.ContainsKey(fallbacklanguage)
+                    ? skiarea.Detail[fallbacklanguage].Title
+                    : "";
+            myskiarea.Telephone = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].Phonenumber
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
             //Image Overwrite
             if (String.IsNullOrEmpty(passedimage))
@@ -1137,7 +1671,9 @@ namespace JsonLDTransformer
                 if (skiarea.ImageGallery != null)
                     if (skiarea.ImageGallery.Count > 0)
                         if (!String.IsNullOrEmpty(skiarea.ImageGallery.FirstOrDefault().ImageUrl))
-                            myskiarea.Image = new Uri(skiarea.ImageGallery.FirstOrDefault().ImageUrl);
+                            myskiarea.Image = new Uri(
+                                skiarea.ImageGallery.FirstOrDefault().ImageUrl
+                            );
             }
             else
                 myskiarea.Image = new Uri(passedimage);
@@ -1145,7 +1681,11 @@ namespace JsonLDTransformer
             //URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].Url : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].Url : "";
+                string url = skiarea.ContactInfos.ContainsKey(language)
+                    ? skiarea.ContactInfos[language].Url
+                    : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiarea.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     myskiarea.Url = new Uri(url);
             }
@@ -1158,39 +1698,78 @@ namespace JsonLDTransformer
                 myskiarea.Url = new Uri(passedid);
             }
 
-            string logo = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].LogoUrl : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].LogoUrl : "";
+            string logo = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].LogoUrl
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].LogoUrl
+                    : "";
             if (CheckURLValid(logo))
                 myskiarea.Logo = new Uri(logo);
 
-
             myskiarea.OpeningHours = GetOpeningDatesSkiArea(skiarea.OperationSchedule);
-
 
             if (CheckURLValid(skiarea.SkiAreaMapURL))
                 myskiarea.HasMap = new Uri(skiarea.SkiAreaMapURL);
 
             myskiarea.IsAccessibleForFree = false;
 
-
-
             PostalAddress myaddress = new PostalAddress();
             //myaddress.Type = "http://schema.org/PostalAddress";
-            myaddress.StreetAddress = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].Address : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].Address : "";
-            myaddress.PostalCode = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].ZipCode : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].ZipCode : "";
-            myaddress.AddressLocality = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].City : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].City : "";
+            myaddress.StreetAddress = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].Address
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].Address
+                    : "";
+            myaddress.PostalCode = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].ZipCode
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].ZipCode
+                    : "";
+            myaddress.AddressLocality = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].City
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].City
+                    : "";
             myaddress.AddressRegion = getRegionDependingonLanguage(language);
-            myaddress.AddressCountry = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].CountryName : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].CountryName : "";
-            myaddress.Telephone = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].Phonenumber : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].Phonenumber : "";
+            myaddress.AddressCountry = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].CountryName
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].CountryName
+                    : "";
+            myaddress.Telephone = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].Phonenumber
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
-            string adressurl = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].Url : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].Url : "";
+            string adressurl = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].Url
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].Url
+                    : "";
             if (CheckURLValid(adressurl))
                 myaddress.Url = new Uri(adressurl);
 
-            myaddress.Email = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].Email : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].Email : "";
-            myaddress.FaxNumber = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].Faxnumber : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].Faxnumber : "";
-            myaddress.AlternateName = skiarea.ContactInfos.ContainsKey(language) ? skiarea.ContactInfos[language].CompanyName : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.ContactInfos[fallbacklanguage].CompanyName : "";
-            myaddress.Name = skiarea.ContactInfos.ContainsKey(language) ? skiarea.Detail[language].Title : skiarea.ContactInfos.ContainsKey(fallbacklanguage) ? skiarea.Detail[fallbacklanguage].Title : "";
-
+            myaddress.Email = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].Email
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].Email
+                    : "";
+            myaddress.FaxNumber = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].Faxnumber
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            myaddress.AlternateName = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.ContactInfos[language].CompanyName
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.ContactInfos[fallbacklanguage].CompanyName
+                    : "";
+            myaddress.Name = skiarea.ContactInfos.ContainsKey(language)
+                ? skiarea.Detail[language].Title
+                : skiarea.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? skiarea.Detail[fallbacklanguage].Title
+                    : "";
 
             myskiarea.Address = myaddress;
 
@@ -1201,29 +1780,73 @@ namespace JsonLDTransformer
 
             myskiarea.Geo = mygeo;
 
-            //Mitglied OSA DSS         
+            //Mitglied OSA DSS
 
             if (skiregion != null)
             {
                 var parentorganization = new Organization();
-                parentorganization.Description = skiregion.Detail.ContainsKey(language) ? skiregion.Detail[language].BaseText : skiregion.Detail.ContainsKey(fallbacklanguage) ? skiregion.Detail[fallbacklanguage].BaseText : "";
-                parentorganization.FaxNumber = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].Faxnumber : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].Faxnumber : "";
-                parentorganization.Name = skiregion.Detail.ContainsKey(language) ? skiregion.Detail[language].Title : skiregion.Detail.ContainsKey(fallbacklanguage) ? skiregion.Detail[fallbacklanguage].Title : "";
-                parentorganization.Telephone = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].Phonenumber : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].Phonenumber : "";
-                string url = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].Url : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].Url : "";
+                parentorganization.Description = skiregion.Detail.ContainsKey(language)
+                    ? skiregion.Detail[language].BaseText
+                    : skiregion.Detail.ContainsKey(fallbacklanguage)
+                        ? skiregion.Detail[fallbacklanguage].BaseText
+                        : "";
+                parentorganization.FaxNumber = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].Faxnumber
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].Faxnumber
+                        : "";
+                parentorganization.Name = skiregion.Detail.ContainsKey(language)
+                    ? skiregion.Detail[language].Title
+                    : skiregion.Detail.ContainsKey(fallbacklanguage)
+                        ? skiregion.Detail[fallbacklanguage].Title
+                        : "";
+                parentorganization.Telephone = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].Phonenumber
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].Phonenumber
+                        : "";
+                string url = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].Url
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     parentorganization.Url = new Uri(url);
 
                 PostalAddress myskiregionaddress = new PostalAddress();
                 //myaddress.Type = "http://schema.org/PostalAddress";
-                myskiregionaddress.StreetAddress = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].Address : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].Address : "";
-                myskiregionaddress.PostalCode = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].ZipCode : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].ZipCode : "";
-                myskiregionaddress.AddressLocality = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].City : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].City : "";
+                myskiregionaddress.StreetAddress = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].Address
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].Address
+                        : "";
+                myskiregionaddress.PostalCode = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].ZipCode
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].ZipCode
+                        : "";
+                myskiregionaddress.AddressLocality = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].City
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].City
+                        : "";
                 myskiregionaddress.AddressRegion = getRegionDependingonLanguage(language);
-                myskiregionaddress.AddressCountry = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].CountryName : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].CountryName : "";
-                myskiregionaddress.Telephone = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].Phonenumber : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].Phonenumber : "";
+                myskiregionaddress.AddressCountry = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].CountryName
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].CountryName
+                        : "";
+                myskiregionaddress.Telephone = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].Phonenumber
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].Phonenumber
+                        : "";
 
-                string adressurlskiregion = skiregion.ContactInfos.ContainsKey(language) ? skiregion.ContactInfos[language].Url : skiregion.ContactInfos.ContainsKey(fallbacklanguage) ? skiregion.ContactInfos[fallbacklanguage].Url : "";
+                string adressurlskiregion = skiregion.ContactInfos.ContainsKey(language)
+                    ? skiregion.ContactInfos[language].Url
+                    : skiregion.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? skiregion.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(adressurl))
                     myskiregionaddress.Url = new Uri(adressurlskiregion);
 
@@ -1231,7 +1854,6 @@ namespace JsonLDTransformer
 
                 myskiarea.ParentOrganization = parentorganization;
             }
-
 
             //PriceRange
             var liftcount = 0;
@@ -1248,48 +1870,75 @@ namespace JsonLDTransformer
                 }
             }
 
-
             return myskiarea;
         }
 
-        private static List<string> GetOpeningDatesSkiArea(ICollection<OperationSchedule> operationschedules)
+        private static List<string> GetOpeningDatesSkiArea(
+            ICollection<OperationSchedule> operationschedules
+        )
         {
             List<string> openingtime = new List<string>();
 
             if (operationschedules != null)
             {
-                foreach (var operationschedule in operationschedules.Where(x => x.Start <= DateTime.Now && x.Stop >= DateTime.Now))
+                foreach (
+                    var operationschedule in operationschedules.Where(
+                        x => x.Start <= DateTime.Now && x.Stop >= DateTime.Now
+                    )
+                )
                 {
-                    //IF there are 
+                    //IF there are
 
                     if (operationschedule.OperationScheduleTime != null)
                     {
                         foreach (var operationtime in operationschedule.OperationScheduleTime)
                         {
-                            if (operationtime.Monday && operationtime.Tuesday && operationtime.Wednesday && operationtime.Thuresday && operationtime.Friday && operationtime.Saturday && operationtime.Sunday)
+                            if (
+                                operationtime.Monday
+                                && operationtime.Tuesday
+                                && operationtime.Wednesday
+                                && operationtime.Thuresday
+                                && operationtime.Friday
+                                && operationtime.Saturday
+                                && operationtime.Sunday
+                            )
                             {
-                                openingtime.Add("Mo-Su " + operationtime.Start + " - " + operationtime.End);
+                                openingtime.Add(
+                                    "Mo-Su " + operationtime.Start + " - " + operationtime.End
+                                );
                             }
                             else
                             {
-
                                 if (operationtime.Monday)
-                                    openingtime.Add("Mo " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Mo " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Tuesday)
-                                    openingtime.Add("Tu " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Tu " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Wednesday)
-                                    openingtime.Add("We " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "We " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Thuresday)
-                                    openingtime.Add("Th " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Th " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Friday)
-                                    openingtime.Add("Fr " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Fr " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Saturday)
-                                    openingtime.Add("Sa " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Sa " + operationtime.Start + " - " + operationtime.End
+                                    );
                                 if (operationtime.Sunday)
-                                    openingtime.Add("Su " + operationtime.Start + " - " + operationtime.End);
+                                    openingtime.Add(
+                                        "Su " + operationtime.Start + " - " + operationtime.End
+                                    );
                             }
                         }
-
                     }
                     //No opening time defined valid for whole week default time entered for skiareas 08:30 - 16:30
                     else
@@ -1302,12 +1951,18 @@ namespace JsonLDTransformer
             return openingtime;
         }
 
-
         #endregion
 
         #region Place
 
-        private static Schema.NET.Place TransformPlaceToLD(DataModel.Region placetotrasform, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Place TransformPlaceToLD(
+            DataModel.Region placetotrasform,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
 
@@ -1316,24 +1971,48 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    place.Id = new Uri("http://service.suedtirol.info/api/Common/Region/" + placetotrasform.Id);
+                    place.Id = new Uri(
+                        "http://service.suedtirol.info/api/Common/Region/" + placetotrasform.Id
+                    );
                 else
                     place.Id = new Uri(passedid);
             }
 
-            place.Description = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].BaseText : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].BaseText : "";
-            place.Name = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].Title : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].Title : "";
+            place.Description = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].BaseText
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].BaseText
+                    : "";
+            place.Name = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].Title
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].Title
+                    : "";
 
-            place.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Faxnumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber : "";
-            place.Telephone = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Phonenumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber : "";
+            place.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Faxnumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            place.Telephone = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Phonenumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
             //Image Overwrite
             if (String.IsNullOrEmpty(passedimage))
             {
                 if (placetotrasform.ImageGallery != null)
                     if (placetotrasform.ImageGallery.Count > 0)
-                        if (!String.IsNullOrEmpty(placetotrasform.ImageGallery.FirstOrDefault().ImageUrl))
-                            place.Image = new Uri(placetotrasform.ImageGallery.FirstOrDefault().ImageUrl);
+                        if (
+                            !String.IsNullOrEmpty(
+                                placetotrasform.ImageGallery.FirstOrDefault().ImageUrl
+                            )
+                        )
+                            place.Image = new Uri(
+                                placetotrasform.ImageGallery.FirstOrDefault().ImageUrl
+                            );
             }
             else
                 place.Image = new Uri(passedimage);
@@ -1341,7 +2020,11 @@ namespace JsonLDTransformer
             // URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Url : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Url : "";
+                string url = placetotrasform.ContactInfos.ContainsKey(language)
+                    ? placetotrasform.ContactInfos[language].Url
+                    : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? placetotrasform.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     place.Url = new Uri(url);
             }
@@ -1356,29 +2039,71 @@ namespace JsonLDTransformer
                     place.Url = new Uri(passedid);
             }
 
-            string logo = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].LogoUrl : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].LogoUrl : "";
+            string logo = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].LogoUrl
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].LogoUrl
+                    : "";
             if (CheckURLValid(logo))
                 place.Logo = new Uri(logo);
 
-
             PostalAddress myaddress = new PostalAddress();
             //myaddress.Type = "http://schema.org/PostalAddress";
-            myaddress.StreetAddress = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Address : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Address : "";
-            myaddress.PostalCode = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].ZipCode : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].ZipCode : "";
-            myaddress.AddressLocality = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].City : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].City : "";
+            myaddress.StreetAddress = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Address
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Address
+                    : "";
+            myaddress.PostalCode = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].ZipCode
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].ZipCode
+                    : "";
+            myaddress.AddressLocality = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].City
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].City
+                    : "";
             myaddress.AddressRegion = getRegionDependingonLanguage(language);
-            myaddress.AddressCountry = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].CountryName : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].CountryName : "";
-            myaddress.Telephone = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Phonenumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber : "";
+            myaddress.AddressCountry = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].CountryName
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].CountryName
+                    : "";
+            myaddress.Telephone = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Phonenumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
-            string adressurl = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Url : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Url : "";
+            string adressurl = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Url
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Url
+                    : "";
             if (CheckURLValid(adressurl))
                 myaddress.Url = new Uri(adressurl);
 
-            myaddress.Email = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Email : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Email : "";
-            myaddress.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Faxnumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber : "";
-            myaddress.AlternateName = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].CompanyName : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].CompanyName : "";
-            myaddress.Name = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].Title : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].Title : "";
-
+            myaddress.Email = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Email
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Email
+                    : "";
+            myaddress.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Faxnumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            myaddress.AlternateName = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].CompanyName
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].CompanyName
+                    : "";
+            myaddress.Name = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].Title
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].Title
+                    : "";
 
             place.Address = myaddress;
 
@@ -1392,7 +2117,14 @@ namespace JsonLDTransformer
             return place;
         }
 
-        private static Schema.NET.Place TransformPlaceToLD(DataModel.Tourismverein placetotrasform, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Place TransformPlaceToLD(
+            DataModel.Tourismverein placetotrasform,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
 
@@ -1401,25 +2133,49 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    place.Id = new Uri("http://service.suedtirol.info/api/Common/TourismAssociation/" + placetotrasform.Id);
+                    place.Id = new Uri(
+                        "http://service.suedtirol.info/api/Common/TourismAssociation/"
+                            + placetotrasform.Id
+                    );
                 else
                     place.Id = new Uri(passedid);
             }
 
-            place.Description = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].BaseText : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].BaseText : "";
-            place.Name = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].Title : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].Title : "";
+            place.Description = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].BaseText
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].BaseText
+                    : "";
+            place.Name = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].Title
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].Title
+                    : "";
 
-            place.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Faxnumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber : "";
-            place.Telephone = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Phonenumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber : "";
-
+            place.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Faxnumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            place.Telephone = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Phonenumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
             //Image Overwrite
             if (String.IsNullOrEmpty(passedimage))
             {
                 if (placetotrasform.ImageGallery != null)
                     if (placetotrasform.ImageGallery.Count > 0)
-                        if (!String.IsNullOrEmpty(placetotrasform.ImageGallery.FirstOrDefault().ImageUrl))
-                            place.Image = new Uri(placetotrasform.ImageGallery.FirstOrDefault().ImageUrl);
+                        if (
+                            !String.IsNullOrEmpty(
+                                placetotrasform.ImageGallery.FirstOrDefault().ImageUrl
+                            )
+                        )
+                            place.Image = new Uri(
+                                placetotrasform.ImageGallery.FirstOrDefault().ImageUrl
+                            );
             }
             else
                 place.Image = new Uri(passedimage);
@@ -1427,7 +2183,11 @@ namespace JsonLDTransformer
             //URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Url : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Url : "";
+                string url = placetotrasform.ContactInfos.ContainsKey(language)
+                    ? placetotrasform.ContactInfos[language].Url
+                    : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? placetotrasform.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     place.Url = new Uri(url);
             }
@@ -1442,29 +2202,71 @@ namespace JsonLDTransformer
                     place.Url = new Uri(passedid);
             }
 
-            string logo = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].LogoUrl : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].LogoUrl : "";
+            string logo = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].LogoUrl
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].LogoUrl
+                    : "";
             if (CheckURLValid(logo))
                 place.Logo = new Uri(logo);
 
-
             PostalAddress myaddress = new PostalAddress();
             //myaddress.Type = "http://schema.org/PostalAddress";
-            myaddress.StreetAddress = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Address : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Address : "";
-            myaddress.PostalCode = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].ZipCode : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].ZipCode : "";
-            myaddress.AddressLocality = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].City : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].City : "";
+            myaddress.StreetAddress = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Address
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Address
+                    : "";
+            myaddress.PostalCode = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].ZipCode
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].ZipCode
+                    : "";
+            myaddress.AddressLocality = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].City
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].City
+                    : "";
             myaddress.AddressRegion = getRegionDependingonLanguage(language);
-            myaddress.AddressCountry = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].CountryName : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].CountryName : "";
-            myaddress.Telephone = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Phonenumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber : "";
+            myaddress.AddressCountry = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].CountryName
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].CountryName
+                    : "";
+            myaddress.Telephone = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Phonenumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
-            string adressurl = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Url : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Url : "";
+            string adressurl = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Url
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Url
+                    : "";
             if (CheckURLValid(adressurl))
                 myaddress.Url = new Uri(adressurl);
 
-            myaddress.Email = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Email : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Email : "";
-            myaddress.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Faxnumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber : "";
-            myaddress.AlternateName = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].CompanyName : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].CompanyName : "";
-            myaddress.Name = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].Title : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].Title : "";
-
+            myaddress.Email = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Email
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Email
+                    : "";
+            myaddress.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Faxnumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            myaddress.AlternateName = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].CompanyName
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].CompanyName
+                    : "";
+            myaddress.Name = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].Title
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].Title
+                    : "";
 
             place.Address = myaddress;
 
@@ -1478,7 +2280,14 @@ namespace JsonLDTransformer
             return place;
         }
 
-        private static Schema.NET.Place TransformPlaceToLD(DataModel.Municipality placetotrasform, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Place TransformPlaceToLD(
+            DataModel.Municipality placetotrasform,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
 
@@ -1487,33 +2296,61 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    place.Id = new Uri("http://service.suedtirol.info/api/Common/Municipality/" + placetotrasform.Id);
+                    place.Id = new Uri(
+                        "http://service.suedtirol.info/api/Common/Municipality/"
+                            + placetotrasform.Id
+                    );
                 else
                     place.Id = new Uri(passedid);
             }
 
-            place.Description = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].BaseText : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].BaseText : "";
-            place.Name = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].Title : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].Title : "";
+            place.Description = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].BaseText
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].BaseText
+                    : "";
+            place.Name = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].Title
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].Title
+                    : "";
 
-            place.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Faxnumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber : "";
-            place.Telephone = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Phonenumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber : "";
+            place.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Faxnumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            place.Telephone = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Phonenumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
             //Image Overwrite
             if (String.IsNullOrEmpty(passedimage))
             {
                 if (placetotrasform.ImageGallery != null)
                     if (placetotrasform.ImageGallery.Count > 0)
-                        if (!String.IsNullOrEmpty(placetotrasform.ImageGallery.FirstOrDefault().ImageUrl))
-                            place.Image = new Uri(placetotrasform.ImageGallery.FirstOrDefault().ImageUrl);
+                        if (
+                            !String.IsNullOrEmpty(
+                                placetotrasform.ImageGallery.FirstOrDefault().ImageUrl
+                            )
+                        )
+                            place.Image = new Uri(
+                                placetotrasform.ImageGallery.FirstOrDefault().ImageUrl
+                            );
             }
             else
                 place.Image = new Uri(passedimage);
 
-
             //URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Url : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Url : "";
+                string url = placetotrasform.ContactInfos.ContainsKey(language)
+                    ? placetotrasform.ContactInfos[language].Url
+                    : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? placetotrasform.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     place.Url = new Uri(url);
             }
@@ -1528,28 +2365,71 @@ namespace JsonLDTransformer
                     place.Url = new Uri(passedid);
             }
 
-            string logo = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].LogoUrl : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].LogoUrl : "";
+            string logo = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].LogoUrl
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].LogoUrl
+                    : "";
             if (CheckURLValid(logo))
                 place.Logo = new Uri(logo);
 
             PostalAddress myaddress = new PostalAddress();
             //myaddress.Type = "http://schema.org/PostalAddress";
-            myaddress.StreetAddress = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Address : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Address : "";
-            myaddress.PostalCode = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].ZipCode : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].ZipCode : "";
-            myaddress.AddressLocality = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].City : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].City : "";
+            myaddress.StreetAddress = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Address
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Address
+                    : "";
+            myaddress.PostalCode = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].ZipCode
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].ZipCode
+                    : "";
+            myaddress.AddressLocality = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].City
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].City
+                    : "";
             myaddress.AddressRegion = getRegionDependingonLanguage(language);
-            myaddress.AddressCountry = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].CountryName : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].CountryName : "";
-            myaddress.Telephone = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Phonenumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber : "";
+            myaddress.AddressCountry = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].CountryName
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].CountryName
+                    : "";
+            myaddress.Telephone = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Phonenumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
-            string adressurl = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Url : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Url : "";
+            string adressurl = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Url
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Url
+                    : "";
             if (CheckURLValid(adressurl))
                 myaddress.Url = new Uri(adressurl);
 
-            myaddress.Email = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Email : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Email : "";
-            myaddress.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Faxnumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber : "";
-            myaddress.AlternateName = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].CompanyName : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].CompanyName : "";
-            myaddress.Name = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].Title : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].Title : "";
-
+            myaddress.Email = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Email
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Email
+                    : "";
+            myaddress.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Faxnumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            myaddress.AlternateName = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].CompanyName
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].CompanyName
+                    : "";
+            myaddress.Name = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].Title
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].Title
+                    : "";
 
             place.Address = myaddress;
 
@@ -1563,7 +2443,14 @@ namespace JsonLDTransformer
             return place;
         }
 
-        private static Schema.NET.Place TransformPlaceToLD(DataModel.District placetotrasform, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Place TransformPlaceToLD(
+            DataModel.District placetotrasform,
+            string language,
+            string passedid,
+            string passedurl,
+            string passedimage,
+            bool showid
+        )
         {
             string fallbacklanguage = "en";
             //Winery, Museum
@@ -1573,25 +2460,48 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    place.Id = new Uri("http://service.suedtirol.info/api/Common/District/" + placetotrasform.Id);
+                    place.Id = new Uri(
+                        "http://service.suedtirol.info/api/Common/District/" + placetotrasform.Id
+                    );
                 else
                     place.Id = new Uri(passedid);
             }
 
-            place.Description = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].BaseText : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].BaseText : "";
-            place.Name = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].Title : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].Title : "";
+            place.Description = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].BaseText
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].BaseText
+                    : "";
+            place.Name = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].Title
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].Title
+                    : "";
 
-            place.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Faxnumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber : "";
-            place.Telephone = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Phonenumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber : "";
-
+            place.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Faxnumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            place.Telephone = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Phonenumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
             //Image Overwrite
             if (String.IsNullOrEmpty(passedimage))
             {
                 if (placetotrasform.ImageGallery != null)
                     if (placetotrasform.ImageGallery.Count > 0)
-                        if (!String.IsNullOrEmpty(placetotrasform.ImageGallery.FirstOrDefault().ImageUrl))
-                            place.Image = new Uri(placetotrasform.ImageGallery.FirstOrDefault().ImageUrl);
+                        if (
+                            !String.IsNullOrEmpty(
+                                placetotrasform.ImageGallery.FirstOrDefault().ImageUrl
+                            )
+                        )
+                            place.Image = new Uri(
+                                placetotrasform.ImageGallery.FirstOrDefault().ImageUrl
+                            );
             }
             else
                 place.Image = new Uri(passedimage);
@@ -1599,7 +2509,11 @@ namespace JsonLDTransformer
             //URL OVERWRITE
             if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
             {
-                string url = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Url : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Url : "";
+                string url = placetotrasform.ContactInfos.ContainsKey(language)
+                    ? placetotrasform.ContactInfos[language].Url
+                    : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                        ? placetotrasform.ContactInfos[fallbacklanguage].Url
+                        : "";
                 if (CheckURLValid(url))
                     place.Url = new Uri(url);
             }
@@ -1614,30 +2528,71 @@ namespace JsonLDTransformer
                     place.Url = new Uri(passedid);
             }
 
-
-            string logo = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].LogoUrl : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].LogoUrl : "";
+            string logo = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].LogoUrl
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].LogoUrl
+                    : "";
             if (CheckURLValid(logo))
                 place.Logo = new Uri(logo);
 
-
             PostalAddress myaddress = new PostalAddress();
             //myaddress.Type = "http://schema.org/PostalAddress";
-            myaddress.StreetAddress = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Address : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Address : "";
-            myaddress.PostalCode = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].ZipCode : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].ZipCode : "";
-            myaddress.AddressLocality = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].City : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].City : "";
+            myaddress.StreetAddress = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Address
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Address
+                    : "";
+            myaddress.PostalCode = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].ZipCode
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].ZipCode
+                    : "";
+            myaddress.AddressLocality = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].City
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].City
+                    : "";
             myaddress.AddressRegion = getRegionDependingonLanguage(language);
-            myaddress.AddressCountry = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].CountryName : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].CountryName : "";
-            myaddress.Telephone = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Phonenumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber : "";
+            myaddress.AddressCountry = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].CountryName
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].CountryName
+                    : "";
+            myaddress.Telephone = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Phonenumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Phonenumber
+                    : "";
 
-            string adressurl = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Url : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Url : "";
+            string adressurl = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Url
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Url
+                    : "";
             if (CheckURLValid(adressurl))
                 myaddress.Url = new Uri(adressurl);
 
-            myaddress.Email = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Email : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Email : "";
-            myaddress.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].Faxnumber : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber : "";
-            myaddress.AlternateName = placetotrasform.ContactInfos.ContainsKey(language) ? placetotrasform.ContactInfos[language].CompanyName : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage) ? placetotrasform.ContactInfos[fallbacklanguage].CompanyName : "";
-            myaddress.Name = placetotrasform.Detail.ContainsKey(language) ? placetotrasform.Detail[language].Title : placetotrasform.Detail.ContainsKey(fallbacklanguage) ? placetotrasform.Detail[fallbacklanguage].Title : "";
-
+            myaddress.Email = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Email
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Email
+                    : "";
+            myaddress.FaxNumber = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].Faxnumber
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].Faxnumber
+                    : "";
+            myaddress.AlternateName = placetotrasform.ContactInfos.ContainsKey(language)
+                ? placetotrasform.ContactInfos[language].CompanyName
+                : placetotrasform.ContactInfos.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.ContactInfos[fallbacklanguage].CompanyName
+                    : "";
+            myaddress.Name = placetotrasform.Detail.ContainsKey(language)
+                ? placetotrasform.Detail[language].Title
+                : placetotrasform.Detail.ContainsKey(fallbacklanguage)
+                    ? placetotrasform.Detail[fallbacklanguage].Title
+                    : "";
 
             place.Address = myaddress;
 
@@ -1706,7 +2661,8 @@ namespace JsonLDTransformer
         public static bool CheckURLValid(string source)
         {
             Uri uriResult;
-            return Uri.TryCreate(source, UriKind.Absolute, out uriResult) && uriResult.Scheme == Uri.UriSchemeHttp;
+            return Uri.TryCreate(source, UriKind.Absolute, out uriResult)
+                && uriResult.Scheme == Uri.UriSchemeHttp;
         }
     }
 
@@ -1720,23 +2676,23 @@ namespace JsonLDTransformer
         //NEW
         //"kalorien" --> nutrition (Nutritioninformation.... calories)
         public NutritionInformation recipeNutritionInfo { get; set; }
+
         //"vorbereitungszeit" --> prepTime (Duration)
         public TimeSpan prepTime { get; set; }
+
         //"keywords" --> keywords (TEXT)
         public string recipeKeywords { get; set; }
+
         //"kategorie" --> recipecategory  (TEXT)
         public string recipeCategory { get; set; }
 
         //"artkueche" --> recipecousine  (TEXT)
         public string recipeCuisinetype { get; set; }
 
-
         //"author" --> author (Organization or Person)
         public Organization author { get; set; }
 
         //"bewertung" --> aggregaterating (Aggregaterating)
         public AggregateRating aggregateRating { get; set; }
-
-
     }
 }

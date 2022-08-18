@@ -14,9 +14,15 @@ namespace Helper
         private static void CheckIsEnum<T>(bool withFlags)
         {
             if (!typeof(T).IsEnum)
-                throw new ArgumentException($"Type '{typeof(T).FullName}' is not an enum", nameof(withFlags));
+                throw new ArgumentException(
+                    $"Type '{typeof(T).FullName}' is not an enum",
+                    nameof(withFlags)
+                );
             if (withFlags && !Attribute.IsDefined(typeof(T), typeof(FlagsAttribute)))
-                throw new ArgumentException($"Type '{typeof(T).FullName}' doesn't have the 'Flags' attribute", nameof(withFlags));
+                throw new ArgumentException(
+                    $"Type '{typeof(T).FullName}' doesn't have the 'Flags' attribute",
+                    nameof(withFlags)
+                );
         }
 
         public static bool IsFlagSet<T>(this T value, T flag) where T : struct
@@ -84,7 +90,10 @@ namespace Helper
                 FieldInfo? field = typeof(T).GetField(name);
                 if (field != null)
                 {
-                    if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
+                    if (
+                        Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
+                        is DescriptionAttribute attr
+                    )
                     {
                         return attr.Description;
                     }
@@ -103,7 +112,10 @@ namespace Helper
                 FieldInfo? field = mytype.GetField(name);
                 if (field != null)
                 {
-                    if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
+                    if (
+                        Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
+                        is DescriptionAttribute attr
+                    )
                     {
                         return attr.Description;
                     }
@@ -126,7 +138,10 @@ namespace Helper
                         FieldInfo? field = typeof(T).GetField(name);
                         if (field != null)
                         {
-                            if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
+                            if (
+                                Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
+                                is DescriptionAttribute attr
+                            )
                             {
                                 description = attr.Description;
                             }
@@ -157,7 +172,10 @@ namespace Helper
                         FieldInfo? field = typeof(T).GetField(name);
                         if (field != null)
                         {
-                            if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
+                            if (
+                                Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
+                                is DescriptionAttribute attr
+                            )
                             {
                                 description = attr.Description;
                             }
@@ -175,7 +193,8 @@ namespace Helper
         }
 
         //Des gibmer die Liste zrugg!
-        public static List<string> GetDescriptionList<T>(this IEnumerable<T> enumlist) where T : struct
+        public static List<string> GetDescriptionList<T>(this IEnumerable<T> enumlist)
+            where T : struct
         {
             List<string> descriptionList = new List<string>();
             foreach (var value in enumlist)
@@ -187,7 +206,10 @@ namespace Helper
                     FieldInfo? field = typeof(T).GetField(name);
                     if (field != null)
                     {
-                        if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
+                        if (
+                            Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
+                            is DescriptionAttribute attr
+                        )
                         {
                             descriptionList.Add(attr.Description);
                         }

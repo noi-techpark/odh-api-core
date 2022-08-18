@@ -27,12 +27,14 @@ namespace OdhApiCore.Controllers.api
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
+
         //Gastronomy
         public List<string> dishcodesids;
         public List<string> ceremonycodesids;
         public List<string> categorycodesids;
         public List<string> facilitycodesids;
         public List<string> cuisinecodesids;
+
         //Activity
         public List<string> activitytypelist;
         public List<string> poitypelist;
@@ -50,72 +52,126 @@ namespace OdhApiCore.Controllers.api
 
         public string tagfilterbehaviour = "";
         public List<string> taglist;
-        
-        public IDictionary<string, IDictionary<string,string>> tagdict;
+
+        public IDictionary<string, IDictionary<string, string>> tagdict;
 
         //New Publishedonlist
         public List<string> publishedonlist;
 
-
         public static async Task<ODHActivityPoiHelper> CreateAsync(
-            QueryFactory queryFactory, 
-            string? typefilter, 
-            string? subtypefilter, 
-            string? level3typefilter, 
-            string? idfilter, 
+            QueryFactory queryFactory,
+            string? typefilter,
+            string? subtypefilter,
+            string? level3typefilter,
+            string? idfilter,
             string? locfilter,
-            string? areafilter, 
-            string? languagefilter, 
-            string? sourcefilter, 
-            bool? highlightfilter, 
-            bool? activefilter, 
+            string? areafilter,
+            string? languagefilter,
+            string? sourcefilter,
+            bool? highlightfilter,
+            bool? activefilter,
             bool? smgactivefilter,
             string? smgtags,
             string? smgtagsand,
             string? lastchange,
-            string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
-            string? activitytypefilter, string? poitypefilter,
-            string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
+            string? categorycodefilter,
+            string? dishcodefilter,
+            string? ceremonycodefilter,
+            string? facilitycodefilter,
+            string? cuisinecodefilter,
+            string? activitytypefilter,
+            string? poitypefilter,
+            string? distancefilter,
+            string? altitudefilter,
+            string? durationfilter,
+            string? difficultyfilter,
             string? tagfilter,
             string? publishedonfilter,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken
+        )
         {
-            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(
+                queryFactory,
+                areafilter,
+                cancellationToken
+            );
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
-            return new ODHActivityPoiHelper(typefilter, subtypefilter, level3typefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, 
-                highlightfilter, activefilter, smgactivefilter, smgtags, smgtagsand,
-                categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
-                activitytypefilter, poitypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter,
-                tagfilter, publishedonfilter,
-                lastchange, tourismusvereinids);
+            return new ODHActivityPoiHelper(
+                typefilter,
+                subtypefilter,
+                level3typefilter,
+                idfilter,
+                locfilter,
+                arealist,
+                languagefilter,
+                sourcefilter,
+                highlightfilter,
+                activefilter,
+                smgactivefilter,
+                smgtags,
+                smgtagsand,
+                categorycodefilter,
+                dishcodefilter,
+                ceremonycodefilter,
+                facilitycodefilter,
+                cuisinecodefilter,
+                activitytypefilter,
+                poitypefilter,
+                distancefilter,
+                altitudefilter,
+                durationfilter,
+                difficultyfilter,
+                tagfilter,
+                publishedonfilter,
+                lastchange,
+                tourismusvereinids
+            );
         }
 
         private ODHActivityPoiHelper(
-            string? typefilter, 
-            string? subtypefilter, 
-            string? level3typefilter, 
-            string? idfilter, 
-            string? locfilter, 
-            IEnumerable<string> arealist, 
-            string? languagefilter, 
+            string? typefilter,
+            string? subtypefilter,
+            string? level3typefilter,
+            string? idfilter,
+            string? locfilter,
+            IEnumerable<string> arealist,
+            string? languagefilter,
             string? sourcefilter,
-            bool? highlightfilter, 
-            bool? activefilter, 
-            bool? smgactivefilter, 
+            bool? highlightfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
             string? smgtags,
             string? smgtagsand,
-            string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter,  string? facilitycodefilter,  string? cuisinecodefilter,
-            string? activitytypefilter, string? poitypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
-            string? tagfilter, string? publishedonfilter,
-            string? lastchange,             
-            IEnumerable<string>? tourismusvereinids)
+            string? categorycodefilter,
+            string? dishcodefilter,
+            string? ceremonycodefilter,
+            string? facilitycodefilter,
+            string? cuisinecodefilter,
+            string? activitytypefilter,
+            string? poitypefilter,
+            string? distancefilter,
+            string? altitudefilter,
+            string? durationfilter,
+            string? difficultyfilter,
+            string? tagfilter,
+            string? publishedonfilter,
+            string? lastchange,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
             typelist = new();
 
@@ -125,7 +181,9 @@ namespace OdhApiCore.Controllers.api
                 {
                     //Sonderfall wenn alles abgefragt wird um keine unnötige Where zu erzeugen
                     if (typeinteger != 255)
-                        typelist = Helper.ActivityPoiListCreator.CreateSmgPoiTypefromFlag(typefilter);
+                        typelist = Helper.ActivityPoiListCreator.CreateSmgPoiTypefromFlag(
+                            typefilter
+                        );
                 }
                 else
                 {
@@ -139,16 +197,20 @@ namespace OdhApiCore.Controllers.api
             }
 
             if (typelist.Count > 0)
-                subtypelist = Helper.ActivityPoiListCreator.CreateSmgPoiSubTypefromFlag(typelist.FirstOrDefault(), subtypefilter);
+                subtypelist = Helper.ActivityPoiListCreator.CreateSmgPoiSubTypefromFlag(
+                    typelist.FirstOrDefault(),
+                    subtypefilter
+                );
             else
                 subtypelist = new();
 
             if (subtypelist.Count > 0)
-                level3typelist = Helper.ActivityPoiListCreator.CreateSmgPoiPoiTypefromFlag(subtypelist.FirstOrDefault(), level3typefilter);
+                level3typelist = Helper.ActivityPoiListCreator.CreateSmgPoiPoiTypefromFlag(
+                    subtypelist.FirstOrDefault(),
+                    level3typefilter
+                );
             else
                 level3typelist = new();
-            
-
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             var sourcelisttemp = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
@@ -188,10 +250,18 @@ namespace OdhApiCore.Controllers.api
 
             //Using Gastronomy Filters
             dishcodesids = GastronomyListCreator.CreateGastroDishCodeListfromFlag(dishcodefilter);
-            ceremonycodesids = GastronomyListCreator.CreateGastroCeremonyCodeListfromFlag(ceremonycodefilter);
-            categorycodesids = GastronomyListCreator.CreateGastroCategoryCodeListfromFlag(categorycodefilter);
-            facilitycodesids = GastronomyListCreator.CreateGastroFacilityCodeListfromFlag(facilitycodefilter);
-            cuisinecodesids = GastronomyListCreator.CreateGastroCusineCodeListfromFlag(cuisinecodefilter);
+            ceremonycodesids = GastronomyListCreator.CreateGastroCeremonyCodeListfromFlag(
+                ceremonycodefilter
+            );
+            categorycodesids = GastronomyListCreator.CreateGastroCategoryCodeListfromFlag(
+                categorycodefilter
+            );
+            facilitycodesids = GastronomyListCreator.CreateGastroFacilityCodeListfromFlag(
+                facilitycodefilter
+            );
+            cuisinecodesids = GastronomyListCreator.CreateGastroCusineCodeListfromFlag(
+                cuisinecodefilter
+            );
             facilitycodesids.AddRange(cuisinecodesids);
 
             //using Activity Filters
@@ -204,7 +274,9 @@ namespace OdhApiCore.Controllers.api
                 if (int.TryParse(activitytypefilter, out int typeintegeractivity))
                 {
                     if (typeintegeractivity != 1023)
-                        activitytypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(activitytypefilter);
+                        activitytypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(
+                            activitytypefilter
+                        );
                 }
                 else
                 {
@@ -214,7 +286,10 @@ namespace OdhApiCore.Controllers.api
 
             //ODHActivityPoi Typelist has priority
             if (typelist.Count == 0 && poitypelist.Count == 0 && activitytypelist.Count > 0)
-                subtypelist = Helper.ActivityPoiListCreator.CreateActivitySubTypefromFlag(activitytypelist.FirstOrDefault(), subtypefilter);
+                subtypelist = Helper.ActivityPoiListCreator.CreateActivitySubTypefromFlag(
+                    activitytypelist.FirstOrDefault(),
+                    subtypefilter
+                );
 
             //using Poi Filters
             poitypelist = new();
@@ -223,7 +298,9 @@ namespace OdhApiCore.Controllers.api
                 if (int.TryParse(poitypefilter, out int typeintegerpoi))
                 {
                     if (typeintegerpoi != 511)
-                        poitypelist = Helper.ActivityPoiListCreator.CreatePoiTypefromFlag(poitypefilter);
+                        poitypelist = Helper.ActivityPoiListCreator.CreatePoiTypefromFlag(
+                            poitypefilter
+                        );
                 }
                 else
                 {
@@ -233,9 +310,15 @@ namespace OdhApiCore.Controllers.api
 
             //ODHActivityPoi Typelist has priority
             if (typelist.Count == 0 && activitytypelist.Count == 0 && poitypelist.Count > 0)
-                subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
+                subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(
+                    poitypelist.FirstOrDefault(),
+                    subtypefilter
+                );
 
-            difficultylist = CommonListCreator.CreateDifficultyList(difficultyfilter, activitytypefilter);
+            difficultylist = CommonListCreator.CreateDifficultyList(
+                difficultyfilter,
+                activitytypefilter
+            );
             //Distance
             distance = distancefilter != null;
             if (distance)
@@ -254,7 +337,6 @@ namespace OdhApiCore.Controllers.api
             duration = durationfilter != null;
             if (duration)
                 (durationmin, durationmax) = CommonListCreator.CreateRangeString(durationfilter);
-
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
@@ -280,7 +362,7 @@ namespace OdhApiCore.Controllers.api
         {
             List<string> sourcelistnew = new();
 
-            foreach(var source in sourcelist)
+            foreach (var source in sourcelist)
             {
                 sourcelistnew.Add(source);
 
@@ -291,9 +373,9 @@ namespace OdhApiCore.Controllers.api
                     if (!sourcelistnew.Contains("magnolia"))
                         sourcelistnew.Add("magnolia");
                     if (!sourcelistnew.Contains("common"))
-                        sourcelistnew.Add("common");                    
+                        sourcelistnew.Add("common");
                 }
-                else if(source == "lts")
+                else if (source == "lts")
                 {
                     if (!sourcelistnew.Contains("activitydata"))
                         sourcelistnew.Add("activitydata");
@@ -306,7 +388,7 @@ namespace OdhApiCore.Controllers.api
                     if (!sourcelistnew.Contains("beacondata"))
                         sourcelistnew.Add("beacondata");
                 }
-                else if(source == "siag")
+                else if (source == "siag")
                 {
                     if (!sourcelistnew.Contains("museumdata"))
                         sourcelistnew.Add("museumdata");
@@ -323,5 +405,4 @@ namespace OdhApiCore.Controllers.api
             return sourcelistnew;
         }
     }
-    
 }

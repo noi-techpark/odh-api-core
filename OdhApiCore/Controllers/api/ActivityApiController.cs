@@ -27,11 +27,13 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
-    {     
-        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
-        {
-        }
+    {
+        public ActivityController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<ActivityController> logger,
+            QueryFactory queryFactory
+        ) : base(env, settings, logger, queryFactory) { }
 
         #region SWAGGER Exposed API
 
@@ -44,7 +46,7 @@ namespace OdhApiCore.Controllers
         /// <param name="activitytype">Type of the Activity ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), REFERENCE TO: GET /api/ActivityTypes </param>
         /// <param name="subtype">Subtype of the Activity (BITMASK Filter = available SubTypes depends on the selected Activity Type), (default:'null')</param>
         /// <param name="idlist">IDFilter (Separator ',' List of Activity IDs), (default:'null')</param>
-        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
+        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>
         /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ','), (default:'null')</param>
         /// <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km), (default:'null')</param>
         /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
@@ -64,7 +66,7 @@ namespace OdhApiCore.Controllers
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues" target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues" target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of Activity Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -73,7 +75,12 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,ActivityReader")]
-        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
+        [OdhCacheOutput(
+            ClientTimeSpan = 0,
+            ServerTimeSpan = 3600,
+            CacheKeyGenerator = typeof(CustomCacheKeyGenerator),
+            MustRevalidate = true
+        )]
         [HttpGet, Route("Activity")]
         public async Task<IActionResult> GetActivityList(
             string? language = null,
@@ -93,30 +100,53 @@ namespace OdhApiCore.Controllers
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
             string? updatefrom = null,
-            string? langfilter = null, 
+            string? langfilter = null,
             string? seed = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);           
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
 
             return await GetFiltered(
-                    fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
-                    pagesize: pagesize, activitytype: activitytype, subtypefilter: subtype, idfilter: idlist,
-                    searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
-                    distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
-                    highlightfilter: highlight, difficultyfilter: difficultyfilter, active: active,
-                    smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
-                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
-                    cancellationToken: cancellationToken);
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                pagenumber: pagenumber,
+                pagesize: pagesize,
+                activitytype: activitytype,
+                subtypefilter: subtype,
+                idfilter: idlist,
+                searchfilter: searchfilter,
+                locfilter: locfilter,
+                areafilter: areafilter,
+                distancefilter: distancefilter,
+                altitudefilter: altitudefilter,
+                durationfilter: durationfilter,
+                highlightfilter: highlight,
+                difficultyfilter: difficultyfilter,
+                active: active,
+                smgactive: odhactive,
+                smgtags: odhtagfilter,
+                seed: seed,
+                lastchange: updatefrom,
+                langfilter: langfilter,
+                geosearchresult: geosearchresult,
+                rawfilter: rawfilter,
+                rawsort: rawsort,
+                removenullvalues: removenullvalues,
+                cancellationToken: cancellationToken
+            );
         }
 
         /// <summary>
@@ -125,7 +155,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">ID of the Activity</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>GBLTSActivity Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
@@ -138,12 +168,18 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetActivitySingle(
             string id,
             string? language,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
+            return await GetSingle(
+                id,
+                language,
+                fields: fields ?? Array.Empty<string>(),
+                removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -154,7 +190,7 @@ namespace OdhApiCore.Controllers
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of ActivityTypes Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -167,15 +203,23 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("ActivityTypes")]
         public async Task<IActionResult> GetAllActivityTypesListAsync(
             string? language,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await GetActivityTypesListAsync(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues, cancellationToken);
+            return await GetActivityTypesListAsync(
+                language,
+                fields: fields ?? Array.Empty<string>(),
+                searchfilter,
+                rawfilter,
+                rawsort,
+                removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -184,7 +228,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">ID of the Activity Type</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>ActivityTypes Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -198,12 +242,18 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetAllActivityTypesSingleAsync(
             string id,
             string? language,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await GetActivityTypesSingleAsync(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
+            return await GetActivityTypesSingleAsync(
+                id,
+                language,
+                fields: fields ?? Array.Empty<string>(),
+                removenullvalues,
+                cancellationToken
+            );
         }
 
         #endregion
@@ -231,52 +281,112 @@ namespace OdhApiCore.Controllers
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting</param>
         /// <returns>Result Object with Collection of Activities Objects</returns>
         private Task<IActionResult> GetFiltered(
-            string[] fields, string? language, uint pagenumber, int? pagesize, string? activitytype, string? subtypefilter,
-            string? idfilter, string? searchfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
-            string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
-            string? smgtags, string? seed, string? lastchange, string? langfilter, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort,
-            bool removenullvalues, CancellationToken cancellationToken)
+            string[] fields,
+            string? language,
+            uint pagenumber,
+            int? pagesize,
+            string? activitytype,
+            string? subtypefilter,
+            string? idfilter,
+            string? searchfilter,
+            string? locfilter,
+            string? areafilter,
+            string? distancefilter,
+            string? altitudefilter,
+            string? durationfilter,
+            bool? highlightfilter,
+            string? difficultyfilter,
+            bool? active,
+            bool? smgactive,
+            string? smgtags,
+            string? seed,
+            string? lastchange,
+            string? langfilter,
+            PGGeoSearchResult geosearchresult,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
-                    QueryFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
-                    altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange, langfilter,
-                    cancellationToken);
+                    QueryFactory,
+                    activitytype,
+                    subtypefilter,
+                    idfilter,
+                    locfilter,
+                    areafilter,
+                    distancefilter,
+                    altitudefilter,
+                    durationfilter,
+                    highlightfilter,
+                    difficultyfilter,
+                    active,
+                    smgactive,
+                    smgtags,
+                    lastchange,
+                    langfilter,
+                    cancellationToken
+                );
 
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From("activities")
-                        .ActivityWhereExpression(
-                            idlist: myactivityhelper.idlist, activitytypelist: myactivityhelper.activitytypelist,
-                            subtypelist: myactivityhelper.subtypelist, difficultylist: myactivityhelper.difficultylist,
-                            smgtaglist: myactivityhelper.smgtaglist, districtlist: new List<string>(),
-                            municipalitylist: new List<string>(), tourismvereinlist: myactivityhelper.tourismvereinlist,
-                            regionlist: myactivityhelper.regionlist, arealist: myactivityhelper.arealist,
-                            distance: myactivityhelper.distance, distancemin: myactivityhelper.distancemin,
-                            distancemax: myactivityhelper.distancemax, duration: myactivityhelper.duration,
-                            durationmin: myactivityhelper.durationmin, durationmax: myactivityhelper.durationmax,
-                            altitude: myactivityhelper.altitude, altitudemin: myactivityhelper.altitudemin,
-                            altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
-                            activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
-                            searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, 
-                            languagelist: myactivityhelper.languagelist, filterClosedData: FilterClosedData, reducedData: ReducedData)
-                        .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
+                var query = QueryFactory
+                    .Query()
+                    .SelectRaw("data")
+                    .From("activities")
+                    .ActivityWhereExpression(
+                        idlist: myactivityhelper.idlist,
+                        activitytypelist: myactivityhelper.activitytypelist,
+                        subtypelist: myactivityhelper.subtypelist,
+                        difficultylist: myactivityhelper.difficultylist,
+                        smgtaglist: myactivityhelper.smgtaglist,
+                        districtlist: new List<string>(),
+                        municipalitylist: new List<string>(),
+                        tourismvereinlist: myactivityhelper.tourismvereinlist,
+                        regionlist: myactivityhelper.regionlist,
+                        arealist: myactivityhelper.arealist,
+                        distance: myactivityhelper.distance,
+                        distancemin: myactivityhelper.distancemin,
+                        distancemax: myactivityhelper.distancemax,
+                        duration: myactivityhelper.duration,
+                        durationmin: myactivityhelper.durationmin,
+                        durationmax: myactivityhelper.durationmax,
+                        altitude: myactivityhelper.altitude,
+                        altitudemin: myactivityhelper.altitudemin,
+                        altitudemax: myactivityhelper.altitudemax,
+                        highlight: myactivityhelper.highlight,
+                        activefilter: myactivityhelper.active,
+                        smgactivefilter: myactivityhelper.smgactive,
+                        searchfilter: searchfilter,
+                        language: language,
+                        lastchange: myactivityhelper.lastchange,
+                        languagelist: myactivityhelper.languagelist,
+                        filterClosedData: FilterClosedData,
+                        reducedData: ReducedData
+                    )
+                    .ApplyRawFilter(rawfilter)
+                    .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
-                var data =
-                    await query
-                        .PaginateAsync<JsonRaw>(
-                            page: (int)pagenumber,
-                            perPage: pagesize ?? 25);
+                var data = await query.PaginateAsync<JsonRaw>(
+                    page: (int)pagenumber,
+                    perPage: pagesize ?? 25
+                );
                 var fieldsTohide = FieldsToHide;
 
-                var dataTransformed =
-                    data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
+                var dataTransformed = data.List.Select(
+                    raw =>
+                        raw.TransformRawData(
+                            language,
+                            fields,
+                            checkCC0: FilterCC0License,
+                            filterClosedData: FilterClosedData,
+                            filteroutNullValues: removenullvalues,
+                            urlGenerator: UrlGenerator,
+                            fieldstohide: fieldsTohide
+                        )
+                );
 
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
@@ -287,7 +397,8 @@ namespace OdhApiCore.Controllers
                     totalcount,
                     seed,
                     dataTransformed,
-                    Url);
+                    Url
+                );
             });
         }
 
@@ -296,21 +407,35 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">ID of the Activity</param>
         /// <returns>Activity Object</returns>
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(
+            string id,
+            string? language,
+            string[] fields,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query("activities")
-                        .Select("data")
-                        .Where("id", id.ToUpper())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-                        //.When(FilterClosedData, q => q.FilterClosedData());
+                var query = QueryFactory
+                    .Query("activities")
+                    .Select("data")
+                    .Where("id", id.ToUpper())
+                    .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                //.When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
                 var fieldsTohide = FieldsToHide;
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(
+                    language,
+                    fields,
+                    checkCC0: FilterCC0License,
+                    filterClosedData: FilterClosedData,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGenerator,
+                    fieldstohide: fieldsTohide
+                );
             });
         }
 
@@ -322,25 +447,44 @@ namespace OdhApiCore.Controllers
         /// GET Activity Types List
         /// </summary>
         /// <returns>Collection of ActivityTypes Object</returns>
-        private Task<IActionResult> GetActivityTypesListAsync(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetActivityTypesListAsync(
+            string? language,
+            string[] fields,
+            string? searchfilter,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query("activitytypes")
-                        .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
-                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
-                        .ApplyRawFilter(rawfilter)
-                        .OrderOnlyByRawSortIfNotNull(rawsort);
+                var query = QueryFactory
+                    .Query("activitytypes")
+                    .SelectRaw("data")
+                    .When(FilterClosedData, q => q.FilterClosedData())
+                    .SearchFilter(
+                        PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language),
+                        searchfilter
+                    )
+                    .ApplyRawFilter(rawfilter)
+                    .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
                 var fieldsTohide = FieldsToHide;
 
-                var dataTransformed =
-                    data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
+                var dataTransformed = data.Select(
+                    raw =>
+                        raw?.TransformRawData(
+                            language,
+                            fields,
+                            checkCC0: FilterCC0License,
+                            filterClosedData: FilterClosedData,
+                            filteroutNullValues: removenullvalues,
+                            urlGenerator: UrlGenerator,
+                            fieldstohide: fieldsTohide
+                        )
+                );
 
                 return dataTransformed;
             });
@@ -350,21 +494,35 @@ namespace OdhApiCore.Controllers
         /// GET Activity Types Single
         /// </summary>
         /// <returns>ActivityTypes Object</returns>
-        private Task<IActionResult> GetActivityTypesSingleAsync(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetActivityTypesSingleAsync(
+            string id,
+            string? language,
+            string[] fields,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query("activitytypes")
-                        .Select("data")
-                         //.WhereJsonb("Key", "ilike", id)
-                        .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());                
+                var query = QueryFactory
+                    .Query("activitytypes")
+                    .Select("data")
+                    //.WhereJsonb("Key", "ilike", id)
+                    .Where("id", id.ToLower())
+                    .When(FilterClosedData, q => q.FilterClosedData());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
                 var fieldsTohide = FieldsToHide;
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(
+                    language,
+                    fields,
+                    checkCC0: FilterCC0License,
+                    filterClosedData: FilterClosedData,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGenerator,
+                    fieldstohide: fieldsTohide
+                );
             });
         }
 
@@ -423,7 +581,6 @@ namespace OdhApiCore.Controllers
                 return await DeleteData(id, "activities");
             });
         }
-
 
         #endregion
     }

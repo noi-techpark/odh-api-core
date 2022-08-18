@@ -59,7 +59,11 @@ namespace Helper
             return $"earth_distance(ll_to_earth({latitude}, {longitude}),ll_to_earth((data->'GpsPoints'->'position'#>>'\\{{Latitude\\}}')::double precision, (data#>>'\\{{GpsPoints,position,Longitude\\}}')::double precision))";
         }
 
-        public static string GetGeoWhereBoundingBoxes(string latitude, string longitude, string radius)
+        public static string GetGeoWhereBoundingBoxes(
+            string latitude,
+            string longitude,
+            string radius
+        )
         {
             return $"earth_box(ll_to_earth({latitude}, {longitude}), {radius}) @> ll_to_earth((data#>>'\\{{Latitude\\}}')::double precision, (data#>>'\\{{Longitude\\}}')::double precision) and earth_distance(ll_to_earth({latitude}, {longitude}), ll_to_earth((data#>>'\\{{Latitude\\}}')::double precision, (data#>>'\\{{Longitude\\}}')::double precision)) < {radius}";
         }
@@ -69,19 +73,30 @@ namespace Helper
             return $"earth_box(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), {radius.ToString()}) @> ll_to_earth((data#>>'\\{{Latitude\\}}')::double precision, (data#>>'\\{{Longitude\\}}')::double precision) and earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), ll_to_earth((data#>>'\\{{Latitude\\}}')::double precision, (data#>>'\\{{Longitude\\}}')::double precision)) < {radius.ToString()}";
         }
 
-        public static string GetGeoWhereBoundingBoxesExtended(string latitude, string longitude, string radius)
+        public static string GetGeoWhereBoundingBoxesExtended(
+            string latitude,
+            string longitude,
+            string radius
+        )
         {
             return $"earth_box(ll_to_earth({latitude}, {longitude}), {radius}) @> ll_to_earth((data#>>'\\{{GpsPoints,position,Latitude\\}}')::double precision, (data#>>'\\{{GpsPoints,position,Longitude\\}}')::double precision) and earth_distance(ll_to_earth({latitude}, {longitude}), ll_to_earth((data#>>'\\{{GpsPoints,position,Latitude\\}}')::double precision, (data#>>'\\{{GpsPoints,position,Longitude\\}}')::double precision)) < {radius}";
         }
 
-        public static string GetGeoWhereBoundingBoxesExtended(double latitude, double longitude, int radius)
+        public static string GetGeoWhereBoundingBoxesExtended(
+            double latitude,
+            double longitude,
+            int radius
+        )
         {
             return $"earth_box(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), {radius.ToString()}) @> ll_to_earth((data#>>'\\{{GpsPoints,position,Latitude\\}}')::double precision, (data#>>'\\{{GpsPoints,position,Longitude\\}}')::double precision) and earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), ll_to_earth((data#>>'\\{{GpsPoints,position,Latitude\\}}')::double precision, (data#>>'\\{{GpsPoints,position,Longitude\\}}')::double precision)) < {radius.ToString()}";
         }
 
         //For Accommodations
         public static void ApplyGeoSearchWhereOrderbySimple(
-            ref string where, ref string orderby, PGGeoSearchResult geosearchresult)
+            ref string where,
+            ref string orderby,
+            PGGeoSearchResult geosearchresult
+        )
         {
             if (geosearchresult != null)
             {
@@ -93,39 +108,43 @@ namespace Helper
                     where += PostgresSQLHelper.GetGeoWhereSimple(
                         geosearchresult.latitude,
                         geosearchresult.longitude,
-                        geosearchresult.radius);
+                        geosearchresult.radius
+                    );
                     orderby = PostgresSQLHelper.GetGeoOrderBySimple(
                         geosearchresult.latitude,
-                        geosearchresult.longitude);
+                        geosearchresult.longitude
+                    );
                 }
             }
         }
 
         public static Query GeoSearchFilterAndOrderby(
             this Query query,
-            PGGeoSearchResult? geosearchresult)
+            PGGeoSearchResult? geosearchresult
+        )
         {
             if (geosearchresult == null || !geosearchresult.geosearch)
                 return query;
 
-            return
-                query.WhereRaw(
-                        GetGeoWhereExtended(
-                            geosearchresult.latitude,
-                            geosearchresult.longitude,
-                            geosearchresult.radius)
-                    ).OrderByRaw(
-                        GetGeoOrderByExtended(
-                            geosearchresult.latitude,
-                            geosearchresult.longitude)
-                    );
+            return query
+                .WhereRaw(
+                    GetGeoWhereExtended(
+                        geosearchresult.latitude,
+                        geosearchresult.longitude,
+                        geosearchresult.radius
+                    )
+                )
+                .OrderByRaw(
+                    GetGeoOrderByExtended(geosearchresult.latitude, geosearchresult.longitude)
+                );
         }
 
         //For Activities Pois and GBActivityPoi
         public static void ApplyGeoSearchWhereOrderby(
             ref string where,
             ref string orderby,
-            PGGeoSearchResult geosearchresult)
+            PGGeoSearchResult geosearchresult
+        )
         {
             if (geosearchresult != null)
             {
@@ -137,10 +156,12 @@ namespace Helper
                     where += PostgresSQLHelper.GetGeoWhereExtended(
                         geosearchresult.latitude,
                         geosearchresult.longitude,
-                        geosearchresult.radius);
+                        geosearchresult.radius
+                    );
                     orderby = PostgresSQLHelper.GetGeoOrderByExtended(
                         geosearchresult.latitude,
-                        geosearchresult.longitude);
+                        geosearchresult.longitude
+                    );
                 }
             }
         }
@@ -151,7 +172,11 @@ namespace Helper
 
         //For Activities Pois and Smgpois
 
-        public static string GetGeoWhereSimple_GeneratedColumns(double latitude, double longitude, int radius)
+        public static string GetGeoWhereSimple_GeneratedColumns(
+            double latitude,
+            double longitude,
+            int radius
+        )
         {
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
@@ -170,8 +195,12 @@ namespace Helper
         //{
         //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision))";
         //}
-        
-        public static string GetGeoWhereExtended_GeneratedColumns(double latitude, double longitude, int radius)
+
+        public static string GetGeoWhereExtended_GeneratedColumns(
+            double latitude,
+            double longitude,
+            int radius
+        )
         {
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
@@ -181,39 +210,64 @@ namespace Helper
         //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < " + radius;
         //}
 
-        public static string GetGeoOrderByExtended_GeneratedColumns(double latitude, double longitude)
+        public static string GetGeoOrderByExtended_GeneratedColumns(
+            double latitude,
+            double longitude
+        )
         {
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision))";
         }
 
-        public static string GetGeoOrderByExtended_GeneratedColumns(string latitude, string longitude)
+        public static string GetGeoOrderByExtended_GeneratedColumns(
+            string latitude,
+            string longitude
+        )
         {
             return $"earth_distance(ll_to_earth({latitude}, {longitude}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision))";
         }
 
-        public static string GetGeoWhereBoundingBoxes_GeneratedColumns(string latitude, string longitude, string radius)
+        public static string GetGeoWhereBoundingBoxes_GeneratedColumns(
+            string latitude,
+            string longitude,
+            string radius
+        )
         {
             return $"earth_box(ll_to_earth({latitude}, {longitude}), {radius}) @> ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision) and earth_distance(ll_to_earth({latitude}, {longitude}), ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius}";
         }
 
-        public static string GetGeoWhereBoundingBoxes_GeneratedColumns(double latitude, double longitude, int radius)
+        public static string GetGeoWhereBoundingBoxes_GeneratedColumns(
+            double latitude,
+            double longitude,
+            int radius
+        )
         {
             return $"earth_box(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), {radius.ToString()}) @> ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision) and earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
 
-        public static string GetGeoWhereBoundingBoxesExtended_GeneratedColumns(string latitude, string longitude, string radius)
+        public static string GetGeoWhereBoundingBoxesExtended_GeneratedColumns(
+            string latitude,
+            string longitude,
+            string radius
+        )
         {
             return $"earth_box(ll_to_earth({latitude}, {longitude}), {radius}) @> ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision) and earth_distance(ll_to_earth({latitude}, {longitude}), ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius}";
         }
 
-        public static string GetGeoWhereBoundingBoxesExtended_GeneratedColumns(double latitude, double longitude, int radius)
+        public static string GetGeoWhereBoundingBoxesExtended_GeneratedColumns(
+            double latitude,
+            double longitude,
+            int radius
+        )
         {
             return $"earth_box(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), {radius.ToString()}) @> ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision) and earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}), ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
 
         //For Accommodations
         public static void ApplyGeoSearchWhereOrderbySimple_GeneratedColumns(
-            ref string where, ref string orderby, PGGeoSearchResult geosearchresult)
+            ref string where,
+            ref string orderby,
+            PGGeoSearchResult geosearchresult
+        )
         {
             if (geosearchresult != null)
             {
@@ -225,39 +279,46 @@ namespace Helper
                     where += PostgresSQLHelper.GetGeoWhereSimple_GeneratedColumns(
                         geosearchresult.latitude,
                         geosearchresult.longitude,
-                        geosearchresult.radius);
+                        geosearchresult.radius
+                    );
                     orderby = PostgresSQLHelper.GetGeoOrderBySimple_GeneratedColumns(
                         geosearchresult.latitude,
-                        geosearchresult.longitude);
+                        geosearchresult.longitude
+                    );
                 }
             }
         }
 
         public static Query GeoSearchFilterAndOrderby_GeneratedColumns(
             this Query query,
-            PGGeoSearchResult? geosearchresult)
+            PGGeoSearchResult? geosearchresult
+        )
         {
             if (geosearchresult == null || !geosearchresult.geosearch)
                 return query;
 
-            return
-                query.WhereRaw(
-                        GetGeoWhereExtended_GeneratedColumns(
-                            geosearchresult.latitude,
-                            geosearchresult.longitude,
-                            geosearchresult.radius)
-                    ).OrderByRaw(
-                        GetGeoOrderByExtended_GeneratedColumns(
-                            geosearchresult.latitude,
-                            geosearchresult.longitude)
-                    );
+            return query
+                .WhereRaw(
+                    GetGeoWhereExtended_GeneratedColumns(
+                        geosearchresult.latitude,
+                        geosearchresult.longitude,
+                        geosearchresult.radius
+                    )
+                )
+                .OrderByRaw(
+                    GetGeoOrderByExtended_GeneratedColumns(
+                        geosearchresult.latitude,
+                        geosearchresult.longitude
+                    )
+                );
         }
 
         //For Activities Pois and GBActivityPoi
         public static void ApplyGeoSearchWhereOrderby_GeneratedColumns(
             ref string where,
             ref string orderby,
-            PGGeoSearchResult geosearchresult)
+            PGGeoSearchResult geosearchresult
+        )
         {
             if (geosearchresult != null)
             {
@@ -269,10 +330,12 @@ namespace Helper
                     where += PostgresSQLHelper.GetGeoWhereExtended_GeneratedColumns(
                         geosearchresult.latitude,
                         geosearchresult.longitude,
-                        geosearchresult.radius);
+                        geosearchresult.radius
+                    );
                     orderby = PostgresSQLHelper.GetGeoOrderByExtended_GeneratedColumns(
                         geosearchresult.latitude,
-                        geosearchresult.longitude);
+                        geosearchresult.longitude
+                    );
                 }
             }
         }
@@ -289,7 +352,6 @@ namespace Helper
 
             return totalpages;
         }
-
     }
 
     public class PGParameters

@@ -21,25 +21,61 @@ namespace OdhApiCore.Controllers.api
         public bool? communityactivefilter;
         public string? lastchange;
         public string? sortorder;
+
         //New Publishedonlist
         public List<string> publishedonlist;
 
         public static EventShortHelper Create(
-            string? startdate, string? enddate, string? datetimeformat, string? source,
-            string? eventlocation, bool? onlyactive, bool? websiteactive, bool? communityactive,
-            string? eventids, string? webaddress, string? lastchange, string? sortorder, string? publishedonfilter)
+            string? startdate,
+            string? enddate,
+            string? datetimeformat,
+            string? source,
+            string? eventlocation,
+            bool? onlyactive,
+            bool? websiteactive,
+            bool? communityactive,
+            string? eventids,
+            string? webaddress,
+            string? lastchange,
+            string? sortorder,
+            string? publishedonfilter
+        )
         {
-            return new EventShortHelper(startdate, enddate, datetimeformat, source, eventlocation, onlyactive, websiteactive, 
-                communityactive, eventids, webaddress, lastchange, sortorder, publishedonfilter);
+            return new EventShortHelper(
+                startdate,
+                enddate,
+                datetimeformat,
+                source,
+                eventlocation,
+                onlyactive,
+                websiteactive,
+                communityactive,
+                eventids,
+                webaddress,
+                lastchange,
+                sortorder,
+                publishedonfilter
+            );
         }
 
         private EventShortHelper(
-            string? startdate, string? enddate, string? datetimeformat, string? source,
-            string? eventlocation, bool? onlyactive, bool? websiteactive, bool? communityactive, string? eventids, string? webaddress,
-            string? lastchange, string? sortorder, string? publishedonfilter)
-        {            
+            string? startdate,
+            string? enddate,
+            string? datetimeformat,
+            string? source,
+            string? eventlocation,
+            bool? onlyactive,
+            bool? websiteactive,
+            bool? communityactive,
+            string? eventids,
+            string? webaddress,
+            string? lastchange,
+            string? sortorder,
+            string? publishedonfilter
+        )
+        {
             idlist = Helper.CommonListCreator.CreateIdList(eventids);
-            var sourcelisttemp = Helper.CommonListCreator.CreateIdList(source);                     
+            var sourcelisttemp = Helper.CommonListCreator.CreateIdList(source);
 
             sourcelist = ExtendSourceFilterEventShort(sourcelisttemp);
 
@@ -64,7 +100,6 @@ namespace OdhApiCore.Controllers.api
             }
             else if (datetimeformat == "uxtimestamp")
             {
-
                 if (!String.IsNullOrEmpty(startdate))
                 {
                     double startdatedb = Convert.ToDouble(startdate);
@@ -95,17 +130,16 @@ namespace OdhApiCore.Controllers.api
 
             this.sortorder = sortorder;
 
-            if(sortorder != null)
+            if (sortorder != null)
             {
                 sortorder = sortorder.ToUpper();
 
                 if (sortorder != "ASC" && sortorder != "DESC")
                     sortorder = "";
             }
-            
+
             this.lastchange = lastchange;
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
-
         }
 
         private List<string> ExtendSourceFilterEventShort(List<string> sourcelist)
@@ -119,13 +153,13 @@ namespace OdhApiCore.Controllers.api
                 if (source == "noi")
                 {
                     if (!sourcelistnew.Contains("Content"))
-                        sourcelistnew.Add("Content");                    
+                        sourcelistnew.Add("Content");
                 }
                 else if (source == "eurac")
                 {
                     if (!sourcelistnew.Contains("EBMS"))
-                        sourcelistnew.Add("EBMS");                    
-                }               
+                        sourcelistnew.Add("EBMS");
+                }
             }
 
             return sourcelistnew;

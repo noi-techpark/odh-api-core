@@ -79,7 +79,5 @@ namespace Helper
 
             return rids;
         }
-
     }
-
 }

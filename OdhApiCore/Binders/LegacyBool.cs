@@ -30,7 +30,9 @@ namespace OdhApiCore.Controllers
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+            var valueProviderResult = bindingContext.ValueProvider.GetValue(
+                bindingContext.ModelName
+            );
             var firstValue = valueProviderResult.FirstValue;
             if (firstValue == null || firstValue == "null") // "null" exists for compatibility reasons
             {
@@ -44,7 +46,9 @@ namespace OdhApiCore.Controllers
             {
                 bindingContext.ModelState.TryAddModelError(
                     bindingContext.ModelName,
-                    bindingContext.ModelMetadata.ModelBindingMessageProvider.ValueIsInvalidAccessor(firstValue)
+                    bindingContext.ModelMetadata.ModelBindingMessageProvider.ValueIsInvalidAccessor(
+                        firstValue
+                    )
                 );
                 bindingContext.Result = ModelBindingResult.Failed();
             }

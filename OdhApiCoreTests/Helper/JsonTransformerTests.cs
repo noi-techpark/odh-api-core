@@ -14,14 +14,16 @@ namespace OdhApiCoreTests.Helper
         [Fact]
         public void FilterByLanguageTest()
         {
-            var actual = @"{
+            var actual =
+                @"{
                 ""languages"": {
                     ""de"": ""hallo"",
                     ""it"": ""ciao"",
                     ""en"": ""hello""
                 }
             }";
-            var expected = @"{
+            var expected =
+                @"{
                 ""languages"": {
                     ""de"": ""hallo""
                 }
@@ -35,7 +37,8 @@ namespace OdhApiCoreTests.Helper
         [Fact]
         public void FilterImagesByCC0LicenseTest()
         {
-            var actual = @"[{
+            var actual =
+                @"[{
                 ""License"": ""CC0"",
                 ""Name"": ""Image1""
             },
@@ -43,7 +46,8 @@ namespace OdhApiCoreTests.Helper
                 ""License"": ""LTS"",
                 ""Name"": ""Image2""
             }]";
-            var expected = @"[{
+            var expected =
+                @"[{
                 ""License"": ""CC0"",
                 ""Name"": ""Image1""
             }]";

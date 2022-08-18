@@ -6,18 +6,23 @@ namespace LCS
 {
     public class ServiceReferenceConfig
     {
-        private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)
+        private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(
+            EndpointConfiguration endpointConfiguration
+        )
         {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_ISimpleService))
             {
-                System.ServiceModel.BasicHttpBinding result = new System.ServiceModel.BasicHttpBinding();
+                System.ServiceModel.BasicHttpBinding result =
+                    new System.ServiceModel.BasicHttpBinding();
                 result.MaxBufferSize = int.MaxValue;
                 result.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
                 result.MaxReceivedMessageSize = int.MaxValue;
                 result.AllowCookies = true;
                 return result;
             }
-            throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
+            throw new System.InvalidOperationException(
+                string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration)
+            );
         }
 
         //private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(TimeSpan timeout)
@@ -40,13 +45,19 @@ namespace LCS
         //    return httpsBinding;
         //}
 
-        private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
+        private static System.ServiceModel.EndpointAddress GetEndpointAddress(
+            EndpointConfiguration endpointConfiguration
+        )
         {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_ISimpleService))
             {
-                return new System.ServiceModel.EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
+                return new System.ServiceModel.EndpointAddress(
+                    "https://lcs.lts.it/api/data.svc/soap"
+                );
             }
-            throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
+            throw new System.InvalidOperationException(
+                string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration)
+            );
         }
 
         public enum EndpointConfiguration

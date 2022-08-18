@@ -14,7 +14,7 @@ namespace OdhApiCore.Factories
             parameterPlaceholder = "$$";
         }
     }
-        
+
     /// <summary>
     /// For the time of writing QueryFactory doesn't implement IDisposable
     /// so it is a bit dangerous to use with ASP.NET's DI when used directly.
@@ -28,7 +28,8 @@ namespace OdhApiCore.Factories
         {
             Connection = new NpgsqlConnection(settings.PostgresConnectionString);
             Compiler = new OdhPostgresCompiler();
-            Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
+            Logger = info =>
+                logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
 
         public new void Dispose()

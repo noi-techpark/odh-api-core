@@ -11,49 +11,99 @@ namespace MSS
 {
     public class ParseMssResponse
     {
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<Room> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(
+            string lang,
+            string servicecode,
+            XDocument mssresponse,
+            List<Room> myroompersons,
+            string requestsource,
+            string version
+        )
         {
             try
             {
                 var resultid = mssresponse.Root.Element("header").Element("result_id").Value;
 
-                var myresult = mssresponse.Root.Elements("root").Elements("result").Elements("hotel");
+                var myresult = mssresponse.Root
+                    .Elements("root")
+                    .Elements("result")
+                    .Elements("hotel");
 
-                return ResponseParser(myresult, servicecode, myroompersons, resultid, requestsource, lang, version);
+                return ResponseParser(
+                    myresult,
+                    servicecode,
+                    myroompersons,
+                    resultid,
+                    requestsource,
+                    lang,
+                    version
+                );
             }
             catch (Exception)
             {
                 return null;
             }
-
         }
 
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<string> A0Rids, List<Room> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(
+            string lang,
+            string servicecode,
+            XDocument mssresponse,
+            List<string> A0Rids,
+            List<Room> myroompersons,
+            string requestsource,
+            string version
+        )
         {
             try
             {
-                foreach (XElement mytime in mssresponse.Root.Elements("root").Elements("header").Elements("time"))
+                foreach (
+                    XElement mytime in mssresponse.Root
+                        .Elements("root")
+                        .Elements("header")
+                        .Elements("time")
+                )
                 {
                     Console.WriteLine("Requestdauer: " + mytime.Value);
                 }
 
                 var resultid = mssresponse.Root.Element("header").Element("result_id").Value;
 
-                var myresult = mssresponse.Root.Elements("root").Elements("result").Elements("hotel").Where
-                    (x => A0Rids.Contains(x.Element("id_lts").Value.ToLower()) && x.Elements("channel").Count() > 0);
+                var myresult = mssresponse.Root
+                    .Elements("root")
+                    .Elements("result")
+                    .Elements("hotel")
+                    .Where(
+                        x =>
+                            A0Rids.Contains(x.Element("id_lts").Value.ToLower())
+                            && x.Elements("channel").Count() > 0
+                    );
 
-                return ResponseParser(myresult, servicecode, myroompersons, resultid, requestsource, lang, version);
-
-
+                return ResponseParser(
+                    myresult,
+                    servicecode,
+                    myroompersons,
+                    resultid,
+                    requestsource,
+                    lang,
+                    version
+                );
             }
             catch (Exception)
             {
                 return null;
             }
-
         }
 
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XElement mssresponse, List<string> A0Rids, List<Room> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(
+            string lang,
+            string servicecode,
+            XElement mssresponse,
+            List<string> A0Rids,
+            List<Room> myroompersons,
+            string requestsource,
+            string version
+        )
         {
             try
             {
@@ -64,19 +114,40 @@ namespace MSS
 
                 var resultid = mssresponse.Element("header").Element("result_id").Value;
 
-                var myresult = mssresponse.Elements("result").Elements("hotel").Where
-                    (x => A0Rids.Contains(x.Element("id_lts").Value.ToUpper()) && x.Elements("channel").Count() > 0);
+                var myresult = mssresponse
+                    .Elements("result")
+                    .Elements("hotel")
+                    .Where(
+                        x =>
+                            A0Rids.Contains(x.Element("id_lts").Value.ToUpper())
+                            && x.Elements("channel").Count() > 0
+                    );
 
-                return ResponseParser(myresult, servicecode, myroompersons, resultid, requestsource, lang, version);
+                return ResponseParser(
+                    myresult,
+                    servicecode,
+                    myroompersons,
+                    resultid,
+                    requestsource,
+                    lang,
+                    version
+                );
             }
             catch (Exception)
             {
                 return null;
             }
-
         }
 
-        public static MssResult ResponseParser(IEnumerable<XElement> myresult, string servicecode, List<Room> roompersons, string resultid, string requestsource, string lang, string version)
+        public static MssResult ResponseParser(
+            IEnumerable<XElement> myresult,
+            string servicecode,
+            List<Room> roompersons,
+            string resultid,
+            string requestsource,
+            string lang,
+            string version
+        )
         {
             try
             {
@@ -89,7 +160,9 @@ namespace MSS
 
                 List<XElement> poslist = myresult.Elements("pos").Elements("id_pos").ToList();
 
-                foreach (var myhotelresult in myresult.Where(x => x.Elements("channel").Count() > 0))
+                foreach (
+                    var myhotelresult in myresult.Where(x => x.Elements("channel").Count() > 0)
+                )
                 {
                     //Nur wenn ein Angebot eines Channels vorhanden ist
                     if (myhotelresult.Elements("channel").Count() > 0)
@@ -121,14 +194,35 @@ namespace MSS
                             var myonlinepayment = myhotelresult.Element("online_payment");
                             if (myonlinepayment != null)
                             {
-                                myresp.OnlinepaymentMethods = myonlinepayment.Element("methods") != null ? myonlinepayment.Element("methods").Value : "";
-                                myresp.OnlinepaymentPrepayment = myonlinepayment.Element("prepayment") != null ? myonlinepayment.Element("prepayment").Value : "";
-                                myresp.OnlinepaymentCCards = myonlinepayment.Element("ccards") != null ? myonlinepayment.Element("ccards").Value : "";
+                                myresp.OnlinepaymentMethods =
+                                    myonlinepayment.Element("methods") != null
+                                        ? myonlinepayment.Element("methods").Value
+                                        : "";
+                                myresp.OnlinepaymentPrepayment =
+                                    myonlinepayment.Element("prepayment") != null
+                                        ? myonlinepayment.Element("prepayment").Value
+                                        : "";
+                                myresp.OnlinepaymentCCards =
+                                    myonlinepayment.Element("ccards") != null
+                                        ? myonlinepayment.Element("ccards").Value
+                                        : "";
                             }
 
                             if (myresp.ChannelID == "pos")
                             {
-                                string posid = poslist.Where(x => x.Value != "sinfo" && x.Value != "bok" && x.Value != "esy" && x.Value != "lts" && x.Value != "htl" && x.Value != "hgv" && x.Value != "exp").FirstOrDefault().Value;
+                                string posid = poslist
+                                    .Where(
+                                        x =>
+                                            x.Value != "sinfo"
+                                            && x.Value != "bok"
+                                            && x.Value != "esy"
+                                            && x.Value != "lts"
+                                            && x.Value != "htl"
+                                            && x.Value != "hgv"
+                                            && x.Value != "exp"
+                                    )
+                                    .FirstOrDefault()
+                                    .Value;
 
                                 switch (posid)
                                 {
@@ -165,15 +259,17 @@ namespace MSS
                                         myresp.ChannelID = "valgardenait";
                                         break;
                                 }
-
                             }
-
 
                             if (mychanneloffer.Element("channel_link") != null)
                                 myresp.Channellink = mychanneloffer.Element("channel_link").Value;
 
                             //Specialcase build the bookinglink for Booking Südtirol
-                            if (myresp.ChannelID == "esy" || myresp.ChannelID == "lts" || myresp.ChannelID == "hgv")
+                            if (
+                                myresp.ChannelID == "esy"
+                                || myresp.ChannelID == "lts"
+                                || myresp.ChannelID == "hgv"
+                            )
                             {
                                 //http://www.bookingsuedtirol.com/index.php?action=view&src=" + + "&id=10096&result_id=ec373a3d116ce01806a1c5f9f110c16b&room_qty_0=1&room_occ_0=18&room_rid_0=3124
                                 //http://www.bookingsuedtirol.com/index.php?action=view&src=sinfo&id=10096&result_id=fba3a11c1a9cf7c9ce636e10188507bd&room_qty_0=1&room_occ_0=18&room_rid_0=3124&room_qty_1=1&room_occ_1=18,18&room_rid_1=3125
@@ -186,7 +282,8 @@ namespace MSS
                                     string person = String.Join(",", room.Person.ToArray());
 
                                     roomstring = roomstring + "room_qty_" + roomcounter + "=1&";
-                                    roomstring = roomstring + "room_occ_" + roomcounter + "=" + person + "&";
+                                    roomstring =
+                                        roomstring + "room_occ_" + roomcounter + "=" + person + "&";
 
                                     roomcounter++;
                                 }
@@ -195,14 +292,32 @@ namespace MSS
 
                                 if (lang.ToLower() == "it")
                                     bookingurl = "https://www.bookingaltoadige.com";
-                                else if (lang.ToLower() == "en" || lang.ToLower() == "nl" || lang.ToLower() == "fr" || lang.ToLower() == "ru" || lang.ToLower() == "pl" || lang.ToLower() == "cs")
+                                else if (
+                                    lang.ToLower() == "en"
+                                    || lang.ToLower() == "nl"
+                                    || lang.ToLower() == "fr"
+                                    || lang.ToLower() == "ru"
+                                    || lang.ToLower() == "pl"
+                                    || lang.ToLower() == "cs"
+                                )
                                     bookingurl = "https://www.bookingsouthtyrol.com";
 
-                                string bookinglink = bookingurl + "/index.php?action=view&src=" + requestsource + "&id=" + myresp.HotelId + "&result_id=" + resultid + "&" + roomstring;
+                                string bookinglink =
+                                    bookingurl
+                                    + "/index.php?action=view&src="
+                                    + requestsource
+                                    + "&id="
+                                    + myresp.HotelId
+                                    + "&result_id="
+                                    + resultid
+                                    + "&"
+                                    + roomstring;
 
-                                myresp.Channellink = bookinglink.Substring(0, bookinglink.Length - 1);
+                                myresp.Channellink = bookinglink.Substring(
+                                    0,
+                                    bookinglink.Length - 1
+                                );
                             }
-
 
                             var myofferdescription = mychanneloffer.Element("offer_description");
 
@@ -213,18 +328,38 @@ namespace MSS
                                 {
                                     int offershow = 0;
                                     if (myofferdetails.Element("offer_gid") != null)
-                                        myresp.OfferGid = !String.IsNullOrEmpty(myofferdetails.Element("offer_gid").Value) ? myofferdetails.Element("offer_gid").Value : "";
+                                        myresp.OfferGid = !String.IsNullOrEmpty(
+                                            myofferdetails.Element("offer_gid").Value
+                                        )
+                                            ? myofferdetails.Element("offer_gid").Value
+                                            : "";
                                     if (myofferdetails.Element("offer_id") != null)
-                                        myresp.OfferId = !String.IsNullOrEmpty(myofferdetails.Element("offer_id").Value) ? myofferdetails.Element("offer_id").Value : "";
+                                        myresp.OfferId = !String.IsNullOrEmpty(
+                                            myofferdetails.Element("offer_id").Value
+                                        )
+                                            ? myofferdetails.Element("offer_id").Value
+                                            : "";
                                     if (myofferdetails.Element("offer_show") != null)
-                                        myresp.OfferShow = Int32.TryParse(myofferdetails.Element("offer_show").Value, out offershow) ? offershow : 0;
+                                        myresp.OfferShow = Int32.TryParse(
+                                            myofferdetails.Element("offer_show").Value,
+                                            out offershow
+                                        )
+                                            ? offershow
+                                            : 0;
                                     int offertyp = 0;
                                     if (myofferdetails.Element("offer_typ") != null)
-                                        myresp.OfferTyp = Int32.TryParse(myofferdetails.Element("offer_typ").Value, out offertyp) ? offertyp : 0;
+                                        myresp.OfferTyp = Int32.TryParse(
+                                            myofferdetails.Element("offer_typ").Value,
+                                            out offertyp
+                                        )
+                                            ? offertyp
+                                            : 0;
                                 }
                             }
 
-                            var myroomdetails = mychanneloffer.Element("room_price").Elements("price");
+                            var myroomdetails = mychanneloffer
+                                .Element("room_price")
+                                .Elements("price");
                             foreach (var myroomdetail in myroomdetails)
                             {
                                 RoomDetails myroom = new RoomDetails();
@@ -239,36 +374,96 @@ namespace MSS
 
                                 int roomseq = 0;
                                 if (myroomdetail.Element("room_seq") != null)
-                                    myroom.RoomSeq = Int32.TryParse(myroomdetail.Element("room_seq").Value, out roomseq) ? roomseq : 0;
-
+                                    myroom.RoomSeq = Int32.TryParse(
+                                        myroomdetail.Element("room_seq").Value,
+                                        out roomseq
+                                    )
+                                        ? roomseq
+                                        : 0;
 
                                 //NEU MSS VERSION 2.0
                                 if (version == "2")
                                 {
-                                    string cancelpolicyid = myroomdetail.Element("cancel_policy_id") != null ? myroomdetail.Element("cancel_policy_id").Value : null;
-                                    string paymenttermid = myroomdetail.Element("cancel_policy_id") != null ? myroomdetail.Element("payment_term_id").Value : null;
-
+                                    string cancelpolicyid =
+                                        myroomdetail.Element("cancel_policy_id") != null
+                                            ? myroomdetail.Element("cancel_policy_id").Value
+                                            : null;
+                                    string paymenttermid =
+                                        myroomdetail.Element("cancel_policy_id") != null
+                                            ? myroomdetail.Element("payment_term_id").Value
+                                            : null;
 
                                     if (!String.IsNullOrEmpty(paymenttermid))
                                     {
-                                        var mypaymentterm = mychanneloffer.Element("payment_terms").Elements("payment_term").Where(x => x.Element("id").Value == paymenttermid).FirstOrDefault();
+                                        var mypaymentterm = mychanneloffer
+                                            .Element("payment_terms")
+                                            .Elements("payment_term")
+                                            .Where(x => x.Element("id").Value == paymenttermid)
+                                            .FirstOrDefault();
 
                                         if (mypaymentterm != null)
                                         {
                                             PaymentTerm paymentterm = new PaymentTerm();
-                                            paymentterm.Id = mypaymentterm.Element("id") != null ? mypaymentterm.Element("id").Value : "";
-                                            paymentterm.Methods = mypaymentterm.Element("methods") != null ? Convert.ToInt32(mypaymentterm.Element("methods").Value) : 0;
-                                            paymentterm.Prepayment = mypaymentterm.Element("prepayment") != null ? Convert.ToInt32(mypaymentterm.Element("prepayment").Value) : 0;
-                                            paymentterm.Ccards = mypaymentterm.Element("ccards") != null ? Convert.ToInt32(mypaymentterm.Element("ccards").Value) : 0;
-                                            paymentterm.Description = mypaymentterm.Element("description") != null ? mypaymentterm.Element("description").Value : "";
-                                            paymentterm.Priority = mypaymentterm.Element("priority") != null ? Convert.ToInt32(mypaymentterm.Element("priority").Value) : 0;
+                                            paymentterm.Id =
+                                                mypaymentterm.Element("id") != null
+                                                    ? mypaymentterm.Element("id").Value
+                                                    : "";
+                                            paymentterm.Methods =
+                                                mypaymentterm.Element("methods") != null
+                                                    ? Convert.ToInt32(
+                                                        mypaymentterm.Element("methods").Value
+                                                    )
+                                                    : 0;
+                                            paymentterm.Prepayment =
+                                                mypaymentterm.Element("prepayment") != null
+                                                    ? Convert.ToInt32(
+                                                        mypaymentterm.Element("prepayment").Value
+                                                    )
+                                                    : 0;
+                                            paymentterm.Ccards =
+                                                mypaymentterm.Element("ccards") != null
+                                                    ? Convert.ToInt32(
+                                                        mypaymentterm.Element("ccards").Value
+                                                    )
+                                                    : 0;
+                                            paymentterm.Description =
+                                                mypaymentterm.Element("description") != null
+                                                    ? mypaymentterm.Element("description").Value
+                                                    : "";
+                                            paymentterm.Priority =
+                                                mypaymentterm.Element("priority") != null
+                                                    ? Convert.ToInt32(
+                                                        mypaymentterm.Element("priority").Value
+                                                    )
+                                                    : 0;
 
                                             if (mypaymentterm.Element("bank") != null)
                                             {
                                                 Bank bank = new Bank();
-                                                bank.Name = mypaymentterm.Element("bank").Element("name") != null ? mypaymentterm.Element("bank").Element("name").Value : "";
-                                                bank.Iban = mypaymentterm.Element("bank").Element("iban") != null ? mypaymentterm.Element("bank").Element("iban").Value : "";
-                                                bank.Swift = mypaymentterm.Element("bank").Element("swift") != null ? mypaymentterm.Element("bank").Element("swift").Value : "";
+                                                bank.Name =
+                                                    mypaymentterm.Element("bank").Element("name")
+                                                    != null
+                                                        ? mypaymentterm
+                                                            .Element("bank")
+                                                            .Element("name")
+                                                            .Value
+                                                        : "";
+                                                bank.Iban =
+                                                    mypaymentterm.Element("bank").Element("iban")
+                                                    != null
+                                                        ? mypaymentterm
+                                                            .Element("bank")
+                                                            .Element("iban")
+                                                            .Value
+                                                        : "";
+                                                bank.Swift =
+                                                    mypaymentterm.Element("bank").Element("swift")
+                                                    != null
+                                                        ? mypaymentterm
+                                                            .Element("bank")
+                                                            .Element("swift")
+                                                            .Value
+                                                        : "";
 
                                                 paymentterm.Bank = bank;
                                             }
@@ -278,53 +473,90 @@ namespace MSS
                                     }
                                     if (!String.IsNullOrEmpty(cancelpolicyid))
                                     {
-                                        var mycancelpolicy = mychanneloffer.Element("cancel_policies").Elements("cancel_policy").Where(x => x.Element("id").Value == cancelpolicyid).FirstOrDefault();
+                                        var mycancelpolicy = mychanneloffer
+                                            .Element("cancel_policies")
+                                            .Elements("cancel_policy")
+                                            .Where(x => x.Element("id").Value == cancelpolicyid)
+                                            .FirstOrDefault();
 
                                         if (mycancelpolicy != null)
                                         {
                                             CancelPolicy cancelpolicy = new CancelPolicy();
 
-                                            cancelpolicy.Id = mycancelpolicy.Element("id") != null ? mycancelpolicy.Element("id").Value : "";
+                                            cancelpolicy.Id =
+                                                mycancelpolicy.Element("id") != null
+                                                    ? mycancelpolicy.Element("id").Value
+                                                    : "";
                                             if (mycancelpolicy.Element("refundable") != null)
-                                                cancelpolicy.Refundable = Convert.ToInt32(mycancelpolicy.Element("refundable").Value);
+                                                cancelpolicy.Refundable = Convert.ToInt32(
+                                                    mycancelpolicy.Element("refundable").Value
+                                                );
                                             else
                                                 cancelpolicy.Refundable = null;
 
                                             if (mycancelpolicy.Element("refundable_until") != null)
                                             {
-                                                if (!String.IsNullOrEmpty(mycancelpolicy.Element("refundable_until").Value))
-                                                    cancelpolicy.RefundableUntil = Convert.ToDateTime(mycancelpolicy.Element("refundable_until").Value);
+                                                if (
+                                                    !String.IsNullOrEmpty(
+                                                        mycancelpolicy
+                                                            .Element("refundable_until")
+                                                            .Value
+                                                    )
+                                                )
+                                                    cancelpolicy.RefundableUntil =
+                                                        Convert.ToDateTime(
+                                                            mycancelpolicy
+                                                                .Element("refundable_until")
+                                                                .Value
+                                                        );
                                                 else
                                                     cancelpolicy.RefundableUntil = null;
                                             }
                                             else
                                                 cancelpolicy.RefundableUntil = null;
 
-                                            cancelpolicy.Description = mycancelpolicy.Element("description") != null ? mycancelpolicy.Element("description").Value : "";
+                                            cancelpolicy.Description =
+                                                mycancelpolicy.Element("description") != null
+                                                    ? mycancelpolicy.Element("description").Value
+                                                    : "";
 
                                             if (mycancelpolicy.Element("penalties") != null)
                                             {
                                                 cancelpolicy.Penalties = new List<Penalty>();
 
-                                                foreach (var penalty in mycancelpolicy.Element("penalties").Elements("penalty"))
+                                                foreach (
+                                                    var penalty in mycancelpolicy
+                                                        .Element("penalties")
+                                                        .Elements("penalty")
+                                                )
                                                 {
                                                     Penalty mypenalty = new Penalty();
 
                                                     if (penalty.Element("percent") != null)
-                                                        mypenalty.Percent = Convert.ToInt32(penalty.Element("percent").Value);
+                                                        mypenalty.Percent = Convert.ToInt32(
+                                                            penalty.Element("percent").Value
+                                                        );
                                                     else
                                                         mypenalty.Percent = null;
 
                                                     if (penalty.Element("datefrom") != null)
-                                                        if (String.IsNullOrEmpty(penalty.Element("datefrom").Value))
+                                                        if (
+                                                            String.IsNullOrEmpty(
+                                                                penalty.Element("datefrom").Value
+                                                            )
+                                                        )
                                                             mypenalty.Datefrom = null;
                                                         else
-                                                            Convert.ToDateTime(penalty.Element("datefrom").Value);
+                                                            Convert.ToDateTime(
+                                                                penalty.Element("datefrom").Value
+                                                            );
                                                     else
                                                         mypenalty.Datefrom = null;
 
                                                     if (penalty.Element("daysarrival") != null)
-                                                        mypenalty.Daysarrival = Convert.ToInt32(penalty.Element("daysarrival").Value);
+                                                        mypenalty.Daysarrival = Convert.ToInt32(
+                                                            penalty.Element("daysarrival").Value
+                                                        );
                                                     else
                                                         mypenalty.Daysarrival = null;
 
@@ -335,9 +567,7 @@ namespace MSS
                                             myroom.CancelPolicy = cancelpolicy;
                                         }
                                     }
-
                                 }
-
 
                                 //ENDE NEU VERSION 2.0
 
@@ -347,52 +577,147 @@ namespace MSS
                                 {
                                     if (requestedservice == "price_ws")
                                     {
-                                        double mycurrentpricews = myroomdetail.Element("price_total").Element(requestedservice) != null ? Convert.ToDouble(myroomdetail.Element("price_total").Element(requestedservice).Value, CultureInfo.InvariantCulture.NumberFormat) : 0;
+                                        double mycurrentpricews =
+                                            myroomdetail
+                                                .Element("price_total")
+                                                .Element(requestedservice) != null
+                                                ? Convert.ToDouble(
+                                                    myroomdetail
+                                                        .Element("price_total")
+                                                        .Element(requestedservice)
+                                                        .Value,
+                                                    CultureInfo.InvariantCulture.NumberFormat
+                                                )
+                                                : 0;
                                         myroom.Price_ws = mycurrentpricews;
 
                                         if (mycurrentpricews > 0)
                                         {
-                                            cheapestofferlist_ws.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpricews, RoomFree = 0 });
+                                            cheapestofferlist_ws.Add(
+                                                new CheapestOffer()
+                                                {
+                                                    RoomId = myroom.RoomId,
+                                                    RoomSeq = (int)myroom.RoomSeq,
+                                                    Price = mycurrentpricews,
+                                                    RoomFree = 0
+                                                }
+                                            );
                                         }
                                     }
                                     if (requestedservice == "price_bb")
                                     {
-                                        double mycurrentpricebb = myroomdetail.Element("price_total").Element(requestedservice) != null ? Convert.ToDouble(myroomdetail.Element("price_total").Element(requestedservice).Value, CultureInfo.InvariantCulture.NumberFormat) : 0;
+                                        double mycurrentpricebb =
+                                            myroomdetail
+                                                .Element("price_total")
+                                                .Element(requestedservice) != null
+                                                ? Convert.ToDouble(
+                                                    myroomdetail
+                                                        .Element("price_total")
+                                                        .Element(requestedservice)
+                                                        .Value,
+                                                    CultureInfo.InvariantCulture.NumberFormat
+                                                )
+                                                : 0;
                                         myroom.Price_bb = mycurrentpricebb;
 
                                         if (mycurrentpricebb > 0)
                                         {
-                                            cheapestofferlist_bb.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpricebb, RoomFree = 0 });
+                                            cheapestofferlist_bb.Add(
+                                                new CheapestOffer()
+                                                {
+                                                    RoomId = myroom.RoomId,
+                                                    RoomSeq = (int)myroom.RoomSeq,
+                                                    Price = mycurrentpricebb,
+                                                    RoomFree = 0
+                                                }
+                                            );
                                         }
                                     }
                                     if (requestedservice == "price_hb")
                                     {
-                                        double mycurrentpricehb = myroomdetail.Element("price_total").Element(requestedservice) != null ? Convert.ToDouble(myroomdetail.Element("price_total").Element(requestedservice).Value, CultureInfo.InvariantCulture.NumberFormat) : 0;
+                                        double mycurrentpricehb =
+                                            myroomdetail
+                                                .Element("price_total")
+                                                .Element(requestedservice) != null
+                                                ? Convert.ToDouble(
+                                                    myroomdetail
+                                                        .Element("price_total")
+                                                        .Element(requestedservice)
+                                                        .Value,
+                                                    CultureInfo.InvariantCulture.NumberFormat
+                                                )
+                                                : 0;
                                         myroom.Price_hb = mycurrentpricehb;
 
                                         if (mycurrentpricehb > 0)
                                         {
-                                            cheapestofferlist_hb.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpricehb, RoomFree = 0 });
+                                            cheapestofferlist_hb.Add(
+                                                new CheapestOffer()
+                                                {
+                                                    RoomId = myroom.RoomId,
+                                                    RoomSeq = (int)myroom.RoomSeq,
+                                                    Price = mycurrentpricehb,
+                                                    RoomFree = 0
+                                                }
+                                            );
                                         }
                                     }
                                     if (requestedservice == "price_fb")
                                     {
-                                        double mycurrentpricefb = myroomdetail.Element("price_total").Element(requestedservice) != null ? Convert.ToDouble(myroomdetail.Element("price_total").Element(requestedservice).Value, CultureInfo.InvariantCulture.NumberFormat) : 0;
+                                        double mycurrentpricefb =
+                                            myroomdetail
+                                                .Element("price_total")
+                                                .Element(requestedservice) != null
+                                                ? Convert.ToDouble(
+                                                    myroomdetail
+                                                        .Element("price_total")
+                                                        .Element(requestedservice)
+                                                        .Value,
+                                                    CultureInfo.InvariantCulture.NumberFormat
+                                                )
+                                                : 0;
                                         myroom.Price_fb = mycurrentpricefb;
 
                                         if (mycurrentpricefb > 0)
                                         {
-                                            cheapestofferlist_fb.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpricefb, RoomFree = 0 });
+                                            cheapestofferlist_fb.Add(
+                                                new CheapestOffer()
+                                                {
+                                                    RoomId = myroom.RoomId,
+                                                    RoomSeq = (int)myroom.RoomSeq,
+                                                    Price = mycurrentpricefb,
+                                                    RoomFree = 0
+                                                }
+                                            );
                                         }
                                     }
                                     if (requestedservice == "price_ai")
                                     {
-                                        double mycurrentpriceai = myroomdetail.Element("price_total").Element(requestedservice) != null ? Convert.ToDouble(myroomdetail.Element("price_total").Element(requestedservice).Value, CultureInfo.InvariantCulture.NumberFormat) : 0;
+                                        double mycurrentpriceai =
+                                            myroomdetail
+                                                .Element("price_total")
+                                                .Element(requestedservice) != null
+                                                ? Convert.ToDouble(
+                                                    myroomdetail
+                                                        .Element("price_total")
+                                                        .Element(requestedservice)
+                                                        .Value,
+                                                    CultureInfo.InvariantCulture.NumberFormat
+                                                )
+                                                : 0;
                                         myroom.Price_ai = mycurrentpriceai;
 
                                         if (mycurrentpriceai > 0)
-                                        {                                            
-                                            cheapestofferlist_ai.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentpriceai, RoomFree = 0 });
+                                        {
+                                            cheapestofferlist_ai.Add(
+                                                new CheapestOffer()
+                                                {
+                                                    RoomId = myroom.RoomId,
+                                                    RoomSeq = (int)myroom.RoomSeq,
+                                                    Price = mycurrentpriceai,
+                                                    RoomFree = 0
+                                                }
+                                            );
                                         }
                                     }
                                 }
@@ -400,21 +725,54 @@ namespace MSS
                                 //Spezial falls mehrere Services angefragt werden
                                 if (splittedservice.Count == 1)
                                 {
-                                    double mycurrentprice = !String.IsNullOrEmpty(myroomdetail.Element("price_total").Element(servicecode).Value) ? Convert.ToDouble(myroomdetail.Element("price_total").Element(servicecode).Value, CultureInfo.InvariantCulture.NumberFormat) : 0;
-                                    
-                                    cheapestofferlist.Add(new CheapestOffer() { RoomId = myroom.RoomId, RoomSeq = (int)myroom.RoomSeq, Price = mycurrentprice, RoomFree = 0 });
+                                    double mycurrentprice = !String.IsNullOrEmpty(
+                                        myroomdetail
+                                            .Element("price_total")
+                                            .Element(servicecode)
+                                            .Value
+                                    )
+                                        ? Convert.ToDouble(
+                                            myroomdetail
+                                                .Element("price_total")
+                                                .Element(servicecode)
+                                                .Value,
+                                            CultureInfo.InvariantCulture.NumberFormat
+                                        )
+                                        : 0;
+
+                                    cheapestofferlist.Add(
+                                        new CheapestOffer()
+                                        {
+                                            RoomId = myroom.RoomId,
+                                            RoomSeq = (int)myroom.RoomSeq,
+                                            Price = mycurrentprice,
+                                            RoomFree = 0
+                                        }
+                                    );
 
                                     myroom.TotalPrice = mycurrentprice;
-                                    myroom.TotalPriceString = String.Format(culturede, "{0:0,0.00}", mycurrentprice);
+                                    myroom.TotalPriceString = String.Format(
+                                        culturede,
+                                        "{0:0,0.00}",
+                                        mycurrentprice
+                                    );
                                 }
                                 else
                                 {
                                     //billigsten preis suchen TODO!
                                     myroom.TotalPrice = 0;
-                                    myroom.TotalPriceString = String.Format(culturede, "{0:0,0.00}", 0);
+                                    myroom.TotalPriceString = String.Format(
+                                        culturede,
+                                        "{0:0,0.00}",
+                                        0
+                                    );
                                 }
 
-                                var myroomdesc = mychanneloffer.Element("room_description").Elements("room").Where(x => x.Element("room_id").Value == roomid).FirstOrDefault();
+                                var myroomdesc = mychanneloffer
+                                    .Element("room_description")
+                                    .Elements("room")
+                                    .Where(x => x.Element("room_id").Value == roomid)
+                                    .FirstOrDefault();
                                 if (myroomdesc != null)
                                 {
                                     if (myroomdesc.Element("title") != null)
@@ -422,36 +780,67 @@ namespace MSS
                                     if (myroomdesc.Element("description") != null)
                                         myroom.Roomdesc = myroomdesc.Element("description").Value;
 
-
                                     if (myroomdesc.Element("room_type") != null)
-                                        myroom.Roomtype = !String.IsNullOrEmpty(myroomdesc.Element("room_type").Value) ? Convert.ToInt32(myroomdesc.Element("room_type").Value) : 0;
+                                        myroom.Roomtype = !String.IsNullOrEmpty(
+                                            myroomdesc.Element("room_type").Value
+                                        )
+                                            ? Convert.ToInt32(myroomdesc.Element("room_type").Value)
+                                            : 0;
                                     if (myroomdesc.Element("room_free") != null)
-                                        myroom.Roomfree = !String.IsNullOrEmpty(myroomdesc.Element("room_free").Value) ? Convert.ToInt32(myroomdesc.Element("room_free").Value) : 0;
+                                        myroom.Roomfree = !String.IsNullOrEmpty(
+                                            myroomdesc.Element("room_free").Value
+                                        )
+                                            ? Convert.ToInt32(myroomdesc.Element("room_free").Value)
+                                            : 0;
 
                                     //TODO add Roomfree also to cheapeast channel list
                                     if (myroom.Roomfree != null && myroom.Roomfree > 0)
                                     {
-                                        foreach (var cheapeastoffersingle in cheapestofferlist.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        foreach (
+                                            var cheapeastoffersingle in cheapestofferlist
+                                                .Where(x => x.RoomId == myroom.RoomId)
+                                                .ToList()
+                                        )
                                         {
                                             cheapeastoffersingle.RoomFree = myroom.Roomfree;
                                         }
-                                        foreach (var cheapeastoffersingle in cheapestofferlist_ws.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        foreach (
+                                            var cheapeastoffersingle in cheapestofferlist_ws
+                                                .Where(x => x.RoomId == myroom.RoomId)
+                                                .ToList()
+                                        )
                                         {
                                             cheapeastoffersingle.RoomFree = myroom.Roomfree;
                                         }
-                                        foreach (var cheapeastoffersingle in cheapestofferlist_bb.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        foreach (
+                                            var cheapeastoffersingle in cheapestofferlist_bb
+                                                .Where(x => x.RoomId == myroom.RoomId)
+                                                .ToList()
+                                        )
                                         {
                                             cheapeastoffersingle.RoomFree = myroom.Roomfree;
                                         }
-                                        foreach (var cheapeastoffersingle in cheapestofferlist_hb.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        foreach (
+                                            var cheapeastoffersingle in cheapestofferlist_hb
+                                                .Where(x => x.RoomId == myroom.RoomId)
+                                                .ToList()
+                                        )
                                         {
                                             cheapeastoffersingle.RoomFree = myroom.Roomfree;
                                         }
-                                        foreach (var cheapeastoffersingle in cheapestofferlist_fb.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        foreach (
+                                            var cheapeastoffersingle in cheapestofferlist_fb
+                                                .Where(x => x.RoomId == myroom.RoomId)
+                                                .ToList()
+                                        )
                                         {
                                             cheapeastoffersingle.RoomFree = myroom.Roomfree;
                                         }
-                                        foreach (var cheapeastoffersingle in cheapestofferlist_ai.Where(x => x.RoomId == myroom.RoomId).ToList())
+                                        foreach (
+                                            var cheapeastoffersingle in cheapestofferlist_ai
+                                                .Where(x => x.RoomId == myroom.RoomId)
+                                                .ToList()
+                                        )
                                         {
                                             cheapeastoffersingle.RoomFree = myroom.Roomfree;
                                         }
@@ -463,13 +852,23 @@ namespace MSS
                                         var myroomprops = myroomdesc.Element("properties");
 
                                         if (myroomprops.Element("min") != null)
-                                            myroom.Roommin = !String.IsNullOrEmpty(myroomprops.Element("min").Value) ? Convert.ToInt32(myroomprops.Element("min").Value) : 0;
+                                            myroom.Roommin = !String.IsNullOrEmpty(
+                                                myroomprops.Element("min").Value
+                                            )
+                                                ? Convert.ToInt32(myroomprops.Element("min").Value)
+                                                : 0;
                                         if (myroomprops.Element("max") != null)
-                                            myroom.Roommax = !String.IsNullOrEmpty(myroomprops.Element("max").Value) ? Convert.ToInt32(myroomprops.Element("max").Value) : 0;
+                                            myroom.Roommax = !String.IsNullOrEmpty(
+                                                myroomprops.Element("max").Value
+                                            )
+                                                ? Convert.ToInt32(myroomprops.Element("max").Value)
+                                                : 0;
                                         if (myroomprops.Element("std") != null)
-                                            myroom.Roomstd = !String.IsNullOrEmpty(myroomprops.Element("std").Value) ? Convert.ToInt32(myroomprops.Element("std").Value) : 0;
-
-
+                                            myroom.Roomstd = !String.IsNullOrEmpty(
+                                                myroomprops.Element("std").Value
+                                            )
+                                                ? Convert.ToInt32(myroomprops.Element("std").Value)
+                                                : 0;
                                     }
 
                                     //Zimmerbilder
@@ -479,49 +878,84 @@ namespace MSS
                                     {
                                         if (myroompic.Element("url") != null)
                                         {
-                                            RoomPictures mypicture = new RoomPictures() { Pictureurl = myroompic.Element("url").Value };
+                                            RoomPictures mypicture = new RoomPictures()
+                                            {
+                                                Pictureurl = myroompic.Element("url").Value
+                                            };
                                             //myroom.RoomPictures.Add(mypicture);
 
                                             myroompiclist.Add(mypicture);
                                         }
                                     }
                                     myroom.RoomPictures = myroompiclist.ToList();
-
                                 }
                                 //myroom.MssResponseShort = myresp;
 
                                 myresp.RoomDetails.Add(myroom);
                             }
-                            
-                            var cheapestofferobj = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist, rooms, "");
+
+                            var cheapestofferobj = RoomCalculationHelper.CalculateCheapestRooms(
+                                cheapestofferlist,
+                                rooms,
+                                ""
+                            );
                             double cheapestchanneloffer = cheapestofferobj.Price;
 
                             myresp.CheapestOffer = cheapestchanneloffer;
-                            myresp.CheapestOfferString = String.Format(culturede, "{0:0,0.00}", cheapestchanneloffer);
-                          
+                            myresp.CheapestOfferString = String.Format(
+                                culturede,
+                                "{0:0,0.00}",
+                                cheapestchanneloffer
+                            );
+
                             //Cheapest offers calculation
-                            var cheapestofferobj_ws = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_ws, rooms, "ws");
-                            myresp.CheapestOffer_ws = cheapestofferobj_ws != null ? cheapestofferobj_ws.Price : 0;
+                            var cheapestofferobj_ws = RoomCalculationHelper.CalculateCheapestRooms(
+                                cheapestofferlist_ws,
+                                rooms,
+                                "ws"
+                            );
+                            myresp.CheapestOffer_ws =
+                                cheapestofferobj_ws != null ? cheapestofferobj_ws.Price : 0;
                             if (cheapestofferobj_ws != null && cheapestofferobj_ws.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_ws);
 
-                            var cheapestofferobj_bb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_bb, rooms, "bb");
-                            myresp.CheapestOffer_bb = cheapestofferobj_bb != null ? cheapestofferobj_bb.Price : 0;
+                            var cheapestofferobj_bb = RoomCalculationHelper.CalculateCheapestRooms(
+                                cheapestofferlist_bb,
+                                rooms,
+                                "bb"
+                            );
+                            myresp.CheapestOffer_bb =
+                                cheapestofferobj_bb != null ? cheapestofferobj_bb.Price : 0;
                             if (cheapestofferobj_bb != null && cheapestofferobj_bb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_bb);
 
-                            var cheapestofferobj_hb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_hb, rooms, "hb");
-                            myresp.CheapestOffer_hb = cheapestofferobj_hb != null ? cheapestofferobj_hb.Price : 0;
+                            var cheapestofferobj_hb = RoomCalculationHelper.CalculateCheapestRooms(
+                                cheapestofferlist_hb,
+                                rooms,
+                                "hb"
+                            );
+                            myresp.CheapestOffer_hb =
+                                cheapestofferobj_hb != null ? cheapestofferobj_hb.Price : 0;
                             if (cheapestofferobj_hb != null && cheapestofferobj_hb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_hb);
 
-                            var cheapestofferobj_fb = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_fb, rooms, "fb");
-                            myresp.CheapestOffer_fb = cheapestofferobj_fb != null ? cheapestofferobj_fb.Price : 0;
+                            var cheapestofferobj_fb = RoomCalculationHelper.CalculateCheapestRooms(
+                                cheapestofferlist_fb,
+                                rooms,
+                                "fb"
+                            );
+                            myresp.CheapestOffer_fb =
+                                cheapestofferobj_fb != null ? cheapestofferobj_fb.Price : 0;
                             if (cheapestofferobj_fb != null && cheapestofferobj_fb.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_fb);
 
-                            var cheapestofferobj_ai = RoomCalculationHelper.CalculateCheapestRooms(cheapestofferlist_ai, rooms, "ai");
-                            myresp.CheapestOffer_ai = cheapestofferobj_ai != null ? cheapestofferobj_ai.Price : 0;
+                            var cheapestofferobj_ai = RoomCalculationHelper.CalculateCheapestRooms(
+                                cheapestofferlist_ai,
+                                rooms,
+                                "ai"
+                            );
+                            myresp.CheapestOffer_ai =
+                                cheapestofferobj_ai != null ? cheapestofferobj_ai.Price : 0;
                             if (cheapestofferobj_ai != null && cheapestofferobj_ai.Price > 0)
                                 myresp.CheapestOfferDetail.Add(cheapestofferobj_ai);
 
@@ -542,17 +976,27 @@ namespace MSS
 
                                 if (cheapestoffertotal.Count > 0)
                                 {
-                                    var cheapestofferdouble = cheapestoffertotal.OrderBy(x => x).FirstOrDefault();
+                                    var cheapestofferdouble = cheapestoffertotal
+                                        .OrderBy(x => x)
+                                        .FirstOrDefault();
                                     myresp.CheapestOffer = cheapestofferdouble;
-                                    myresp.CheapestOfferString = String.Format(culturede, "{0:0,0.00}", cheapestofferdouble);
+                                    myresp.CheapestOfferString = String.Format(
+                                        culturede,
+                                        "{0:0,0.00}",
+                                        cheapestofferdouble
+                                    );
                                 }
                             }
 
-                            if (myresp.CheapestOfferDetail != null && myresp.CheapestOfferDetail.Count > 0)
+                            if (
+                                myresp.CheapestOfferDetail != null
+                                && myresp.CheapestOfferDetail.Count > 0
+                            )
                                 myparsedresponselist.MssResponseShort.Add(myresp);
                         }
                     }
-                };
+                }
+                ;
 
                 //myparsedresponselist.CheapestChannel = cheapestchannel;
                 //myparsedresponselist.Cheapestprice = cheapestprice;
@@ -567,6 +1011,5 @@ namespace MSS
                 return null;
             }
         }
-
     }
 }

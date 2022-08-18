@@ -39,6 +39,5 @@ namespace Helper
                     return new List<int> { 1 };
             }
         }
-
     }
 }

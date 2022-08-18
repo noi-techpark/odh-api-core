@@ -21,11 +21,16 @@ namespace Helper
             {
                 foreach (var destProperty in destProperties)
                 {
-                    if (destProperty.Name == sourceProperty.Name &&
-                destProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType))
+                    if (
+                        destProperty.Name == sourceProperty.Name
+                        && destProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType)
+                    )
                     {
-                        destProperty.SetValue(destination, sourceProperty.GetValue(
-                            source, new object[] { }), new object[] { });
+                        destProperty.SetValue(
+                            destination,
+                            sourceProperty.GetValue(source, new object[] { }),
+                            new object[] { }
+                        );
 
                         break;
                     }

@@ -10,20 +10,33 @@ namespace Helper
 {
     public class RoomCalculationHelper
     {
-        public static CheapestRoomCombination CalculateCheapestRooms(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        public static CheapestRoomCombination CalculateCheapestRooms(
+            IEnumerable<CheapestOffer> cheapestofferlist,
+            int rooms,
+            string service
+        )
         {
-            if (cheapestofferlist != null && cheapestofferlist.Count() > 0 && cheapestofferlist.Count() >= rooms)
+            if (
+                cheapestofferlist != null
+                && cheapestofferlist.Count() > 0
+                && cheapestofferlist.Count() >= rooms
+            )
             {
                 if (rooms == 1)
                 {
-                    var cheapestorffersingle = cheapestofferlist.OrderBy(x => x.Price).Take(1).FirstOrDefault();
-                    CheapestRoomCombination cheapestroomcombinationresult = new CheapestRoomCombination();
+                    var cheapestorffersingle = cheapestofferlist
+                        .OrderBy(x => x.Price)
+                        .Take(1)
+                        .FirstOrDefault();
+                    CheapestRoomCombination cheapestroomcombinationresult =
+                        new CheapestRoomCombination();
                     if (cheapestorffersingle is { })
-                        cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { cheapestorffersingle };
+                        cheapestroomcombinationresult.CheapestRoomCombinationDetail =
+                            new List<CheapestOffer>() { cheapestorffersingle };
                     cheapestroomcombinationresult.Service = service;
 
                     return cheapestroomcombinationresult;
-                }                
+                }
                 else
                     return CalculateCheapestRoomCombinations(cheapestofferlist, rooms, service);
                 //else
@@ -39,16 +52,27 @@ namespace Helper
             }
             else
             {
-                return new CheapestRoomCombination() { Service = service, CheapestRoomCombinationDetail = new List<CheapestOffer>() };
+                return new CheapestRoomCombination()
+                {
+                    Service = service,
+                    CheapestRoomCombinationDetail = new List<CheapestOffer>()
+                };
             }
         }
 
-        private static CheapestRoomCombination CalculateCheapestRoomCombinations(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        private static CheapestRoomCombination CalculateCheapestRoomCombinations(
+            IEnumerable<CheapestOffer> cheapestofferlist,
+            int rooms,
+            string service
+        )
         {
             List<CheapestRoomCombination> mycombinationresult = new List<CheapestRoomCombination>();
 
             //Create combinations TO verify use variations??
-            Combinations<CheapestOffer> combinations = new Combinations<CheapestOffer>(cheapestofferlist, rooms);
+            Combinations<CheapestOffer> combinations = new Combinations<CheapestOffer>(
+                cheapestofferlist,
+                rooms
+            );
 
             foreach (IList<CheapestOffer> c in combinations)
             {
@@ -67,7 +91,7 @@ namespace Helper
                         break;
                 }
 
-                //Remove all combinations where more rooms are used than roomfree                 
+                //Remove all combinations where more rooms are used than roomfree
                 if (addcombination)
                 {
                     for (int i = 0; i < rooms; i++)
@@ -86,30 +110,51 @@ namespace Helper
 
                 if (addcombination)
                 {
-                    mycombinationresult.Add(new CheapestRoomCombination() { CheapestRoomCombinationDetail = c, Service = service });
+                    mycombinationresult.Add(
+                        new CheapestRoomCombination()
+                        {
+                            CheapestRoomCombinationDetail = c,
+                            Service = service
+                        }
+                    );
                 }
             }
 
             //Return Cheapestroomcombination
-            var cheapestcombination = mycombinationresult.OrderBy(x => x.Price).Take(1).FirstOrDefault();
+            var cheapestcombination = mycombinationresult
+                .OrderBy(x => x.Price)
+                .Take(1)
+                .FirstOrDefault();
 
             return cheapestcombination ?? new();
         }
 
         //Hack because of CPU always over 90%
-        private static CheapestRoomCombination CalculateCheapestRoomCombinationsTemp(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        private static CheapestRoomCombination CalculateCheapestRoomCombinationsTemp(
+            IEnumerable<CheapestOffer> cheapestofferlist,
+            int rooms,
+            string service
+        )
         {
             CheapestRoomCombination cheapestroomcombinationresult = new CheapestRoomCombination();
             cheapestroomcombinationresult.Service = service;
-            cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { };
+            cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>()
+            {
+                };
 
             //Get always the cheapest
             for (int i = 1; i <= rooms; i++)
             {
-                var cheapestorffersingle = cheapestofferlist.Where(x => x.RoomSeq == i).OrderBy(x => x.Price).Take(1).FirstOrDefault();
+                var cheapestorffersingle = cheapestofferlist
+                    .Where(x => x.RoomSeq == i)
+                    .OrderBy(x => x.Price)
+                    .Take(1)
+                    .FirstOrDefault();
 
                 if (cheapestorffersingle != null)
-                    cheapestroomcombinationresult.CheapestRoomCombinationDetail.Add(cheapestorffersingle);
+                    cheapestroomcombinationresult.CheapestRoomCombinationDetail.Add(
+                        cheapestorffersingle
+                    );
             }
 
             return cheapestroomcombinationresult;

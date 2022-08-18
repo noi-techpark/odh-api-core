@@ -8,27 +8,40 @@ using SqlKata.Execution;
 
 namespace Helper
 {
-
     public class ODHTagHelper
     {
-        public static async Task<IEnumerable<SmgTags>> GetODHTagsValidforTranslations(QueryFactory QueryFactory, List<string> validforentity, List<string>? idlist = null)
+        public static async Task<IEnumerable<SmgTags>> GetODHTagsValidforTranslations(
+            QueryFactory QueryFactory,
+            List<string> validforentity,
+            List<string>? idlist = null
+        )
         {
             try
             {
                 List<SmgTags> validtags = new List<SmgTags>();
 
-                var validtagquery = QueryFactory.Query("smgtags")
-                        .Select("data")
-                        .When(validforentity.Count > 0, q => q.WhereInJsonb(
-                            validforentity,
-                            tag => new { ValidForEntity = new[] { tag.ToLower() } }
-                        ))
-                        .When(idlist != null, w => w.WhereIn("id", idlist?.Select(x => x.ToLower()) ?? Enumerable.Empty<string>()))
-                        .WhereRaw("data->>'DisplayAsCategory' = $$", "true");
+                var validtagquery = QueryFactory
+                    .Query("smgtags")
+                    .Select("data")
+                    .When(
+                        validforentity.Count > 0,
+                        q =>
+                            q.WhereInJsonb(
+                                validforentity,
+                                tag => new { ValidForEntity = new[] { tag.ToLower() } }
+                            )
+                    )
+                    .When(
+                        idlist != null,
+                        w =>
+                            w.WhereIn(
+                                "id",
+                                idlist?.Select(x => x.ToLower()) ?? Enumerable.Empty<string>()
+                            )
+                    )
+                    .WhereRaw("data->>'DisplayAsCategory' = $$", "true");
 
-                var validtagdata =
-                    await validtagquery
-                        .GetAllAsObject<SmgTags>();
+                var validtagdata = await validtagquery.GetAllAsObject<SmgTags>();
 
                 return validtagdata;
             }
@@ -42,10 +55,7 @@ namespace Helper
         {
             try
             {
-                var query =
-                       QueryFactory.Query("smgtags")
-                           .Select("data")
-                           .Where("id", id.ToLower());
+                var query = QueryFactory.Query("smgtags").Select("data").Where("id", id.ToLower());
 
                 var result = await query.GetFirstOrDefaultAsObject<SmgTags>();
 
@@ -62,39 +72,82 @@ namespace Helper
             //Add LTS Id as Mapping
             var maintype = "poi";
 
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "activitydata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "activitydata"
+            )
                 maintype = "activity";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "poidata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "poidata"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "gastronomicdata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "gastronomicdata"
+            )
                 maintype = "gastronomy";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "beacondata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "beacondata"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "archapp")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "archapp"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "museumdata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "museumdata"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "suedtirolwein")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "suedtirolwein"
+            )
                 maintype = "gastronomy";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "common")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "common"
+            )
                 maintype = "activity";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "none")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "none"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "magnolia")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "magnolia"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "sta")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "sta"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "dssliftbase")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "dssliftbase"
+            )
                 maintype = "activity";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "dssslopebase")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "dssslopebase"
+            )
                 maintype = "activity";
 
-            if(smgpoi.SmgTags == null)
+            if (smgpoi.SmgTags == null)
             {
                 smgpoi.SmgTags = new List<string>();
                 smgpoi.SmgTags.Add(maintype);
             }
-            else if(!smgpoi.SmgTags.Contains("activity") && !smgpoi.SmgTags.Contains("poi") && !smgpoi.SmgTags.Contains("gastronomy"))
+            else if (
+                !smgpoi.SmgTags.Contains("activity")
+                && !smgpoi.SmgTags.Contains("poi")
+                && !smgpoi.SmgTags.Contains("gastronomy")
+            )
             {
                 //Assign to SMGTags if not there
                 if (!smgpoi.SmgTags.Contains(maintype))
@@ -103,6 +156,5 @@ namespace Helper
 
             return maintype;
         }
-
     }
 }

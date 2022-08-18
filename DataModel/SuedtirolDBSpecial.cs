@@ -16,6 +16,7 @@ namespace DataModel
         {
             Metainfos = new Dictionary<string, List<Dictionary<string, object>>>();
         }
+
         public string? Id { get; set; }
 
         public Dictionary<string, List<Dictionary<string, object>>> Metainfos { get; set; }
@@ -23,14 +24,14 @@ namespace DataModel
 
     #endregion
     public class AccoBookList
-    {        
+    {
         public string? Id { get; set; }
         public bool IsBookable { get; set; }
         public ICollection<AccoBookingChannel>? AccoBookingChannel { get; set; }
     }
 
     public class AccoBookListRaw
-    {        
+    {
         public string? Id { get; set; }
         public bool IsBookable { get; set; }
         public JsonRaw AccoBookingChannel { get; set; }
@@ -301,8 +302,6 @@ namespace DataModel
         public string Name { get; set; }
     }
 
-
-
     #region Evalanche
 
     public class EvalancheMailing
@@ -311,6 +310,7 @@ namespace DataModel
         {
             ArticleIDs = new Dictionary<string, string>();
         }
+
         public string? Name { get; set; }
         public DateTime CreationDate { get; set; }
         public string? Type { get; set; }
@@ -328,7 +328,6 @@ namespace DataModel
         }
 
         public IDictionary<string, int> EvalancheArticleID { get; set; }
-
     }
 
     #endregion

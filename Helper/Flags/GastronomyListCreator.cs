@@ -14,14 +14,19 @@ namespace Helper
             {
                 if (capacityceremonyfilter != "null")
                 {
-                    if (capacityceremonyfilter.Substring(capacityceremonyfilter.Length - 1, 1) == ",")
-                        capacityceremonyfilter = capacityceremonyfilter.Substring(0, capacityceremonyfilter.Length - 1);
+                    if (
+                        capacityceremonyfilter.Substring(capacityceremonyfilter.Length - 1, 1)
+                        == ","
+                    )
+                        capacityceremonyfilter = capacityceremonyfilter.Substring(
+                            0,
+                            capacityceremonyfilter.Length - 1
+                        );
 
                     var splittedfilter = capacityceremonyfilter.Split(',');
 
                     foreach (var filter in splittedfilter)
                     {
-
                         switch (filter)
                         {
                             case "1":
@@ -71,7 +76,6 @@ namespace Helper
 
                     foreach (var filter in splittedfilter)
                     {
-
                         switch (filter)
                         {
                             case "1":
@@ -117,13 +121,15 @@ namespace Helper
                 if (categorycodefilter != "null")
                 {
                     if (categorycodefilter.Substring(categorycodefilter.Length - 1, 1) == ",")
-                        categorycodefilter = categorycodefilter.Substring(0, categorycodefilter.Length - 1);
+                        categorycodefilter = categorycodefilter.Substring(
+                            0,
+                            categorycodefilter.Length - 1
+                        );
 
                     var splittedfilter = categorycodefilter.Split(',');
 
                     foreach (var filter in splittedfilter)
                     {
-
                         switch (filter)
                         {
                             case "1":
@@ -203,13 +209,15 @@ namespace Helper
                 if (facilitycodefilter != "null")
                 {
                     if (facilitycodefilter.Substring(facilitycodefilter.Length - 1, 1) == ",")
-                        facilitycodefilter = facilitycodefilter.Substring(0, facilitycodefilter.Length - 1);
+                        facilitycodefilter = facilitycodefilter.Substring(
+                            0,
+                            facilitycodefilter.Length - 1
+                        );
 
                     var splittedfilter = facilitycodefilter.Split(',');
 
                     foreach (var filter in splittedfilter)
                     {
-
                         switch (filter)
                         {
                             //Credit Card
@@ -398,9 +406,7 @@ namespace Helper
                                 typeids.Add("5C84265DA5F84F84A7896808ACCB675A");
                                 break;
 
-                                //Ende Cuisine
-
-
+                            //Ende Cuisine
                         }
                     }
                 }
@@ -410,15 +416,18 @@ namespace Helper
 
         #region Flags
 
-        public static List<string> CreateGastroCeremonyCodeListfromFlag(string? capacityceremonyfilter)
+        public static List<string> CreateGastroCeremonyCodeListfromFlag(
+            string? capacityceremonyfilter
+        )
         {
             List<string> ceremonycodeids = new List<string>();
 
             if (!String.IsNullOrEmpty(capacityceremonyfilter) && capacityceremonyfilter != "null")
             {
                 if (int.TryParse(capacityceremonyfilter, out var ceremonycodefilterint))
-                {                    
-                    GastroCeremonyFlag myceremonycodeflag = (GastroCeremonyFlag)ceremonycodefilterint;
+                {
+                    GastroCeremonyFlag myceremonycodeflag =
+                        (GastroCeremonyFlag)ceremonycodefilterint;
 
                     var myflags = myceremonycodeflag.GetFlags().GetDescriptionList();
 
@@ -439,7 +448,7 @@ namespace Helper
             if (!String.IsNullOrEmpty(dishcodefilter) && dishcodefilter != "null")
             {
                 if (int.TryParse(dishcodefilter, out var dishcodefilterint))
-                {                    
+                {
                     GastroDishcodeFlag mydishcodeflag = (GastroDishcodeFlag)dishcodefilterint;
 
                     var myflags = mydishcodeflag.GetFlags().GetDescriptionList();
@@ -461,8 +470,9 @@ namespace Helper
             if (!String.IsNullOrEmpty(categorycodefilter) && categorycodefilter != "null")
             {
                 if (int.TryParse(categorycodefilter, out var categorycodefilterint))
-                {                    
-                    GastroCategoryFlag mycategorycodeflag = (GastroCategoryFlag)categorycodefilterint;
+                {
+                    GastroCategoryFlag mycategorycodeflag =
+                        (GastroCategoryFlag)categorycodefilterint;
 
                     var myflags = mycategorycodeflag.GetFlags().GetDescriptionList();
 
@@ -483,8 +493,9 @@ namespace Helper
             if (!String.IsNullOrEmpty(facilitycodefilter) && facilitycodefilter != "null")
             {
                 if (long.TryParse(facilitycodefilter, out var facilitycodefilterint))
-                {                    
-                    GastroFacilityFlag myfacilitycodeflag = (GastroFacilityFlag)facilitycodefilterint;
+                {
+                    GastroFacilityFlag myfacilitycodeflag =
+                        (GastroFacilityFlag)facilitycodefilterint;
 
                     var myflags = myfacilitycodeflag.GetFlags().GetDescriptionList();
 
@@ -505,11 +516,10 @@ namespace Helper
             if (!String.IsNullOrEmpty(facilitycodefilter) && facilitycodefilter != "null")
             {
                 if (long.TryParse(facilitycodefilter, out var facilitycodefilterint))
-                {                    
+                {
                     GastroCuisineFlag myfacilitycodeflag = (GastroCuisineFlag)facilitycodefilterint;
 
                     var myflags = myfacilitycodeflag.GetFlags().GetDescriptionList();
-
 
                     foreach (var myflag in myflags)
                     {
@@ -522,6 +532,5 @@ namespace Helper
         }
 
         #endregion
-
     }
 }

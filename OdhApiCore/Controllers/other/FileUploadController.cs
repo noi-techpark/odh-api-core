@@ -26,7 +26,11 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         protected ILogger<OdhController> Logger { get; }
 
-        public FileUploadController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger)
+        public FileUploadController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<OdhController> logger
+        )
         {
             this.env = env;
             this.settings = settings;
@@ -34,7 +38,9 @@ namespace OdhApiCore.Controllers.api
         }
 
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
+        [Authorize(
+            Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate"
+        )]
         //[HttpPost, Route("v1/FileUpload/{type}/{directory}")]
         [HttpPost, Route("v1/FileUpload")]
         [HttpPost, Route("v1/FileUpload/Image")]
@@ -64,10 +70,14 @@ namespace OdhApiCore.Controllers.api
                 };
                 var response = await client.PutObjectAsync(request); //UploadPartAsync(request);
 
-                if(IsFileImage(file.ContentType))
-                    filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.Url, filename));
+                if (IsFileImage(file.ContentType))
+                    filenames.Add(
+                        String.Format("{0}{1}", settings.S3ImageresizerConfig.Url, filename)
+                    );
                 else
-                    filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename));
+                    filenames.Add(
+                        String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename)
+                    );
             }
             if (filenames.Count == 1)
                 return Ok(filenames.FirstOrDefault());
@@ -76,7 +86,9 @@ namespace OdhApiCore.Controllers.api
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
+        [Authorize(
+            Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate"
+        )]
         [HttpPost, Route("v1/FileUpload/Doc")]
         public async Task<IActionResult> PostFormDataPDF(IFormCollection form)
         {
@@ -104,7 +116,9 @@ namespace OdhApiCore.Controllers.api
                 };
                 var response = await client.PutObjectAsync(request);
 
-                filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename));
+                filenames.Add(
+                    String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename)
+                );
             }
             if (filenames.Count == 1)
                 return Ok(filenames.FirstOrDefault());
@@ -113,7 +127,9 @@ namespace OdhApiCore.Controllers.api
         }
 
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataMofify,DataCreate,DataDelete,ODHPoiCreate,ODHPoiModify,ODHPoiManager,ODHPoiUpdate,CommonCreate,CommonModify,CommonManager,CommonDelete,ArticleCreate,ArticleModify,ArticleManager,ArticleDelete")]
+        [Authorize(
+            Roles = "DataWriter,DataMofify,DataCreate,DataDelete,ODHPoiCreate,ODHPoiModify,ODHPoiManager,ODHPoiUpdate,CommonCreate,CommonModify,CommonManager,CommonDelete,ArticleCreate,ArticleModify,ArticleManager,ArticleDelete"
+        )]
         [HttpDelete, Route("v1/FileDelete/{filepath}")]
         public async Task<IActionResult> Delete(string filepath)
         {
@@ -164,11 +180,21 @@ namespace OdhApiCore.Controllers.api
             }
             catch (AmazonS3Exception e)
             {
-                return BadRequest(String.Format("Error encountered on server.Message:'{0}' when deleting an object", e.Message));
+                return BadRequest(
+                    String.Format(
+                        "Error encountered on server.Message:'{0}' when deleting an object",
+                        e.Message
+                    )
+                );
             }
             catch (Exception e)
             {
-                return BadRequest(String.Format("Unknown encountered on server. Message:'{0}' when deleting an object", e.Message));
+                return BadRequest(
+                    String.Format(
+                        "Unknown encountered on server. Message:'{0}' when deleting an object",
+                        e.Message
+                    )
+                );
             }
         }
 
@@ -178,6 +204,4 @@ namespace OdhApiCore.Controllers.api
             return contenttype.ToLower().StartsWith("image");
         }
     }
-
-
 }

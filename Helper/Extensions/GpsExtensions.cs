@@ -9,7 +9,9 @@ namespace Helper
 {
     public static class GpsExtensions
     {
-        public static Dictionary<string, GpsInfo> ConvertGpsInfoToGpsPoints(this List<GpsInfo> gpsinfolist)
+        public static Dictionary<string, GpsInfo> ConvertGpsInfoToGpsPoints(
+            this List<GpsInfo> gpsinfolist
+        )
         {
             Dictionary<string, GpsInfo> gpspoints = new Dictionary<string, GpsInfo>();
             foreach (var gpsinfo in gpsinfolist)
@@ -23,7 +25,9 @@ namespace Helper
             return gpspoints;
         }
 
-        public static Dictionary<string, GpsInfo> ConvertGpsInfoToGpsPointsLinq(this List<GpsInfo> gpsinfolist)
+        public static Dictionary<string, GpsInfo> ConvertGpsInfoToGpsPointsLinq(
+            this List<GpsInfo> gpsinfolist
+        )
         {
             if (gpsinfolist != null && gpsinfolist.Count > 0)
                 return gpsinfolist

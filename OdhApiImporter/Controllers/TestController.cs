@@ -9,7 +9,6 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("Test")]
         public IActionResult Get()
         {
-
             return Ok("importer alive");
         }
     }

@@ -14,10 +14,7 @@ namespace DataModel
     {
         public string Self
         {
-            get
-            {
-                return "AccommodationFeatures/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "AccommodationFeatures/" + Uri.EscapeDataString(this.Id); }
         }
     }
 
@@ -25,10 +22,7 @@ namespace DataModel
     {
         public string Self
         {
-            get
-            {
-                return "AccommodationRoom/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "AccommodationRoom/" + Uri.EscapeDataString(this.Id); }
         }
     }
 
@@ -36,10 +30,7 @@ namespace DataModel
     {
         public string Self
         {
-            get
-            {
-                return "EventTopics/" + Uri.EscapeDataString(this.TopicRID);
-            }
+            get { return "EventTopics/" + Uri.EscapeDataString(this.TopicRID); }
         }
     }
 
@@ -49,7 +40,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -60,7 +53,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -71,7 +66,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -82,7 +79,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -93,7 +92,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "Region/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "Region/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -104,7 +105,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "TourismAssociation/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "TourismAssociation/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -115,7 +118,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "Municipality/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "Municipality/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -126,7 +131,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "District/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "District/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -137,7 +144,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : "Area/" + Uri.EscapeDataString(this.Id);
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : "Area/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -157,7 +166,9 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
+                return String.IsNullOrEmpty(this.Id)
+                    ? null
+                    : ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
             }
         }
     }
@@ -176,13 +187,9 @@ namespace DataModel
         public string Source { get; set; }
         public string Self
         {
-            get
-            {
-                return ODHConstant.ApplicationURL + "Tag/" + this.Id;
-            }
+            get { return ODHConstant.ApplicationURL + "Tag/" + this.Id; }
         }
     }
-
 
     public class ODHActivityPoiTypesLink
     {
@@ -281,18 +288,12 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Gastronomy/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Gastronomy/" + Uri.EscapeDataString(this.Id); }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         //Taglist
@@ -300,7 +301,18 @@ namespace DataModel
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
@@ -320,18 +332,12 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Accommodation/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Accommodation/" + Uri.EscapeDataString(this.Id); }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         //Taglist
@@ -339,7 +345,18 @@ namespace DataModel
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
@@ -347,7 +364,16 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.AccoTypeId) ? null : new AccoType() { Id = this.AccoTypeId, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + Uri.EscapeDataString(this.AccoTypeId) };
+                return String.IsNullOrEmpty(this.AccoTypeId)
+                    ? null
+                    : new AccoType()
+                    {
+                        Id = this.AccoTypeId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "AccommodationTypes/"
+                            + Uri.EscapeDataString(this.AccoTypeId)
+                    };
             }
         }
 
@@ -355,7 +381,16 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.AccoCategoryId) ? null : new AccoCategory() { Id = this.AccoCategoryId, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + Uri.EscapeDataString(this.AccoCategoryId) };
+                return String.IsNullOrEmpty(this.AccoCategoryId)
+                    ? null
+                    : new AccoCategory()
+                    {
+                        Id = this.AccoCategoryId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "AccommodationTypes/"
+                            + Uri.EscapeDataString(this.AccoCategoryId)
+                    };
             }
         }
 
@@ -363,7 +398,18 @@ namespace DataModel
         {
             get
             {
-                return this.BoardIds != null ? this.BoardIds.Select(x => new AccoBoards() { Id = x, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + x }).ToList() : new List<AccoBoards>();
+                return this.BoardIds != null
+                    ? this.BoardIds
+                        .Select(
+                            x =>
+                                new AccoBoards()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AccoBoards>();
             }
         }
 
@@ -371,7 +417,18 @@ namespace DataModel
         {
             get
             {
-                return this.BadgeIds != null ? this.BadgeIds.Select(x => new AccoBadges() { Id = x, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + x }).ToList() : new List<AccoBadges>();
+                return this.BadgeIds != null
+                    ? this.BadgeIds
+                        .Select(
+                            x =>
+                                new AccoBadges()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AccoBadges>();
             }
         }
 
@@ -379,7 +436,18 @@ namespace DataModel
         {
             get
             {
-                return this.ThemeIds != null ? this.ThemeIds.Select(x => new AccoThemes() { Id = x, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + x }).ToList() : new List<AccoThemes>();
+                return this.ThemeIds != null
+                    ? this.ThemeIds
+                        .Select(
+                            x =>
+                                new AccoThemes()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AccoThemes>();
             }
         }
 
@@ -387,7 +455,18 @@ namespace DataModel
         {
             get
             {
-                return this.SpecialFeaturesIds != null ? this.SpecialFeaturesIds.Select(x => new AccoSpecialFeatures() { Id = x, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + x }).ToList() : new List<AccoSpecialFeatures>();
+                return this.SpecialFeaturesIds != null
+                    ? this.SpecialFeaturesIds
+                        .Select(
+                            x =>
+                                new AccoSpecialFeatures()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AccoSpecialFeatures>();
             }
         }
 
@@ -407,14 +486,11 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "AccommodationRoom/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "AccommodationRoom/" + Uri.EscapeDataString(this.Id); }
         }
 
         //Overwrites The Features
-        public new ICollection<AccoFeatureLinked>? Features { get; set; }       
+        public new ICollection<AccoFeatureLinked>? Features { get; set; }
     }
 
     public class EventPG : Event
@@ -447,25 +523,30 @@ namespace DataModel
 
         public int EventDateCounter
         {
-            get
-            {
-                return this.EventDate != null ? this.EventDate.Count : 0;
-            }
+            get { return this.EventDate != null ? this.EventDate.Count : 0; }
         }
 
         public string Self
         {
-            get
-            {
-                return "Event/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Event/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<DistrictLink> Districts
         {
             get
             {
-                return this.DistrictIds != null ? this.DistrictIds.Select(x => new DistrictLink() { Id = x, Self = ODHConstant.ApplicationURL + "District/" + x }).ToList() : new List<DistrictLink>();
+                return this.DistrictIds != null
+                    ? this.DistrictIds
+                        .Select(
+                            x =>
+                                new DistrictLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "District/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<DistrictLink>();
             }
         }
 
@@ -474,16 +555,24 @@ namespace DataModel
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         //Overwrites The Features
@@ -502,10 +591,7 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Package/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Package/" + Uri.EscapeDataString(this.Id); }
         }
 
         //Taglist
@@ -513,16 +599,24 @@ namespace DataModel
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         //Overwrites The LocationInfo
@@ -543,17 +637,25 @@ namespace DataModel
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
@@ -562,10 +664,32 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.Type, Type = "Type" });
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.SubType, Type = "SubType" });
+                returnlist.Add(
+                    new ODHActivityPoiTypesLink()
+                    {
+                        Id = this.Type,
+                        Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.Type,
+                        Type = "Type"
+                    }
+                );
+                returnlist.Add(
+                    new ODHActivityPoiTypesLink()
+                    {
+                        Id = this.SubType,
+                        Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.SubType,
+                        Type = "SubType"
+                    }
+                );
                 if (!String.IsNullOrEmpty(this.PoiType))
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self =ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.PoiType, Type = "PoiType" });
+                    returnlist.Add(
+                        new ODHActivityPoiTypesLink()
+                        {
+                            Id = this.PoiType,
+                            Self =
+                                ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.PoiType,
+                            Type = "PoiType"
+                        }
+                    );
 
                 return returnlist;
             }
@@ -575,7 +699,18 @@ namespace DataModel
         {
             get
             {
-                return this.AreaId != null ? this.AreaId.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
+                return this.AreaId != null
+                    ? this.AreaId
+                        .Select(
+                            x =>
+                                new AreaLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "Area/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AreaLink>();
             }
         }
 
@@ -589,8 +724,6 @@ namespace DataModel
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
-
-        
     }
 
     public class LTSPoiLinked : LTSPoi, IMetaData
@@ -599,25 +732,30 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Poi/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Poi/" + Uri.EscapeDataString(this.Id); }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "PoiTypes/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "PoiTypes/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
@@ -626,11 +764,45 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeDataString(this.Type), Type = "Type" });
-                if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeDataString(this.SubType), Type = "SubType" });
+                returnlist.Add(
+                    new ODHActivityPoiTypesLink()
+                    {
+                        Id = this.Type,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "PoiTypes/"
+                            + Uri.EscapeDataString(this.Type),
+                        Type = "Type"
+                    }
+                );
+                if (
+                    !String.IsNullOrEmpty(this.SubType)
+                    && this.SubType != "no Subtype"
+                    && this.SubType != "Essen Trinken"
+                )
+                    returnlist.Add(
+                        new ODHActivityPoiTypesLink()
+                        {
+                            Id = this.SubType,
+                            Self =
+                                ODHConstant.ApplicationURL
+                                + "PoiTypes/"
+                                + Uri.EscapeDataString(this.SubType),
+                            Type = "SubType"
+                        }
+                    );
                 if (!String.IsNullOrEmpty(this.PoiType))
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeDataString(this.PoiType), Type = "PoiType" });
+                    returnlist.Add(
+                        new ODHActivityPoiTypesLink()
+                        {
+                            Id = this.PoiType,
+                            Self =
+                                ODHConstant.ApplicationURL
+                                + "PoiTypes/"
+                                + Uri.EscapeDataString(this.PoiType),
+                            Type = "PoiType"
+                        }
+                    );
 
                 return returnlist;
             }
@@ -640,7 +812,18 @@ namespace DataModel
         {
             get
             {
-                return this.AreaId != null ? this.AreaId.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
+                return this.AreaId != null
+                    ? this.AreaId
+                        .Select(
+                            x =>
+                                new AreaLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "Area/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AreaLink>();
             }
         }
 
@@ -648,7 +831,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }        
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class LTSActivityLinked : LTSActivity, IMetaData
@@ -657,25 +840,30 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return ODHConstant.ApplicationURL + "Activity/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return ODHConstant.ApplicationURL + "Activity/" + Uri.EscapeDataString(this.Id); }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ActivityTypes/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
@@ -684,11 +872,45 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeDataString(this.Type), Type = "Type" });
-                if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeDataString(this.SubType), Type = "SubType" });
+                returnlist.Add(
+                    new ODHActivityPoiTypesLink()
+                    {
+                        Id = this.Type,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "ActivityTypes/"
+                            + Uri.EscapeDataString(this.Type),
+                        Type = "Type"
+                    }
+                );
+                if (
+                    !String.IsNullOrEmpty(this.SubType)
+                    && this.SubType != "no Subtype"
+                    && this.SubType != "Essen Trinken"
+                )
+                    returnlist.Add(
+                        new ODHActivityPoiTypesLink()
+                        {
+                            Id = this.SubType,
+                            Self =
+                                ODHConstant.ApplicationURL
+                                + "ActivityTypes/"
+                                + Uri.EscapeDataString(this.SubType),
+                            Type = "SubType"
+                        }
+                    );
                 if (!String.IsNullOrEmpty(this.PoiType))
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeDataString(this.PoiType), Type = "PoiType" });
+                    returnlist.Add(
+                        new ODHActivityPoiTypesLink()
+                        {
+                            Id = this.PoiType,
+                            Self =
+                                ODHConstant.ApplicationURL
+                                + "ActivityTypes/"
+                                + Uri.EscapeDataString(this.PoiType),
+                            Type = "PoiType"
+                        }
+                    );
 
                 return returnlist;
             }
@@ -698,7 +920,18 @@ namespace DataModel
         {
             get
             {
-                return this.AreaId != null ? this.AreaId.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
+                return this.AreaId != null
+                    ? this.AreaId
+                        .Select(
+                            x =>
+                                new AreaLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "Area/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AreaLink>();
             }
         }
 
@@ -706,7 +939,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }        
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class ArticlesLinked : ArticleBaseInfos, IMetaData
@@ -715,18 +948,12 @@ namespace DataModel
 
         public string? Self
         {
-            get
-            {
-                return this.Id != null ? "Article/" + Uri.EscapeDataString(this.Id) : null;
-            }
+            get { return this.Id != null ? "Article/" + Uri.EscapeDataString(this.Id) : null; }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public ICollection<ODHActivityPoiTypesLink>? ArticleTypes
@@ -734,9 +961,33 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeDataString(this.Type), Type = "ArticleType" });
-                if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeDataString(this.SubType), Type = "ArticleSubType" });
+                returnlist.Add(
+                    new ODHActivityPoiTypesLink()
+                    {
+                        Id = this.Type,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "ArticleTypes/"
+                            + Uri.EscapeDataString(this.Type),
+                        Type = "ArticleType"
+                    }
+                );
+                if (
+                    !String.IsNullOrEmpty(this.SubType)
+                    && this.SubType != "no Subtype"
+                    && this.SubType != "Essen Trinken"
+                )
+                    returnlist.Add(
+                        new ODHActivityPoiTypesLink()
+                        {
+                            Id = this.SubType,
+                            Self =
+                                ODHConstant.ApplicationURL
+                                + "ArticleTypes/"
+                                + Uri.EscapeDataString(this.SubType),
+                            Type = "ArticleSubType"
+                        }
+                    );
 
                 return returnlist;
             }
@@ -748,7 +999,11 @@ namespace DataModel
             {
                 var returnlist = new List<string>();
                 returnlist.Add(this.Type);
-                if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
+                if (
+                    !String.IsNullOrEmpty(this.SubType)
+                    && this.SubType != "no Subtype"
+                    && this.SubType != "Essen Trinken"
+                )
                     returnlist.Add(this.SubType);
 
                 return returnlist;
@@ -759,7 +1014,18 @@ namespace DataModel
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
     }
@@ -770,33 +1036,47 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "District/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "District/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public RegionLink Region
         {
             get
             {
-                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.RegionId) };
+                return String.IsNullOrEmpty(this.RegionId)
+                    ? null
+                    : new RegionLink()
+                    {
+                        Id = this.RegionId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "Region/"
+                            + Uri.EscapeDataString(this.RegionId)
+                    };
             }
         }
 
@@ -804,7 +1084,16 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.MunicipalityId) ? null : new MunicipalityLink() { Id = this.MunicipalityId, Self = ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeDataString(this.MunicipalityId) };
+                return String.IsNullOrEmpty(this.MunicipalityId)
+                    ? null
+                    : new MunicipalityLink()
+                    {
+                        Id = this.MunicipalityId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "Municipality/"
+                            + Uri.EscapeDataString(this.MunicipalityId)
+                    };
             }
         }
 
@@ -812,7 +1101,16 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.TourismvereinId) };
+                return String.IsNullOrEmpty(this.TourismvereinId)
+                    ? null
+                    : new TourismAssociationLink()
+                    {
+                        Id = this.TourismvereinId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "TourismAssociation/"
+                            + Uri.EscapeDataString(this.TourismvereinId)
+                    };
             }
         }
     }
@@ -823,33 +1121,47 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Municipality/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Municipality/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public RegionLink Region
         {
             get
             {
-                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.RegionId) };
+                return String.IsNullOrEmpty(this.RegionId)
+                    ? null
+                    : new RegionLink()
+                    {
+                        Id = this.RegionId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "Region/"
+                            + Uri.EscapeDataString(this.RegionId)
+                    };
             }
         }
 
@@ -857,7 +1169,16 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.TourismvereinId) };
+                return String.IsNullOrEmpty(this.TourismvereinId)
+                    ? null
+                    : new TourismAssociationLink()
+                    {
+                        Id = this.TourismvereinId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "TourismAssociation/"
+                            + Uri.EscapeDataString(this.TourismvereinId)
+                    };
             }
         }
     }
@@ -868,33 +1189,47 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "TourismAssociation/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "TourismAssociation/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public RegionLink Region
         {
             get
             {
-                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.RegionId) };
+                return String.IsNullOrEmpty(this.RegionId)
+                    ? null
+                    : new RegionLink()
+                    {
+                        Id = this.RegionId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "Region/"
+                            + Uri.EscapeDataString(this.RegionId)
+                    };
             }
         }
 
@@ -902,7 +1237,18 @@ namespace DataModel
         {
             get
             {
-                return this.SkiareaIds != null ? this.SkiareaIds.Select(x => new SkiAreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "SkiArea/" + x }).ToList() : new List<SkiAreaLink>();
+                return this.SkiareaIds != null
+                    ? this.SkiareaIds
+                        .Select(
+                            x =>
+                                new SkiAreaLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "SkiArea/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<SkiAreaLink>();
             }
         }
     }
@@ -913,33 +1259,49 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Region/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Region/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public ICollection<SkiAreaLink> SkiAreas
         {
             get
             {
-                return this.SkiareaIds != null ? this.SkiareaIds.Select(x => new SkiAreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "SkiArea/" + x }).ToList() : new List<SkiAreaLink>();
+                return this.SkiareaIds != null
+                    ? this.SkiareaIds
+                        .Select(
+                            x =>
+                                new SkiAreaLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "SkiArea/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<SkiAreaLink>();
             }
         }
     }
@@ -950,33 +1312,49 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "MetaRegion/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "MetaRegion/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public ICollection<DistrictLink> Districts
         {
             get
             {
-                return this.DistrictIds != null ? this.DistrictIds.Select(x => new DistrictLink() { Id = x, Self = ODHConstant.ApplicationURL + "District/" + x }).ToList() : new List<DistrictLink>();
+                return this.DistrictIds != null
+                    ? this.DistrictIds
+                        .Select(
+                            x =>
+                                new DistrictLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "District/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<DistrictLink>();
             }
         }
 
@@ -984,7 +1362,18 @@ namespace DataModel
         {
             get
             {
-                return this.TourismvereinIds != null ? this.TourismvereinIds.Select(x => new TourismAssociationLink() { Id = x, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + x }).ToList() : new List<TourismAssociationLink>();
+                return this.TourismvereinIds != null
+                    ? this.TourismvereinIds
+                        .Select(
+                            x =>
+                                new TourismAssociationLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "TourismAssociation/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<TourismAssociationLink>();
             }
         }
 
@@ -992,7 +1381,18 @@ namespace DataModel
         {
             get
             {
-                return this.RegionIds != null ? this.RegionIds.Select(x => new RegionLink() { Id = x, Self = ODHConstant.ApplicationURL + "Region/" + x }).ToList() : new List<RegionLink>();
+                return this.RegionIds != null
+                    ? this.RegionIds
+                        .Select(
+                            x =>
+                                new RegionLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "Region/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<RegionLink>();
             }
         }
     }
@@ -1003,33 +1403,49 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "ExperienceArea/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "ExperienceArea/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public ICollection<TourismAssociationLink> TourismAssociations
         {
             get
             {
-                return this.TourismvereinIds != null ? this.TourismvereinIds.Select(x => new TourismAssociationLink() { Id = x, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + x }).ToList() : new List<TourismAssociationLink>();
+                return this.TourismvereinIds != null
+                    ? this.TourismvereinIds
+                        .Select(
+                            x =>
+                                new TourismAssociationLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "TourismAssociation/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<TourismAssociationLink>();
             }
         }
 
@@ -1037,7 +1453,18 @@ namespace DataModel
         {
             get
             {
-                return this.DistrictIds != null ? this.DistrictIds.Select(x => new DistrictLink() { Id = x, Self = ODHConstant.ApplicationURL + "District/" + x }).ToList() : new List<DistrictLink>();
+                return this.DistrictIds != null
+                    ? this.DistrictIds
+                        .Select(
+                            x =>
+                                new DistrictLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "District/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<DistrictLink>();
             }
         }
     }
@@ -1048,25 +1475,28 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Area/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Area/" + Uri.EscapeDataString(this.Id); }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public RegionLink Region
         {
             get
             {
-                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.RegionId) };
+                return String.IsNullOrEmpty(this.RegionId)
+                    ? null
+                    : new RegionLink()
+                    {
+                        Id = this.RegionId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "Region/"
+                            + Uri.EscapeDataString(this.RegionId)
+                    };
             }
         }
 
@@ -1074,7 +1504,16 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.MunicipalityId) ? null : new MunicipalityLink() { Id = this.MunicipalityId, Self = ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeDataString(this.MunicipalityId) };
+                return String.IsNullOrEmpty(this.MunicipalityId)
+                    ? null
+                    : new MunicipalityLink()
+                    {
+                        Id = this.MunicipalityId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "Municipality/"
+                            + Uri.EscapeDataString(this.MunicipalityId)
+                    };
             }
         }
 
@@ -1082,7 +1521,16 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.TourismvereinId) };
+                return String.IsNullOrEmpty(this.TourismvereinId)
+                    ? null
+                    : new TourismAssociationLink()
+                    {
+                        Id = this.TourismvereinId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "TourismAssociation/"
+                            + Uri.EscapeDataString(this.TourismvereinId)
+                    };
             }
         }
 
@@ -1090,7 +1538,16 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.SkiAreaID) ? null : new SkiAreaLink() { Id = this.SkiAreaID, Self = ODHConstant.ApplicationURL + "SkiArea/" + Uri.EscapeDataString(this.SkiAreaID) };
+                return String.IsNullOrEmpty(this.SkiAreaID)
+                    ? null
+                    : new SkiAreaLink()
+                    {
+                        Id = this.SkiAreaID,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "SkiArea/"
+                            + Uri.EscapeDataString(this.SkiAreaID)
+                    };
             }
         }
     }
@@ -1101,33 +1558,47 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "SkiArea/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "SkiArea/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
 
         public SkiRegionLink SkiRegion
         {
             get
             {
-                return String.IsNullOrEmpty(this.SkiRegionId) ? null : new SkiRegionLink() { Id = this.SkiRegionId, Self = ODHConstant.ApplicationURL + "SkiRegion/" + Uri.EscapeDataString(this.SkiRegionId) };
+                return String.IsNullOrEmpty(this.SkiRegionId)
+                    ? null
+                    : new SkiRegionLink()
+                    {
+                        Id = this.SkiRegionId,
+                        Self =
+                            ODHConstant.ApplicationURL
+                            + "SkiRegion/"
+                            + Uri.EscapeDataString(this.SkiRegionId)
+                    };
             }
         }
 
@@ -1135,7 +1606,18 @@ namespace DataModel
         {
             get
             {
-                return this.AreaId != null ? this.AreaId.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
+                return this.AreaId != null
+                    ? this.AreaId
+                        .Select(
+                            x =>
+                                new AreaLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "Area/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AreaLink>();
             }
         }
 
@@ -1143,7 +1625,18 @@ namespace DataModel
         {
             get
             {
-                return this.TourismvereinIds != null ? this.TourismvereinIds.Select(x => new TourismAssociationLink() { Id = x, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + x }).ToList() : new List<TourismAssociationLink>();
+                return this.TourismvereinIds != null
+                    ? this.TourismvereinIds
+                        .Select(
+                            x =>
+                                new TourismAssociationLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "TourismAssociation/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<TourismAssociationLink>();
             }
         }
 
@@ -1151,7 +1644,18 @@ namespace DataModel
         {
             get
             {
-                return this.RegionIds != null ? this.RegionIds.Select(x => new RegionLink() { Id = x, Self = ODHConstant.ApplicationURL + "Region/" + x }).ToList() : new List<RegionLink>();
+                return this.RegionIds != null
+                    ? this.RegionIds
+                        .Select(
+                            x =>
+                                new RegionLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "Region/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<RegionLink>();
             }
         }
 
@@ -1165,26 +1669,31 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "SkiRegion/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "SkiRegion/" + Uri.EscapeDataString(this.Id); }
         }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return this.SmgActive;
-            }
+            get { return this.SmgActive; }
         }
     }
 
@@ -1194,25 +1703,30 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "WebcamInfo/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "WebcamInfo/" + Uri.EscapeDataString(this.Id); }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return (bool)this.SmgActive;
-            }
+            get { return (bool)this.SmgActive; }
         }
 
         public ICollection<AreaLink> Areas
         {
             get
             {
-                return this.AreaIds != null ? this.AreaIds.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
+                return this.AreaIds != null
+                    ? this.AreaIds
+                        .Select(
+                            x =>
+                                new AreaLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "Area/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AreaLink>();
             }
         }
 
@@ -1220,9 +1734,20 @@ namespace DataModel
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this.SmgTags
+                        .Select(
+                            x =>
+                                new ODHTags()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "ODHTag/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<ODHTags>();
             }
-        }       
+        }
     }
 
     public class MeasuringpointLinked : Measuringpoint, IMetaData
@@ -1231,30 +1756,35 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Weather/Measuringpoint/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Weather/Measuringpoint/" + Uri.EscapeDataString(this.Id); }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return (bool)this.SmgActive;
-            }
+            get { return (bool)this.SmgActive; }
         }
 
         public ICollection<AreaLink> Areas
         {
             get
             {
-                return this.AreaIds != null ? this.AreaIds.Select(x => new AreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "Area/" + x }).ToList() : new List<AreaLink>();
+                return this.AreaIds != null
+                    ? this.AreaIds
+                        .Select(
+                            x =>
+                                new AreaLink()
+                                {
+                                    Id = x,
+                                    Self = ODHConstant.ApplicationURL + "Area/" + x
+                                }
+                        )
+                        .ToList()
+                    : new List<AreaLink>();
             }
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked? LocationInfo { get; set; }       
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class WineLinked : Wine, IMetaData
@@ -1263,25 +1793,25 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return ODHConstant.ApplicationURL + "WineAward/" + this.Id;
-            }
+            get { return ODHConstant.ApplicationURL + "WineAward/" + this.Id; }
         }
 
         public bool OdhActive
         {
-            get
-            {
-                return (bool)this.SmgActive;
-            }
+            get { return (bool)this.SmgActive; }
         }
 
         public CompanyLink Company
         {
             get
             {
-                return String.IsNullOrEmpty(this.CompanyId) ? null : new CompanyLink() { Id = this.CompanyId, Self = ODHConstant.ApplicationURL + "ODHActivityPoi/" + this.CompanyId };
+                return String.IsNullOrEmpty(this.CompanyId)
+                    ? null
+                    : new CompanyLink()
+                    {
+                        Id = this.CompanyId,
+                        Self = ODHConstant.ApplicationURL + "ODHActivityPoi/" + this.CompanyId
+                    };
             }
         }
     }
@@ -1292,10 +1822,7 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return ODHConstant.ApplicationURL + "EventShort/" + this.Id;
-            }
+            get { return ODHConstant.ApplicationURL + "EventShort/" + this.Id; }
         }
     }
 
@@ -1305,10 +1832,7 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return ODHConstant.ApplicationURL + "Weather/" + this.Id;
-            }
+            get { return ODHConstant.ApplicationURL + "Weather/" + this.Id; }
         }
     }
 
@@ -1318,23 +1842,17 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return ODHConstant.ApplicationURL + "WeatherHistory/" + this.Id;
-            }
+            get { return ODHConstant.ApplicationURL + "WeatherHistory/" + this.Id; }
         }
     }
 
     public class ODHTagLinked : SmgTags, IMetaData
     {
-        public Metadata _Meta { get; set; }        
+        public Metadata _Meta { get; set; }
 
         public string Self
         {
-            get
-            {
-                return ODHConstant.ApplicationURL + "ODHTag/" + this.Id;
-            }
+            get { return ODHConstant.ApplicationURL + "ODHTag/" + this.Id; }
         }
     }
 
@@ -1344,15 +1862,12 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return ODHConstant.ApplicationURL + "Tag/" + this.Id;
-            }
+            get { return ODHConstant.ApplicationURL + "Tag/" + this.Id; }
         }
         public List<string> ODHTagIds { get; set; }
     }
 
-    //TODO ADD Linked + Meta 
+    //TODO ADD Linked + Meta
     //EventTopics
     //ActivityTypes
     //PoiTypes

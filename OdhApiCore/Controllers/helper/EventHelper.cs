@@ -29,36 +29,82 @@ namespace OdhApiCore.Controllers
         public DateTime? begin;
         public DateTime? end;
         public string? lastchange;
+
         //New Publishedonlist
         public List<string> publishedonlist;
 
         public static async Task<EventHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, string? rancfilter,
-            string? typefilter, string? topicfilter, string? orgfilter, string? begindate, string? enddate,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? langfilter, string? source, 
+            QueryFactory queryFactory,
+            string? idfilter,
+            string? locfilter,
+            string? rancfilter,
+            string? typefilter,
+            string? topicfilter,
+            string? orgfilter,
+            string? begindate,
+            string? enddate,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? langfilter,
+            string? source,
             string? publishedonfilter,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken
+        )
         {
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
             return new EventHelper(
-                idfilter: idfilter, locfilter: locfilter, rancfilter: rancfilter, typefilter: typefilter,
-                topicfilter: topicfilter, orgfilter: orgfilter, begindate: begindate, enddate: enddate,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, sourcefilter: source, 
-                languagefilter: langfilter, publishedonfilter: publishedonfilter, tourismusvereinids: tourismusvereinids);
+                idfilter: idfilter,
+                locfilter: locfilter,
+                rancfilter: rancfilter,
+                typefilter: typefilter,
+                topicfilter: topicfilter,
+                orgfilter: orgfilter,
+                begindate: begindate,
+                enddate: enddate,
+                activefilter: activefilter,
+                smgactivefilter: smgactivefilter,
+                smgtags: smgtags,
+                lastchange: lastchange,
+                sourcefilter: source,
+                languagefilter: langfilter,
+                publishedonfilter: publishedonfilter,
+                tourismusvereinids: tourismusvereinids
+            );
         }
 
         private EventHelper(
-            string? idfilter, string? locfilter, string? rancfilter,
-            string? typefilter, string? topicfilter, string? orgfilter,
-            string? begindate, string? enddate, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, string? languagefilter, string? sourcefilter, string? publishedonfilter, 
-            IEnumerable<string>? tourismusvereinids)
+            string? idfilter,
+            string? locfilter,
+            string? rancfilter,
+            string? typefilter,
+            string? topicfilter,
+            string? orgfilter,
+            string? begindate,
+            string? enddate,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? languagefilter,
+            string? sourcefilter,
+            string? publishedonfilter,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
             idlist = CommonListCreator.CreateIdList(idfilter?.ToUpper());
 
@@ -109,7 +155,5 @@ namespace OdhApiCore.Controllers
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
-
-
     }
 }

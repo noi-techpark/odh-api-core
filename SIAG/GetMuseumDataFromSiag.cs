@@ -10,11 +10,11 @@ namespace SIAG
 {
     public class GetMuseumFromSIAG
     {
-        public const string serviceurl = @"https://musport.prov.bz.it/musport/services/MuseumsService/";
+        public const string serviceurl =
+            @"https://musport.prov.bz.it/musport/services/MuseumsService/";
 
         public static async Task<HttpResponseMessage> MuseumList()
         {
-
             string requesturl = serviceurl + "getMuseums";
             using (var client = new HttpClient())
             {
@@ -22,12 +22,10 @@ namespace SIAG
 
                 return myresponse;
             }
-
         }
 
         public static async Task<XDocument> GetMuseumList()
         {
-
             var myresponse = MuseumList();
 
             var myresponsecontent = await myresponse.Result.Content.ReadAsStringAsync();
@@ -35,7 +33,6 @@ namespace SIAG
             XDocument xresponse = XDocument.Parse(myresponsecontent);
 
             return xresponse;
-
         }
 
         public static async Task<HttpResponseMessage> MuseumDetail(string museumid)
@@ -52,7 +49,11 @@ namespace SIAG
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Content = new StringContent(ex.Message)
+                };
             }
         }
 

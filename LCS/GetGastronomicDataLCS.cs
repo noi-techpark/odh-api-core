@@ -28,7 +28,9 @@ namespace LCS
             basicHttpBinding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
             basicHttpBinding.AllowCookies = true;
 
-            EndpointAddress endpointAddress = new EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
+            EndpointAddress endpointAddress = new EndpointAddress(
+                "https://lcs.lts.it/api/data.svc/soap"
+            );
 
             lcs = new ServiceReferenceLCS.DataClient(basicHttpBinding, endpointAddress);
             lcs.ClientCredentials.UserName.UserName = user;
@@ -38,14 +40,18 @@ namespace LCS
         }
 
         //Gastronomy Search
-        public ServiceReferenceLCS.GastronomicDataSearchRS GetGastronomicDataSearch(XElement myrequest)
+        public ServiceReferenceLCS.GastronomicDataSearchRS GetGastronomicDataSearch(
+            XElement myrequest
+        )
         {
             var gastrosearch = lcs.oGastronomicDataSearch(myrequest.ToXmlElement());
             return gastrosearch;
         }
 
         //Gastronomy Detail
-        public ServiceReferenceLCS.GastronomicDataDetailRS GetGastronomicDataDetail(XElement myrequest)
+        public ServiceReferenceLCS.GastronomicDataDetailRS GetGastronomicDataDetail(
+            XElement myrequest
+        )
         {
             var gastrodetail = lcs.oGastronomicDataDetail(myrequest.ToXmlElement());
             return gastrodetail;
@@ -70,7 +76,6 @@ namespace LCS
         {
             return XElement.Load(xmlElement.CreateNavigator().ReadSubtree());
         }
-
 
         //Gastronomy List Changed LTS WS!!! THEORETISCH UM den SMG STatus abzufragen (A0NE) müsste man bei HotelBaseData anfragen hmmm was machen wir hier? Hier aber TVList übergeben???
         //public static XDocument GetGastroChanged(DateTime startdate, string A0Ene, string G0Rids, string ltsuser, string ltspswd)
@@ -113,11 +118,11 @@ namespace LCS
             List<string> facilityprefilter,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("GastronomicDataSearchRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -233,11 +238,11 @@ namespace LCS
             string newsandfeatures,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("GastronomicDataDetailRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -282,11 +287,11 @@ namespace LCS
             string language,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("GastronomicCodesRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -297,24 +302,23 @@ namespace LCS
             XElement lang = new XElement("Language");
             lang.Add(new XAttribute("Code", language));
             parameters.Add(lang);
-            //Ende Language            
+            //Ende Language
 
             requestbody.Add(parameters);
 
             return requestbody;
         }
 
-
         public static XElement GetGastronomicDataChangedRequestAsync(
             string timespan,
             string tvrid,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("GastronomicDataChangedItemsRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -325,7 +329,7 @@ namespace LCS
             XElement ts = new XElement("TimeSpan");
             ts.Add(new XAttribute("Start", timespan));
             parameters.Add(ts);
-            //Ende Language    
+            //Ende Language
 
             if (!String.IsNullOrEmpty(tvrid))
             {
@@ -338,12 +342,10 @@ namespace LCS
                 parameters.Add(toursimverein);
             }
 
-
             requestbody.Add(parameters);
 
             return requestbody;
         }
-
 
         public static XElement GetPOS(string requestor, string ltsmsgpswd)
         {
@@ -464,7 +466,7 @@ namespace LCS
             return myfacilities;
         }
 
-        //Categorycode Prefilters 
+        //Categorycode Prefilters
         public static XElement GetCategoryPreFilter(List<string> categoryprefilter)
         {
             XElement mycatprefilter = new XElement("CategoryCodes");
@@ -491,7 +493,7 @@ namespace LCS
             return mycatprefilter;
         }
 
-        //Facility Prefilters 
+        //Facility Prefilters
         public static XElement GetFacilityPreFilter(List<string> facilityprefilter)
         {
             XElement myfacilityprefilter = new XElement("Facilities");
@@ -518,7 +520,5 @@ namespace LCS
             }
             return myfacilityprefilter;
         }
-
-
     }
 }

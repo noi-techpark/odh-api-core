@@ -35,10 +35,8 @@ namespace Helper
         {
             if (seedstring == null)
                 return null;
-
             else if (int.TryParse(seedstring, out int seed))
             {
-
                 //Kein Seed es wird ein Seed zwischen 0 und 10 erzeugt
                 if (seed == 0)
                 {

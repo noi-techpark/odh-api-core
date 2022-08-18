@@ -17,8 +17,12 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly ISettings settings;
 
-        public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public PushNotificationController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<PushNotificationController> logger,
+            QueryFactory queryFactory
+        ) : base(env, settings, logger, queryFactory)
         {
             this.settings = settings;
         }
@@ -38,11 +42,11 @@ namespace OdhApiCore.Controllers.api
             var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
             var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
 
-            var query =
-              QueryFactory.Query(mytable)
-                  .Select("data")
-                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
-                  .When(FilterClosedData, q => q.FilterClosedData());
+            var query = QueryFactory
+                .Query(mytable)
+                .Select("data")
+                .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
+                .When(FilterClosedData, q => q.FilterClosedData());
 
             // TODO: Create a logic that constructs a message out of the object
 
@@ -52,7 +56,13 @@ namespace OdhApiCore.Controllers.api
 
             var message = new PushServerMessage();
 
-            var result = await SendToPushServer.SendMessageToPushServer(pushserverconfig.ServiceUrl, message, pushserverconfig.User, pushserverconfig.Password, message.destination.language);
+            var result = await SendToPushServer.SendMessageToPushServer(
+                pushserverconfig.ServiceUrl,
+                message,
+                pushserverconfig.User,
+                pushserverconfig.Password,
+                message.destination.language
+            );
 
             return Ok(result);
         }
@@ -69,7 +79,13 @@ namespace OdhApiCore.Controllers.api
         {
             var pushserverconfig = settings.PushServerConfig;
 
-            var result = await SendToPushServer.SendMessageToPushServer(pushserverconfig.ServiceUrl, message, pushserverconfig.User, pushserverconfig.Password, message.destination.language);
+            var result = await SendToPushServer.SendMessageToPushServer(
+                pushserverconfig.ServiceUrl,
+                message,
+                pushserverconfig.User,
+                pushserverconfig.Password,
+                message.destination.language
+            );
 
             return Ok(result);
         }
@@ -85,7 +101,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpGet, Route("FCMMessage/{type}/{id}/{identifier}/{language}")]
-        public async Task<IActionResult> GetFCM(string type, string id, string identifier, string language)
+        public async Task<IActionResult> GetFCM(
+            string type,
+            string id,
+            string identifier,
+            string language
+        )
         {
             try
             {
@@ -93,11 +114,11 @@ namespace OdhApiCore.Controllers.api
                 var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
                 var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
 
-                var query =
-                  QueryFactory.Query(mytable)
-                      .Select("data")
-                      .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
-                      .When(FilterClosedData, q => q.FilterClosedData());
+                var query = QueryFactory
+                    .Query(mytable)
+                    .Select("data")
+                    .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
+                    .When(FilterClosedData, q => q.FilterClosedData());
 
                 var fieldsTohide = FieldsToHide;
 
@@ -116,7 +137,11 @@ namespace OdhApiCore.Controllers.api
                 foreach (var lang in langarr)
                 {
                     //Construct the message
-                    var message = FCMMessageConstructor.ConstructMyMessage(identifier, lang.ToLower(), myobject);
+                    var message = FCMMessageConstructor.ConstructMyMessage(
+                        identifier,
+                        lang.ToLower(),
+                        myobject
+                    );
 
                     if (message != null)
                         messages.Add(message);
@@ -124,7 +149,9 @@ namespace OdhApiCore.Controllers.api
                         throw new Exception("Message could not be constructed");
                 }
 
-                var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == identifier).FirstOrDefault();
+                var pushserverconfig = settings.FCMConfig
+                    .Where(x => x.Identifier == identifier)
+                    .FirstOrDefault();
 
                 if (pushserverconfig == null)
                     throw new Exception("PushserverConfig could not be found");
@@ -133,7 +160,12 @@ namespace OdhApiCore.Controllers.api
 
                 foreach (var message in messages)
                 {
-                    var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
+                    var result = await FCMPushNotification.SendNotification(
+                        message,
+                        " https://fcm.googleapis.com/fcm/send",
+                        pushserverconfig.SenderId,
+                        pushserverconfig.ServerKey
+                    );
 
                     resultlist.Add(message.to, result);
                 }
@@ -144,7 +176,6 @@ namespace OdhApiCore.Controllers.api
             {
                 return BadRequest("Error: " + ex.Message);
             }
-
         }
 
         /// <summary>
@@ -155,14 +186,24 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpPost, Route("FCMMessage/{identifier}")]
-        public async Task<IActionResult> PostFCMMessage(string identifier, [FromBody] FCMModels message)
+        public async Task<IActionResult> PostFCMMessage(
+            string identifier,
+            [FromBody] FCMModels message
+        )
         {
             //TODO add configurable FCM setting where config can be accessed by identifier
-            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == identifier).FirstOrDefault();
+            var pushserverconfig = settings.FCMConfig
+                .Where(x => x.Identifier == identifier)
+                .FirstOrDefault();
 
             if (pushserverconfig != null)
             {
-                var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
+                var result = await FCMPushNotification.SendNotification(
+                    message,
+                    " https://fcm.googleapis.com/fcm/send",
+                    pushserverconfig.SenderId,
+                    pushserverconfig.ServerKey
+                );
 
                 return Ok(result);
             }

@@ -14,6 +14,7 @@ namespace Helper
         public string host { get; init; }
         public string path { get; init; }
         public string schema { get; init; }
+
         //public Dictionary<string,string>? querystring { get; set; }
         public string urlparams { get; init; }
         public string useragent { get; init; }

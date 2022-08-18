@@ -32,7 +32,11 @@ namespace OdhApiCoreTests.Helper
             string orderby = "";
             string? invalidseed = "invalidnumber";
 
-            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, ref invalidseed, "orderbyclause");
+            PostgresSQLOrderByBuilder.BuildSeedOrderBy(
+                ref orderby,
+                ref invalidseed,
+                "orderbyclause"
+            );
             // CHECK: Is this the correct behavior?
             Assert.Equal("md5(id || '')", orderby);
         }

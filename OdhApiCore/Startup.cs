@@ -74,14 +74,23 @@ namespace OdhApiCore
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddHttpClient("mss", client =>
-            {
-                //client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-            }).ConfigureHttpMessageHandlerBuilder(config => new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            });
-            services.AddHttpClient("lcs"); // TODO: put LCS config here            
+            services
+                .AddHttpClient(
+                    "mss",
+                    client =>
+                    {
+                        //client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+                    }
+                )
+                .ConfigureHttpMessageHandlerBuilder(
+                    config =>
+                        new HttpClientHandler()
+                        {
+                            AutomaticDecompression =
+                                DecompressionMethods.GZip | DecompressionMethods.Deflate
+                        }
+                );
+            services.AddHttpClient("lcs"); // TODO: put LCS config here
 
             //Adding Cache Service in Memory
             services.AddInMemoryCacheOutput();
@@ -155,7 +164,7 @@ namespace OdhApiCore
             //    options.HttpStatusCode = 429;
             //    options.ClientIdHeader = "Referer";
             //    options.ClientWhitelist = new List<string> { "Anonymous", "Authenticated" };
-            //    //General Rule from 
+            //    //General Rule from
             //    options.GeneralRules = new List<RateLimitRule>
             //    {
             //        new RateLimitRule()
@@ -209,8 +218,8 @@ namespace OdhApiCore
 
             //services.AddInMemoryRateLimiting();
 
-            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();                        
-            //services.AddSingleton<IRateLimitConfiguration, Middleware.OdhRateLimitConfiguration>();            
+            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            //services.AddSingleton<IRateLimitConfiguration, Middleware.OdhRateLimitConfiguration>();
 
             services.AddLogging(options =>
             {
@@ -218,13 +227,12 @@ namespace OdhApiCore
 
                 var levelSwitch = new LoggingLevelSwitch
                 {
-                    MinimumLevel =
-                        CurrentEnvironment.IsDevelopment() ?
-                            LogEventLevel.Debug :
-                            LogEventLevel.Warning
+                    MinimumLevel = CurrentEnvironment.IsDevelopment()
+                        ? LogEventLevel.Debug
+                        : LogEventLevel.Warning
                 };
-                var loggerConfiguration = new LoggerConfiguration()
-                    .MinimumLevel.ControlledBy(levelSwitch)
+                var loggerConfiguration = new LoggerConfiguration().MinimumLevel
+                    .ControlledBy(levelSwitch)
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                     .Enrich.FromLogContext()
                     .WriteTo.Console(outputTemplate: "{Message}{NewLine}")
@@ -251,8 +259,10 @@ namespace OdhApiCore
                 Log.Logger = loggerConfiguration;
             });
 
-            services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
-            services.AddResponseCompression( options =>
+            services.Configure<GzipCompressionProviderOptions>(
+                options => options.Level = System.IO.Compression.CompressionLevel.Optimal
+            );
+            services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
                 options.Providers.Add<GzipCompressionProvider>();
@@ -260,49 +270,60 @@ namespace OdhApiCore
 
             services.AddCors(o =>
             {
-                o.AddPolicy("CorsPolicy", builder =>
-                {
-                    builder.AllowAnyMethod()
+                o.AddPolicy(
+                    "CorsPolicy",
+                    builder =>
+                    {
+                        builder
+                            .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials()
                             .SetIsOriginAllowed(hostName => true);
+                    }
+                );
+            });
+
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    //{
+                    //    CamelCaseText = true
+                    //});
                 });
-            });
-            
-            services.AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                //{
-                //    CamelCaseText = true
-                //});
-            });
 
             services.AddRazorPages();
 
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
-      
+
             //Initialize JWT Authentication
-            services.AddAuthentication(options =>
+            services
+                .AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                    .AddJwtBearer(jwtBearerOptions =>
+                .AddJwtBearer(jwtBearerOptions =>
                 {
-                    jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");                    
-                    //jwtBearerOptions.Audience = "account";                
+                    jwtBearerOptions.Authority = Configuration
+                        .GetSection("OauthServerConfig")
+                        .GetValue<string>("Authority");
+                    //jwtBearerOptions.Audience = "account";
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = "preferred_username",
                         ValidateAudience = false,
-                        ValidateLifetime = true,                        
-                        ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
+                        ValidateLifetime = true,
+                        ValidIssuer = Configuration
+                            .GetSection("OauthServerConfig")
+                            .GetValue<string>("Authority"),
                         ValidateIssuer = true
                     };
                     jwtBearerOptions.Events = new JwtBearerEvents()
-                    {     
+                    {
                         OnAuthenticationFailed = c =>
                         {
                             c.NoResult();
@@ -310,75 +331,94 @@ namespace OdhApiCore
                             c.Response.StatusCode = 401;
                             c.Response.ContentType = "text/plain";
                             return c.Response.WriteAsync("");
-                        },                        
+                        },
                     };
                 });
 
             services.AddMvc(options =>
-                {
-                    options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
-                    options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
+            {
+                options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
+                options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
 
-                    options.OutputFormatters.Add(new Formatters.JsonLdOutputFormatter());
-                    options.FormatterMappings.SetMediaTypeMappingForFormat("json-ld", "application/ldjson");
+                options.OutputFormatters.Add(new Formatters.JsonLdOutputFormatter());
+                options.FormatterMappings.SetMediaTypeMappingForFormat(
+                    "json-ld",
+                    "application/ldjson"
+                );
 
-                    options.OutputFormatters.Add(new Formatters.RawdataOutputFormatter());
-                    options.FormatterMappings.SetMediaTypeMappingForFormat("rawdata", "application/rawdata");
-                });
-                //.AddJsonOptions(options =>
-                //{
-                //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = new DefaultContractResolver();
-                //});
-            
+                options.OutputFormatters.Add(new Formatters.RawdataOutputFormatter());
+                options.FormatterMappings.SetMediaTypeMappingForFormat(
+                    "rawdata",
+                    "application/rawdata"
+                );
+            });
+            //.AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = new DefaultContractResolver();
+            //});
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { 
-                    Title = "OdhApi Tourism .Net Core", 
-                    Version = "v1",
-                    Description = "ODH Tourism Api based on .Net Core with PostgreSQL",
-                    TermsOfService = new System.Uri("https://opendatahub.readthedocs.io/en/latest/"),
-                    Contact = new OpenApiContact
+                c.SwaggerDoc(
+                    "v1",
+                    new OpenApiInfo
                     {
-                        Name = "Open Data Hub Team",
-                        Email = "help@opendatahub.bz.it",
-                        Url = new System.Uri("https://opendatahub.bz.it/"),
-                    },
-                });                               
-                c.MapType<LegacyBool>(() => new OpenApiSchema
-                {
-                    Type = "boolean"
-                });
-                c.MapType<PageSize>(() => new OpenApiSchema
-                {
-                    Type = "integer"
-                });
+                        Title = "OdhApi Tourism .Net Core",
+                        Version = "v1",
+                        Description = "ODH Tourism Api based on .Net Core with PostgreSQL",
+                        TermsOfService = new System.Uri(
+                            "https://opendatahub.readthedocs.io/en/latest/"
+                        ),
+                        Contact = new OpenApiContact
+                        {
+                            Name = "Open Data Hub Team",
+                            Email = "help@opendatahub.bz.it",
+                            Url = new System.Uri("https://opendatahub.bz.it/"),
+                        },
+                    }
+                );
+                c.MapType<LegacyBool>(() => new OpenApiSchema { Type = "boolean" });
+                c.MapType<PageSize>(() => new OpenApiSchema { Type = "integer" });
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 //var xmlPathdatamodel = Path.Combine(AppContext.BaseDirectory, $"DataModel.xml");
                 c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
                 //c.IncludeXmlComments(xmlPathdatamodel, includeControllerXmlComments: true);
-                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
+                c.AddSecurityDefinition(
+                    "oauth2",
+                    new OpenApiSecurityScheme
                     {
-                        Password = new OpenApiOAuthFlow
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.OAuth2,
+                        Flows = new OpenApiOAuthFlows
                         {
-                           TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
+                            Password = new OpenApiOAuthFlow
+                            {
+                                TokenUrl = new Uri(
+                                    Configuration
+                                        .GetSection("OauthServerConfig")
+                                        .GetValue<string>("Authority")
+                                        + "protocol/openid-connect/token"
+                                )
+                            },
+                            ClientCredentials = new OpenApiOAuthFlow
+                            {
+                                TokenUrl = new Uri(
+                                    Configuration
+                                        .GetSection("OauthServerConfig")
+                                        .GetValue<string>("Authority")
+                                        + "protocol/openid-connect/token"
+                                )
+                            }
                         },
-                        ClientCredentials = new OpenApiOAuthFlow
-                        {
-                            TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
-                        }
-                    },
-                    BearerFormat = "JWT",
-                    Scheme = "Bearer"
-                });
+                        BearerFormat = "JWT",
+                        Scheme = "Bearer"
+                    }
+                );
                 c.SchemaFilter<DeprecatedAttributeSchemaFilter>();
                 c.SchemaFilter<EnumAttributeSchemaFilter>();
-                c.EnableAnnotations();                       
+                c.EnableAnnotations();
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{
                 //    {
@@ -397,7 +437,7 @@ namespace OdhApiCore
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;                
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
             });
 
             //services.AddHttpContextAccessor();
@@ -410,7 +450,7 @@ namespace OdhApiCore
             //// TODO: Move to Production
             //app.UseClientRateLimiting();
             //app.UseIpRateLimiting();
-           
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -423,14 +463,19 @@ namespace OdhApiCore
             app.UseResponseCompression();
             //app.UseHttpsRedirection();
 
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                OnPrepareResponse = ctx =>
+            app.UseStaticFiles(
+                new StaticFileOptions()
                 {
-                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-                },                
-            });
+                    OnPrepareResponse = ctx =>
+                    {
+                        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+                        ctx.Context.Response.Headers.Append(
+                            "Access-Control-Allow-Headers",
+                            "Origin, X-Requested-With, Content-Type, Accept"
+                        );
+                    },
+                }
+            );
 
             app.UseRouting();
 
@@ -444,10 +489,15 @@ namespace OdhApiCore
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
             {
-                c.PreSerializeFilters.Add((swagger, httpReq) =>
-                {
-                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
-                });                
+                c.PreSerializeFilters.Add(
+                    (swagger, httpReq) =>
+                    {
+                        swagger.Servers = new List<OpenApiServer>
+                        {
+                            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
+                        };
+                    }
+                );
             });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
@@ -470,7 +520,6 @@ namespace OdhApiCore
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);
 
-
             //REWRITE, REDIRECT RULES
             //var rwoptions = new RewriteOptions()
             //    .AddRedirect("api/(.*)", "v1/$1");
@@ -480,10 +529,9 @@ namespace OdhApiCore
             //skipRemainingRules: true)
 
             app.UseRewriter(
-                new RewriteOptions()
-                .AddRedirect("api/(.*)", "v1/$1")
-                //.AddRewrite(@"^(?=/api)", "/v1", skipRemainingRules: true)
-                );
+                new RewriteOptions().AddRedirect("api/(.*)", "v1/$1")
+            //.AddRewrite(@"^(?=/api)", "/v1", skipRemainingRules: true)
+            );
 
             //Not needed at moment
             //app.UseHttpContext();
@@ -491,7 +539,7 @@ namespace OdhApiCore
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");                
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

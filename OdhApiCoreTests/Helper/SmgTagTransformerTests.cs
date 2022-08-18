@@ -11,10 +11,7 @@ namespace OdhApiCoreTests.Helper
     {
         public static TheoryData<string> GetLanguages()
         {
-            return new TheoryData<string>
-            {
-                "de", "it", "en", "ru"
-            };
+            return new TheoryData<string> { "de", "it", "en", "ru" };
         }
 
         [Theory]
@@ -23,7 +20,9 @@ namespace OdhApiCoreTests.Helper
         {
             var smgtagslist = Enumerable.Empty<SmgTags>();
             IEnumerable<SmgTags> result = SmgTagTransformer.TransformToLocalizedSmgTag(
-                smgtagslist, language);
+                smgtagslist,
+                language
+            );
             Assert.NotNull(result);
             Assert.Empty(result);
         }
@@ -43,12 +42,11 @@ namespace OdhApiCoreTests.Helper
                 },
                 ValidForEntity = Array.Empty<string>()
             };
-            var smgtagslist = new SmgTags[]
-            {
-                expectedSmgTag
-            };
+            var smgtagslist = new SmgTags[] { expectedSmgTag };
             IEnumerable<SmgTags> result = SmgTagTransformer.TransformToLocalizedSmgTag(
-                smgtagslist, language);
+                smgtagslist,
+                language
+            );
             Assert.NotNull(result);
             var smgtag = Assert.Single(result);
             Assert.Equal(expectedSmgTag.Id, smgtag.Id);
