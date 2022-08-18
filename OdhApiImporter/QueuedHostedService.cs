@@ -13,15 +13,18 @@ namespace OdhApiImporter
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly ILogger<QueuedHostedService> _logger;
 
-        public QueuedHostedService(IBackgroundTaskQueue taskQueue, ILogger<QueuedHostedService> logger) =>
-            (_taskQueue, _logger) = (taskQueue, logger);
+        public QueuedHostedService(
+            IBackgroundTaskQueue taskQueue,
+            ILogger<QueuedHostedService> logger
+        ) => (_taskQueue, _logger) = (taskQueue, logger);
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation(
-                $"{nameof(QueuedHostedService)} is running.{Environment.NewLine}" +
-                $"{Environment.NewLine}Tap W to add a work item to the " +
-                $"background queue.{Environment.NewLine}");
+                $"{nameof(QueuedHostedService)} is running.{Environment.NewLine}"
+                    + $"{Environment.NewLine}Tap W to add a work item to the "
+                    + $"background queue.{Environment.NewLine}"
+            );
 
             return ProcessTaskQueueAsync(stoppingToken);
         }
@@ -32,8 +35,9 @@ namespace OdhApiImporter
             {
                 try
                 {
-                    Func<CancellationToken, ValueTask>? workItem =
-                        await _taskQueue.DequeueAsync(stoppingToken);
+                    Func<CancellationToken, ValueTask>? workItem = await _taskQueue.DequeueAsync(
+                        stoppingToken
+                    );
 
                     await workItem(stoppingToken);
                 }
@@ -50,8 +54,7 @@ namespace OdhApiImporter
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation(
-                $"{nameof(QueuedHostedService)} is stopping.");
+            _logger.LogInformation($"{nameof(QueuedHostedService)} is stopping.");
 
             return base.StopAsync(cancellationToken);
         }

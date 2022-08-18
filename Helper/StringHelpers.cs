@@ -21,13 +21,13 @@ namespace Helper
             {
                 Dictionary<string, string>? myvaluedict = new Dictionary<string, string>();
 
-                string valuenew = value.Replace("?","");
+                string valuenew = value.Replace("?", "");
 
                 var splitted = valuenew.Split('&');
 
                 if (splitted.Count() > 0)
                 {
-                    foreach(var splittedfield in  splitted)
+                    foreach (var splittedfield in splitted)
                     {
                         var splittedobj = splittedfield.Split('=');
                         if (splittedobj.Count() == 2)
@@ -39,9 +39,13 @@ namespace Helper
                 else
                     return null;
             }
-        }        
+        }
 
-        public static string JoinStringListForPG(string separator, IEnumerable<string> list, string escapechar)
+        public static string JoinStringListForPG(
+            string separator,
+            IEnumerable<string> list,
+            string escapechar
+        )
         {
             var newlist = list.Select(x => (escapechar + x + escapechar)).ToList();
 
@@ -63,7 +67,9 @@ namespace Helper
             }
             else
             {
-                throw new FormatException("The string is not a recognized as a valid boolean value.");
+                throw new FormatException(
+                    "The string is not a recognized as a valid boolean value."
+                );
             }
         }
 
@@ -72,13 +78,13 @@ namespace Helper
             var strlist = strarr.ToList();
             strlist.Add(value);
 
-            return strlist.ToArray();            
+            return strlist.ToArray();
         }
 
         public static string[] AddToStringArray(this string[] strarr, string[] values)
         {
             var strlist = strarr.ToList();
-           
+
             foreach (var value in values)
             {
                 strlist.Add(value);
@@ -87,6 +93,4 @@ namespace Helper
             return strlist.ToArray();
         }
     }
-
-
 }

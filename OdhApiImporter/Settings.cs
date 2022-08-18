@@ -12,7 +12,7 @@ namespace OdhApiImporter
         }
 
         public string Username { get; private set; }
-        public string Password { get; private set;  }
+        public string Password { get; private set; }
     }
 
     public class LcsConfig
@@ -50,11 +50,11 @@ namespace OdhApiImporter
         public SiagConfig(string username, string password)
         {
             this.Username = username;
-            this.Password = password;            
+            this.Password = password;
         }
 
         public string Username { get; private set; }
-        public string Password { get; private set; }        
+        public string Password { get; private set; }
     }
 
     public class XmlConfig
@@ -66,14 +66,14 @@ namespace OdhApiImporter
         }
 
         public string Xmldir { get; private set; }
-        public string XmldirWeather { get; private set; }        
+        public string XmldirWeather { get; private set; }
     }
 
     public class JsonConfig
     {
         public JsonConfig(string jsondir)
         {
-            this.Jsondir = jsondir;            
+            this.Jsondir = jsondir;
         }
 
         public string Jsondir { get; private set; }
@@ -81,7 +81,13 @@ namespace OdhApiImporter
 
     public class S3ImageresizerConfig
     {
-        public S3ImageresizerConfig(string url, string docurl, string bucketaccesspoint, string accesskey, string secretkey)
+        public S3ImageresizerConfig(
+            string url,
+            string docurl,
+            string bucketaccesspoint,
+            string accesskey,
+            string secretkey
+        )
         {
             this.Url = url;
             this.DocUrl = docurl;
@@ -157,7 +163,7 @@ namespace OdhApiImporter
         private readonly IConfiguration configuration;
         private readonly Lazy<string> connectionString;
         private readonly MssConfig mssConfig;
-        private readonly LcsConfig lcsConfig; 
+        private readonly LcsConfig lcsConfig;
         private readonly CDBConfig cdbConfig;
         private readonly SiagConfig siagConfig;
         private readonly XmlConfig xmlConfig;
@@ -170,28 +176,63 @@ namespace OdhApiImporter
         public Settings(IConfiguration configuration)
         {
             this.configuration = configuration;
-            this.connectionString = new Lazy<string>(() =>
-            this.configuration.GetConnectionString("PGConnection"));
+            this.connectionString = new Lazy<string>(
+                () => this.configuration.GetConnectionString("PGConnection")
+            );
             var mss = this.configuration.GetSection("MssConfig");
-            this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
+            this.mssConfig = new MssConfig(
+                mss.GetValue<string>("Username", ""),
+                mss.GetValue<string>("Password", "")
+            );
             var lcs = this.configuration.GetSection("LcsConfig");
-            this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""));
+            this.lcsConfig = new LcsConfig(
+                lcs.GetValue<string>("Username", ""),
+                lcs.GetValue<string>("Password", ""),
+                lcs.GetValue<string>("MessagePassword", "")
+            );
             var cdb = this.configuration.GetSection("CDBConfig");
-            this.cdbConfig = new CDBConfig(cdb.GetValue<string>("Username", ""), cdb.GetValue<string>("Password", ""), cdb.GetValue<string>("Url", ""));
+            this.cdbConfig = new CDBConfig(
+                cdb.GetValue<string>("Username", ""),
+                cdb.GetValue<string>("Password", ""),
+                cdb.GetValue<string>("Url", "")
+            );
             var siag = this.configuration.GetSection("SiagConfig");
-            this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
+            this.siagConfig = new SiagConfig(
+                siag.GetValue<string>("Username", ""),
+                siag.GetValue<string>("Password", "")
+            );
             var xml = this.configuration.GetSection("XmlConfig");
-            this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
+            this.xmlConfig = new XmlConfig(
+                xml.GetValue<string>("Xmldir", ""),
+                xml.GetValue<string>("XmldirWeather", "")
+            );
             var json = this.configuration.GetSection("JsonConfig");
             this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
-            this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("DocUrl", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
+            this.s3imageresizerConfig = new S3ImageresizerConfig(
+                s3img.GetValue<string>("Url", ""),
+                s3img.GetValue<string>("DocUrl", ""),
+                s3img.GetValue<string>("BucketAccessPoint", ""),
+                s3img.GetValue<string>("AccessKey", ""),
+                s3img.GetValue<string>("SecretKey", "")
+            );
             var ebms = this.configuration.GetSection("EBMSConfig");
-            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
+            this.ebmsConfig = new EBMSConfig(
+                ebms.GetValue<string>("EBMSUser", ""),
+                ebms.GetValue<string>("EBMSPassword", "")
+            );
             var raven = this.configuration.GetSection("RavenConfig");
-            this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
+            this.ravenConfig = new RavenConfig(
+                raven.GetValue<string>("Username", ""),
+                raven.GetValue<string>("Password", ""),
+                raven.GetValue<string>("ServiceUrl", "")
+            );
             var dss = this.configuration.GetSection("DSSConfig");
-            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+            this.dssConfig = new DSSConfig(
+                dss.GetValue<string>("Username", ""),
+                dss.GetValue<string>("Password", ""),
+                dss.GetValue<string>("ServiceUrl", "")
+            );
         }
 
         public string PostgresConnectionString => this.connectionString.Value;

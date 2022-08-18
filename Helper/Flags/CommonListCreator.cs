@@ -104,22 +104,25 @@ namespace Helper
 
         public static (double, double) CreateRangeStringDouble(string? rangetoSplit)
         {
-            NumberFormatInfo provider = new NumberFormatInfo
-            {
-                NumberDecimalSeparator = "."
-            };
+            NumberFormatInfo provider = new NumberFormatInfo { NumberDecimalSeparator = "." };
 
             if (rangetoSplit != null)
             {
                 var splittedfilter = rangetoSplit.Split(',');
 
-                return (Convert.ToDouble(splittedfilter[0], provider), Convert.ToDouble(splittedfilter[1], provider));
+                return (
+                    Convert.ToDouble(splittedfilter[0], provider),
+                    Convert.ToDouble(splittedfilter[1], provider)
+                );
             }
             else
                 return (0.0, 0.0);
         }
 
-        public static List<string> CreateDifficultyList(string? difficultyfilter, string? activitypoitype)
+        public static List<string> CreateDifficultyList(
+            string? difficultyfilter,
+            string? activitypoitype
+        )
         {
             List<string> difficultyids = new List<string>();
 
@@ -212,14 +215,15 @@ namespace Helper
 
                         break;
                 }
-
-
             }
 
             return difficultyids;
         }
 
-        public static List<string> CreateDifficultyListfromFlag(string? difficultyfilter, string activitypoitype)
+        public static List<string> CreateDifficultyListfromFlag(
+            string? difficultyfilter,
+            string activitypoitype
+        )
         {
             List<string> difficultyids = new List<string>();
 
@@ -321,8 +325,6 @@ namespace Helper
 
                         break;
                 }
-
-
             }
 
             return difficultyids;

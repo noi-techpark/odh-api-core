@@ -16,16 +16,71 @@ namespace LCS
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Gets Gastronomy Detail
-        public static Gastronomy GetGastronomyDetailLTS(string gastroRID, Gastronomy gastro, bool newgastro, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static Gastronomy GetGastronomyDetailLTS(
+            string gastroRID,
+            Gastronomy gastro,
+            bool newgastro,
+            string ltsuser,
+            string ltspswd,
+            string ltsmsgpswd
+        )
         {
-            var mygastrodetailrequestde = GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(gastroRID, "de", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
-            var mygastrodetailrequestit = GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(gastroRID, "it", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
-            var mygastrodetailrequesten = GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(gastroRID, "en", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
+            var mygastrodetailrequestde =
+                GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(
+                    gastroRID,
+                    "de",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "SMG",
+                    ltsmsgpswd
+                );
+            var mygastrodetailrequestit =
+                GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(
+                    gastroRID,
+                    "it",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "SMG",
+                    ltsmsgpswd
+                );
+            var mygastrodetailrequesten =
+                GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(
+                    gastroRID,
+                    "en",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "1",
+                    "SMG",
+                    ltsmsgpswd
+                );
 
             GetGastronomicDataLCS mygastrosearch = new GetGastronomicDataLCS(ltsuser, ltspswd);
-            var mygastroresponsede = mygastrosearch.GetGastronomicDataDetail(mygastrodetailrequestde);
-            var mygastroresponseit = mygastrosearch.GetGastronomicDataDetail(mygastrodetailrequestit);
-            var mygastroresponseen = mygastrosearch.GetGastronomicDataDetail(mygastrodetailrequesten);
+            var mygastroresponsede = mygastrosearch.GetGastronomicDataDetail(
+                mygastrodetailrequestde
+            );
+            var mygastroresponseit = mygastrosearch.GetGastronomicDataDetail(
+                mygastrodetailrequestit
+            );
+            var mygastroresponseen = mygastrosearch.GetGastronomicDataDetail(
+                mygastrodetailrequesten
+            );
 
             //NEW if Service gives <Error Code="450" ShortText="WRONG_RID" Type="13">Gastronomic RID(s) for GastronomicDataDetail not found or not a gastronomic object.</Error>
 
@@ -40,7 +95,9 @@ namespace LCS
                         gastro.LastChange = DateTime.Now;
 
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Gastronomy " + gastro.Id + " deactivated on source, deactivating!");
+                        Console.WriteLine(
+                            "Gastronomy " + gastro.Id + " deactivated on source, deactivating!"
+                        );
 
                         return gastro;
                     }
@@ -54,10 +111,11 @@ namespace LCS
 
             if (thegastrononomyde.ContactInfos != null)
                 if (thegastrononomyde.ContactInfos.ContactInfo.FirstOrDefault().CompanyName != null)
-                    nome = thegastrononomyde.ContactInfos.ContactInfo.FirstOrDefault().CompanyName.InnerText;
+                    nome = thegastrononomyde.ContactInfos.ContactInfo
+                        .FirstOrDefault()
+                        .CompanyName.InnerText;
 
             gastro.Shortname = nome;
-
 
             //Gastro anhängen weil es sein kann dass Hotel auch Gastro ist
             gastro.Id = "GASTRO" + thegastrononomyde.RID;
@@ -80,8 +138,6 @@ namespace LCS
                 gastro.LastChange = DateTime.Now;
             }
 
-
-
             //Add The available Languages
             List<string> availablelangs = new List<string>() { "de", "it", "en" };
             gastro.HasLanguage = availablelangs;
@@ -92,7 +148,10 @@ namespace LCS
             //LastChange: Wann wurde das Objekt das letzte Mal geändert.
             //Mode: Das Objekt soll nur dann publiziert werden wenn Mode > 0.
             gastro.Active = Convert.ToBoolean(thegastrononomyde.News.Status.IsEnabled);
-            gastro.RepresentationRestriction = thegastrononomyde.News != null ? Convert.ToInt32(thegastrononomyde.News.RepresentationRestriction.Mode) : 0;
+            gastro.RepresentationRestriction =
+                thegastrononomyde.News != null
+                    ? Convert.ToInt32(thegastrononomyde.News.RepresentationRestriction.Mode)
+                    : 0;
 
             //if (gastro.RepresentationRestriction > 0 && gastro.Active)
             //    gastro.SmgActive = true;
@@ -107,14 +166,12 @@ namespace LCS
                 gastro.Active = false;
             }
 
-
             //Contactinfo DE
             if (thegastrononomyde.ContactInfos.ContactInfo != null)
             {
                 var parsedcontactinfo = thegastrononomyde.ContactInfos.ContactInfo.FirstOrDefault();
                 if (parsedcontactinfo != null)
                 {
-
                     //de
                     ContactInfos mycontactinfode = new ContactInfos();
 
@@ -122,28 +179,79 @@ namespace LCS
 
                     if (myadresselement != null)
                     {
-                        mycontactinfode.Address = myadresselement.Address.FirstOrDefault().AddressLine;
+                        mycontactinfode.Address = myadresselement.Address
+                            .FirstOrDefault()
+                            .AddressLine;
 
-                        mycontactinfode.City = parsedcontactinfo.Addresses.Address.FirstOrDefault().CityName;
-                        mycontactinfode.CountryCode = parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName.Code;
-                        mycontactinfode.CountryName = parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName != null ? parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName.InnerText : "";
-                        mycontactinfode.ZipCode = parsedcontactinfo.Addresses.Address.FirstOrDefault().PostalCode;
+                        mycontactinfode.City = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .CityName;
+                        mycontactinfode.CountryCode = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .CountryName.Code;
+                        mycontactinfode.CountryName =
+                            parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName != null
+                                ? parsedcontactinfo.Addresses.Address
+                                    .FirstOrDefault()
+                                    .CountryName.InnerText
+                                : "";
+                        mycontactinfode.ZipCode = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .PostalCode;
 
-                        mycontactinfode.Email = parsedcontactinfo.Emails != null ? parsedcontactinfo.Emails.Email.FirstOrDefault().InnerText : "";
+                        mycontactinfode.Email =
+                            parsedcontactinfo.Emails != null
+                                ? parsedcontactinfo.Emails.Email.FirstOrDefault().InnerText
+                                : "";
                         mycontactinfode.Faxnumber = "";
 
-                        mycontactinfode.Givenname = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().GivenName : "";
-                        mycontactinfode.Surname = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().Surname : "";
-                        mycontactinfode.NamePrefix = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().NamePrefix : "";
+                        mycontactinfode.Givenname =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().GivenName
+                                : "";
+                        mycontactinfode.Surname =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().Surname
+                                : "";
+                        mycontactinfode.NamePrefix =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().NamePrefix
+                                : "";
 
-                        mycontactinfode.CompanyName = parsedcontactinfo.CompanyName != null ? parsedcontactinfo.CompanyName.InnerText : "";
+                        mycontactinfode.CompanyName =
+                            parsedcontactinfo.CompanyName != null
+                                ? parsedcontactinfo.CompanyName.InnerText
+                                : "";
 
                         mycontactinfode.Language = "de";
 
-                        mycontactinfode.Phonenumber = parsedcontactinfo.Phones != null ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "1").Count() > 0 ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "1").FirstOrDefault().PhoneNumber : "" : "";
-                        mycontactinfode.Faxnumber = parsedcontactinfo.Phones != null ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "3").Count() > 0 ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "3").FirstOrDefault().PhoneNumber : "" : "";
+                        mycontactinfode.Phonenumber =
+                            parsedcontactinfo.Phones != null
+                                ? parsedcontactinfo.Phones.Phone
+                                    .Where(x => x.PhoneTechType == "1")
+                                    .Count() > 0
+                                    ? parsedcontactinfo.Phones.Phone
+                                        .Where(x => x.PhoneTechType == "1")
+                                        .FirstOrDefault()
+                                        .PhoneNumber
+                                    : ""
+                                : "";
+                        mycontactinfode.Faxnumber =
+                            parsedcontactinfo.Phones != null
+                                ? parsedcontactinfo.Phones.Phone
+                                    .Where(x => x.PhoneTechType == "3")
+                                    .Count() > 0
+                                    ? parsedcontactinfo.Phones.Phone
+                                        .Where(x => x.PhoneTechType == "3")
+                                        .FirstOrDefault()
+                                        .PhoneNumber
+                                    : ""
+                                : "";
 
-                        mycontactinfode.Url = parsedcontactinfo.URLs != null ? parsedcontactinfo.URLs.URL.FirstOrDefault().InnerText : "";
+                        mycontactinfode.Url =
+                            parsedcontactinfo.URLs != null
+                                ? parsedcontactinfo.URLs.URL.FirstOrDefault().InnerText
+                                : "";
 
                         //contactinfolist.Add(mycontactinfode);
                         gastro.ContactInfos.TryAddOrUpdate("de", mycontactinfode);
@@ -163,36 +271,84 @@ namespace LCS
                 var parsedcontactinfo = thegastrononomyit.ContactInfos.ContactInfo.FirstOrDefault();
                 if (parsedcontactinfo != null)
                 {
-
                     ContactInfos mycontactinfoit = new ContactInfos();
 
                     var myadresselement = parsedcontactinfo.Addresses;
                     if (myadresselement != null)
                     {
-                        mycontactinfoit.Address = myadresselement.Address.FirstOrDefault().AddressLine;
+                        mycontactinfoit.Address = myadresselement.Address
+                            .FirstOrDefault()
+                            .AddressLine;
 
-                        mycontactinfoit.City = parsedcontactinfo.Addresses.Address.FirstOrDefault().CityName;
-                        mycontactinfoit.CountryCode = parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName.Code;
-                        mycontactinfoit.CountryName = parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName != null ? parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName.InnerText : "";
-                        mycontactinfoit.ZipCode = parsedcontactinfo.Addresses.Address.FirstOrDefault().PostalCode;
+                        mycontactinfoit.City = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .CityName;
+                        mycontactinfoit.CountryCode = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .CountryName.Code;
+                        mycontactinfoit.CountryName =
+                            parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName != null
+                                ? parsedcontactinfo.Addresses.Address
+                                    .FirstOrDefault()
+                                    .CountryName.InnerText
+                                : "";
+                        mycontactinfoit.ZipCode = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .PostalCode;
 
-                        mycontactinfoit.Email = parsedcontactinfo.Emails != null ? parsedcontactinfo.Emails.Email.FirstOrDefault().InnerText : "";
+                        mycontactinfoit.Email =
+                            parsedcontactinfo.Emails != null
+                                ? parsedcontactinfo.Emails.Email.FirstOrDefault().InnerText
+                                : "";
                         mycontactinfoit.Faxnumber = "";
 
-                        mycontactinfoit.Givenname = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().GivenName : "";
-                        mycontactinfoit.Surname = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().Surname : "";
-                        mycontactinfoit.NamePrefix = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().NamePrefix : "";
+                        mycontactinfoit.Givenname =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().GivenName
+                                : "";
+                        mycontactinfoit.Surname =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().Surname
+                                : "";
+                        mycontactinfoit.NamePrefix =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().NamePrefix
+                                : "";
 
-                        mycontactinfoit.CompanyName = parsedcontactinfo.CompanyName != null ? parsedcontactinfo.CompanyName.InnerText : "";
+                        mycontactinfoit.CompanyName =
+                            parsedcontactinfo.CompanyName != null
+                                ? parsedcontactinfo.CompanyName.InnerText
+                                : "";
 
                         mycontactinfoit.Language = "it";
 
-                        mycontactinfoit.Phonenumber = parsedcontactinfo.Phones != null ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "1").Count() > 0 ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "1").FirstOrDefault().PhoneNumber : "" : "";
-                        mycontactinfoit.Faxnumber = parsedcontactinfo.Phones != null ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "3").Count() > 0 ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "3").FirstOrDefault().PhoneNumber : "" : "";
+                        mycontactinfoit.Phonenumber =
+                            parsedcontactinfo.Phones != null
+                                ? parsedcontactinfo.Phones.Phone
+                                    .Where(x => x.PhoneTechType == "1")
+                                    .Count() > 0
+                                    ? parsedcontactinfo.Phones.Phone
+                                        .Where(x => x.PhoneTechType == "1")
+                                        .FirstOrDefault()
+                                        .PhoneNumber
+                                    : ""
+                                : "";
+                        mycontactinfoit.Faxnumber =
+                            parsedcontactinfo.Phones != null
+                                ? parsedcontactinfo.Phones.Phone
+                                    .Where(x => x.PhoneTechType == "3")
+                                    .Count() > 0
+                                    ? parsedcontactinfo.Phones.Phone
+                                        .Where(x => x.PhoneTechType == "3")
+                                        .FirstOrDefault()
+                                        .PhoneNumber
+                                    : ""
+                                : "";
 
-
-
-                        mycontactinfoit.Url = parsedcontactinfo.URLs != null ? parsedcontactinfo.URLs.URL.FirstOrDefault().InnerText : "";
+                        mycontactinfoit.Url =
+                            parsedcontactinfo.URLs != null
+                                ? parsedcontactinfo.URLs.URL.FirstOrDefault().InnerText
+                                : "";
 
                         //contactinfolist.Add(mycontactinfoit);
 
@@ -218,28 +374,79 @@ namespace LCS
                     var myadresselement = parsedcontactinfo.Addresses;
                     if (myadresselement != null)
                     {
-                        mycontactinfoen.Address = myadresselement.Address.FirstOrDefault().AddressLine;
+                        mycontactinfoen.Address = myadresselement.Address
+                            .FirstOrDefault()
+                            .AddressLine;
 
-                        mycontactinfoen.City = parsedcontactinfo.Addresses.Address.FirstOrDefault().CityName;
-                        mycontactinfoen.CountryCode = parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName.Code;
-                        mycontactinfoen.CountryName = parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName != null ? parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName.InnerText : "";
-                        mycontactinfoen.ZipCode = parsedcontactinfo.Addresses.Address.FirstOrDefault().PostalCode;
+                        mycontactinfoen.City = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .CityName;
+                        mycontactinfoen.CountryCode = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .CountryName.Code;
+                        mycontactinfoen.CountryName =
+                            parsedcontactinfo.Addresses.Address.FirstOrDefault().CountryName != null
+                                ? parsedcontactinfo.Addresses.Address
+                                    .FirstOrDefault()
+                                    .CountryName.InnerText
+                                : "";
+                        mycontactinfoen.ZipCode = parsedcontactinfo.Addresses.Address
+                            .FirstOrDefault()
+                            .PostalCode;
 
-                        mycontactinfoen.Email = parsedcontactinfo.Emails != null ? parsedcontactinfo.Emails.Email.FirstOrDefault().InnerText : "";
+                        mycontactinfoen.Email =
+                            parsedcontactinfo.Emails != null
+                                ? parsedcontactinfo.Emails.Email.FirstOrDefault().InnerText
+                                : "";
                         mycontactinfoen.Faxnumber = "";
 
-                        mycontactinfoen.Givenname = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().GivenName : "";
-                        mycontactinfoen.Surname = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().Surname : "";
-                        mycontactinfoen.NamePrefix = parsedcontactinfo.Names != null ? parsedcontactinfo.Names.Name.FirstOrDefault().NamePrefix : "";
+                        mycontactinfoen.Givenname =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().GivenName
+                                : "";
+                        mycontactinfoen.Surname =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().Surname
+                                : "";
+                        mycontactinfoen.NamePrefix =
+                            parsedcontactinfo.Names != null
+                                ? parsedcontactinfo.Names.Name.FirstOrDefault().NamePrefix
+                                : "";
 
-                        mycontactinfoen.CompanyName = parsedcontactinfo.CompanyName != null ? parsedcontactinfo.CompanyName.InnerText : "";
+                        mycontactinfoen.CompanyName =
+                            parsedcontactinfo.CompanyName != null
+                                ? parsedcontactinfo.CompanyName.InnerText
+                                : "";
 
                         mycontactinfoen.Language = "en";
 
-                        mycontactinfoen.Phonenumber = parsedcontactinfo.Phones != null ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "1").Count() > 0 ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "1").FirstOrDefault().PhoneNumber : "" : "";
-                        mycontactinfoen.Faxnumber = parsedcontactinfo.Phones != null ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "3").Count() > 0 ? parsedcontactinfo.Phones.Phone.Where(x => x.PhoneTechType == "3").FirstOrDefault().PhoneNumber : "" : "";
+                        mycontactinfoen.Phonenumber =
+                            parsedcontactinfo.Phones != null
+                                ? parsedcontactinfo.Phones.Phone
+                                    .Where(x => x.PhoneTechType == "1")
+                                    .Count() > 0
+                                    ? parsedcontactinfo.Phones.Phone
+                                        .Where(x => x.PhoneTechType == "1")
+                                        .FirstOrDefault()
+                                        .PhoneNumber
+                                    : ""
+                                : "";
+                        mycontactinfoen.Faxnumber =
+                            parsedcontactinfo.Phones != null
+                                ? parsedcontactinfo.Phones.Phone
+                                    .Where(x => x.PhoneTechType == "3")
+                                    .Count() > 0
+                                    ? parsedcontactinfo.Phones.Phone
+                                        .Where(x => x.PhoneTechType == "3")
+                                        .FirstOrDefault()
+                                        .PhoneNumber
+                                    : ""
+                                : "";
 
-                        mycontactinfoen.Url = parsedcontactinfo.URLs != null ? parsedcontactinfo.URLs.URL.FirstOrDefault().InnerText : "";
+                        mycontactinfoen.Url =
+                            parsedcontactinfo.URLs != null
+                                ? parsedcontactinfo.URLs.URL.FirstOrDefault().InnerText
+                                : "";
 
                         //contactinfolist.Add(mycontactinfoen);
 
@@ -263,10 +470,14 @@ namespace LCS
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
             //DE Infos
-            var parsedmultimediainfogeneralde = thegastrononomyde.MultimediaDescriptions.MultimediaDescription;
+            var parsedmultimediainfogeneralde = thegastrononomyde
+                .MultimediaDescriptions
+                .MultimediaDescription;
             if (parsedmultimediainfogeneralde != null)
             {
-                var parsedmultimediainfode = parsedmultimediainfogeneralde.Where(x => x.InfoCode == "23").FirstOrDefault();
+                var parsedmultimediainfode = parsedmultimediainfogeneralde
+                    .Where(x => x.InfoCode == "23")
+                    .FirstOrDefault();
 
                 if (parsedmultimediainfode.ImageItems.ImageItem != null)
                 {
@@ -274,15 +485,34 @@ namespace LCS
                     {
                         ImageGallery myimggallery = new ImageGallery();
                         myimggallery.Height = imageelement.ImageFormat.Height;
-                        myimggallery.ImageDesc.TryAddOrUpdate("de", imageelement.Description != null ? imageelement.Description.FirstOrDefault().InnerText : "");
+                        myimggallery.ImageDesc.TryAddOrUpdate(
+                            "de",
+                            imageelement.Description != null
+                                ? imageelement.Description.FirstOrDefault().InnerText
+                                : ""
+                        );
                         myimggallery.ImageName = imageelement.RID;
-                        myimggallery.ImageUrl = imageelement.ImageFormat.URL != null ? imageelement.ImageFormat.URL.InnerText : "";
+                        myimggallery.ImageUrl =
+                            imageelement.ImageFormat.URL != null
+                                ? imageelement.ImageFormat.URL.InnerText
+                                : "";
                         myimggallery.IsInGallery = true;
                         //myimggallery.Language = "de";
-                        myimggallery.ListPosition = Convert.ToInt32(imageelement.ImageFormat.RecordID) - 1;
+                        myimggallery.ListPosition =
+                            Convert.ToInt32(imageelement.ImageFormat.RecordID) - 1;
                         myimggallery.Width = imageelement.ImageFormat.Width;
-                        myimggallery.ValidFrom = imageelement.ImageFormat.ApplicableStart != null ? Convert.ToDateTime("2000-" + imageelement.ImageFormat.ApplicableStart) : DateTime.MinValue;
-                        myimggallery.ValidTo = imageelement.ImageFormat.ApplicableEnd != null ? Convert.ToDateTime("2000-" + imageelement.ImageFormat.ApplicableEnd) : DateTime.MaxValue;
+                        myimggallery.ValidFrom =
+                            imageelement.ImageFormat.ApplicableStart != null
+                                ? Convert.ToDateTime(
+                                    "2000-" + imageelement.ImageFormat.ApplicableStart
+                                )
+                                : DateTime.MinValue;
+                        myimggallery.ValidTo =
+                            imageelement.ImageFormat.ApplicableEnd != null
+                                ? Convert.ToDateTime(
+                                    "2000-" + imageelement.ImageFormat.ApplicableEnd
+                                )
+                                : DateTime.MaxValue;
                         myimggallery.CopyRight = imageelement.ImageFormat.CopyrightOwner;
                         myimggallery.License = imageelement.ImageFormat.License;
 
@@ -294,22 +524,43 @@ namespace LCS
                     }
                 }
 
-                var parsedtextinfo = parsedmultimediainfogeneralde.Where(x => x.InfoCode == "1").FirstOrDefault();
-                var parsedshorttextinfo = parsedmultimediainfogeneralde.Where(x => x.InfoCode == "17").FirstOrDefault();
+                var parsedtextinfo = parsedmultimediainfogeneralde
+                    .Where(x => x.InfoCode == "1")
+                    .FirstOrDefault();
+                var parsedshorttextinfo = parsedmultimediainfogeneralde
+                    .Where(x => x.InfoCode == "17")
+                    .FirstOrDefault();
 
                 Detail mydetailde = new Detail();
 
                 //Titel
-                mydetailde.Title = thegastrononomyde.ContactInfos.ContactInfo.FirstOrDefault().CompanyName != null ? thegastrononomyde.ContactInfos.ContactInfo.FirstOrDefault().CompanyName.InnerText : "no name";
+                mydetailde.Title =
+                    thegastrononomyde.ContactInfos.ContactInfo.FirstOrDefault().CompanyName != null
+                        ? thegastrononomyde.ContactInfos.ContactInfo
+                            .FirstOrDefault()
+                            .CompanyName.InnerText
+                        : "no name";
                 mydetailde.Header = "";
                 mydetailde.Language = "de";
                 mydetailde.AdditionalText = "";
                 //mydetailde.MainImage = "";
                 mydetailde.GetThereText = "";
                 if (parsedtextinfo != null)
-                    mydetailde.BaseText = parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description != null ? parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description.FirstOrDefault().InnerText : "";
+                    mydetailde.BaseText =
+                        parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description != null
+                            ? parsedtextinfo.TextItems.TextItem
+                                .FirstOrDefault()
+                                .Description.FirstOrDefault()
+                                .InnerText
+                            : "";
                 if (parsedshorttextinfo != null)
-                    mydetailde.IntroText = parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description != null ? parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description.FirstOrDefault().InnerText : "";
+                    mydetailde.IntroText =
+                        parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description != null
+                            ? parsedshorttextinfo.TextItems.TextItem
+                                .FirstOrDefault()
+                                .Description.FirstOrDefault()
+                                .InnerText
+                            : "";
 
                 //detaillist.Add(mydetailde);
 
@@ -317,16 +568,32 @@ namespace LCS
             }
 
             //IT Infos
-            var parsedmultimediainfogeneralit = thegastrononomyit.MultimediaDescriptions.MultimediaDescription;
+            var parsedmultimediainfogeneralit = thegastrononomyit
+                .MultimediaDescriptions
+                .MultimediaDescription;
             if (parsedmultimediainfogeneralit != null)
             {
-                var parsedmultimediainfoit = parsedmultimediainfogeneralit.Where(x => x.InfoCode == "23").FirstOrDefault();
+                var parsedmultimediainfoit = parsedmultimediainfogeneralit
+                    .Where(x => x.InfoCode == "23")
+                    .FirstOrDefault();
 
                 if (parsedmultimediainfoit.ImageItems.ImageItem != null)
                 {
                     foreach (var imageelement in parsedmultimediainfoit.ImageItems.ImageItem)
                     {
-                        imagegallerylist.Where(x => x.ListPosition == (Convert.ToInt32(imageelement.ImageFormat.RecordID) - 1)).FirstOrDefault().ImageDesc.TryAddOrUpdate("it", imageelement.Description != null ? imageelement.Description.FirstOrDefault().InnerText : "");
+                        imagegallerylist
+                            .Where(
+                                x =>
+                                    x.ListPosition
+                                    == (Convert.ToInt32(imageelement.ImageFormat.RecordID) - 1)
+                            )
+                            .FirstOrDefault()
+                            .ImageDesc.TryAddOrUpdate(
+                                "it",
+                                imageelement.Description != null
+                                    ? imageelement.Description.FirstOrDefault().InnerText
+                                    : ""
+                            );
 
                         //ImageGallery myimggallery = new ImageGallery();
                         //myimggallery.Height = imageelement.ImageFormat.Height;
@@ -342,21 +609,43 @@ namespace LCS
                     }
                 }
 
-                var parsedtextinfo = parsedmultimediainfogeneralit.Where(x => x.InfoCode == "1").FirstOrDefault();
-                var parsedshorttextinfo = parsedmultimediainfogeneralit.Where(x => x.InfoCode == "17").FirstOrDefault();
+                var parsedtextinfo = parsedmultimediainfogeneralit
+                    .Where(x => x.InfoCode == "1")
+                    .FirstOrDefault();
+                var parsedshorttextinfo = parsedmultimediainfogeneralit
+                    .Where(x => x.InfoCode == "17")
+                    .FirstOrDefault();
 
                 Detail mydetailit = new Detail();
 
-                mydetailit.Title = thegastrononomyit.ContactInfos.ContactInfo.FirstOrDefault().CompanyName != null ? thegastrononomyit.ContactInfos.ContactInfo.FirstOrDefault().CompanyName.InnerText : "no name"; ;
+                mydetailit.Title =
+                    thegastrononomyit.ContactInfos.ContactInfo.FirstOrDefault().CompanyName != null
+                        ? thegastrononomyit.ContactInfos.ContactInfo
+                            .FirstOrDefault()
+                            .CompanyName.InnerText
+                        : "no name";
+                ;
                 mydetailit.Header = "";
                 mydetailit.Language = "it";
                 mydetailit.AdditionalText = "";
                 //mydetailit.MainImage = "";
                 mydetailit.GetThereText = "";
                 if (parsedtextinfo != null)
-                    mydetailit.BaseText = parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description != null ? parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description.FirstOrDefault().InnerText : "";
+                    mydetailit.BaseText =
+                        parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description != null
+                            ? parsedtextinfo.TextItems.TextItem
+                                .FirstOrDefault()
+                                .Description.FirstOrDefault()
+                                .InnerText
+                            : "";
                 if (parsedshorttextinfo != null)
-                    mydetailit.IntroText = parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description != null ? parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description.FirstOrDefault().InnerText : "";
+                    mydetailit.IntroText =
+                        parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description != null
+                            ? parsedshorttextinfo.TextItems.TextItem
+                                .FirstOrDefault()
+                                .Description.FirstOrDefault()
+                                .InnerText
+                            : "";
 
                 //detaillist.Add(mydetailit);
 
@@ -365,16 +654,32 @@ namespace LCS
 
             //en
             //DE Infos
-            var parsedmultimediainfogeneralen = thegastrononomyen.MultimediaDescriptions.MultimediaDescription;
+            var parsedmultimediainfogeneralen = thegastrononomyen
+                .MultimediaDescriptions
+                .MultimediaDescription;
             if (parsedmultimediainfogeneralen != null)
             {
-                var parsedmultimediainfoen = parsedmultimediainfogeneralen.Where(x => x.InfoCode == "23").FirstOrDefault();
+                var parsedmultimediainfoen = parsedmultimediainfogeneralen
+                    .Where(x => x.InfoCode == "23")
+                    .FirstOrDefault();
 
                 if (parsedmultimediainfoen.ImageItems.ImageItem != null)
                 {
                     foreach (var imageelement in parsedmultimediainfoen.ImageItems.ImageItem)
                     {
-                        imagegallerylist.Where(x => x.ListPosition == (Convert.ToInt32(imageelement.ImageFormat.RecordID) - 1)).FirstOrDefault().ImageDesc.TryAddOrUpdate("en", imageelement.Description != null ? imageelement.Description.FirstOrDefault().InnerText : "");
+                        imagegallerylist
+                            .Where(
+                                x =>
+                                    x.ListPosition
+                                    == (Convert.ToInt32(imageelement.ImageFormat.RecordID) - 1)
+                            )
+                            .FirstOrDefault()
+                            .ImageDesc.TryAddOrUpdate(
+                                "en",
+                                imageelement.Description != null
+                                    ? imageelement.Description.FirstOrDefault().InnerText
+                                    : ""
+                            );
                         //ImageGallery myimggallery = new ImageGallery();
                         //myimggallery.Height = imageelement.ImageFormat.Height;
                         //myimggallery.ImageDesc = imageelement.Description != null ? imageelement.Description.FirstOrDefault().InnerText : "";
@@ -389,27 +694,48 @@ namespace LCS
                     }
                 }
 
-                var parsedtextinfo = parsedmultimediainfogeneralen.Where(x => x.InfoCode == "1").FirstOrDefault();
-                var parsedshorttextinfo = parsedmultimediainfogeneralen.Where(x => x.InfoCode == "17").FirstOrDefault();
+                var parsedtextinfo = parsedmultimediainfogeneralen
+                    .Where(x => x.InfoCode == "1")
+                    .FirstOrDefault();
+                var parsedshorttextinfo = parsedmultimediainfogeneralen
+                    .Where(x => x.InfoCode == "17")
+                    .FirstOrDefault();
 
                 Detail mydetailen = new Detail();
 
-                mydetailen.Title = thegastrononomyen.ContactInfos.ContactInfo.FirstOrDefault().CompanyName != null ? thegastrononomyen.ContactInfos.ContactInfo.FirstOrDefault().CompanyName.InnerText : "no name"; ;
+                mydetailen.Title =
+                    thegastrononomyen.ContactInfos.ContactInfo.FirstOrDefault().CompanyName != null
+                        ? thegastrononomyen.ContactInfos.ContactInfo
+                            .FirstOrDefault()
+                            .CompanyName.InnerText
+                        : "no name";
+                ;
                 mydetailen.Header = "";
                 mydetailen.Language = "en";
                 mydetailen.AdditionalText = "";
                 //mydetailen.MainImage = "";
                 mydetailen.GetThereText = "";
                 if (parsedtextinfo != null)
-                    mydetailen.BaseText = parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description != null ? parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description.FirstOrDefault().InnerText : "";
+                    mydetailen.BaseText =
+                        parsedtextinfo.TextItems.TextItem.FirstOrDefault().Description != null
+                            ? parsedtextinfo.TextItems.TextItem
+                                .FirstOrDefault()
+                                .Description.FirstOrDefault()
+                                .InnerText
+                            : "";
                 if (parsedshorttextinfo != null)
-                    mydetailen.IntroText = parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description != null ? parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description.FirstOrDefault().InnerText : "";
+                    mydetailen.IntroText =
+                        parsedshorttextinfo.TextItems.TextItem.FirstOrDefault().Description != null
+                            ? parsedshorttextinfo.TextItems.TextItem
+                                .FirstOrDefault()
+                                .Description.FirstOrDefault()
+                                .InnerText
+                            : "";
 
                 //detaillist.Add(mydetailen);
 
                 gastro.Detail.TryAddOrUpdate("en", mydetailen);
             }
-
 
             gastro.ImageGallery = imagegallerylist.ToList();
             //gastro.Detail = detaillist.ToList();
@@ -448,19 +774,30 @@ namespace LCS
                 foreach (var myoperationschedule in operationschedules.OperationSchedule)
                 {
                     OperationSchedule theoperationschedule = new OperationSchedule();
-                    theoperationschedule.OperationscheduleName["de"] = myoperationschedule.Name != null ? myoperationschedule.Name.FirstOrDefault().InnerText : "";
+                    theoperationschedule.OperationscheduleName["de"] =
+                        myoperationschedule.Name != null
+                            ? myoperationschedule.Name.FirstOrDefault().InnerText
+                            : "";
                     theoperationschedule.Start = DateTime.Parse(myoperationschedule.Start);
                     theoperationschedule.Stop = DateTime.Parse(myoperationschedule.End);
-                    theoperationschedule.Type = myoperationschedule.Type == null ? "1" : myoperationschedule.Type;
+                    theoperationschedule.Type =
+                        myoperationschedule.Type == null ? "1" : myoperationschedule.Type;
 
                     if (myoperationschedule.OperationTime != null)
                     {
-                        List<OperationScheduleTime> operationscheduletimelist = new List<OperationScheduleTime>();
+                        List<OperationScheduleTime> operationscheduletimelist =
+                            new List<OperationScheduleTime>();
                         foreach (var timeschedule in myoperationschedule.OperationTime)
                         {
                             OperationScheduleTime myopscheduletime = new OperationScheduleTime();
-                            myopscheduletime.Start = timeschedule.Start == null ? TimeSpan.Parse("00:00:00") : TimeSpan.Parse(timeschedule.Start);
-                            myopscheduletime.End = timeschedule.End == null ? TimeSpan.Parse("23:59:00") : TimeSpan.Parse(timeschedule.End);
+                            myopscheduletime.Start =
+                                timeschedule.Start == null
+                                    ? TimeSpan.Parse("00:00:00")
+                                    : TimeSpan.Parse(timeschedule.Start);
+                            myopscheduletime.End =
+                                timeschedule.End == null
+                                    ? TimeSpan.Parse("23:59:00")
+                                    : TimeSpan.Parse(timeschedule.End);
                             myopscheduletime.Monday = timeschedule.Mon;
                             myopscheduletime.Tuesday = timeschedule.Tue;
                             myopscheduletime.Wednesday = timeschedule.Weds;
@@ -474,7 +811,8 @@ namespace LCS
                             operationscheduletimelist.Add(myopscheduletime);
                         }
 
-                        theoperationschedule.OperationScheduleTime = operationscheduletimelist.ToList();
+                        theoperationschedule.OperationScheduleTime =
+                            operationscheduletimelist.ToList();
                     }
                     operationschedulelist.Add(theoperationschedule);
                 }
@@ -519,7 +857,7 @@ namespace LCS
                 //    myfac.Language = "en";
 
                 //    facilitieslist.Add(myfac);
-                //}                
+                //}
             }
             //Ende Facilities Element
             gastro.Facilities = facilitieslist.ToList();
@@ -562,7 +900,7 @@ namespace LCS
                 //    mycatcode.Language = "en";
 
                 //    categorycodeslist.Add(mycatcode);
-                //}                
+                //}
             }
             gastro.CategoryCodes = categorycodeslist.ToList();
             //Ende CategoryCodes Element
@@ -580,7 +918,10 @@ namespace LCS
                 {
                     DishRates mydishrate = new DishRates();
                     mydishrate.Id = dishrate.DishCodeRID;
-                    mydishrate.Shortname = dishrate.DishName != null ? dishrate.DishName.FirstOrDefault().InnerText : "";
+                    mydishrate.Shortname =
+                        dishrate.DishName != null
+                            ? dishrate.DishName.FirstOrDefault().InnerText
+                            : "";
                     mydishrate.CurrencyCode = dishrate.CurrencyCode;
                     mydishrate.MaxAmount = dishrate.MaxAmount;
                     mydishrate.MinAmount = dishrate.MinAmount;
@@ -615,7 +956,7 @@ namespace LCS
                 //    mydishrate.Language = "en";
 
                 //    dishrateslist.Add(mydishrate);
-                //}                
+                //}
             }
             gastro.DishRates = dishrateslist.ToList();
             //Ende Dishrates Element
@@ -632,7 +973,10 @@ namespace LCS
                 {
                     CapacityCeremony mycapcer = new CapacityCeremony();
                     mycapcer.Id = capceremony.CeremonyCodeRID;
-                    mycapcer.Shortname = capceremony.CeremonyName != null ? capceremony.CeremonyName.FirstOrDefault().InnerText : "";
+                    mycapcer.Shortname =
+                        capceremony.CeremonyName != null
+                            ? capceremony.CeremonyName.FirstOrDefault().InnerText
+                            : "";
                     mycapcer.MaxSeatingCapacity = capceremony.MaxSeatingCapacity;
                     //mycapcer.Language = "de";
                     capacitycerlist.Add(mycapcer);
@@ -656,7 +1000,7 @@ namespace LCS
                 //    mycapcer.MaxSeatingCapacity = capceremony.MaxSeatingCapacity;
                 //    mycapcer.Language = "en";
                 //    capacitycerlist.Add(mycapcer);
-                //}                
+                //}
             }
             gastro.CapacityCeremony = capacitycerlist.ToList();
 
@@ -692,14 +1036,44 @@ namespace LCS
         }
 
         //Gets the Gastronomy List
-        public static void GetGastronomyListLTS(string destinationpath, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static void GetGastronomyListLTS(
+            string destinationpath,
+            string ltsuser,
+            string ltspswd,
+            string ltsmsgpswd
+        )
         {
             Console.WriteLine("Get Gastronomy RIDs");
 
             XDocument mygastrolist = new XDocument();
             XElement mygastro = new XElement("Gastronomies");
 
-            var mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync("", "1", "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
+            var mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync(
+                "",
+                "1",
+                "25",
+                "de",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "",
+                "0",
+                "0",
+                "0",
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                "SMG",
+                ltsmsgpswd
+            );
 
             GetGastronomicDataLCS mygastrosearch = new GetGastronomicDataLCS(ltsuser, ltspswd);
 
@@ -711,7 +1085,32 @@ namespace LCS
 
             for (int i = 2; i <= pages; i++)
             {
-                mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync(resultrid, i.ToString(), "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
+                mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync(
+                    resultrid,
+                    i.ToString(),
+                    "25",
+                    "de",
+                    "1",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "",
+                    "0",
+                    "0",
+                    "0",
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    "SMG",
+                    ltsmsgpswd
+                );
 
                 mygastroresponse = mygastrosearch.GetGastronomicDataSearch(mygastrorequest);
                 mygastro.Add(GetGastroRid(mygastroresponse).ToList());
@@ -729,14 +1128,45 @@ namespace LCS
         }
 
         //Gets the Gastronomy List
-        public static void GetGastronomyListLTS(string destinationpath, List<string> tourismorganizations, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static void GetGastronomyListLTS(
+            string destinationpath,
+            List<string> tourismorganizations,
+            string ltsuser,
+            string ltspswd,
+            string ltsmsgpswd
+        )
         {
             Console.WriteLine("Get Gastronomy RIDs");
 
             XDocument mygastrolist = new XDocument();
             XElement mygastro = new XElement("Gastronomies");
 
-            var mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync("", "1", "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), tourismorganizations, new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
+            var mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync(
+                "",
+                "1",
+                "25",
+                "de",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "",
+                "0",
+                "0",
+                "0",
+                new List<string>(),
+                new List<string>(),
+                tourismorganizations,
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                new List<string>(),
+                "SMG",
+                ltsmsgpswd
+            );
 
             GetGastronomicDataLCS mygastrosearch = new GetGastronomicDataLCS(ltsuser, ltspswd);
 
@@ -748,7 +1178,32 @@ namespace LCS
 
             for (int i = 2; i <= pages; i++)
             {
-                mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync(resultrid, i.ToString(), "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
+                mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync(
+                    resultrid,
+                    i.ToString(),
+                    "25",
+                    "de",
+                    "1",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "",
+                    "0",
+                    "0",
+                    "0",
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    new List<string>(),
+                    "SMG",
+                    ltsmsgpswd
+                );
 
                 mygastroresponse = mygastrosearch.GetGastronomicDataSearch(mygastrorequest);
                 mygastro.Add(GetGastroRid(mygastroresponse).ToList());
@@ -766,7 +1221,9 @@ namespace LCS
         }
 
         //Gets the RID List Gastronomies
-        private static List<XElement> GetGastroRid(ServiceReferenceLCS.GastronomicDataSearchRS myresult)
+        private static List<XElement> GetGastroRid(
+            ServiceReferenceLCS.GastronomicDataSearchRS myresult
+        )
         {
             List<XElement> mylist = new List<XElement>();
 
@@ -812,7 +1269,5 @@ namespace LCS
 
         //    Console.WriteLine("Gastronomy List generated");
         //}
-
     }
 }
-

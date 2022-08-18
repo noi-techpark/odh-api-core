@@ -24,26 +24,71 @@ namespace OdhApiCore.Controllers.api
         public string? lastchange;
 
         public static async Task<PoiHelper> CreateAsync(
-            QueryFactory queryFactory, string? poitype, string? subtypefilter, string? idfilter, string? locfilter,
-            string? areafilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, string? langfilter, CancellationToken cancellationToken)
+            QueryFactory queryFactory,
+            string? poitype,
+            string? subtypefilter,
+            string? idfilter,
+            string? locfilter,
+            string? areafilter,
+            bool? highlightfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? langfilter,
+            CancellationToken cancellationToken
+        )
         {
-            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(
+                queryFactory,
+                areafilter,
+                cancellationToken
+            );
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
             return new PoiHelper(
-                poitype, subtypefilter, idfilter, locfilter, arealist, highlightfilter, activefilter, smgactivefilter, smgtags, lastchange, langfilter, tourismusvereinids);
+                poitype,
+                subtypefilter,
+                idfilter,
+                locfilter,
+                arealist,
+                highlightfilter,
+                activefilter,
+                smgactivefilter,
+                smgtags,
+                lastchange,
+                langfilter,
+                tourismusvereinids
+            );
         }
 
         private PoiHelper(
-            string? poitype, string? subtypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist,
-            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? languagefilter, IEnumerable<string>? tourismusvereinids)
+            string? poitype,
+            string? subtypefilter,
+            string? idfilter,
+            string? locfilter,
+            IEnumerable<string> arealist,
+            bool? highlightfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? languagefilter,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
             poitypelist = new List<string>();
             if (poitype != null)
@@ -61,10 +106,12 @@ namespace OdhApiCore.Controllers.api
             }
 
             if (poitypelist.Count > 0)
-                subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(poitypelist.FirstOrDefault(), subtypefilter);
+                subtypelist = Helper.ActivityPoiListCreator.CreatePoiSubTypefromFlag(
+                    poitypelist.FirstOrDefault(),
+                    subtypefilter
+                );
             else
                 subtypelist = new List<string>();
-
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);

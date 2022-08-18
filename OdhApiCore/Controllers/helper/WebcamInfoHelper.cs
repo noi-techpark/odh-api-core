@@ -15,25 +15,41 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
+
         //New Publishedonlist
         public List<string> publishedonlist;
 
         public static WebcamInfoHelper Create(
             string? sourcefilter,
-            string? idfilter, bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter)
+            string? idfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? lastchange,
+            string? publishedonfilter
+        )
         {
             return new WebcamInfoHelper(
-                idfilter: idfilter, sourcefilter: sourcefilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter,
-                lastchange: lastchange, publishedonfilter: publishedonfilter);
+                idfilter: idfilter,
+                sourcefilter: sourcefilter,
+                activefilter: activefilter,
+                smgactivefilter: smgactivefilter,
+                lastchange: lastchange,
+                publishedonfilter: publishedonfilter
+            );
         }
 
         private WebcamInfoHelper(
-            string? sourcefilter, string? idfilter, bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter)
+            string? sourcefilter,
+            string? idfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? lastchange,
+            string? publishedonfilter
+        )
         {
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             var sourcelisttemp = Helper.CommonListCreator.CreateIdList(sourcefilter?.ToLower());
-            
+
             sourcelist = ExtendSourceFilterWebcamInfo(sourcelisttemp);
 
             //active
@@ -58,8 +74,8 @@ namespace OdhApiCore.Controllers
                 if (source == "idm")
                 {
                     if (!sourcelistnew.Contains("content"))
-                        sourcelistnew.Add("content");                   
-                }                
+                        sourcelistnew.Add("content");
+                }
             }
 
             return sourcelistnew;

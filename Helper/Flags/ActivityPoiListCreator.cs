@@ -46,7 +46,10 @@ namespace Helper
             return typeids;
         }
 
-        public static List<string> CreateActivitySubTypeList(string activitytype, string subtypefilter)
+        public static List<string> CreateActivitySubTypeList(
+            string activitytype,
+            string subtypefilter
+        )
         {
             List<string> typeids = new List<string>();
 
@@ -106,7 +109,6 @@ namespace Helper
                             }
 
                             break;
-
 
                         case "Wandern":
 
@@ -270,8 +272,6 @@ namespace Helper
 
                             break;
                     }
-
-
                 }
             }
 
@@ -621,8 +621,6 @@ namespace Helper
 
                             break;
                     }
-
-
                 }
             }
 
@@ -832,14 +830,7 @@ namespace Helper
                             }
 
                             break;
-
-
-
-
-
                     }
-
-
                 }
             }
 
@@ -1133,58 +1124,53 @@ namespace Helper
 
                             break;
 
-                            //case "Restaurants Gasthäuser":
-                            //    switch (filter)
-                            //    {
-                            //        case "one":
-                            //            typeids.Add("Restaurants");
-                            //            break;
-                            //        case "two":
-                            //            typeids.Add("Gasthäuser Gasthöfe  ");
-                            //            break;
-                            //        case "three":
-                            //            typeids.Add("Pizzerias");
-                            //            break;
-                            //        case "four":
-                            //            typeids.Add("Vinotheken");
-                            //            break;
-                            //        case "five":
-                            //            typeids.Add("Bars Cafés Bistros");
-                            //            break;                                                      
-                            //    }
+                        //case "Restaurants Gasthäuser":
+                        //    switch (filter)
+                        //    {
+                        //        case "one":
+                        //            typeids.Add("Restaurants");
+                        //            break;
+                        //        case "two":
+                        //            typeids.Add("Gasthäuser Gasthöfe  ");
+                        //            break;
+                        //        case "three":
+                        //            typeids.Add("Pizzerias");
+                        //            break;
+                        //        case "four":
+                        //            typeids.Add("Vinotheken");
+                        //            break;
+                        //        case "five":
+                        //            typeids.Add("Bars Cafés Bistros");
+                        //            break;
+                        //    }
 
-                            //    break;
-                            //case "Hütten Almen":
-                            //    switch (filter)
-                            //    {
-                            //        case "one":
-                            //            typeids.Add("Schutzhütten");
-                            //            break;
-                            //        case "two":
-                            //            typeids.Add("Almen");
-                            //            break;
-                            //        case "three":
-                            //            typeids.Add("Skihütten");
-                            //            break; 
-                            //    }
+                        //    break;
+                        //case "Hütten Almen":
+                        //    switch (filter)
+                        //    {
+                        //        case "one":
+                        //            typeids.Add("Schutzhütten");
+                        //            break;
+                        //        case "two":
+                        //            typeids.Add("Almen");
+                        //            break;
+                        //        case "three":
+                        //            typeids.Add("Skihütten");
+                        //            break;
+                        //    }
 
-                            //    break;
-                            //case "Bäuerliche Schankbetriebe":
-                            //    switch (filter)
-                            //    {
-                            //        case "one":
-                            //            typeids.Add("Buschen Hofschänke");
-                            //            break;
+                        //    break;
+                        //case "Bäuerliche Schankbetriebe":
+                        //    switch (filter)
+                        //    {
+                        //        case "one":
+                        //            typeids.Add("Buschen Hofschänke");
+                        //            break;
 
-                            //    }
+                        //    }
 
-                            //    break;
-
-
-
+                        //    break;
                     }
-
-
                 }
             }
 
@@ -1221,7 +1207,10 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateActivitySubTypefromFlag(string? typefiltertext, string? subtypefilter)
+        public static List<string> CreateActivitySubTypefromFlag(
+            string? typefiltertext,
+            string? subtypefilter
+        )
         {
             List<string> subtypelist = new List<string>();
 
@@ -1229,7 +1218,6 @@ namespace Helper
             {
                 if (long.TryParse(subtypefilter, out long typefilterint))
                 {
-
                     switch (typefiltertext)
                     {
                         case "Berg":
@@ -1238,12 +1226,14 @@ namespace Helper
 
                             break;
                         case "Radfahren":
-                            ActivityTypeRadfahren mypoitypeflag2 = (ActivityTypeRadfahren)typefilterint;
+                            ActivityTypeRadfahren mypoitypeflag2 =
+                                (ActivityTypeRadfahren)typefilterint;
                             subtypelist.AddRange(mypoitypeflag2.GetFlags().GetDescriptionList());
 
                             break;
                         case "Stadtrundgang":
-                            ActivityTypeOrtstouren mypoitypeflag3 = (ActivityTypeOrtstouren)typefilterint;
+                            ActivityTypeOrtstouren mypoitypeflag3 =
+                                (ActivityTypeOrtstouren)typefilterint;
                             subtypelist.AddRange(mypoitypeflag3.GetFlags().GetDescriptionList());
 
                             break;
@@ -1259,7 +1249,8 @@ namespace Helper
                             break;
 
                         case "Laufen und Fitness":
-                            ActivityTypeLaufenFitness mypoitypeflag6 = (ActivityTypeLaufenFitness)typefilterint;
+                            ActivityTypeLaufenFitness mypoitypeflag6 =
+                                (ActivityTypeLaufenFitness)typefilterint;
                             subtypelist.AddRange(mypoitypeflag6.GetFlags().GetDescriptionList());
 
                             break;
@@ -1283,12 +1274,11 @@ namespace Helper
                             break;
 
                         case "Aufstiegsanlagen":
-                            ActivityTypeAufstiegsanlagen mypoitypeflag10 = (ActivityTypeAufstiegsanlagen)typefilterint;
+                            ActivityTypeAufstiegsanlagen mypoitypeflag10 =
+                                (ActivityTypeAufstiegsanlagen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag10.GetFlags().GetDescriptionList());
 
-
                             break;
-
                     }
                 }
                 else
@@ -1297,8 +1287,6 @@ namespace Helper
 
             return subtypelist;
         }
-
-
 
         //Poi Data
 
@@ -1314,7 +1302,6 @@ namespace Helper
 
                     var myflags = mypoitypeflag.GetFlags().GetDescriptionList();
 
-
                     foreach (var myflag in myflags)
                     {
                         typelist.Add(myflag);
@@ -1327,7 +1314,10 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreatePoiSubTypefromFlag(string? typefiltertext, string? subtypefilter)
+        public static List<string> CreatePoiSubTypefromFlag(
+            string? typefiltertext,
+            string? subtypefilter
+        )
         {
             List<string> subtypelist = new List<string>();
 
@@ -1335,43 +1325,49 @@ namespace Helper
             {
                 if (long.TryParse(subtypefilter, out long typefilterint))
                 {
-
                     switch (typefiltertext)
                     {
                         case "Ärzte, Apotheken":
-                            PoiTypeAerzteApotheken mypoitypeflag1 = (PoiTypeAerzteApotheken)typefilterint;
+                            PoiTypeAerzteApotheken mypoitypeflag1 =
+                                (PoiTypeAerzteApotheken)typefilterint;
                             subtypelist.AddRange(mypoitypeflag1.GetFlags().GetDescriptionList());
 
                             break;
                         case "Kultur und Sehenswürdigkeiten":
-                            PoiTypeKulturSehenswuerdigkeiten mypoitypeflag2 = (PoiTypeKulturSehenswuerdigkeiten)typefilterint;
+                            PoiTypeKulturSehenswuerdigkeiten mypoitypeflag2 =
+                                (PoiTypeKulturSehenswuerdigkeiten)typefilterint;
                             subtypelist.AddRange(mypoitypeflag2.GetFlags().GetDescriptionList());
 
                             break;
                         case "Nachtleben und Unterhaltung":
-                            PoiTypeNachtlebenUnterhaltung mypoitypeflag3 = (PoiTypeNachtlebenUnterhaltung)typefilterint;
+                            PoiTypeNachtlebenUnterhaltung mypoitypeflag3 =
+                                (PoiTypeNachtlebenUnterhaltung)typefilterint;
                             subtypelist.AddRange(mypoitypeflag3.GetFlags().GetDescriptionList());
 
                             break;
                         case "Öffentliche Einrichtungen":
-                            PoiTypeOeffentlicheEinrichtungen mypoitypeflag4 = (PoiTypeOeffentlicheEinrichtungen)typefilterint;
+                            PoiTypeOeffentlicheEinrichtungen mypoitypeflag4 =
+                                (PoiTypeOeffentlicheEinrichtungen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag4.GetFlags().GetDescriptionList());
 
                             break;
                         case "Verkehr und Transport":
-                            PoiTypeVerkehrTransport mypoitypeflag5 = (PoiTypeVerkehrTransport)typefilterint;
+                            PoiTypeVerkehrTransport mypoitypeflag5 =
+                                (PoiTypeVerkehrTransport)typefilterint;
                             subtypelist.AddRange(mypoitypeflag5.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Sport und Freizeit":
-                            PoiTypeSportFreizeit mypoitypeflag6 = (PoiTypeSportFreizeit)typefilterint;
+                            PoiTypeSportFreizeit mypoitypeflag6 =
+                                (PoiTypeSportFreizeit)typefilterint;
                             subtypelist.AddRange(mypoitypeflag6.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Geschäfte und Dienstleister":
-                            PoiTypeGeschaefteDienstleister mypoitypeflag7 = (PoiTypeGeschaefteDienstleister)typefilterint;
+                            PoiTypeGeschaefteDienstleister mypoitypeflag7 =
+                                (PoiTypeGeschaefteDienstleister)typefilterint;
                             subtypelist.AddRange(mypoitypeflag7.GetFlags().GetDescriptionList());
 
                             break;
@@ -1383,7 +1379,8 @@ namespace Helper
                             break;
 
                         case "Dienstleister":
-                            PoiTypeDienstleister mypoitypeflag9 = (PoiTypeDienstleister)typefilterint;
+                            PoiTypeDienstleister mypoitypeflag9 =
+                                (PoiTypeDienstleister)typefilterint;
                             subtypelist.AddRange(mypoitypeflag9.GetFlags().GetDescriptionList());
 
                             break;
@@ -1414,7 +1411,6 @@ namespace Helper
             return subtypelist;
         }
 
-
         //SmgPois
 
         public static List<string> CreateSmgPoiTypefromFlag(string typefilter)
@@ -1429,7 +1425,6 @@ namespace Helper
 
                     var myflags = mypoitypeflag.GetFlags().GetDescriptionList();
 
-
                     foreach (var myflag in myflags)
                     {
                         typelist.Add(myflag);
@@ -1442,7 +1437,10 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateSmgPoiSubTypefromFlag(string? typefiltertext, string? subtypefilter)
+        public static List<string> CreateSmgPoiSubTypefromFlag(
+            string? typefiltertext,
+            string? subtypefilter
+        )
         {
             List<string> subtypelist = new List<string>();
 
@@ -1450,53 +1448,59 @@ namespace Helper
             {
                 if (long.TryParse(subtypefilter, out long typefilterint))
                 {
-
                     switch (typefiltertext)
                     {
                         case "Wellness Entspannung":
-                            SmgPoiSubTypeFlagWellness mypoitypeflag1 = (SmgPoiSubTypeFlagWellness)typefilterint;
+                            SmgPoiSubTypeFlagWellness mypoitypeflag1 =
+                                (SmgPoiSubTypeFlagWellness)typefilterint;
                             subtypelist.AddRange(mypoitypeflag1.GetFlags().GetDescriptionList());
 
                             break;
                         case "Winter":
-                            SmgPoiSubTypeFlagWinter mypoitypeflag2 = (SmgPoiSubTypeFlagWinter)typefilterint;
+                            SmgPoiSubTypeFlagWinter mypoitypeflag2 =
+                                (SmgPoiSubTypeFlagWinter)typefilterint;
                             subtypelist.AddRange(mypoitypeflag2.GetFlags().GetDescriptionList());
 
                             break;
                         case "Sommer":
-                            SmgPoiSubTypeFlagSommer mypoitypeflag3 = (SmgPoiSubTypeFlagSommer)typefilterint;
+                            SmgPoiSubTypeFlagSommer mypoitypeflag3 =
+                                (SmgPoiSubTypeFlagSommer)typefilterint;
                             subtypelist.AddRange(mypoitypeflag3.GetFlags().GetDescriptionList());
 
                             break;
                         case "Kultur Sehenswürdigkeiten":
-                            SmgPoiSubTypeFlagKultur mypoitypeflag4 = (SmgPoiSubTypeFlagKultur)typefilterint;
+                            SmgPoiSubTypeFlagKultur mypoitypeflag4 =
+                                (SmgPoiSubTypeFlagKultur)typefilterint;
                             subtypelist.AddRange(mypoitypeflag4.GetFlags().GetDescriptionList());
 
                             break;
                         case "Anderes":
-                            SmgPoiSubTypeFlagAnderes mypoitypeflag5 = (SmgPoiSubTypeFlagAnderes)typefilterint;
+                            SmgPoiSubTypeFlagAnderes mypoitypeflag5 =
+                                (SmgPoiSubTypeFlagAnderes)typefilterint;
                             subtypelist.AddRange(mypoitypeflag5.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Essen Trinken":
-                            SmgPoiSubTypeFlagEssenTrinken mypoitypeflag6 = (SmgPoiSubTypeFlagEssenTrinken)typefilterint;
+                            SmgPoiSubTypeFlagEssenTrinken mypoitypeflag6 =
+                                (SmgPoiSubTypeFlagEssenTrinken)typefilterint;
                             subtypelist.AddRange(mypoitypeflag6.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Mobilität":
-                            SmgPoiSubTypeFlagMobility mypoitypeflag7 = (SmgPoiSubTypeFlagMobility)typefilterint;
+                            SmgPoiSubTypeFlagMobility mypoitypeflag7 =
+                                (SmgPoiSubTypeFlagMobility)typefilterint;
                             subtypelist.AddRange(mypoitypeflag7.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Geschäfte und Dienstleister":
-                            SmgPoiSubTypeFlagShopsAndServices mypoitypeflag8 = (SmgPoiSubTypeFlagShopsAndServices)typefilterint;
+                            SmgPoiSubTypeFlagShopsAndServices mypoitypeflag8 =
+                                (SmgPoiSubTypeFlagShopsAndServices)typefilterint;
                             subtypelist.AddRange(mypoitypeflag8.GetFlags().GetDescriptionList());
 
                             break;
-
                     }
                 }
                 else
@@ -1506,7 +1510,10 @@ namespace Helper
             return subtypelist;
         }
 
-        public static List<string> CreateSmgPoiPoiTypefromFlag(string? subtypefilter, string? poitypefilter)
+        public static List<string> CreateSmgPoiPoiTypefromFlag(
+            string? subtypefilter,
+            string? poitypefilter
+        )
         {
             List<string> subtypelist = new List<string>();
 
@@ -1514,187 +1521,213 @@ namespace Helper
             {
                 if (long.TryParse(poitypefilter, out long typefilterint))
                 {
-
                     switch (subtypefilter)
                     {
                         case "Wandern":
-                            SmgPoiPoiTypeFlagWandern mypoitypeflag1 = (SmgPoiPoiTypeFlagWandern)typefilterint;
+                            SmgPoiPoiTypeFlagWandern mypoitypeflag1 =
+                                (SmgPoiPoiTypeFlagWandern)typefilterint;
                             subtypelist.AddRange(mypoitypeflag1.GetFlags().GetDescriptionList());
 
                             break;
                         case "Klettern":
-                            SmgPoiPoiTypeFlagKlettern mypoitypeflag2 = (SmgPoiPoiTypeFlagKlettern)typefilterint;
+                            SmgPoiPoiTypeFlagKlettern mypoitypeflag2 =
+                                (SmgPoiPoiTypeFlagKlettern)typefilterint;
                             subtypelist.AddRange(mypoitypeflag2.GetFlags().GetDescriptionList());
 
                             break;
                         case "Radfahren Radtouren":
-                            SmgPoiPoiTypeFlagRadfahren mypoitypeflag3 = (SmgPoiPoiTypeFlagRadfahren)typefilterint;
+                            SmgPoiPoiTypeFlagRadfahren mypoitypeflag3 =
+                                (SmgPoiPoiTypeFlagRadfahren)typefilterint;
                             subtypelist.AddRange(mypoitypeflag3.GetFlags().GetDescriptionList());
 
                             break;
                         case "Museen":
-                            SmgPoiPoiTypeFlagMuseen mypoitypeflag4 = (SmgPoiPoiTypeFlagMuseen)typefilterint;
+                            SmgPoiPoiTypeFlagMuseen mypoitypeflag4 =
+                                (SmgPoiPoiTypeFlagMuseen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag4.GetFlags().GetDescriptionList());
 
                             break;
                         case "Freizeit Erlebnis":
-                            SmgPoiPoiTypeFlagFreizeitErlebnis mypoitypeflag5 = (SmgPoiPoiTypeFlagFreizeitErlebnis)typefilterint;
+                            SmgPoiPoiTypeFlagFreizeitErlebnis mypoitypeflag5 =
+                                (SmgPoiPoiTypeFlagFreizeitErlebnis)typefilterint;
                             subtypelist.AddRange(mypoitypeflag5.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Kirchen Klöster":
-                            SmgPoiPoiTypeFlagKirchenKloester mypoitypeflag6 = (SmgPoiPoiTypeFlagKirchenKloester)typefilterint;
+                            SmgPoiPoiTypeFlagKirchenKloester mypoitypeflag6 =
+                                (SmgPoiPoiTypeFlagKirchenKloester)typefilterint;
                             subtypelist.AddRange(mypoitypeflag6.GetFlags().GetDescriptionList());
 
                             break;
                         case "Laufen Fitness":
-                            SmgPoiPoiTypeFlagLaufenFitness mypoitypeflag7 = (SmgPoiPoiTypeFlagLaufenFitness)typefilterint;
+                            SmgPoiPoiTypeFlagLaufenFitness mypoitypeflag7 =
+                                (SmgPoiPoiTypeFlagLaufenFitness)typefilterint;
                             subtypelist.AddRange(mypoitypeflag7.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Therme Wasserwelten":
-                            SmgPoiPoiTypeFlagThermeWasserwelten mypoitypeflag9 = (SmgPoiPoiTypeFlagThermeWasserwelten)typefilterint;
+                            SmgPoiPoiTypeFlagThermeWasserwelten mypoitypeflag9 =
+                                (SmgPoiPoiTypeFlagThermeWasserwelten)typefilterint;
                             subtypelist.AddRange(mypoitypeflag9.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Weihnachtsmärkte":
-                            SmgPoiPoiTypeFlagWeihnachtsmaerkte mypoitypeflag10 = (SmgPoiPoiTypeFlagWeihnachtsmaerkte)typefilterint;
+                            SmgPoiPoiTypeFlagWeihnachtsmaerkte mypoitypeflag10 =
+                                (SmgPoiPoiTypeFlagWeihnachtsmaerkte)typefilterint;
                             subtypelist.AddRange(mypoitypeflag10.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Langlaufen":
-                            SmgPoiPoiTypeFlagLanglaufen mypoitypeflag11 = (SmgPoiPoiTypeFlagLanglaufen)typefilterint;
+                            SmgPoiPoiTypeFlagLanglaufen mypoitypeflag11 =
+                                (SmgPoiPoiTypeFlagLanglaufen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag11.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Rodeln":
-                            SmgPoiPoiTypeFlagRodelbahnen mypoitypeflag12 = (SmgPoiPoiTypeFlagRodelbahnen)typefilterint;
+                            SmgPoiPoiTypeFlagRodelbahnen mypoitypeflag12 =
+                                (SmgPoiPoiTypeFlagRodelbahnen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag12.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Skischulen Skiverleih":
-                            SmgPoiPoiTypeFlagSkischulen mypoitypeflag13 = (SmgPoiPoiTypeFlagSkischulen)typefilterint;
+                            SmgPoiPoiTypeFlagSkischulen mypoitypeflag13 =
+                                (SmgPoiPoiTypeFlagSkischulen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag13.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Skigebiete":
-                            SmgPoiPoiTypeFlagSkigebiete mypoitypeflag113 = (SmgPoiPoiTypeFlagSkigebiete)typefilterint;
+                            SmgPoiPoiTypeFlagSkigebiete mypoitypeflag113 =
+                                (SmgPoiPoiTypeFlagSkigebiete)typefilterint;
                             subtypelist.AddRange(mypoitypeflag113.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Burgen Schlösser":
-                            SmgPoiPoiTypeFlagBurgenSchloesser mypoitypeflag14 = (SmgPoiPoiTypeFlagBurgenSchloesser)typefilterint;
+                            SmgPoiPoiTypeFlagBurgenSchloesser mypoitypeflag14 =
+                                (SmgPoiPoiTypeFlagBurgenSchloesser)typefilterint;
                             subtypelist.AddRange(mypoitypeflag14.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Badeseen Freibäder":
-                            SmgPoiPoiTypeFlagBadeseenFreibaeder mypoitypeflag15 = (SmgPoiPoiTypeFlagBadeseenFreibaeder)typefilterint;
+                            SmgPoiPoiTypeFlagBadeseenFreibaeder mypoitypeflag15 =
+                                (SmgPoiPoiTypeFlagBadeseenFreibaeder)typefilterint;
                             subtypelist.AddRange(mypoitypeflag15.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Architektur":
-                            SmgPoiPoiTypeFlagArchitektur mypoitypeflag16 = (SmgPoiPoiTypeFlagArchitektur)typefilterint;
+                            SmgPoiPoiTypeFlagArchitektur mypoitypeflag16 =
+                                (SmgPoiPoiTypeFlagArchitektur)typefilterint;
                             subtypelist.AddRange(mypoitypeflag16.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Restaurants Gasthäuser":
-                            SmgPoiPoiTypeFlagRestaurantsGasthauser mypoitypeflag17 = (SmgPoiPoiTypeFlagRestaurantsGasthauser)typefilterint;
+                            SmgPoiPoiTypeFlagRestaurantsGasthauser mypoitypeflag17 =
+                                (SmgPoiPoiTypeFlagRestaurantsGasthauser)typefilterint;
                             subtypelist.AddRange(mypoitypeflag17.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Andere Gastronomiebetriebe":
-                            SmgPoiPoiTypeFlagAndereGastronomiebetriebe mypoitypeflag28 = (SmgPoiPoiTypeFlagAndereGastronomiebetriebe)typefilterint;
+                            SmgPoiPoiTypeFlagAndereGastronomiebetriebe mypoitypeflag28 =
+                                (SmgPoiPoiTypeFlagAndereGastronomiebetriebe)typefilterint;
                             subtypelist.AddRange(mypoitypeflag28.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Hütten Almen":
-                            SmgPoiPoiTypeFlagHuettenAlmen mypoitypeflag18 = (SmgPoiPoiTypeFlagHuettenAlmen)typefilterint;
+                            SmgPoiPoiTypeFlagHuettenAlmen mypoitypeflag18 =
+                                (SmgPoiPoiTypeFlagHuettenAlmen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag18.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Bäuerliche Schankbetriebe":
-                            SmgPoiPoiTypeFlagBauerlicheSchankbetriebe mypoitypeflag19 = (SmgPoiPoiTypeFlagBauerlicheSchankbetriebe)typefilterint;
+                            SmgPoiPoiTypeFlagBauerlicheSchankbetriebe mypoitypeflag19 =
+                                (SmgPoiPoiTypeFlagBauerlicheSchankbetriebe)typefilterint;
                             subtypelist.AddRange(mypoitypeflag19.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Aufstiegsanlagen":
-                            SmgPoiPoiTypeFlagAufstiegsanlagen mypoitypeflag27 = (SmgPoiPoiTypeFlagAufstiegsanlagen)typefilterint;
+                            SmgPoiPoiTypeFlagAufstiegsanlagen mypoitypeflag27 =
+                                (SmgPoiPoiTypeFlagAufstiegsanlagen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag27.GetFlags().GetDescriptionList());
 
                             break;
 
-
                         case "Gesundheit":
-                            SmgPoiPoiTypeFlagGesundheit mypoitypeflag20 = (SmgPoiPoiTypeFlagGesundheit)typefilterint;
+                            SmgPoiPoiTypeFlagGesundheit mypoitypeflag20 =
+                                (SmgPoiPoiTypeFlagGesundheit)typefilterint;
                             subtypelist.AddRange(mypoitypeflag20.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Geschäfte":
-                            SmgPoiPoiTypeFlagGeschaefte mypoitypeflag21 = (SmgPoiPoiTypeFlagGeschaefte)typefilterint;
+                            SmgPoiPoiTypeFlagGeschaefte mypoitypeflag21 =
+                                (SmgPoiPoiTypeFlagGeschaefte)typefilterint;
                             subtypelist.AddRange(mypoitypeflag21.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Dienstleister":
-                            SmgPoiPoiTypeFlagDienstleister mypoitypeflag22 = (SmgPoiPoiTypeFlagDienstleister)typefilterint;
+                            SmgPoiPoiTypeFlagDienstleister mypoitypeflag22 =
+                                (SmgPoiPoiTypeFlagDienstleister)typefilterint;
                             subtypelist.AddRange(mypoitypeflag22.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Öffentliche Einrichtungen":
-                            SmgPoiPoiTypeFlagOeffentlichEinrichtungen mypoitypeflag23 = (SmgPoiPoiTypeFlagOeffentlichEinrichtungen)typefilterint;
+                            SmgPoiPoiTypeFlagOeffentlichEinrichtungen mypoitypeflag23 =
+                                (SmgPoiPoiTypeFlagOeffentlichEinrichtungen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag23.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Nachtleben und Unterhaltung":
-                            SmgPoiPoiTypeFlagNachtlebenUnterhaltung mypoitypeflag24 = (SmgPoiPoiTypeFlagNachtlebenUnterhaltung)typefilterint;
+                            SmgPoiPoiTypeFlagNachtlebenUnterhaltung mypoitypeflag24 =
+                                (SmgPoiPoiTypeFlagNachtlebenUnterhaltung)typefilterint;
                             subtypelist.AddRange(mypoitypeflag24.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Spiel und Sportanlagen":
-                            SmgPoiPoiTypeFlagSpielundSportanlagen mypoitypeflag25 = (SmgPoiPoiTypeFlagSpielundSportanlagen)typefilterint;
+                            SmgPoiPoiTypeFlagSpielundSportanlagen mypoitypeflag25 =
+                                (SmgPoiPoiTypeFlagSpielundSportanlagen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag25.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Guides Schulen":
-                            SmgPoiPoiTypeFlagGuidesSchulen mypoitypeflag26 = (SmgPoiPoiTypeFlagGuidesSchulen)typefilterint;
+                            SmgPoiPoiTypeFlagGuidesSchulen mypoitypeflag26 =
+                                (SmgPoiPoiTypeFlagGuidesSchulen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag26.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Vereine":
-                            SmgPoiPoiTypeFlagVereine mypoitypeflag30 = (SmgPoiPoiTypeFlagVereine)typefilterint;
+                            SmgPoiPoiTypeFlagVereine mypoitypeflag30 =
+                                (SmgPoiPoiTypeFlagVereine)typefilterint;
                             subtypelist.AddRange(mypoitypeflag30.GetFlags().GetDescriptionList());
 
                             break;
 
                         case "Unternehmen":
-                            SmgPoiPoiTypeFlagUnternehmen mypoitypeflag29 = (SmgPoiPoiTypeFlagUnternehmen)typefilterint;
+                            SmgPoiPoiTypeFlagUnternehmen mypoitypeflag29 =
+                                (SmgPoiPoiTypeFlagUnternehmen)typefilterint;
                             subtypelist.AddRange(mypoitypeflag29.GetFlags().GetDescriptionList());
 
                             break;
                     }
-
-
                 }
                 else
                     return new List<string>();
@@ -1702,7 +1735,6 @@ namespace Helper
 
             return subtypelist;
         }
-
 
         #endregion
     }

@@ -11,23 +11,27 @@ namespace Helper
         {
             var tzinfo = TZConvert.GetTimeZoneInfo("W. Europe Standard Time");
 
-            return (TimeZoneInfo.ConvertTimeToUtc(dateTime, tzinfo) -
-                   new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalSeconds;
+            return (
+                TimeZoneInfo.ConvertTimeToUtc(dateTime, tzinfo)
+                - new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
+            ).TotalSeconds;
         }
 
         public static double DateTimeToUnixTimestampMilliseconds(DateTime dateTime)
         {
             var tzinfo = TZConvert.GetTimeZoneInfo("W. Europe Standard Time");
 
-            return (TimeZoneInfo.ConvertTimeToUtc(dateTime, tzinfo) -
-                   new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;
+            return (
+                TimeZoneInfo.ConvertTimeToUtc(dateTime, tzinfo)
+                - new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
+            ).TotalMilliseconds;
         }
 
         ////TEST without conversion to UTC simply convert to UTC what is passed
         //public static double DateTimeToUnixTimestampMillisecondsWithoutUTCConvert(DateTime dateTime)
         //{
         //    return (dateTime -
-        //           new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;        
+        //           new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalMilliseconds;
         //}
 
         //TODO UnixTimeStampToDateTime
@@ -37,7 +41,16 @@ namespace Helper
             var tzinfo = TZConvert.GetTimeZoneInfo("W. Europe Standard Time");
 
             // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            System.DateTime dtDateTime = new DateTime(
+                1970,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                System.DateTimeKind.Utc
+            );
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
 
             return TimeZoneInfo.ConvertTimeFromUtc(dtDateTime, tzinfo);
@@ -48,12 +61,18 @@ namespace Helper
             var tzinfo = TZConvert.GetTimeZoneInfo("W. Europe Standard Time");
 
             // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            System.DateTime dtDateTime = new DateTime(
+                1970,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                System.DateTimeKind.Utc
+            );
             dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToUniversalTime();
             return TimeZoneInfo.ConvertTimeFromUtc(dtDateTime, tzinfo);
         }
-
-
-
     }
 }

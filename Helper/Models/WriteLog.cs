@@ -19,10 +19,14 @@ namespace Helper
         /// <param name="output">HttpRequestLog / ImportLog</param>
         public static void LogToConsole<T>(string id, string type, string log, T output)
         {
-            LogOutput<T> logoutput = new LogOutput<T>() { id = id, type = type, log = log, output = output };
+            LogOutput<T> logoutput = new LogOutput<T>()
+            {
+                id = id,
+                type = type,
+                log = log,
+                output = output
+            };
             Console.WriteLine(JsonConvert.SerializeObject(logoutput));
         }
-
-
     }
 }

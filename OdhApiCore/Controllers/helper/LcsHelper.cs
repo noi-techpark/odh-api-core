@@ -8,33 +8,49 @@ namespace OdhApiCore.Controllers.helper
 {
     public class LcsHelper
     {
-        public readonly string lcsrequestlanguage;        
-        public readonly List<string> accoidlist;        
-        public readonly List<LCS.LCSRoomStay> myroomdata;        
+        public readonly string lcsrequestlanguage;
+        public readonly List<string> accoidlist;
+        public readonly List<LCS.LCSRoomStay> myroomdata;
         public readonly string arrival;
         public readonly string departure;
         public readonly List<string> service;
         public readonly int rooms;
         public readonly string source;
-        
+
         public static LcsHelper Create(
-            List<string> accoidlist, string language, string roominfo, string boardfilter,
-            string arrival, string departure, string source)
+            List<string> accoidlist,
+            string language,
+            string roominfo,
+            string boardfilter,
+            string arrival,
+            string departure,
+            string source
+        )
         {
             return new LcsHelper(
-                accoidlist: accoidlist, language: language,
-                roominfo: roominfo, boardfilter: boardfilter, arrival: arrival, 
-                departure: departure, source: source);
+                accoidlist: accoidlist,
+                language: language,
+                roominfo: roominfo,
+                boardfilter: boardfilter,
+                arrival: arrival,
+                departure: departure,
+                source: source
+            );
         }
 
         private LcsHelper(
-            List<string> accoidlist, string language, string roominfo, string boardfilter,
-            string arrival, string departure, string source)
+            List<string> accoidlist,
+            string language,
+            string roominfo,
+            string boardfilter,
+            string arrival,
+            string departure,
+            string source
+        )
         {
-
             service = Helper.AccoListCreator.CreateBoardListLCSfromFlag(boardfilter);
             myroomdata = LCS.GetAccommodationDataLCS.RoomstayTransformer(roominfo);
-            
+
             rooms = myroomdata.Count;
 
             this.arrival = arrival;
@@ -42,13 +58,21 @@ namespace OdhApiCore.Controllers.helper
 
             this.source = source;
 
-            if (language.ToLower() == "nl" || language.ToLower() == "cs" || language.ToLower() == "pl" || language.ToLower() == "fr" || language.ToLower() == "ru")
+            if (
+                language.ToLower() == "nl"
+                || language.ToLower() == "cs"
+                || language.ToLower() == "pl"
+                || language.ToLower() == "fr"
+                || language.ToLower() == "ru"
+            )
                 lcsrequestlanguage = "en";
             else
                 lcsrequestlanguage = language.ToLower();
 
-            this.accoidlist = accoidlist != null && accoidlist.Count > 0 ? accoidlist.Select(x => x.ToUpper()).ToList() : accoidlist ?? new();            
+            this.accoidlist =
+                accoidlist != null && accoidlist.Count > 0
+                    ? accoidlist.Select(x => x.ToUpper()).ToList()
+                    : accoidlist ?? new();
         }
-
     }
 }

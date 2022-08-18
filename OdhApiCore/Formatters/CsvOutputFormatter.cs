@@ -23,7 +23,7 @@ namespace OdhApiCore.Formatters
         {
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/csv"));
 
-            SupportedEncodings.Add(Encoding.UTF8);            
+            SupportedEncodings.Add(Encoding.UTF8);
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
@@ -45,30 +45,36 @@ namespace OdhApiCore.Formatters
                     //var stringlist = kvp.Value as Newtonsoft.Json.Linq.JArray;
                     var stringlist = kvp.Value as IEnumerable<object>;
                     if (stringlist != null)
-                        eoColl.Add(new KeyValuePair<string, object>(kvp.Key, String.Join("|", stringlist)));
+                        eoColl.Add(
+                            new KeyValuePair<string, object>(kvp.Key, String.Join("|", stringlist))
+                        );
                     else
                         continue;
                 }
                 else
                 {
                     eoColl.Add(kvp);
-                }                
+                }
             }
             return eo;
         }
 
-        public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+        public override async Task WriteResponseBodyAsync(
+            OutputFormatterWriteContext context,
+            Encoding selectedEncoding
+        )
         {
             //Works only with List Method add an understandable Exception if it is used on single methods
             //Add support if an object list is returned instead of JsonRAW issue 4762
-         
+
             var result = context.Object as IResponse<JsonRaw>;
             if (result != null)
             {
-                var data =
-                    (from item in result.Items
-                     let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(item.Value)
-                     select ConvertToExpandoObject(dict)).ToList<dynamic>();
+                var data = (
+                    from item in result.Items
+                    let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(item.Value)
+                    select ConvertToExpandoObject(dict)
+                ).ToList<dynamic>();
 
                 await WriteCSVStream(context, data);
             }
@@ -78,10 +84,13 @@ namespace OdhApiCore.Formatters
 
                 if (listresult != null)
                 {
-                    var data =
-                        (from item in listresult
-                         let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(item.Value)
-                         select ConvertToExpandoObject(dict)).ToList<dynamic>();
+                    var data = (
+                        from item in listresult
+                        let dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(
+                            item.Value
+                        )
+                        select ConvertToExpandoObject(dict)
+                    ).ToList<dynamic>();
 
                     await WriteCSVStream(context, data);
                 }
@@ -100,7 +109,11 @@ namespace OdhApiCore.Formatters
         {
             var stream = context.HttpContext.Response.Body;
 
-            await using var writer = new StreamWriter(stream, leaveOpen: true, encoding: Encoding.UTF8);
+            await using var writer = new StreamWriter(
+                stream,
+                leaveOpen: true,
+                encoding: Encoding.UTF8
+            );
             await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
             await csv.WriteRecordsAsync(data);
             await writer.FlushAsync();

@@ -25,7 +25,10 @@ namespace OdhApiImporter.Helpers
 
         #region NINJA Helpers
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(
+            DateTime? lastchanged = null,
+            CancellationToken cancellationToken = default
+        )
         {
             //Import the data from Mobility Api
             var culturelist = await ImportList(cancellationToken);
@@ -35,19 +38,34 @@ namespace OdhApiImporter.Helpers
             return result;
         }
 
-        private async Task<Tuple<NinjaObject<NinjaEvent>,NinjaObject<NinjaPlaceRoom>> > ImportList(CancellationToken cancellationToken)
+        private async Task<Tuple<NinjaObject<NinjaEvent>, NinjaObject<NinjaPlaceRoom>>> ImportList(
+            CancellationToken cancellationToken
+        )
         {
             var responseevents = await GetNinjaData.GetNinjaEvent();
             var responseplaces = await GetNinjaData.GetNinjaPlaces();
 
-            WriteLog.LogToConsole("", "dataimport", "list.mobilityculture", new ImportLog() { sourceid = "", sourceinterface = "mobility.culture", success = true, error = "" });
+            WriteLog.LogToConsole(
+                "",
+                "dataimport",
+                "list.mobilityculture",
+                new ImportLog()
+                {
+                    sourceid = "",
+                    sourceinterface = "mobility.culture",
+                    success = true,
+                    error = ""
+                }
+            );
 
             return Tuple.Create(responseevents, responseplaces);
         }
 
-        private async Task<UpdateDetail> SaveEventsToPG(ICollection<NinjaData<NinjaEvent>> ninjadataarr, ICollection<NinjaData<NinjaPlaceRoom>> ninjaplaceroomarr)
+        private async Task<UpdateDetail> SaveEventsToPG(
+            ICollection<NinjaData<NinjaEvent>> ninjadataarr,
+            ICollection<NinjaData<NinjaPlaceRoom>> ninjaplaceroomarr
+        )
         {
-
             var newimportcounter = 0;
             var updateimportcounter = 0;
             var errorimportcounter = 0;
@@ -62,12 +80,21 @@ namespace OdhApiImporter.Helpers
                 {
                     if (!String.IsNullOrEmpty(kvp.Key))
                     {
-                        var place = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.place).FirstOrDefault();
-                        var room = ninjaplaceroomarr.Where(x => x.sname == kvp.Value.room).FirstOrDefault();
+                        var place = ninjaplaceroomarr
+                            .Where(x => x.sname == kvp.Value.place)
+                            .FirstOrDefault();
+                        var room = ninjaplaceroomarr
+                            .Where(x => x.sname == kvp.Value.room)
+                            .FirstOrDefault();
 
-                        var eventtosave = ParseNinjaData.ParseNinjaEventToODHEvent(kvp.Key, kvp.Value, place, room);
+                        var eventtosave = ParseNinjaData.ParseNinjaEventToODHEvent(
+                            kvp.Key,
+                            kvp.Value,
+                            place,
+                            room
+                        );
 
-                        if(eventtosave != null)
+                        if (eventtosave != null)
                         {
                             //Setting Location Info
                             //Location Info (by GPS Point)
@@ -94,14 +121,36 @@ namespace OdhApiImporter.Helpers
                             if (!sourcelist.Contains(eventtosave.Source))
                                 sourcelist.Add(eventtosave.Source);
 
-                            WriteLog.LogToConsole(idtocheck.ToUpper(), "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtocheck.ToUpper(), sourceinterface = "mobility.culture", success = true, error = "" });
-                        }                        
+                            WriteLog.LogToConsole(
+                                idtocheck.ToUpper(),
+                                "dataimport",
+                                "single.mobilityculture",
+                                new ImportLog()
+                                {
+                                    sourceid = idtocheck.ToUpper(),
+                                    sourceinterface = "mobility.culture",
+                                    success = true,
+                                    error = ""
+                                }
+                            );
+                        }
                         else
                         {
-                            WriteLog.LogToConsole(kvp.Key, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = kvp.Key, sourceinterface = "mobility.culture", success = false, error = "Event could not be parsed" });
+                            WriteLog.LogToConsole(
+                                kvp.Key,
+                                "dataimport",
+                                "single.mobilityculture",
+                                new ImportLog()
+                                {
+                                    sourceid = kvp.Key,
+                                    sourceinterface = "mobility.culture",
+                                    success = false,
+                                    error = "Event could not be parsed"
+                                }
+                            );
                         }
                     }
-                }               
+                }
             }
 
             //Begin SetDataNotinListToInactive
@@ -113,36 +162,69 @@ namespace OdhApiImporter.Helpers
             {
                 var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
 
-                if(deletedisableresult.Item1 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                if (deletedisableresult.Item1 > 0)
+                    WriteLog.LogToConsole(
+                        idtodelete,
+                        "dataimport",
+                        "single.mobilityculture",
+                        new ImportLog()
+                        {
+                            sourceid = idtodelete,
+                            sourceinterface = "mobility.culture",
+                            success = true,
+                            error = ""
+                        }
+                    );
                 else if (deletedisableresult.Item2 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                    WriteLog.LogToConsole(
+                        idtodelete,
+                        "dataimport",
+                        "single.mobilityculture",
+                        new ImportLog()
+                        {
+                            sourceid = idtodelete,
+                            sourceinterface = "mobility.culture",
+                            success = true,
+                            error = ""
+                        }
+                    );
 
-
-                deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
+                deleteimportcounter =
+                    deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
             }
 
-            return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter };
+            return new UpdateDetail()
+            {
+                updated = updateimportcounter,
+                created = newimportcounter,
+                deleted = deleteimportcounter
+            };
         }
 
         //Check if logic can be moved here
         //private async Task<UpdateDetail> SetDataNotinListToInactive()
         //{
-            
+
         //}
 
-        private async Task<PGCRUDResult> InsertDataToDB(EventLinked eventtosave, KeyValuePair<string, NinjaEvent> ninjaevent)
+        private async Task<PGCRUDResult> InsertDataToDB(
+            EventLinked eventtosave,
+            KeyValuePair<string, NinjaEvent> ninjaevent
+        )
         {
             try
             {
                 eventtosave.Id = eventtosave.Id?.ToUpper();
 
                 //Set LicenseInfo
-                eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(eventtosave, Helper.LicenseHelper.GetLicenseforEvent);
+                eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(
+                    eventtosave,
+                    Helper.LicenseHelper.GetLicenseforEvent
+                );
 
                 var rawdataid = await InsertInRawDataDB(ninjaevent);
 
-                return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid);                
+                return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid);
             }
             catch (Exception ex)
             {
@@ -153,46 +235,50 @@ namespace OdhApiImporter.Helpers
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, NinjaEvent> ninjaevent)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
-                        new RawDataStore()
-                        {
-                            datasource = "ninja",
-                            importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(ninjaevent.Value),
-                            sourceinterface = "culture",
-                            sourceid = ninjaevent.Key,
-                            sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
-                            type = "event_centrotrevi-drin"
-                        });
-        }        
-          
-        private async Task<Tuple<int,int>> DeleteOrDisableData(string eventid, bool delete)
+                new RawDataStore()
+                {
+                    datasource = "ninja",
+                    importdate = DateTime.Now,
+                    raw = JsonConvert.SerializeObject(ninjaevent.Value),
+                    sourceinterface = "culture",
+                    sourceid = ninjaevent.Key,
+                    sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
+                    type = "event_centrotrevi-drin"
+                }
+            );
+        }
+
+        private async Task<Tuple<int, int>> DeleteOrDisableData(string eventid, bool delete)
         {
             var deleteresult = 0;
             var updateresult = 0;
 
             if (delete)
             {
-                deleteresult = await QueryFactory.Query("events").Where("id", eventid)
+                deleteresult = await QueryFactory
+                    .Query("events")
+                    .Where("id", eventid)
                     .DeleteAsync();
             }
             else
             {
-                var query =
-               QueryFactory.Query("events")
-                   .Select("data")
-                   .Where("id", eventid);
+                var query = QueryFactory.Query("events").Select("data").Where("id", eventid);
 
                 var data = await query.GetFirstOrDefaultAsObject<EventLinked>();
 
-                if (data != null)                
+                if (data != null)
                 {
                     if (data.Active != false || data.SmgActive != false)
                     {
                         data.Active = false;
                         data.SmgActive = false;
 
-                        updateresult = await QueryFactory.Query("events").Where("id", eventid)
-                                        .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+                        updateresult = await QueryFactory
+                            .Query("events")
+                            .Where("id", eventid)
+                            .UpdateAsync(
+                                new JsonBData() { id = eventid, data = new JsonRaw(data) }
+                            );
                     }
                 }
             }
@@ -206,11 +292,10 @@ namespace OdhApiImporter.Helpers
 
         private async Task<List<string>> GetAllEventsBySource(List<string> sourcelist)
         {
-
-            var query =
-               QueryFactory.Query("events")
-                   .Select("id")
-                   .SourceFilter_GeneratedColumn(sourcelist);
+            var query = QueryFactory
+                .Query("events")
+                .Select("id")
+                .SourceFilter_GeneratedColumn(sourcelist);
 
             var eventids = await query.GetAsync<string>();
 
@@ -219,7 +304,12 @@ namespace OdhApiImporter.Helpers
 
         private async Task SetLocationInfo(EventLinked myevent)
         {
-            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, myevent.Latitude, myevent.Longitude, 30000);
+            var district = await GetLocationInfo.GetNearestDistrictbyGPS(
+                QueryFactory,
+                myevent.Latitude,
+                myevent.Longitude,
+                30000
+            );
 
             if (district == null)
                 return;
@@ -227,7 +317,10 @@ namespace OdhApiImporter.Helpers
             myevent.DistrictId = district.Id;
             myevent.DistrictIds = new List<string>() { district.Id };
 
-            var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+            var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(
+                QueryFactory,
+                district.Id
+            );
             if (locinfo != null)
             {
                 LocationInfoLinked locinfolinked = new LocationInfoLinked
@@ -259,6 +352,5 @@ namespace OdhApiImporter.Helpers
         }
 
         #endregion
-
     }
 }

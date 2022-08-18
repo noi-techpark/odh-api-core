@@ -14,8 +14,8 @@ namespace LCS
 
         public GetAccommodationDataLCS(string user, string pswd)
         {
-        //https://medium.com/grensesnittet/integrating-with-soap-web-services-in-net-core-adebfad173fb
-        //https://github.com/dotnet/wcf/issues/8
+            //https://medium.com/grensesnittet/integrating-with-soap-web-services-in-net-core-adebfad173fb
+            //https://github.com/dotnet/wcf/issues/8
 
             BasicHttpsBinding basicHttpBinding = new BasicHttpsBinding();
             //basicHttpBinding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
@@ -27,8 +27,9 @@ namespace LCS
             basicHttpBinding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
             basicHttpBinding.AllowCookies = true;
 
-
-            EndpointAddress endpointAddress = new EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
+            EndpointAddress endpointAddress = new EndpointAddress(
+                "https://lcs.lts.it/api/data.svc/soap"
+            );
 
             lcs = new ServiceReferenceLCS.DataClient(basicHttpBinding, endpointAddress);
             lcs.ClientCredentials.UserName.UserName = user;
@@ -38,7 +39,9 @@ namespace LCS
         }
 
         //Accommodation Search
-        public ServiceReferenceLCS.AccommodationDataSearchRS GetAccommodationDataSearch(XElement myrequest)
+        public ServiceReferenceLCS.AccommodationDataSearchRS GetAccommodationDataSearch(
+            XElement myrequest
+        )
         {
             try
             {
@@ -53,7 +56,9 @@ namespace LCS
         }
 
         //Accommodation Search
-        public async Task<ServiceReferenceLCS.AccommodationDataSearchRS> GetAccommodationDataSearchAsync(XElement myrequest)
+        public async Task<ServiceReferenceLCS.AccommodationDataSearchRS> GetAccommodationDataSearchAsync(
+            XElement myrequest
+        )
         {
             try
             {
@@ -66,32 +71,32 @@ namespace LCS
         }
 
         public static XElement GetAccommodationDataSearchRequest(
-         string resultRID,
-         string pageNr,
-         string pageSize,
-         string language,
-         string sortingcriterion,
-         string sortingorder,
-         string sortingpromotebookable,
-         string request,
-         string filters,
-         string timespanstart,
-         string timespanend,
-         string checkavailabilitystatus,
-         string onlybookableresults,
-         List<string> mealplans,
-         List<string> accommodationrids,
-         List<string> tourismorg,
-         List<string> districts,
-         List<string> marketinggroups,
-         List<LCSRoomStay> lcsroomstay,
-         string requestor,
-         string messagepswd
-         )
+            string resultRID,
+            string pageNr,
+            string pageSize,
+            string language,
+            string sortingcriterion,
+            string sortingorder,
+            string sortingpromotebookable,
+            string request,
+            string filters,
+            string timespanstart,
+            string timespanend,
+            string checkavailabilitystatus,
+            string onlybookableresults,
+            List<string> mealplans,
+            List<string> accommodationrids,
+            List<string> tourismorg,
+            List<string> districts,
+            List<string> marketinggroups,
+            List<LCSRoomStay> lcsroomstay,
+            string requestor,
+            string messagepswd
+        )
         {
             XElement requestbody = new XElement("AccommodationDataSearchRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, messagepswd));
             //Ende POS Element
 
@@ -127,7 +132,11 @@ namespace LCS
 
 
             //"<Sorting Criterion='1' Order='' PromoteBookable='' />"
-            if (!String.IsNullOrEmpty(sortingcriterion) || !String.IsNullOrEmpty(sortingorder) || !String.IsNullOrEmpty(sortingpromotebookable))
+            if (
+                !String.IsNullOrEmpty(sortingcriterion)
+                || !String.IsNullOrEmpty(sortingorder)
+                || !String.IsNullOrEmpty(sortingpromotebookable)
+            )
             {
                 XElement sortingquery = new XElement("Sorting");
                 sortingquery.Add(new XAttribute("Criterion", sortingcriterion));
@@ -149,7 +158,6 @@ namespace LCS
             if (marketinggroups.Count > 0)
                 parameters.Add(GetMarketingGroups(marketinggroups));
 
-
             //	"<TimeSpan Start='2017-11-10' End='2017-11-11' CheckAvailabilityStatus='1' />" +
             if (!String.IsNullOrEmpty(timespanstart) && !String.IsNullOrEmpty(timespanend))
             {
@@ -165,7 +173,9 @@ namespace LCS
             if (!String.IsNullOrEmpty(onlybookableresults))
             {
                 XElement onlybookableresultsquery = new XElement("AdvanceBookingRestriction");
-                onlybookableresultsquery.Add(new XAttribute("OnlyBookableResults", onlybookableresults));
+                onlybookableresultsquery.Add(
+                    new XAttribute("OnlyBookableResults", onlybookableresults)
+                );
                 parameters.Add(onlybookableresultsquery);
             }
             //Ende Searchtermphrase
@@ -184,9 +194,6 @@ namespace LCS
             {
                 parameters.Add(myroomstaydata);
             }
-
-
-
 
             //Facilities
             //if (facilities.Count > 0)
@@ -362,7 +369,7 @@ namespace LCS
         {
             if (!String.IsNullOrEmpty(roominfo) && roominfo != "null")
             {
-                //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18                
+                //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18
                 List<LCSRoomStay> myroominfo = new List<LCSRoomStay>();
 
                 var zimmerinfos = roominfo.Split('|');
@@ -397,7 +404,15 @@ namespace LCS
             else
             {
                 List<LCSRoomStay> myroominfostd = new List<LCSRoomStay>();
-                myroominfostd.Add(new LCSRoomStay() { Index = "1", Type = "0", Guests = "2", Age = new List<string>() { "18", "18" } });
+                myroominfostd.Add(
+                    new LCSRoomStay()
+                    {
+                        Index = "1",
+                        Type = "0",
+                        Guests = "2",
+                        Age = new List<string>() { "18", "18" }
+                    }
+                );
 
                 return myroominfostd;
             }

@@ -25,21 +25,45 @@ namespace MSS
         /// <param name="departure">Abreisedatum</param>
         /// <param name="service">Verpflegungsart</param>
         /// <returns></returns>
-        public static async Task<MssResult?> GetMssResponse(HttpClient httpClient, string lang, List<string> idlist, string idsofchannel, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string requestsource, string version, string mssuser, string msspswd, bool withoutmssids = false)
+        public static async Task<MssResult?> GetMssResponse(
+            HttpClient httpClient,
+            string lang,
+            List<string> idlist,
+            string idsofchannel,
+            string[] mybookingchannels,
+            List<Tuple<string, string, List<string>>> myroomdata,
+            DateTime arrival,
+            DateTime departure,
+            int service,
+            string hgvservicecode,
+            XElement offerdetails,
+            XElement hoteldetails,
+            int rooms,
+            string requestsource,
+            string version,
+            string mssuser,
+            string msspswd,
+            bool withoutmssids = false
+        )
         {
             try
             {
-
-                List<Room> myroompersons = (from x in myroomdata
-                                            select new Room { RoomSeq = x.Item1, RoomType = x.Item2, Person = x.Item3 }).ToList();
+                List<Room> myroompersons = (
+                    from x in myroomdata
+                    select new Room
+                    {
+                        RoomSeq = x.Item1,
+                        RoomType = x.Item2,
+                        Person = x.Item3
+                    }
+                ).ToList();
 
                 var myroomlist = MssRequest.BuildRoomData(myroompersons);
 
                 XElement mychannels = MssRequest.BuildChannelList(mybookingchannels);
 
-                XElement myidlist =
-                    withoutmssids
-                    ?  MssRequest.BuildIDList(new List<string>())
+                XElement myidlist = withoutmssids
+                    ? MssRequest.BuildIDList(new List<string>())
                     : myidlist = MssRequest.BuildIDList(idlist);
 
                 XElement mytyp = MssRequest.BuildType("10");
@@ -51,7 +75,23 @@ namespace MSS
                 //    tracesource.TraceEvent(TraceEventType.Information, 0, "MSS Request Hotel ID Count: " + A0Ridlist.Count + " Period: " + arrival.ToShortDateString() + " " + departure.ToShortDateString() + " Service: " + service.ToString() + " Rooms: " + myroompersons.Count + " Result from Cache: " + withoutmssids.ToString());
                 //}
 
-                XDocument myrequest = MssRequest.BuildPostData(myidlist, mychannels, myroomlist, arrival, departure, offerdetails, hoteldetails, mytyp, service, lang, idsofchannel, requestsource, version, mssuser, msspswd);
+                XDocument myrequest = MssRequest.BuildPostData(
+                    myidlist,
+                    mychannels,
+                    myroomlist,
+                    arrival,
+                    departure,
+                    offerdetails,
+                    hoteldetails,
+                    mytyp,
+                    service,
+                    lang,
+                    idsofchannel,
+                    requestsource,
+                    version,
+                    mssuser,
+                    msspswd
+                );
 
                 var myresponses = await MssRequest.RequestAsync(httpClient, myrequest);
 
@@ -59,19 +99,25 @@ namespace MSS
 
                 XElement allmyresponses = XElement.Parse(activityresponsecontent);
 
-                List<XElement> allmyoffers = (from xy in allmyresponses.Element("result").Elements("hotel")
-                                              where
-                                                  xy.Elements("channel").Count() > 0
-                                              select xy).ToList();
+                List<XElement> allmyoffers = (
+                    from xy in allmyresponses.Element("result").Elements("hotel")
+                    where xy.Elements("channel").Count() > 0
+                    select xy
+                ).ToList();
 
                 XElement myresult = new XElement("root");
-                myresult.Add(
-                    allmyresponses.Element("header"),
-                    new XElement("result",
-                    allmyoffers));
+                myresult.Add(allmyresponses.Element("header"), new XElement("result", allmyoffers));
 
                 //Und iatz no parsen
-                MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(lang, hgvservicecode, myresult, idlist, myroompersons, requestsource, version);
+                MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(
+                    lang,
+                    hgvservicecode,
+                    myresult,
+                    idlist,
+                    myroompersons,
+                    requestsource,
+                    version
+                );
 
                 return myparsedresponse;
             }
@@ -80,12 +126,15 @@ namespace MSS
                 //var tracesource = new TraceSource("MssData");
                 //tracesource.TraceEvent(TraceEventType.Error, 0, "MSS Request Error: " + ex.Message);
 
-                Log.Logger.Error(ex, "Error while retrieving MSS information for {A0Ridlist}", idlist);
+                Log.Logger.Error(
+                    ex,
+                    "Error while retrieving MSS information for {A0Ridlist}",
+                    idlist
+                );
 
                 return null;
             }
         }
-
 
         #region obsoleteCode
 
@@ -138,7 +187,7 @@ namespace MSS
         //        new XDeclaration("1.0", "utf-8", "yes"), myroot);
 
 
-        //        //var servicecode = mysuedtirolcontainer.AccoBoardSet.Where(x => x.BoardIdHGV == service).FirstOrDefault().BoardnameHGV;            
+        //        //var servicecode = mysuedtirolcontainer.AccoBoardSet.Where(x => x.BoardIdHGV == service).FirstOrDefault().BoardnameHGV;
         //        //Und iatz no parsen
         //        MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(lang, hgvservicecode, encodedDoc8, myroompersons, source);
 
@@ -329,7 +378,7 @@ namespace MSS
         //        //DEs geat no net ! Index fahler
         //        //var bookableaccos = session.Query<Accommodation, AccommodationsByBookingPortal>()
         //        //    .Where(x => x.Id.In(A0Ridlist))
-        //        //    .Where(x => x.AccoBookingChannel.Any(y => y.Id.In(myhotelchannellist)))                                        
+        //        //    .Where(x => x.AccoBookingChannel.Any(y => y.Id.In(myhotelchannellist)))
         //        //    .TransformWith<AccoListTransformer, string>()
         //        //    .ToList();
 
@@ -346,7 +395,7 @@ namespace MSS
         //    {
         //        var myidlist = buildidList(mya0rids);
 
-        //        //Channel Data            
+        //        //Channel Data
         //        var mychannellist = buildChannelList(bookingportal);
 
         //        Tuple<XElement, XElement> mytuple = new Tuple<XElement, XElement>(myidlist, mychannellist);

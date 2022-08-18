@@ -48,11 +48,11 @@ namespace Helper
 
             if (style == IDStyle.uppercase)
                 id = id.ToUpper();
-            else if(style == IDStyle.lowercase)
+            else if (style == IDStyle.lowercase)
                 id = id.ToLower();
 
             return id;
-        }        
+        }
 
         public static IDStyle GetIDStyle<T>(T odhtype)
         {
@@ -90,30 +90,62 @@ namespace Helper
         {
             return odhtype switch
             {
-                Type _ when odhtype == typeof(Accommodation) || odhtype == typeof(AccommodationLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(AccoRoom) || odhtype == typeof(AccommodationRoomLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(LTSActivity) || odhtype == typeof(LTSActivityLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(LTSPoi) || odhtype == typeof(LTSPoiLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Gastronomy) || odhtype == typeof(GastronomyLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Event) || odhtype == typeof(EventLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(ODHActivityPoi) || odhtype == typeof(ODHActivityPoiLinked) => IDStyle.lowercase,
-                Type _ when odhtype == typeof(Package) || odhtype == typeof(PackageLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Measuringpoint) || odhtype == typeof(MeasuringpointLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(WebcamInfo) || odhtype == typeof(WebcamInfoLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Article) || odhtype == typeof(ArticlesLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(DDVenue)  => IDStyle.uppercase,
-                Type _ when odhtype == typeof(EventShort) || odhtype == typeof(EventShortLinked) => IDStyle.lowercase,
-                Type _ when odhtype == typeof(ExperienceArea) || odhtype == typeof(ExperienceAreaLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(MetaRegion) || odhtype == typeof(MetaRegionLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Region) || odhtype == typeof(RegionLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Tourismverein) || odhtype == typeof(TourismvereinLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Municipality) || odhtype == typeof(MunicipalityLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(District) || odhtype == typeof(DistrictLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(SkiArea) || odhtype == typeof(SkiAreaLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(SkiRegion) || odhtype == typeof(SkiRegionLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Area) || odhtype == typeof(AreaLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Wine) || odhtype == typeof(WineLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(SmgTags) || odhtype == typeof(ODHTagLinked) => IDStyle.lowercase,
+                Type _
+                    when odhtype == typeof(Accommodation) || odhtype == typeof(AccommodationLinked)
+                    => IDStyle.uppercase,
+                Type _
+                    when odhtype == typeof(AccoRoom) || odhtype == typeof(AccommodationRoomLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(LTSActivity) || odhtype == typeof(LTSActivityLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(LTSPoi) || odhtype == typeof(LTSPoiLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Gastronomy) || odhtype == typeof(GastronomyLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Event) || odhtype == typeof(EventLinked)
+                    => IDStyle.uppercase,
+                Type _
+                    when odhtype == typeof(ODHActivityPoi)
+                        || odhtype == typeof(ODHActivityPoiLinked)
+                    => IDStyle.lowercase,
+                Type _ when odhtype == typeof(Package) || odhtype == typeof(PackageLinked)
+                    => IDStyle.uppercase,
+                Type _
+                    when odhtype == typeof(Measuringpoint)
+                        || odhtype == typeof(MeasuringpointLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(WebcamInfo) || odhtype == typeof(WebcamInfoLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Article) || odhtype == typeof(ArticlesLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(DDVenue) => IDStyle.uppercase,
+                Type _ when odhtype == typeof(EventShort) || odhtype == typeof(EventShortLinked)
+                    => IDStyle.lowercase,
+                Type _
+                    when odhtype == typeof(ExperienceArea)
+                        || odhtype == typeof(ExperienceAreaLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(MetaRegion) || odhtype == typeof(MetaRegionLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Region) || odhtype == typeof(RegionLinked)
+                    => IDStyle.uppercase,
+                Type _
+                    when odhtype == typeof(Tourismverein) || odhtype == typeof(TourismvereinLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Municipality) || odhtype == typeof(MunicipalityLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(District) || odhtype == typeof(DistrictLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(SkiArea) || odhtype == typeof(SkiAreaLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(SkiRegion) || odhtype == typeof(SkiRegionLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Area) || odhtype == typeof(AreaLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Wine) || odhtype == typeof(WineLinked)
+                    => IDStyle.uppercase,
+                Type _ when odhtype == typeof(SmgTags) || odhtype == typeof(ODHTagLinked)
+                    => IDStyle.lowercase,
                 _ => throw new Exception("not known odh type")
             };
         }

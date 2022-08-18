@@ -117,13 +117,15 @@ namespace NINJA.Parser
                     break;
             }
 
-            return new List<TopicLinked>()
-            {
-                topic
-            };
+            return new List<TopicLinked>() { topic };
         }
 
-        public static EventLinked ParseNinjaEventToODHEvent(string id, NinjaEvent ninjaevent, NinjaData<NinjaPlaceRoom> place, NinjaData<NinjaPlaceRoom> room)
+        public static EventLinked ParseNinjaEventToODHEvent(
+            string id,
+            NinjaEvent ninjaevent,
+            NinjaData<NinjaPlaceRoom> place,
+            NinjaData<NinjaPlaceRoom> room
+        )
         {
             if (id != "------" && place != null)
             {
@@ -134,15 +136,28 @@ namespace NINJA.Parser
                 var ninjaid = new Dictionary<string, string>() { { "id", id } };
                 myevent.Mapping.TryAddOrUpdate("culture", ninjaid);
 
+                string source = !String.IsNullOrEmpty(place.sname)
+                    ? place.sname.ToLower()
+                    : "ninja";
 
-                string source = !String.IsNullOrEmpty(place.sname) ? place.sname.ToLower() : "ninja";
-
-                Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "event" };
+                Metadata metainfo = new Metadata()
+                {
+                    Id = id,
+                    LastUpdate = DateTime.Now,
+                    Source = source,
+                    Type = "event"
+                };
                 myevent._Meta = metainfo;
 
                 myevent.Source = source;
 
-                LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
+                LicenseInfo licenseInfo = new LicenseInfo()
+                {
+                    ClosedData = false,
+                    Author = "",
+                    License = "CC0",
+                    LicenseHolder = source
+                };
                 myevent.LicenseInfo = licenseInfo;
 
                 //Maybe needeed by DD Transformer
@@ -158,8 +173,18 @@ namespace NINJA.Parser
                 {
                     Detail mydetail = new Detail();
                     mydetail.Language = language;
-                    mydetail.Title = ninjaevent.title != null ? ninjaevent.title.ContainsKey(language) ? ninjaevent.title[language] : "no title" : "no title";
-                    mydetail.BaseText = ninjaevent.decription != null ? ninjaevent.decription.ContainsKey(language) ? ninjaevent.decription[language] : "" : "";
+                    mydetail.Title =
+                        ninjaevent.title != null
+                            ? ninjaevent.title.ContainsKey(language)
+                                ? ninjaevent.title[language]
+                                : "no title"
+                            : "no title";
+                    mydetail.BaseText =
+                        ninjaevent.decription != null
+                            ? ninjaevent.decription.ContainsKey(language)
+                                ? ninjaevent.decription[language]
+                                : ""
+                            : "";
 
                     myevent.Detail.TryAddOrUpdate(language, mydetail);
                 }
@@ -195,7 +220,6 @@ namespace NINJA.Parser
                     }
                 }
 
-
                 //Add Type info
                 myevent.Topics = GetTopicRid(ninjaevent.event_type_key);
                 myevent.TopicRIDs = myevent.Topics.Select(x => x.TopicRID).ToList();
@@ -203,17 +227,19 @@ namespace NINJA.Parser
                 //Console.WriteLine("Parsing: " + ninjaevent.begin_date + " " + ninjaevent.begin_time);
 
                 //TODO PARSING FAILS IF format of datetime is not exactly as described
-                //TODO Resolve this "exception": "String '04/04/2022 9:00' was not recognized as a valid DateTime.",                
-                
+                //TODO Resolve this "exception": "String '04/04/2022 9:00' was not recognized as a valid DateTime.",
+
 
                 //Date Info
                 //myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
                 //myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
 
-                myevent.DateBegin = TryParsingToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time);
-                myevent.DateEnd = TryParsingToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time);
-
-                
+                myevent.DateBegin = TryParsingToDateTime(
+                    ninjaevent.begin_date + " " + ninjaevent.begin_time
+                );
+                myevent.DateEnd = TryParsingToDateTime(
+                    ninjaevent.end_date + " " + ninjaevent.end_time
+                );
 
                 //DateTime.TryParse(ninjaevent.begin_date + " " + ninjaevent.begin_time, CultureInfo.InvariantCulture, out evendatebegin);
                 //DateTime.TryParse(ninjaevent.end_date + " " + ninjaevent.end_time, CultureInfo.InvariantCulture, out evendateend);
@@ -227,17 +253,29 @@ namespace NINJA.Parser
                 myevent.NextBeginDate = myevent.DateBegin;
 
                 myevent.EventDate = new List<EventDate>()
-            {
-                new EventDate()
                 {
-                    Begin = TimeSpan.Parse(ninjaevent.begin_time),
-                    From = DateTime.ParseExact(ninjaevent.begin_date, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                    End = TimeSpan.Parse(ninjaevent.end_time),
-                    To = DateTime.ParseExact(ninjaevent.end_date, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                    Ticket = ticket,
-                    MaxPersons = !String.IsNullOrEmpty(ninjaevent.number_of_seats) && int.TryParse(ninjaevent.number_of_seats, out var numberofseatsint) ? numberofseatsint : 0
-                }
-            };
+                    new EventDate()
+                    {
+                        Begin = TimeSpan.Parse(ninjaevent.begin_time),
+                        From = DateTime.ParseExact(
+                            ninjaevent.begin_date,
+                            "dd/MM/yyyy",
+                            CultureInfo.InvariantCulture
+                        ),
+                        End = TimeSpan.Parse(ninjaevent.end_time),
+                        To = DateTime.ParseExact(
+                            ninjaevent.end_date,
+                            "dd/MM/yyyy",
+                            CultureInfo.InvariantCulture
+                        ),
+                        Ticket = ticket,
+                        MaxPersons =
+                            !String.IsNullOrEmpty(ninjaevent.number_of_seats)
+                            && int.TryParse(ninjaevent.number_of_seats, out var numberofseatsint)
+                                ? numberofseatsint
+                                : 0
+                    }
+                };
 
                 myevent.Ticket = ticketstr;
                 myevent.PayMet = paymet;
@@ -256,20 +294,38 @@ namespace NINJA.Parser
                 floor.Add(new KeyValuePair<string, string>("it", "piano"));
                 floor.Add(new KeyValuePair<string, string>("en", "floor"));
 
-                //Contact Info            
+                //Contact Info
                 foreach (var language in languages)
                 {
                     if (room != null)
                     {
                         string floorstr = " ";
-                        if (!String.IsNullOrEmpty(room.smetadata.floor.ToString()) && floor.ContainsKey(language))
+                        if (
+                            !String.IsNullOrEmpty(room.smetadata.floor.ToString())
+                            && floor.ContainsKey(language)
+                        )
                             floorstr = floorstr + room.smetadata.floor + " " + floor[language];
 
                         ContactInfos mycontact = new ContactInfos();
                         mycontact.Language = language;
-                        mycontact.Address = room.smetadata.address != null ? room.smetadata.address.ContainsKey(language) ? room.smetadata.address[language] + floorstr : "" : "";
-                        mycontact.City = room.smetadata.city != null ? room.smetadata.city.ContainsKey(language) ? room.smetadata.city[language] : "" : "";
-                        mycontact.CompanyName = room.smetadata.name != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "" : "";
+                        mycontact.Address =
+                            room.smetadata.address != null
+                                ? room.smetadata.address.ContainsKey(language)
+                                    ? room.smetadata.address[language] + floorstr
+                                    : ""
+                                : "";
+                        mycontact.City =
+                            room.smetadata.city != null
+                                ? room.smetadata.city.ContainsKey(language)
+                                    ? room.smetadata.city[language]
+                                    : ""
+                                : "";
+                        mycontact.CompanyName =
+                            room.smetadata.name != null
+                                ? room.smetadata.name.ContainsKey(language)
+                                    ? room.smetadata.name[language]
+                                    : ""
+                                : "";
                         mycontact.Phonenumber = room.smetadata.phone;
                         mycontact.Email = room.smetadata.email;
                         mycontact.ZipCode = room.smetadata.zipcode;
@@ -285,14 +341,32 @@ namespace NINJA.Parser
                     if (place != null)
                     {
                         string floorstr = " ";
-                        if (!String.IsNullOrEmpty(place.smetadata.floor.ToString()) && floor.ContainsKey(language))
+                        if (
+                            !String.IsNullOrEmpty(place.smetadata.floor.ToString())
+                            && floor.ContainsKey(language)
+                        )
                             floorstr = floorstr + place.smetadata.floor + " " + floor[language];
 
                         ContactInfos orgcontact = new ContactInfos();
                         orgcontact.Language = language;
-                        orgcontact.Address = place.smetadata.address != null ? place.smetadata.address.ContainsKey(language) ? place.smetadata.address[language] + floorstr : "" : "";
-                        orgcontact.City = place.smetadata.city != null ? place.smetadata.city.ContainsKey(language) ? place.smetadata.city[language] : "" : "";
-                        orgcontact.CompanyName = place.smetadata.name != null ? place.smetadata.name.ContainsKey(language) ? place.smetadata.name[language] : "" : "";
+                        orgcontact.Address =
+                            place.smetadata.address != null
+                                ? place.smetadata.address.ContainsKey(language)
+                                    ? place.smetadata.address[language] + floorstr
+                                    : ""
+                                : "";
+                        orgcontact.City =
+                            place.smetadata.city != null
+                                ? place.smetadata.city.ContainsKey(language)
+                                    ? place.smetadata.city[language]
+                                    : ""
+                                : "";
+                        orgcontact.CompanyName =
+                            place.smetadata.name != null
+                                ? place.smetadata.name.ContainsKey(language)
+                                    ? place.smetadata.name[language]
+                                    : ""
+                                : "";
                         orgcontact.Phonenumber = place.smetadata.phone;
                         orgcontact.Email = place.smetadata.email;
                         orgcontact.ZipCode = place.smetadata.zipcode;
@@ -309,21 +383,26 @@ namespace NINJA.Parser
                 {
                     EventAdditionalInfos eventadditionalinfo = new EventAdditionalInfos();
                     eventadditionalinfo.Language = language;
-                    eventadditionalinfo.Location = room != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "" : "";
+                    eventadditionalinfo.Location =
+                        room != null
+                            ? room.smetadata.name.ContainsKey(language)
+                                ? room.smetadata.name[language]
+                                : ""
+                            : "";
                     eventadditionalinfo.Reg = ninjaevent.link_to_ticket_info;
 
                     myevent.EventAdditionalInfos.TryAddOrUpdate(language, eventadditionalinfo);
                 }
 
                 myevent.EventPublisher = new List<EventPublisher>()
-            {
-                new EventPublisher()
                 {
-                    Publish = 1,
-                    PublisherRID = ninjaevent.place,
-                    Ranc = 0
-                }
-            };
+                    new EventPublisher()
+                    {
+                        Publish = 1,
+                        PublisherRID = ninjaevent.place,
+                        Ranc = 0
+                    }
+                };
 
                 myevent.HasLanguage = languages;
 
@@ -337,9 +416,25 @@ namespace NINJA.Parser
 
         public static DateTime TryParsingToDateTime(string datetimetoparse)
         {
-            if (DateTime.TryParseExact(datetimetoparse, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime datetimetoreturn))
+            if (
+                DateTime.TryParseExact(
+                    datetimetoparse,
+                    "dd/MM/yyyy HH:mm",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateTime datetimetoreturn
+                )
+            )
                 return datetimetoreturn;
-            else if (DateTime.TryParseExact(datetimetoparse, "dd/MM/yyyy H:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime datetimetoreturn2))
+            else if (
+                DateTime.TryParseExact(
+                    datetimetoparse,
+                    "dd/MM/yyyy H:mm",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateTime datetimetoreturn2
+                )
+            )
                 return datetimetoreturn2;
             else
                 throw new Exception("DateTime Parsing failed  input:" + datetimetoparse);

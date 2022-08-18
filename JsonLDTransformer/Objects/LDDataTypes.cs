@@ -19,10 +19,7 @@ namespace JsonLDTransformer.Objects
         public string id { get; set; }
     }
 
-
-    public class RecipeLD : ObjectLD
-    {
-    }
+    public class RecipeLD : ObjectLD { }
 
     public class EventLD : ObjectLD
     {
@@ -42,7 +39,7 @@ namespace JsonLDTransformer.Objects
         public string endDate { get; set; }
 
         [JsonProperty(Order = 8)]
-        public string url { get; set; }     
+        public string url { get; set; }
 
         [JsonProperty(Order = 9)]
         public PlaceLD location { get; set; }
@@ -52,7 +49,6 @@ namespace JsonLDTransformer.Objects
 
         [JsonProperty(Order = 11)]
         public OrganizationLD organizer { get; set; }
-
     }
 
     public class RestaurantLD : ObjectLD
@@ -89,21 +85,13 @@ namespace JsonLDTransformer.Objects
 
         [JsonProperty(Order = 8)]
         public personLD founder { get; set; }
-
-
     }
 
-    public class TouristAttractionLD : ObjectLD
-    {
-    }
+    public class TouristAttractionLD : ObjectLD { }
 
-    public class ArticleLD : ObjectLD
-    {
-    }
+    public class ArticleLD : ObjectLD { }
 
-    public class SkiResortLD : ObjectLD
-    {
-    }
+    public class SkiResortLD : ObjectLD { }
 
     public class OrganizationLD : ObjectLD
     {
@@ -121,10 +109,9 @@ namespace JsonLDTransformer.Objects
 
         [JsonProperty(Order = 7)]
         public addressLD address { get; set; }
-
     }
 
-    public class PlaceLD 
+    public class PlaceLD
     {
         [JsonProperty(PropertyName = "@type", Order = 0)]
         public string type { get; set; }
@@ -133,7 +120,7 @@ namespace JsonLDTransformer.Objects
         public string name { get; set; }
 
         [JsonProperty(Order = 2)]
-        public addressLD address { get; set; }  
+        public addressLD address { get; set; }
     }
 
     public class OfferLD
@@ -163,21 +150,13 @@ namespace JsonLDTransformer.Objects
         public string priceCurrency { get; set; }
     }
 
-    public class LodgingBusinessLD : ObjectLD
-    {
-    }
+    public class LodgingBusinessLD : ObjectLD { }
 
-    public class BookLD : ObjectLD
-    {
-    }
+    public class BookLD : ObjectLD { }
 
-    public class StoreLD : ObjectLD
-    {
-    }
+    public class StoreLD : ObjectLD { }
 
-    public class LocalBusinessLD : ObjectLD
-    {
-    }
+    public class LocalBusinessLD : ObjectLD { }
 
     public class HotelLD : ObjectLD
     {
@@ -198,7 +177,7 @@ namespace JsonLDTransformer.Objects
 
         [JsonProperty(Order = 5)]
         public string description { get; set; }
-        
+
         [JsonProperty(Order = 6)]
         public string telephone { get; set; }
 
@@ -224,12 +203,16 @@ public class addressLD
 
     [JsonProperty(Order = 1)]
     public string streetAddress { get; set; }
+
     [JsonProperty(Order = 2)]
     public string postalCode { get; set; }
+
     [JsonProperty(Order = 3)]
     public string addressLocality { get; set; }
+
     [JsonProperty(Order = 4)]
     public string addressRegion { get; set; }
+
     [JsonProperty(Order = 5)]
     public string addressCountry { get; set; }
 }
@@ -241,6 +224,7 @@ public class geoLD
 
     [JsonProperty(Order = 1)]
     public double latitude { get; set; }
+
     [JsonProperty(Order = 2)]
     public double longitude { get; set; }
 }
@@ -252,5 +236,4 @@ public class personLD
 
     [JsonProperty(Order = 1)]
     public string name { get; set; }
-   
 }

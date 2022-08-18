@@ -11,7 +11,9 @@ namespace STA
 {
     public class ParseSTAPois
     {
-        public static ODHActivityPoiLinked ParseSTAVendingPointToODHActivityPoi(STAVendingPoint vendingpoint)
+        public static ODHActivityPoiLinked ParseSTAVendingPointToODHActivityPoi(
+            STAVendingPoint vendingpoint
+        )
         {
             //Integrate this data
             //Website
@@ -30,7 +32,7 @@ namespace STA
             //Long
             //Angebot von Leistungen(von AW bis BD)
 
-            var mypoi = new ODHActivityPoiLinked();            
+            var mypoi = new ODHActivityPoiLinked();
 
             //ID
             var id = "salespoint_sta_" + vendingpoint.STA_ID;
@@ -46,14 +48,15 @@ namespace STA
             //GPSData
             var commaCulture = new CultureInfo("en")
             {
-                NumberFormat =
-                {
-                    NumberDecimalSeparator = ","
-                }
+                NumberFormat = { NumberDecimalSeparator = "," }
             };
 
-            double gpslat = !String.IsNullOrEmpty(vendingpoint.latitude) ? Convert.ToDouble(vendingpoint.latitude, commaCulture) : 0;
-            double gpslong = !String.IsNullOrEmpty(vendingpoint.longitude) ? Convert.ToDouble(vendingpoint.longitude, commaCulture) : 0;
+            double gpslat = !String.IsNullOrEmpty(vendingpoint.latitude)
+                ? Convert.ToDouble(vendingpoint.latitude, commaCulture)
+                : 0;
+            double gpslong = !String.IsNullOrEmpty(vendingpoint.longitude)
+                ? Convert.ToDouble(vendingpoint.longitude, commaCulture)
+                : 0;
 
             if (gpslat != 0 && gpslong != 0)
             {
@@ -75,32 +78,68 @@ namespace STA
 
             //Properties Parsing
             List<PoiProperty> mypoipropertylist = new List<PoiProperty>();
-            
-            PoiProperty pPhasWebsite = new PoiProperty() { Name = "haswebsite", Value = vendingpoint.Website == "1" ? "True" : "False" };
+
+            PoiProperty pPhasWebsite = new PoiProperty()
+            {
+                Name = "haswebsite",
+                Value = vendingpoint.Website == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPhasWebsite);
 
-            PoiProperty pPsuedtirolpassdienste = new PoiProperty() { Name = "suedtirolpass_services", Value = vendingpoint.SuedtirolPassDienste == "1" ? "True" : "False" };
+            PoiProperty pPsuedtirolpassdienste = new PoiProperty()
+            {
+                Name = "suedtirolpass_services",
+                Value = vendingpoint.SuedtirolPassDienste == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPsuedtirolpassdienste);
-            
-            PoiProperty pPsuedtirolpassover65 = new PoiProperty() { Name = "suedtirolpass_over65_apply", Value = vendingpoint.SuedtirolPass65PlusBeantragung == "1" ? "True" : "False" };
+
+            PoiProperty pPsuedtirolpassover65 = new PoiProperty()
+            {
+                Name = "suedtirolpass_over65_apply",
+                Value = vendingpoint.SuedtirolPass65PlusBeantragung == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPsuedtirolpassover65);
-            
-            PoiProperty pPduplicate = new PoiProperty() { Name = "duplicate", Value = vendingpoint.Duplikat == "1" ? "True" : "False" };
+
+            PoiProperty pPduplicate = new PoiProperty()
+            {
+                Name = "duplicate",
+                Value = vendingpoint.Duplikat == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPduplicate);
-            
-            PoiProperty pPHwertkarte = new PoiProperty() { Name = "chargecard", Value = vendingpoint.Wertkarte == "1" ? "True" : "False" };
+
+            PoiProperty pPHwertkarte = new PoiProperty()
+            {
+                Name = "chargecard",
+                Value = vendingpoint.Wertkarte == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPHwertkarte);
-            
-            PoiProperty pPstadtfahrkartecitybus = new PoiProperty() { Name = "city_card_bus", Value = vendingpoint.StadtfahrkarteoCitybus == "1" ? "True" : "False" };
+
+            PoiProperty pPstadtfahrkartecitybus = new PoiProperty()
+            {
+                Name = "city_card_bus",
+                Value = vendingpoint.StadtfahrkarteoCitybus == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPstadtfahrkartecitybus);
-            
-            PoiProperty pPmobilcard = new PoiProperty() { Name = "mobilecard", Value = vendingpoint.Mobilcard == "1" ? "True" : "False" };
+
+            PoiProperty pPmobilcard = new PoiProperty()
+            {
+                Name = "mobilecard",
+                Value = vendingpoint.Mobilcard == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPmobilcard);
-            
-            PoiProperty pPbikemobilcard = new PoiProperty() { Name = "bike_mobilecard", Value = vendingpoint.bikemobilCard == "1" ? "True" : "False" };
+
+            PoiProperty pPbikemobilcard = new PoiProperty()
+            {
+                Name = "bike_mobilecard",
+                Value = vendingpoint.bikemobilCard == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPbikemobilcard);
 
-            PoiProperty pPmobilecard = new PoiProperty() { Name = "museum_mobilecard", Value = vendingpoint.MuseumobilCard == "1" ? "True" : "False" }; 
+            PoiProperty pPmobilecard = new PoiProperty()
+            {
+                Name = "museum_mobilecard",
+                Value = vendingpoint.MuseumobilCard == "1" ? "True" : "False"
+            };
             mypoipropertylist.Add(pPmobilecard);
 
             mypoi.PoiProperty.TryAddOrUpdate("de", mypoipropertylist);
@@ -120,7 +159,7 @@ namespace STA
                 detailde.AdditionalText = vendingpoint.Zusatzinfo_DE;
 
             mypoi.Detail.TryAddOrUpdate("de", detailde);
-       
+
             Detail detailit = new Detail();
             detailit.Language = "it";
             detailit.Title = vendingpoint.Salepoint_Name_STA_IT;
@@ -199,7 +238,7 @@ namespace STA
             //Standard open all year? Make use of DB with Festive days and add them as closed?
             var operationschedule = ParseOperationScheduleFromCSV(vendingpoint);
 
-            if(operationschedule != null)
+            if (operationschedule != null)
             {
                 mypoi.OperationSchedule = new List<OperationSchedule>();
 
@@ -209,18 +248,18 @@ namespace STA
             //END Openingtimes Parsing
 
             //TODO
-            //Categorization                        
+            //Categorization
 
-            //ODH Tags 
+            //ODH Tags
             mypoi.SmgTags = new List<string>();
             mypoi.SmgTags.Add("mobilität");
             mypoi.SmgTags.Add("verkaufstellen ticket oeffentliche verkehrsmittel");
 
             //ODH Categorizations
-            //TODO LOAD Categorizations 
+            //TODO LOAD Categorizations
             mypoi.Type = "Mobilität";
             mypoi.SubType = "Verkaufstellen Ticket Oeffentliche Verkehrsmittel";
-          
+
             mypoi.SyncSourceInterface = "sta";
             mypoi.SyncUpdateMode = "Full";
             mypoi.Source = "sta";
@@ -228,7 +267,7 @@ namespace STA
             mypoi.Active = true;
             mypoi.SmgActive = true;
 
-            mypoi.HasLanguage = new List<string>() { "de","it","en","ld" };
+            mypoi.HasLanguage = new List<string>() { "de", "it", "en", "ld" };
 
             mypoi.Shortname = mypoi.Detail["de"].Title;
 
@@ -237,9 +276,15 @@ namespace STA
             return mypoi;
         }
 
-        private static OperationSchedule? ParseOperationScheduleFromCSV(STAVendingPoint vendingpoint)
+        private static OperationSchedule? ParseOperationScheduleFromCSV(
+            STAVendingPoint vendingpoint
+        )
         {
-            if (!String.IsNullOrEmpty(vendingpoint.Wochentags_Beginn) || !String.IsNullOrEmpty(vendingpoint.Samstag_Beginn) || !String.IsNullOrEmpty(vendingpoint.Sonntag_Beginn))
+            if (
+                !String.IsNullOrEmpty(vendingpoint.Wochentags_Beginn)
+                || !String.IsNullOrEmpty(vendingpoint.Samstag_Beginn)
+                || !String.IsNullOrEmpty(vendingpoint.Sonntag_Beginn)
+            )
             {
                 OperationSchedule myoperationschedule = new OperationSchedule();
                 myoperationschedule.OperationscheduleName = new Dictionary<string, string>()
@@ -254,51 +299,99 @@ namespace STA
 
                 ////Try Parsing Columns
                 TimeSpan beginweekday = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Wochentags_Beginn, CultureInfo.InvariantCulture, out beginweekday);
+                TimeSpan.TryParse(
+                    vendingpoint.Wochentags_Beginn,
+                    CultureInfo.InvariantCulture,
+                    out beginweekday
+                );
 
                 TimeSpan endweekdaynoon = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Pause_Start, CultureInfo.InvariantCulture, out endweekdaynoon);
+                TimeSpan.TryParse(
+                    vendingpoint.Pause_Start,
+                    CultureInfo.InvariantCulture,
+                    out endweekdaynoon
+                );
 
                 TimeSpan beginweekdaynoon = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Pause_Ende, CultureInfo.InvariantCulture, out beginweekdaynoon);
+                TimeSpan.TryParse(
+                    vendingpoint.Pause_Ende,
+                    CultureInfo.InvariantCulture,
+                    out beginweekdaynoon
+                );
 
                 TimeSpan endweekday = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Wochentags_Ende, CultureInfo.InvariantCulture, out endweekday);
+                TimeSpan.TryParse(
+                    vendingpoint.Wochentags_Ende,
+                    CultureInfo.InvariantCulture,
+                    out endweekday
+                );
 
                 //Saturday
 
                 TimeSpan beginsaturday = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Samstag_Beginn, CultureInfo.InvariantCulture, out beginsaturday);
+                TimeSpan.TryParse(
+                    vendingpoint.Samstag_Beginn,
+                    CultureInfo.InvariantCulture,
+                    out beginsaturday
+                );
 
                 TimeSpan endsaturdaynoon = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Pause_Samstag_Beginn, CultureInfo.InvariantCulture, out endsaturdaynoon);
+                TimeSpan.TryParse(
+                    vendingpoint.Pause_Samstag_Beginn,
+                    CultureInfo.InvariantCulture,
+                    out endsaturdaynoon
+                );
 
                 TimeSpan beginsaturdaynoon = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Pause_Samstag_Ende, CultureInfo.InvariantCulture, out beginsaturdaynoon);
+                TimeSpan.TryParse(
+                    vendingpoint.Pause_Samstag_Ende,
+                    CultureInfo.InvariantCulture,
+                    out beginsaturdaynoon
+                );
 
                 TimeSpan endsaturday = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Samstag_Ende,  CultureInfo.InvariantCulture, out endsaturday);
+                TimeSpan.TryParse(
+                    vendingpoint.Samstag_Ende,
+                    CultureInfo.InvariantCulture,
+                    out endsaturday
+                );
 
                 //Sunday
 
                 TimeSpan beginsunday = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Sonntag_Beginn, CultureInfo.InvariantCulture, out beginsunday);
+                TimeSpan.TryParse(
+                    vendingpoint.Sonntag_Beginn,
+                    CultureInfo.InvariantCulture,
+                    out beginsunday
+                );
 
                 TimeSpan endsundaynoon = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Pause_Sonntag_Beginn, CultureInfo.InvariantCulture, out endsundaynoon);
+                TimeSpan.TryParse(
+                    vendingpoint.Pause_Sonntag_Beginn,
+                    CultureInfo.InvariantCulture,
+                    out endsundaynoon
+                );
 
                 TimeSpan beginsundaynoon = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Pause_Sonntag_Ende, CultureInfo.InvariantCulture, out beginsundaynoon);
+                TimeSpan.TryParse(
+                    vendingpoint.Pause_Sonntag_Ende,
+                    CultureInfo.InvariantCulture,
+                    out beginsundaynoon
+                );
 
                 TimeSpan endsunday = default(TimeSpan);
-                TimeSpan.TryParse(vendingpoint.Sonntag_Ende, CultureInfo.InvariantCulture, out endsunday);
+                TimeSpan.TryParse(
+                    vendingpoint.Sonntag_Ende,
+                    CultureInfo.InvariantCulture,
+                    out endsunday
+                );
 
                 myoperationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
 
                 //Add openingtime for Weekday, Saturday and Sunday
 
-                if (beginweekday!= TimeSpan.Zero && endweekday != TimeSpan.Zero)
-                {                
+                if (beginweekday != TimeSpan.Zero && endweekday != TimeSpan.Zero)
+                {
                     //If no pause
                     if (beginweekdaynoon == TimeSpan.Zero || endweekdaynoon == TimeSpan.Zero)
                     {
@@ -487,22 +580,29 @@ namespace STA
                 }
 
                 //Exceptions, Closed on a certain day
-                if(!String.IsNullOrEmpty(vendingpoint.Zusatzinfo_EN))
+                if (!String.IsNullOrEmpty(vendingpoint.Zusatzinfo_EN))
                 {
-                    if(vendingpoint.Zusatzinfo_EN.EndsWith("closed"))
+                    if (vendingpoint.Zusatzinfo_EN.EndsWith("closed"))
                     {
                         //Find out the day
                         var myday = vendingpoint.Zusatzinfo_EN.Replace(" closed", "");
 
                         //var validdays = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-                        var validdays = new List<string>() { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" }; //Excluding Saturday and Sunday because they can set separately
+                        var validdays = new List<string>()
+                        {
+                            "Monday",
+                            "Tuesday",
+                            "Wednesday",
+                            "Thursday",
+                            "Friday"
+                        }; //Excluding Saturday and Sunday because they can set separately
 
                         if (validdays.Contains(myday))
                         {
                             //Add closed Schedule
                             OperationScheduleTime myoptimeclosed = new OperationScheduleTime();
                             myoptimeclosed.Monday = myday == "Monday" ? true : false;
-                            myoptimeclosed.Tuesday = myday == "Tuesday" ? true : false; 
+                            myoptimeclosed.Tuesday = myday == "Tuesday" ? true : false;
                             myoptimeclosed.Wednesday = myday == "Wednesday" ? true : false;
                             myoptimeclosed.Thuresday = myday == "Thursday" ? true : false;
                             //myoptimeclosed.Thursday = myday == "Thursday" ? true : false;
@@ -518,12 +618,8 @@ namespace STA
 
                             myoperationschedule.OperationScheduleTime.Add(myoptimeclosed);
                         }
-                        
                     }
                 }
-
-
-
 
                 return myoperationschedule;
             }

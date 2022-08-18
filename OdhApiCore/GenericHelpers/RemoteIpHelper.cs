@@ -19,7 +19,9 @@ namespace OdhApiCore
             // http://stackoverflow.com/a/43554000/538763
             //
             if (tryUseXForwardHeader)
-                ip = GetHeaderValueAs<string>("X-Forwarded-For", context)?.SplitCsv()?.FirstOrDefault();
+                ip = GetHeaderValueAs<string>("X-Forwarded-For", context)
+                    ?.SplitCsv()
+                    ?.FirstOrDefault();
 
             // RemoteIpAddress is always null in DNX RC1 Update1 (bug).
             if (ip.IsNullOrWhitespace() && context?.Connection?.RemoteIpAddress != null)
@@ -46,7 +48,7 @@ namespace OdhApiCore
 
             if (context?.Request?.Headers?.TryGetValue(headerName, out values) ?? false)
             {
-                string rawValues = values.ToString();   // writes out as Csv when there are multiple.
+                string rawValues = values.ToString(); // writes out as Csv when there are multiple.
 
                 if (!rawValues.IsNullOrWhitespace())
                     return (T)Convert.ChangeType(values.ToString(), typeof(T));
@@ -54,7 +56,10 @@ namespace OdhApiCore
             return default(T);
         }
 
-        private static List<string>? SplitCsv(this string csvList, bool nullOrWhitespaceInputReturnsNull = false)
+        private static List<string>? SplitCsv(
+            this string csvList,
+            bool nullOrWhitespaceInputReturnsNull = false
+        )
         {
             if (string.IsNullOrWhiteSpace(csvList))
                 return nullOrWhitespaceInputReturnsNull ? null : new List<string>();

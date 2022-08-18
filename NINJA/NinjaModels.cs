@@ -6,7 +6,6 @@ using DataModel;
 
 namespace NINJA
 {
-
     #region Ninja classes
 
     public class NinjaObject<T>
@@ -46,16 +45,22 @@ namespace NINJA
         public IDictionary<string, string> decription { get; set; }
         public IDictionary<string, string> event_type { get; set; }
         public string event_type_key { get; set; }
+
         [JsonProperty("begin_date")]
         public string begin_date { get; set; }
+
         [JsonProperty("end_date")]
         public string end_date { get; set; }
+
         [JsonProperty("begin_time")]
         public string begin_time { get; set; }
+
         [JsonProperty("end_time")]
         public string end_time { get; set; }
+
         [JsonProperty("price")]
         public string price { get; set; }
+
         [JsonProperty("number_of_seats")]
         public string number_of_seats { get; set; }
     }

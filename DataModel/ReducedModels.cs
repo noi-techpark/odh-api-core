@@ -8,50 +8,23 @@ namespace DataModel
 {
     #region ReducedClasses
 
-    public class LTSActivityLinkedReduced : LTSActivityLinked
-    {
+    public class LTSActivityLinkedReduced : LTSActivityLinked { }
 
-    }
+    public class LTSPoiLinkedReduced : LTSPoiLinked { }
 
-    public class LTSPoiLinkedReduced : LTSPoiLinked
-    {
+    public class LTSODHActivityPoiReduced : ODHActivityPoiLinked { }
 
-    }
+    public class AccommodationLinkedReduced : AccommodationLinked { }
 
-    public class LTSODHActivityPoiReduced : ODHActivityPoiLinked
-    {
+    public class EventLinkedReduced : EventLinked { }
 
-    }
+    public class GastronomyLinkedReduced : GastronomyLinked { }
 
-    public class AccommodationLinkedReduced : AccommodationLinked
-    {
+    public class MeasuringpointLinkedReduced : MeasuringpointLinked { }
 
-    }
+    public class WebcamInfoLinkedReduced : WebcamInfoLinked { }
 
-    public class EventLinkedReduced : EventLinked
-    {
-
-    }
-
-    public class GastronomyLinkedReduced : GastronomyLinked
-    {
-
-    }
-
-    public class MeasuringpointLinkedReduced : MeasuringpointLinked
-    {
-
-    }
-
-    public class WebcamInfoLinkedReduced : WebcamInfoLinked
-    {
-
-    }
-
-    public class DDVenueReduced : DDVenue
-    {
-
-    }
+    public class DDVenueReduced : DDVenue { }
 
     #endregion
 }

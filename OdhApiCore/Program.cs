@@ -9,7 +9,7 @@ namespace OdhApiCore
     {
         public static async Task Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();           
+            var host = CreateHostBuilder(args).Build();
 
             await host.RunAsync();
         }
@@ -21,8 +21,7 @@ namespace OdhApiCore
                 //{
                 //    config.AddEnvironmentVariables();
                 //})
-                .ConfigureWebHostDefaults(webBuilder =>
-                    webBuilder.UseStartup<Startup>());
+                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
     }
 }

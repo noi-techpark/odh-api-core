@@ -12,11 +12,15 @@ namespace OdhApiCore.Swagger
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            if ((context.MemberInfo as ICustomAttributeProvider ?? context.ParameterInfo) is { } info)
+            if (
+                (context.MemberInfo as ICustomAttributeProvider ?? context.ParameterInfo) is
+                { } info
+            )
             {
-                var obsoleteMemberAttribute = info
-                    .GetCustomAttributes(false)
-                    .FirstOrDefault(attribute => attribute.GetType() == typeof(SwaggerEnumAttribute));
+                var obsoleteMemberAttribute = info.GetCustomAttributes(false)
+                    .FirstOrDefault(
+                        attribute => attribute.GetType() == typeof(SwaggerEnumAttribute)
+                    );
                 if (obsoleteMemberAttribute is SwaggerEnumAttribute obsoleteMember)
                 {
                     var enumValues = new List<IOpenApiAny>();

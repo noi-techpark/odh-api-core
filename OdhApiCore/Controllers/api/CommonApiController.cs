@@ -17,12 +17,14 @@ namespace OdhApiCore.Controllers.api
 {
     public class CommonController : OdhController
     {
-        public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<CommonController> logger, QueryFactory queryFactory)
-       : base(env, settings, logger, queryFactory)
-        {            
-        }
+        public CommonController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<CommonController> logger,
+            QueryFactory queryFactory
+        ) : base(env, settings, logger, queryFactory) { }
 
-        #region SWAGGER Exposed API        
+        #region SWAGGER Exposed API
 
         //Standard GETTER
 
@@ -38,15 +40,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of MetaRegion Objects</returns>     
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of MetaRegion Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -66,8 +68,7 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
             string? updatefrom = null,
@@ -77,22 +78,65 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
-        {                        
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            CancellationToken cancellationToken = default
+        )
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
 
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source, active?.Value, odhactive?.Value, odhtagfilter, lastchange: updatefrom, publishedon, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                null,
+                source,
+                active?.Value,
+                odhactive?.Value,
+                odhtagfilter,
+                lastchange: updatefrom,
+                publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "metaregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "metaregions",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "metaregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
-            }                
+                return await CommonGetListHelper(
+                    tablename: "metaregions",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
+            }
         }
 
         /// <summary>
@@ -101,8 +145,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>MetaRegion Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>MetaRegion Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -112,13 +156,20 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("MetaRegion/{id}", Name = "SingleMetaRegion")]
         public async Task<IActionResult> GetMetaRegionSingle(
             string id,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
-        {            
-            return await CommonGetSingleHelper(id: id, tablename: "metaregions", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            CancellationToken cancellationToken = default
+        )
+        {
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "metaregions",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -134,15 +185,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of ExperienceArea Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of ExperienceArea Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -152,7 +203,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("ExperienceArea")]
         public async Task<IActionResult> GetExperienceAreas(
             uint? pagenumber = null,
-            PageSize pagesize = null!, 
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
@@ -162,8 +213,7 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
             string? updatefrom = null,
@@ -173,21 +223,63 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
-        {          
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, source, activefilter: active?.Value, 
-                smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
+            CancellationToken cancellationToken = default
+        )
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                visibleinsearch,
+                source,
+                activefilter: active?.Value,
+                smgactivefilter: odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                publishedonfilter: publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "experienceareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "experienceareas",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "experienceareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetListHelper(
+                    tablename: "experienceareas",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
         }
 
@@ -197,23 +289,31 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>ExperienceArea Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>ExperienceArea Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(ExperienceArea), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("ExperienceArea/{id}", Name ="SingleExperienceArea")]
-        public async Task<IActionResult> GetExperienceAreaSingle(string id,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        [HttpGet, Route("ExperienceArea/{id}", Name = "SingleExperienceArea")]
+        public async Task<IActionResult> GetExperienceAreaSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "experienceareas", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "experienceareas",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -228,15 +328,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of Region Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of Region Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -246,7 +346,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Region")]
         public async Task<IActionResult> GetRegions(
             uint? pagenumber = null,
-            PageSize pagesize = null!, 
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
@@ -255,8 +355,7 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
             string? updatefrom = null,
@@ -266,21 +365,63 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
-                activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                null,
+                source,
+                activefilter: active?.Value,
+                smgactivefilter: odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                publishedonfilter: publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "regions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "regions",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "regions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetListHelper(
+                    tablename: "regions",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
         }
 
@@ -290,23 +431,31 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Region Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Region Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(Region), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Region/{id}", Name ="SingleRegion")]
-        public async Task<IActionResult> GetRegionSingle(string id,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        [HttpGet, Route("Region/{id}", Name = "SingleRegion")]
+        public async Task<IActionResult> GetRegionSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "regions", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "regions",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -321,15 +470,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of Tourismverein Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of Tourismverein Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -339,7 +488,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TourismAssociation")]
         public async Task<IActionResult> GetTourismverein(
             uint? pagenumber = null,
-            PageSize pagesize = null!, 
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
@@ -348,34 +497,74 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
-            string? updatefrom = null, 
+            string? updatefrom = null,
             string? seed = null,
             string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
-                activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                null,
+                source,
+                activefilter: active?.Value,
+                smgactivefilter: odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                publishedonfilter: publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "tvs", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "tvs",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "tvs", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetListHelper(
+                    tablename: "tvs",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
-
         }
 
         /// <summary>
@@ -384,8 +573,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Tourismverein Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Tourismverein Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -393,14 +582,22 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("TourismAssociation/{id}", Name = "SingleTourismAssociation")]
-        public async Task<IActionResult> GetTourismvereinSingle(string id,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        public async Task<IActionResult> GetTourismvereinSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "tvs", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "tvs",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -416,15 +613,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of Municipality Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of Municipality Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -434,7 +631,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Municipality")]
         public async Task<IActionResult> GetMunicipality(
             uint? pagenumber = null,
-            PageSize pagesize = null!, 
+            PageSize pagesize = null!,
             bool? visibleinsearch = null,
             string? idlist = null,
             string? odhtagfilter = null,
@@ -444,34 +641,74 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
-            string? updatefrom = null, 
+            string? updatefrom = null,
             string? seed = null,
             string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, source,
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                visibleinsearch,
+                source,
+                active?.Value,
+                odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                publishedonfilter: publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "municipalities", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "municipalities",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "municipalities", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetListHelper(
+                    tablename: "municipalities",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
-
         }
 
         /// <summary>
@@ -480,8 +717,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Municipality Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Municipality Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -489,14 +726,22 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Municipality/{id}", Name = "SingleMunicipality")]
-        public async Task<IActionResult> GetMunicipalitySingle(string id, 
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        public async Task<IActionResult> GetMunicipalitySingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "municipalities", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "municipalities",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -512,15 +757,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of District Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of District Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -540,8 +785,7 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
             string? updatefrom = null,
@@ -551,23 +795,64 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
-        {            
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, source,
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
+            CancellationToken cancellationToken = default
+        )
+        {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                visibleinsearch,
+                source,
+                active?.Value,
+                odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                publishedonfilter: publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "districts", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                    language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "districts",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "districts", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                    language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);                
+                return await CommonGetListHelper(
+                    tablename: "districts",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
-
         }
 
         /// <summary>
@@ -576,8 +861,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>District Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>District Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -585,16 +870,23 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("District/{id}", Name = "SingleDistrict")]
-        public async Task<IActionResult> GetDistrictSingle(string id,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        public async Task<IActionResult> GetDistrictSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "districts", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "districts",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
-
 
         /// <summary>
         /// GET Area List
@@ -605,15 +897,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactive">Odhactive (Published) data Filter (possible Values: 'true' only published data, 'false' only not published data, (default:'null')</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of Area Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of Area Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -623,14 +915,13 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("Area")]
         public async Task<IActionResult> GetAreas(
             uint? pagenumber = null,
-            PageSize pagesize = null!, 
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
             string? source = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
             string? updatefrom = null,
@@ -640,20 +931,58 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                null,
+                source,
+                active?.Value,
+                odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                publishedonfilter: publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "areas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "areas",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: new PGGeoSearchResult(),
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "areas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetListHelper(
+                    tablename: "areas",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: new PGGeoSearchResult(),
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
         }
 
@@ -663,8 +992,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Area Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Area Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -672,16 +1001,23 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Area/{id}", Name = "SingleArea")]
-        public async Task<IActionResult> GetAreaSingle(string id, 
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        public async Task<IActionResult> GetAreaSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "areas", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues : removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "areas",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
-
 
         /// <summary>
         /// GET SkiRegion List
@@ -695,15 +1031,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of SkiRegion Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of SkiRegion Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -713,14 +1049,13 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("SkiRegion")]
         public async Task<IActionResult> GetSkiRegion(
             uint? pagenumber = null,
-            PageSize pagesize = null!, 
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
             string? source = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
             string? updatefrom = null,
@@ -730,20 +1065,58 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                null,
+                source,
+                active?.Value,
+                odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                publishedonfilter: publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "skiregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "skiregions",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: new PGGeoSearchResult(),
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "skiregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetListHelper(
+                    tablename: "skiregions",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: new PGGeoSearchResult(),
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
         }
 
@@ -753,23 +1126,31 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>SkiRegion Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>SkiRegion Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(SkiRegion), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("SkiRegion/{id}", Name ="SingleSkiRegion")]
-        public async Task<IActionResult> GetSkiRegionSingle(string id, 
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        [HttpGet, Route("SkiRegion/{id}", Name = "SingleSkiRegion")]
+        public async Task<IActionResult> GetSkiRegionSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "skiregions", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "skiregions",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -784,15 +1165,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of SkiArea Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of SkiArea Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -802,17 +1183,16 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("SkiArea")]
         public async Task<IActionResult> GetSkiArea(
             uint? pagenumber = null,
-            PageSize pagesize = null!, 
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
             string? source = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
-            string? updatefrom = null, 
+            string? updatefrom = null,
             string? seed = null,
             string? publishedon = null,
             string? searchfilter = null,
@@ -822,22 +1202,64 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
 
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                languagefilter: langfilter,
+                null,
+                source,
+                active?.Value,
+                odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                publishedonfilter: publishedon,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "skiareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "skiareas",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await CommonGetListHelper(tablename: "skiareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await CommonGetListHelper(
+                    tablename: "skiareas",
+                    seed: seed,
+                    publishedon: publishedon,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    geosearchresult: geosearchresult,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
         }
 
@@ -847,25 +1269,32 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>SkiArea Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>SkiArea Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(SkiArea), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("SkiArea/{id}", Name ="SingleSkiArea")]
-        public async Task<IActionResult> GetSkiAreaSingle(string id,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        [HttpGet, Route("SkiArea/{id}", Name = "SingleSkiArea")]
+        public async Task<IActionResult> GetSkiAreaSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "skiareas", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "skiareas",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
-
 
         ////Special GETTER
 
@@ -880,14 +1309,14 @@ namespace OdhApiCore.Controllers.api
         /// <param name="wineid">Filter by Wine Id, (default:'null')</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -897,7 +1326,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("WineAward")]
         public async Task<IActionResult> GetWineAwardsList(
             uint? pagenumber = null,
-            PageSize pagesize = null!, 
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
@@ -905,8 +1334,7 @@ namespace OdhApiCore.Controllers.api
             string? source = null,
             string? wineid = null,
             string? companyid = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             string? langfilter = null,
             string? updatefrom = null,
@@ -917,20 +1345,54 @@ namespace OdhApiCore.Controllers.api
             string? searchfilter = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default
-            )
+        )
         {
-            WineHelper commonhelper = await WineHelper.CreateAsync(QueryFactory, idfilter: idlist, companyid, wineid, languagefilter: langfilter, null, source,
-                active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
+            WineHelper commonhelper = await WineHelper.CreateAsync(
+                QueryFactory,
+                idfilter: idlist,
+                companyid,
+                wineid,
+                languagefilter: langfilter,
+                null,
+                source,
+                active?.Value,
+                odhactive?.Value,
+                smgtags: odhtagfilter,
+                lastchange: updatefrom,
+                cancellationToken
+            );
 
             if (pagenumber.HasValue)
             {
-                return await WineGetPagedListHelper(pagenumber.Value, pagesize, tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await WineGetPagedListHelper(
+                    pagenumber.Value,
+                    pagesize,
+                    tablename: "wines",
+                    seed: seed,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
             else
             {
-                return await WineGetListHelper(tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                return await WineGetListHelper(
+                    tablename: "wines",
+                    seed: seed,
+                    searchfilter: searchfilter,
+                    fields: fields ?? Array.Empty<string>(),
+                    language: language,
+                    commonhelper,
+                    rawfilter: rawfilter,
+                    rawsort: rawsort,
+                    removenullvalues: removenullvalues,
+                    cancellationToken
+                );
             }
         }
 
@@ -940,83 +1402,154 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the requested data</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Wine Object</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Wine Object</returns>
         [ProducesResponseType(typeof(Wine), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("WineAward/{id}", Name ="SingleWineAward")]
-        public async Task<IActionResult> GetWineAwardsSingle(string id, 
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+        [HttpGet, Route("WineAward/{id}", Name = "SingleWineAward")]
+        public async Task<IActionResult> GetWineAwardsSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? language = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await CommonGetSingleHelper(id: id, tablename: "wines", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(
+                id: id,
+                tablename: "wines",
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         #endregion
 
         #region GETTER
 
-        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? publishedon, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetListHelper(
+            string tablename,
+            string? seed,
+            string? publishedon,
+            string? searchfilter,
+            string[] fields,
+            string? language,
+            CommonHelper commonhelper,
+            PGGeoSearchResult geosearchresult,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From(tablename)
-                        .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
-                                               activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language, 
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
-                        .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                var query = QueryFactory
+                    .Query()
+                    .SelectRaw("data")
+                    .From(tablename)
+                    .CommonWhereExpression(
+                        idlist: commonhelper.idlist,
+                        languagelist: commonhelper.languagelist,
+                        visibleinsearch: commonhelper.visibleinsearch,
+                        commonhelper.smgtaglist,
+                        activefilter: commonhelper.active,
+                        odhactivefilter: commonhelper.smgactive,
+                        publishedonlist: commonhelper.publishedonlist,
+                        sourcelist: commonhelper.sourcelist,
+                        searchfilter: searchfilter,
+                        language: language,
+                        lastchange: commonhelper.lastchange,
+                        filterClosedData: FilterClosedData
+                    )
+                    .ApplyRawFilter(rawfilter)
+                    .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
                 // Get paginated data
-                var data =
-                    await query
-                        .GetAsync<JsonRaw>();
-                
+                var data = await query.GetAsync<JsonRaw>();
+
                 var fieldsTohide = FieldsToHide;
 
-                var dataTransformed =
-                    data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
+                var dataTransformed = data.Select(
+                    raw =>
+                        raw.TransformRawData(
+                            language,
+                            fields,
+                            checkCC0: FilterCC0License,
+                            filterClosedData: FilterClosedData,
+                            filteroutNullValues: removenullvalues,
+                            urlGenerator: UrlGenerator,
+                            fieldstohide: fieldsTohide
+                        )
+                );
 
                 return dataTransformed;
             });
         }
 
-        private Task<IActionResult> CommonGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? publishedon, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetPagedListHelper(
+            uint pagenumber,
+            int? pagesize,
+            string tablename,
+            string? seed,
+            string? publishedon,
+            string? searchfilter,
+            string[] fields,
+            string? language,
+            CommonHelper commonhelper,
+            PGGeoSearchResult geosearchresult,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From(tablename)
-                        .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
-                                               activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language,
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
-                        .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
+                var query = QueryFactory
+                    .Query()
+                    .SelectRaw("data")
+                    .From(tablename)
+                    .CommonWhereExpression(
+                        idlist: commonhelper.idlist,
+                        languagelist: commonhelper.languagelist,
+                        visibleinsearch: commonhelper.visibleinsearch,
+                        commonhelper.smgtaglist,
+                        activefilter: commonhelper.active,
+                        odhactivefilter: commonhelper.smgactive,
+                        publishedonlist: commonhelper.publishedonlist,
+                        sourcelist: commonhelper.sourcelist,
+                        searchfilter: searchfilter,
+                        language: language,
+                        lastchange: commonhelper.lastchange,
+                        filterClosedData: FilterClosedData
+                    )
+                    .ApplyRawFilter(rawfilter)
+                    .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
-                var data =
-                    await query
-                        .PaginateAsync<JsonRaw>(
-                            page: (int)pagenumber,
-                            perPage: pagesize ?? 25);
+                var data = await query.PaginateAsync<JsonRaw>(
+                    page: (int)pagenumber,
+                    perPage: pagesize ?? 25
+                );
 
                 var fieldsTohide = FieldsToHide;
 
-                var dataTransformed =
-                    data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
+                var dataTransformed = data.List.Select(
+                    raw =>
+                        raw.TransformRawData(
+                            language,
+                            fields,
+                            checkCC0: FilterCC0License,
+                            filterClosedData: FilterClosedData,
+                            filteroutNullValues: removenullvalues,
+                            urlGenerator: UrlGenerator,
+                            fieldstohide: fieldsTohide
+                        )
+                );
 
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
@@ -1027,67 +1560,131 @@ namespace OdhApiCore.Controllers.api
                     totalcount,
                     seed,
                     dataTransformed,
-                    Url);
+                    Url
+                );
             });
         }
 
-        private Task<IActionResult> WineGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> WineGetListHelper(
+            string tablename,
+            string? seed,
+            string? searchfilter,
+            string[] fields,
+            string? language,
+            WineHelper winehelper,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From(tablename)
-                        .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
-                                             activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
-                        .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                var query = QueryFactory
+                    .Query()
+                    .SelectRaw("data")
+                    .From(tablename)
+                    .WineWhereExpression(
+                        languagelist: new List<string>(),
+                        lastchange: winehelper.lastchange,
+                        wineid: winehelper.wineidlist,
+                        companyid: winehelper.companyidlist,
+                        activefilter: winehelper.active,
+                        odhactivefilter: winehelper.smgactive,
+                        sourcelist: winehelper.sourcelist,
+                        searchfilter: searchfilter,
+                        language: language,
+                        filterClosedData: FilterClosedData
+                    )
+                    .ApplyRawFilter(rawfilter)
+                    .ApplyOrdering(
+                        ref seed,
+                        new PGGeoSearchResult() { geosearch = false },
+                        rawsort
+                    );
 
                 // Get paginated data
-                var data =
-                    await query
-                        .GetAsync<JsonRaw>();
-                
+                var data = await query.GetAsync<JsonRaw>();
+
                 var fieldsTohide = FieldsToHide;
 
-                var dataTransformed =
-                    data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
+                var dataTransformed = data.Select(
+                    raw =>
+                        raw.TransformRawData(
+                            language,
+                            fields,
+                            checkCC0: FilterCC0License,
+                            filterClosedData: FilterClosedData,
+                            filteroutNullValues: removenullvalues,
+                            urlGenerator: UrlGenerator,
+                            fieldstohide: fieldsTohide
+                        )
+                );
 
                 return dataTransformed;
             });
         }
 
-        private Task<IActionResult> WineGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> WineGetPagedListHelper(
+            uint pagenumber,
+            int? pagesize,
+            string tablename,
+            string? seed,
+            string? searchfilter,
+            string[] fields,
+            string? language,
+            WineHelper winehelper,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From(tablename)
-                        .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
-                                             activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
-                        .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                var query = QueryFactory
+                    .Query()
+                    .SelectRaw("data")
+                    .From(tablename)
+                    .WineWhereExpression(
+                        languagelist: new List<string>(),
+                        lastchange: winehelper.lastchange,
+                        wineid: winehelper.wineidlist,
+                        companyid: winehelper.companyidlist,
+                        activefilter: winehelper.active,
+                        odhactivefilter: winehelper.smgactive,
+                        sourcelist: winehelper.sourcelist,
+                        searchfilter: searchfilter,
+                        language: language,
+                        filterClosedData: FilterClosedData
+                    )
+                    .ApplyRawFilter(rawfilter)
+                    .ApplyOrdering(
+                        ref seed,
+                        new PGGeoSearchResult() { geosearch = false },
+                        rawsort
+                    );
 
                 // Get paginated data
-                var data =
-                    await query
-                        .PaginateAsync<JsonRaw>(
-                            page: (int)pagenumber,
-                            perPage: pagesize ?? 25);
+                var data = await query.PaginateAsync<JsonRaw>(
+                    page: (int)pagenumber,
+                    perPage: pagesize ?? 25
+                );
 
                 var fieldsTohide = FieldsToHide;
 
-                var dataTransformed =
-                    data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
+                var dataTransformed = data.List.Select(
+                    raw =>
+                        raw.TransformRawData(
+                            language,
+                            fields,
+                            checkCC0: FilterCC0License,
+                            filterClosedData: FilterClosedData,
+                            filteroutNullValues: removenullvalues,
+                            urlGenerator: UrlGenerator,
+                            fieldstohide: fieldsTohide
+                        )
+                );
 
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
@@ -1098,26 +1695,41 @@ namespace OdhApiCore.Controllers.api
                     totalcount,
                     seed,
                     dataTransformed,
-                    Url);
+                    Url
+                );
             });
         }
 
-
-        private Task<IActionResult> CommonGetSingleHelper(string id, string tablename, string[] fields, string? language, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetSingleHelper(
+            string id,
+            string tablename,
+            string[] fields,
+            string? language,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query(tablename)
-                        .Select("data")
-                        .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                
+                var query = QueryFactory
+                    .Query(tablename)
+                    .Select("data")
+                    .Where("id", id.ToUpper())
+                    .When(FilterClosedData, q => q.FilterClosedData());
+
                 var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(
+                    language,
+                    fields,
+                    checkCC0: FilterCC0License,
+                    filterClosedData: FilterClosedData,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGenerator,
+                    fieldstohide: fieldsTohide
+                );
             });
         }
 

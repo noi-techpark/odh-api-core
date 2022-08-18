@@ -20,7 +20,8 @@ namespace OdhApiImporter.Factories
         {
             Connection = new NpgsqlConnection(settings.PostgresConnectionString);
             Compiler = new PostgresCompiler();
-            Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
+            Logger = info =>
+                logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
 
         public new void Dispose()

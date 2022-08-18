@@ -9,14 +9,17 @@ namespace OdhApiCore.Controllers
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+            var valueProviderResult = bindingContext.ValueProvider.GetValue(
+                bindingContext.ModelName
+            );
 
-            string[] model =
-                valueProviderResult
-                    .Values
-                    .SelectMany(value =>
-                        value?.Split(",", StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>())
-                    .ToArray();
+            string[] model = valueProviderResult.Values
+                .SelectMany(
+                    value =>
+                        value?.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                        ?? Array.Empty<string>()
+                )
+                .ToArray();
 
             bindingContext.Result = ModelBindingResult.Success(model);
 

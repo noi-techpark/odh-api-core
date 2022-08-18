@@ -21,14 +21,18 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             this.settings = settings;
         }
 
-        public async Task<UpdateDetail> SaveSuedtirolWeinGastronomiesToODH(QueryFactory QueryFactory, DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveSuedtirolWeinGastronomiesToODH(
+            QueryFactory QueryFactory,
+            DateTime? lastchanged = null,
+            CancellationToken cancellationToken = default
+        )
         {
             var winegastrolist = await GetSuedtirolWeinGastronomiesList(cancellationToken);
 
-            foreach (var winedata in winegastrolist["de"].Root?.Elements("item") ?? Enumerable.Empty<XElement>())
-            {
-
-            }
+            foreach (
+                var winedata in winegastrolist["de"].Root?.Elements("item")
+                    ?? Enumerable.Empty<XElement>()
+            ) { }
             //var updateresult = await ImportMuseums(museumslist, cancellationToken);
             //SetMuseumsnotinListToInactive()
             //SetSuedtirolWineCompanyToInactive(documentStore, tracesource, log, winedatalistde);
@@ -37,7 +41,9 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             return new UpdateDetail();
         }
 
-        public async Task<IDictionary<string, XDocument>> GetSuedtirolWeinGastronomiesList(CancellationToken cancellationToken = default)
+        public async Task<IDictionary<string, XDocument>> GetSuedtirolWeinGastronomiesList(
+            CancellationToken cancellationToken = default
+        )
         {
             var winedatalistde = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("de");
             var winedatalistit = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("it");
@@ -62,6 +68,5 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
         {
             //ImportSuedtirolWineCompanySingle(documentStore, tracesource, log, winedata, mywinedata, i);
         }
-
     }
 }

@@ -9,8 +9,10 @@ namespace DataModel
 {
     public static class GpsConverter
     {
-
-        public static IDictionary<string, GpsInfo> ToGpsPointsDictionary(this ICollection<GpsInfo> gpsinfos, bool ltsactivitypoi = false)
+        public static IDictionary<string, GpsInfo> ToGpsPointsDictionary(
+            this ICollection<GpsInfo> gpsinfos,
+            bool ltsactivitypoi = false
+        )
         {
             //ODHActivityPoi should already pass
             if (!ltsactivitypoi)
@@ -22,7 +24,7 @@ namespace DataModel
                         .ToDictionary(x => x.Gpstype!, x => x);
                 else
                     return new Dictionary<string, GpsInfo>();
-            }   
+            }
             //For LTS POI & LTS Activity
             else
             {
@@ -30,16 +32,22 @@ namespace DataModel
                 var positioncount = 0;
 
                 foreach (var gpsinfo in gpsinfos)
-                {                    
+                {
                     string postionstr = "position";
 
                     if (positioncount > 0)
                         postionstr = postionstr + positioncount;
-                    
+
                     if (gpsinfo.Gpstype == "Endpunkt" || gpsinfo.Gpstype == "Bergstation")
                         gpspoints.Add("endposition", gpsinfo);
 
-                    if (gpsinfo.Gpstype == "position" || gpsinfo.Gpstype == "Standpunkt" || gpsinfo.Gpstype == "Startpunkt" || gpsinfo.Gpstype == "Start und Ziel" || gpsinfo.Gpstype == "Talstation")
+                    if (
+                        gpsinfo.Gpstype == "position"
+                        || gpsinfo.Gpstype == "Standpunkt"
+                        || gpsinfo.Gpstype == "Startpunkt"
+                        || gpsinfo.Gpstype == "Start und Ziel"
+                        || gpsinfo.Gpstype == "Talstation"
+                    )
                         gpspoints.Add(postionstr, gpsinfo);
 
                     positioncount = gpspoints.Where(x => x.Key == "position").Count();
@@ -47,11 +55,7 @@ namespace DataModel
 
                 return gpspoints;
             }
-
-
-           
         }
-
 
         //public IDictionary<string, GpsInfo> GpsPoints
         //{
@@ -69,6 +73,5 @@ namespace DataModel
         //        }
         //    }
         //}
-
     }
 }

@@ -20,7 +20,11 @@ namespace OdhApiCore
         //    throw new NotImplementedException();
         //}
 
-        public override string MakeCacheKey(ActionExecutingContext context, string mediaType, bool excludeQueryString = false)
+        public override string MakeCacheKey(
+            ActionExecutingContext context,
+            string mediaType,
+            bool excludeQueryString = false
+        )
         {
             var key = base.MakeCacheKey(context, mediaType, excludeQueryString);
 
@@ -43,13 +47,12 @@ namespace OdhApiCore
             {
                 if (context.HttpContext.User.Identity.IsAuthenticated)
                 {
-                    if(!String.IsNullOrEmpty(context.HttpContext.User.Identity.Name))
+                    if (!String.IsNullOrEmpty(context.HttpContext.User.Identity.Name))
                         username = context.HttpContext.User.Identity.Name.ToLower();
                 }
             }
 
             return username;
         }
-       
     }
 }

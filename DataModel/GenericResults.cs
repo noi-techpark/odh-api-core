@@ -55,17 +55,31 @@ namespace DataModel
             int? created = 0;
             int? deleted = 0;
 
-            foreach(var updatedetail in updatedetails)
+            foreach (var updatedetail in updatedetails)
             {
                 created = updatedetail.created + created;
                 updated = updatedetail.updated + updated;
                 deleted = updatedetail.deleted + deleted;
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted };
+            return new UpdateDetail()
+            {
+                created = created,
+                updated = updated,
+                deleted = deleted
+            };
         }
 
-        public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
+        public static UpdateResult GetSuccessUpdateResult(
+            string id,
+            string source,
+            string operation,
+            string updatetype,
+            string message,
+            string otherinfo,
+            UpdateDetail detail,
+            bool createlog
+        )
         {
             var result = new UpdateResult()
             {
@@ -84,14 +98,24 @@ namespace DataModel
                 stacktrace = null
             };
 
-            if(createlog)
+            if (createlog)
                 Console.WriteLine(JsonConvert.SerializeObject(result));
 
             return result;
         }
 
-        public static UpdateResult GetErrorUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, Exception ex, bool createlog)
-        {    
+        public static UpdateResult GetErrorUpdateResult(
+            string id,
+            string source,
+            string operation,
+            string updatetype,
+            string message,
+            string otherinfo,
+            UpdateDetail detail,
+            Exception ex,
+            bool createlog
+        )
+        {
             var result = new UpdateResult()
             {
                 id = id,

@@ -10,22 +10,47 @@ namespace Helper
     public class MetadataHelper
     {
         //Simple Method to reset the Metainfo
-        public static Metadata GetMetadata(string id, string type, string? source, DateTime? lastupdated = null, bool reduced = false)
+        public static Metadata GetMetadata(
+            string id,
+            string type,
+            string? source,
+            DateTime? lastupdated = null,
+            bool reduced = false
+        )
         {
-            return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
+            return new Metadata()
+            {
+                Id = id,
+                Type = type,
+                LastUpdate = lastupdated,
+                Source = source,
+                Reduced = reduced
+            };
         }
 
-        public static Metadata GetMetadata<T>(T data, string source, DateTime? lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
+        public static Metadata GetMetadata<T>(
+            T data,
+            string source,
+            DateTime? lastupdated = null,
+            bool reduced = false
+        ) where T : IIdentifiable, IMetaData
         {
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
             //If source is already set use the old source
             if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
-                source = data._Meta.Source;            
+                source = data._Meta.Source;
 
-            return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
+            return new Metadata()
+            {
+                Id = data.Id,
+                Type = type,
+                LastUpdate = lastupdated,
+                Source = source,
+                Reduced = reduced
+            };
         }
-               
+
         public static Metadata GetMetadataobject<T>(T myobject, Func<T, Metadata> metadataganerator)
         {
             return metadataganerator(myobject);
@@ -62,7 +87,7 @@ namespace Helper
                 ODHTagLinked odhtl => GetMetadataforOdhTag(odhtl),
                 WeatherHistoryLinked wh => GetMetaDataForWeatherHistory(wh),
                 _ => throw new Exception("not known odh type")
-            };            
+            };
         }
 
         public static Metadata GetMetadataforAccommodation(AccommodationLinked data)
@@ -101,7 +126,7 @@ namespace Helper
                 reduced = (bool)data._Meta.Reduced;
 
             var sourcemeta = "lts";
-            if(data.Source != null) 
+            if (data.Source != null)
                 sourcemeta = data.Source.ToLower();
 
             return GetMetadata(data, sourcemeta, data.LastChange, reduced);
@@ -189,8 +214,8 @@ namespace Helper
         public static Metadata GetMetadataforArticle(ArticlesLinked data)
         {
             string sourcemeta = "noi";
-            
-            if(!String.IsNullOrEmpty(data.Source))
+
+            if (!String.IsNullOrEmpty(data.Source))
                 sourcemeta = data.Source.ToLower();
 
             if (sourcemeta == "content")
@@ -262,13 +287,13 @@ namespace Helper
         }
 
         public static Metadata GetMetadataforArea(AreaLinked data)
-        {            
+        {
             return GetMetadata(data, "lts", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforWineAward(WineLinked data)
         {
-           return GetMetadata(data, "suedtirolwein", data.LastChange, false);
+            return GetMetadata(data, "suedtirolwein", data.LastChange, false);
         }
 
         public static Metadata GetMetaDataForWeatherHistory(WeatherHistoryLinked data)

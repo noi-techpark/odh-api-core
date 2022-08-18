@@ -13,14 +13,74 @@ namespace LCS
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Get the Webcam Detail Information
-        public static WebcamInfo GetWebcamDetailLTS(string rid, WebcamInfo webcam, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static WebcamInfo GetWebcamDetailLTS(
+            string rid,
+            WebcamInfo webcam,
+            string ltsuser,
+            string ltspswd,
+            string ltsmsgpswd
+        )
         {
             List<string> mywebcamlist = new List<string>();
             mywebcamlist.Add(rid);
 
-            var mywebcamrequestde = GetActivityDataLCS.GetWebcamDetailRequest("de", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
-            var mywebcamrequestit = GetActivityDataLCS.GetWebcamDetailRequest("it", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
-            var mywebcamrequesten = GetActivityDataLCS.GetWebcamDetailRequest("en", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
+            var mywebcamrequestde = GetActivityDataLCS.GetWebcamDetailRequest(
+                "de",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "",
+                "",
+                "",
+                mywebcamlist,
+                "NOI",
+                ltsmsgpswd
+            );
+            var mywebcamrequestit = GetActivityDataLCS.GetWebcamDetailRequest(
+                "it",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "",
+                "",
+                "",
+                mywebcamlist,
+                "NOI",
+                ltsmsgpswd
+            );
+            var mywebcamrequesten = GetActivityDataLCS.GetWebcamDetailRequest(
+                "en",
+                "0",
+                "0",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "",
+                "",
+                "",
+                mywebcamlist,
+                "NOI",
+                ltsmsgpswd
+            );
 
             GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
             var myactivityresponsede = myactivitysearch.GetWebcamDetail(mywebcamrequestde);
@@ -91,15 +151,36 @@ namespace LCS
                         mygpstrack.Id = gpstrack.RID;
                         mygpstrack.GpxTrackUrl = gpstrack.File.URL.InnerText;
 
-                        if (gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText == "Übersicht")
+                        if (
+                            gpstrack.EnumCodes.EnumCode
+                                .FirstOrDefault()
+                                .Code.Where(x => x.Level == "1")
+                                .FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText == "Übersicht"
+                        )
                             mygpstrack.Type = "overview";
-                        if (gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText == "Datei zum herunterladen")
+                        if (
+                            gpstrack.EnumCodes.EnumCode
+                                .FirstOrDefault()
+                                .Code.Where(x => x.Level == "1")
+                                .FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText == "Datei zum herunterladen"
+                        )
                             mygpstrack.Type = "detailed";
-
 
                         //EN und IT Info?
 
-                        mygpstrack.GpxTrackDesc.TryAddOrUpdate("de", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
+                        mygpstrack.GpxTrackDesc.TryAddOrUpdate(
+                            "de",
+                            gpstrack.EnumCodes.EnumCode
+                                .FirstOrDefault()
+                                .Code.Where(x => x.Level == "1")
+                                .FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText
+                        );
 
                         mygpstracklist.Add(mygpstrack);
                     }
@@ -116,8 +197,18 @@ namespace LCS
                 {
                     foreach (var gpstrack in gpstracksit)
                     {
-                        GpsTrack mygpstrack = mygpstracklist.Where(x => x.Id == gpstrack.RID).FirstOrDefault();
-                        mygpstrack.GpxTrackDesc.TryAddOrUpdate("it", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
+                        GpsTrack mygpstrack = mygpstracklist
+                            .Where(x => x.Id == gpstrack.RID)
+                            .FirstOrDefault();
+                        mygpstrack.GpxTrackDesc.TryAddOrUpdate(
+                            "it",
+                            gpstrack.EnumCodes.EnumCode
+                                .FirstOrDefault()
+                                .Code.Where(x => x.Level == "1")
+                                .FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText
+                        );
                         //mygpstracklist.Add(mygpstrack);
                     }
                 }
@@ -133,8 +224,18 @@ namespace LCS
                 {
                     foreach (var gpstrack in gpstracksen)
                     {
-                        GpsTrack mygpstrack = mygpstracklist.Where(x => x.Id == gpstrack.RID).FirstOrDefault();
-                        mygpstrack.GpxTrackDesc.TryAddOrUpdate("en", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
+                        GpsTrack mygpstrack = mygpstracklist
+                            .Where(x => x.Id == gpstrack.RID)
+                            .FirstOrDefault();
+                        mygpstrack.GpxTrackDesc.TryAddOrUpdate(
+                            "en",
+                            gpstrack.EnumCodes.EnumCode
+                                .FirstOrDefault()
+                                .Code.Where(x => x.Level == "1")
+                                .FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText
+                        );
                         //mygpstracklist.Add(mygpstrack);
                     }
                 }
@@ -146,7 +247,8 @@ namespace LCS
             //URls
             webcam.Webcamurl = thewebcamde.URL != null ? thewebcamde.URL.InnerText : "";
             webcam.Streamurl = thewebcamde.StreamURL != null ? thewebcamde.StreamURL.InnerText : "";
-            webcam.Previewurl = thewebcamde.PreviewURL != null ? thewebcamde.PreviewURL.InnerText : "";
+            webcam.Previewurl =
+                thewebcamde.PreviewURL != null ? thewebcamde.PreviewURL.InnerText : "";
 
             //Name
             if (thewebcamde.Name != null)
@@ -159,7 +261,10 @@ namespace LCS
             if (webcam.FirstImport == null)
                 webcam.FirstImport = DateTime.Now;
 
-            webcam.LastChange = thewebcamde.News.Status != null ? Convert.ToDateTime(thewebcamde.News.Status.LastChange) : DateTime.MinValue;
+            webcam.LastChange =
+                thewebcamde.News.Status != null
+                    ? Convert.ToDateTime(thewebcamde.News.Status.LastChange)
+                    : DateTime.MinValue;
 
             webcam.Source = "LTS";
 

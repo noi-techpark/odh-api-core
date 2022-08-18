@@ -21,7 +21,6 @@ namespace Helper
 
                     foreach (var filter in splittedfilter)
                     {
-
                         switch (filter)
                         {
                             case "1":
@@ -84,7 +83,6 @@ namespace Helper
 
                     var myflags = mytopicflag.GetFlags().GetDescriptionList();
 
-
                     foreach (var myflag in myflags)
                     {
                         topicids.Add(myflag);
@@ -94,6 +92,5 @@ namespace Helper
 
             return topicids;
         }
-
     }
 }

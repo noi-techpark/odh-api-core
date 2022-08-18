@@ -42,14 +42,16 @@ namespace OdhApiCore.Formatters
                     string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
                     //Load rawid
-                    var rawid = QueryFactory.Query()
-                           .Select("rawdataid")
-                           .From(table)
-                           .Where("id", id)
-                           .Get<string>()
-                           .FirstOrDefault();
+                    var rawid = QueryFactory
+                        .Query()
+                        .Select("rawdataid")
+                        .From(table)
+                        .Where("id", id)
+                        .Get<string>()
+                        .FirstOrDefault();
 
-                    var rawdata = QueryFactory.Query()
+                    var rawdata = QueryFactory
+                        .Query()
                         .Select("raw")
                         .From("rawdata")
                         .Where("id", rawid)
@@ -60,17 +62,20 @@ namespace OdhApiCore.Formatters
                 }
                 else
                     return null;
-                
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
-            }                       
+            }
         }
 
-        public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+        public override async Task WriteResponseBodyAsync(
+            OutputFormatterWriteContext context,
+            Encoding selectedEncoding
+        )
         {
-            var queryFactory = (QueryFactory?)context.HttpContext.RequestServices.GetService(typeof(QueryFactory));
+            var queryFactory = (QueryFactory?)
+                context.HttpContext.RequestServices.GetService(typeof(QueryFactory));
 
             if (context.Object is JsonRaw jsonRaw && queryFactory is { })
             {

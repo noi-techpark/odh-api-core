@@ -22,16 +22,20 @@ namespace OdhApiImporter.Helpers
         //    this.settings = settings;
         //}
 
-        public EBMSImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
-        {
-
-        }
+        public EBMSImportHelper(ISettings settings, QueryFactory queryfactory, string table)
+            : base(settings, queryfactory, table) { }
 
         #region EBMS Helpers
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, CancellationToken cancellationToken)
+        public async Task<UpdateDetail> SaveDataToODH(
+            DateTime? lastchanged,
+            CancellationToken cancellationToken
+        )
         {
-            var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
+            var resulttuple = ImportEBMSData.GetEbmsEvents(
+                settings.EbmsConfig.User,
+                settings.EbmsConfig.Password
+            );
             var resulttuplesorted = resulttuple.OrderBy(x => x.Item1.StartDate);
 
             var currenteventshort = await GetAllEventsShort(DateTime.Now);
@@ -45,10 +49,10 @@ namespace OdhApiImporter.Helpers
 
             foreach (var (eventshort, eventebms) in resulttuplesorted)
             {
-                var query =
-                   QueryFactory.Query("eventeuracnoi")
-                       .Select("data")
-                       .Where("id", eventshort.Id);
+                var query = QueryFactory
+                    .Query("eventeuracnoi")
+                    .Select("data")
+                    .Where("id", eventshort.Id);
 
                 var eventindb = await query.GetFirstOrDefaultAsObject<EventShortLinked>();
 
@@ -90,7 +94,6 @@ namespace OdhApiImporter.Helpers
                     soldout = eventindb.SoldOut;
                 }
 
-
                 if (changedonDB != eventshort.ChangedOn)
                 {
                     eventshort.ImageGallery = imagegallery;
@@ -110,39 +113,69 @@ namespace OdhApiImporter.Helpers
                     eventshort.ExternalOrganizer = externalorganizer;
 
                     //New If CompanyName is Noi - blablabla assign TechnologyField automatically and Write to Display5 if not empty "NOI"
-                    if (!String.IsNullOrEmpty(eventshort.CompanyName) && eventshort.CompanyName.StartsWith("NOI - "))
+                    if (
+                        !String.IsNullOrEmpty(eventshort.CompanyName)
+                        && eventshort.CompanyName.StartsWith("NOI - ")
+                    )
                     {
                         if (String.IsNullOrEmpty(eventshort.Display5))
                             eventshort.Display5 = "NOI";
 
-                        eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
+                        eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(
+                            eventshort.CompanyName,
+                            eventshort.TechnologyFields
+                        );
                     }
 
-                    var queryresult = await InsertDataToDB(eventshort, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
+                    var queryresult = await InsertDataToDB(
+                        eventshort,
+                        new KeyValuePair<string, EBMSEventREST>(
+                            eventebms.EventId.ToString(),
+                            eventebms
+                        )
+                    );
 
                     newcounter = newcounter + queryresult.created ?? 0;
-                    updatecounter = updatecounter + queryresult.updated ?? 0;               
+                    updatecounter = updatecounter + queryresult.updated ?? 0;
                 }
             }
 
             if (resulttuple.Select(x => x.Item1).Count() > 0)
-                deletecounter = await DeleteDeletedEvents(resulttuple.Select(x => x.Item1).ToList(), currenteventshort.ToList());
+                deletecounter = await DeleteDeletedEvents(
+                    resulttuple.Select(x => x.Item1).ToList(),
+                    currenteventshort.ToList()
+                );
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
+            return new UpdateDetail()
+            {
+                created = newcounter,
+                updated = updatecounter,
+                deleted = deletecounter
+            };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(EventShortLinked eventshort, KeyValuePair<string, EBMSEventREST> ebmsevent)
+        private async Task<PGCRUDResult> InsertDataToDB(
+            EventShortLinked eventshort,
+            KeyValuePair<string, EBMSEventREST> ebmsevent
+        )
         {
             try
-            {                
+            {
                 //Setting LicenseInfo
-                eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
+                eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(
+                    eventshort,
+                    Helper.LicenseHelper.GetLicenseforEventShort
+                );
                 //Check Languages
                 eventshort.CheckMyInsertedLanguages();
 
                 var rawdataid = await InsertInRawDataDB(ebmsevent);
 
-                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid);
+                return await QueryFactory.UpsertData<EventShortLinked>(
+                    eventshort,
+                    "eventeuracnoi",
+                    rawdataid
+                );
             }
             catch (Exception ex)
             {
@@ -153,20 +186,23 @@ namespace OdhApiImporter.Helpers
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, EBMSEventREST> eventebms)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
-                        new RawDataStore()
-                        {
-                            datasource = "eurac",
-                            importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(eventebms.Value),
-                            sourceinterface = "ebms",
-                            sourceid = eventebms.Key,
-                            sourceurl = "https://emea-interface.ungerboeck.com",
-                            type = "event_euracnoi"
-                        });
+                new RawDataStore()
+                {
+                    datasource = "eurac",
+                    importdate = DateTime.Now,
+                    raw = JsonConvert.SerializeObject(eventebms.Value),
+                    sourceinterface = "ebms",
+                    sourceid = eventebms.Key,
+                    sourceurl = "https://emea-interface.ungerboeck.com",
+                    type = "event_euracnoi"
+                }
+            );
         }
 
-
-        private static List<string>? AssignTechnologyfieldsautomatically(string companyname, List<string>? technologyfields)
+        private static List<string>? AssignTechnologyfieldsautomatically(
+            string companyname,
+            List<string>? technologyfields
+        )
         {
             if (technologyfields == null)
                 technologyfields = new List<string>();
@@ -175,7 +211,12 @@ namespace OdhApiImporter.Helpers
 
             AssignTechnologyFields(companyname, "Digital", "Digital", technologyfields);
             AssignTechnologyFields(companyname, "Alpine", "Alpine", technologyfields);
-            AssignTechnologyFields(companyname, "Automotive", "Automotive/Automation", technologyfields);
+            AssignTechnologyFields(
+                companyname,
+                "Automotive",
+                "Automotive/Automation",
+                technologyfields
+            );
             AssignTechnologyFields(companyname, "Food", "Food", technologyfields);
             AssignTechnologyFields(companyname, "Green", "Green", technologyfields);
 
@@ -185,14 +226,22 @@ namespace OdhApiImporter.Helpers
                 return technologyfields;
         }
 
-        private static void AssignTechnologyFields(string companyname, string tocheck, string toassign, List<string> automatictechnologyfields)
+        private static void AssignTechnologyFields(
+            string companyname,
+            string tocheck,
+            string toassign,
+            List<string> automatictechnologyfields
+        )
         {
             if (companyname.Contains(tocheck))
                 if (!automatictechnologyfields.Contains(toassign))
                     automatictechnologyfields.Add(toassign);
         }
 
-        private async Task<int> DeleteDeletedEvents(List<EventShortLinked> eventshortfromnow, List<EventShortLinked> eventshortinDB)
+        private async Task<int> DeleteDeletedEvents(
+            List<EventShortLinked> eventshortfromnow,
+            List<EventShortLinked> eventshortinDB
+        )
         {
             //TODO CHECK if Event is in list, if not, DELETE!
             //TODO CHECK IF THIS IS WORKING CORRECTLY
@@ -211,12 +260,17 @@ namespace OdhApiImporter.Helpers
                 {
                     //Set to inactive or delete?
 
-                    var eventshorttodeactivate = eventshortinDB.Where(x => x.EventId == idtodelete).FirstOrDefault();
+                    var eventshorttodeactivate = eventshortinDB
+                        .Where(x => x.EventId == idtodelete)
+                        .FirstOrDefault();
 
                     //TODO CHECK IF IT WORKS
                     if (eventshorttodeactivate != null)
                     {
-                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
+                        await QueryFactory
+                            .Query("eventeuracnoi")
+                            .Where("id", eventshorttodeactivate.Id?.ToLower())
+                            .DeleteAsync();
                         deletecounter++;
                     }
                 }
@@ -229,17 +283,19 @@ namespace OdhApiImporter.Helpers
         {
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
 
-            var query =
-                         QueryFactory.Query("eventeuracnoi")
-                             .Select("data")
-                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = ?)", "EBMS");
+            var query = QueryFactory
+                .Query("eventeuracnoi")
+                .Select("data")
+                .WhereRaw(
+                    "(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '"
+                        + String.Format("{0:yyyy-MM-dd}", today)
+                        + "'))) AND(data#>>'\\{Source\\}' = ?)",
+                    "EBMS"
+                );
 
             return await query.GetAllAsObject<EventShortLinked>();
         }
 
-        
-
         #endregion
-
     }
 }

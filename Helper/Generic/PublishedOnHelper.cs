@@ -17,7 +17,7 @@ namespace Helper
                 if (smgactive)
                     publishedonlist.Add("https://noi.bz.it");
             }
-            else if(type != "package")
+            else if (type != "package")
             {
                 if (smgactive)
                     publishedonlist.Add("https://www.suedtirol.info");

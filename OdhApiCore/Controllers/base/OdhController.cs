@@ -16,14 +16,19 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers
 {
     [ApiController]
-    [Route("v1")]    
+    [Route("v1")]
     [FormatFilter]
     public abstract class OdhController : ControllerBase
     {
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
 
-        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory)
+        public OdhController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<OdhController> logger,
+            QueryFactory queryFactory
+        )
         {
             this.env = env;
             this.settings = settings;
@@ -39,10 +44,7 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                var roles = new[] {
-                    "IDM",
-                    "AllImages"
-                };
+                var roles = new[] { "IDM", "AllImages" };
                 return !roles.Any(User.IsInRole);
             }
         }
@@ -55,7 +57,8 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                var roles = new[] {
+                var roles = new[]
+                {
                     "IDM"
                     //"DataReader",
                     //$"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
@@ -72,20 +75,22 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                var roles = new[] {
-                    "IDM",
-                    "LTS"
-                };
+                var roles = new[] { "IDM", "LTS" };
                 return !roles.Any(User.IsInRole);
             }
         }
-
 
         protected IEnumerable<string> UserRolesList
         {
             get
             {
-                var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
+                var roleclaims = User.Claims
+                    .Where(
+                        x =>
+                            x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                    )
+                    .Select(claim => claim.Value)
+                    .ToList();
 
                 return roleclaims ?? new List<string>();
             }
@@ -98,7 +103,7 @@ namespace OdhApiCore.Controllers
         //    foreach(var role in roles)
         //    {
         //        if (User.IsInRole(role))
-        //            return true;                
+        //            return true;
         //    }
 
         //    return false;
@@ -110,16 +115,25 @@ namespace OdhApiCore.Controllers
             {
                 List<string> fieldstohide = new();
 
-                var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
+                var roleclaims = User.Claims
+                    .Where(
+                        x =>
+                            x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                    )
+                    .Select(claim => claim.Value)
+                    .ToList();
 
                 //Search all settings with Entity = Controllername
-                var fields = settings.Field2HideConfig
-                    .Where(x => x.Entity == this.ControllerContext.RouteData.Values["controller"]?.ToString() ||
-                                string.IsNullOrEmpty(x.Entity));
+                var fields = settings.Field2HideConfig.Where(
+                    x =>
+                        x.Entity
+                            == this.ControllerContext.RouteData.Values["controller"]?.ToString()
+                        || string.IsNullOrEmpty(x.Entity)
+                );
 
-                foreach(var field in fields)
+                foreach (var field in fields)
                 {
-                    if(roleclaims.Intersect(field.DisplayOnRoles ?? new()).Count() == 0)
+                    if (roleclaims.Intersect(field.DisplayOnRoles ?? new()).Count() == 0)
                     {
                         fieldstohide.AddRange(field.Fields ?? new());
                     }
@@ -140,16 +154,16 @@ namespace OdhApiCore.Controllers
                         return self;
 
                     //Hack if there is another / in the route to check if it is not generating side effects
-                    if(chunks[1].Split('/').Count() > 1)
+                    if (chunks[1].Split('/').Count() > 1)
                     {
                         chunks[1] = chunks[1].Split('/')[1];
-                    }    
+                    }
 
                     var (controller, id) = (chunks[0], chunks[1]);
                     return Url.Link($"Single{controller}", new { id })!;
                 };
             }
-        }        
+        }
 
         protected async Task<IActionResult> DoAsync(Func<Task<IActionResult>> f)
         {
@@ -159,25 +173,38 @@ namespace OdhApiCore.Controllers
             }
             catch (PostGresSQLHelperException ex)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new { error = ex.Message }
+                );
             }
             catch (JsonPathException ex)
             {
-                return this.BadRequest(new
-                {
-                    error = "Invalid JSONPath selection",
-                    path = ex.Path,
-                    details = env.IsDevelopment() ? ex.ToString() : ex.Message
-                });
+                return this.BadRequest(
+                    new
+                    {
+                        error = "Invalid JSONPath selection",
+                        path = ex.Path,
+                        details = env.IsDevelopment() ? ex.ToString() : ex.Message
+                    }
+                );
             }
             catch (Exception ex)
             {
                 if (ex.Message == "Request Error")
-                    return this.BadRequest(new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
+                    return this.BadRequest(
+                        new { error = env.IsDevelopment() ? ex.ToString() : ex.Message }
+                    );
                 else if (ex.Message == "No data")
-                    return this.StatusCode(StatusCodes.Status404NotFound, new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
+                    return this.StatusCode(
+                        StatusCodes.Status404NotFound,
+                        new { error = env.IsDevelopment() ? ex.ToString() : ex.Message }
+                    );
                 else
-                    return this.StatusCode(StatusCodes.Status500InternalServerError, new { error = env.IsDevelopment() ? ex.ToString() : ex.Message });
+                    return this.StatusCode(
+                        StatusCodes.Status500InternalServerError,
+                        new { error = env.IsDevelopment() ? ex.ToString() : ex.Message }
+                    );
             }
         }
 
@@ -195,14 +222,26 @@ namespace OdhApiCore.Controllers
 
         //Provide Methods for POST, PUT, DELETE passing DataType etc...
 
-        protected async Task<IActionResult> UpsertData<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        protected async Task<IActionResult> UpsertData<T>(
+            T data,
+            string table,
+            bool errorwhendataexists = false,
+            bool errorwhendataisnew = false
+        ) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
-            return Ok(await QueryFactory.UpsertData<T>(data, table, errorwhendataexists, errorwhendataisnew));          
+            return Ok(
+                await QueryFactory.UpsertData<T>(
+                    data,
+                    table,
+                    errorwhendataexists,
+                    errorwhendataisnew
+                )
+            );
         }
 
         protected async Task<IActionResult> DeleteData(string id, string table)
         {
-            return Ok(await QueryFactory.DeleteData(id, table));            
+            return Ok(await QueryFactory.DeleteData(id, table));
         }
-    }    
+    }
 }

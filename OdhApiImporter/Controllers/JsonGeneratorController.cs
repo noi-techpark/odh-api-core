@@ -18,7 +18,12 @@ namespace OdhApiImporter.Controllers
         private readonly ILogger<JsonGeneratorController> logger;
         private readonly IWebHostEnvironment env;
 
-        public JsonGeneratorController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory)
+        public JsonGeneratorController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<JsonGeneratorController> logger,
+            QueryFactory queryFactory
+        )
         {
             this.env = env;
             this.settings = settings;
@@ -33,25 +38,33 @@ namespace OdhApiImporter.Controllers
         {
             try
             {
-                await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
+                await JsonGeneratorHelper.GenerateJSONTaglist(
+                    QueryFactory,
+                    settings.JsonConfig.Jsondir,
+                    "GenericTags"
+                );
 
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "Taglist",
-                    message = "Generate Json Taglist succeeded",
-                    success = true
-                });
+                return Ok(
+                    new
+                    {
+                        operation = "Json Generation",
+                        type = "Taglist",
+                        message = "Generate Json Taglist succeeded",
+                        success = true
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "Taglist",
-                    message = "Generate Json Taglist failed error: " + ex.Message,
-                    success = false
-                });
+                return BadRequest(
+                    new
+                    {
+                        operation = "Json Generation",
+                        type = "Taglist",
+                        message = "Generate Json Taglist failed error: " + ex.Message,
+                        success = false
+                    }
+                );
             }
         }
 

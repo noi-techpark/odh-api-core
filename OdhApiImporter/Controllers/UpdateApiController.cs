@@ -26,7 +26,7 @@ using OdhApiImporter.Helpers.DSS;
 
 namespace OdhApiImporter.Controllers
 {
-    [ApiExplorerSettings(IgnoreApi = true)]    
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
     public class UpdateApiController : Controller
     {
@@ -35,19 +35,28 @@ namespace OdhApiImporter.Controllers
         private readonly ILogger<UpdateApiController> logger;
         private readonly IWebHostEnvironment env;
 
-        public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<UpdateApiController> logger, QueryFactory queryFactory)
+        public UpdateApiController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<UpdateApiController> logger,
+            QueryFactory queryFactory
+        )
         {
             this.env = env;
             this.settings = settings;
             this.logger = logger;
             this.QueryFactory = queryFactory;
-        }        
+        }
 
         #region UPDATE FROM RAVEN INSTANCE
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
         //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
-        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateFromRaven(
+            string id,
+            string datatype,
+            CancellationToken cancellationToken = default
+        )
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update Raven";
@@ -58,16 +67,39 @@ namespace OdhApiImporter.Controllers
             try
             {
                 RAVENImportHelper ravenimporthelper = new RAVENImportHelper(settings, QueryFactory);
-                var resulttuple = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
+                var resulttuple = await ravenimporthelper.GetFromRavenAndTransformToPGObject(
+                    id,
+                    datatype,
+                    cancellationToken
+                );
                 updatedetail = resulttuple.Item2;
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(resulttuple.Item1, source, operation, updatetype, "Update Raven succeeded", otherinfo, updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    resulttuple.Item1,
+                    source,
+                    operation,
+                    updatetype,
+                    "Update Raven succeeded",
+                    otherinfo,
+                    updatedetail,
+                    true
+                );
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Update Raven failed", otherinfo, updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(
+                    id,
+                    source,
+                    operation,
+                    updatetype,
+                    "Update Raven failed",
+                    otherinfo,
+                    updatedetail,
+                    ex,
+                    true
+                );
 
                 return BadRequest(errorResult);
             }
@@ -78,7 +110,9 @@ namespace OdhApiImporter.Controllers
         #region EBMS DATA SYNC (EventShort)
 
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]
-        public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllEBMS(
+            CancellationToken cancellationToken = default
+        )
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update EBMS";
@@ -87,27 +121,56 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(settings, QueryFactory, "eventeuracnoi");
+                EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(
+                    settings,
+                    QueryFactory,
+                    "eventeuracnoi"
+                );
 
                 updatedetail = await ebmsimporthelper.SaveDataToODH(null, cancellationToken);
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "EBMS Eventshorts update succeeded", "", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "EBMS Eventshorts update succeeded",
+                    "",
+                    updatedetail,
+                    true
+                );
 
                 return Ok(updateResult);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "EBMS Eventshorts update failed", "", updatedetail, ex, true);
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "EBMS Eventshorts update failed",
+                    "",
+                    updatedetail,
+                    ex,
+                    true
+                );
                 return BadRequest(updateResult);
             }
         }
 
         [HttpGet, Route("EBMS/EventShort/UpdateSingle/{id}")]
-        public IActionResult UpdateSingleEBMS(string id, CancellationToken cancellationToken = default)
+        public IActionResult UpdateSingleEBMS(
+            string id,
+            CancellationToken cancellationToken = default
+        )
         {
-            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
+            return StatusCode(
+                StatusCodes.Status501NotImplemented,
+                new { error = "Not Implemented" }
+            );
 
             //try
-            //{               
+            //{
             //    return Ok(new UpdateResult
             //    {
             //        operation = "Update EBMS",
@@ -144,7 +207,9 @@ namespace OdhApiImporter.Controllers
         #region NINJA DATA SYNC (Events Centro Trevi and DRIN)
 
         [HttpGet, Route("NINJA/Events/UpdateAll")]
-        public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllNinjaEvents(
+            CancellationToken cancellationToken = default
+        )
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update Ninja Events";
@@ -152,32 +217,59 @@ namespace OdhApiImporter.Controllers
             string source = "mobilityapi";
 
             try
-            {              
+            {
                 NINJAImportHelper ninjaimporthelper = new NINJAImportHelper(settings, QueryFactory);
                 updatedetail = await ninjaimporthelper.SaveDataToODH(null, cancellationToken);
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja Events update succeeded", "", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Ninja Events update succeeded",
+                    "",
+                    updatedetail,
+                    true
+                );
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja Events update failed", "", updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Ninja Events update failed",
+                    "",
+                    updatedetail,
+                    ex,
+                    true
+                );
                 return BadRequest(errorResult);
             }
         }
 
         [HttpGet, Route("NINJA/Events/UpdateSingle/{id}")]
-        public IActionResult UpdateSingleNinjaEvents(string id, CancellationToken cancellationToken = default)
-        {           
-            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
+        public IActionResult UpdateSingleNinjaEvents(
+            string id,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return StatusCode(
+                StatusCodes.Status501NotImplemented,
+                new { error = "Not Implemented" }
+            );
         }
 
-        #endregion        
+        #endregion
 
-        #region SIAG DATA SYNC WEATHER 
+        #region SIAG DATA SYNC WEATHER
 
         [HttpGet, Route("Siag/Weather/Import")]
-        public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportWeather(
+            CancellationToken cancellationToken = default
+        )
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import Weather data";
@@ -186,21 +278,47 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(
+                    settings,
+                    QueryFactory,
+                    "weatherdatahistory"
+                );
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Weather data succeeded", "actual", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import Weather data succeeded",
+                    "actual",
+                    updatedetail,
+                    true
+                );
 
-                return Ok(updateResult);     
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed", "actual", updatedetail, ex, true);
-                return BadRequest(errorResult);                
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import Weather data failed",
+                    "actual",
+                    updatedetail,
+                    ex,
+                    true
+                );
+                return BadRequest(errorResult);
             }
         }
 
         [HttpGet, Route("Siag/Weather/Import/{id}")]
-        public async Task<IActionResult> ImportWeatherByID(string id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportWeatherByID(
+            string id,
+            CancellationToken cancellationToken = default
+        )
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import Weather data";
@@ -209,15 +327,41 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
-                updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(id, source, operation, updatetype, "Import Weather data succeeded id:" + id.ToString(), "byid", updatedetail, true);
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(
+                    settings,
+                    QueryFactory,
+                    "weatherdatahistory"
+                );
+                updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(
+                    cancellationToken,
+                    id
+                );
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    id,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import Weather data succeeded id:" + id.ToString(),
+                    "byid",
+                    updatedetail,
+                    true
+                );
 
-                return Ok(updateResult);                
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed id:" + id.ToString(), "byid", updatedetail, ex, true);
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import Weather data failed id:" + id.ToString(),
+                    "byid",
+                    updatedetail,
+                    ex,
+                    true
+                );
                 return BadRequest(updateResult);
             }
         }
@@ -236,17 +380,40 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "smgpois");
+                SIAGImportHelper siagimporthelper = new SIAGImportHelper(
+                    settings,
+                    QueryFactory,
+                    "smgpois"
+                );
                 updatedetail = await siagimporthelper.SaveDataToODH(null, cancellationToken);
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data succeeded", "actual", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import SIAG Museum data succeeded",
+                    "actual",
+                    updatedetail,
+                    true
+                );
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data failed", "actual", updatedetail, ex, true);
-                return BadRequest(updateResult);                
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import SIAG Museum data failed",
+                    "actual",
+                    updatedetail,
+                    ex,
+                    true
+                );
+                return BadRequest(updateResult);
             }
         }
 
@@ -292,7 +459,9 @@ namespace OdhApiImporter.Controllers
 
         //[Authorize(Roles = "DataWriter,STAPoiImport")]
         [HttpPost, Route("STA/VendingPoints/UpdateAll")]
-        public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
+        public async Task<IActionResult> SendVendingPointsFromSTA(
+            CancellationToken cancellationToken
+        )
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import Vendingpoints";
@@ -304,15 +473,37 @@ namespace OdhApiImporter.Controllers
             {
                 STAImportHelper staimporthelper = new STAImportHelper(settings, QueryFactory);
 
-                updatedetail = await staimporthelper.PostVendingPointsFromSTA(Request, cancellationToken);
+                updatedetail = await staimporthelper.PostVendingPointsFromSTA(
+                    Request,
+                    cancellationToken
+                );
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Import Vendingpoints succeeded", otherinfo, updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    "",
+                    source,
+                    operation,
+                    updatetype,
+                    "Import Vendingpoints succeeded",
+                    otherinfo,
+                    updatedetail,
+                    true
+                );
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Import Vendingpoints failed", otherinfo, updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(
+                    "",
+                    source,
+                    operation,
+                    updatetype,
+                    "Import Vendingpoints failed",
+                    otherinfo,
+                    updatedetail,
+                    ex,
+                    true
+                );
 
                 return BadRequest(errorResult);
             }
@@ -323,39 +514,72 @@ namespace OdhApiImporter.Controllers
         #region DSS DATA SYNC
 
         [HttpGet, Route("DSS/{dssentity}/UpdateAll")]
-        public async Task<IActionResult> UpdateAllDSSLifts(string dssentity, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllDSSLifts(
+            string dssentity,
+            CancellationToken cancellationToken = default
+        )
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update DSS " + dssentity;
             string updatetype = "all";
-            string source = "dss";            
+            string source = "dss";
 
             try
             {
-                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois");                
+                DSSImportHelper dssimporthelper = new DSSImportHelper(
+                    settings,
+                    QueryFactory,
+                    "smgpois"
+                );
                 dssimporthelper.entitytype = dssentity;
-                
+
                 updatedetail = await dssimporthelper.SaveDataToODH(null, cancellationToken);
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update succeeded", "", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "DSS " + dssentity + " update succeeded",
+                    "",
+                    updatedetail,
+                    true
+                );
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update failed", "", updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "DSS " + dssentity + " update failed",
+                    "",
+                    updatedetail,
+                    ex,
+                    true
+                );
 
                 return BadRequest(errorResult);
             }
         }
 
         [HttpGet, Route("DSS/{dssentity}/UpdateSingle/{id}")]
-        public IActionResult UpdateSingleDSS(string dssentity, string id, CancellationToken cancellationToken = default)
+        public IActionResult UpdateSingleDSS(
+            string dssentity,
+            string id,
+            CancellationToken cancellationToken = default
+        )
         {
-            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
+            return StatusCode(
+                StatusCodes.Status501NotImplemented,
+                new { error = "Not Implemented" }
+            );
 
             //try
-            //{               
+            //{
             //    return Ok(new UpdateResult
             //    {
             //        operation = "Update EBMS",
@@ -388,6 +612,5 @@ namespace OdhApiImporter.Controllers
         }
 
         #endregion
-
     }
 }

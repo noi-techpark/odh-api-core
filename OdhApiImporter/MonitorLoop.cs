@@ -14,7 +14,11 @@ namespace OdhApiImporter
         private readonly ILogger<MonitorLoop> _logger;
         private readonly CancellationToken _cancellationToken;
 
-        public MonitorLoop(IBackgroundTaskQueue taskQueue, ILogger<MonitorLoop> logger, IHostApplicationLifetime applicationLifetime)
+        public MonitorLoop(
+            IBackgroundTaskQueue taskQueue,
+            ILogger<MonitorLoop> logger,
+            IHostApplicationLifetime applicationLifetime
+        )
         {
             _taskQueue = taskQueue;
             _logger = logger;
@@ -60,7 +64,11 @@ namespace OdhApiImporter
 
                 ++delayLoop;
 
-                _logger.LogInformation("Queued work item {Guid} is running. {DelayLoop}/3", guid, delayLoop);
+                _logger.LogInformation(
+                    "Queued work item {Guid} is running. {DelayLoop}/3",
+                    guid,
+                    delayLoop
+                );
             }
 
             string format = delayLoop switch

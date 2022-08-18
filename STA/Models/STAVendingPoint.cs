@@ -86,47 +86,47 @@ namespace STA
         public string? Tel { get; set; }
 
         [Index(19)]
-        [Name("SEPA")] 
+        [Name("SEPA")]
         public string? SEPA { get; set; }
 
         [Index(20)]
-        [Name("IBAN")] 
+        [Name("IBAN")]
         public string? IBAN { get; set; }
 
         [Index(21)]
-        [Name("Parita IVA")] 
+        [Name("Parita IVA")]
         public string? Parita_IVA { get; set; }
 
         [Index(22)]
-        [Name("VerkaufstellenID Gasser")] 
+        [Name("VerkaufstellenID Gasser")]
         public string? VerkaufstellenID_Gasser { get; set; }
 
         [Index(23)]
-        [Name("Adresse DE")] 
+        [Name("Adresse DE")]
         public string? Adresse_DE { get; set; }
 
         [Index(24)]
-        [Name("Adresse IT/EN/LAD")] 
+        [Name("Adresse IT/EN/LAD")]
         public string? Adresse_IT_EN_LAD { get; set; }
 
         [Index(25)]
-        [Name("CAP")] 
+        [Name("CAP")]
         public string? CAP { get; set; }
 
         [Index(26)]
-        [Name("Stadt")] 
+        [Name("Stadt")]
         public string? Stadt { get; set; }
 
         [Index(27)]
-        [Name("città IT/EN/LAD")] 
+        [Name("città IT/EN/LAD")]
         public string? cittaIT_EN_LAD { get; set; }
 
         [Index(29)]
-        [Name("CODICE ISTAT")] 
+        [Name("CODICE ISTAT")]
         public string? CODICE_ISTAT { get; set; }
 
         [Index(30)]
-        [Name("Wochentags Beginn")] 
+        [Name("Wochentags Beginn")]
         public string? Wochentags_Beginn { get; set; }
 
         [Index(31)]
@@ -134,114 +134,114 @@ namespace STA
         public string? Wochentags_Ende { get; set; }
 
         [Index(32)]
-        [Name("Pause Start")] 
+        [Name("Pause Start")]
         public string? Pause_Start { get; set; }
 
         [Index(33)]
-        [Name("Pause Ende")] 
+        [Name("Pause Ende")]
         public string? Pause_Ende { get; set; }
 
         [Index(34)]
-        [Name("Samstag Beginn")] 
+        [Name("Samstag Beginn")]
         public string? Samstag_Beginn { get; set; }
 
         [Index(35)]
-        [Name("Samstag Ende")] 
+        [Name("Samstag Ende")]
         public string? Samstag_Ende { get; set; }
 
         [Index(36)]
-        [Name("Pause Samstag Beginn")] 
+        [Name("Pause Samstag Beginn")]
         public string? Pause_Samstag_Beginn { get; set; }
 
         [Index(37)]
-        [Name("Pause Samstag Ende")] 
+        [Name("Pause Samstag Ende")]
         public string? Pause_Samstag_Ende { get; set; }
 
         [Index(38)]
-        [Name("Sonntag Beginn")] 
+        [Name("Sonntag Beginn")]
         public string? Sonntag_Beginn { get; set; }
 
         [Index(39)]
-        [Name("Sonntag Ende")] 
+        [Name("Sonntag Ende")]
         public string? Sonntag_Ende { get; set; }
 
         [Index(40)]
-        [Name("Pause Sonntag Beginn")] 
+        [Name("Pause Sonntag Beginn")]
         public string? Pause_Sonntag_Beginn { get; set; }
 
         [Index(41)]
-        [Name("Pause Sonntag Ende")] 
+        [Name("Pause Sonntag Ende")]
         public string? Pause_Sonntag_Ende { get; set; }
 
         [Index(42)]
         public string? LEER { get; set; }
 
         [Index(43)]
-        [Name("Zusatzinfo DE")] 
+        [Name("Zusatzinfo DE")]
         public string? Zusatzinfo_DE { get; set; }
 
         [Index(44)]
-        [Name("Zusatzinfo IT")] 
+        [Name("Zusatzinfo IT")]
         public string? Zusatzinfo_IT { get; set; }
 
         [Index(45)]
-        [Name("Zusatzinfo LAD")] 
+        [Name("Zusatzinfo LAD")]
         public string? Zusatzinfo_LAD { get; set; }
 
         [Index(46)]
-        [Name("Zusatzinfo EN")] 
+        [Name("Zusatzinfo EN")]
         public string? Zusatzinfo_EN { get; set; }
 
         [Index(47)]
-        [Name("lat")] 
+        [Name("lat")]
         public string? latitude { get; set; }
 
         [Index(48)]
-        [Name("long")] 
+        [Name("long")]
         public string? longitude { get; set; }
 
         [Index(49)]
-        [Name("* Südtirol Pass Dienste")] 
+        [Name("* Südtirol Pass Dienste")]
         public string? SuedtirolPassDienste { get; set; }
 
         [Index(50)]
-        [Name("Südtirol Pass 65+ Beantragung")] 
+        [Name("Südtirol Pass 65+ Beantragung")]
         public string? SuedtirolPass65PlusBeantragung { get; set; }
 
         [Index(51)]
-        [Name("** Duplikat")] 
+        [Name("** Duplikat")]
         public string? Duplikat { get; set; }
 
         [Index(52)]
-        [Name("Wertkarte")] 
+        [Name("Wertkarte")]
         public string? Wertkarte { get; set; }
 
         [Index(53)]
-        [Name("Stadtfahrkarte o. Citybus")] 
+        [Name("Stadtfahrkarte o. Citybus")]
         public string? StadtfahrkarteoCitybus { get; set; }
 
         [Index(54)]
-        [Name("Mobilcard")] 
+        [Name("Mobilcard")]
         public string? Mobilcard { get; set; }
 
         [Index(55)]
-        [Name("bikemobil Card")] 
+        [Name("bikemobil Card")]
         public string? bikemobilCard { get; set; }
 
         [Index(56)]
-        [Name("Museumobil Card")] 
+        [Name("Museumobil Card")]
         public string? MuseumobilCard { get; set; }
 
         [Index(57)]
-        [Name("Kartenkreislauf mobilcard")] 
+        [Name("Kartenkreislauf mobilcard")]
         public string? Kartenkreislaufmobilcard { get; set; }
 
         [Index(58)]
-        [Name("Kartenkreislauf museummobil")] 
+        [Name("Kartenkreislauf museummobil")]
         public string? Kartenkreislaufmuseummobil { get; set; }
 
         [Index(59)]
-        [Name("Kartenkreislauf bikemobil")] 
+        [Name("Kartenkreislauf bikemobil")]
         public string? Kartenkreislaufbikemobil { get; set; }
     }
 }

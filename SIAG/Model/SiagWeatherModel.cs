@@ -17,7 +17,7 @@ namespace SIAG.WeatherModel
         public string type { get; set; }
         public string evolution { get; set; }
         public string evolutionTitle { get; set; }
-        public Dayforecast[] dayForecasts { get; set; }        
+        public Dayforecast[] dayForecasts { get; set; }
     }
 
     public class Today

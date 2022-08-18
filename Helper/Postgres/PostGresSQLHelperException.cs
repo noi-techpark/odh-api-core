@@ -5,24 +5,17 @@ namespace Helper
 {
     public class PostGresSQLHelperException : Exception
     {
-        public PostGresSQLHelperException()
-        {
-        }
+        public PostGresSQLHelperException() { }
 
-        public PostGresSQLHelperException(string message) : base(message)
-        {
-        }
+        public PostGresSQLHelperException(string message) : base(message) { }
 
-        public PostGresSQLHelperException(Exception innerException) : base("Error executing SQL query.", innerException)
-        {
-        }
+        public PostGresSQLHelperException(Exception innerException)
+            : base("Error executing SQL query.", innerException) { }
 
-        public PostGresSQLHelperException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+        public PostGresSQLHelperException(string message, Exception innerException)
+            : base(message, innerException) { }
 
-        protected PostGresSQLHelperException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+        protected PostGresSQLHelperException(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
     }
 }

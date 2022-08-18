@@ -10,11 +10,15 @@ namespace OdhApiCore.Swagger
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            if ((context.ParameterInfo as ICustomAttributeProvider ?? context.MemberInfo) is { } info)
+            if (
+                (context.ParameterInfo as ICustomAttributeProvider ?? context.MemberInfo) is
+                { } info
+            )
             {
-                var deprecatedAttribute = info
-                    .GetCustomAttributes(false)
-                    .FirstOrDefault(attribute => attribute.GetType() == typeof(SwaggerDeprecatedAttribute));
+                var deprecatedAttribute = info.GetCustomAttributes(false)
+                    .FirstOrDefault(
+                        attribute => attribute.GetType() == typeof(SwaggerDeprecatedAttribute)
+                    );
                 if (deprecatedAttribute is SwaggerDeprecatedAttribute deprecated)
                 {
                     schema.Deprecated = true;

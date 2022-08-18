@@ -9,7 +9,14 @@ namespace Helper
 {
     public class PushServerMessageHelper
     {
-        public static PushServerMessage GetPuhServerMessage(string title, string text, string language, string group, string? image = null, string? video = null)
+        public static PushServerMessage GetPuhServerMessage(
+            string title,
+            string text,
+            string language,
+            string group,
+            string? image = null,
+            string? video = null
+        )
         {
             var message = new PushServerMessage();
             message.text = text;

@@ -8,8 +8,10 @@ namespace SuedtirolWein
 {
     public class GetSuedtirolWeinData
     {
-        public const string serviceurlcompanies = @"https://suedtirolwein.secure.consisto.net/companies.ashx";
-        public const string serviceurlawards = @"https://suedtirolwein.secure.consisto.net/awards.ashx";
+        public const string serviceurlcompanies =
+            @"https://suedtirolwein.secure.consisto.net/companies.ashx";
+        public const string serviceurlawards =
+            @"https://suedtirolwein.secure.consisto.net/awards.ashx";
 
         private static async Task<HttpResponseMessage> RequestCompaniesAsync(string lang)
         {
@@ -26,9 +28,12 @@ namespace SuedtirolWein
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Content = new StringContent(ex.Message)
+                };
             }
-
         }
 
         private static async Task<HttpResponseMessage> RequestAwardsAsync(string lang)
@@ -43,11 +48,14 @@ namespace SuedtirolWein
 
                     return myresponse;
                 }
-
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Content = new StringContent(ex.Message)
+                };
             }
         }
 
@@ -72,6 +80,5 @@ namespace SuedtirolWein
 
             return myweatherresponse;
         }
-
     }
 }

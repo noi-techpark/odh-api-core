@@ -5,9 +5,7 @@ namespace OdhApiCore.Controllers
 {
     public class NullStringParameterActionFilterAttribute : ActionFilterAttribute
     {
-        public NullStringParameterActionFilterAttribute()
-        {
-        }
+        public NullStringParameterActionFilterAttribute() { }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

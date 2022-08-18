@@ -17,15 +17,14 @@ namespace OdhApiCoreTests.IntegrationTets
             };
     }
 
-    public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
+    public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>
+        where TStartup : class
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureServices(services =>
             {
-                var sp = services
-                    .AddRouting()
-                    .BuildServiceProvider();
+                var sp = services.AddRouting().BuildServiceProvider();
 
                 //using (var scope = sp.CreateScope())
                 //{

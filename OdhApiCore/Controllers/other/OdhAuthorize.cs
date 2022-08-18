@@ -11,7 +11,7 @@ namespace OdhApiCore.Controllers
     {
         public OdhAuthorizeAttribute(string roles) : base(typeof(OdhAuthorizeFilter))
         {
-            Arguments = new object[] { roles } ;
+            Arguments = new object[] { roles };
         }
     }
 
@@ -28,7 +28,10 @@ namespace OdhApiCore.Controllers
         {
             bool allowed = false;
 
-            if (context.HttpContext.User.Identity != null && context.HttpContext.User.Identity.IsAuthenticated)
+            if (
+                context.HttpContext.User.Identity != null
+                && context.HttpContext.User.Identity.IsAuthenticated
+            )
             {
                 foreach (var role in _roles)
                 {
@@ -43,7 +46,7 @@ namespace OdhApiCore.Controllers
             }
             else
                 context.Result = new UnauthorizedResult();
-                                    
+
             //TODO, if Token is invalid POST not workign anymore?
         }
     }

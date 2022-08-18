@@ -41,7 +41,8 @@ namespace STA
                         csv.ReadHeader();
                         records = csv.GetRecords<STAVendingPoint>();
 
-                        ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
+                        ParseResult<STAVendingPoint> myresult =
+                            new STA.ParseResult<STAVendingPoint>();
                         myresult.Success = true;
                         myresult.Error = false;
                         myresult.records = records.ToList();
@@ -59,7 +60,8 @@ namespace STA
                         csv.ReadHeader();
                         records = csv.GetRecords<STAVendingPoint>();
 
-                        ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
+                        ParseResult<STAVendingPoint> myresult =
+                            new STA.ParseResult<STAVendingPoint>();
                         myresult.Success = true;
                         myresult.Error = false;
                         myresult.records = records.ToList();
@@ -68,9 +70,17 @@ namespace STA
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Task.FromResult(new ParseResult<STAVendingPoint>() { Error = true, Success = false, ErrorMessage = ex.Message, records = Enumerable.Empty<STAVendingPoint>() });
+                return Task.FromResult(
+                    new ParseResult<STAVendingPoint>()
+                    {
+                        Error = true,
+                        Success = false,
+                        ErrorMessage = ex.Message,
+                        records = Enumerable.Empty<STAVendingPoint>()
+                    }
+                );
             }
         }
 

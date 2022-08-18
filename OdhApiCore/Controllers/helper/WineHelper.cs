@@ -23,18 +23,49 @@ namespace OdhApiCore.Controllers
         public bool? smgactive;
 
         public static Task<WineHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? companyidfilter, string? wineidfilter, string? languagefilter, bool? visibleinsearch, string? sourcefilter,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange,
-            CancellationToken cancellationToken)
-        {           
-            return Task.FromResult(new WineHelper(
-               idfilter: idfilter, languagefilter: languagefilter, companyidfilter: companyidfilter, wineidfilter: wineidfilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, visibleinsearch: visibleinsearch, sourcefilter: sourcefilter, smgtags: smgtags, lastchange: lastchange));
+            QueryFactory queryFactory,
+            string? idfilter,
+            string? companyidfilter,
+            string? wineidfilter,
+            string? languagefilter,
+            bool? visibleinsearch,
+            string? sourcefilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            CancellationToken cancellationToken
+        )
+        {
+            return Task.FromResult(
+                new WineHelper(
+                    idfilter: idfilter,
+                    languagefilter: languagefilter,
+                    companyidfilter: companyidfilter,
+                    wineidfilter: wineidfilter,
+                    activefilter: activefilter,
+                    smgactivefilter: smgactivefilter,
+                    visibleinsearch: visibleinsearch,
+                    sourcefilter: sourcefilter,
+                    smgtags: smgtags,
+                    lastchange: lastchange
+                )
+            );
         }
 
         private WineHelper(
-            string? idfilter, string? languagefilter, string? companyidfilter, string? wineidfilter, bool? activefilter, bool? smgactivefilter, bool? visibleinsearch, string? sourcefilter, string? smgtags, string? lastchange)
-        {           
+            string? idfilter,
+            string? languagefilter,
+            string? companyidfilter,
+            string? wineidfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            bool? visibleinsearch,
+            string? sourcefilter,
+            string? smgtags,
+            string? lastchange
+        )
+        {
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             companyidlist = Helper.CommonListCreator.CreateIdList(companyidfilter?.ToLower());
             wineidlist = Helper.CommonListCreator.CreateIdList(wineidfilter?.ToLower());
@@ -54,7 +85,5 @@ namespace OdhApiCore.Controllers
 
             this.lastchange = lastchange;
         }
-
-
     }
 }
