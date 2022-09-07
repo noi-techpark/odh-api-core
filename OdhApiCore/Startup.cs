@@ -376,6 +376,8 @@ namespace OdhApiCore
                     BearerFormat = "JWT",
                     Scheme = "Bearer"
                 });
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+                c.OperationFilter<AuthenticationRequirementsOperationFilter>();
                 c.SchemaFilter<DeprecatedAttributeSchemaFilter>();
                 c.SchemaFilter<EnumAttributeSchemaFilter>();
                 c.EnableAnnotations();                       
