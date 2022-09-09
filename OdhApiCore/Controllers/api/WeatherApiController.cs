@@ -620,7 +620,11 @@ namespace OdhApiCore.Controllers
 
             if(!String.IsNullOrEmpty(id))
             {
-                return Ok(weatherresult.Where(x => x.id == id).FirstOrDefault());
+                var single = weatherresult.Where(x => x.id == id).FirstOrDefault();
+                if (single != null)
+                    return Ok(single);
+                else
+                    return NotFound("id unknown");
             }
             else
             {
