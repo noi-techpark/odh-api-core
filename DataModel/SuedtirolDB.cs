@@ -1455,7 +1455,7 @@ namespace DataModel
 
         }
 
-        public int Id { get; set; }
+        public string? Id { get; set; }
         public string? RID { get; set; }
         public string? Skiregion { get; set; }
         public string? Areaname { get; set; }

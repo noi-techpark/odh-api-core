@@ -402,7 +402,7 @@ namespace OdhApiCore.Controllers
         {
             try
             {
-                var snowreport = await GetSnowReportBaseData(lang, id, cancellationToken);
+                var snowreport = await GetSnowReportBaseData(lang, id.ToUpper().Replace("_SNOWREPORT", ""), cancellationToken);
 
                 return Ok(snowreport);
             }
@@ -826,6 +826,8 @@ namespace OdhApiCore.Controllers
             //var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
 
             var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea!, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
+
+            mysnowreport.Id = mysnowreport.RID + "_SNOWREPORT";
 
             return mysnowreport;
         }
