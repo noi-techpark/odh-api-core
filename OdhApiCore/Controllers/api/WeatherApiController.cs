@@ -383,6 +383,35 @@ namespace OdhApiCore.Controllers
             }
         }
 
+
+        /// <summary>
+        /// GET Snowreport Data LIVE Single
+        /// </summary>
+        /// <param name="lang">Language</param>
+        /// <param name="id">Skiarea ID</param>
+        /// <returns>Snowreport BaseData Object</returns>
+        [ProducesResponseType(typeof(SnowReportBaseData), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
+        [HttpGet, Route("Weather/SnowReport/{id}", Name = "SingleSnowReport")]
+        public async Task<ActionResult> GetSnowReportBaseSingle(
+            string id,
+            string? lang = "en",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var snowreport = await GetSnowReportBaseData(lang, id, cancellationToken);
+
+                return Ok(snowreport);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
         #endregion
 
         #region SiagWeather
