@@ -115,6 +115,30 @@ namespace OdhApiCore.Controllers
         }
 
         /// <summary>
+        /// GET Suedtirol Weather HISTORY SINGLE
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <returns>Measuringpoint Object</returns>
+        [ProducesResponseType(typeof(Measuringpoint), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("WeatherHistory/{id}", Name = "SingleWeatherHistory")]
+        public async Task<IActionResult> GetWeatherSingleHistory(
+            string id,
+            string? language = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await GetWeatherHistorySingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
+        }
+
+
+        /// <summary>
         /// GET District Weather LIVE
         /// </summary>
         /// <param name="language">Language</param>
@@ -240,7 +264,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(Measuringpoint), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Weather/Measuringpoint/{id}", Name = "SingleWeather")]
+        [HttpGet, Route("Weather/Measuringpoint/{id}", Name = "SingleMeasuringpoint")]
         public async Task<IActionResult> GetMeasuringPoint(
             string id,
             string? language = null,
@@ -565,6 +589,31 @@ namespace OdhApiCore.Controllers
                     dataTransformed,
                     Url);
             });
+        }
+
+        /// GET Weather History SINGLE by ID
+        private Task<IActionResult> GetWeatherHistorySingle(
+            string id,
+            string? language,
+            string[] fields,
+            bool removenullvalues,
+            CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("weatherdatahistory")
+                        .Select("data")
+                        .Where("id", id.ToUpper());
+                        //Disable temporary there is no meta info .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+
+                var fieldsTohide = FieldsToHide;
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+            });
+
         }
 
         #endregion
