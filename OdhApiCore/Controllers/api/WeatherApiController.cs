@@ -58,7 +58,32 @@ namespace OdhApiCore.Controllers
         {
             try
             {
-                return await Get(pagenumber, pagesize, language ?? "en", locfilter, extended, cancellationToken);
+                return await Get(pagenumber, pagesize, language ?? "en", locfilter, extended, null, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// GET Current Suedtirol Weather LIVE Single
+        /// </summary>
+        /// <param name="language">Language</param>
+        /// <param name="id">ID</param>
+        /// <returns>Weather Object</returns>
+        [ProducesResponseType(typeof(Weather), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Weather/{id}", Name = "SingleWeather")]
+        public async Task<IActionResult> GetWeatherSingle(
+            string id,
+            string? language = "en",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await Get(null, null, language ?? "en", null, true, id, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -423,6 +448,7 @@ namespace OdhApiCore.Controllers
             string language, 
             string? locfilter, 
             bool extended, 
+            string? id,
             CancellationToken cancellationToken)
         {
             var weatherresult = default(Weather);
@@ -430,7 +456,7 @@ namespace OdhApiCore.Controllers
             if(String.IsNullOrEmpty(locfilter))
             {
                 //Get Weather General from Siag and Parse it to ODH Format
-                var weatherresponsetask = await SIAG.GetWeatherData.GetSiagWeatherData(language, settings.SiagConfig.Username, settings.SiagConfig.Password, extended);
+                var weatherresponsetask = await SIAG.GetWeatherData.GetSiagWeatherData(language, settings.SiagConfig.Username, settings.SiagConfig.Password, extended, id);
                 weatherresult = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather(language, settings.XmlConfig.XmldirWeather, weatherresponsetask, extended);                
             }
             else
