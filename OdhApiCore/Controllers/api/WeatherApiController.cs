@@ -147,7 +147,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(BezirksWeather), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Weather/District")]
+        [HttpGet, Route("Weather/District", Name = "SingleWeatherDistrict")]
         public async Task<IActionResult> GetDistrictWeather(
             uint? pagenumber = null,
             PageSize pagesize = null!,
@@ -164,7 +164,32 @@ namespace OdhApiCore.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
         }
-        
+
+        /// <summary>
+        /// GET District Weather LIVE SINGLE
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="language">Language</param>
+        /// <returns>District Weather Object</returns>        
+        [ProducesResponseType(typeof(BezirksWeather), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Weather/District/{id}")]
+        public async Task<IActionResult> GetDistrictWeatherSingle(
+            string id,
+            string? language = "en",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await GetBezirksWetter(null, null, language ?? "en", id, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
         /// <summary>
         /// GET Current Realtime Weather LIVE
         /// </summary>
