@@ -232,7 +232,32 @@ namespace OdhApiCore.Controllers
         {
             try
             {
-                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", cancellationToken);
+                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", null, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// GET Current Realtime Weather LIVE Single
+        /// </summary>
+        /// <param name="language">Language</param> 
+        /// <param name="id">id</param> 
+        /// <returns>WeatherRealTime Object</returns>
+        [ProducesResponseType(typeof(IEnumerable<WeatherRealTime>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Weather/Realtime/{id}", Name = "SingleWeatherRealtime")]
+        public async Task<IActionResult> GetRealtimeWeatherSingle(
+            string id,
+            string? language = "en",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await GetRealTimeWeather(null, null, language ?? "en", id, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -588,24 +613,32 @@ namespace OdhApiCore.Controllers
             uint? pagenumber, 
             int? pagesize, 
             string language, 
+            string? id,
             CancellationToken cancellationToken)
         {
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
 
-            if (pagenumber != null)
+            if(!String.IsNullOrEmpty(id))
             {
-                return Ok(ResponseHelpers.GetResult(
-                    pagenumber.Value,
-                    1,
-                    (uint)weatherresult.Count(),
-                    null,
-                    weatherresult,
-                    Url));
+                return Ok(weatherresult.Where(x => x.id == id).FirstOrDefault());
             }
             else
             {
-                return Ok(weatherresult);
-            }
+                if (pagenumber != null)
+                {
+                    return Ok(ResponseHelpers.GetResult(
+                        pagenumber.Value,
+                        1,
+                        (uint)weatherresult.Count(),
+                        null,
+                        weatherresult,
+                        Url));
+                }
+                else
+                {
+                    return Ok(weatherresult);
+                }
+            }           
         }
 
         /// GET Suedtirol Weather from History Table
