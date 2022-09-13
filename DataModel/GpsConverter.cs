@@ -10,7 +10,7 @@ namespace DataModel
     public static class GpsConverter
     {
 
-        public static IDictionary<string, GpsInfo> ToGpsPointsDictionary(this ICollection<GpsInfo> gpsinfos, bool ltsactivitypoi = false)
+        public static IDictionary<string, GpsInfo> ToGpsPointsDictionary(this ICollection<GpsInfo>? gpsinfos, bool ltsactivitypoi = false)
         {
             //ODHActivityPoi should already pass
             if (!ltsactivitypoi)
@@ -29,27 +29,27 @@ namespace DataModel
                 var gpspoints = new Dictionary<string, GpsInfo>();
                 var positioncount = 0;
 
-                foreach (var gpsinfo in gpsinfos)
-                {                    
-                    string postionstr = "position";
+                if (gpsinfos != null)
+                {
+                    foreach (var gpsinfo in gpsinfos)
+                    {
+                        string postionstr = "position";
 
-                    if (positioncount > 0)
-                        postionstr = postionstr + positioncount;
-                    
-                    if (gpsinfo.Gpstype == "Endpunkt" || gpsinfo.Gpstype == "Bergstation")
-                        gpspoints.Add("endposition", gpsinfo);
+                        if (positioncount > 0)
+                            postionstr = postionstr + positioncount;
 
-                    if (gpsinfo.Gpstype == "position" || gpsinfo.Gpstype == "Standpunkt" || gpsinfo.Gpstype == "Startpunkt" || gpsinfo.Gpstype == "Start und Ziel" || gpsinfo.Gpstype == "Talstation")
-                        gpspoints.Add(postionstr, gpsinfo);
+                        if (gpsinfo.Gpstype == "Endpunkt" || gpsinfo.Gpstype == "Bergstation")
+                            gpspoints.Add("endposition", gpsinfo);
 
-                    positioncount = gpspoints.Where(x => x.Key == "position").Count();
+                        if (gpsinfo.Gpstype == "position" || gpsinfo.Gpstype == "Standpunkt" || gpsinfo.Gpstype == "Startpunkt" || gpsinfo.Gpstype == "Start und Ziel" || gpsinfo.Gpstype == "Talstation")
+                            gpspoints.Add(postionstr, gpsinfo);
+
+                        positioncount = gpspoints.Where(x => x.Key == "position").Count();
+                    }
                 }
 
                 return gpspoints;
-            }
-
-
-           
+            }           
         }
 
 
