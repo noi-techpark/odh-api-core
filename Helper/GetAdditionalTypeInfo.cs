@@ -21,7 +21,7 @@ namespace Helper
             var subtypequery = QueryFactory.Query("smgpoitypes")
                         .Select("data")
                         .Where("id", subtype?.ToLower());
-                         //.WhereRaw("data->>'Key' LIKE ?", subtype);
+                         //.WhereRaw("data->>'Key' LIKE $$", subtype);
             var subtypedata =
                 await subtypequery
                     .GetFirstOrDefaultAsObject<SmgPoiTypes>();
@@ -31,7 +31,7 @@ namespace Helper
                 var maintypequery = QueryFactory.Query("smgpoitypes")
                             .Select("data")
                             .Where("id", subtypedata.Parent?.ToLower());
-                //.WhereRaw("data->>'Key' LIKE ?",  subtypedata.TypeParent);
+                //.WhereRaw("data->>'Key' LIKE $$",  subtypedata.TypeParent);
                 var maintypedata =
                     await maintypequery
                         .GetFirstOrDefaultAsObject<SmgPoiTypes>();

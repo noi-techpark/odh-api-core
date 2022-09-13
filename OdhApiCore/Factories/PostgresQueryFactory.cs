@@ -7,6 +7,14 @@ using System;
 
 namespace OdhApiCore.Factories
 {
+    class OdhPostgresCompiler : PostgresCompiler
+    {
+        public OdhPostgresCompiler()
+        {
+            parameterPlaceholder = "$$";
+        }
+    }
+        
     /// <summary>
     /// For the time of writing QueryFactory doesn't implement IDisposable
     /// so it is a bit dangerous to use with ASP.NET's DI when used directly.
@@ -19,7 +27,7 @@ namespace OdhApiCore.Factories
         public PostgresQueryFactory(ISettings settings, ILogger<QueryFactory> logger)
         {
             Connection = new NpgsqlConnection(settings.PostgresConnectionString);
-            Compiler = new PostgresCompiler();
+            Compiler = new OdhPostgresCompiler();
             Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
 

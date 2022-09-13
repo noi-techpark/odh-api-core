@@ -26,7 +26,7 @@ namespace Helper
             string comparisonOperator,
             string value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' {comparisonOperator} ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' {comparisonOperator} $$",
                     value
                 );
 
@@ -41,7 +41,7 @@ namespace Helper
             string jsonPath,
             int value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = $$",
                     value.ToString()
                 );
 
@@ -50,7 +50,7 @@ namespace Helper
             string jsonPath,
             bool value) =>
                 query.WhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = $$",
                     value ? "true" : "false"
                 );
 
@@ -59,7 +59,7 @@ namespace Helper
             string jsonPath,
             string value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = $$",
                     value
                 );
 
@@ -68,7 +68,7 @@ namespace Helper
             string jsonPath,
             int value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = $$",
                     value.ToString()
                 );
 
@@ -77,7 +77,7 @@ namespace Helper
             string jsonPath,
             bool value) =>
                 query.OrWhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ?",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = $$",
                     value ? "true" : "false"
                 );
 
@@ -87,7 +87,7 @@ namespace Helper
             T value,
             Func<T, object> jsonObjectConstructor) =>
                 query.WhereRaw(
-                    "data @> jsonb(?)",
+                    "data @> jsonb($$)",
                     JsonConvert.SerializeObject(
                         jsonObjectConstructor(value)
                     )
@@ -99,7 +99,7 @@ namespace Helper
             T value,
             Func<T, object> jsonObjectConstructor) =>
                 query.OrWhereRaw(
-                    "data @> jsonb(?)",
+                    "data @> jsonb($$)",
                     JsonConvert.SerializeObject(
                         jsonObjectConstructor(value)
                     )
@@ -152,7 +152,7 @@ namespace Helper
             else
             {
                 return query.WhereRaw(
-                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ANY(?)",
+                    $"data#>>'\\{{{JsonPathToPostgresArray(jsonPath)}\\}}' = ANY($$)",
                     new[] { new[] { list } }
                 );
             }
@@ -216,7 +216,7 @@ namespace Helper
             query.When(
                 updatefrom != null,
                 query => query.WhereRaw(
-                    "to_date(data#>>'\\{LastChange\\}', 'YYYY-MM-DD') > date(?)",
+                    "to_date(data#>>'\\{LastChange\\}', 'YYYY-MM-DD') > date($$)",
                     updatefrom
                 )
             );
@@ -288,7 +288,7 @@ namespace Helper
             query.When(
                 distance,
                 query => query.WhereRaw(
-                    "(data#>>'\\{DistanceLength\\}')::numeric > ? AND (data#>>'\\{DistanceLength\\}')::numeric < ?",
+                    "(data#>>'\\{DistanceLength\\}')::numeric > $$ AND (data#>>'\\{DistanceLength\\}')::numeric < $$",
                     distancemin,
                     distancemax
                 )
@@ -298,7 +298,7 @@ namespace Helper
             query.When(
                 duration,
                 query => query.WhereRaw(
-                    "(data#>>'\\{DistanceDuration\\}')::numeric > ? AND (data#>>'\\{DistanceDuration\\}')::numeric < ?",
+                    "(data#>>'\\{DistanceDuration\\}')::numeric > $$ AND (data#>>'\\{DistanceDuration\\}')::numeric < $$",
                     durationmin,
                     durationmax
                 )
@@ -308,7 +308,7 @@ namespace Helper
             query.When(
                 altitude,
                 query => query.WhereRaw(
-                    "(data#>>'\\{AltitudeDifference\\}')::numeric > ? AND (data#>>'\\{AltitudeDifference\\}')::numeric < ?",
+                    "(data#>>'\\{AltitudeDifference\\}')::numeric > $$ AND (data#>>'\\{AltitudeDifference\\}')::numeric < $$",
                     altitudemin,
                     altitudemax
                 )
@@ -336,7 +336,7 @@ namespace Helper
                     foreach (var field in fields)
                     {
                         q = q.OrWhereRaw(
-                                $"data#>>'\\{{{JsonPathToPostgresArray(field)}\\}}' ILIKE ?",
+                                $"data#>>'\\{{{JsonPathToPostgresArray(field)}\\}}' ILIKE $$",
                                 $"%{searchfilter}%");
                     }
                     return q;
@@ -579,7 +579,7 @@ namespace Helper
             query.When(
                 altitude,
                 query => query.WhereRaw(
-                    "(data#>>'\\{Altitude\\}')::numeric > ? AND (data#>>'\\{Altitude\\}')::numeric < ?",
+                    "(data#>>'\\{Altitude\\}')::numeric > $$ AND (data#>>'\\{Altitude\\}')::numeric < $$",
                     altitudemin,
                     altitudemax
                 )
@@ -892,7 +892,7 @@ namespace Helper
            query.When(
                updatefrom != null,
                query => query.WhereRaw(
-                   "to_date(data#>>'\\{meta,lastUpdate\\}', 'YYYY-MM-DD') > date(?)",
+                   "to_date(data#>>'\\{meta,lastUpdate\\}', 'YYYY-MM-DD') > date($$)",
                    updatefrom
                )
            );
@@ -954,16 +954,24 @@ namespace Helper
         #region Tagging
 
         public static Query TaggingFilter_OR(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
-               query.WhereInJsonb(
-                taglist,
-                tag => new { Tagging = new { idm = new[] { new { Id = tag.ToLower() } } } }
-            );
+            query.Where(q =>
+                taglist.Aggregate(q, (q, tag) =>
+                    q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
 
         public static Query TaggingFilter_AND(this Query query, string tagkey, IReadOnlyCollection<string> taglist) =>
-               query.WhereAllInJsonb(
-                taglist,
-                tag => new { Tagging = new { idm = new[] { new { Id = tag.ToLower() } } } }
-            );
+            query.Where(q =>
+                taglist.Aggregate(q, (q, tag) =>
+                    q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tagkey}\[*\] ? (@.Id == ""{tag}"")'")));
+
+        public static Query TaggingFilter_OR(this Query query, IDictionary<string,string> tagdict) =>
+           query.Where(q =>
+               tagdict.Aggregate(q, (q, tag) =>
+                   q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
+
+        public static Query TaggingFilter_AND(this Query query, IDictionary<string,string> tagdict) =>
+            query.Where(q =>
+                tagdict.Aggregate(q, (q, tag) =>
+                    q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
 
         #endregion
 
@@ -975,7 +983,7 @@ namespace Helper
                     foreach (var item in list)
                     {
                         q = q.OrWhereRaw(
-                            generatedcolumn + " @> array\\[?\\]", item.ToLower()
+                            generatedcolumn + " @> array\\[$$\\]", item.ToLower()
                         );
                     }
                     return q;
@@ -984,7 +992,7 @@ namespace Helper
         public static Query WhereArrayInListAnd(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
             query.Where(q =>
             q.WhereRaw(
-                generatedcolumn + " @> array\\[?\\]", list.Select(x => x.ToLower())
+                generatedcolumn + " @> array\\[$$\\]", list.Select(x => x.ToLower())
                 )
             );
         
@@ -994,7 +1002,7 @@ namespace Helper
                foreach (var item in list)
                {
                    q = q.OrWhereRaw(
-                       generatedcolumn + " = ?", item.ToLower()
+                       generatedcolumn + " = $$", item.ToLower()
                    );
                }
                return q;
@@ -1018,7 +1026,7 @@ namespace Helper
         //Filter on Generated Field gen_haslanguage AND
         public static Query HasLanguageFilterAnd_GeneratedColumn(this Query query, IReadOnlyCollection<string> languagelist) =>
          query.Where(q => q.WhereRaw(
-             "gen_haslanguage @> array\\[?\\]",
+             "gen_haslanguage @> array\\[$$\\]",
              languagelist.Select(x => x.ToLower())
              )
          );
@@ -1030,7 +1038,7 @@ namespace Helper
              foreach (var item in languagelist)
              {
                  q = q.OrWhereRaw(
-                     "gen_haslanguage @> array\\[?\\]", item.ToLower()
+                     "gen_haslanguage @> array\\[$$\\]", item.ToLower()
                  );
              }
              return q;
@@ -1039,7 +1047,7 @@ namespace Helper
         //Filter on Generated Field gen_smgtags AND
         public static Query SmgTagFilterAnd_GeneratedColumn(this Query query, IReadOnlyCollection<string> list) =>
          query.Where(q => q.WhereRaw(
-             "gen_smgtags @> array\\[?\\]",
+             "gen_smgtags @> array\\[$$\\]",
              list.Select(x => x.ToLower())
              )
          );
@@ -1051,7 +1059,7 @@ namespace Helper
             foreach (var item in list)
             {
                 q = q.OrWhereRaw(
-                    "gen_smgtags @> array\\[?\\]", item.ToLower()
+                    "gen_smgtags @> array\\[$$\\]", item.ToLower()
                 );
             }
             return q;
@@ -1064,7 +1072,7 @@ namespace Helper
             foreach (var item in list)
             {
                 q = q.OrWhereRaw(
-                    "gen_articletype @> array\\[?\\]", item.ToLower()
+                    "gen_articletype @> array\\[$$\\]", item.ToLower()
                 );
             }
             return q;
@@ -1075,7 +1083,7 @@ namespace Helper
             query.When(
                 active != null,
                 query => query.WhereRaw(
-                    "gen_active = ?",
+                    "gen_active = $$",
                     active ?? false
                 )
             );
@@ -1085,7 +1093,7 @@ namespace Helper
             query.When(
                 odhactive != null,
                 query => query.WhereRaw(
-                    "gen_odhactive = ?",
+                    "gen_odhactive = $$",
                     odhactive ?? false
                 )
             );             
@@ -1097,7 +1105,7 @@ namespace Helper
             foreach (var item in eventtopiclist)
             {
                 q = q.OrWhereRaw(
-                    "gen_eventtopic @> array\\[?\\]", item.ToUpper()
+                    "gen_eventtopic @> array\\[$$\\]", item.ToUpper()
                 );
             }
             return q;
@@ -1110,7 +1118,7 @@ namespace Helper
             foreach (var item in boardids)
             {
                 q = q.OrWhereRaw(
-                    "gen_boardids @> array\\[?\\]", item
+                    "gen_boardids @> array\\[$$\\]", item
                 );
             }
             return q;
@@ -1123,7 +1131,7 @@ namespace Helper
             foreach (var item in featureids)
             {
                 q = q.OrWhereRaw(
-                    "gen_featureids @> array\\[?\\]", item
+                    "gen_featureids @> array\\[$$\\]", item
                 );
             }
             return q;
@@ -1136,7 +1144,7 @@ namespace Helper
             foreach (var item in specialfeatureids)
             {
                 q = q.OrWhereRaw(
-                    "gen_specialfeatureids @> array\\[?\\]", item
+                    "gen_specialfeatureids @> array\\[$$\\]", item
                 );
             }
             return q;
@@ -1149,7 +1157,7 @@ namespace Helper
             foreach (var item in boardids)
             {
                 q = q.OrWhereRaw(
-                    "gen_badgeids @> array\\[?\\]", item
+                    "gen_badgeids @> array\\[$$\\]", item
                 );
             }
             return q;
@@ -1162,7 +1170,7 @@ namespace Helper
             foreach (var item in boardids)
             {
                 q = q.OrWhereRaw(
-                    "gen_themeids @> array\\[?\\]", item
+                    "gen_themeids @> array\\[$$\\]", item
                 );
             }
             return q;
@@ -1175,7 +1183,7 @@ namespace Helper
                 foreach (var item in accotype)
                 {
                     q = q.OrWhereRaw(
-                        "gen_accotype = ?", item
+                        "gen_accotype = $$", item
                     );
                 }
                 return q;
@@ -1188,7 +1196,7 @@ namespace Helper
                foreach (var item in accocategory)
                {
                    q = q.OrWhereRaw(
-                       "gen_accocategory = ?", item
+                       "gen_accocategory = $$", item
                    );
                }
                return q;
@@ -1199,7 +1207,7 @@ namespace Helper
             query.When(
                 hasapartment != null,
                 query => query.WhereRaw(
-                    "gen_hasapartment = ?",
+                    "gen_hasapartment = $$",
                     hasapartment ?? false
                 )
             );
@@ -1209,7 +1217,7 @@ namespace Helper
             query.When(
                 isbookable != null,
                 query => query.WhereRaw(
-                    "gen_isbookable = ?",
+                    "gen_isbookable = $$",
                     isbookable ?? false
                 )
             );
@@ -1219,7 +1227,7 @@ namespace Helper
            query.When(
                altitude,
                query => query.WhereRaw(
-                   "(gen_altitude)::numeric > ? AND (gen_altitude)::numeric < ?",
+                   "(gen_altitude)::numeric > $$ AND (gen_altitude)::numeric < $$",
                    altitudemin,
                    altitudemax
                )
@@ -1233,8 +1241,8 @@ namespace Helper
                 //updatefrom != null && DateTime.TryParse(updatefrom, out DateTime updatefromparsed),
                 updatefrom != null,
                 query => query.WhereRaw(
-                    //"to_date(gen_lastchange, 'YYYY-MM-DD') > date(?)",
-                    "gen_lastchange > date(?)",
+                    //"to_date(gen_lastchange, 'YYYY-MM-DD') > date($$)",
+                    "gen_lastchange > date($$)",
                     updatefrom
                 )
             );
@@ -1246,12 +1254,23 @@ namespace Helper
             query.When(
                 updatefrom != null && updateto != null,
                 query => query.WhereRaw(
-                    //"to_date(gen_lastchange, 'YYYY-MM-DD') > date(?)",
-                    "gen_lastchange > date(?) AND gen_lastchange < date(?)",
+                    //"to_date(gen_lastchange, 'YYYY-MM-DD') > date($$)",
+                    "gen_lastchange > date($$) AND gen_lastchange < date($$)",
                     updatefrom,
                     updateto
                 )
             );
+
+        //Source Filter (SyncSourceInterface)
+        public static Query SyncSourceInterfaceFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
+            query.Where(q =>
+            {
+                foreach (var source in sourcelist)
+                {
+                    q = q.OrWhere("gen_syncsourceinterface", "ILIKE", source);
+                }
+                return q;
+            });
 
         //Source Filter (SyncSourceInterface)
         public static Query SourceFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
@@ -1259,7 +1278,7 @@ namespace Helper
             {
                 foreach (var source in sourcelist)
                 {
-                    q = q.OrWhere("gen_syncsourceinterface", "ILIKE", source);
+                    q = q.OrWhere("gen_source", "ILIKE", source);
                 }
                 return q;
             });
@@ -1294,11 +1313,22 @@ namespace Helper
                 foreach (var item in messagetypelist)
                 {
                     q = q.OrWhereRaw(
-                        "gen_messagetype = ?", item
+                        "gen_messagetype = $$", item
                     );
                 }
                 return q;
             });
+
+
+        //public static Query TaggingFilter_OR_GeneratedColumn(this Query query, IDictionary<string, string> tagdict) =>
+        //   query.Where(q =>
+        //       tagdict.Aggregate(q, (q, tag) =>
+        //           q.OrWhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
+
+        //public static Query TaggingFilter_AND_GeneratedColumn(this Query query, IDictionary<string, string> tagdict) =>
+        //    query.Where(q =>
+        //        tagdict.Aggregate(q, (q, tag) =>
+        //            q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
 
         #endregion
 
@@ -1448,16 +1478,16 @@ namespace Helper
                 q.WhereRaw(
                     "(gen_source <> 'lts')"
                 ).OrWhereRaw(
-                    "(gen_source = 'lts' AND gen_reduced = ?)", reduced
+                    "(gen_source = 'lts' AND gen_reduced = $$)", reduced
                 )
             );
 
         public static Query FilterSourceReducedAnonymous(this Query query) =>
             query.Where(q =>
                 q.WhereRaw(
-                    "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = ?))", false
+                    "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$))", false
                 ).OrWhereRaw(
-                    "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = ?)))", false
+                    "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$)))", false
                 )
             );
 

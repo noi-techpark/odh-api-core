@@ -56,10 +56,13 @@ namespace OdhApiCore.Controllers.api
         //[Authorize(Roles = "DataReader,CommonReader")]
         [HttpGet, Route("MetaRegion")]
         public async Task<IActionResult> GetMetaRegions(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -78,10 +81,18 @@ namespace OdhApiCore.Controllers.api
         {                        
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, active?.Value, odhactive?.Value, odhtagfilter, lastchange: updatefrom, publishedon, cancellationToken);
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source, active?.Value, odhactive?.Value, odhtagfilter, lastchange: updatefrom, publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "metaregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
-                language: language, commonhelper, geosearchresult:  geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "metaregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "metaregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }                
         }
 
         /// <summary>
@@ -140,10 +151,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ExperienceArea")]
         public async Task<IActionResult> GetExperienceAreas(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             bool? visibleinsearch = null,
             string? latitude = null,
             string? longitude = null,
@@ -162,11 +176,19 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {          
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, activefilter: active?.Value, 
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, source, activefilter: active?.Value, 
                 smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "experienceareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "experienceareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "experienceareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -223,10 +245,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Region")]
         public async Task<IActionResult> GetRegions(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -244,11 +269,19 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
                 activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "regions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "regions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "regions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -305,10 +338,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("TourismAssociation")]
         public async Task<IActionResult> GetTourismverein(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -326,11 +362,19 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
                 activefilter: active?.Value, smgactivefilter: odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "tvs", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "tvs", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "tvs", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
 
         }
 
@@ -389,11 +433,14 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Municipality")]
         public async Task<IActionResult> GetMunicipality(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             bool? visibleinsearch = null,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
-            LegacyBool odhactive = null!,            
+            LegacyBool odhactive = null!,
+            string? source = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -411,11 +458,19 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, 
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, source,
                 active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "municipalities", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "municipalities", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "municipalities", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
 
         }
 
@@ -474,10 +529,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("District")]
         public async Task<IActionResult> GetDistrict(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             bool? visibleinsearch = null,
             string? latitude = null,
             string? longitude = null,
@@ -494,13 +552,22 @@ namespace OdhApiCore.Controllers.api
             string? rawsort = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
-        {
+        {            
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, 
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, visibleinsearch, source,
                 active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "districts", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "districts", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                    language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "districts", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                    language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);                
+            }
+
         }
 
         /// <summary>
@@ -555,10 +622,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Area")]
         public async Task<IActionResult> GetAreas(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
@@ -572,11 +642,19 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
                 active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "areas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
-                language: language, commonhelper, geosearchresult:  new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "areas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "areas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -634,10 +712,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("SkiRegion")]
         public async Task<IActionResult> GetSkiRegion(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
@@ -651,11 +732,19 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
                 active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "skiregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "skiregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
                 language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "skiregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -712,10 +801,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("SkiArea")]
         public async Task<IActionResult> GetSkiArea(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? language = null,
@@ -734,11 +826,19 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, 
+            CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, idfilter: idlist, languagefilter: langfilter, null, source,
                 active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, publishedonfilter: publishedon, cancellationToken);
 
-            return await CommonGetListHelper(tablename: "skiareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            if (pagenumber.HasValue)
+            {
+                return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "skiareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
                 language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await CommonGetListHelper(tablename: "skiareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -796,10 +896,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("WineAward")]
         public async Task<IActionResult> GetWineAwardsList(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? idlist = null,
             string? odhtagfilter = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
+            string? source = null,
             string? wineid = null,
             string? companyid = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
@@ -816,11 +919,19 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default
             )
         {
-            WineHelper commonhelper = await WineHelper.CreateAsync(QueryFactory, idfilter: idlist, companyid, wineid, languagefilter: langfilter, null, 
+            WineHelper commonhelper = await WineHelper.CreateAsync(QueryFactory, idfilter: idlist, companyid, wineid, languagefilter: langfilter, null, source,
                 active?.Value, odhactive?.Value, smgtags: odhtagfilter, lastchange: updatefrom, cancellationToken);
 
-            return await WineGetListHelper(tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(), 
+            if (pagenumber.HasValue)
+            {
+                return await WineGetPagedListHelper(pagenumber.Value, pagesize, tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
                 language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
+            else
+            {
+                return await WineGetListHelper(tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
+                language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -858,7 +969,7 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw("data")
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
-                                               activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, searchfilter: searchfilter, language: language, 
+                                               activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language, 
                                                lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
@@ -879,6 +990,47 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
+        private Task<IActionResult> CommonGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? publishedon, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From(tablename)
+                        .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
+                                               activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language,
+                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
+
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: pagesize ?? 25);
+
+                var fieldsTohide = FieldsToHide;
+
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                    );
+
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
+
+                return ResponseHelpers.GetResult(
+                    pagenumber,
+                    totalpages,
+                    totalcount,
+                    seed,
+                    dataTransformed,
+                    Url);
+            });
+        }
+
         private Task<IActionResult> WineGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -888,7 +1040,7 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw("data")
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
-                                             activefilter: winehelper.active, odhactivefilter: winehelper.smgactive,
+                                             activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
                                                searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
@@ -908,6 +1060,48 @@ namespace OdhApiCore.Controllers.api
                 return dataTransformed;
             });
         }
+
+        private Task<IActionResult> WineGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From(tablename)
+                        .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
+                                             activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
+                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: pagesize ?? 25);
+
+                var fieldsTohide = FieldsToHide;
+
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                    );
+
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
+
+                return ResponseHelpers.GetResult(
+                    pagenumber,
+                    totalpages,
+                    totalcount,
+                    seed,
+                    dataTransformed,
+                    Url);
+            });
+        }
+
 
         private Task<IActionResult> CommonGetSingleHelper(string id, string tablename, string[] fields, string? language, bool removenullvalues, CancellationToken cancellationToken)
         {

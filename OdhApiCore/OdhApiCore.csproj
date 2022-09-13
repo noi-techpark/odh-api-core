@@ -41,7 +41,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.0" PrivateAssets="All" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
     <PackageReference Include="Serilog.Sinks.ElasticSearch" Version="8.4.1" />
-    <PackageReference Include="SqlKata.Execution" Version="2.3.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3" />
@@ -51,7 +50,6 @@
 
   <ItemGroup>
     <Folder Include="docker\postgres\" />
-    <Folder Include="wwwroot\json\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +64,11 @@
     <ProjectReference Include="..\RAVEN\RAVEN.csproj" />
     <ProjectReference Include="..\SIAG\SIAG.csproj" />
     <ProjectReference Include="..\STA\STA.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\sqlkata\SqlKata.Execution\SqlKata.Execution.csproj" />
+    <ProjectReference Include="..\sqlkata\QueryBuilder\QueryBuilder.csproj" />
   </ItemGroup>
 
 </Project>

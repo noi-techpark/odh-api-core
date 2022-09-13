@@ -3,6 +3,25 @@ using System.Collections.Generic;
 
 namespace DataModel
 {
+    #region Specials
+
+    public class PackageAccos : Package
+    {
+        public Accommodation? Accommodation { get; set; }
+    }
+
+    public class MetaInfosOdhActivityPoi
+    {
+        public MetaInfosOdhActivityPoi()
+        {
+            Metainfos = new Dictionary<string, List<Dictionary<string, object>>>();
+        }
+        public string? Id { get; set; }
+
+        public Dictionary<string, List<Dictionary<string, object>>> Metainfos { get; set; }
+    }
+
+    #endregion
     public class AccoBookList
     {        
         public string? Id { get; set; }
@@ -281,4 +300,36 @@ namespace DataModel
         public string Id { get; set; }
         public string Name { get; set; }
     }
+
+
+
+    #region Evalanche
+
+    public class EvalancheMailing
+    {
+        public EvalancheMailing()
+        {
+            ArticleIDs = new Dictionary<string, string>();
+        }
+        public string? Name { get; set; }
+        public DateTime CreationDate { get; set; }
+        public string? Type { get; set; }
+
+        //Slot and ID of the Article
+        public IDictionary<string, string> ArticleIDs { get; set; }
+    }
+
+    //Evalanche Spezial
+    public class EvalancheMapping
+    {
+        public EvalancheMapping()
+        {
+            EvalancheArticleID = new Dictionary<string, int>();
+        }
+
+        public IDictionary<string, int> EvalancheArticleID { get; set; }
+
+    }
+
+    #endregion
 }

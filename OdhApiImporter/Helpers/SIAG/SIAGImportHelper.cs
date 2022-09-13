@@ -14,15 +14,6 @@ namespace OdhApiImporter.Helpers
 {
     public class SIAGImportHelper : ImportHelper, IImportHelper
     {
-        //private readonly QueryFactory QueryFactory;
-        //private readonly ISettings settings;
-
-        //public SIAGImportHelper(ISettings settings, QueryFactory queryfactory)
-        //{
-        //    this.QueryFactory = queryfactory;
-        //    this.settings = settings;            
-        //}
-
         public SIAGImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
 
@@ -88,7 +79,8 @@ namespace OdhApiImporter.Helpers
                 //var insertresulten = await QueryFactory.Query("weatherdatahistory")
                 //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_en", data = new JsonRaw(odhweatherresulten), raw = weatherresponsetasken });
 
-                var myweatherhistory = new WeatherHistory();
+                var myweatherhistory = new WeatherHistoryLinked();
+
                 myweatherhistory.Id = odhweatherresultde.Id.ToString();
                 myweatherhistory.Weather.Add("de", odhweatherresultde);
                 myweatherhistory.Weather.Add("it", odhweatherresultit);
@@ -99,14 +91,17 @@ namespace OdhApiImporter.Helpers
                 myweatherhistory.LastChange = odhweatherresultde.date;
                 myweatherhistory.Shortname = odhweatherresultde.evolutiontitle;
 
-                var insertresult = await QueryFactory.Query("weatherdatahistory")
-                      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });
+
+                var insertresult = await QueryFactory.UpsertData<WeatherHistoryLinked>(myweatherhistory, "weatherdatahistory", insertresultraw, true);
+
+                //var insertresult = await QueryFactory.Query("weatherdatahistory")
+                //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });
 
                 ////Save to PG
                 ////Check if data exists                    
                 //var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "weatherdatahistory", insertresultraw);
 
-                return new UpdateDetail() { created = insertresult, updated = 0, deleted = 0 };                    
+                return new UpdateDetail() { created = insertresult.created, updated = insertresult.updated, deleted = insertresult.deleted };                    
             }
             else
                 throw new Exception("No weatherdata received from source!");
@@ -138,13 +133,13 @@ namespace OdhApiImporter.Helpers
             XNamespace ns = "http://service.kks.siag";
             XNamespace ax211 = "http://data.service.kks.siag/xsd";
 
-            var mymuseumlist2 = myxml.Root.Element(ns + "return").Elements(ax211 + "museums");
+            var mymuseumlist2 = myxml.Root?.Element(ns + "return")?.Elements(ax211 + "museums") ?? Enumerable.Empty<XElement>();
 
             foreach (XElement idtoimport in mymuseumlist2)
             {
                 XElement mymuseum = new XElement("Museum");
-                mymuseum.Add(new XAttribute("ID", idtoimport.Element(ax211 + "museId").Value));
-                mymuseum.Add(new XAttribute("PLZ", idtoimport.Element(ax211 + "plz").Value));
+                mymuseum.Add(new XAttribute("ID", idtoimport.Element(ax211 + "museId")?.Value ?? ""));
+                mymuseum.Add(new XAttribute("PLZ", idtoimport.Element(ax211 + "plz")?.Value ?? ""));
 
                 mymuseums.Add(mymuseum);
             }
@@ -160,7 +155,7 @@ namespace OdhApiImporter.Helpers
         {
             string museumid = "";
 
-            XElement mymuseumroot = mymuseumlist.Root;
+            XElement? mymuseumroot = mymuseumlist.Root;
 
             XNamespace ns = "http://service.kks.siag";
 
@@ -176,18 +171,18 @@ namespace OdhApiImporter.Helpers
             //Getting valid Tags for Museums
             validtagsforcategories = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>() { "Kultur Sehenswürdigkeiten" });
 
-            foreach (XElement mymuseumelement in mymuseumroot.Elements("Museum"))
+            foreach (XElement mymuseumelement in mymuseumroot?.Elements("Museum") ?? Enumerable.Empty<XElement>())
             {
-                museumid = mymuseumelement.Attribute("ID").Value;
-                string plz = mymuseumelement.Attribute("PLZ").Value;
+                museumid = mymuseumelement.Attribute("ID")?.Value ?? "";
+                string plz = mymuseumelement.Attribute("PLZ")?.Value ?? "";
 
                 //Import Museum data from Siag
                 var mymuseumdata = await SIAG.GetMuseumFromSIAG.GetMuseumDetail(museumid);
-                var mymuseumxml = mymuseumdata.Root.Element(ns + "return");
+                var mymuseumxml = mymuseumdata?.Root?.Element(ns + "return");
 
                 var mymuseumquery = QueryFactory.Query("smgpois")
                     .Select("data")
-                    .WhereRaw("data->>'CustomId' = ?", museumid.ToLower());
+                    .WhereRaw("data->>'CustomId' = $$", museumid.ToLower());
 
                 var mymuseum = await mymuseumquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
 
@@ -200,8 +195,8 @@ namespace OdhApiImporter.Helpers
 
                     XNamespace ax211 = "http://data.service.kks.siag/xsd";
 
-                    string siagid = mymuseumxml.Element(ax211 + "museId").Value;
-                    string gemeindeid = mymuseumxml.Element(ax211 + "gemeindeId").Value;
+                    string siagid = mymuseumxml?.Element(ax211 + "museId")?.Value ?? "";
+                    string gemeindeid = mymuseumxml?.Element(ax211 + "gemeindeId")?.Value ?? "";
 
                     mymuseum.Id = "smgpoi" + siagid + "siag";
                     mymuseum.CustomId = siagid;
@@ -210,13 +205,14 @@ namespace OdhApiImporter.Helpers
 
                     mymuseum.FirstImport = DateTime.Now;
 
-                    SIAG.Parser.ParseMuseum.ParseMuseumToPG(mymuseum, mymuseumxml, plz);
+                    if (mymuseumxml is { })
+                        SIAG.Parser.ParseMuseum.ParseMuseumToPG(mymuseum, mymuseumxml, plz);
 
                     //ADD MAPPING
                     var museummuseId = new Dictionary<string, string>() { { "museId", siagid } };
                     mymuseum.Mapping.TryAddOrUpdate("siag", museummuseId);
 
-                    mymuseum.Shortname = mymuseum.Detail["de"].Title.Trim();
+                    mymuseum.Shortname = mymuseum.Detail["de"].Title?.Trim();
 
                     //Suedtirol Type laden
                     var mysmgmaintype = await ODHTagHelper.GeODHTagByID(QueryFactory, "Kultur Sehenswürdigkeiten");
@@ -227,36 +223,37 @@ namespace OdhApiImporter.Helpers
                     var mymuseumscategoriesstrings = mymuseum.PoiProperty["de"].Where(x => x.Name == "categories").Select(x => x.Value).ToList();
                     foreach (var mymuseumscategoriesstring in mymuseumscategoriesstrings)
                     {
-                        var splittedlist = mymuseumscategoriesstring.Split(',').ToList();
+                        var splittedlist = mymuseumscategoriesstring?.Split(',').ToList() ?? new();
 
                         foreach (var splitted in splittedlist)
                         {
-                            if (!String.IsNullOrEmpty(splitted))
+                            if (!string.IsNullOrEmpty(splitted))
                             {
                                 museumskategorien.Add(splitted.Trim());
 
                                 var mykategoriequery = await ODHTagHelper.GeODHTagByID(QueryFactory, "Museen " + splitted.Trim());
-                                mysmgpoipoitype.Add(mykategoriequery);
+                                if (mykategoriequery is { })
+                                    mysmgpoipoitype.Add(mykategoriequery);
                             }
                         }
                     }
 
-                    mymuseum.Type = mysmgmaintype.Shortname;
-                    mymuseum.SubType = mysmgsubtype.Shortname;
+                    mymuseum.Type = mysmgmaintype?.Shortname;
+                    mymuseum.SubType = mysmgsubtype?.Shortname;
 
-                    List<string> mysmgtags = mymuseum.SmgTags.ToList();
+                    List<string> mysmgtags = mymuseum.SmgTags?.ToList() ?? new();
 
-                    if (!mysmgtags.Contains(mysmgmaintype.Id.ToLower()))
+                    if (mysmgmaintype?.Id is { } && !mysmgtags.Contains(mysmgmaintype.Id.ToLower()))
                         mysmgtags.Add(mysmgmaintype.Id.ToLower());
 
-                    if (!mysmgtags.Contains(mysmgsubtype.Id.ToLower()))
+                    if (mysmgsubtype?.Id is { } && !mysmgtags.Contains(mysmgsubtype.Id.ToLower()))
                         mysmgtags.Add(mysmgsubtype.Id.ToLower());
 
                     if (mysmgpoipoitype.Count > 0)
                     {
                         foreach (var mysmgpoipoitypel in mysmgpoipoitype)
                         {
-                            if (!mysmgtags.Contains(mysmgpoipoitypel.Id.ToLower()))
+                            if (mysmgpoipoitypel.Id is { } && !mysmgtags.Contains(mysmgpoipoitypel.Id.ToLower()))
                                 mysmgtags.Add(mysmgpoipoitypel.Id.ToLower());
                         }
 
@@ -264,11 +261,11 @@ namespace OdhApiImporter.Helpers
                     mymuseum.SmgTags = mysmgtags.ToList();
 
                     if (mysmgpoipoitype.Count > 0)
-                        mymuseum.PoiType = mysmgpoipoitype.FirstOrDefault().Shortname;
+                        mymuseum.PoiType = mysmgpoipoitype.FirstOrDefault()?.Shortname;
                     else
                         mymuseum.PoiType = "";
 
-                    List<string> haslanguagelist = new List<string>();
+                    List<string> haslanguagelist = new();
 
                     haslanguagelist.Add("de");
                     haslanguagelist.Add("it");
@@ -280,9 +277,9 @@ namespace OdhApiImporter.Helpers
                     {
                         AdditionalPoiInfos additional = new AdditionalPoiInfos();
                         additional.Language = langcat;
-                        additional.MainType = mysmgmaintype.TagName[langcat];
-                        additional.SubType = mysmgsubtype.TagName[langcat];
-                        additional.PoiType = mysmgpoipoitype.Count > 0 ? mysmgpoipoitype.FirstOrDefault().TagName[langcat] : "";
+                        additional.MainType = mysmgmaintype?.TagName[langcat];
+                        additional.SubType = mysmgsubtype?.TagName[langcat];
+                        additional.PoiType = mysmgpoipoitype.Count > 0 ? mysmgpoipoitype.FirstOrDefault()?.TagName[langcat] : "";
                         mymuseum.AdditionalPoiInfos.TryAddOrUpdate(langcat, additional);
                     }
 
@@ -291,13 +288,13 @@ namespace OdhApiImporter.Helpers
 
                     foreach (var smgtagtotranslate in currentcategories)
                     {
-                        foreach (var languagecategory in languagelistcategories)
+                        foreach (string languagecategory in languagelistcategories)
                         {
-                            if (mymuseum.AdditionalPoiInfos[languagecategory].Categories == null)
+                            if (mymuseum.AdditionalPoiInfos![languagecategory].Categories == null)
                                 mymuseum.AdditionalPoiInfos[languagecategory].Categories = new List<string>();
 
-                            if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && !mymuseum.AdditionalPoiInfos[languagecategory].Categories.Contains(smgtagtotranslate.TagName[languagecategory].Trim()))
-                                mymuseum.AdditionalPoiInfos[languagecategory].Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
+                            if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && (!mymuseum.AdditionalPoiInfos?[languagecategory].Categories?.Contains(smgtagtotranslate.TagName[languagecategory].Trim()) ?? false))
+                                mymuseum.AdditionalPoiInfos![languagecategory]!.Categories!.Add(smgtagtotranslate.TagName[languagecategory].Trim());
                         }
                     }
 
@@ -305,16 +302,16 @@ namespace OdhApiImporter.Helpers
                     //Get Locationinfo by given GPS Points
                     if (mymuseum.GpsInfo != null && mymuseum.GpsInfo.Count > 0)
                     {
-                        if (mymuseum.GpsInfo.FirstOrDefault().Latitude != 0 && mymuseum.GpsInfo.FirstOrDefault().Longitude != 0)
+                        if (mymuseum.GpsInfo.FirstOrDefault()?.Latitude != 0 && mymuseum.GpsInfo.FirstOrDefault()?.Longitude != 0)
                         {
-                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, mymuseum.GpsInfo.FirstOrDefault().Latitude, mymuseum.GpsInfo.FirstOrDefault().Longitude, 30000);
+                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, mymuseum.GpsInfo.FirstOrDefault()!.Latitude, mymuseum.GpsInfo.FirstOrDefault()!.Longitude, 30000);
 
                             if (district != null)
                             {
                                 var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
 
                                 mymuseum.LocationInfo = locinfo;
-                                mymuseum.TourismorganizationId = locinfo.TvInfo.Id;
+                                mymuseum.TourismorganizationId = locinfo.TvInfo?.Id;
                             }
                         }
                     }
@@ -327,7 +324,7 @@ namespace OdhApiImporter.Helpers
                         if (gemeindeid.StartsWith("8"))
                             mymuseum.LocationInfo = await GetLocationInfo.GetTheLocationInfoDistrict_Siag(QueryFactory, gemeindeid);
 
-                        mymuseum.TourismorganizationId = mymuseum.LocationInfo.TvInfo.Id;
+                        mymuseum.TourismorganizationId = mymuseum.LocationInfo?.TvInfo?.Id;
                     }
                 }
                 else
@@ -336,7 +333,8 @@ namespace OdhApiImporter.Helpers
                     mymuseum.Active = true;
                     //mymuseum.SmgActive = true;                 
 
-                    SIAG.Parser.ParseMuseum.ParseMuseumToPG(mymuseum, mymuseumxml, plz);
+                    if (mymuseumxml is { })
+                        SIAG.Parser.ParseMuseum.ParseMuseumToPG(mymuseum, mymuseumxml, plz);
 
                     string subtype = "Museen";
                     if (mymuseum.SubType == "Bergwerke")
@@ -354,7 +352,7 @@ namespace OdhApiImporter.Helpers
                     var mymuseumscategoriesstrings = mymuseum.PoiProperty["de"].Where(x => x.Name == "categories").Select(x => x.Value).ToList();
                     foreach (var mymuseumscategoriesstring in mymuseumscategoriesstrings)
                     {
-                        var splittedlist = mymuseumscategoriesstring.Split(',').ToList();
+                        var splittedlist = mymuseumscategoriesstring?.Split(',').ToList() ?? new();
 
                         foreach (var splitted in splittedlist)
                         {
@@ -363,29 +361,31 @@ namespace OdhApiImporter.Helpers
                                 museumskategorien.Add(splitted.Trim());
 
                                 var mykategoriequery = await ODHTagHelper.GeODHTagByID(QueryFactory, "Museen " + splitted.Trim());
-                                mysmgpoipoitype.Add(mykategoriequery);
+                                if (mykategoriequery is { })
+                                    mysmgpoipoitype.Add(mykategoriequery);
                             }
                         }
                     }
 
-                    mymuseum.Type = mysmgmaintype.Shortname;
-                    mymuseum.SubType = mysmgsubtype.Shortname;
+                    mymuseum.Type = mysmgmaintype?.Shortname;
+                    mymuseum.SubType = mysmgsubtype?.Shortname;
 
-                    if (!mymuseum.SmgTags.Contains(mysmgmaintype.Id.ToLower()))
+                    mymuseum.SmgTags ??= new List<string>();
+                    if (mysmgmaintype?.Id is { } && !mymuseum.SmgTags.Contains(mysmgmaintype.Id.ToLower()))
                         mymuseum.SmgTags.Add(mysmgmaintype.Id.ToLower());
-                    if (!mymuseum.SmgTags.Contains(mysmgsubtype.Id.ToLower()))
+                    if (mysmgsubtype?.Id is { } && !mymuseum.SmgTags.Contains(mysmgsubtype.Id.ToLower()))
                         mymuseum.SmgTags.Add(mysmgsubtype.Id.ToLower());
                     if (mysmgpoipoitype.Count > 0)
                     {
                         foreach (var mysmgpoitypel in mysmgpoipoitype)
                         {
-                            if (!mymuseum.SmgTags.Contains(mysmgpoitypel.Id.ToLower()))
+                            if (mysmgpoitypel.Id is { } && !mymuseum.SmgTags.Contains(mysmgpoitypel.Id.ToLower()))
                                 mymuseum.SmgTags.Add(mysmgpoitypel.Id.ToLower());
                         }
                     }
 
                     if (mysmgpoipoitype.Count > 0)
-                        mymuseum.PoiType = mysmgpoipoitype.FirstOrDefault().Shortname;
+                        mymuseum.PoiType = mysmgpoipoitype.FirstOrDefault()?.Shortname;
                     else
                         mymuseum.PoiType = "";
 
@@ -394,9 +394,9 @@ namespace OdhApiImporter.Helpers
                     {
                         AdditionalPoiInfos additional = new AdditionalPoiInfos();
                         additional.Language = langcat;
-                        additional.MainType = mysmgmaintype.TagName[langcat];
-                        additional.SubType = mysmgsubtype.TagName[langcat];
-                        additional.PoiType = mysmgpoipoitype.Count > 0 ? mysmgpoipoitype.FirstOrDefault().TagName[langcat] : "";
+                        additional.MainType = mysmgmaintype?.TagName[langcat];
+                        additional.SubType = mysmgsubtype?.TagName[langcat];
+                        additional.PoiType = mysmgpoipoitype.Count > 0 ? mysmgpoipoitype.FirstOrDefault()?.TagName[langcat] : "";
                         mymuseum.AdditionalPoiInfos.TryAddOrUpdate(langcat, additional);
                     }
 
@@ -409,8 +409,8 @@ namespace OdhApiImporter.Helpers
                             if (mymuseum.AdditionalPoiInfos[languagecategory].Categories == null)
                                 mymuseum.AdditionalPoiInfos[languagecategory].Categories = new List<string>();
 
-                            if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && !mymuseum.AdditionalPoiInfos[languagecategory].Categories.Contains(smgtagtotranslate.TagName[languagecategory].Trim()))
-                                mymuseum.AdditionalPoiInfos[languagecategory].Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
+                            if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && (!mymuseum.AdditionalPoiInfos[languagecategory].Categories?.Contains(smgtagtotranslate.TagName[languagecategory].Trim()) ?? false))
+                                mymuseum.AdditionalPoiInfos[languagecategory].Categories?.Add(smgtagtotranslate.TagName[languagecategory].Trim());
                         }
                     }
                 }
@@ -422,16 +422,19 @@ namespace OdhApiImporter.Helpers
                 mymuseum.LastChange = DateTime.Now;                
 
                 //Setting LicenseInfo
-                mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<SmgPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+                mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
                 //Special get all Taglist and traduce it on import
                 await GenericTaggingHelper.AddMappingToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
 
-                var result = await InsertDataToDB(mymuseum, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
-                newcounter = newcounter + result.created.Value;
-                updatecounter = updatecounter + result.updated.Value;
-
-                WriteLog.LogToConsole(mymuseum.Id, "dataimport", "single.siagmuseum", new ImportLog() { sourceid = mymuseum.Id, sourceinterface = "siag.museum", success = true, error = "" });                
+                if (mymuseumdata?.Root is { })
+                {
+                    var result = await InsertDataToDB(mymuseum, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
+                    newcounter = newcounter + result.created ?? 0;
+                    updatecounter = updatecounter + result.updated ?? 0;
+                    if (mymuseum.Id is { })
+                        WriteLog.LogToConsole(mymuseum.Id, "dataimport", "single.siagmuseum", new ImportLog() { sourceid = mymuseum.Id, sourceinterface = "siag.museum", success = true, error = "" });
+                }
             }
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };
@@ -439,10 +442,8 @@ namespace OdhApiImporter.Helpers
         
         private async Task<UpdateDetail> SetDataNotinListToInactive(XDocument mymuseumlist, CancellationToken cancellationToken)
         {
-            List<string> mymuseumroot = mymuseumlist.Root.Elements("Museum").Select(x => x.Attribute("ID").Value).ToList();
+            List<string?> mymuseumroot = mymuseumlist.Root?.Elements("Museum").Select(x => x.Attribute("ID")?.Value).ToList() ?? new();
       
-            int todeactivatecounter = 0;
-         
             var mymuseumquery = QueryFactory.Query("smgpois")
                 .Select("data->>'CustomId'")
                 .Where("gen_syncsourceinterface", "museumdata");
@@ -498,42 +499,6 @@ namespace OdhApiImporter.Helpers
                             type = "odhactivitypoi-museum"
                         });
         }
-
-        //private async Task<Tuple<int, int>> DeleteOrDisableData(string museumid, bool delete)
-        //{
-        //    var deleteresult = 0;
-        //    var updateresult = 0;
-
-        //    if (delete)
-        //    {
-        //        deleteresult = await QueryFactory.Query("smgpois").Where("id", museumid)
-        //            .DeleteAsync();
-        //    }
-        //    else
-        //    {
-        //        var query =
-        //       QueryFactory.Query("smgpois")
-        //           .Select("data")
-        //           .Where("id", museumid);
-
-        //        var data = await query.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
-
-        //        if (data != null)
-        //        {
-        //            if (data.Active != false || data.SmgActive != false)
-        //            {
-        //                data.Active = false;
-        //                data.SmgActive = false;
-
-        //                updateresult = await QueryFactory.Query("smgpois").Where("id", museumid)
-        //                                .UpdateAsync(new JsonBData() { id = museumid, data = new JsonRaw(data) });
-        //            }
-        //        }
-        //    }
-
-        //    return Tuple.Create(updateresult, deleteresult);
-        //}
-
         #endregion
     }
 }

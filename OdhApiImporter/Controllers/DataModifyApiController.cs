@@ -60,8 +60,6 @@ namespace OdhApiImporter.Controllers
                 updated = objectscount,
                 success = true
             });
-
-            return Ok();
         }
 
         [HttpGet, Route("ModifySTAVendingpoint")]
@@ -83,8 +81,6 @@ namespace OdhApiImporter.Controllers
                 updated = objectscount,
                 success = true
             });
-
-            return Ok();
         }
 
         #endregion
@@ -110,8 +106,6 @@ namespace OdhApiImporter.Controllers
                 updated = objectscount,
                 success = true
             });
-
-            return Ok();
         }
 
         #endregion

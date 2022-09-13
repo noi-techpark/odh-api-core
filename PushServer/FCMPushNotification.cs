@@ -14,8 +14,8 @@ namespace PushServer
 	public class FCMPushNotificationResponse
     {
 		public bool Success { get; set; }
-		public string Response { get; set; }
-		public Exception Error { get; set; }
+		public string? Response { get; set; }
+		public Exception? Error { get; set; }
 	}
 
 	public class FCMPushNotification

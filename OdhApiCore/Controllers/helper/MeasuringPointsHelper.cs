@@ -17,6 +17,7 @@ namespace OdhApiCore.Controllers
         public List<string> tourismvereinlist;
         public List<string> regionlist;
         public List<string> arealist;
+        public List<string> sourcelist;
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
@@ -24,7 +25,7 @@ namespace OdhApiCore.Controllers
         public List<string> publishedonlist;
 
         public static async Task<MeasuringPointsHelper> Create(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, string? areafilter, string? skiareafilter, 
+            QueryFactory queryFactory, string? idfilter, string? locfilter, string? areafilter, string? skiareafilter, string? sourcefilter,
             bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter,
             CancellationToken cancellationToken)
         {
@@ -41,17 +42,20 @@ namespace OdhApiCore.Controllers
             }
 
             return new MeasuringPointsHelper(
-                idfilter: idfilter, locfilter: locfilter, areafilterlist: arealistfromarea, skiareafilterlist: arealistfromskiarea,
+                idfilter: idfilter, locfilter: locfilter, areafilterlist: arealistfromarea, skiareafilterlist: arealistfromskiarea, sourcefilter: sourcefilter,
                 activefilter: activefilter, smgactivefilter: smgactivefilter,
                 lastchange: lastchange, publishedonfilter: publishedonfilter, 
                 tourismusvereinids: tourismusvereinids);
         }
 
         private MeasuringPointsHelper(
-            string? idfilter, string? locfilter, IEnumerable<string> areafilterlist, IEnumerable<string> skiareafilterlist, 
+            string? idfilter, string? locfilter, IEnumerable<string> areafilterlist, IEnumerable<string> skiareafilterlist, string? sourcefilter,
             bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter, IEnumerable<string>? tourismusvereinids)
         {
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
+
+            sourcelist = Helper.CommonListCreator.CreateIdList(sourcefilter);
+
 
             arealist = new List<string>();
 

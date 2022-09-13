@@ -19,7 +19,7 @@ namespace Helper
                 //Special get all Taglist and traduce it on import
                 var myalltaglist = await GetAllGenericTagsfromJson(jsondir);
                 if (myalltaglist != null && ((ODHActivityPoiLinked)mypgdata).SmgTags != null)
-                    ((ODHActivityPoiLinked)mypgdata).Tags = GenerateNewTags(((ODHActivityPoiLinked)mypgdata).SmgTags, myalltaglist);
+                    ((ODHActivityPoiLinked)mypgdata).Tags = GenerateNewTags(((ODHActivityPoiLinked)mypgdata).SmgTags ?? new List<string>(), myalltaglist);
             }
             catch(Exception ex)
             {                
@@ -47,7 +47,7 @@ namespace Helper
             {
                 string json = await r.ReadToEndAsync();
 
-                return JsonConvert.DeserializeObject<List<TagLinked>>(json);
+                return JsonConvert.DeserializeObject<List<TagLinked>>(json) ?? new();
             }
         }
 
@@ -85,7 +85,7 @@ namespace Helper
 
             var tagen = alltaglist.Where(x => x.ODHTagIds.Any(y => y == germankey)).FirstOrDefault();
 
-            if (tagen != null)
+            if (tagen?.Id != null)
             {
                 if (tagen.Source.Contains("ODHCategory"))
                 {

@@ -37,9 +37,11 @@ namespace STA
             mypoi.Id = id;
 
             //ADD MAPPING
-            var staid = new Dictionary<string, string>() { { "sta_id", vendingpoint.STA_ID } };
-            mypoi.Mapping.TryAddOrUpdate("sta", staid);
-
+            if (vendingpoint.STA_ID is { })
+            {
+                var staid = new Dictionary<string, string>() { { "sta_id", vendingpoint.STA_ID } };
+                mypoi.Mapping.TryAddOrUpdate("sta", staid);
+            }
 
             //GPSData
             var commaCulture = new CultureInfo("en")
@@ -235,7 +237,7 @@ namespace STA
             return mypoi;
         }
 
-        private static OperationSchedule ParseOperationScheduleFromCSV(STAVendingPoint vendingpoint)
+        private static OperationSchedule? ParseOperationScheduleFromCSV(STAVendingPoint vendingpoint)
         {
             if (!String.IsNullOrEmpty(vendingpoint.Wochentags_Beginn) || !String.IsNullOrEmpty(vendingpoint.Samstag_Beginn) || !String.IsNullOrEmpty(vendingpoint.Sonntag_Beginn))
             {

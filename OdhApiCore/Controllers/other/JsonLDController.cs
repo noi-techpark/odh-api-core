@@ -47,16 +47,16 @@ namespace OdhApiCore.Controllers.api
                         myobject = await LoadFromRavenDBSchemaNet<Accommodation>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "gastronomy":
-                        myobject = await LoadFromRavenDBSchemaNet<SmgPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "event":
                         myobject = await LoadFromRavenDBSchemaNet<Event>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "recipe":
-                        myobject = await LoadFromRavenDBSchemaNet<RecipeArticle>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Article>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "poi":
-                        myobject = await LoadFromRavenDBSchemaNet<SmgPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "region":
                         myobject = await LoadFromRavenDBSchemaNet<Region>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
@@ -140,22 +140,12 @@ namespace OdhApiCore.Controllers.api
 
             if (myobject != null)
             {
-                //if (myobject.GetType() == typeof(SkiArea))
-                //{
-                //    var myparentobject = await RavenSession.LoadAsync<SkiRegion>(((SkiArea)(object)myobject).SkiRegionId);
-
-                //    var myresult = TransformToSchemaNet.TransformDataToSchemaNet<T>(myobject, myparentobject, language, idtoshow, urltoshow, imagetoshow, type, showid);
-
-                //    return myresult;
-                //}
-                //else
-                //{
                 var myparsedobject = JsonConvert.DeserializeObject<T>(myobject.Value);
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(myparsedobject, type, language, null, idtoshow, urltoshow, imagetoshow, showid);               
-                //}
+                if (myparsedobject is { })
+                    return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(myparsedobject, type, language, null, idtoshow, urltoshow, imagetoshow, showid);               
             }
-            else
-                return null;
+
+            return new();
         }
 
     }

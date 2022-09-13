@@ -5,17 +5,14 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Converters;
+using DataModel.Annotations;
 
 namespace DataModel
 {
-    /// <summary>
-    /// Interfaces welche von den anderen Klassen implementiert werden
-    /// </summary>
     #region Interfaces
 
-    //Common Interfaces
+    //Common Interfaces (shared between all Entities)
 
-    //Id (LTSRID) und Shortname
     public interface IIdentifiable
     {
         string Id { get; set; }
@@ -34,11 +31,12 @@ namespace DataModel
 
     public interface ISource
     {
+        [SwaggerSchema("Source of the Data")]
         string? Source { get; set; }        
     }
 
     public interface IImportDateassigneable
-    {
+    {        
         DateTime? FirstImport { get; set; }
         DateTime? LastChange { get; set; }
     }
@@ -106,9 +104,7 @@ namespace DataModel
     }
 
     public interface IImageGallery
-    {
-        //ImageDESC nur als Icollection??? zuerts LTS Schnittstellen anschauen
-
+    {      
         string? ImageName { get; set; }
         string? ImageUrl { get; set; }
         int? Width { get; set; }
@@ -151,6 +147,11 @@ namespace DataModel
         ICollection<GpsInfo> GpsInfo { get; set; }
     }
 
+    public interface IGPSPointsAware
+    {
+        IDictionary<string, GpsInfo> GpsPoints { get; }
+    }
+
     public interface IDistanceInfoAware
     {
         DistanceInfo? DistanceInfo { get; set; }
@@ -180,8 +181,7 @@ namespace DataModel
     }
 
     public interface IGpsPolygonAware
-    {
-        //brauchts nix?
+    {        
         ICollection<GpsPolygon>? GpsPolygon { get; set; }
     }
 
@@ -238,9 +238,7 @@ namespace DataModel
 
     public interface ISmgTags
     {
-        ICollection<string>? SmgTags { get; set; }
-        //string Id { get; set; }
-        //IDictionary<string, string> TagDescription { get; set; }
+        ICollection<string>? SmgTags { get; set; }        
     }
 
     public interface IRatings
@@ -266,20 +264,26 @@ namespace DataModel
         int Level { get; set; }
         IDictionary<string, string> TypeNames { get; set; }
     }
+    
+    public interface ITags
+    {        
+        IDictionary<string, List<Tags>> Tags { get; set; }
+    }
 
-    //End Common Interfaces
-
-    //Activity & Poi Data Interfaces
-
-    public interface IAdditionalPoiInfosAware
+    public interface IPublishedOn
     {
-        //brauchts nix?
+        ICollection<string>? PublishedOn { get; set; }
+    }
+
+    //ODHActivityPoi
+        
+    public interface IAdditionalPoiInfosAware
+    {        
         IDictionary<string, AdditionalPoiInfos> AdditionalPoiInfos { get; set; }
     }
 
     public interface IAdditionalPoiInfos
     {
-        //string Difficulty { get; set; }
         string? Novelty { get; set; }
         string? MainType { get; set; }
         string? SubType { get; set; }
@@ -296,10 +300,8 @@ namespace DataModel
         bool? IsWithLigth { get; set; }
         bool? HasRentals { get; set; }
     }
-
-    //End Activity & Poi Data Interfaces 
-
-    //Article Interfaces
+   
+    //Article
 
     public interface IAdditionalArticleInfosAware
     {
@@ -307,9 +309,7 @@ namespace DataModel
         IDictionary<string, AdditionalArticleInfos> AdditionalArticleInfos { get; set; }
     }
 
-    //End Article Interfaces
-
-    //Event Interfaces
+    //Event
 
     public interface IEventAdditionalInfos
     {
@@ -341,25 +341,18 @@ namespace DataModel
         TimeSpan? End { get; set; }
         TimeSpan? Entrance { get; set; }
     }
-
-    //End Event Interfaces
-
+    
     #endregion
-
-    /// <summary>
-    /// Fraktionen, Gemeinden und Regionen mit Ihren Detailinformationen
-    /// </summary>
+    
     #region District Municipality Region
 
-    public class Region : BaseInfos, IImageGalleryAware, IWebcamAware
+    public class Region : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public Region()
         {
             DetailThemed = new Dictionary<string, DetailThemed>();
         }
-
         public IDictionary<string, DetailThemed> DetailThemed { get; set; }
-
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public ICollection<Webcam>? Webcam { get; set; }
@@ -369,7 +362,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware
+    public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public MetaRegion()
         {
@@ -380,28 +373,23 @@ namespace DataModel
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<string>? TourismvereinIds { get; set; }
         public ICollection<string>? RegionIds { get; set; }
-
-
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
-
-    //NEW Erlebnisräume
-    public class ExperienceArea : BaseInfos, IImageGalleryAware
+    
+    public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<string>? TourismvereinIds { get; set; }
-
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public bool VisibleInSearch { get; set; }
-
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware
+    public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public string? RegionId { get; set; }
 
@@ -413,7 +401,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware
+    public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public string? Plz { get; set; }
 
@@ -431,52 +419,41 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class District : BaseInfos, IImageGalleryAware, IWebcamAware
+    public class District : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public Nullable<bool> IsComune { get; set; }
         public string? RegionId { get; set; }
         public string? TourismvereinId { get; set; }
         public string? MunicipalityId { get; set; }
-
         public string? SiagId { get; set; }
-
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
-
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource
     {
         public Area()
-        {
-            //Mapping New
+        {            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
             Detail = new Dictionary<string, Detail>();
         }
         public LicenseInfo LicenseInfo { get; set; }
-
         public string? Id { get; set; }
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
-
         public string? Shortname { get; set; }
         public string? CustomId { get; set; }
-
         public string? RegionId { get; set; }
         public string? TourismvereinId { get; set; }
         public string? MunicipalityId { get; set; }
-
         public string? SkiAreaID { get; set; }
-
         public string? GID { get; set; }
         public string? LtsID { get; set; }
         public string? AreaType { get; set; }
-
         public DateTime? LastChange { get; set; }
-        public DateTime? FirstImport { get; set; }
-        //New Mapping
+        public DateTime? FirstImport { get; set; }        
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
         public string Source { get; set; }
         public IDictionary<string, Detail> Detail { get; set; }
@@ -497,31 +474,28 @@ namespace DataModel
         public string? SkiRegionId { get; set; }
         public string? SkiAreaMapURL { get; set; }
         public string? TotalSlopeKm { get; set; }
-
-        //Neu
+        
         public string? SlopeKmBlue { get; set; }
         public string? SlopeKmRed { get; set; }
         public string? SlopeKmBlack { get; set; }
 
         public string? LiftCount { get; set; }
-
-        //Neu Altimeter von bis
+        
         public Nullable<int> AltitudeFrom { get; set; }
         public Nullable<int> AltitudeTo { get; set; }
 
 
         public IDictionary<string, string> SkiRegionName { get; set; }
 
+        [SwaggerDeprecated("Deprecated use AreaIds")]
         public ICollection<string>? AreaId { get; set; }
-        //Compatibility
+        
         public ICollection<string>? AreaIds { get { return AreaId; } }
 
         public ICollection<Webcam>? Webcam { get; set; }
-        //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
+        
         public LocationInfo? LocationInfo { get; set; }
 
-        //Folsch
-        //public OperationSchedule OperationSchedule { get; set; }
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
 
         public ICollection<string>? TourismvereinIds { get; set; }
@@ -539,26 +513,7 @@ namespace DataModel
         public ICollection<Webcam>? Webcam { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }
-    }
-
-    public class Naturepark : BaseInfos, IImageGalleryAware, IContactInfosAware, IWebcamAware
-    {
-        //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
-        public LocationInfo? LocationInfo { get; set; }
-
-        public ICollection<Webcam>? Webcam { get; set; }
-        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-    }
-
-    public class Christkindlmarkt : BaseInfos, IImageGalleryAware, IContactInfosAware, IWebcamAware
-    {
-        //NEU Region TV Municipality Fraktion NEU LocationInfo Classe        
-        public LocationInfo? LocationInfo { get; set; }
-
-        public ICollection<Webcam>? Webcam { get; set; }
-    }
+    }    
 
     public class SmgTags : IIdentifiable, IImportDateassigneable, ILicenseInfo
     {
@@ -573,8 +528,7 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, refer to TagName")]
+        [SwaggerDeprecated("Deprecated, refer to TagName")]
         public string? Shortname { get; set; }
 
         public IDictionary<string, string> TagName { get; set; }
@@ -588,15 +542,12 @@ namespace DataModel
 
         public Nullable<bool> DisplayAsCategory { get; set; }
 
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use Mapping")]
+        [SwaggerDeprecated("Deprecated, use Mapping")]
         public IDictionary<string, string> IDMCategoryMapping { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use Mapping")]        
+        [SwaggerDeprecated("Deprecated, use Mapping")]
         public LTSTaggingInfo LTSTaggingInfo { get; set; }
 
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use ValidForEntity")]
+        [SwaggerDeprecated("Deprecated, use ValidForEntity")]
         public string? MainEntity { get; set; }
 
         //Generic Mapping Object
@@ -636,9 +587,6 @@ namespace DataModel
 
     #endregion
 
-    /// <summary>
-    /// Informationen zu G0RIDs Marketinggroups Muassi no iberprüfen
-    /// </summary>
     #region Marketinggroup
 
     public class Marketinggroup : IIdentifiable
@@ -652,139 +600,35 @@ namespace DataModel
 
     #endregion
 
-    /// <summary>
-    /// Alle Aktivitäten welche eine Route haben
-    /// </summary>
     #region Activities & POIs  
 
-    public class Hike : PoiBaseInfos
+    public class LTSPoi : PoiBaseInfos, IGPSPointsAware
     {
-
-    }
-
-    public class RunningFitness : PoiBaseInfos
-    {
-
-    }
-
-    public class Bike : PoiBaseInfos
-    {
-
-    }
-
-    public class Alpine : PoiBaseInfos
-    {
-
-    }
-
-    public class Skitrack : PoiBaseInfos
-    {
-
-    }
-
-    public class Slide : PoiBaseInfos
-    {
-
-    }
-
-    public class Slope : PoiBaseInfos
-    {
-
-    }
-
-    public class Lift : PoiBaseInfos
-    {
-
-    }
-
-    public class Equestrianism : PoiBaseInfos
-    {
-
-    }
-
-    public class CityTour : PoiBaseInfos
-    {
-
-    }
-
-    /// <summary>
-    /// LTS Point of Interest
-    /// </summary>
-    public class LTSPoi : PoiBaseInfos, ILicenseInfo
-    {
-        
-    }
-
-    //For PG Activities & Pois
-
-    public class GBLTSPoi : LTSPoi
-    {
-        public GBLTSPoi()
+        public IDictionary<string, GpsInfo> GpsPoints
         {
-            GpsPoints = new Dictionary<string, GpsInfo>();
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary(true);
+            }
         }
-
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
     }
 
-    public class GBLTSActivity : PoiBaseInfos
+    public class LTSActivity : PoiBaseInfos, IGPSPointsAware
     {
-        public GBLTSActivity()
+        public IDictionary<string, GpsInfo> GpsPoints
         {
-            GpsPoints = new Dictionary<string, GpsInfo>();
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary(true);
+            }
         }
-
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }        
     }
-
-    //End for PG
-
-    public class Mobility : PoiBaseInfos
+   
+    public class ODHActivityPoi : PoiBaseInfos, IWebcamAware, ILicenseInfo, IGPSPointsAware
     {
-
-    }
-
-    public class Active : PoiBaseInfos
-    {
-
-    }
-
-    public class Nightlife : PoiBaseInfos
-    {
-
-    }
-
-    public class Service : PoiBaseInfos
-    {
-
-    }
-
-    public class Shop : PoiBaseInfos
-    {
-
-    }
-
-    public class Sightseen : PoiBaseInfos
-    {
-
-    }
-
-    public class Artisan : PoiBaseInfos
-    {
-
-    }
-
-    public class Health : PoiBaseInfos
-    {
-
-    }
-
-    public class SmgPoi : PoiBaseInfos, IWebcamAware, ILicenseInfo
-    {
-        public SmgPoi()
+        public ODHActivityPoi()
         {
             PoiProperty = new Dictionary<string, List<PoiProperty>>();
-            //LinkedAppSuggestions = new Dictionary<string, string>();
         }
 
         public string? CustomId { get; set; }
@@ -801,7 +645,6 @@ namespace DataModel
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
 
-        //NEW Gastronomy
         public int? MaxSeatingCapacity { get; set; }
         public ICollection<CategoryCodes>? CategoryCodes { get; set; }
         public ICollection<DishRates>? DishRates { get; set; }
@@ -810,25 +653,14 @@ namespace DataModel
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
-        //new for Wine Importers
         public IDictionary<string, List<AdditionalContact>>? AdditionalContact { get; set; }
-
-        //NEU LISTE Suggestions
-        //public IDictionary<string, string> LinkedAppSuggestions { get; set; }
-        //public bool? overWriteAppSuggestions { get; set; }
-
-        ////NEU LISTE mit z.B Google Places ID
-        //public ICollection<RatingSources> RatingSources { get; set; }
-    }
-
-    public class ODHActivityPoi : SmgPoi
-    {
-        public ODHActivityPoi()
+        public IDictionary<string, GpsInfo> GpsPoints
         {
-            GpsPoints = new Dictionary<string, GpsInfo>();
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
         }
-
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }        
     }
 
     public class PoiProperty
@@ -877,38 +709,6 @@ namespace DataModel
         public string Self { get { return this.Link; } }
     }
 
-    public class AppSuggestion
-    {
-        public AppSuggestion()
-        {
-            Suggestion = new Dictionary<string, Suggestion>();
-        }
-
-        public string? Id { get; set; }
-        public string? Platform { get; set; }
-
-        public List<AppSuggestionValidFor>? Validfor { get; set; }
-
-        public IDictionary<string, Suggestion> Suggestion { get; set; }
-
-    }
-
-    public class AppSuggestionValidFor
-    {
-        public string? MainEntity { get; set; }
-        public string? Type { get; set; }
-        public string? Value { get; set; }
-    }
-
-    public class Suggestion
-    {
-        public string? Title { get; set; }
-        public string? Icon { get; set; }
-        public string? Package { get; set; }
-        public string? Developer { get; set; }
-        public string? Description { get; set; }
-    }
-
     public class RatingSources
     {
         public string? Source { get; set; }
@@ -919,15 +719,14 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware
+    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
         public Accommodation()
         {
             AccoDetail = new Dictionary<string, AccoDetail>();
-            MssResponseShort = new List<MssResponseShort>();
-            //Mapping New
+            MssResponseShort = new List<MssResponseShort>();            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
@@ -935,7 +734,10 @@ namespace DataModel
 
         [SwaggerSchema("Data is marked as Active by the data provider")]
         public bool Active { get; set; }
+
+        [SwaggerDeprecated("Accommodation ID on the HGV System, use Mapping instead")]
         public string? HgvId { get; set; }
+        [SwaggerDeprecated("Use AccoDetail.lang.Name")]
         public string? Shortname { get; set; }
 
         //public int Units { get; set; }
@@ -970,7 +772,6 @@ namespace DataModel
         public ICollection<string>? MarketingGroupIds { get; set; }
         public ICollection<AccoFeature>? Features { get; set; }
 
-        //Custom
         public ICollection<string>? BadgeIds { get; set; }
         public ICollection<string>? ThemeIds { get; set; }
         public ICollection<string>? SpecialFeaturesIds { get; set; }
@@ -978,25 +779,21 @@ namespace DataModel
         public IDictionary<string, AccoDetail>? AccoDetail { get; set; }
         public ICollection<AccoBookingChannel>? AccoBookingChannel { get; set; }
         public ICollection<ImageGallery>? ImageGallery { get; set; }
-
-        //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
+        
         public LocationInfo? LocationInfo { get; set; }
 
-        //Gastronomy 
         public string? GastronomyId { get; set; }
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
 
-        //MSS Result
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
 
-        //Independent Data
+        [SwaggerSchema("Independent Data <a href='https://www.independent.it/it/cooperativa-independent' target='_blank'>cooperative Independent</a>")]
         public IndependentData? IndependentData { get; set; }
 
         public ICollection<AccoRoomInfo>? AccoRoomInfo { get; set; }
-
-        //new Add GPS Points from Root Representation
+        
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -1016,13 +813,11 @@ namespace DataModel
                 }
             }
         }
-
-        //New published on List
-        public List<string>? PublishedOn { get; set; }
+        
+        public ICollection<string>? PublishedOn { get; set; }
         
         public string? Source { get; set; }
-
-        //New Mapping
+        
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
@@ -1076,24 +871,29 @@ namespace DataModel
 
     public abstract class TrustYouInfos
     {
-        [SwaggerSchema("Id Accommodation has on Trust You")]
+        [SwaggerSchema("Accommodation Id on Trust You")]
         public string? TrustYouID { get; set; }
+
         [SwaggerSchema("Review Score on Trust You")]
         public double TrustYouScore { get; set; }
+
         [SwaggerSchema("Number of Ratings in Trust You")]
         public int TrustYouResults { get; set; }
+
+        [SwaggerSchema("Active in Trust You")]
         public bool TrustYouActive { get; set; }
+
+        [SwaggerSchema("Trust You State on LTS")]
         public int TrustYouState { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware
+    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
     {
         public LicenseInfo LicenseInfo { get; set; }
 
         public AccoRoom()
         {
-            AccoRoomDetail = new Dictionary<string, AccoRoomDetail>();
-            //Mapping New
+            AccoRoomDetail = new Dictionary<string, AccoRoomDetail>();            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
@@ -1109,8 +909,7 @@ namespace DataModel
         public ICollection<ImageGallery>? ImageGallery { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
-
-        //NEU
+        
         public string? LTSId { get; set; }
         public string? HGVId { get; set; }
         public string? Source { get; set; }
@@ -1127,11 +926,9 @@ namespace DataModel
 
         public Nullable<DateTime> LastChange { get; set; }
         public Nullable<DateTime> FirstImport { get; set; }
+        
+        public ICollection<string>? PublishedOn { get; set; }
 
-        //New published on List
-        public List<string>? PublishedOn { get; set; }
-
-        //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
@@ -1168,9 +965,8 @@ namespace DataModel
 
     #region Gastronomy
 
-    public class Gastronomy : GastronomyBaseInfos, ILicenseInfo
-    {
-        //new Add GPS Points from Root Representation
+    public class Gastronomy : GastronomyBaseInfos, IGPSPointsAware
+    {        
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -1190,29 +986,25 @@ namespace DataModel
                 }
             }
         }
-    }
-
-    //Für Types Api
-
+    }    
 
     #endregion
 
     #region Events
 
-    public class Event : EventBaseInfos, ILicenseInfo
+    public class Event : EventBaseInfos
     {
-        //Neu        
-        //public string CustomId { get; set; }
-        //public string Source { get; set; }
-        //public string SyncSourceInterface { get; set; }
-        //public string SyncUpdateMode { get; set; }
-        //public bool? GrpEvent { get; set; }
-        //public string Pdf { get; set; }
 
-        //public string Source { get; set; }
     }
 
+    #endregion
 
+    #region Articles    
+
+    public class Article : ArticleBaseInfos
+    {
+
+    }
 
     #endregion
 
@@ -1403,7 +1195,7 @@ namespace DataModel
         public string? imageUrl { get; set; }
     }
 
-    public class WeatherHistory
+    public class WeatherHistory : IIdentifiable, ILicenseInfo, IImportDateassigneable
     {
         public WeatherHistory()
         {
@@ -1420,63 +1212,7 @@ namespace DataModel
         public string Id { get; set; }
     }
 
-    #endregion
-
-    #region Articles    
-
-    public class Article : ArticleBaseInfos  //, IArticleBaseInfos
-    {
-
-    }
-
-    public class RecipeArticle : ArticleBaseInfos
-    {
-
-    }
-
-    public class PressArticle : ArticleBaseInfos
-    {
-
-    }
-
-    public class BaseArticle : ArticleBaseInfos
-    {
-
-    }
-
-    public class EventArticle : ArticleBaseInfos
-    {
-
-    }
-
-    public class BookArticle : ArticleBaseInfos
-    {
-
-    }
-
-    public class CatalogArticle : ArticleBaseInfos
-    {
-
-    }
-
-    public class TouroperatorArticle : ArticleBaseInfos
-    {
-
-    }
-
-    public class B2BArticle : ArticleBaseInfos
-    {
-
-    }
-
-    public class ContentArticle : ArticleBaseInfos
-    {
-
-    }
-
-
-
-    #endregion
+    #endregion   
 
     #region Packages
 
@@ -1488,8 +1224,7 @@ namespace DataModel
         {
             PackageDetail = new Dictionary<string, PackageDetail>();
             Inclusive = new Dictionary<string, Inclusive>();
-            ChannelInfo = new Dictionary<string, string>();
-            GpsPoints = new Dictionary<string, GpsInfo>();
+            ChannelInfo = new Dictionary<string, string>();            
         }
 
         //IIdentifiable
@@ -1558,12 +1293,8 @@ namespace DataModel
         //MSS Result
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
 
-        public EvalancheMapping? EvalancheMapping { get; set; }
-
-        //new Add GPS Points from Root Representation
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
-
-        //New published on List
+        public EvalancheMapping? EvalancheMapping { get; set; }                   
+        
         public List<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; } 
@@ -1632,20 +1363,17 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware
+    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
         public Measuringpoint()
-        {
-            //Mapping New
+        {            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
         public LicenseInfo LicenseInfo { get; set; }
 
-        //IIdentifiable
         public string? Id { get; set; }
 
-        //Infos zum Import
         public DateTime? FirstImport { get; set; }
         public DateTime LastUpdate { get; set; }
         public DateTime? LastChange { get; set; }
@@ -1670,13 +1398,12 @@ namespace DataModel
         public DateTime LastSnowDate { get; set; }
         public List<WeatherObservation>? WeatherObservation { get; set; }
 
-        //Location Geschichte
+        //Location
         public LocationInfo? LocationInfo { get; set; }
         public string? OwnerId { get; set; }
 
         public List<string>? AreaIds { get; set; }
-
-        //new Add GPS Points from Root Representation
+        
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -1697,12 +1424,10 @@ namespace DataModel
             }
         }
 
-        //New published on List
-        public List<string>? PublishedOn { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
-
-        //New Mapping
+        
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
@@ -1730,7 +1455,7 @@ namespace DataModel
 
         }
 
-        public int Id { get; set; }
+        public string? Id { get; set; }
         public string? RID { get; set; }
         public string? Skiregion { get; set; }
         public string? Areaname { get; set; }
@@ -1803,9 +1528,9 @@ namespace DataModel
         //public virtual ICollection<IActivity> IActivity { get; set; }
     }
 
+    //Reduced Measuringpoint for Snow Report
     public class MeasuringpointReduced : ISource
-    {
-        //IIdentifiable
+    {        
         public string? Id { get; set; }
 
         public DateTime LastUpdate { get; set; }
@@ -1836,374 +1561,305 @@ namespace DataModel
 
     #endregion
 
-    #region TypeInfos
+    #region EventShort
 
-    public class GastronomyTypes
+    public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
     {
-        public GastronomyTypes()
+        public EventShort()
         {
-            TypeDesc = new Dictionary<string, string>();
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
+        public LicenseInfo? LicenseInfo { get; set; }
+
         public string? Id { get; set; }
-        public int Bitmask { get; set; }
+        public string? Source { get; set; }
 
-        public string? Type { get; set; }
+        [SwaggerEnum(new[] { "NOI", "EC" })]
+        public string? EventLocation { get; set; }
 
-        public string? Key { get; set; }
+        public int EventId { get; set; }
 
-        public Dictionary<string, string> TypeDesc { get; set; }
-    }
 
-    //Für Types Api
-    public class AccoTypes
-    {
-        public AccoTypes()
+        public string? EventTextDE { get; set; }
+        public string? EventTextIT { get; set; }
+        public string? EventTextEN { get; set; }
+
+        //TODO ADD A Dictionary with EventTextDE + EventDescriptionDE infos
+
+
+        //Hauptbeschreibung
+        public string? EventDescription { get; set; }
+        //Beschreibung DE
+        public string? EventDescriptionDE { get; set; }
+        //Beschreibung IT
+        public string? EventDescriptionIT { get; set; }
+        //Beschreibung EN
+        public string? EventDescriptionEN { get; set; }
+        //Hauptsaal/ort
+        public string? AnchorVenue { get; set; }
+        //Hauptsaal/ort soll für die Ausgabe verwendet werden
+        public string? AnchorVenueShort { get; set; }
+        //letzte Änderung
+        public DateTime ChangedOn { get; set; }
+        //Beginndatum
+        public DateTime StartDate { get; set; }
+        //Beginnzeit
+        //public string StartTime { get; set; }
+        ////Ende Datum
+        public DateTime EndDate { get; set; }
+        //Endzeit
+        //public string EndTime { get; set; }
+
+        public double StartDateUTC { get; set; }
+        public double EndDateUTC { get; set; }
+
+        //URL für externe Webseite (noch nicht ausgefüllt)
+        public string? WebAddress { get; set; }
+        //Spezialfelder
+
+        
+        [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
+        [SwaggerEnum(new[] { "Y", "N" })]
+        [SwaggerSchema("Active")]
+        public string? Display1 { get; set; }
+
+        [SwaggerEnum(new[] { "Y", "N" })]
+        [SwaggerSchema("Intranet Eurac")]
+        public string? Display2 { get; set; }
+
+        [SwaggerEnum(new[] { "Y", "N" })]
+        [SwaggerSchema("Website Eurac")]
+        public string? Display3 { get; set; }
+
+        [SwaggerEnum(new[] { "Y", "N" })]
+        public string? Display4 { get; set; }
+
+        [SwaggerEnum(new[] { "Y", "N" })]
+        public string? Display5 { get; set; }
+
+        [SwaggerEnum(new[] { "Y", "N" })]
+        public string? Display6 { get; set; }
+
+        [SwaggerEnum(new[] { "Y", "N" })]
+        public string? Display7 { get; set; }
+
+        [SwaggerEnum(new[] { "Y", "N" })]
+        public string? Display8 { get; set; }
+
+        [SwaggerEnum(new[] { "Y", "N" })]
+        public string? Display9 { get; set; }
+        
+        public string? CompanyName { get; set; }
+        public string? CompanyId { get; set; }
+        public string? CompanyAddressLine1 { get; set; }
+        public string? CompanyAddressLine2 { get; set; }
+        public string? CompanyAddressLine3 { get; set; }
+        public string? CompanyPostalCode { get; set; }
+        public string? CompanyCity { get; set; }
+        public string? CompanyCountry { get; set; }
+        public string? CompanyPhone { get; set; }
+        public string? CompanyFax { get; set; }
+        public string? CompanyMail { get; set; }
+        public string? CompanyUrl { get; set; }
+
+        //Person aus Modul CRM (interessiert uns nicht)
+        public string? ContactCode { get; set; }
+        public string? ContactFirstName { get; set; }
+        public string? ContactLastName { get; set; }
+        public string? ContactPhone { get; set; }
+        public string? ContactCell { get; set; }
+        public string? ContactFax { get; set; }
+        public string? ContactEmail { get; set; }
+        public string? ContactAddressLine1 { get; set; }
+        public string? ContactAddressLine2 { get; set; }
+        public string? ContactAddressLine3 { get; set; }
+        public string? ContactPostalCode { get; set; }
+        public string? ContactCity { get; set; }
+        public string? ContactCountry { get; set; }
+
+        //gebuchten Sääle von spezifischen Event
+        //Space : Code für Raum von DB
+        //SpaceDesc: Beschreibung --> zu nehmen
+        //SpaceAbbrev: Abgekürzte Beschreibung 
+        //SoaceType : EC = Eurac, NO = Noi
+        //Comnment: entweder x oder leer --> x bedeutet bitte nicht anzeigen!!!!!!!
+        //Subtitle: Untertitel vom Saal (anzeigen)
+        //Zeiten (diese sind relevant, diese anzeigen)
+        public List<RoomBooked>? RoomBooked { get; set; }
+
+        //all das interessiert nicht
+        //public string AbstractsEN { get; set; }
+        //public string AbstractsGER { get; set; }
+        //public string AbstractsIT { get; set; }
+        ////gehört zu Abstract
+        //public string Documents { get; set; }
+        public List<ImageGallery>? ImageGallery { get; set; }
+        public string? VideoUrl { get; set; }
+
+
+        public List<string>? TechnologyFields { get; set; }
+
+        public List<string>? CustomTagging { get; set; }
+
+        public List<DocumentPDF>? EventDocument { get; set; }
+
+        public bool? ExternalOrganizer { get; set; }
+
+        public string? Shortname { get; set; }
+        
+        public ICollection<string>? PublishedOn { get; set; }
+
+        public string? AnchorVenueRoomMapping
         {
-            TypeDesc = new Dictionary<string, string>();
+            get
+            {
+                return !String.IsNullOrEmpty(this.AnchorVenue) ? (this.AnchorVenue.StartsWith("NOI ") || this.AnchorVenue.StartsWith("Noi ") || this.AnchorVenue.StartsWith("noi ")) ? this.AnchorVenue.Remove(0, 3).Trim() : this.AnchorVenue : this.AnchorVenue;
+            }
         }
 
-        public string? Id { get; set; }
-        public int Bitmask { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
 
-        public string? Type { get; set; }
+        public bool? SoldOut { get; set; }
+        
+        [SwaggerSchema(" ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI")]
+        public bool? ActiveWeb { get; set; }
 
-        public string? Key { get; set; }
+        [SwaggerSchema("ActiveCommunityApp Indicates if Event is shown on the Noi Community App")]
+        public bool? ActiveCommunityApp { get; set; }
 
-        public Dictionary<string, string> TypeDesc { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
+        
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public string? CustomId { get; set; }
-    }
-
-    //Für Types Api
-    public class AccoFeatures : AccoTypes
-    {
-
-    }
-
-    //Für Types Api 
-    public class SmgPoiTypes
-    {
-        public SmgPoiTypes()
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
+        
+        public IDictionary<string, GpsInfo> GpsPoints
         {
-            TypeDesc = new Dictionary<string, string>();
+            get
+            {
+                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
+                {
+                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
+            }
+        }
+    }
+
+    public class RoomBooked
+    {
+        public string? Space { get; set; }
+        public string? SpaceDesc { get; set; }
+        public string? SpaceAbbrev { get; set; }
+        public string? SpaceType { get; set; }
+        public string? Subtitle { get; set; }
+        public string? Comment { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+
+        public double StartDateUTC { get; set; }
+        public double EndDateUTC { get; set; }
+
+        public string? SpaceDescRoomMapping
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(this.SpaceDesc) ? (this.SpaceDesc.StartsWith("NOI ") || this.SpaceDesc.StartsWith("Noi ") || this.SpaceDesc.StartsWith("noi ")) ? this.SpaceDesc.Remove(0, 3).Trim() : this.SpaceDesc : this.SpaceDesc;
+            }
+        }
+    }
+
+    public class EventShortByRoom
+    {
+        public EventShortByRoom()
+        {
+            SpaceDescList = new List<string>();
+            TechnologyFields = new List<string>();
+            CustomTagging = new List<string>();
+            EventDescription = new Dictionary<string, string>();
+            EventDocument = new Dictionary<string, string>();
         }
 
+        //Room Infos
+
+        public List<string> SpaceDescList { get; set; }
+
+        public string? SpaceDesc { get; set; }
+        public string? SpaceType { get; set; }
+        public string? Subtitle { get; set; }
+
+        public DateTime RoomStartDate { get; set; }
+        public DateTime RoomEndDate { get; set; }
+
+        public double RoomStartDateUTC { get; set; }
+        public double RoomEndDateUTC { get; set; }
+
+        //Event Infos
+
+        public int EventId { get; set; }
+
+        public Dictionary<string, string> EventDescription { get; set; }
+
+        public string? EventDescriptionDE { get; set; }
+        public string? EventDescriptionIT { get; set; }
+        public string? EventDescriptionEN { get; set; }
+
+        public string? EventAnchorVenue { get; set; }
+        public string? EventAnchorVenueShort { get; set; }
+
+        public DateTime EventStartDate { get; set; }
+        public DateTime EventEndDate { get; set; }
+        public double EventStartDateUTC { get; set; }
+        public double EventEndDateUTC { get; set; }
+
+        public string? EventWebAddress { get; set; }
         public string? Id { get; set; }
-        public long Bitmask { get; set; }
-        public string? Type { get; set; }
-        public string? Parent { get; set; }
-        public string Key { get; set; }
+        public string? EventSource { get; set; }
+        public string? EventLocation { get; set; }
 
-        public IDictionary<string, string>? TypeDesc { get; set; }
+        public string? CompanyName { get; set; }
+        public List<ImageGallery>? ImageGallery { get; set; }
+        public string? VideoUrl { get; set; }
+        public Nullable<bool> ActiveWeb { get; set; }
+
+        public string? EventTextDE { get; set; }
+        public string? EventTextIT { get; set; }
+        public string? EventTextEN { get; set; }
+
+        public List<string>? TechnologyFields { get; set; }
+        public List<string>? CustomTagging { get; set; }
+        public bool? SoldOut { get; set; }
+
+        public Dictionary<string, string> EventDocument { get; set; }
+
+        public bool? ExternalOrganizer { get; set; }
+        //public string MapsNoiUrl { get; set; }
     }
 
-    public class EventTypes
+    public class DocumentPDF
     {
-        public EventTypes()
-        {
-            TypeDesc = new Dictionary<string, string>();
-        }
-
-        public string? Id { get; set; }
-        public int Bitmask { get; set; }
-        public string? Type { get; set; }
-        public Dictionary<string, string> TypeDesc { get; set; }
-    }
-
-    //Für Types Api 
-    public class ActivityTypes : SmgPoiTypes
-    {
-
-    }
-
-    //Für Types Api 
-    public class ArticleTypes : SmgPoiTypes
-    {
-
-    }
-
-    //Für Types Api 
-    public class PoiTypes : SmgPoiTypes
-    {
-
-    }
-
-    public class ODHActivityPoiTypes : SmgPoiTypes
-    {
+        public string? DocumentURL { get; set; }
+        public string? Language { get; set; }
     }
 
     #endregion
 
-    #region Mobile
+    #region Wine
 
-    public class SmgPoisMobileTypes
-    {
-        public SmgPoisMobileTypes()
-        {
-            TypeDesc = new Dictionary<string, string>();
-        }
-
-        public string? Id { get; set; }
-        //public int Bitmask { get; set; }
-        public string? Key { get; set; }
-        public string? Type { get; set; }
-        public string? IconURL { get; set; }
-        public int SortOrder { get; set; }
-        public bool active { get; set; }
-
-        public Dictionary<string, string>? TypeDesc { get; set; }
-    }
-
-    public class SmgPoisMobileTypesExtended : SmgPoisMobileTypes
-    {
-        public ICollection<SmgPoisMobileFilters>? SubTypes { get; set; }
-    }
-
-    public class SmgPoisMobileFilters
-    {
-        public SmgPoisMobileFilters()
-        {
-            FilterText = new Dictionary<string, string>();
-        }
-
-        public string? Id { get; set; }
-        public string? MainTypeId { get; set; }
-        public int SortOrder { get; set; }
-
-        public int Bitmask { get; set; }
-        public IDictionary<string, string> FilterText { get; set; }
-        public string? FilterReference { get; set; }
-
-        public ICollection<SmgPoisMobileFilterDetail>? FilterDetails { get; set; }
-    }
-
-    public class SmgPoisMobileFilterDetail
-    {
-        public SmgPoisMobileFilterDetail()
-        {
-            FilterText = new Dictionary<string, string>();
-            StartingDesc = new Dictionary<string, string>();
-            EndDesc = new Dictionary<string, string>();
-        }
-
-        public string? Id { get; set; }                                  //Unique Id
-        //public string MainTypeId { get; set; }                          //Reference to Maintype
-        public int SortOrder { get; set; }                              //Sort Order of the Filter
-        public int Bitmask { get; set; }
-
-        public string? Filtertype { get; set; }                          //Type of the Filter (checkbox, scroller, rating)
-        public IDictionary<string, string> FilterText { get; set; }    //Values of the Filter, Key is intended to use on the Filter Api, Value is what we want to display.  
-
-        public string? FilterReference { get; set; }
-        public string? FilterString { get; set; }
-
-        public IDictionary<string, string> StartingDesc { get; set; }    //For a scroller Filter, there can be provided a Starting Description (like 1 km)
-        public string? StartingValue { get; set; }                       //For a scroller Filter a startingvalue can be defined
-        public IDictionary<string, string> EndDesc { get; set; }         //For a scroller Filter, there can be provided a Ending Description (like >20 km)
-        public string? EndValue { get; set; }                            //For a scroller Filter a endingvalue can be defined
-
-        public int RatingItems { get; set; }                            //For a rating Filter there can be set a Rating Items (this well be 6)
-        public string? SelectedValue { get; set; }                       //For a rating Filter the Initially selected Value can be defined
-
-    }
-
-    public class MobileHtml
-    {
-        public MobileHtml()
-        {
-            HtmlText = new Dictionary<string, string>();
-        }
-
-        public string? Id { get; set; }
-        public Dictionary<string, string> HtmlText { get; set; }
-    }
-
-    public class Tutorial
-    {
-        public Tutorial()
-        {
-            image_url = new Dictionary<string, string>();
-            title = new Dictionary<string, string>();
-            description = new Dictionary<string, string>();
-        }
-
-        public string? Id { get; set; }
-        public Dictionary<string, string> image_url { get; set; }
-        public Dictionary<string, string> title { get; set; }
-        public Dictionary<string, string> description { get; set; }
-
-        public string? category { get; set; }
-        public int sortorder { get; set; }
-
-    }
-
-    public class AppMessage
-    {
-        public AppMessage()
-        {
-            Text = new Dictionary<string, string>();
-            Title = new Dictionary<string, string>();
-            VideoUrl = new Dictionary<string, string>();
-            Images = new Dictionary<string, List<AppMessageImage>>();
-        }
-
-
-        public string? Id { get; set; }
-        public string? Type { get; set; }
-        public DateTime ValidFrom { get; set; }
-        public DateTime ValidTo { get; set; }
-
-        public Dictionary<string, string> Title { get; set; }
-        public Dictionary<string, string> Text { get; set; }
-
-        public Dictionary<string, List<AppMessageImage>> Images { get; set; }
-        public Dictionary<string, string> VideoUrl { get; set; }
-    }
-
-    public class AppMessageImage
-    {
-        public string? ImageUrl { get; set; }
-        public int SortOrder { get; set; }
-    }
-
-    //public class FiltersByMainType
-    //{
-    //    public Dictionary<string, >
-
-    //}
-
-    //public class SmgPoisMobileFilterLocalized
-    //{
-    //    public string Id { get; set; }                                  //Unique ID
-    //    public string MainTypeId { get; set; }                          //Reference to Maintype
-
-    //    public string Filtername { get; set; }                          //Filtername to display
-    //    public string Filterkey { get; set; }                           //Effective Value you use on the Filter Api
-    //    public string FilterReference { get; set; }
-
-    //    public string language { get; set; }                            //Current Language
-    //    public int SortOrder { get; set; }                              //Sort Order
-
-    //    public ICollection<SmgPoisMobileFilterDetailLocalized> FilterDetails { get; set; }     //List with Detailed Filters
-    //}
-
-    //public class SmgPoisMobileFilterDetailLocalized
-    //{       
-    //    public string Id { get; set; }                                  //Unique Id
-    //    public string SubTypeId { get; set; }                           //Reference to SmgPoisMobileFilterListLocalized ID
-
-    //    public string Filtername { get; set; }                          //Filtername to display
-    //    public string Filterkey { get; set; }                           //Effective Value you use on the Filter Api
-    //    public string FilterReference { get; set; }
-
-    //    public string Filtertype { get; set; }                          //Type of the Filter (checkbox, scroller, rating)
-
-    //    public string language { get; set; }                            //Current Language
-    //    public int SortOrder { get; set; }                              //Sort Order of the Filter
-
-    //    public string StartingDesc { get; set; }                        //For a scroller Filter, there can be provided a Starting Description (like 1 km)
-    //    public string StartingValue { get; set; }                       //For a scroller Filter a startingvalue can be defined
-    //    public string EndDesc { get; set; }                             //For a scroller Filter, there can be provided a Ending Description (like >20 km)
-    //    public string EndValue { get; set; }                            //For a scroller Filter a endingvalue can be defined
-
-    //    public int RatingItems { get; set; }                            //For a rating Filter there can be set a Rating Items (this well be 6)
-    //    public string SelectedValue { get; set; }                       //For a rating Filter the Initially selected Value can be defined
-    //}
-
-    public class AccoThemesMobile
-    {
-        public AccoThemesMobile()
-        {
-            Name = new Dictionary<string, string>();
-        }
-
-        public string? Id { get; set; }
-        public int Bitmask { get; set; }
-        public string? Type { get; set; }
-        public string? Key { get; set; }
-        public Dictionary<string, string> Name { get; set; }
-        public string? ImageURL { get; set; }
-        //public int AccoCount { get; set; }
-        public int SortOrder { get; set; }
-        public Nullable<bool> Active { get; set; }
-        public Nullable<int> AccoCount { get; set; }
-    }
-
-    public class AccoThemesFull
-    {
-        public string? Id { get; set; }
-        public int Bitmask { get; set; }
-        public string? Type { get; set; }
-        public string? Name { get; set; }
-        public string? ImageURL { get; set; }
-        public int AccoCount { get; set; }
-        public int SortOrder { get; set; }
-    }
-
-    public class AppCustomTips
-    {
-        public AppCustomTips()
-        {
-            Title = new Dictionary<string, string>();
-            Description = new Dictionary<string, string>();
-            Region = new Dictionary<string, string>();
-            Tv = new Dictionary<string, string>();
-            LinkText = new Dictionary<string, string>();
-            Category = new Dictionary<string, string>();
-            ValidForLanguage = new Dictionary<string, bool>();
-        }
-
-        public string? Id { get; set; }
-        public string? ImageUrl { get; set; }
-        public IDictionary<string, string> Title { get; set; }
-        public IDictionary<string, string> Description { get; set; }
-        public IDictionary<string, string> Region { get; set; }
-        public IDictionary<string, string> Tv { get; set; }
-        public IDictionary<string, string> LinkText { get; set; }
-        public string? Link { get; set; }
-        public bool Active { get; set; }
-        public DateTime LastChanged { get; set; }
-        public string? Type { get; set; }
-
-        public string? TvId { get; set; }
-
-        //additional
-        public IDictionary<string, string> Category { get; set; }
-        public string? Difficulty { get; set; }
-        public string? Duration { get; set; }
-        public string? Length { get; set; }
-
-        //Settings
-        public ICollection<AppCustomTipsSettings>? AppCustomTipsSettings { get; set; }
-
-        public IDictionary<string, bool> ValidForLanguage { get; set; }
-    }
-
-    public class AppCustomTipsSettings
-    {
-        public int Fixedposition { get; set; }  //position 0 is random
-        public bool Randomposition { get; set; }
-        public DateTime ValidFrom { get; set; }
-        public DateTime ValidTo { get; set; }
-    }
-
-    #endregion
-
-
-    /// <summary>
-    /// Gemeinsam Benutzte Klassen / Entitäten
-    /// </summary>
-    #region CommonInfos
-
-    public class Wine : IIdentifiable, IImportDateassigneable,ILicenseInfo, ISource, IMappingAware
+    public class Wine : IIdentifiable, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
     {
         public LicenseInfo LicenseInfo { get; set; }
 
         public Wine()
         {
-            Detail = new Dictionary<string, Detail>();
-            //Mapping New
+            Detail = new Dictionary<string, Detail>();            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
@@ -2234,29 +1890,135 @@ namespace DataModel
         public ICollection<string>? HasLanguage { get; set; }
 
         public string? Source { get; set; }
-
-        //New Mapping
+        
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public ICollection<string> PublishedOn { get; set; }
     }
 
-    public class SuedtirolType : ISuedtirolType
+
+    #endregion
+
+    #region TypeInfos
+
+    public class GastronomyTypes
     {
-        public SuedtirolType()
+        public GastronomyTypes()
         {
-            TypeNames = new Dictionary<string, string>();
+            TypeDesc = new Dictionary<string, string>();
         }
 
         public string? Id { get; set; }
+        public int Bitmask { get; set; }
+
+        public string? Type { get; set; }
+
         public string? Key { get; set; }
 
-        public int? Bitmask { get; set; } 
-
-        public string? Entity { get; set; }
-        public string? TypeParent { get; set; }
-        public int Level { get; set; }
-        public IDictionary<string, string> TypeNames { get; set; }
+        public Dictionary<string, string> TypeDesc { get; set; }
     }
 
+    //For Types Api
+    public class AccoTypes
+    {
+        public AccoTypes()
+        {
+            TypeDesc = new Dictionary<string, string>();
+        }
+
+        public string? Id { get; set; }
+        public int Bitmask { get; set; }
+
+        public string? Type { get; set; }
+
+        public string? Key { get; set; }
+
+        public Dictionary<string, string> TypeDesc { get; set; }
+
+        public string? CustomId { get; set; }
+    }
+
+    //For Types Api
+    public class AccoFeatures : AccoTypes
+    {
+
+    }
+
+    //For Types Api 
+    public class SmgPoiTypes
+    {
+        public SmgPoiTypes()
+        {
+            TypeDesc = new Dictionary<string, string>();
+        }
+
+        public string? Id { get; set; }
+        public long Bitmask { get; set; }
+        public string? Type { get; set; }
+        public string? Parent { get; set; }
+        public string Key { get; set; }
+
+        public IDictionary<string, string>? TypeDesc { get; set; }
+    }
+
+    //For Types Api 
+    public class EventTypes
+    {
+        public EventTypes()
+        {
+            TypeDesc = new Dictionary<string, string>();
+        }
+
+        public string? Id { get; set; }
+        public int Bitmask { get; set; }
+        public string? Type { get; set; }
+        public Dictionary<string, string> TypeDesc { get; set; }
+    }
+
+    //For Types Api 
+    public class ActivityTypes : SmgPoiTypes
+    {
+
+    }
+
+    //For Types Api 
+    public class ArticleTypes : SmgPoiTypes
+    {
+
+    }
+
+    //For Types Api 
+    public class PoiTypes : SmgPoiTypes
+    {
+
+    }
+
+    //For Types Api 
+    public class ODHActivityPoiTypes : SmgPoiTypes
+    {
+    }
+
+    #endregion
+
+    #region CommonInfos
+
+    public class Metadata
+    {
+        public string Id { get; set; }
+        public string Type { get; set; }
+        public DateTime? LastUpdate { get; set; }
+        public string? Source { get; set; }
+        public bool Reduced { get; set; }
+    }
+
+    public class LicenseInfo
+    {
+        public string? License { get; set; }
+        public string? LicenseHolder { get; set; }
+        public string? Author { get; set; }
+        public bool ClosedData { get; set; }
+    }
+     
     public class LTSTaggingType
     {
         public LTSTaggingType()
@@ -2274,8 +2036,8 @@ namespace DataModel
         public IDictionary<string, string> TypeDescriptions { get; set; }
     }
 
-    //BaseInfos für Districts / Regions / Municipalities
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware
+    //BaseInfos for Districts / Regions / Municipalities ...
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2292,20 +2054,15 @@ namespace DataModel
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
         
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public string? Gpstype { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public double Latitude { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public double Longitude { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public Nullable<double> Altitude { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Deprecated, use GpsPoints")] 
+        [SwaggerDeprecated("Deprecated, use GpsPoints")]
         public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -2357,8 +2114,8 @@ namespace DataModel
 
     }
 
-    //Erweiterte Baseinfos für Activities //abstract wegen Index mol ogscholten
-    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware
+    //BaseInfos for ODHActivityPois
+    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2375,8 +2132,7 @@ namespace DataModel
 
         public string? OutdooractiveID { get; set; }
         public string? OutdooractiveElevationID { get; set; }
-
-        //new
+        
         public bool? CopyrightChecked { get; set; }
 
         public bool Active { get; set; }
@@ -2384,41 +2140,29 @@ namespace DataModel
         public string? SmgId { get; set; }
         public bool? Highlight { get; set; }
 
-        //obsolete ??
+        [SwaggerDeprecated("Use Ratings.Difficulty")]
         public string? Difficulty { get; set; }
-
-        //Activity SubType
-        [Obsolete]
-        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
+        
+        [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? Type { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
+        [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? SubType { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Use AdditionalPoiInfos.Categories instead")]
+        [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? PoiType { get; set; }
-
-        /// <summary>
-        /// First Import date
-        /// </summary>
-        public DateTime? FirstImport { get; set; }
-        /// <summary>
-        /// Last Change date
-        /// </summary>
+        
+        public DateTime? FirstImport { get; set; }        
         public DateTime? LastChange { get; set; }
         public bool SmgActive { get; set; }
         
         public LocationInfo? LocationInfo { get; set; }
 
         public string? TourismorganizationId { get; set; }
-        public ICollection<string>? AreaId { get; set; }
-        //Compatibility
+
+        [SwaggerDeprecated("Deprecated use AreaIds")]
+        public ICollection<string>? AreaId { get; set; }        
         public ICollection<string>? AreaIds { get { return AreaId; } }
 
-
-        //Distance & Altitude Informationen
         public double? AltitudeDifference { get; set; }
-        //neu LTSUpdate 11.16
         public double? AltitudeHighestPoint { get; set; }
         public double? AltitudeLowestPoint { get; set; }
         public double? AltitudeSumUp { get; set; }
@@ -2426,9 +2170,8 @@ namespace DataModel
 
         public double? DistanceDuration { get; set; }
         public double? DistanceLength { get; set; }
-        //neu LTSUpdate 11.16
+        
 
-        //Status & Features
         public bool? IsOpen { get; set; }
         public bool? IsPrepared { get; set; }
         public bool? RunToValley { get; set; }
@@ -2437,21 +2180,13 @@ namespace DataModel
         public bool? HasFreeEntrance { get; set; }
         public bool? LiftAvailable { get; set; }
         public bool? FeetClimb { get; set; }
-
-        //neu
+        
         public bool? BikeTransport { get; set; }
 
-        //OperationSchedule
-        //public string OperationscheduleName { get; set; }
-        //public DateTime Start { get; set; }
-        //public DateTime Stop { get; set; }
-        //public bool? ClosedonPublicHolidays { get; set; }
-        //public ICollection<OperationScheduleTime> OperationScheduleTime { get; set; }
-        //Für mearere aso
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
 
         public ICollection<GpsInfo>? GpsInfo { get; set; }
-        public ICollection<GpsTrack>? GpsTrack { get; set; }
+        public ICollection<GpsTrack>? GpsTrack { get; set; }        
 
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, Detail> Detail { get; set; }
@@ -2474,32 +2209,20 @@ namespace DataModel
         public string? Number { get; set; }
 
         public List<LTSTags>? LTSTags { get; set; }
+        
+        public ICollection<string>? PublishedOn { get; set; }
 
-        /// <summary>
-        /// Published on URL List
-        /// </summary>
-        public List<string>? PublishedOn { get; set; }
-
-        /// <summary>
-        /// Source of the dataset
-        /// </summary>
         public string? Source { get; set; }
 
-        /// <summary>
-        /// Generic Mapping object, contains at example original Id of the source provider or mapped Id to other providers
-        /// </summary>
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
 
-        /// <summary>
-        /// Generic Tags object
-        /// </summary>
         public IDictionary<string, List<Tags>> Tags { get; set; }
     }
 
-    //Erweiterte Baseinfos für ARticles
-    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware
+    //BaseInfo Article
+    public abstract class ArticleBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2557,8 +2280,7 @@ namespace DataModel
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
-
-        //new Add GPS Points from Root Representation
+        
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2575,9 +2297,8 @@ namespace DataModel
                 }
             }
         }
-
-        //New published on List
-        public List<string>? PublishedOn { get; set; }
+        
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
@@ -2587,8 +2308,8 @@ namespace DataModel
         public DistanceInfo? DistanceInfo { get; set; }
     }
 
-    //Erweiterte Baseinfos für Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware
+    //BaseInfo Gastronomy
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2671,8 +2392,8 @@ namespace DataModel
         public DistanceInfo? DistanceInfo { get; set; }
     }
 
-    //Erweiterte BaseInfo für Events
-    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware
+    //BaseInfo Events
+    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2687,19 +2408,16 @@ namespace DataModel
             //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
             Hashtag = new Dictionary<string, ICollection<string>>();
             EventDescAdditional = new Dictionary<string, EventDescAdditional>();
-            //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
-        //IIdentifiable
         public string? Id { get; set; }
         public bool Active { get; set; }
         public string? Shortname { get; set; }
 
         public Nullable<DateTime> DateBegin { get; set; }
         public Nullable<DateTime> DateEnd { get; set; }
-
-        //Infos on the Data
+        
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
 
@@ -2710,8 +2428,7 @@ namespace DataModel
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
-
-        //Eventspezifische Infos
+        
         public string? OrgRID { get; set; }
         public int? Ranc { get; set; }
         public string? Ticket { get; set; }
@@ -2720,14 +2437,10 @@ namespace DataModel
         public string? Type { get; set; }
         public string Pdf { get; set; }
 
-        public string? DistrictId { get; set; }
-        //???????
-        public ICollection<string>? DistrictIds { get; set; }
-
-        //ImageGallery
+        public string? DistrictId { get; set; }        
+        public ICollection<string>? DistrictIds { get; set; }        
         public ICollection<ImageGallery>? ImageGallery { get; set; }
-
-        //Detail
+        
         public IDictionary<string, Detail> Detail { get; set; }
 
         public ICollection<string>? TopicRIDs { get; set; }
@@ -2744,7 +2457,6 @@ namespace DataModel
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
         public IDictionary<string, ContactInfos> OrganizerInfos { get; set; }
 
-        //NEU Region TV Municipality Fraktion NEU LocationInfo Classe
         public LocationInfo? LocationInfo { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
@@ -2753,12 +2465,11 @@ namespace DataModel
         public ICollection<string>? HasLanguage { get; set; }
 
         public Nullable<DateTime> NextBeginDate { get; set; }
-
-        //NEW Fields 
+        
         public string Source { get; set; }
         public bool? GrpEvent { get; set; }
         public bool? EventBenefit { get; set; }
-        public EventBooking EventBooking { get; set; }
+        public EventBooking? EventBooking { get; set; }
         public ICollection<LTSTags> LTSTags { get; set; }
 
         public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
@@ -2769,8 +2480,7 @@ namespace DataModel
         public IDictionary<string, ICollection<string>> Hashtag { get; set; }
 
         public EventOperationScheduleOverview EventOperationScheduleOverview { get; set; }
-
-        //new Add GPS Points from Root Representation
+        
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2790,20 +2500,17 @@ namespace DataModel
                 }
             }
         }
-
-        //New published on List
-        public List<string>? PublishedOn { get; set; }
+        
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string ClassificationRID { get; set; }
 
         public ICollection<EventCrossSelling> EventCrossSelling { get; set; }
         public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
-
-        //New Mapping
+        
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
-
     }
 
     public class Topic
@@ -2906,8 +2613,7 @@ namespace DataModel
         public IDictionary<string, string> Webcamname { get; set; }
         public string? Webcamurl { get; set; }
 
-        [Obsolete]
-        [SwaggerSchema("Use GpsPoints instead")]
+        [SwaggerDeprecated("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
         public int? ListPosition { get; set; }       
         public string? Streamurl { get; set; }
@@ -2926,20 +2632,10 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamLocalized
-    {
-        public string? WebcamId { get; set; }
-        public string? Webcamname { get; set; }
-        public string? Webcamurl { get; set; }
-        public GpsInfo? GpsInfo { get; set; }
-        public Nullable<int> ListPosition { get; set; }
-    }
-
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware
+    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware
     {
         public WebcamInfo()
-        {
-            //Mapping New
+        {            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
@@ -2960,8 +2656,7 @@ namespace DataModel
         public ICollection<string>? AreaIds { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
-
-        //new Add GPS Points from GpsInfo
+        
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2982,11 +2677,18 @@ namespace DataModel
             }
         }
 
-        //New published on List
-        public List<string>? PublishedOn { get; set; }
-
-        //New Mapping
+        public ICollection<string>? PublishedOn { get; set; }
+        
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        //Temporary Hack because GpsInfo here is a object instead of object list
+        public ICollection<GpsInfo> GpsInfos
+        {
+            get
+            {
+                return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
+            }
+        }
     }
 
     public class PublishedonObject
@@ -3073,14 +2775,11 @@ namespace DataModel
         //public string Difficulty { get; set; }
         public string? Novelty { get; set; }
 
-        [Obsolete]
-        [SwaggerSchema("Use Categories instead")]
+        [SwaggerDeprecated("Use Categories instead")]
         public string? MainType { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Use Categories instead")]
+        [SwaggerDeprecated("Use Categories instead")]
         public string? SubType { get; set; }
-        [Obsolete]
-        [SwaggerSchema("Use Categories instead")]
+        [SwaggerDeprecated("Use Categories instead")]
         public string? PoiType { get; set; }
 
         public string? Language { get; set; }
@@ -3206,8 +2905,7 @@ namespace DataModel
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
         // Here for compatibility reasons
-        [SwaggerSchema("Will be removed withhin 2021-12-31")]
-        [Obsolete]
+        [SwaggerDeprecated("Will be removed within 2021-12-31")]
         public bool Thuresday { get; set; }
         public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }
@@ -3269,11 +2967,11 @@ namespace DataModel
         //NEW Properties
         public double? InscriptionTill { get; set; }
         public bool? Active { get; set; }
-        public string DayRID { get; set; }
+        public string? DayRID { get; set; }
 
-        public Dictionary<string, EventDateAdditionalInfo> EventDateAdditionalInfo { get; set; }
-        public ICollection<EventDateAdditionalTime> EventDateAdditionalTime { get; set; }
-        public EventDateCalculatedDay EventCalculatedDay { get; set; }
+        public Dictionary<string, EventDateAdditionalInfo>? EventDateAdditionalInfo { get; set; }
+        public ICollection<EventDateAdditionalTime>? EventDateAdditionalTime { get; set; }
+        public EventDateCalculatedDay? EventCalculatedDay { get; set; }
 
         //New
         public string PriceFrom { get; set; }
@@ -3380,19 +3078,6 @@ namespace DataModel
         public string RSHtml { get; set; }
     }
 
-    //Evalanche Spezial
-
-    public class EvalancheMapping
-    {
-        public EvalancheMapping()
-        {
-            EvalancheArticleID = new Dictionary<string, int>();
-        }
-
-        public IDictionary<string, int> EvalancheArticleID { get; set; }
-
-    }
-
     public class LocationInfo : ILocationInfoAware
     {
         public RegionInfo? RegionInfo { get; set; }
@@ -3432,410 +3117,6 @@ namespace DataModel
         public IDictionary<string, string>? Name { get; set; }
     }
 
-    #endregion
+    #endregion    
 
-    #region Evalanche
-
-    public class EvalancheMailing
-    {
-        public EvalancheMailing()
-        {
-            ArticleIDs = new Dictionary<string, string>();
-        }
-        public string? Name { get; set; }
-        public DateTime CreationDate { get; set; }
-        public string? Type { get; set; }
-
-        //Slot and ID of the Article
-        public IDictionary<string, string> ArticleIDs { get; set; }
-    }
-
-    #endregion
-
-    #region Resultset
-
-    //Generic Result für Paging
-    public class Result<T>
-    {
-        public int TotalResults { get; set; }
-        public int TotalPages { get; set; }
-        public int CurrentPage { get; set; }
-        public Nullable<int> OnlineResults { get; set; }
-        public string? ResultId { get; set; }
-        public string? Seed { get; set; }
-
-        public ICollection<T>? Items { get; set; }
-    }
-
-    public class ResultAsync<T>
-    {
-        public int TotalResults { get; set; }
-        public int TotalPages { get; set; }
-        public int CurrentPage { get; set; }
-        public Nullable<int> OnlineResults { get; set; }
-
-        public string? Seed { get; set; }
-
-        public IList<T>? Items { get; set; }
-    }
-
-    #endregion
-
-    #region Specials
-
-    public class PackageAccos : Package
-    {
-        public Accommodation? Accommodation { get; set; }
-    }
-
-    #endregion
-
-    #region EBMS
-
-    public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware
-    {
-        public EventShort()
-        {            
-            Mapping = new Dictionary<string, IDictionary<string, string>>();
-        }
-
-        public LicenseInfo? LicenseInfo { get; set; }
-
-        public string? Id { get; set; }
-        public string? Source { get; set; }
-        public string? EventLocation { get; set; }
-
-        public int EventId { get; set; }
-        //Hauptbeschreibung
-        public string? EventDescription { get; set; }
-        //Beschreibung DE
-        public string? EventDescriptionDE { get; set; }
-        //Beschreibung IT
-        public string? EventDescriptionIT { get; set; }
-        //Beschreibung EN
-        public string? EventDescriptionEN { get; set; }
-        //Hauptsaal/ort
-        public string? AnchorVenue { get; set; }
-        //Hauptsaal/ort soll für die Ausgabe verwendet werden
-        public string? AnchorVenueShort { get; set; }
-        //letzte Änderung
-        public DateTime ChangedOn { get; set; }
-        //Beginndatum
-        public DateTime StartDate { get; set; }
-        //Beginnzeit
-        //public string StartTime { get; set; }
-        ////Ende Datum
-        public DateTime EndDate { get; set; }
-        //Endzeit
-        //public string EndTime { get; set; }
-
-        public double StartDateUTC { get; set; }
-        public double EndDateUTC { get; set; }
-
-        //URL für externe Webseite (noch nicht ausgefüllt)
-        public string? WebAddress { get; set; }
-        //Spezialfelder
-
-        /// <summary>
-        /// Display1 used as active info
-        /// </summary>
-        [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
-        public string? Display1 { get; set; }
-        //Intranet Eurac (Y / N)
-        public string? Display2 { get; set; }
-        //Webseite Eurac ( Y /N)
-        public string? Display3 { get; set; }
-        //diese sind nicht belegt, könnten verwendet werden
-        public string? Display4 { get; set; }
-        public string? Display5 { get; set; }
-        public string? Display6 { get; set; }
-        public string? Display7 { get; set; }
-        public string? Display8 { get; set; }
-
-        public string? Display9 { get; set; }
-
-        //Temporary disabled
-        //[RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
-        //[JsonConverter(typeof(StringEnumConverter))]
-        //public EventShortDisplay? Display9 { get; set; }
-
-        //CRM Modul Account (Firma) interessiert uns nicht
-        public string? CompanyName { get; set; }
-        public string? CompanyId { get; set; }
-        public string? CompanyAddressLine1 { get; set; }
-        public string? CompanyAddressLine2 { get; set; }
-        public string? CompanyAddressLine3 { get; set; }
-        public string? CompanyPostalCode { get; set; }
-        public string? CompanyCity { get; set; }
-        public string? CompanyCountry { get; set; }
-        public string? CompanyPhone { get; set; }
-        public string? CompanyFax { get; set; }
-        public string? CompanyMail { get; set; }
-        public string? CompanyUrl { get; set; }
-
-        //Person aus Modul CRM (interessiert uns nicht)
-        public string? ContactCode { get; set; }
-        public string? ContactFirstName { get; set; }
-        public string? ContactLastName { get; set; }
-        public string? ContactPhone { get; set; }
-        public string? ContactCell { get; set; }
-        public string? ContactFax { get; set; }
-        public string? ContactEmail { get; set; }
-        public string? ContactAddressLine1 { get; set; }
-        public string? ContactAddressLine2 { get; set; }
-        public string? ContactAddressLine3 { get; set; }
-        public string? ContactPostalCode { get; set; }
-        public string? ContactCity { get; set; }
-        public string? ContactCountry { get; set; }
-
-        //gebuchten Sääle von spezifischen Event
-        //Space : Code für Raum von DB
-        //SpaceDesc: Beschreibung --> zu nehmen
-        //SpaceAbbrev: Abgekürzte Beschreibung 
-        //SoaceType : EC = Eurac, NO = Noi
-        //Comnment: entweder x oder leer --> x bedeutet bitte nicht anzeigen!!!!!!!
-        //Subtitle: Untertitel vom Saal (anzeigen)
-        //Zeiten (diese sind relevant, diese anzeigen)
-        public List<RoomBooked>? RoomBooked { get; set; }
-
-        //all das interessiert nicht
-        //public string AbstractsEN { get; set; }
-        //public string AbstractsGER { get; set; }
-        //public string AbstractsIT { get; set; }
-        ////gehört zu Abstract
-        //public string Documents { get; set; }
-        public List<ImageGallery>? ImageGallery { get; set; }
-        public string? VideoUrl { get; set; }        
-        public string? EventTextDE { get; set; }
-        public string? EventTextIT { get; set; }
-        public string? EventTextEN { get; set; }
-
-        public List<string>? TechnologyFields { get; set; }
-
-        public List<string>? CustomTagging { get; set; }
-
-        public List<DocumentPDF>? EventDocument { get; set; }
-
-        public bool? ExternalOrganizer { get; set; }
-
-        public string? Shortname { get; set; }
-     
-        //New published on List
-        public List<string>? PublishedOn { get; set; }
-
-        public string? AnchorVenueRoomMapping
-        {
-            get
-            {
-                return !String.IsNullOrEmpty(this.AnchorVenue) ? (this.AnchorVenue.StartsWith("NOI ") || this.AnchorVenue.StartsWith("Noi ") || this.AnchorVenue.StartsWith("noi ")) ? this.AnchorVenue.Remove(0, 3).Trim() : this.AnchorVenue : this.AnchorVenue;
-            }
-        }
-
-        public DateTime? FirstImport { get; set; }
-        public DateTime? LastChange { get; set; }
-
-        public bool? SoldOut { get; set; }
-        /// <summary>
-        /// ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI
-        /// </summary>
-        public bool? ActiveWeb { get; set; }
-        /// <summary>
-        /// ActiveCommunityApp Indicates if Event is shown on the Noi Community App
-        /// </summary>
-        public bool? ActiveCommunityApp { get; set; }
-
-        public ICollection<string>? HasLanguage { get; set; }
-
-        //New Mapping
-        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
-
-        public ICollection<GpsInfo>? GpsInfo { get; set; }
-
-        //new Add GPS Points from Root Representation
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
-                {
-                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
-                }
-                else
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
-                }
-            }
-        }
-    }
-    
-    public enum EventShortDisplay
-    {    
-        /// <summary>
-        /// NO / no
-        /// </summary>
-        Y,  
-        /// <summary>
-        /// YES / true
-        /// </summary>
-        N
-    }
-    
-    public enum EventShortEventLocation
-    {
-        /// <summary>
-        /// NOI Techpark
-        /// </summary>
-        NOI,
-        /// <summary>
-        /// Eurac
-        /// </summary>
-        EC,
-        /// <summary>
-        /// Virtual Village
-        /// </summary>
-        VV,
-        /// <summary>
-        /// Other Location
-        /// </summary>
-        OUT
-    }
-
-    public class RoomBooked
-    {
-        public string? Space { get; set; }
-        public string? SpaceDesc { get; set; }
-        public string? SpaceAbbrev { get; set; }
-        public string? SpaceType { get; set; }
-        public string? Subtitle { get; set; }
-        public string? Comment { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-
-        public double StartDateUTC { get; set; }
-        public double EndDateUTC { get; set; }
-
-        public string? SpaceDescRoomMapping
-        { 
-            get
-            {
-                return !String.IsNullOrEmpty(this.SpaceDesc) ? (this.SpaceDesc.StartsWith("NOI ") || this.SpaceDesc.StartsWith("Noi ") || this.SpaceDesc.StartsWith("noi ")) ? this.SpaceDesc.Remove(0, 3).Trim() : this.SpaceDesc : this.SpaceDesc;
-            } 
-        }
-    }
-
-    public class EventShortByRoom
-    {
-        public EventShortByRoom()
-        {
-            SpaceDescList = new List<string>();
-            TechnologyFields = new List<string>();
-            CustomTagging = new List<string>();
-            EventDescription = new Dictionary<string, string>();
-            EventDocument = new Dictionary<string, string>();
-        }
-
-        //Room Infos
-
-        public List<string> SpaceDescList { get; set; }
-
-        public string? SpaceDesc { get; set; }
-        public string? SpaceType { get; set; }
-        public string? Subtitle { get; set; }
-
-        public DateTime RoomStartDate { get; set; }
-        public DateTime RoomEndDate { get; set; }
-
-        public double RoomStartDateUTC { get; set; }
-        public double RoomEndDateUTC { get; set; }
-
-        //Event Infos
-
-        public int EventId { get; set; }
-
-        public Dictionary<string, string> EventDescription { get; set; }
-
-        public string? EventDescriptionDE { get; set; }
-        public string? EventDescriptionIT { get; set; }
-        public string? EventDescriptionEN { get; set; }
-
-        public string? EventAnchorVenue { get; set; }
-        public string? EventAnchorVenueShort { get; set; }
-
-        public DateTime EventStartDate { get; set; }
-        public DateTime EventEndDate { get; set; }
-        public double EventStartDateUTC { get; set; }
-        public double EventEndDateUTC { get; set; }
-
-        public string? EventWebAddress { get; set; }
-        public string? Id { get; set; }
-        public string? EventSource { get; set; }
-        public string? EventLocation { get; set; }
-
-        public string? CompanyName { get; set; }
-        public List<ImageGallery>? ImageGallery { get; set; }
-        public string? VideoUrl { get; set; }
-        public Nullable<bool> ActiveWeb { get; set; }
-
-        public string? EventTextDE { get; set; }
-        public string? EventTextIT { get; set; }
-        public string? EventTextEN { get; set; }
-
-        public List<string>? TechnologyFields { get; set; }
-        public List<string>? CustomTagging { get; set; }
-        public bool? SoldOut { get; set; }
-
-        public Dictionary<string, string> EventDocument { get; set; }
-
-        public bool? ExternalOrganizer { get; set; }
-        //public string MapsNoiUrl { get; set; }
-    }
-
-    public class DocumentPDF
-    {
-        public string? DocumentURL { get; set; }
-        public string? Language { get; set; }
-    }
-
-    #endregion
-
-    public class MetaInfosOdhActivityPoi
-    {
-        public MetaInfosOdhActivityPoi()
-        {
-            Metainfos = new Dictionary<string, List<Dictionary<string, object>>>();
-        }
-        public string? Id { get; set; }
-
-        public Dictionary<string, List<Dictionary<string, object>>> Metainfos { get; set; }
-    }
-
-    #region MetaInfo
-
-    public class Metadata
-    {
-        public string Id { get; set; }
-        public string Type { get; set; }
-        public DateTime? LastUpdate { get; set; }
-
-        //New
-        public string Source { get; set; }
-        public bool Reduced { get; set; }
-    }
-
-    #endregion
-
-    #region LicenseInfo
-
-    public class LicenseInfo
-    {
-        //public string DataType { get; set; }
-        public string? License { get; set; }
-        public string? LicenseHolder { get; set; }
-        public string? Author { get; set; }
-        public bool ClosedData { get; set; }
-    }
-
-    #endregion
 }

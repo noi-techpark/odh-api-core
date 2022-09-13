@@ -32,7 +32,9 @@ namespace OdhApiCore.Controllers
             string? sourcefilter, string? idfilter, bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter)
         {
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
-            sourcelist = Helper.CommonListCreator.CreateIdList(sourcefilter?.ToLower());
+            var sourcelisttemp = Helper.CommonListCreator.CreateIdList(sourcefilter?.ToLower());
+            
+            sourcelist = ExtendSourceFilterWebcamInfo(sourcelisttemp);
 
             //active
             active = activefilter;
@@ -45,6 +47,22 @@ namespace OdhApiCore.Controllers
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
 
+        private List<string> ExtendSourceFilterWebcamInfo(List<string> sourcelist)
+        {
+            List<string> sourcelistnew = new();
 
+            foreach (var source in sourcelist)
+            {
+                sourcelistnew.Add(source);
+
+                if (source == "idm")
+                {
+                    if (!sourcelistnew.Contains("content"))
+                        sourcelistnew.Add("content");                   
+                }                
+            }
+
+            return sourcelistnew;
+        }
     }
 }

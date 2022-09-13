@@ -3,6 +3,7 @@ using SqlKata.Execution;
 using SuedtirolWein;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -24,7 +25,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
         {
             var winegastrolist = await GetSuedtirolWeinGastronomiesList(cancellationToken);
 
-            foreach (var winedata in winegastrolist["de"].Root.Elements("item"))
+            foreach (var winedata in winegastrolist["de"].Root?.Elements("item") ?? Enumerable.Empty<XElement>())
             {
 
             }
@@ -57,7 +58,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             return mywinedata;
         }
 
-        public async Task ImportSuedtirolWeinGastronomy(XElement winedata)
+        public void ImportSuedtirolWeinGastronomy(XElement winedata)
         {
             //ImportSuedtirolWineCompanySingle(documentStore, tracesource, log, winedata, mywinedata, i);
         }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Npgsql;
+using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using SIAG;
 using SqlKata.Execution;
@@ -47,7 +48,9 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Weather")]
-        public async Task<ActionResult<Weather>> GetWeather(
+        public async Task<IActionResult> GetWeather(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
             string? language = "en", 
             string? locfilter = null,
             bool extended = true,
@@ -55,7 +58,32 @@ namespace OdhApiCore.Controllers
         {
             try
             {
-                return await Get(language ?? "en", locfilter, extended, cancellationToken);
+                return await Get(pagenumber, pagesize, language ?? "en", locfilter, extended, null, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// GET Current Suedtirol Weather LIVE Single
+        /// </summary>
+        /// <param name="language">Language</param>
+        /// <param name="id">ID</param>
+        /// <returns>Weather Object</returns>
+        [ProducesResponseType(typeof(Weather), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Weather/{id}", Name = "SingleWeather")]
+        public async Task<IActionResult> GetWeatherSingle(
+            string id,
+            string? language = "en",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await Get(null, null, language ?? "en", null, true, id, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -112,6 +140,30 @@ namespace OdhApiCore.Controllers
         }
 
         /// <summary>
+        /// GET Suedtirol Weather HISTORY SINGLE
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <returns>Measuringpoint Object</returns>
+        [ProducesResponseType(typeof(Measuringpoint), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("WeatherHistory/{id}", Name = "SingleWeatherHistory")]
+        public async Task<IActionResult> GetWeatherSingleHistory(
+            string id,
+            string? language = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await GetWeatherHistorySingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
+        }
+
+
+        /// <summary>
         /// GET District Weather LIVE
         /// </summary>
         /// <param name="language">Language</param>
@@ -120,22 +172,49 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(BezirksWeather), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Weather/District")]
-        public async Task<ActionResult<BezirksWeather>> GetDistrictWeather(
-            string locfilter,
+        [HttpGet, Route("Weather/District", Name = "SingleWeatherDistrict")]
+        public async Task<IActionResult> GetDistrictWeather(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
+            string? locfilter = null,
             string? language = "en",             
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetBezirksWetter(language ?? "en", locfilter, cancellationToken);
+                return await GetBezirksWetter(pagenumber, pagesize, language ?? "en", locfilter, cancellationToken);
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
         }
-        
+
+        /// <summary>
+        /// GET District Weather LIVE SINGLE
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="language">Language</param>
+        /// <returns>District Weather Object</returns>        
+        [ProducesResponseType(typeof(BezirksWeather), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Weather/District/{id}")]
+        public async Task<IActionResult> GetDistrictWeatherSingle(
+            string id,
+            string? language = "en",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await GetBezirksWetter(null, null, language ?? "en", id, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
         /// <summary>
         /// GET Current Realtime Weather LIVE
         /// </summary>
@@ -145,13 +224,40 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Weather/Realtime")]
-        public async Task<ActionResult<IEnumerable<WeatherRealTime>>> GetRealtimeWeather(
+        public async Task<IActionResult> GetRealtimeWeather(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? language = "en",
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetRealTimeWeather(language ?? "en", cancellationToken);
+                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", null, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// GET Current Realtime Weather LIVE Single
+        /// </summary>
+        /// <param name="language">Language</param> 
+        /// <param name="id">id</param> 
+        /// <returns>WeatherRealTime Object</returns>
+        [ProducesResponseType(typeof(IEnumerable<WeatherRealTime>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Weather/Realtime/{id}", Name = "SingleWeatherRealtime")]
+        public async Task<IActionResult> GetRealtimeWeatherSingle(
+            string id,
+            string? language = "en",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await GetRealTimeWeather(null, null, language ?? "en", id, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -184,14 +290,17 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<Measuringpoint>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
+        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
         [HttpGet, Route("Weather/Measuringpoint")]
         public async Task<IActionResult> GetMeasuringPoints(
+            uint? pagenumber = null,
+            PageSize pagesize = null!, 
             string? idlist = null,
             string? locfilter = null, 
             string? areafilter = null, 
             string? skiareafilter = null,
             string? language = null,
+            string? source = null,
             LegacyBool active = null!,
             LegacyBool odhactive = null!,
             string? publishedon = null,
@@ -210,10 +319,10 @@ namespace OdhApiCore.Controllers
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-            return await GetMeasuringPointList(
+            return await GetMeasuringPointList(pagenumber, pagesize,
                 fields: fields ?? Array.Empty<string>(), language: language, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
-                    skiareafilter: skiareafilter, active: active, publishedon: publishedon,
+                    skiareafilter: skiareafilter, source: source, active: active, publishedon: publishedon,
                     smgactive: odhactive, seed: seed, lastchange: updatefrom,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                     removenullvalues: removenullvalues, cancellationToken: cancellationToken);
@@ -230,7 +339,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(Measuringpoint), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Weather/Measuringpoint/{id}", Name = "SingleWeather")]
+        [HttpGet, Route("Weather/Measuringpoint/{id}", Name = "SingleMeasuringpoint")]
         public async Task<IActionResult> GetMeasuringPoint(
             string id,
             string? language = null,
@@ -251,11 +360,13 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(SnowReportBaseData), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
+        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Weather/SnowReport")]
-        public async Task<ActionResult<SnowReportBaseData>> GetSnowReportBase(
-            string? skiareaid,
-            string lang = "de",             
+        public async Task<ActionResult> GetSnowReportBase(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
+            string? skiareaid = null,
+            string? lang = "en",             
             CancellationToken cancellationToken = default)
         {
             try
@@ -264,7 +375,20 @@ namespace OdhApiCore.Controllers
                 {
                     var snowreport = await GetSnowReportBaseData(lang, skiareaid, cancellationToken);
 
-                    return Ok(snowreport);
+                    if(pagenumber != null)
+                    {
+                        return Ok(ResponseHelpers.GetResult(
+                                    pagenumber.Value,
+                                    1,
+                                    1,
+                                    null,
+                                    new List<SnowReportBaseData>() { snowreport },
+                                    Url));
+                    }
+                    else
+                    {
+                        return Ok(snowreport);
+                    }                    
                 }
                 else
                 {                    
@@ -287,8 +411,50 @@ namespace OdhApiCore.Controllers
                             snowreportbasedatalist.Add(result);
                     }
 
-                    return Ok(snowreportbasedatalist);
+                    if (pagenumber != null)
+                    {
+                        return Ok(ResponseHelpers.GetResult(
+                                    pagenumber.Value,
+                                    1,
+                                    (uint)snowreportbasedatalist.Count,
+                                    null,
+                                    snowreportbasedatalist,
+                                    Url));
+                    }
+                    else
+                    {
+                        return Ok(snowreportbasedatalist);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
+
+        /// <summary>
+        /// GET Snowreport Data LIVE Single
+        /// </summary>
+        /// <param name="lang">Language</param>
+        /// <param name="id">Skiarea ID</param>
+        /// <returns>Snowreport BaseData Object</returns>
+        [ProducesResponseType(typeof(SnowReportBaseData), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
+        [HttpGet, Route("Weather/SnowReport/{id}", Name = "SingleSnowReport")]
+        public async Task<ActionResult> GetSnowReportBaseSingle(
+            string id,
+            string? lang = "en",
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var snowreport = await GetSnowReportBaseData(lang, id.ToUpper().Replace("_SNOWREPORT", ""), cancellationToken);
+
+                return Ok(snowreport);
             }
             catch (Exception ex)
             {
@@ -301,14 +467,21 @@ namespace OdhApiCore.Controllers
         #region SiagWeather
 
         /// GET Current Suedtirol Weather LIVE Request
-        private async Task<ActionResult<Weather>> Get(string language, string? locfilter, bool extended, CancellationToken cancellationToken = default)
+        private async Task<IActionResult> Get(
+            uint? pagenumber, 
+            int? pagesize, 
+            string language, 
+            string? locfilter, 
+            bool extended, 
+            string? id,
+            CancellationToken cancellationToken)
         {
             var weatherresult = default(Weather);
 
             if(String.IsNullOrEmpty(locfilter))
             {
                 //Get Weather General from Siag and Parse it to ODH Format
-                var weatherresponsetask = await SIAG.GetWeatherData.GetSiagWeatherData(language, settings.SiagConfig.Username, settings.SiagConfig.Password, extended);
+                var weatherresponsetask = await SIAG.GetWeatherData.GetSiagWeatherData(language, settings.SiagConfig.Username, settings.SiagConfig.Password, extended, id);
                 weatherresult = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather(language, settings.XmlConfig.XmldirWeather, weatherresponsetask, extended);                
             }
             else
@@ -345,62 +518,131 @@ namespace OdhApiCore.Controllers
                 weatherresult = await SIAG.GetWeatherData.GetCurrentStationWeatherAsync(language, locfilter, stationidtype, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
             }
 
-            return Ok(weatherresult);
+            if (pagenumber != null)
+            {
+                return Ok(ResponseHelpers.GetResult(
+                    pagenumber.Value,
+                    1,
+                    1,
+                    null,
+                    new List<Weather?>() { weatherresult },
+                    Url)); 
+            }
+            else
+            {
+                return Ok(weatherresult);
+            }
         }
               
         /// GET Bezirkswetter by LocFilter LIVE Request
-        private async Task<ActionResult<BezirksWeather>> GetBezirksWetter(string language, string locfilter, CancellationToken cancellationToken = default)
+        private async Task<IActionResult> GetBezirksWetter(
+            uint? pagenumber, 
+            int? pagesize, 
+            string language, 
+            string? locfilter, 
+            CancellationToken cancellationToken)
         {
             string bezirksid = "";
             string tvrid = "";
             string regid = "";
 
-            int n;
-            if (int.TryParse(locfilter, out n))
-                bezirksid = n.ToString();
-            else
+            if(!String.IsNullOrEmpty(locfilter))
             {
-                //Locfilter kann hier sein Region TV, Municipality und Fraktion
-                if (locfilter.Contains("reg"))
+                int n;
+                if (int.TryParse(locfilter, out n))
+                    bezirksid = n.ToString();
+                else
                 {
-                    regid = locfilter.Replace("reg", "");
-                }
+                    //Locfilter kann hier sein Region TV, Municipality und Fraktion
+                    if (locfilter.Contains("reg"))
+                    {
+                        regid = locfilter.Replace("reg", "");
+                    }
 
-                if (locfilter.Contains("tvs"))
-                {
-                    tvrid = locfilter.Replace("tvs", "");
-                }
-                if (locfilter.Contains("mun"))
-                {
-                    var query =
-                   QueryFactory.Query()
-                       .SelectRaw("data ->>'TourismvereinId'")
-                       .From("municipalities")
-                       .Where("id", locfilter.Replace("mun", "").ToUpper());
+                    if (locfilter.Contains("tvs"))
+                    {
+                        tvrid = locfilter.Replace("tvs", "");
+                    }
+                    if (locfilter.Contains("mun"))
+                    {
+                        var query =
+                       QueryFactory.Query()
+                           .SelectRaw("data ->>'TourismvereinId'")
+                           .From("municipalities")
+                           .Where("id", locfilter.Replace("mun", "").ToUpper());
 
-                    tvrid = await query.FirstOrDefaultAsync<string>();
-                }
-                if (locfilter.Contains("fra"))
-                {
-                    var query =
-                   QueryFactory.Query()
-                       .SelectRaw("data ->>'TourismvereinId'")
-                       .From("districts")
-                       .Where("id", locfilter.Replace("fra", "").ToUpper());
+                        tvrid = await query.FirstOrDefaultAsync<string>();
+                    }
+                    if (locfilter.Contains("fra"))
+                    {
+                        var query =
+                       QueryFactory.Query()
+                           .SelectRaw("data ->>'TourismvereinId'")
+                           .From("districts")
+                           .Where("id", locfilter.Replace("fra", "").ToUpper());
 
-                    tvrid = await query.FirstOrDefaultAsync<string>();
+                        tvrid = await query.FirstOrDefaultAsync<string>();
+                    }
                 }
-            }
+            }            
 
             var weatherresult = await GetWeatherData.GetCurrentBezirkWeatherAsync(language, bezirksid, tvrid, regid, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
-            return Ok(weatherresult);
+
+            if(pagenumber != null)
+            {
+                return Ok(ResponseHelpers.GetResult(
+                   pagenumber.Value,
+                   1,
+                   (uint)weatherresult.Count(),
+                   null,
+                   weatherresult,
+                   Url));
+            }
+            else
+            {
+                //Compatibility Hack
+                if (weatherresult.Count() == 1)
+                    return Ok(weatherresult.FirstOrDefault());
+                else
+                    return Ok(weatherresult);
+            }            
         }
 
         /// GET Current Suedtirol Weather Realtime LIVE Request
-        private async Task<ActionResult<IEnumerable<WeatherRealTime>>> GetRealTimeWeather(string language, CancellationToken cancellationToken = default)
+        private async Task<IActionResult> GetRealTimeWeather(
+            uint? pagenumber, 
+            int? pagesize, 
+            string language, 
+            string? id,
+            CancellationToken cancellationToken)
         {
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
-            return Ok(weatherresult);
+
+            if(!String.IsNullOrEmpty(id))
+            {
+                var single = weatherresult.Where(x => x.id == id).FirstOrDefault();
+                if (single != null)
+                    return Ok(single);
+                else
+                    return NotFound("id unknown");
+            }
+            else
+            {
+                if (pagenumber != null)
+                {
+                    return Ok(ResponseHelpers.GetResult(
+                        pagenumber.Value,
+                        1,
+                        (uint)weatherresult.Count(),
+                        null,
+                        weatherresult,
+                        Url));
+                }
+                else
+                {
+                    return Ok(weatherresult);
+                }
+            }           
         }
 
         /// GET Suedtirol Weather from History Table
@@ -418,8 +660,8 @@ namespace OdhApiCore.Controllers
            PGGeoSearchResult geosearchresult,
            string? rawfilter,
            string? rawsort,
-           bool removenullvalues = false,
-           CancellationToken cancellationToken = default)
+           bool removenullvalues,
+           CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {                
@@ -466,17 +708,45 @@ namespace OdhApiCore.Controllers
             });
         }
 
+        /// GET Weather History SINGLE by ID
+        private Task<IActionResult> GetWeatherHistorySingle(
+            string id,
+            string? language,
+            string[] fields,
+            bool removenullvalues,
+            CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("weatherdatahistory")
+                        .Select("data")
+                        .Where("id", id.ToUpper());
+                        //Disable temporary there is no meta info .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+
+                var fieldsTohide = FieldsToHide;
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+            });
+
+        }
+
         #endregion
 
         #region Measuringpoint
 
         /// GET Measuringpoints LIST
         private Task<IActionResult> GetMeasuringPointList(
+            uint? pagenumber, 
+            int? pagesize,
             string? language,
             string? idfilter,
             string? locfilter,
             string? areafilter,
             string? skiareafilter,
+            string? source,
             bool? active,
             bool? smgactive,
             string? lastchange,
@@ -497,7 +767,7 @@ namespace OdhApiCore.Controllers
                 string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
 
                 MeasuringPointsHelper mymeasuringpointshelper = await MeasuringPointsHelper.Create(QueryFactory, idfilter, locfilter,
-                    arefilterwithprefix, skiarefilterwithprefix, active, smgactive, lastchange, publishedon, cancellationToken);
+                    arefilterwithprefix, skiarefilterwithprefix, source, active, smgactive, lastchange, publishedon, cancellationToken);
 
                 var query =
                     QueryFactory.Query()
@@ -506,25 +776,56 @@ namespace OdhApiCore.Controllers
                         .MeasuringpointWhereExpression(
                             idlist: mymeasuringpointshelper.idlist, districtlist: mymeasuringpointshelper.districtlist, municipalitylist: mymeasuringpointshelper.municipalitylist,
                             tourismvereinlist: mymeasuringpointshelper.tourismvereinlist, regionlist: mymeasuringpointshelper.regionlist, arealist: mymeasuringpointshelper.arealist,
-                            activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper. publishedonlist,
+                            activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper.publishedonlist,
+                            sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
                             filterClosedData: FilterClosedData, reducedData: ReducedData)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
 
-                var data =
+                //Hack Paging on Measuringpoints
+                if (pagenumber != null)
+                {
+                    var data =
                         await query
-                            .GetAsync<JsonRaw>();
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: pagesize ?? 25);
 
-                var fieldsTohide = FieldsToHide;
+                    var fieldsTohide = FieldsToHide;
 
-                var dataTransformed =
-                    data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
+                    var dataTransformed =
+                        data.List.Select(
+                            raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        );
+                    
+                    uint totalpages = (uint)data.TotalPages;
+                    uint totalcount = (uint)data.Count;
 
-                return dataTransformed;
+                    return ResponseHelpers.GetResult(
+                        pagenumber.Value,
+                        totalpages,
+                        totalcount,
+                        seed,
+                        dataTransformed,
+                        Url);
+                }
+                else
+                {
+                    var data =
+                            await query
+                                .GetAsync<JsonRaw>();
+
+                    var fieldsTohide = FieldsToHide;
+
+                    var dataTransformed =
+                        data.Select(
+                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        );
+
+                    return dataTransformed;
+                }
             });
         }
 
@@ -559,11 +860,14 @@ namespace OdhApiCore.Controllers
         #region SnowReport
 
         /// GET Snowreport Data by SkiareaID LIVE
-         private async Task<SnowReportBaseData> GetSnowReportBaseData(
-             string lang, 
+         private async Task<SnowReportBaseData> GetSnowReportBaseData(             
+             string? lang, 
              string skiareaid,
              CancellationToken cancellationToken)
         {
+
+            if(lang == null)
+                throw new Exception("parameter lang is null");
 
             var query = QueryFactory.Query()
                        .SelectRaw("data")
@@ -585,6 +889,8 @@ namespace OdhApiCore.Controllers
             //var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
 
             var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea!, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
+
+            mysnowreport.Id = mysnowreport.RID + "_SNOWREPORT";
 
             return mysnowreport;
         }

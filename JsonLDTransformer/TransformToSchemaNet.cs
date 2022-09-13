@@ -23,10 +23,10 @@ namespace JsonLDTransformer
                     objectlist.Add(TransformAccommodationToLD((DataModel.Accommodation)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "gastronomy":
-                    objectlist.Add(TransformGastronomyToLD((DataModel.SmgPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformGastronomyToLD((DataModel.ODHActivityPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "poi":
-                    objectlist.Add(TransformActivityPoiToLD((DataModel.SmgPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformActivityPoiToLD((DataModel.ODHActivityPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "skiarea":
                     objectlist.Add(TransformSkiResortToLD((DataModel.SkiArea)(object)data, (DataModel.SkiRegion)(object)parentobject, language, idtoshow, urltoshow, imageurltoshow, showid));
@@ -44,7 +44,7 @@ namespace JsonLDTransformer
                     objectlist.Add(TransformPlaceToLD((DataModel.District)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "recipe":
-                    objectlist.Add(TransformRecipeToLD((DataModel.RecipeArticle)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformRecipeToLD((DataModel.Article)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "event":
 
@@ -153,7 +153,7 @@ namespace JsonLDTransformer
             //New Trust You infos Display only if State = 2 and Active = true
             if (acco.TrustYouActive)
             {
-                if (acco.TrustYouState != null && acco.TrustYouState == 2)
+                if (acco.TrustYouState == 2)
                 {
                     AggregateRating aggregaterating = new AggregateRating();
                     aggregaterating.RatingValue = acco.TrustYouScore / 10;
@@ -226,7 +226,7 @@ namespace JsonLDTransformer
 
         #region Gastronomy
 
-        private static Schema.NET.Restaurant TransformGastronomyToLD(DataModel.SmgPoi gastro, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Restaurant TransformGastronomyToLD(DataModel.ODHActivityPoi gastro, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             Schema.NET.Restaurant mygastro = new Schema.NET.Restaurant();
 
@@ -558,7 +558,7 @@ namespace JsonLDTransformer
 
         #region Tourismattraction
 
-        private static Schema.NET.TouristAttraction TransformActivityPoiToLD(DataModel.SmgPoi poi, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.TouristAttraction TransformActivityPoiToLD(DataModel.ODHActivityPoi poi, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -810,7 +810,7 @@ namespace JsonLDTransformer
 
         #region Recipe
 
-        private static Schema.NET.Recipe TransformRecipeToLD(DataModel.RecipeArticle recipe, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Recipe TransformRecipeToLD(DataModel.Article recipe, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -905,7 +905,7 @@ namespace JsonLDTransformer
             return myrecipe;
         }
 
-        private static RecipeDetails GetRecipeDetails(DataModel.RecipeArticle recipe, string language)
+        private static RecipeDetails GetRecipeDetails(DataModel.Article recipe, string language)
         {
             RecipeDetails myrecipedetail = new RecipeDetails();
 

@@ -13,7 +13,7 @@ namespace PushServer
     {
 		#region Weather
 
-		public static PushServerMessage GetWeatherInfo(string siaguser, string siagpswd, string xmldir, string language, string group, TraceSource tracesource)
+		public static PushServerMessage? GetWeatherInfo(string siaguser, string siagpswd, string xmldir, string language, string group, TraceSource tracesource)
 		{
 			try
 			{
@@ -24,6 +24,9 @@ namespace PushServer
 				var weatherdatacondition = weatherdata.Conditions.Where(x => x.date.Date == DateTime.Now.Date).FirstOrDefault();
 				//var weatherdataconditionit = weatherdatait.Conditions.Where(x => x.date.Date == DateTime.Now.Date).FirstOrDefault();
 				//var weatherdataconditionen = weatherdataen.Conditions.Where(x => x.date.Date == DateTime.Now.Date).FirstOrDefault();
+
+				if (weatherdatacondition is not { })
+					return null;
 
 				tracesource.TraceEvent(TraceEventType.Information, 0, "Weatherinfo GET success, language " + language);
 

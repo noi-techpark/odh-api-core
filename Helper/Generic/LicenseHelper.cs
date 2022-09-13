@@ -41,7 +41,7 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.hgv.it";
 
-            if (data.Source.ToLower() == "lts")
+            if (data.Source?.ToLower() == "lts")
             {
                 isopendata = false;
                 licensetype = "Closed";
@@ -51,7 +51,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforActivity(PoiBaseInfos data)
+        public static LicenseInfo GetLicenseforActivity(LTSActivity data)
         {
             var isopendata = false;
             var licensetype = "Closed";
@@ -128,7 +128,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforOdhActivityPoi(SmgPoi data)
+        public static LicenseInfo GetLicenseforOdhActivityPoi(ODHActivityPoi data)
         {
             var isopendata = false;
             var licensetype = "Closed";
@@ -202,7 +202,7 @@ namespace Helper
                 licensetype = ""; //licensetype = "CC0";
             }
 
-            if(data.Source.ToLower() == "content")
+            if(data.Source?.ToLower() == "content")
             {
                 licenseholder = @"https://www.idm-suedtirol.com";
             }
@@ -231,7 +231,7 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
 
-            if (!data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH"))
+            if (data.attributes.categories is { } && !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH"))
             {
                 isopendata = true;
                 licensetype = "CC0";
@@ -247,18 +247,18 @@ namespace Helper
             var licenseholder = @"http://www.eurac.edu";
             var author = "";
 
-            if (data.Source.ToLower() == "content")
+            if (data.Source?.ToLower() == "content")
             {
                 licenseholder = @"https://noi.bz.it";
                 isopendata = true;
                 licensetype = "CC0";
             }
-            else if (data.Source.ToLower() != "content" && data.Source.ToLower() != "ebms")
+            else if (data.Source?.ToLower() != "content" && data.Source?.ToLower() != "ebms")
             {
                 licenseholder = @"https://noi.bz.it";
                 isopendata = true;
                 licensetype = "CC0";
-                author = data.Source;
+                author = data.Source ?? "";
             }
 
             return GetLicenseInfoobject(licensetype, author, licenseholder, !isopendata);

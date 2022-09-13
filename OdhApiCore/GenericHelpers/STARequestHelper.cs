@@ -67,7 +67,7 @@ namespace OdhApiCore.GenericHelpers
                             tourismvereinlist: new List<string>(), regionlist: new List<string>(),
                             apartmentfilter: null, bookable: null, altitude: false,
                             altitudemin: 0, altitudemax: 0,
-                            activefilter: true, smgactivefilter: null, publishedonlist: new List<string>(),
+                            activefilter: true, smgactivefilter: null, publishedonlist: new List<string>(), sourcelist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>() { language },
                             filterClosedData: true, reducedData: true)
                       .OrderByRaw(orderby);
@@ -115,7 +115,7 @@ namespace OdhApiCore.GenericHelpers
                             activitytypelist: new List<string>(), poitypelist: new List<string>(), difficultylist: new List<string>(), distance: false,
                             distancemin: 0, distancemax: 0, duration: false, durationmin: 0,
                             durationmax: 0, altitude: false, altitudemin: 0, altitudemax: 0,
-                            tagbehaviour: "", taglist: new List<string>(), publishedonlist: new List<string>(),
+                            tagbehaviour: "", tagdict: null, publishedonlist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null,
                             filterClosedData: true, reducedData: true)
                     .OrderByRaw(orderby);

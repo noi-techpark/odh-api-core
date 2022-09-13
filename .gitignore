@@ -164,7 +164,6 @@ $RECYCLE.BIN/
 .fake
 .ionide
 
-/OdhApiCore/wwwroot/json
 /OdhApiCore/STAAccommodations_de.json
 /OdhApiCore/STAAccommodations_en.json
 /OdhApiCore/STAAccommodations_it.json
@@ -174,3 +173,4 @@ $RECYCLE.BIN/
 /OdhApiCore/AccosAll.json
 /OdhApiCore/AccosBookable.json
 /OdhApiCore/GenericTags.json
+/OdhApiCore/wwwroot/json/swagger.json

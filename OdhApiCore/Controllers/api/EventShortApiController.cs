@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using DataModel.Annotations;
 using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -12,6 +13,7 @@ using Npgsql;
 using OdhApiCore.Responses;
 using SqlKata;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -76,10 +78,9 @@ namespace OdhApiCore.Controllers.api
             string? enddate = null, 
             string? datetimeformat = null, 
             string? source = null,
-            //[RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
-            [JsonConverter(typeof(StringEnumConverter))]
-            EventShortEventLocation? eventlocation = null, 
-            //string? eventlocation = null,
+            [SwaggerEnum(new[] { "NOI", "EV", "VV", "OUT" })]
+            [SwaggerParameter("<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>")]
+            string? eventlocation = null, 
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
@@ -104,7 +105,7 @@ namespace OdhApiCore.Controllers.api
             return await GetEventShortList(
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
-                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation.ToString(),
+                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, active: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, optimizedates: optimizedates,
                    sortorder: sortorder, seed: seed, lastchange: lastchange, publishedon: publishedon, 
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
@@ -227,7 +228,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>Collection of EventShortType Object</returns> 
-        /// [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventShortTypes")]
@@ -299,16 +300,12 @@ namespace OdhApiCore.Controllers.api
                        .ApplyRawFilter(rawfilter)
                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);
 
-                //.OrderBySeed(ref seed, );
-
-                //.OrderBy("data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);                       
-
                 // Get paginated data
                 var data =
-                    await query
+                    (await query
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
-                            perPage: pagesize ?? 25);
+                            perPage: pagesize ?? 25));
 
                 if (optimizedates)
                     data.List = OptimizeRoomForAppList(data.List);
@@ -349,7 +346,7 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                if (optimizedates)
+                if (optimizedates && data is { })
                     data = OptimizeRoomForApp(data);
 
                 return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
@@ -457,15 +454,6 @@ namespace OdhApiCore.Controllers.api
                             myeventshortbyroom.SpaceType = room.SpaceType;
                             myeventshortbyroom.Subtitle = room.Subtitle;
 
-
-                            //var maplink = noiroomslist.Where(x => x.name == room.SpaceDesc.ToLower()).FirstOrDefault();
-                            ////var maplink = noiroomslist.Where(x => x.name == eventshort.AnchorVenue.ToLower()).FirstOrDefault();
-
-                            //if (maplink != null)
-                            //    myeventshortbyroom.MapsNoiUrl = maplink.maplink;
-                            //else
-                            //    myeventshortbyroom.MapsNoiUrl = "";
-
                             string roomname = room.SpaceDesc ?? "";
                             if (roomname.StartsWith("NOI ") || roomname.StartsWith("Noi ") || roomname.StartsWith("noi "))
                                 roomname = roomname.Remove(0, 3).Trim();
@@ -476,11 +464,11 @@ namespace OdhApiCore.Controllers.api
                                 myeventshortbyroom.CompanyName = "";
 
 
-                            //New Fields to display
+                            // New Fields to display
                             myeventshortbyroom.ActiveWeb = eventshort.ActiveWeb;
                             myeventshortbyroom.ImageGallery = eventshort.ImageGallery != null ? eventshort.ImageGallery : new List<ImageGallery>();
                             myeventshortbyroom.VideoUrl = eventshort.VideoUrl != null ? eventshort.VideoUrl : "";
-                            //Same Logic
+                            // Same Logic
 
                             string textde = eventshort.EventTextDE != null ? eventshort.EventTextDE : "";
 
@@ -489,9 +477,9 @@ namespace OdhApiCore.Controllers.api
                             myeventshortbyroom.EventTextEN = eventshort.EventTextEN;
 
 
-                            if (String.IsNullOrEmpty(myeventshortbyroom.EventTextIT))
+                            if (string.IsNullOrEmpty(myeventshortbyroom.EventTextIT))
                                 myeventshortbyroom.EventTextIT = textde;
-                            if (String.IsNullOrEmpty(myeventshortbyroom.EventTextEN))
+                            if (string.IsNullOrEmpty(myeventshortbyroom.EventTextEN))
                                 myeventshortbyroom.EventTextEN = textde;
 
                             myeventshortbyroom.TechnologyFields = eventshort.TechnologyFields != null ? eventshort.TechnologyFields : new List<string>();
@@ -521,25 +509,10 @@ namespace OdhApiCore.Controllers.api
                                 myeventshortbyroom.ExternalOrganizer = false;
 
 
-                            if (!String.IsNullOrEmpty(eventshort.Display5))
+                            if (!string.IsNullOrEmpty(eventshort.Display5))
                                 myeventshortbyroom.CompanyName = eventshort.Display5;
 
                             AddToRoomList(eventshortlistbyroom, myeventshortbyroom);
-
-                            //if (onlyactive == null)
-                            //    onlyactive = "";
-
-                            //if (onlyactive.ToLower() == "true")
-                            //{
-                            //    if (eventshort.Display1 == "Y")
-                            //        AddToRoomList(eventshortlistbyroom, myeventshortbyroom);
-                            //    //eventshortlistbyroom.Add(myeventshortbyroom);
-                            //}
-                            //else
-                            //{
-                            //    //eventshortlistbyroom.Add(myeventshortbyroom);
-                                
-                            //}
                         }
                     }
                 }
@@ -550,13 +523,10 @@ namespace OdhApiCore.Controllers.api
 
         private void AddToRoomList(List<EventShortByRoom> eventshortlistbyroom, EventShortByRoom roomtoadd)
         {
-            //Sieh nach ob bereits ein Event mit demselben namen und 
+            // Sieh nach ob bereits ein Event mit demselben namen und 
             var sameevent = eventshortlistbyroom.Where(x => x.Id == roomtoadd.Id
                                                         && x.RoomStartDate == roomtoadd.RoomStartDate
                                                         && x.RoomEndDate == roomtoadd.RoomEndDate).FirstOrDefault();
-
-
-
 
             if (sameevent != null)
             {
@@ -571,10 +541,9 @@ namespace OdhApiCore.Controllers.api
 
         }
 
-        private IEnumerable<JsonRaw>? OptimizeRoomForAppList(IEnumerable<JsonRaw>? data)
+        private IEnumerable<JsonRaw> OptimizeRoomForAppList(IEnumerable<JsonRaw> data)
         {
             List<JsonRaw> datanew = new List<JsonRaw>();
-
             foreach (var eventshortraw in data)
             {
                 datanew.Add(OptimizeRoomForApp(eventshortraw));
@@ -587,30 +556,29 @@ namespace OdhApiCore.Controllers.api
         private JsonRaw OptimizeRoomForApp(JsonRaw eventshortraw)
         {
             //var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x.Value)!).ToList();
-            var eventshort = JsonConvert.DeserializeObject<EventShort>(eventshortraw.Value);
+            var eventshort = JsonConvert.DeserializeObject<EventShort>(eventshortraw.Value) ?? new();
 
-            //TODO
-            //Remove all Rooms with x
-            //Starting and ending date check with rooms remaining
+            // TODO: Remove all Rooms with x
+            // Starting and ending date check with rooms remaining
             if (eventshort.RoomBooked != null && eventshort.RoomBooked.Count > 0)
             {
                 eventshort.RoomBooked.RemoveAll(x => x.Comment == "x" || x.Comment == "X");
             }
 
-            //Get the lowest room start date
-            var firstbegindate = eventshort.RoomBooked.OrderBy(x => x.StartDate).Select(x => x.StartDate).First();
-            var lastenddate = eventshort.RoomBooked.OrderByDescending(x => x.EndDate).Select(x => x.EndDate).First();
+            // Get the lowest room start date
+            var firstbegindate = eventshort.RoomBooked?.OrderBy(x => x.StartDate).Select(x => x.StartDate).FirstOrDefault();
+            var lastenddate = eventshort.RoomBooked?.OrderByDescending(x => x.EndDate).Select(x => x.EndDate).FirstOrDefault();
 
-            if (firstbegindate != eventshort.StartDate)
+            if (firstbegindate.HasValue && firstbegindate != eventshort.StartDate)
             {
-                eventshort.StartDate = firstbegindate;
-                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(firstbegindate);
+                eventshort.StartDate = firstbegindate.Value;
+                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(firstbegindate.Value);
             }
 
-            if (lastenddate != eventshort.EndDate)
+            if (lastenddate.HasValue && lastenddate != eventshort.EndDate)
             {
-                eventshort.EndDate = lastenddate;
-                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(lastenddate);
+                eventshort.EndDate = lastenddate.Value;
+                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(lastenddate.Value);
             }
 
             return new JsonRaw(eventshort);
@@ -1275,7 +1243,7 @@ namespace OdhApiCore.Controllers.api
 
     public class EventShortType
     {
-        public List<string> TechnologyFields { get; set; }
-        public List<string> CustomTaggings { get; set; }
+        public List<string> TechnologyFields { get; set; } = new();
+        public List<string> CustomTaggings { get; set; } = new();
     }
 }

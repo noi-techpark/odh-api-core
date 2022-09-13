@@ -39,7 +39,10 @@ namespace OdhApiCore.Controllers.api
             string? lastchange, string? sortorder, string? publishedonfilter)
         {            
             idlist = Helper.CommonListCreator.CreateIdList(eventids);
-            sourcelist = Helper.CommonListCreator.CreateIdList(source);
+            var sourcelisttemp = Helper.CommonListCreator.CreateIdList(source);                     
+
+            sourcelist = ExtendSourceFilterEventShort(sourcelisttemp);
+
             eventlocationlist = Helper.CommonListCreator.CreateIdList(eventlocation);
             webaddresslist = Helper.CommonListCreator.CreateIdList(webaddress);
 
@@ -103,6 +106,29 @@ namespace OdhApiCore.Controllers.api
             this.lastchange = lastchange;
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
+        }
+
+        private List<string> ExtendSourceFilterEventShort(List<string> sourcelist)
+        {
+            List<string> sourcelistnew = new();
+
+            foreach (var source in sourcelist)
+            {
+                sourcelistnew.Add(source);
+
+                if (source == "noi")
+                {
+                    if (!sourcelistnew.Contains("Content"))
+                        sourcelistnew.Add("Content");                    
+                }
+                else if (source == "eurac")
+                {
+                    if (!sourcelistnew.Contains("EBMS"))
+                        sourcelistnew.Add("EBMS");                    
+                }               
+            }
+
+            return sourcelistnew;
         }
     }
 }

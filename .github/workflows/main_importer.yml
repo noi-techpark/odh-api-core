@@ -33,6 +33,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
 
     - name: Build docker
       uses: noi-techpark/github-actions/docker-build@v2
@@ -51,6 +53,8 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - name: Create .env file
         uses: noi-techpark/github-actions/env-file@v2
@@ -125,6 +129,8 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - name: Create .env file
         uses: noi-techpark/github-actions/env-file@v2

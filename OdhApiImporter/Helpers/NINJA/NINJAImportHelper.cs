@@ -86,9 +86,9 @@ namespace OdhApiImporter.Helpers
 
                             var result = await InsertDataToDB(eventtosave, kvp);
 
-                            newimportcounter = newimportcounter + result.created.Value;
-                            updateimportcounter = updateimportcounter + result.updated.Value;
-                            errorimportcounter = errorimportcounter + result.error.Value;
+                            newimportcounter = newimportcounter + result.created ?? 0;
+                            updateimportcounter = updateimportcounter + result.updated ?? 0;
+                            errorimportcounter = errorimportcounter + result.error ?? 0;
 
                             idlistspreadsheet.Add(idtocheck.ToUpper());
                             if (!sourcelist.Contains(eventtosave.Source))

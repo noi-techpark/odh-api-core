@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OdhApiCore.Filters;
+using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -38,6 +40,7 @@ namespace OdhApiCore.Controllers
         /// <param name="displayascategory">true = returns only Tags which are marked as DisplayAsCategory true</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="localizationlanguage">here for Compatibility Reasons, replaced by language parameter</param>
+        /// <param name="source">Source Filter (possible Values: 'lts','idm), (default:'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -50,14 +53,17 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<TagLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
+        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Tag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetTagAsync(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
             string? language = null,
             string? validforentity = null,
             string? mainentity = null,
             bool? displayascategory = null,
+            string? source = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -72,7 +78,7 @@ namespace OdhApiCore.Controllers
                 language = localizationlanguage;
 
 
-            return await Get(language, mainentity, validforentity, displayascategory, fields: fields ?? Array.Empty<string>(), 
+            return await Get(pagenumber, pagesize, language, mainentity, validforentity, displayascategory, source, fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
         }
@@ -93,7 +99,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Tag/{id}", Name = "SingleTag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
-        public async Task<IActionResult> GetTagSingle(string id,
+        public async Task<IActionResult> GetTagSingle(uint? pagenumber, int? pagesize, string id,
             string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -112,7 +118,9 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> Get(string? language, string? maintype, string? validforentity, bool? displayascategory, string[] fields,
+        private Task<IActionResult> Get(
+            uint? pagenumber, int? pagesize, 
+            string? language, string? maintype, string? validforentity, bool? displayascategory, string? source, string[] fields,
             string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
@@ -120,6 +128,7 @@ namespace OdhApiCore.Controllers
             {
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var sourcelist = Helper.CommonListCreator.CreateIdList(source);
 
                 var query = 
                     QueryFactory.Query()
@@ -129,6 +138,7 @@ namespace OdhApiCore.Controllers
                         languagelist: new List<string>(), 
                         mainentitylist: maintypeslist,
                         validforentitylist: validforentitytypeslist,
+                        sourcelist: sourcelist,
                         displayascategory: displayascategory,
                         searchfilter: searchfilter,
                         language: language,
@@ -137,12 +147,40 @@ namespace OdhApiCore.Controllers
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
 
+            var fieldsTohide = FieldsToHide;
 
-                var data = await query.GetAsync<JsonRaw>();
+                if (pagenumber != null)
+                {
 
-                var fieldsTohide = FieldsToHide;
+                    // Get paginated data
+                    var data =
+                        await query
+                            .PaginateAsync<JsonRaw>(
+                                page: (int)pagenumber,
+                                perPage: pagesize ?? 25);
 
-                return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
+                    var dataTransformed =
+                        data.List.Select(
+                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        );
+
+                    uint totalpages = (uint)data.TotalPages;
+                    uint totalcount = (uint)data.Count;
+
+                    return ResponseHelpers.GetResult(
+                        (uint)pagenumber,
+                        totalpages,
+                        totalcount,
+                        null,
+                        dataTransformed,
+                        Url);
+                }
+                else
+                {
+                    var data = await query.GetAsync<JsonRaw>();
+
+                    return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
+                }
             });
         }      
 

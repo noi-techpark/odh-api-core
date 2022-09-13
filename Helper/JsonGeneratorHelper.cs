@@ -39,7 +39,7 @@ namespace Helper
                         tourismvereinlist: new List<string>(), regionlist: new List<string>(),
                         apartmentfilter: null, bookable: isbookable, altitude: false,
                         altitudemin: 0, altitudemax: 0,
-                        activefilter: null, smgactivefilter: true, publishedonlist: new List<string>(),
+                        activefilter: null, smgactivefilter: true, publishedonlist: new List<string>(), sourcelist: new List<string>(),
                         searchfilter: null, language: null, lastchange: null, languagelist: new List<string>(),
                         filterClosedData: false, reducedData: false)
                   .OrderByRaw(orderby);

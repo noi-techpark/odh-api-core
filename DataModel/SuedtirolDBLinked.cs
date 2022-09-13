@@ -16,7 +16,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "AccommodationFeatures/" + Uri.EscapeUriString(this.Id));
+                return "AccommodationFeatures/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -27,7 +27,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "AccommodationRoom/" + Uri.EscapeUriString(this.Id));
+                return "AccommodationRoom/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -38,7 +38,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "EventTopics/" + Uri.EscapeUriString(this.TopicRID));
+                return "EventTopics/" + Uri.EscapeDataString(this.TopicRID);
             }
         }
     }
@@ -49,7 +49,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "GastronomyTypes/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -60,7 +60,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "GastronomyTypes/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -71,7 +71,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "GastronomyTypes/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -82,7 +82,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "GastronomyTypes/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "GastronomyTypes/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -93,7 +93,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "Region/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "Region/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -104,7 +104,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "TourismAssociation/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -115,7 +115,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "Municipality/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -126,7 +126,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "District/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "District/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -137,7 +137,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.Id) ? null : Uri.EscapeUriString(ODHConstant.ApplicationURL + "Area/" + Uri.EscapeUriString(this.Id));
+                return String.IsNullOrEmpty(this.Id) ? null : "Area/" + Uri.EscapeDataString(this.Id);
             }
         }
     }
@@ -283,7 +283,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Gastronomy/" + Uri.EscapeUriString(this.Id));
+                return "Gastronomy/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -322,7 +322,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Accommodation/" + Uri.EscapeUriString(this.Id));
+                return "Accommodation/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -347,7 +347,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.AccoTypeId) ? null : new AccoType() { Id = this.AccoTypeId, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + Uri.EscapeUriString(this.AccoTypeId) };
+                return String.IsNullOrEmpty(this.AccoTypeId) ? null : new AccoType() { Id = this.AccoTypeId, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + Uri.EscapeDataString(this.AccoTypeId) };
             }
         }
 
@@ -355,7 +355,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.AccoCategoryId) ? null : new AccoCategory() { Id = this.AccoCategoryId, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + Uri.EscapeUriString(this.AccoCategoryId) };
+                return String.IsNullOrEmpty(this.AccoCategoryId) ? null : new AccoCategory() { Id = this.AccoCategoryId, Self = ODHConstant.ApplicationURL + "AccommodationTypes/" + Uri.EscapeDataString(this.AccoCategoryId) };
             }
         }
 
@@ -409,7 +409,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "AccommodationRoom/" + Uri.EscapeUriString(this.Id));
+                return "AccommodationRoom/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -457,7 +457,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Event/" + Uri.EscapeUriString(this.Id));
+                return "Event/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -504,7 +504,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Event/" + Uri.EscapeUriString(this.Id));
+                return "Package/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -531,13 +531,13 @@ namespace DataModel
 
     public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "ODHActivityPoi/" + Uri.EscapeUriString(this.Id));
+                return this.Id != null ? "ODHActivityPoi/" + Uri.EscapeDataString(this.Id) : null;
             }
         }
 
@@ -557,7 +557,7 @@ namespace DataModel
             }
         }
 
-        public ICollection<ODHActivityPoiTypesLink> ODHActivityPoiTypes
+        public ICollection<ODHActivityPoiTypesLink>? ODHActivityPoiTypes
         {
             get
             {
@@ -571,7 +571,7 @@ namespace DataModel
             }
         }
 
-        public ICollection<AreaLink> Areas
+        public ICollection<AreaLink>? Areas
         {
             get
             {
@@ -589,9 +589,11 @@ namespace DataModel
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
+
+        
     }
 
-    public class LTSPoiLinked : GBLTSPoi, IMetaData
+    public class LTSPoiLinked : LTSPoi, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -599,7 +601,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Poi/" + Uri.EscapeUriString(this.Id));
+                return "Poi/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -624,11 +626,11 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeUriString(this.Type), Type = "Type" });
+                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeDataString(this.Type), Type = "Type" });
                 if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeUriString(this.SubType), Type = "SubType" });
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeDataString(this.SubType), Type = "SubType" });
                 if (!String.IsNullOrEmpty(this.PoiType))
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeUriString(this.PoiType), Type = "PoiType" });
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "PoiTypes/" + Uri.EscapeDataString(this.PoiType), Type = "PoiType" });
 
                 return returnlist;
             }
@@ -646,10 +648,10 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }
+        public new List<LTSTagsLinked>? LTSTags { get; set; }        
     }
 
-    public class LTSActivityLinked : GBLTSActivity, IMetaData
+    public class LTSActivityLinked : LTSActivity, IMetaData
     {
         public Metadata _Meta { get; set; }
 
@@ -657,7 +659,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Activity/" + Uri.EscapeUriString(this.Id));
+                return ODHConstant.ApplicationURL + "Activity/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -682,11 +684,11 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeUriString(this.Type), Type = "Type" });
+                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeDataString(this.Type), Type = "Type" });
                 if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeUriString(this.SubType), Type = "SubType" });
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeDataString(this.SubType), Type = "SubType" });
                 if (!String.IsNullOrEmpty(this.PoiType))
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeUriString(this.PoiType), Type = "PoiType" });
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "ActivityTypes/" + Uri.EscapeDataString(this.PoiType), Type = "PoiType" });
 
                 return returnlist;
             }
@@ -704,7 +706,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }
+        public new List<LTSTagsLinked>? LTSTags { get; set; }        
     }
 
     public class ArticlesLinked : ArticleBaseInfos, IMetaData
@@ -715,7 +717,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Article/" + Uri.EscapeUriString(this.Id));
+                return this.Id != null ? "Article/" + Uri.EscapeDataString(this.Id) : null;
             }
         }
 
@@ -732,9 +734,9 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeUriString(this.Type), Type = "ArticleType" });
+                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeDataString(this.Type), Type = "ArticleType" });
                 if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeUriString(this.SubType), Type = "ArticleSubType" });
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeDataString(this.SubType), Type = "ArticleSubType" });
 
                 return returnlist;
             }
@@ -770,7 +772,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "District/" + Uri.EscapeUriString(this.Id));
+                return "District/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -794,7 +796,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeUriString(this.RegionId) };
+                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.RegionId) };
             }
         }
 
@@ -802,7 +804,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.MunicipalityId) ? null : new MunicipalityLink() { Id = this.MunicipalityId, Self = ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeUriString(this.MunicipalityId) };
+                return String.IsNullOrEmpty(this.MunicipalityId) ? null : new MunicipalityLink() { Id = this.MunicipalityId, Self = ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeDataString(this.MunicipalityId) };
             }
         }
 
@@ -810,7 +812,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeUriString(this.TourismvereinId) };
+                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.TourismvereinId) };
             }
         }
     }
@@ -823,7 +825,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeUriString(this.Id));
+                return "Municipality/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -847,7 +849,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeUriString(this.RegionId) };
+                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.RegionId) };
             }
         }
 
@@ -855,7 +857,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeUriString(this.TourismvereinId) };
+                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.TourismvereinId) };
             }
         }
     }
@@ -868,7 +870,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeUriString(this.Id));
+                return "TourismAssociation/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -892,7 +894,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeUriString(this.RegionId) };
+                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.RegionId) };
             }
         }
 
@@ -913,7 +915,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Region/" + Uri.EscapeUriString(this.Id));
+                return "Region/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -950,7 +952,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "MetaRegion/" + Uri.EscapeUriString(this.Id));
+                return "MetaRegion/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1003,7 +1005,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "ExperienceArea/" + Uri.EscapeUriString(this.Id));
+                return "ExperienceArea/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1048,7 +1050,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Area/" + Uri.EscapeUriString(this.Id));
+                return "Area/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1064,7 +1066,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeUriString(this.RegionId) };
+                return String.IsNullOrEmpty(this.RegionId) ? null : new RegionLink() { Id = this.RegionId, Self = ODHConstant.ApplicationURL + "Region/" + Uri.EscapeDataString(this.RegionId) };
             }
         }
 
@@ -1072,7 +1074,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.MunicipalityId) ? null : new MunicipalityLink() { Id = this.MunicipalityId, Self = ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeUriString(this.MunicipalityId) };
+                return String.IsNullOrEmpty(this.MunicipalityId) ? null : new MunicipalityLink() { Id = this.MunicipalityId, Self = ODHConstant.ApplicationURL + "Municipality/" + Uri.EscapeDataString(this.MunicipalityId) };
             }
         }
 
@@ -1080,7 +1082,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeUriString(this.TourismvereinId) };
+                return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.TourismvereinId) };
             }
         }
 
@@ -1088,7 +1090,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.SkiAreaID) ? null : new SkiAreaLink() { Id = this.SkiAreaID, Self = ODHConstant.ApplicationURL + "SkiArea/" + Uri.EscapeUriString(this.SkiAreaID) };
+                return String.IsNullOrEmpty(this.SkiAreaID) ? null : new SkiAreaLink() { Id = this.SkiAreaID, Self = ODHConstant.ApplicationURL + "SkiArea/" + Uri.EscapeDataString(this.SkiAreaID) };
             }
         }
     }
@@ -1101,7 +1103,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "SkiArea/" + Uri.EscapeUriString(this.Id));
+                return "SkiArea/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1125,7 +1127,7 @@ namespace DataModel
         {
             get
             {
-                return String.IsNullOrEmpty(this.SkiRegionId) ? null : new SkiRegionLink() { Id = this.SkiRegionId, Self = ODHConstant.ApplicationURL + "SkiRegion/" + Uri.EscapeUriString(this.SkiRegionId) };
+                return String.IsNullOrEmpty(this.SkiRegionId) ? null : new SkiRegionLink() { Id = this.SkiRegionId, Self = ODHConstant.ApplicationURL + "SkiRegion/" + Uri.EscapeDataString(this.SkiRegionId) };
             }
         }
 
@@ -1165,7 +1167,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "SkiRegion/" + Uri.EscapeUriString(this.Id));
+                return "SkiRegion/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1194,7 +1196,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "WebcamInfo/" + Uri.EscapeUriString(this.Id));
+                return "WebcamInfo/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1231,7 +1233,7 @@ namespace DataModel
         {
             get
             {
-                return Uri.EscapeUriString(ODHConstant.ApplicationURL + "Weather/Measuringpoint/" + Uri.EscapeUriString(this.Id));
+                return "Weather/Measuringpoint/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -1293,6 +1295,32 @@ namespace DataModel
             get
             {
                 return ODHConstant.ApplicationURL + "EventShort/" + this.Id;
+            }
+        }
+    }
+
+    public class WeatherLinked : Weather, IMetaData
+    {
+        public Metadata? _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Weather/" + this.Id;
+            }
+        }
+    }
+
+    public class WeatherHistoryLinked : WeatherHistory, IMetaData
+    {
+        public Metadata? _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "WeatherHistory/" + this.Id;
             }
         }
     }

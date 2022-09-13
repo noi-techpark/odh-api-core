@@ -17,110 +17,110 @@ namespace LCS
         {
             List<MeasuringpointReduced> mymeasuringpointlist = new List<MeasuringpointReduced>();
 
-            foreach (var measuringpoint in measuringpoints.MeasuringPoints.MeasuringPoint)
+            if (measuringpoints.MeasuringPoints.MeasuringPoint != null)
             {
 
 
-                var mymeasuringpoint = new MeasuringpointReduced();
-
-
-
-                mymeasuringpoint.Id = measuringpoint.RID;
-                mymeasuringpoint.Shortname = measuringpoint.Name.FirstOrDefault().InnerText;
-
-                mymeasuringpoint.LastUpdate = Convert.ToDateTime(measuringpoint.News.Status.LastChange);
-
-                mymeasuringpoint.SnowHeight = measuringpoint.Observation.Snow.Height != null ? measuringpoint.Observation.Snow.Height.ToString() : "0";
-                mymeasuringpoint.newSnowHeight = measuringpoint.Observation.Snow.NewHeight != null ? measuringpoint.Observation.Snow.NewHeight.ToString() : "-";
-                mymeasuringpoint.Temperature = measuringpoint.Observation.Temperature != null ? measuringpoint.Observation.Temperature.ToString() + " °" : "-";
-                mymeasuringpoint.LastSnowDate = measuringpoint.Observation.Snow.DateLastSnow != null ? Convert.ToDateTime(measuringpoint.Observation.Snow.DateLastSnow) : DateTime.MinValue;
-                mymeasuringpoint.Source = "lts";
-
-                List<WeatherObservation> myweatherobservationlist = new List<WeatherObservation>();
-
-
-                if (measuringpoint.Observation.EnumCodes != null)
+                foreach (var measuringpoint in measuringpoints.MeasuringPoints.MeasuringPoint)
                 {
-                    if (measuringpoint.Observation.EnumCodes.EnumCode != null)
+                    var mymeasuringpoint = new MeasuringpointReduced();
+
+                    mymeasuringpoint.Id = measuringpoint.RID;
+                    mymeasuringpoint.Shortname = measuringpoint.Name.FirstOrDefault().InnerText;
+
+                    mymeasuringpoint.LastUpdate = Convert.ToDateTime(measuringpoint.News.Status.LastChange);
+
+                    mymeasuringpoint.SnowHeight = measuringpoint.Observation.Snow.Height != null ? measuringpoint.Observation.Snow.Height.ToString() : "0";
+                    mymeasuringpoint.newSnowHeight = measuringpoint.Observation.Snow.NewHeight != null ? measuringpoint.Observation.Snow.NewHeight.ToString() : "-";
+                    mymeasuringpoint.Temperature = measuringpoint.Observation.Temperature != null ? measuringpoint.Observation.Temperature.ToString() + " °" : "-";
+                    mymeasuringpoint.LastSnowDate = measuringpoint.Observation.Snow.DateLastSnow != null ? Convert.ToDateTime(measuringpoint.Observation.Snow.DateLastSnow) : DateTime.MinValue;
+                    mymeasuringpoint.Source = "lts";
+
+                    List<WeatherObservation> myweatherobservationlist = new List<WeatherObservation>();
+
+
+                    if (measuringpoint.Observation.EnumCodes != null)
                     {
-
-                        foreach (var weatherobservation in measuringpoint.Observation.EnumCodes.EnumCode.FirstOrDefault().Code)
+                        if (measuringpoint.Observation.EnumCodes.EnumCode != null)
                         {
-                            WeatherObservation myobservation = new WeatherObservation();
-                            myobservation.Level = weatherobservation.Level;
-                            myobservation.LevelId = weatherobservation.ID;
-                            myobservation.Id = weatherobservation.RID;
-                            myobservation.WeatherStatus["de"] = weatherobservation.Name.FirstOrDefault().InnerText;
 
-                            myweatherobservationlist.Add(myobservation);
+                            foreach (var weatherobservation in measuringpoint.Observation.EnumCodes.EnumCode.FirstOrDefault().Code)
+                            {
+                                WeatherObservation myobservation = new WeatherObservation();
+                                myobservation.Level = weatherobservation.Level;
+                                myobservation.LevelId = weatherobservation.ID;
+                                myobservation.Id = weatherobservation.RID;
+                                myobservation.WeatherStatus["de"] = weatherobservation.Name.FirstOrDefault().InnerText;
+
+                                myweatherobservationlist.Add(myobservation);
+                            }
                         }
                     }
+                    mymeasuringpoint.WeatherObservation = myweatherobservationlist.ToList();
+
+
+
+                    //NEU add the Measuringpoint only if DateTime is actual
+                    if (mymeasuringpoint.LastUpdate > DateTime.Now.AddYears(-1))
+                        mymeasuringpointlist.Add(mymeasuringpoint);
+
+
+
+
                 }
-                mymeasuringpoint.WeatherObservation = myweatherobservationlist.ToList();
+
+                //NEU Bergstation - Talstation / Mittelstation fix
+                bool hasbergstation = false;
+                bool hasmittelstation = false;
+
+                //Check if measuringpointlist has Bergstation OR Talstation / Mittelstation
+                if (mymeasuringpointlist.Where(x => x.Shortname.Contains("Berg")).Count() > 0)
+                    hasbergstation = true;
+
+                if (mymeasuringpointlist.Where(x => x.Shortname.Contains("Tal") || x.Shortname.Contains("Mittel")).Count() > 0)
+                    hasmittelstation = true;
+
+
+                //IF only 1 available --> Bergstation
+                if (!hasbergstation && !hasmittelstation && mymeasuringpointlist.Count == 1)
+                {
+                    mymeasuringpointlist.FirstOrDefault().Shortname = "Berg " + mymeasuringpointlist.FirstOrDefault().Shortname;
+                }
+                else if (!hasbergstation || !hasmittelstation && mymeasuringpointlist.Count > 1)
+                {
+                    //Fall 2 kein Berg und keine Mittel mehr als 1 MEsspunkt
+                    if (!hasbergstation && !hasmittelstation && mymeasuringpointlist.Count > 1)
+                    {
+                        var mypointtomodify = mymeasuringpointlist.Where(x => !x.Shortname.Contains("Berg") && !x.Shortname.Contains("Mittel") && !x.Shortname.Contains("Tal")).OrderByDescending(x => Convert.ToInt32(x.SnowHeight));
+
+                        if (mypointtomodify.Count() > 0)
+                            mypointtomodify.FirstOrDefault().Shortname = "Berg " + mypointtomodify.FirstOrDefault().Shortname;
+                        if (mypointtomodify.Count() > 1)
+                            mypointtomodify.LastOrDefault().Shortname = "Tal " + mypointtomodify.LastOrDefault().Shortname;
+                    }
+                    //Fall 3 keine Mittel mehr als 1 Messpunkt
+                    else if (hasbergstation && !hasmittelstation && mymeasuringpointlist.Count > 1)
+                    {
+                        var mypointtomodify = mymeasuringpointlist.Where(x => !x.Shortname.Contains("Berg")).OrderBy(x => Convert.ToInt32(x.SnowHeight));
+                        if (mypointtomodify.Count() > 0)
+                            mypointtomodify.FirstOrDefault().Shortname = "Tal " + mypointtomodify.FirstOrDefault().Shortname;
+                    }
+
+                    //Fall 4 keine Berg mehr als 1 Messpunkt
+                    else if (!hasbergstation && hasmittelstation && mymeasuringpointlist.Count > 1)
+                    {
+                        var mypointtomodify = mymeasuringpointlist.Where(x => !x.Shortname.Contains("Tal") && !x.Shortname.Contains("Mittel")).OrderByDescending(x => Convert.ToInt32(x.SnowHeight));
+                        if (mypointtomodify.Count() > 0)
+                            mypointtomodify.FirstOrDefault().Shortname = "Berg " + mypointtomodify.FirstOrDefault().Shortname;
+                    }
+
+                    //Fall 5 beide vorhanden mache nix
 
 
 
-                //NEU add the Measuringpoint only if DateTime is actual
-                if (mymeasuringpoint.LastUpdate > DateTime.Now.AddYears(-1))
-                    mymeasuringpointlist.Add(mymeasuringpoint);
-
-
-
+                }
 
             }
-
-            //NEU Bergstation - Talstation / Mittelstation fix
-            bool hasbergstation = false;
-            bool hasmittelstation = false;
-
-            //Check if measuringpointlist has Bergstation OR Talstation / Mittelstation
-            if (mymeasuringpointlist.Where(x => x.Shortname.Contains("Berg")).Count() > 0)
-                hasbergstation = true;
-
-            if (mymeasuringpointlist.Where(x => x.Shortname.Contains("Tal") || x.Shortname.Contains("Mittel")).Count() > 0)
-                hasmittelstation = true;
-
-
-            //IF only 1 available --> Bergstation
-            if (!hasbergstation && !hasmittelstation && mymeasuringpointlist.Count == 1)
-            {
-                mymeasuringpointlist.FirstOrDefault().Shortname = "Berg " + mymeasuringpointlist.FirstOrDefault().Shortname;
-            }
-            else if (!hasbergstation || !hasmittelstation && mymeasuringpointlist.Count > 1)
-            {
-                //Fall 2 kein Berg und keine Mittel mehr als 1 MEsspunkt
-                if (!hasbergstation && !hasmittelstation && mymeasuringpointlist.Count > 1)
-                {
-                    var mypointtomodify = mymeasuringpointlist.Where(x => !x.Shortname.Contains("Berg") && !x.Shortname.Contains("Mittel") && !x.Shortname.Contains("Tal")).OrderByDescending(x => Convert.ToInt32(x.SnowHeight));
-
-                    if (mypointtomodify.Count() > 0)
-                        mypointtomodify.FirstOrDefault().Shortname = "Berg " + mypointtomodify.FirstOrDefault().Shortname;
-                    if (mypointtomodify.Count() > 1)
-                        mypointtomodify.LastOrDefault().Shortname = "Tal " + mypointtomodify.LastOrDefault().Shortname;
-                }
-                //Fall 3 keine Mittel mehr als 1 Messpunkt
-                else if (hasbergstation && !hasmittelstation && mymeasuringpointlist.Count > 1)
-                {
-                    var mypointtomodify = mymeasuringpointlist.Where(x => !x.Shortname.Contains("Berg")).OrderBy(x => Convert.ToInt32(x.SnowHeight));
-                    if (mypointtomodify.Count() > 0)
-                        mypointtomodify.FirstOrDefault().Shortname = "Tal " + mypointtomodify.FirstOrDefault().Shortname;
-                }
-
-                //Fall 4 keine Berg mehr als 1 Messpunkt
-                else if (!hasbergstation && hasmittelstation && mymeasuringpointlist.Count > 1)
-                {
-                    var mypointtomodify = mymeasuringpointlist.Where(x => !x.Shortname.Contains("Tal") && !x.Shortname.Contains("Mittel")).OrderByDescending(x => Convert.ToInt32(x.SnowHeight));
-                    if (mypointtomodify.Count() > 0)
-                        mypointtomodify.FirstOrDefault().Shortname = "Berg " + mypointtomodify.FirstOrDefault().Shortname;
-                }
-
-                //Fall 5 beide vorhanden mache nix
-
-
-
-            }
-
-
             return mymeasuringpointlist;
         }
 

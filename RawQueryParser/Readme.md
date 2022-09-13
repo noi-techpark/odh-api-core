@@ -33,6 +33,9 @@ in(Features.[*].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")    // all entries in
 in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries in an Array with a specific feature ID - alternative notation
 ```
 
+**Attention**: On the field _ImageGallery _if data is retrieved as anonymous there is a Transformer applied after getting the Result from the DB which cuts out all not CC0 license Images. So there the rawfilter possible can produce false results.  
+
+
 > `<field>` is described [here](#Supported-value-types:)   
 > `<value>` is described [here](#Field-syntax:)
 

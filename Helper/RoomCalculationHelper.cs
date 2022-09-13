@@ -18,7 +18,8 @@ namespace Helper
                 {
                     var cheapestorffersingle = cheapestofferlist.OrderBy(x => x.Price).Take(1).FirstOrDefault();
                     CheapestRoomCombination cheapestroomcombinationresult = new CheapestRoomCombination();
-                    cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { cheapestorffersingle };
+                    if (cheapestorffersingle is { })
+                        cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { cheapestorffersingle };
                     cheapestroomcombinationresult.Service = service;
 
                     return cheapestroomcombinationresult;
@@ -92,7 +93,7 @@ namespace Helper
             //Return Cheapestroomcombination
             var cheapestcombination = mycombinationresult.OrderBy(x => x.Price).Take(1).FirstOrDefault();
 
-            return cheapestcombination;
+            return cheapestcombination ?? new();
         }
 
         //Hack because of CPU always over 90%

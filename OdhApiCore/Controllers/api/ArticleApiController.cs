@@ -65,13 +65,13 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(JsonResult<ArticlesLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
+        //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
         [HttpGet, Route("Article")]
         public async Task<IActionResult> GetArticleList(
             string? language = null,
             uint pagenumber = 1,
             PageSize pagesize = null!,
-            string? articletype = "255",
+            string? articletype = null,
             string? articlesubtype = null,
             string? idlist = null,
             string? langfilter = null,

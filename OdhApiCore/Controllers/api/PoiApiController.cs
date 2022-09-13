@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
 using System;
@@ -66,7 +67,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(JsonResult<LTSPoiLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [CacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
+        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
         [HttpGet, Route("Poi")]
         public async Task<IActionResult> GetPoiList(
             string? language = null,
@@ -148,7 +149,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        //[CacheOutputUntilToday(23, 59)]
+        //[OdhCacheOutputUntilToday(23, 59)]
         [ProducesResponseType(typeof(IEnumerable<PoiTypes>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

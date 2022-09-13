@@ -25,7 +25,7 @@ namespace MSS
         /// <param name="departure">Abreisedatum</param>
         /// <param name="service">Verpflegungsart</param>
         /// <returns></returns>
-        public static async Task<MssResult?> GetMssResponse(HttpClient httpClient, string lang, List<string> idlist, string idsofchannel, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string source, string version, string mssuser, string msspswd, bool withoutmssids = false)
+        public static async Task<MssResult?> GetMssResponse(HttpClient httpClient, string lang, List<string> idlist, string idsofchannel, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string requestsource, string version, string mssuser, string msspswd, bool withoutmssids = false)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace MSS
                 //    tracesource.TraceEvent(TraceEventType.Information, 0, "MSS Request Hotel ID Count: " + A0Ridlist.Count + " Period: " + arrival.ToShortDateString() + " " + departure.ToShortDateString() + " Service: " + service.ToString() + " Rooms: " + myroompersons.Count + " Result from Cache: " + withoutmssids.ToString());
                 //}
 
-                XDocument myrequest = MssRequest.BuildPostData(myidlist, mychannels, myroomlist, arrival, departure, offerdetails, hoteldetails, mytyp, service, lang, idsofchannel, source, version, mssuser, msspswd);
+                XDocument myrequest = MssRequest.BuildPostData(myidlist, mychannels, myroomlist, arrival, departure, offerdetails, hoteldetails, mytyp, service, lang, idsofchannel, requestsource, version, mssuser, msspswd);
 
                 var myresponses = await MssRequest.RequestAsync(httpClient, myrequest);
 
@@ -71,7 +71,7 @@ namespace MSS
                     allmyoffers));
 
                 //Und iatz no parsen
-                MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(lang, hgvservicecode, myresult, idlist, myroompersons, source, version);
+                MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(lang, hgvservicecode, myresult, idlist, myroompersons, requestsource, version);
 
                 return myparsedresponse;
             }

@@ -19,6 +19,7 @@ using Microsoft.Extensions.Primitives;
 using System.Globalization;
 using System.Net.Http;
 using Swashbuckle.AspNetCore.Annotations;
+using DataModel.Annotations;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -221,7 +222,7 @@ namespace OdhApiCore.Controllers.api
         #region CacheTestController
 
         //// Cache for 100 seconds on the server, inform the client that response is valid for 100 seconds
-        //[CacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100, Private = true)]
+        //[OdhCacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100, Private = true)]
         //[HttpGet, Route("Cached100")]
         //public IEnumerable<string> GetCached100()
         //{
@@ -229,7 +230,7 @@ namespace OdhApiCore.Controllers.api
         //}
 
         //// Cache for 100 seconds on the server, inform the client that response is valid for 100 seconds. Cache for anonymous users only.
-        //[CacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100, AnonymousOnly = true)]
+        //[OdhCacheOutput(ClientTimeSpan = 100, ServerTimeSpan = 100, AnonymousOnly = true)]
         //[HttpGet, Route("Cached100Anonymous")]
         //public IEnumerable<string> GetCached100Anonymous()
         //{
@@ -237,7 +238,7 @@ namespace OdhApiCore.Controllers.api
         //}
 
         //// Inform the client that response is valid for 50 seconds. Force client to revalidate.
-        //[CacheOutput(ClientTimeSpan = 50, MustRevalidate = true)]
+        //[OdhCacheOutput(ClientTimeSpan = 50, MustRevalidate = true)]
         //[HttpGet, Route("Cached50Revalidate")]
         //public IEnumerable<string> GetCached50Revalidate(string hello)
         //{
@@ -245,7 +246,7 @@ namespace OdhApiCore.Controllers.api
         //}
 
         //// Cache for 50 seconds on the server. Ignore querystring parameters when serving cached content.
-        //[CacheOutput(ServerTimeSpan = 50, ExcludeQueryStringFromCacheKey = true)]
+        //[OdhCacheOutput(ServerTimeSpan = 50, ExcludeQueryStringFromCacheKey = true)]
         //[HttpGet, Route("Cached50WithoutQS")]
         //public IEnumerable<string> GetCached50WithoutQS(string hello)
         //{
@@ -258,11 +259,10 @@ namespace OdhApiCore.Controllers.api
     }
     
     public class ObjectwithDeprecated
-    {       
-        public string name { get; set; }
-        [SwaggerSchema("Will be removed on 12-05-22")]
-        [Obsolete("name2 is deprecated, please use name instead.")]
-        public string name2 { get; set; }
-        public ICollection<string> namecol { get; set; }
+    {
+        public string? name { get; set; }
+        [SwaggerDeprecated("Will be removed on 12-05-22, please use name instead.")]
+        public string? name2 { get; set; }
+        public ICollection<string>? namecol { get; set; }
     }
 }
