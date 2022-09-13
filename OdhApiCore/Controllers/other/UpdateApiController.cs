@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers.api
                 {
                     operation = "Update Raven",
                     updatetype = "single",
-                    otherinfo = "",
+                    otherinfo = datatype,
                     id = id,
                     message = "Update Raven failed: " + ex.Message,
                     recordsmodified = 0,
