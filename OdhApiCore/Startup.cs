@@ -49,7 +49,7 @@ namespace OdhApiCore
 {
     public class Startup
     {
-        public Startup(IWebHostEnvironment env, IConfiguration configuration)
+        public Startup(IWebHostEnvironment env, IConfiguration configuration)ca
         {
             Configuration = configuration;
             CurrentEnvironment = env;

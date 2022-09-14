@@ -159,6 +159,23 @@ namespace OdhApiCore.Controllers.api
             return Ok(toreturn);
         }
 
+
+        [HttpGet, Route("TestQuery")]
+        public async Task<IActionResult> GetTestRudi()
+        {
+            var validforentity = new List<string>();         
+            validforentity.Add("winter");
+
+            var subcategories = await QueryFactory.Query()
+             .SelectRaw("data")
+             .From("smgtags")
+             .ODHTagValidForEntityFilter(validforentity)
+             .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
+             .GetAllAsObject<ODHTagLinked>();
+
+            return Ok(subcategories);
+        }
+
         ////Not working
         //[HttpGet, Route("TestDateTimeConversion6")]
         //public IActionResult GetDatetimeConversiont6()

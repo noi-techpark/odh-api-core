@@ -33,4 +33,9 @@
     <Folder Include="Models\" />
     <Folder Include="json\" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\sqlkata\SqlKata.Execution\SqlKata.Execution.csproj" />
+    <ProjectReference Include="..\sqlkata\QueryBuilder\QueryBuilder.csproj" />
+  </ItemGroup>
 </Project>
