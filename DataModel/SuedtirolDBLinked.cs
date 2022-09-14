@@ -1325,6 +1325,19 @@ namespace DataModel
         }
     }
 
+    public class WeatherDistrictLinked : BezirksWeather, IMetaData
+    {
+        public Metadata? _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Weather/" + this.Id;
+            }
+        }
+    }
+
     public class ODHTagLinked : SmgTags, IMetaData
     {
         public Metadata _Meta { get; set; }        
