@@ -110,6 +110,29 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region Weather
 
+        [HttpGet, Route("ModifyWeatherHistory")]
+        public async Task<IActionResult> ModifyWeatherHistory(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateAllWeatherHistoryWithMetainfo();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify WeatherHistory",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = objectscount,
+                success = true
+            });
+        }
+
+        #endregion
     }
 }
