@@ -368,7 +368,8 @@ namespace DSS.Parser
                     operationScheduleTime.Wednesday = true;
                     operationScheduleTime.Thuresday = true;
                     operationScheduleTime.Friday = true;
-                    operationScheduleTime.Saturday = true;                                       
+                    operationScheduleTime.Saturday = true;
+                    operationScheduleTime.Sunday = true;
 
                     operationScheduleTime.Start = TimeSpan.Parse(openingtimestart);
                     operationScheduleTime.End = TimeSpan.Parse(openingtimeend);
