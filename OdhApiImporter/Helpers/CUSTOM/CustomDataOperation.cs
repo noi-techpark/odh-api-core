@@ -130,5 +130,36 @@ namespace OdhApiImporter.Helpers
 
             return crudcount;
         }        
+
+        public async Task<int> UpdateAllWeatherHistoryWithMetainfo()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("weatherdatahistory");
+
+            var data = await query.GetObjectListAsync<WeatherHistoryLinked>();
+            int i = 0;
+
+            foreach (var weatherhistory in data)
+            {
+                //Get MetaInfo
+                weatherhistory._Meta = MetadataHelper.GetMetadataobject<WeatherHistoryLinked>(weatherhistory);
+
+                //Setting MetaInfo
+                weatherhistory._Meta.Reduced = false;                
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("weatherdatahistory").Where("id", weatherhistory.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = weatherhistory.Id, data = new JsonRaw(weatherhistory) });
+
+                i++;
+            }
+
+            return i;
+        }
+
     }
 }

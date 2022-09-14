@@ -47,8 +47,8 @@ namespace Helper
                 Wine or WineLinked => "wineaward",
                 SmgTags or ODHTagLinked => "odhtag",
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
-                Weather or WeatherLinked => "weather",
-                BezirksWeather or DistrictWeatherLinked => "weatherdistrict",
+                //Weather or WeatherLinked => "weather",
+                //BezirksWeather or DistrictWeatherLinked => "weatherdistrict",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -247,7 +247,7 @@ namespace Helper
                 "areas" => typeof(AreaLinked),
                 "wines" => typeof(WineLinked),
                 "smgtags" => typeof(ODHTagLinked),
-                "weatherdatahistory" => typeof(WeatherDataHistory),
+                "weatherdatahistory" => typeof(WeatherHistoryLinked),
                 _ => throw new Exception("not known table name")
             };
         }
