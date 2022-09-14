@@ -43,7 +43,7 @@ namespace OdhApiImporter
                 {
                     MinimumLevel =
                         CurrentEnvironment.IsDevelopment() ?
-                            LogEventLevel.Debug :
+                            LogEventLevel.Information:
                             LogEventLevel.Warning
                 };
                 var loggerConfiguration = new LoggerConfiguration()

@@ -143,11 +143,16 @@ namespace OdhApiImporter.Helpers
 
             foreach (var weatherhistory in data)
             {
+                //Setting ID
+                if (weatherhistory.Id == null)
+                    weatherhistory.Id = weatherhistory.Weather["de"].Id.ToString();
+
                 //Get MetaInfo
                 weatherhistory._Meta = MetadataHelper.GetMetadataobject<WeatherHistoryLinked>(weatherhistory);
 
                 //Setting MetaInfo
-                weatherhistory._Meta.Reduced = false;                
+                weatherhistory._Meta.Reduced = false;
+                
 
                 //Save tp DB
                 //TODO CHECK IF THIS WORKS     
