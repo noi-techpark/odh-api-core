@@ -26,7 +26,7 @@ using OdhApiImporter.Helpers.DSS;
 
 namespace OdhApiImporter.Controllers
 {
-    [ApiExplorerSettings(IgnoreApi = true)]    
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
     public class UpdateApiController : Controller
     {
@@ -41,7 +41,7 @@ namespace OdhApiImporter.Controllers
             this.settings = settings;
             this.logger = logger;
             this.QueryFactory = queryFactory;
-        }        
+        }
 
         #region UPDATE FROM RAVEN INSTANCE
 
@@ -94,7 +94,7 @@ namespace OdhApiImporter.Controllers
 
                 return Ok(updateResult);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "EBMS Eventshorts update failed", "", updatedetail, ex, true);
                 return BadRequest(updateResult);
@@ -152,7 +152,7 @@ namespace OdhApiImporter.Controllers
             string source = "mobilityapi";
 
             try
-            {              
+            {
                 NINJAImportHelper ninjaimporthelper = new NINJAImportHelper(settings, QueryFactory);
                 updatedetail = await ninjaimporthelper.SaveDataToODH(null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja Events update succeeded", "", updatedetail, true);
@@ -168,7 +168,7 @@ namespace OdhApiImporter.Controllers
 
         [HttpGet, Route("NINJA/Events/UpdateSingle/{id}")]
         public IActionResult UpdateSingleNinjaEvents(string id, CancellationToken cancellationToken = default)
-        {           
+        {
             return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
         }
 
@@ -190,12 +190,12 @@ namespace OdhApiImporter.Controllers
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Weather data succeeded", "actual", updatedetail, true);
 
-                return Ok(updateResult);     
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
                 var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed", "actual", updatedetail, ex, true);
-                return BadRequest(errorResult);                
+                return BadRequest(errorResult);
             }
         }
 
@@ -213,7 +213,7 @@ namespace OdhApiImporter.Controllers
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(id, source, operation, updatetype, "Import Weather data succeeded id:" + id.ToString(), "byid", updatedetail, true);
 
-                return Ok(updateResult);                
+                return Ok(updateResult);
             }
             catch (Exception ex)
             {
@@ -246,7 +246,7 @@ namespace OdhApiImporter.Controllers
             catch (Exception ex)
             {
                 var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data failed", "actual", updatedetail, ex, true);
-                return BadRequest(updateResult);                
+                return BadRequest(updateResult);
             }
         }
 
@@ -328,13 +328,13 @@ namespace OdhApiImporter.Controllers
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update DSS " + dssentity;
             string updatetype = "all";
-            string source = "dss";            
+            string source = "dss";
 
             try
             {
-                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois");                
+                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois");
                 dssimporthelper.entitytype = dssentity;
-                
+
                 updatedetail = await dssimporthelper.SaveDataToODH(null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update succeeded", "", updatedetail, true);
@@ -386,6 +386,10 @@ namespace OdhApiImporter.Controllers
             //    });
             //}
         }
+
+        #endregion
+
+        #region EJOBS DATA SYNC
 
         #endregion
 

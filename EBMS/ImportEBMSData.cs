@@ -41,13 +41,15 @@ namespace EBMS
 
         public static List<Tuple<EventShortLinked, EBMSEventREST>> GetEbmsEvents(string user, string pass)
         {
-            try
-            {
+            
                 List<Tuple<EventShortLinked, EBMSEventREST>> myeventshortlist = new List<Tuple<EventShortLinked, EBMSEventREST>>();
 
                 System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
                 var response = GetEBMSEventsFromService(user, pass).Result;
+
+                if (response == null)
+                    throw new Exception("No data from Interface");
 
                 var eventarray = JsonConvert.DeserializeObject<List<EBMSEventREST>>(response);
 
@@ -260,15 +262,7 @@ namespace EBMS
                     }
                 }
                 
-                return myeventshortlist;
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error:" + ex.Message);
-
-                return null;
-            }
+                return myeventshortlist;            
         }
     }
 
