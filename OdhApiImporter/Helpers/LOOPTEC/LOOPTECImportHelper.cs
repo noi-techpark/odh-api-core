@@ -38,6 +38,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
                     var rawdataid = await InsertInRawDataDB(ejob);
                     newcounter++;
 
+                    //Because a dynamic is passed to the method a dynamic is returned also if int is defined!!! strange behavior of c#
                     string rawdataidstr = rawdataid.ToString();
 
                     WriteLog.LogToConsole(rawdataidstr, "dataimport", "single.ejob", new ImportLog() { sourceid = rawdataidstr, sourceinterface = "looptec.ejob", success = true, error = "" });
@@ -45,7 +46,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
             }            
 
             return new UpdateDetail() { created = newcounter, updated = 0, deleted = 0 };
-        }
+        }        
 
         private async Task<int> InsertInRawDataDB(dynamic ejob)
         {

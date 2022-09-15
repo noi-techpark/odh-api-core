@@ -55,12 +55,14 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {            
-            return await Get(pagenumber, pagesize, type, source, removenullvalues: removenullvalues, cancellationToken);
+            return await Get(pagenumber, pagesize, type, source, fields: fields ?? Array.Empty<string>(),
+                  searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
         private Task<IActionResult> Get(
             uint pagenumber, int? pagesize,
             string type, string source,
+            string[] fields, string? searchfilter, string? rawfilter, string? rawsort,
             bool removenullvalues,
             CancellationToken cancellationToken)
         {
@@ -82,15 +84,24 @@ namespace OdhApiCore.Controllers.api
                             perPage: pagesize ?? 25);
 
 
+                var jsonrawdata = data.List.Select(raw => new JsonRaw(raw.UseJsonRaw())).ToList();
+
+                //var dataTransformed =
+                //        data.List.Select(
+                //            raw => raw.UseJsonRaw()
+                //        );
+
+                var fieldsTohide = FieldsToHide;
+
                 var dataTransformed =
-                        data.List.Select(
-                            raw => raw.UseJsonRaw()
+                        jsonrawdata.Select(
+                            raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
                         );
 
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
 
-                return ResponseHelpers.GetResult<IRawDataStore>(
+                return ResponseHelpers.GetResult(
                     (uint)pagenumber,
                     totalpages,
                     totalcount,
