@@ -47,7 +47,7 @@ namespace Helper
                 Wine or WineLinked => "wineaward",
                 SmgTags or ODHTagLinked => "odhtag",
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
-                //Weather or WeatherLinked => "weather",
+                Weather or WeatherLinked => "weather",
                 //BezirksWeather or DistrictWeatherLinked => "weatherdistrict",
                 _ => throw new Exception("not known odh type")
             };

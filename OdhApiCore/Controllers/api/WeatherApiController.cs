@@ -476,7 +476,7 @@ namespace OdhApiCore.Controllers
             string? id,
             CancellationToken cancellationToken)
         {
-            var weatherresult = default(Weather);
+            var weatherresult = default(WeatherLinked);
 
             if(String.IsNullOrEmpty(locfilter))
             {
@@ -515,23 +515,30 @@ namespace OdhApiCore.Controllers
                     }
                 }
 
-                weatherresult = await SIAG.GetWeatherData.GetCurrentStationWeatherAsync(language, locfilter, stationidtype, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
+                weatherresult = await SIAG.GetWeatherData.GetCurrentStationWeatherAsync(language, locfilter, stationidtype, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);                
             }
 
-            if (pagenumber != null)
+            if (weatherresult != null)
             {
-                return Ok(ResponseHelpers.GetResult(
-                    pagenumber.Value,
-                    1,
-                    1,
-                    null,
-                    new List<Weather?>() { weatherresult },
-                    Url)); 
+                weatherresult._Meta = MetadataHelper.GetMetadataobject<WeatherLinked>(weatherresult);
+
+                if (pagenumber != null)
+                {
+                    return Ok(ResponseHelpers.GetResult(
+                        pagenumber.Value,
+                        1,
+                        1,
+                        null,
+                        new List<WeatherLinked?>() { weatherresult },
+                        Url));
+                }
+                else
+                {
+                    return Ok(weatherresult);
+                }
             }
             else
-            {
-                return Ok(weatherresult);
-            }
+                return BadRequest("something went wrong");
         }
               
         /// GET Bezirkswetter by LocFilter LIVE Request

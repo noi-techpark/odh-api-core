@@ -29,7 +29,7 @@ namespace SIAG
         }
 
         //Parses to ODH Format
-        public static Task<Weather> ParseSiagWeatherDataToODHWeather(string lang, string xmldir, string weatherresponsetask, bool json)
+        public static Task<WeatherLinked> ParseSiagWeatherDataToODHWeather(string lang, string xmldir, string weatherresponsetask, bool json)
         {
             var weatherinfo = XDocument.Load(xmldir + "Weather.xml");
 
@@ -44,7 +44,7 @@ namespace SIAG
 
         #endregion
 
-        public static async Task<Weather?> GetCurrentStationWeatherAsync(string lang, string stationid, string stationidtype, string xmldir, string siaguser, string siagpswd)
+        public static async Task<WeatherLinked?> GetCurrentStationWeatherAsync(string lang, string stationid, string stationidtype, string xmldir, string siaguser, string siagpswd)
         {
             try
             {

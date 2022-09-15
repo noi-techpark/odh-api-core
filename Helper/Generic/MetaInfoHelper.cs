@@ -61,6 +61,7 @@ namespace Helper
                 WineLinked wl => GetMetadataforWineAward(wl),
                 ODHTagLinked odhtl => GetMetadataforOdhTag(odhtl),
                 WeatherHistoryLinked wh => GetMetaDataForWeatherHistory(wh),
+                WeatherLinked we => GetMetaDataForWeather(we),
                 _ => throw new Exception("not known odh type")
             };            
         }
@@ -274,6 +275,14 @@ namespace Helper
         public static Metadata GetMetaDataForWeatherHistory(WeatherHistoryLinked data)
         {
             return GetMetadata(data, "siag", data.LastChange, false);
+        }
+
+        //Hack because WeatherLinked is not IIdentifiable so return directly
+        public static Metadata GetMetaDataForWeather(WeatherLinked data)
+        {
+            string type = ODHTypeHelper.TranslateType2TypeString<WeatherLinked>(data);
+
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.date, Source = "siag", Reduced = false };            
         }
     }
 }
