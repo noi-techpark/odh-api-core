@@ -625,6 +625,8 @@ namespace OdhApiCore.Controllers
         {
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
 
+            //TODO add Transformer (Self link etc...) also verify on other methods
+
             if(!String.IsNullOrEmpty(id))
             {
                 var single = weatherresult.Where(x => x.id == id).FirstOrDefault();

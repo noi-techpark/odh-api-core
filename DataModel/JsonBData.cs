@@ -27,6 +27,10 @@ namespace DataModel
         public string sourceurl { get; set; }
         public DateTime importdate { get; set; }
 
+        public string license { get; set; }
+        public string rawformat { get; set; }
+
+
         public string raw { get; set; }
     }
 }

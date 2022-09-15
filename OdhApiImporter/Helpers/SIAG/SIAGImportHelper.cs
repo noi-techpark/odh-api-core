@@ -62,6 +62,8 @@ namespace OdhApiImporter.Helpers
                 rawData.sourceinterface = "weatherbulletin";
                 rawData.sourceurl = "http://daten.buergernetz.bz.it/services/weather/bulletin";
                 rawData.raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren });
+                rawData.license = "open";
+                rawData.rawformat = "json";
 
                 var insertresultraw = await QueryFactory.Query("rawdata")
                       .InsertGetIdAsync<int>(rawData);
@@ -496,7 +498,9 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "museumdata",
                             sourceid = siagmuseumdata.Key,
                             sourceurl = "https://musport.prov.bz.it/musport/services/MuseumsService/",
-                            type = "odhactivitypoi-museum"
+                            type = "odhactivitypoi-museum",
+                            license = "open",
+                            rawformat = "xml"
                         });
         }
         #endregion

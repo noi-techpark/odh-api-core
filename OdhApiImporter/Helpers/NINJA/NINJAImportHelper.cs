@@ -161,7 +161,9 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "culture",
                             sourceid = ninjaevent.Key,
                             sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
-                            type = "event_centrotrevi-drin"
+                            type = "event_centrotrevi-drin",
+                            license = "open",
+                            rawformat = "json"
                         });
         }        
           

@@ -1333,7 +1333,7 @@ namespace DataModel
         {
             get
             {
-                return ODHConstant.ApplicationURL + "Weather/" + this.Id;
+                return ODHConstant.ApplicationURL + "Weather/District" + this.Id;
             }
         }
     }

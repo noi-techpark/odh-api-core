@@ -161,7 +161,9 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "ebms",
                             sourceid = eventebms.Key,
                             sourceurl = "https://emea-interface.ungerboeck.com",
-                            type = "event_euracnoi"
+                            type = "event_euracnoi",
+                            license = "open",
+                            rawformat = "json"
                         });
         }
 
@@ -232,7 +234,7 @@ namespace OdhApiImporter.Helpers
             var query =
                          QueryFactory.Query("eventeuracnoi")
                              .Select("data")
-                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = ?)", "EBMS");
+                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = $$)", "EBMS");
 
             return await query.GetAllAsObject<EventShortLinked>();
         }
