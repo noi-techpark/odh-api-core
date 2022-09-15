@@ -23,6 +23,7 @@ using RAVEN;
 using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers;
 using OdhApiImporter.Helpers.DSS;
+using OdhApiImporter.Helpers.LOOPTEC;
 
 namespace OdhApiImporter.Controllers
 {
@@ -390,6 +391,31 @@ namespace OdhApiImporter.Controllers
         #endregion
 
         #region EJOBS DATA SYNC
+
+        [HttpGet, Route("LOOPTEC/Ejobs/UpdateAll")]
+        public async Task<IActionResult> UpdateAllLooptecEjobs(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import Looptec Ejobs";
+            string updatetype = "all";
+            string source = "looptec";
+
+            try
+            {
+                LOOPTECImportHelper looptecejobsimporthelper = new LOOPTECImportHelper(settings, QueryFactory, "");
+
+                updatedetail = await looptecejobsimporthelper.SaveDataToODH(null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs succeeded", "rawonly", updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs failed", "rawonly", updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
 
         #endregion
 
