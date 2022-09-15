@@ -33,7 +33,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
             //Save to RAWTABLE
             foreach(var ejob in data)
             {
-                var rawdataid = InsertInRawDataDB(ejob);
+                var rawdataid = await InsertInRawDataDB(ejob);
                 newcounter++;
                 WriteLog.LogToConsole(rawdataid, "dataimport", "single.ejob", new ImportLog() { sourceid = rawdataid, sourceinterface = "looptec.ejob", success = true, error = "" });
             }
