@@ -12,11 +12,11 @@ namespace SIAG
     {
         //string urlfrom indicates 'siag' old parsing, 'opendata' new url
 
-        public static Weather ParsemyWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string urlfrom)
+        public static WeatherLinked ParsemyWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string urlfrom)
         {
             try
             {
-                Weather myweather = new Weather();
+                WeatherLinked myweather = new WeatherLinked();
 
                 myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("Id").Value);
                 myweather.date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
@@ -263,9 +263,9 @@ namespace SIAG
             }
         }
 
-        public static Weather ParsemyStationWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string stationid, string urlfrom)
+        public static WeatherLinked ParsemyStationWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string stationid, string urlfrom)
         {
-            Weather myweather = new Weather();
+            WeatherLinked myweather = new WeatherLinked();
 
             myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("Id").Value);
             myweather.date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
@@ -454,13 +454,13 @@ namespace SIAG
 
         //JSON Response Parser
 
-        public static Weather ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson)
+        public static WeatherLinked ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson)
         {
             var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(weatherresponsejson);
             
             try
             {
-                Weather myweather = new Weather();
+                WeatherLinked myweather = new WeatherLinked();
 
                 myweather.Id = Convert.ToInt32(siagweather.id);
                 myweather.date = Convert.ToDateTime(siagweather.date.ToShortDateString() + " " + siagweather.hour);
