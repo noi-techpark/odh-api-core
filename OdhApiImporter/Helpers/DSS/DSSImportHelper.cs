@@ -345,7 +345,9 @@ namespace OdhApiImporter.Helpers.DSS
                             sourceinterface = entitytype + "base",
                             sourceid = dssdata.Key,
                             sourceurl = settings.DSSConfig.ServiceUrl,
-                            type = "odhactivitypoi-" + entitytype  
+                            type = "odhactivitypoi-" + entitytype,
+                            license = "open",
+                            rawformat = "json"
                         });
         }
 
