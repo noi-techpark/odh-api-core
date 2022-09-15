@@ -47,6 +47,11 @@ namespace OdhApiCore.Controllers.api
             string? source = null,
             string? sourceinterface = null,
             string? sourceid = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? searchfilter = null,
+            string? rawfilter = null,
+            string? rawsort = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {            
@@ -85,7 +90,7 @@ namespace OdhApiCore.Controllers.api
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
 
-                return ResponseHelpers.GetResult<RawDataStore>(
+                return ResponseHelpers.GetResult<IRawDataStore>(
                     (uint)pagenumber,
                     totalpages,
                     totalcount,
