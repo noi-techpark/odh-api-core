@@ -18,7 +18,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
 
         }
 
-        public Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete)
+        public async Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete)
         {
             throw new NotImplementedException();
         }
@@ -30,13 +30,19 @@ namespace OdhApiImporter.Helpers.LOOPTEC
 
             var newcounter = 0;
 
-            //Save to RAWTABLE
-            foreach(var ejob in data)
+            if(data != null)
             {
-                var rawdataid = await InsertInRawDataDB(ejob);
-                newcounter++;
-                WriteLog.LogToConsole(rawdataid, "dataimport", "single.ejob", new ImportLog() { sourceid = rawdataid, sourceinterface = "looptec.ejob", success = true, error = "" });
-            }
+                //Save to RAWTABLE
+                foreach (var ejob in data.jobs)
+                {
+                    var rawdataid = await InsertInRawDataDB(ejob);
+                    newcounter++;
+
+                    string rawdataidstr = rawdataid.ToString();
+
+                    WriteLog.LogToConsole(rawdataidstr, "dataimport", "single.ejob", new ImportLog() { sourceid = rawdataidstr, sourceinterface = "looptec.ejob", success = true, error = "" });
+                }
+            }            
 
             return new UpdateDetail() { created = newcounter, updated = 0, deleted = 0 };
         }
@@ -54,7 +60,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
                             sourceurl = serviceurl,
                             type = "ejob",
                             sourceid = ejob.identifier,
-                            raw = JsonConvert.SerializeObject(ejob.Value),
+                            raw = JsonConvert.SerializeObject(ejob),
                         });
         }
     }
