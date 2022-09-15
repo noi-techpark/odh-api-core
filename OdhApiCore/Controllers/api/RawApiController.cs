@@ -79,7 +79,7 @@ namespace OdhApiCore.Controllers.api
 
                 var dataTransformed =
                         data.List.Select(
-                            raw => raw
+                            raw => raw.UseJsonRaw()
                         );
 
                 uint totalpages = (uint)data.TotalPages;

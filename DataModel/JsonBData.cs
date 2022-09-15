@@ -30,8 +30,27 @@ namespace DataModel
         public string license { get; set; }
         public string rawformat { get; set; }
 
-
         public string raw { get; set; }
+
+        public new JsonRaw raw2 { get; set; }
+    }
+
+    public class RawDataStoreJson : RawDataStore
+    {       
+        public new JsonRaw raw { get; set; }
+    }
+
+    public static class RawDataStoreExtensions
+    {
+        public static RawDataStore UseJsonRaw(this RawDataStore rawdatastore)
+        {
+            if(rawdatastore.rawformat == "json")
+            {
+                rawdatastore.raw2 = new JsonRaw(rawdatastore.raw);
+            }
+
+            return rawdatastore;
+        }
     }
 }
 

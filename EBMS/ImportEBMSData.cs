@@ -16,26 +16,19 @@ namespace EBMS
 
         public static async Task<string> GetEBMSEventsFromService(string user, string pass)
         {
-            try
-            {
-                CredentialCache wrCache = new CredentialCache();
-                wrCache.Add(new Uri(serviceurlebmsrest), "Basic", new NetworkCredential(user, pass));
+            CredentialCache wrCache = new CredentialCache();
+            wrCache.Add(new Uri(serviceurlebmsrest), "Basic", new NetworkCredential(user, pass));
 
-                using (var handler = new HttpClientHandler { Credentials = wrCache })
+            using (var handler = new HttpClientHandler { Credentials = wrCache })
+            {
+                using (var client = new HttpClient(handler))
                 {
-                    using (var client = new HttpClient(handler))
-                    {
-                        var myresponse = await client.GetAsync(serviceurlebmsrest);
+                    var myresponse = await client.GetAsync(serviceurlebmsrest);
 
-                        var myresponsestring = await myresponse.Content.ReadAsStringAsync();
+                    var myresponsestring = await myresponse.Content.ReadAsStringAsync();
 
-                        return myresponsestring;
-                    }
+                    return myresponsestring;
                 }
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
             }
         }
 
