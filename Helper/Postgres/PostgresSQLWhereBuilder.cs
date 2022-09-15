@@ -719,7 +719,7 @@ namespace Helper
                 .AlpineBitsAccommodationIdFilter_GeneratedColumn(accommodationIds); //AlpineBitsAccommodationIdFilter(accommodationIds);
         }
 
-        //Return Where and Parameters for Wine
+        //Return Where and Parameters for OdhTag and Tag
         public static Query ODHTagWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> mainentitylist, IReadOnlyCollection<string> validforentitylist, IReadOnlyCollection<string> sourcelist, bool? displayascategory,
             string? searchfilter, string? language, bool filterClosedData)
@@ -740,6 +740,24 @@ namespace Helper
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
                 .SourceFilter_GeneratedColumn(sourcelist)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+        }
+
+
+        //Return Where and Parameters for Rawdata
+        public static Query RawdataWhereExpression(
+            this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourceidlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist, 
+            bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, sourceidlist, typelist,
+                sourcelist
+            );
+
+            return query
+                .When(typelist != null, q => query.WhereIn("type", typelist))
+                .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist));                
         }
 
     }
