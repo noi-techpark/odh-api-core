@@ -155,7 +155,7 @@ namespace OdhApiImporter.Helpers
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
-                            datasource = "ninja",
+                            datasource = "centrotrevi-drin",
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(ninjaevent.Value),
                             sourceinterface = "culture",

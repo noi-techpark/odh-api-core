@@ -1,5 +1,6 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
+using DataModel.Annotations;
 using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -20,7 +21,7 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers.api
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class RawdataApiController: OdhController
+    public class RawdataApiController : OdhController
     {
         public RawdataApiController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
@@ -30,7 +31,7 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Raw Data List
         /// </summary>
-        /// <returns>Collection of Tag Objects</returns>        
+        /// <returns>Collection of Raw Data Objects</returns>        
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -42,8 +43,10 @@ namespace OdhApiCore.Controllers.api
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetRawdataAsync(
             uint pagenumber = 1,
-            PageSize pagesize = null!,           
+            PageSize pagesize = null!,
+            [SwaggerEnum(new[] { "event_euracnoi", "odhactivitypoi-lift", "odhactivitypoi-slope", "odhactivitypoi-museum", "weather", "event_centrotrevi-drin", "ejob" })]
             string? type = null,
+            [SwaggerEnum(new[] { "dss", "eurac", "siag", "centrotrevi-drin", "looptec" })]
             string? source = null,
             string? sourceinterface = null,
             string? sourceid = null,
