@@ -31,6 +31,18 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Raw Data List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
+        /// <param name="type">Type Filter (Separator ',' List of rawdata types, 'null' = No Filter), (default:'null')</param>
+        /// <param name="source">Source Filter (Separator ',' List of rawdata sources, 'null' = No Filter), (default:'null')</param>
+        /// <param name="sourceinterface">SourceInterface Filter (Separator ',' List of Sourceinterfaces, 'null' = No Filter), (default:'null')</param>
+        /// <param name="sourceid">SourceIDFilter (Separator ',' List of Rawdata SourceIDs, 'null' = No Filter), (default:'null')</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of Rawdata IDs, 'null' = No Filter), (default:'null')</param>
+        /// <param name="latest">Get only latest data</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="rawfilter">Currently not working on rawdata<a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
+        /// <param name="rawsort">Currently not working on rawdata<a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <returns>Collection of Raw Data Objects</returns>        
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -50,6 +62,7 @@ namespace OdhApiCore.Controllers.api
             string? source = null,
             string? sourceinterface = null,
             string? sourceid = null,
+            string? idlist = null,
             bool latest = true,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -59,13 +72,13 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {            
-            return await Get(pagenumber, pagesize, type, source, latest, fields: fields ?? Array.Empty<string>(),
+            return await Get(pagenumber, pagesize, type, source, idlist, latest, fields: fields ?? Array.Empty<string>(),
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
         private Task<IActionResult> Get(
             uint pagenumber, int? pagesize,
-            string type, string source, bool latest, 
+            string type, string source, string idlist, bool latest, 
             string[] fields, string? searchfilter, string? rawfilter, string? rawsort,
             bool removenullvalues,
             CancellationToken cancellationToken)
@@ -74,6 +87,7 @@ namespace OdhApiCore.Controllers.api
             {
                 var typelist = !String.IsNullOrEmpty(type) ? type.Split(",").ToList() : null;
                 var sourcelist = !String.IsNullOrEmpty(source) ? source.Split(",").ToList() : null;
+                var idlist = !String.IsNullOrEmpty(idlist) ? idlist.Split(",").ToList() : null;
 
                 var fieldsTohide = FieldsToHide;
 
@@ -86,7 +100,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query()
                     .When(latest, q => q.SelectRaw("max(id)"))
                     .From("rawdata")
-                    .RawdataWhereExpression(null, null, typelist, sourcelist, latest, true)
+                    .RawdataWhereExpression(null, null, typelist, sourcelist, idlist, true)
                     //.ApplyRawFilter(rawfilter)
                     //.ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'")
                     .When(latest, q => q.GroupBy("sourceid"));

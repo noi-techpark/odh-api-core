@@ -746,19 +746,20 @@ namespace Helper
         //Return Where and Parameters for Rawdata
         public static Query RawdataWhereExpression(
             this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourceidlist, 
-            IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist, bool latest,
+            IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist, bool latestIReadOnlyCollection<string> idlist,
             bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, sourceidlist, typelist,
-                sourcelist, latest
+                sourcelist, idlist
             );
 
             return query
                 .When(typelist != null, q => query.WhereIn("type", typelist))
-                .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist))     
+                .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist))
+                 .When(idlist != null, q => query.WhereIn("id", idlist))
                 //.When(latest, )
                 .When(filterClosedData, q => q.FilterClosedData_Raw());
             //TODO future opendata rules on 
