@@ -72,13 +72,38 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {            
-            return await Get(pagenumber, pagesize, type, source, idlist, latest, fields: fields ?? Array.Empty<string>(),
+            return await Get(pagenumber, pagesize, type, source, idlist, sourceid, latest, fields: fields ?? Array.Empty<string>(),
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
+        }
+
+        /// <summary>
+        /// GET Rawdata Single
+        /// </summary>
+        /// <param name="id">ID of rawdata</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <returns>Rawdata Object</returns>
+        /// <response code="200">Object created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(LTSPoiLinked), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(Roles = "DataReader,PoiReader")]
+        [HttpGet, Route("Rawdata/{id}", Name = "SingleRawdata")]
+        public async Task<IActionResult> GetRawdataSingle(
+            string id,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await GetSingle(id, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
         private Task<IActionResult> Get(
             uint pagenumber, int? pagesize,
-            string type, string source, string idlist, bool latest, 
+            string type, string source, string ids, string sourceids, bool latest, 
             string[] fields, string? searchfilter, string? rawfilter, string? rawsort,
             bool removenullvalues,
             CancellationToken cancellationToken)
@@ -87,7 +112,8 @@ namespace OdhApiCore.Controllers.api
             {
                 var typelist = !String.IsNullOrEmpty(type) ? type.Split(",").ToList() : null;
                 var sourcelist = !String.IsNullOrEmpty(source) ? source.Split(",").ToList() : null;
-                var idlist = !String.IsNullOrEmpty(idlist) ? idlist.Split(",").ToList() : null;
+                var idlist = !String.IsNullOrEmpty(ids) ? ids.Split(",").ToList() : null;
+                var sourceidlist = !String.IsNullOrEmpty(sourceids) ? sourceids.Split(",").ToList() : null;
 
                 var fieldsTohide = FieldsToHide;
 
@@ -100,7 +126,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query()
                     .When(latest, q => q.SelectRaw("max(id)"))
                     .From("rawdata")
-                    .RawdataWhereExpression(null, null, typelist, sourcelist, idlist, true)
+                    .RawdataWhereExpression(sourceidlist, idlist, typelist, sourcelist, true)
                     //.ApplyRawFilter(rawfilter)
                     //.ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'")
                     .When(latest, q => q.GroupBy("sourceid"));
@@ -173,6 +199,26 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
+        private Task<IActionResult> GetSingle(string id,
+          string[] fields,
+          bool removenullvalues,
+          CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("rawdata")
+                        .Where("id", id)
+                        .When(FilterClosedData, q => q.FilterClosedData_Raw());
+
+                var data = await query.FirstOrDefaultAsync<RawDataStoreWithId?>();
+
+                var fieldsTohide = FieldsToHide;
+
+                //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data;
+            });
+        }
 
     }
 }

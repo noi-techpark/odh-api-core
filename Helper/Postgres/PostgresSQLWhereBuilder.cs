@@ -746,14 +746,14 @@ namespace Helper
         //Return Where and Parameters for Rawdata
         public static Query RawdataWhereExpression(
             this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourceidlist, 
-            IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist, bool latestIReadOnlyCollection<string> idlist,
+            IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist,
             bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, sourceidlist, typelist,
-                sourcelist, idlist
+                sourcelist
             );
 
             return query
