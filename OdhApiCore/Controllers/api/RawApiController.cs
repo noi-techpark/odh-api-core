@@ -72,39 +72,83 @@ namespace OdhApiCore.Controllers.api
                 var typelist = !String.IsNullOrEmpty(type) ? type.Split(",").ToList() : null;
                 var sourcelist = !String.IsNullOrEmpty(source) ? source.Split(",").ToList() : null;
 
+                var fieldsTohide = FieldsToHide;
+
+                //Example latest records
+                //select*
+                //from rawdata
+                //where id in (SELECT max(id)  FROM rawdata where type = 'ejob' group by sourceid)
 
                 var query =
                     QueryFactory.Query()
+                    .When(latest, q => q.SelectRaw("max(id)"))
                     .From("rawdata")
-                    .RawdataWhereExpression(null, null, typelist, sourcelist, latest, true);
+                    .RawdataWhereExpression(null, null, typelist, sourcelist, latest, true)
+                    .When(latest, q => q.GroupBy("sourceid"));
 
-                // Get paginated data
-                var data =
-                    await query
-                        .PaginateAsync<RawDataStoreWithId>(
-                            page: (int)pagenumber,
-                            perPage: pagesize ?? 25);
+                if(latest)
+                {
+                    var query2 = 
+                        QueryFactory.Query()
+                        .From("rawdata")
+                        .WhereIn("id", query);
+
+                    // Get paginated data
+                    var data =
+                        await query2
+                            .PaginateAsync<RawDataStoreWithId>(
+                                page: (int)pagenumber,
+                                perPage: pagesize ?? 25);
 
 
-                var jsonrawdata = data.List.Select(raw => new JsonRaw(raw.UseJsonRaw())).ToList();
-                
-                var fieldsTohide = FieldsToHide;
+                    var jsonrawdata = data.List.Select(raw => new JsonRaw(raw.UseJsonRaw())).ToList();
 
-                var dataTransformed =
-                        jsonrawdata.Select(
-                            raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                        );
+                    var dataTransformed =
+                            jsonrawdata.Select(
+                                raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            );
 
-                uint totalpages = (uint)data.TotalPages;
-                uint totalcount = (uint)data.Count;
+                    uint totalpages = (uint)data.TotalPages;
+                    uint totalcount = (uint)data.Count;
 
-                return ResponseHelpers.GetResult(
-                    (uint)pagenumber,
-                    totalpages,
-                    totalcount,
-                    null,
-                    dataTransformed,
-                    Url);
+                    return ResponseHelpers.GetResult(
+                        (uint)pagenumber,
+                        totalpages,
+                        totalcount,
+                        null,
+                        dataTransformed,
+                        Url);
+                }
+                else
+                {
+                    // Get paginated data
+                    var data =
+                        await query
+                            .PaginateAsync<RawDataStoreWithId>(
+                                page: (int)pagenumber,
+                                perPage: pagesize ?? 25);
+
+
+                    var jsonrawdata = data.List.Select(raw => new JsonRaw(raw.UseJsonRaw())).ToList();
+
+                    var dataTransformed =
+                            jsonrawdata.Select(
+                                raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            );
+
+                    uint totalpages = (uint)data.TotalPages;
+                    uint totalcount = (uint)data.Count;
+
+                    return ResponseHelpers.GetResult(
+                        (uint)pagenumber,
+                        totalpages,
+                        totalcount,
+                        null,
+                        dataTransformed,
+                        Url);
+                }
+
+             
             });
         }
 

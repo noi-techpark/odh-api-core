@@ -761,16 +761,8 @@ namespace Helper
                 .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist))     
                 //.When(latest, )
                 .When(filterClosedData, q => q.FilterClosedData_Raw());
-            //TODO opendata rules on 
-            //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+            //TODO future opendata rules on 
             //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
-
-
-            //Example latest records
-            //select*
-            //from rawdata
-            //where id in (SELECT max(id)  FROM rawdata where type = 'ejob' group by sourceid)
-
         }
 
     }
