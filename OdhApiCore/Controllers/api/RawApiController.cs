@@ -47,6 +47,7 @@ namespace OdhApiCore.Controllers.api
             string? source = null,
             string? sourceinterface = null,
             string? sourceid = null,
+            bool latest = true,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -55,13 +56,13 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {            
-            return await Get(pagenumber, pagesize, type, source, fields: fields ?? Array.Empty<string>(),
+            return await Get(pagenumber, pagesize, type, source, latest, fields: fields ?? Array.Empty<string>(),
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
         private Task<IActionResult> Get(
             uint pagenumber, int? pagesize,
-            string type, string source,
+            string type, string source, bool latest, 
             string[] fields, string? searchfilter, string? rawfilter, string? rawsort,
             bool removenullvalues,
             CancellationToken cancellationToken)
@@ -71,26 +72,22 @@ namespace OdhApiCore.Controllers.api
                 var typelist = !String.IsNullOrEmpty(type) ? type.Split(",").ToList() : null;
                 var sourcelist = !String.IsNullOrEmpty(source) ? source.Split(",").ToList() : null;
 
+
                 var query =
                     QueryFactory.Query()
                     .From("rawdata")
-                    .RawdataWhereExpression(null, null, typelist, sourcelist, true);
+                    .RawdataWhereExpression(null, null, typelist, sourcelist, latest, true);
 
                 // Get paginated data
                 var data =
                     await query
-                        .PaginateAsync<RawDataStore>(
+                        .PaginateAsync<RawDataStoreWithId>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
 
                 var jsonrawdata = data.List.Select(raw => new JsonRaw(raw.UseJsonRaw())).ToList();
-
-                //var dataTransformed =
-                //        data.List.Select(
-                //            raw => raw.UseJsonRaw()
-                //        );
-
+                
                 var fieldsTohide = FieldsToHide;
 
                 var dataTransformed =

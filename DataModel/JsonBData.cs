@@ -30,7 +30,7 @@ namespace DataModel
     }
 
     public class RawDataStore : IRawDataStore
-    {        
+    {              
         public string type { get; set; }
         public string datasource { get; set; }
         public string sourceinterface { get; set; }
@@ -44,10 +44,16 @@ namespace DataModel
         public string raw { get; set; }        
     }
 
-    public class RawDataStoreJson : RawDataStore
+    public class RawDataStoreWithId : RawDataStore
+    {
+        public int? id { get; set; }    
+    }
+
+    public class RawDataStoreJson : RawDataStoreWithId
     {      
-        public RawDataStoreJson(RawDataStore rawdatastore)
+        public RawDataStoreJson(RawDataStoreWithId rawdatastore)
         {
+            this.id = rawdatastore.id;
             this.importdate = rawdatastore.importdate;
             this.datasource = rawdatastore.datasource;
             this.rawformat = rawdatastore.rawformat;
@@ -65,7 +71,7 @@ namespace DataModel
 
     public static class RawDataStoreExtensions
     {
-        public static IRawDataStore UseJsonRaw(this RawDataStore rawdatastore)
+        public static IRawDataStore UseJsonRaw(this RawDataStoreWithId rawdatastore)
         {
             if(rawdatastore.rawformat == "json")
             {

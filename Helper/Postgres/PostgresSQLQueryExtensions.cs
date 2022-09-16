@@ -1011,7 +1011,7 @@ namespace Helper
 
         #endregion
 
-        #region Generated Clolumns Where Expressions
+        #region Generated Columns Where Expressions
 
         //Filter on Generated Field gen_licenseinfo_closeddata
         public static Query FilterClosedData_GeneratedColumn(this Query query) =>
@@ -1329,6 +1329,15 @@ namespace Helper
         //    query.Where(q =>
         //        tagdict.Aggregate(q, (q, tag) =>
         //            q.WhereRaw(@$"(data->>'Tags')::jsonb @? '$.{tag.Value}\[*\] ? (@.Id == ""{tag.Key}"")'")));
+
+        #endregion
+
+        #region Rawdata Where Experession
+
+        public static Query FilterClosedData_Raw(this Query query) =>
+          query.Where(q =>
+              q.Where("license","open")              
+          );
 
         #endregion
 

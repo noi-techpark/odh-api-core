@@ -745,19 +745,32 @@ namespace Helper
 
         //Return Where and Parameters for Rawdata
         public static Query RawdataWhereExpression(
-            this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourceidlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist, 
+            this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourceidlist, 
+            IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist, bool latest,
             bool filterClosedData)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, sourceidlist, typelist,
-                sourcelist
+                sourcelist, latest
             );
 
             return query
                 .When(typelist != null, q => query.WhereIn("type", typelist))
-                .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist));                
+                .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist))     
+                //.When(latest, )
+                .When(filterClosedData, q => q.FilterClosedData_Raw());
+            //TODO opendata rules on 
+            //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+            //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+
+
+            //Example latest records
+            //select*
+            //from rawdata
+            //where id in (SELECT max(id)  FROM rawdata where type = 'ejob' group by sourceid)
+
         }
 
     }
