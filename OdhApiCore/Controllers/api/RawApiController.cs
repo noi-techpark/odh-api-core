@@ -127,8 +127,8 @@ namespace OdhApiCore.Controllers.api
                     .When(latest, q => q.SelectRaw("max(id)"))
                     .From("rawdata")
                     .RawdataWhereExpression(sourceidlist, idlist, typelist, sourcelist, true)
-                    //.ApplyRawFilter(rawfilter)
-                    //.ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'")
+                    .ApplyRawFilter(rawfilter)
+                    .OrderOnlyByRawSortIfNotNull(rawsort)
                     .When(latest, q => q.GroupBy("sourceid"));
 
                 //rawfilter and rawsort could be extended with a generated column "data" which only applies when rawtype is json
