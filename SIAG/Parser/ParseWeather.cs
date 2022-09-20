@@ -546,7 +546,7 @@ namespace SIAG
                     mymountaintomorrow.Sunset = siagweather.mountainTomorrow.sunSet;
                     mymountaintomorrow.Reliability = siagweather.mountainTomorrow.reliability.ToString();
                     mymountaintomorrow.Temp1000 = Convert.ToInt32(siagweather.mountainTomorrow.temp1000);
-                    mymountaintomorrow.Temp2000 = Convert.ToInt32(siagweather.mountainTomorrow.temp3000);
+                    mymountaintomorrow.Temp2000 = Convert.ToInt32(siagweather.mountainTomorrow.temp2000);
                     mymountaintomorrow.Temp3000 = Convert.ToInt32(siagweather.mountainTomorrow.temp3000);
                     mymountaintomorrow.Temp4000 = Convert.ToInt32(siagweather.mountainTomorrow.temp4000);
 
