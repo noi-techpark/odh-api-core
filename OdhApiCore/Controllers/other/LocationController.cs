@@ -250,10 +250,10 @@ namespace OdhApiCore.Controllers.api
                     mylocationlist.AddRange(mymetaregionlistreduced);
                 if (locationtypes.Contains("reg") && myregionlistreduced != null)
                     mylocationlist.AddRange(myregionlistreduced);
-                if (locationtypes.Contains("tvs") && mylocalitylistreduced != null)
-                    mylocationlist.AddRange(mylocalitylistreduced);
-                if (locationtypes.Contains("mun") && mytvlistreduced != null)
+                if (locationtypes.Contains("tvs") && mytvlistreduced != null)
                     mylocationlist.AddRange(mytvlistreduced);
+                if (locationtypes.Contains("mun") && mylocalitylistreduced != null)
+                    mylocationlist.AddRange(mylocalitylistreduced);
                 if (locationtypes.Contains("fra") && myfractionlistreduced != null)
                     mylocationlist.AddRange(myfractionlistreduced);
             }
@@ -375,9 +375,7 @@ namespace OdhApiCore.Controllers.api
 
             //TO TEST
             List<JsonRaw> mylocationlistraw = mylocationlist.Select(x => new JsonRaw(JsonConvert.SerializeObject(x))).ToList();
-
-            //return mylocationlist;
-
+            
             //Transform to JsonRAW List
             return Ok(mylocationlist.Select(x => new JsonRaw(x)).ToList());
         }
