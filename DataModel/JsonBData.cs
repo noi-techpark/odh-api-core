@@ -17,9 +17,20 @@ namespace DataModel
         public Int32 rawdataid { get; set; }
     }
 
-    public class RawDataStore
+    public interface IRawDataStore 
     {
-        //public Int64? id { get; set; }
+        string type { get; set; }
+        string datasource { get; set; }
+        string sourceinterface { get; set; }
+        string sourceid { get; set; }
+        string sourceurl { get; set; }
+        DateTime importdate { get; set; }
+        string license { get; set; }
+        string rawformat { get; set; }        
+    }
+
+    public class RawDataStore : IRawDataStore
+    {              
         public string type { get; set; }
         public string datasource { get; set; }
         public string sourceinterface { get; set; }
@@ -30,8 +41,45 @@ namespace DataModel
         public string license { get; set; }
         public string rawformat { get; set; }
 
+        public string raw { get; set; }        
+    }
 
-        public string raw { get; set; }
+    public class RawDataStoreWithId : RawDataStore
+    {
+        public int? id { get; set; }    
+    }
+
+    public class RawDataStoreJson : RawDataStoreWithId
+    {      
+        public RawDataStoreJson(RawDataStoreWithId rawdatastore)
+        {
+            this.id = rawdatastore.id;
+            this.importdate = rawdatastore.importdate;
+            this.datasource = rawdatastore.datasource;
+            this.rawformat = rawdatastore.rawformat;
+            this.sourceid = rawdatastore.sourceid;
+            this.sourceinterface = rawdatastore.sourceinterface;
+            this.sourceurl = rawdatastore.sourceurl;
+            this.type = rawdatastore.type;
+            this.license = rawdatastore.license;
+
+            this.raw = new JsonRaw(rawdatastore.raw);
+        }
+
+        public new JsonRaw raw { get; set; }
+    }
+
+    public static class RawDataStoreExtensions
+    {
+        public static IRawDataStore UseJsonRaw(this RawDataStoreWithId rawdatastore)
+        {
+            if(rawdatastore.rawformat == "json")
+            {
+                return new RawDataStoreJson(rawdatastore);
+            }
+            else
+                return rawdatastore;
+        }
     }
 }
 

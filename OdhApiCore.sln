@@ -44,7 +44,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonLDTransformer", "JsonLD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PushServer", "PushServer\PushServer.csproj", "{F55BAA43-196C-4699-8E9D-A252F180A7C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSS", "DSS\DSS.csproj", "{E456CF5E-25E8-4DBF-92A4-575E352BD448}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSS", "DSS\DSS.csproj", "{E456CF5E-25E8-4DBF-92A4-575E352BD448}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LOOPTEC", "LOOPTEC\LOOPTEC.csproj", "{59907348-4EE1-4FD6-AD9A-28889EF83A22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -128,6 +130,10 @@ Global
 		{E456CF5E-25E8-4DBF-92A4-575E352BD448}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E456CF5E-25E8-4DBF-92A4-575E352BD448}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E456CF5E-25E8-4DBF-92A4-575E352BD448}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59907348-4EE1-4FD6-AD9A-28889EF83A22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59907348-4EE1-4FD6-AD9A-28889EF83A22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59907348-4EE1-4FD6-AD9A-28889EF83A22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59907348-4EE1-4FD6-AD9A-28889EF83A22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

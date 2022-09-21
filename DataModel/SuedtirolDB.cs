@@ -501,6 +501,10 @@ namespace DataModel
         public ICollection<string>? TourismvereinIds { get; set; }
         public ICollection<string>? RegionIds { get; set; }
 
+        //New Municipality and District Ids
+        public ICollection<string> MunicipalityIds { get; set; }
+        public ICollection<string> DistrictIds { get; set; }
+
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }
