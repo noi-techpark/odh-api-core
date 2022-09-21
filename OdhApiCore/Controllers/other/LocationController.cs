@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
+using DataModel.Annotations;
 using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OdhApiCore.Filters;
 using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers.api
@@ -46,9 +48,11 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(IEnumerable<LocHelperclass>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 7200, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
         [HttpGet, Route("Location")]
         public async Task<IActionResult> GetTheLocationList(
             string? language = "en",
+            [SwaggerEnum(new[] { "mta", "reg", "tvs", "mun", "fra" })]
             string? type = "null",
             bool showall = true,
             string? locfilter = null,
