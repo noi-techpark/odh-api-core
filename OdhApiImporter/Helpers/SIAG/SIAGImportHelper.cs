@@ -441,7 +441,7 @@ namespace OdhApiImporter.Helpers
                 }
 
                 //Setting Common Infos
-                mymuseum.Source = "SIAG";
+                mymuseum.Source = "siag";
                 mymuseum.SyncSourceInterface = "museumdata";
                 mymuseum.SyncUpdateMode = "Full";
                 mymuseum.LastChange = DateTime.Now;

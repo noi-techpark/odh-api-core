@@ -200,7 +200,6 @@ namespace OdhApiImporter.Helpers
             //TODO CHECK if Event is in list, if not, DELETE!
             //TODO CHECK IF THIS IS WORKING CORRECTLY
 
-
             var idsonListinDB = eventshortinDB.Select(x => x.EventId).ToList();
             var idsonService = eventshortfromnow.Select(x => x.EventId).ToList();
 
@@ -239,9 +238,7 @@ namespace OdhApiImporter.Helpers
 
             return await query.GetAllAsObject<EventShortLinked>();
         }
-
         
-
         #endregion
 
     }

@@ -140,10 +140,10 @@ namespace SIAG.Parser
                 museumservicelistIT.Add(museumservice.Element(ax211 + "bezeichnungI").Value);
                 museumservicelistEN.Add(museumservice.Element(ax211 + "bezeichnungE").Value);
 
-                if (museumservice.Element(ax211 + "bezeichnungD").Value == "Familienfreundliches Museum")
+                if (museumservice.Element(ax211 + "bezeichnungD").Value == "familienfreundliches museum")
                     addfamilytag = true;
 
-                if (museumservice.Element(ax211 + "bezeichnungD").Value == "Behindertengerecht")
+                if (museumservice.Element(ax211 + "bezeichnungD").Value == "behindertengerecht")
                     addbarrierefreitag = true;
             }
 
@@ -439,13 +439,13 @@ namespace SIAG.Parser
 
             if (addbarrierefreitag)
             {
-                if (!smgtaglist.Contains("Barrierefrei"))
-                    smgtaglist.Add("Barrierefrei");
+                if (!smgtaglist.Contains("barrierefrei"))
+                    smgtaglist.Add("barrierefrei");
             }
             if (addfamilytag)
             {
-                if (!smgtaglist.Contains("Familientip"))
-                    smgtaglist.Add("Familientip");
+                if (!smgtaglist.Contains("familientip"))
+                    smgtaglist.Add("familientip");
             }
 
             mymuseum.SmgTags = smgtaglist.ToList();
