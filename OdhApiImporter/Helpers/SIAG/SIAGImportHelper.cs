@@ -473,30 +473,39 @@ namespace OdhApiImporter.Helpers
 
         private async Task<UpdateDetail> SetDataNotinListToInactive(XDocument mymuseumlist, CancellationToken cancellationToken)
         {
-            //CHECK FOR ERRORS HERE
-
-            List<string?> mymuseumroot = mymuseumlist.Root?.Elements("Museum").Select(x => x.Attribute("ID")?.Value).ToList() ?? new();
-      
-            var mymuseumquery = QueryFactory.Query("smgpois")
-                .Select("data->>'CustomId'")
-                .Where("gen_syncsourceinterface", "museumdata");
-
-            var mymuseumsonraven = await mymuseumquery.GetAsync<string>();
-            
-            var idstodelete = mymuseumsonraven.Where(p => !mymuseumroot.Any(p2 => p2 == p));
-
             int updateresult = 0;
             int deleteresult = 0;
+            int errorresult = 0;
 
-            foreach (var idtodelete in idstodelete)
+            try
             {
-                var result = await DeleteOrDisableData(idtodelete, false);
+                List<string?> mymuseumroot = mymuseumlist.Root?.Elements("Museum").Select(x => x.Attribute("ID")?.Value).ToList() ?? new();
 
-                updateresult = updateresult + result.Item1;
-                deleteresult = deleteresult + result.Item2;
+                var mymuseumquery = QueryFactory.Query("smgpois")
+                    .SelectRaw("data->>'CustomId'")
+                    .Where("gen_syncsourceinterface", "museumdata");
+
+                var mymuseumsonraven = await mymuseumquery.GetAsync<string>();
+
+                var idstodelete = mymuseumsonraven.Where(p => !mymuseumroot.Any(p2 => p2 == p));
+
+             
+                foreach (var idtodelete in idstodelete)
+                {
+                    var result = await DeleteOrDisableData(idtodelete, false);
+
+                    updateresult = updateresult + result.Item1;
+                    deleteresult = deleteresult + result.Item2;
+                }
+            }
+            catch(Exception ex)
+            {
+                WriteLog.LogToConsole("", "dataimport", "deactivate.siagmuseum", new ImportLog() { sourceid = "", sourceinterface = "siag.museum", success = false, error = ex.Message });
+
+                errorresult = errorresult + 1;
             }
             
-            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult };
+            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult, error = errorresult };
         }
 
         private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, KeyValuePair<string, XElement> siagmuseumdata)
