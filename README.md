@@ -183,3 +183,17 @@ AS $function$ begin
 end; $function$
 ```
 
+* extract_tagkeys
+
+```sql
+CREATE OR REPLACE FUNCTION is_valid_jsonb(p_json text) 
+RETURNS JSONB
+AS $$
+begin
+  return p_json::jsonb;
+exception 
+  when others then
+     return null;  
+end; $$ 
+LANGUAGE plpgsql IMMUTABLE;
+```

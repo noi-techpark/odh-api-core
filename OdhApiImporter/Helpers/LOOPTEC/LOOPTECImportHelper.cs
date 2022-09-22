@@ -45,7 +45,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
                 }
             }            
 
-            return new UpdateDetail() { created = newcounter, updated = 0, deleted = 0 };
+            return new UpdateDetail() { created = newcounter, updated = 0, deleted = 0, error = 0 };
         }        
 
         private async Task<int> InsertInRawDataDB(dynamic ejob)

@@ -635,6 +635,7 @@ namespace DataModel
             PoiProperty = new Dictionary<string, List<PoiProperty>>();
         }
 
+        [SwaggerSchema("Id on the primary data Source")]
         public string? CustomId { get; set; }
         public ICollection<Webcam>? Webcam { get; set; }
 
@@ -1879,6 +1880,7 @@ namespace DataModel
         public int Vintage { get; set; }
         public int Awardyear { get; set; }
 
+        [SwaggerSchema("Id on the primary data Source")]
         public string? CustomId { get; set; }
         public string? CompanyId { get; set; }
 

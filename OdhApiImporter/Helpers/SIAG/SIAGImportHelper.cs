@@ -103,7 +103,7 @@ namespace OdhApiImporter.Helpers
                 ////Check if data exists                    
                 //var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "weatherdatahistory", insertresultraw);
 
-                return new UpdateDetail() { created = insertresult.created, updated = insertresult.updated, deleted = insertresult.deleted };                    
+                return new UpdateDetail() { created = insertresult.created, updated = insertresult.updated, deleted = insertresult.deleted, error = insertresult.error };                    
             }
             else
                 throw new Exception("No weatherdata received from source!");
@@ -154,16 +154,12 @@ namespace OdhApiImporter.Helpers
         }
 
         private async Task<UpdateDetail> ImportData(XDocument mymuseumlist, CancellationToken cancellationToken)
-        {
-            string museumid = "";
-
+        {         
             XElement? mymuseumroot = mymuseumlist.Root;
-
-            XNamespace ns = "http://service.kks.siag";
-
-            //.Where(x => x.Attribute("ID").Value == "963")
+               
             int updatecounter = 0;
             int newcounter = 0;
+            int errorcounter = 0;
 
             //Load ValidTagsfor Categories
             var validtagsforcategories = default(IEnumerable<SmgTags>);
@@ -175,13 +171,35 @@ namespace OdhApiImporter.Helpers
 
             foreach (XElement mymuseumelement in mymuseumroot?.Elements("Museum") ?? Enumerable.Empty<XElement>())
             {
-                museumid = mymuseumelement.Attribute("ID")?.Value ?? "";
+                var importresult = await ImportDataSingle(mymuseumelement, languagelistcategories, validtagsforcategories);
+
+                newcounter = newcounter + importresult.created.Value;
+                updatecounter = updatecounter + importresult.updated.Value;
+                errorcounter = errorcounter + importresult.error.Value;
+            }
+
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
+        }
+        
+        private async Task<UpdateDetail> ImportDataSingle(XElement mymuseumelement, List<string> languagelistcategories, IEnumerable<SmgTags> validtagsforcategories)
+        {
+            string museumidtoreturn = "";
+            int updatecounter = 0;
+            int newcounter = 0;
+            int errorcounter = 0;
+
+            try
+            {
+                XNamespace ns = "http://service.kks.siag";
+
+                string museumid = mymuseumelement.Attribute("ID")?.Value ?? "";
                 string plz = mymuseumelement.Attribute("PLZ")?.Value ?? "";
 
                 //Import Museum data from Siag
                 var mymuseumdata = await SIAG.GetMuseumFromSIAG.GetMuseumDetail(museumid);
                 var mymuseumxml = mymuseumdata?.Root?.Element(ns + "return");
 
+                //Improve Performance this query is very slow!!!!
                 var mymuseumquery = QueryFactory.Query("smgpois")
                     .Select("data")
                     .WhereRaw("data->>'CustomId' = $$", museumid.ToLower());
@@ -201,6 +219,9 @@ namespace OdhApiImporter.Helpers
                     string gemeindeid = mymuseumxml?.Element(ax211 + "gemeindeId")?.Value ?? "";
 
                     mymuseum.Id = "smgpoi" + siagid + "siag";
+
+                    museumidtoreturn = mymuseum.Id;
+
                     mymuseum.CustomId = siagid;
                     mymuseum.Active = true;
                     mymuseum.SmgActive = true;
@@ -331,6 +352,8 @@ namespace OdhApiImporter.Helpers
                 }
                 else
                 {
+                    museumidtoreturn = mymuseum.Id;
+
                     //mymuseum.CustomId = siagid;
                     mymuseum.Active = true;
                     //mymuseum.SmgActive = true;                 
@@ -421,7 +444,7 @@ namespace OdhApiImporter.Helpers
                 mymuseum.Source = "SIAG";
                 mymuseum.SyncSourceInterface = "museumdata";
                 mymuseum.SyncUpdateMode = "Full";
-                mymuseum.LastChange = DateTime.Now;                
+                mymuseum.LastChange = DateTime.Now;
 
                 //Setting LicenseInfo
                 mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
@@ -438,53 +461,63 @@ namespace OdhApiImporter.Helpers
                         WriteLog.LogToConsole(mymuseum.Id, "dataimport", "single.siagmuseum", new ImportLog() { sourceid = mymuseum.Id, sourceinterface = "siag.museum", success = true, error = "" });
                 }
             }
+            catch(Exception ex)
+            {
+                WriteLog.LogToConsole(museumidtoreturn, "dataimport", "single.siagmuseum", new ImportLog() { sourceid = museumidtoreturn, sourceinterface = "siag.museum", success = false, error = ex.Message });
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0 };
+                errorcounter = errorcounter + 1;
+            }
+
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
         }
-        
+
         private async Task<UpdateDetail> SetDataNotinListToInactive(XDocument mymuseumlist, CancellationToken cancellationToken)
         {
-            List<string?> mymuseumroot = mymuseumlist.Root?.Elements("Museum").Select(x => x.Attribute("ID")?.Value).ToList() ?? new();
-      
-            var mymuseumquery = QueryFactory.Query("smgpois")
-                .Select("data->>'CustomId'")
-                .Where("gen_syncsourceinterface", "museumdata");
-
-            var mymuseumsonraven = await mymuseumquery.GetAsync<string>();
-            
-            var idstodelete = mymuseumsonraven.Where(p => !mymuseumroot.Any(p2 => p2 == p));
-
             int updateresult = 0;
             int deleteresult = 0;
+            int errorresult = 0;
 
-            foreach (var idtodelete in idstodelete)
+            try
             {
-                var result = await DeleteOrDisableData(idtodelete, false);
+                List<string?> mymuseumroot = mymuseumlist.Root?.Elements("Museum").Select(x => x.Attribute("ID")?.Value).ToList() ?? new();
 
-                updateresult = updateresult + result.Item1;
-                deleteresult = deleteresult + result.Item2;
+                var mymuseumquery = QueryFactory.Query("smgpois")
+                    .SelectRaw("data->>'CustomId'")
+                    .Where("gen_syncsourceinterface", "museumdata");
+
+                var mymuseumsonraven = await mymuseumquery.GetAsync<string>();
+
+                var idstodelete = mymuseumsonraven.Where(p => !mymuseumroot.Any(p2 => p2 == p));
+
+             
+                foreach (var idtodelete in idstodelete)
+                {
+                    var result = await DeleteOrDisableData(idtodelete, false);
+
+                    updateresult = updateresult + result.Item1;
+                    deleteresult = deleteresult + result.Item2;
+                }
+            }
+            catch(Exception ex)
+            {
+                WriteLog.LogToConsole("", "dataimport", "deactivate.siagmuseum", new ImportLog() { sourceid = "", sourceinterface = "siag.museum", success = false, error = ex.Message });
+
+                errorresult = errorresult + 1;
             }
             
-            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult };
+            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult, error = errorresult };
         }
 
         private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, KeyValuePair<string, XElement> siagmuseumdata)
         {
-            try
-            {                
-                odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
+            odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
 
-                //Set LicenseInfo
-                odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+            //Set LicenseInfo
+            odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
-                var rawdataid = await InsertInRawDataDB(siagmuseumdata);
+            var rawdataid = await InsertInRawDataDB(siagmuseumdata);
 
-                return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid);
         }
 
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, XElement> siagmuseumdata)
@@ -503,6 +536,7 @@ namespace OdhApiImporter.Helpers
                             rawformat = "xml"
                         });
         }
+        
         #endregion
     }
 }

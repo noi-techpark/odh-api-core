@@ -66,6 +66,7 @@ namespace OdhApiImporter.Helpers.DSS
             int updatecounter = 0;
             int newcounter = 0;
             int deletecounter = 0;
+            int errorcounter = 0;
 
             List<string> idlistdssinterface = new List<string>();
 
@@ -279,7 +280,7 @@ namespace OdhApiImporter.Helpers.DSS
             }
 
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
         }
 
         //Parse the dss interface content

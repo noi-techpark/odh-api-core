@@ -42,6 +42,7 @@ namespace OdhApiImporter.Helpers
             var updatecounter = 0;
             var newcounter = 0;
             var deletecounter = 0;
+            var errorcounter = 0;
 
             foreach (var (eventshort, eventebms) in resulttuplesorted)
             {
@@ -128,7 +129,7 @@ namespace OdhApiImporter.Helpers
             if (resulttuple.Select(x => x.Item1).Count() > 0)
                 deletecounter = await DeleteDeletedEvents(resulttuple.Select(x => x.Item1).ToList(), currenteventshort.ToList());
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
         }
 
         private async Task<PGCRUDResult> InsertDataToDB(EventShortLinked eventshort, KeyValuePair<string, EBMSEventREST> ebmsevent)

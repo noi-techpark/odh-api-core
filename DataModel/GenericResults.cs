@@ -20,6 +20,8 @@ namespace DataModel
         public int? created { get; init; }
         public int? deleted { get; init; }
 
+        public int? error { get; init; }
+
         public string id { get; init; }
 
         public string exception { get; init; }
@@ -34,6 +36,8 @@ namespace DataModel
         public int? updated { get; init; }
         public int? created { get; init; }
         public int? deleted { get; init; }
+
+        public int? error { get; init; }
     }
 
     public struct PGCRUDResult
@@ -54,15 +58,17 @@ namespace DataModel
             int? updated = 0;
             int? created = 0;
             int? deleted = 0;
+            int? error = 0;
 
-            foreach(var updatedetail in updatedetails)
+            foreach (var updatedetail in updatedetails)
             {
                 created = updatedetail.created + created;
                 updated = updatedetail.updated + updated;
                 deleted = updatedetail.deleted + deleted;
+                error = updatedetail.error + error;
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted };
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error };
         }
 
         public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
@@ -79,6 +85,7 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
+                error = detail.error,
                 success = true,
                 exception = null,
                 stacktrace = null
@@ -104,6 +111,7 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
+                error = detail.error,
                 success = false,
                 exception = ex.Message,
                 stacktrace = ex.StackTrace
