@@ -365,7 +365,7 @@ namespace OdhApiImporter.Helpers
 
             var result = await QueryFactory.UpsertData<T>(datatosave, table);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
         }
 
         #endregion

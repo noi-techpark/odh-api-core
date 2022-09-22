@@ -53,6 +53,7 @@ namespace OdhApiImporter.Helpers
                 var updatecounter = 0;
                 var newcounter = 0;
                 var deletecounter = 0;
+                var errorcounter = 0;
 
                 //Import Each STA Vendingpoi to ODH
                 foreach (var vendingpoint in vendingpoints.records)
@@ -110,7 +111,7 @@ namespace OdhApiImporter.Helpers
                     }
                 }
 
-                return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter };
+                return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
             }
             else if (vendingpoints.Error)
                 throw new Exception(vendingpoints.ErrorMessage);

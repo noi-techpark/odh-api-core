@@ -103,7 +103,7 @@ namespace OdhApiImporter.Helpers
                 ////Check if data exists                    
                 //var result = await QueryFactory.UpsertData<ODHActivityPoi>(odhactivitypoi!, "weatherdatahistory", insertresultraw);
 
-                return new UpdateDetail() { created = insertresult.created, updated = insertresult.updated, deleted = insertresult.deleted };                    
+                return new UpdateDetail() { created = insertresult.created, updated = insertresult.updated, deleted = insertresult.deleted, error = insertresult.error };                    
             }
             else
                 throw new Exception("No weatherdata received from source!");

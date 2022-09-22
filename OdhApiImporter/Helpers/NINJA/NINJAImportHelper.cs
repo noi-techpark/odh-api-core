@@ -51,7 +51,7 @@ namespace OdhApiImporter.Helpers
             var newimportcounter = 0;
             var updateimportcounter = 0;
             var errorimportcounter = 0;
-            var deleteimportcounter = 0;
+            var deleteimportcounter = 0;            
 
             List<string> idlistspreadsheet = new List<string>();
             List<string> sourcelist = new List<string>();
@@ -122,7 +122,7 @@ namespace OdhApiImporter.Helpers
                 deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
             }
 
-            return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter };
+            return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }
 
         //Check if logic can be moved here
