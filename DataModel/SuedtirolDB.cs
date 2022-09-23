@@ -125,6 +125,30 @@ namespace DataModel
         ICollection<ImageGallery>? ImageGallery { get; set; }
     }
 
+    public interface IVideoItems
+    {
+        string Name { get; set; }
+        string Url { get; set; }
+        string VideoSource { get; set; }
+        string VideoType { get; set; }
+
+        string StreamingSource { get; set; }
+
+        IDictionary<string, string> VideoTitle { get; set; }
+        IDictionary<string, string> VideoDesc { get; set; }
+
+        bool Active { get; set; }
+        string CopyRight { get; set; }
+        string License { get; set; }
+        string LicenseHolder { get; set; }
+    }
+
+    public interface IVideoItemsAware
+    {
+        //brauchts nix?
+        ICollection<VideoItems>? VideoItems { get; set; }
+    }
+
     public interface ILocationInfoAware
     {
         RegionInfo? RegionInfo { get; set; }
@@ -2121,7 +2145,7 @@ namespace DataModel
     }
 
     //BaseInfos for ODHActivityPois
-    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn
+    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IVideoItemsAware
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2225,6 +2249,8 @@ namespace DataModel
         public DistanceInfo? DistanceInfo { get; set; }
 
         public IDictionary<string, List<Tags>> Tags { get; set; }
+
+        public ICollection<VideoItems>? VideoItems { get; set; }
     }
 
     //BaseInfo Article
@@ -2734,6 +2760,28 @@ namespace DataModel
         public string? LicenseHolder { get; set; }
         public ICollection<string>? ImageTags { get; set; }
     }
+
+    public class VideoItems : IVideoItems
+    {
+        public VideoItems()
+        {
+            VideoTitle = new Dictionary<string, string>();
+            VideoDesc = new Dictionary<string, string>();
+        }
+
+        public string? Name { get; set; }
+        public string? Url { get; set; }
+        public string? VideoSource { get; set; }
+        public string? VideoType { get; set; }
+        public string? StreamingSource { get; set; }
+        public IDictionary<string, string> VideoTitle { get; set; }
+        public IDictionary<string, string> VideoDesc { get; set; }
+        public bool? Active { get; set; }
+        public string? CopyRight { get; set; }
+        public string? License { get; set; }
+        public string? LicenseHolder { get; set; }
+    }
+
 
     public class ImageGalleryLocalized
     {
