@@ -56,7 +56,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             return mywinedata;
         }
 
-        private async Task<UpdateDetail> ImportData(IDictionary<string, XDocument> winegastrolist, CancellationToken cancellationToken)
+        private async Task<UpdateDetail> ImportData(IDictionary<string, XDocument> winegastrolist, CancellationToken cancellationToken = default)
         {
             int updatecounter = 0;
             int newcounter = 0;
@@ -75,9 +75,9 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             {
                 var importresult = await ImportDataSingle(winedata, languagelistcategories, validtagsforcategories);
 
-                newcounter = newcounter + importresult.created.Value;
-                updatecounter = updatecounter + importresult.updated.Value;
-                errorcounter = errorcounter + importresult.error.Value;
+                newcounter = newcounter + importresult.created ?? newcounter;
+                updatecounter = updatecounter + importresult.updated ?? updatecounter;
+                errorcounter = errorcounter + importresult.error ?? errorcounter;
             }
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };

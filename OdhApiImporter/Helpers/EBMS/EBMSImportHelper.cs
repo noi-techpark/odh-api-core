@@ -12,16 +12,7 @@ using System.Threading.Tasks;
 namespace OdhApiImporter.Helpers
 {
     public class EBMSImportHelper : ImportHelper, IImportHelper
-    {
-        //private readonly QueryFactory QueryFactory;
-        //private readonly ISettings settings;
-
-        //public EBMSImportHelper(ISettings settings, QueryFactory queryfactory)
-        //{
-        //    this.QueryFactory = queryfactory;
-        //    this.settings = settings;
-        //}
-
+    {        
         public EBMSImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
 
@@ -32,19 +23,45 @@ namespace OdhApiImporter.Helpers
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, CancellationToken cancellationToken)
         {
             var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
-            var resulttuplesorted = resulttuple.OrderBy(x => x.Item1.StartDate);
-
+         
             var currenteventshort = await GetAllEventsShort(DateTime.Now);
 
-            //var result = resulttuple.Select(x => x.Item1).ToList();
-            //var resultsorted = result.OrderBy(x => x.StartDate);
+            var updateresult = await ImportData(resulttuple, cancellationToken);
+            
+            //todo check if resulttuple item1 is null
+            var  deleteresult = await DeleteDeletedEvents(resulttuple, currenteventshort.ToList());
 
-            var updatecounter = 0;
-            var newcounter = 0;
-            var deletecounter = 0;
-            var errorcounter = 0;
+            return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
+        }
+
+        private async Task<UpdateDetail> ImportData(List<Tuple<EventShortLinked, EBMSEventREST>> resulttuple, CancellationToken cancellationToken)
+        {
+            int updatecounter = 0;
+            int newcounter = 0;
+            int errorcounter = 0;
+
+            var resulttuplesorted = resulttuple.OrderBy(x => x.Item1.StartDate);
 
             foreach (var (eventshort, eventebms) in resulttuplesorted)
+            {
+                var importresult = await ImportDataSingle(eventshort, eventebms);
+
+                newcounter = newcounter + importresult.created ?? newcounter;
+                updatecounter = updatecounter + importresult.updated ?? updatecounter;
+                errorcounter = errorcounter + importresult.error ?? errorcounter;
+            }
+
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
+        }
+
+        private async Task<UpdateDetail> ImportDataSingle(EventShortLinked eventshort, EBMSEventREST eventebms)
+        {
+            string idtoreturn = "";
+            int updatecounter = 0;
+            int newcounter = 0;
+            int errorcounter = 0;
+
+            try
             {
                 var query =
                    QueryFactory.Query("eventeuracnoi")
@@ -122,14 +139,20 @@ namespace OdhApiImporter.Helpers
                     var queryresult = await InsertDataToDB(eventshort, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
 
                     newcounter = newcounter + queryresult.created ?? 0;
-                    updatecounter = updatecounter + queryresult.updated ?? 0;               
+                    updatecounter = updatecounter + queryresult.updated ?? 0;
+
+                    WriteLog.LogToConsole(idtoreturn, "dataimport", "single.eventeuracnoi", new ImportLog() { sourceid = idtoreturn, sourceinterface = "ebms.eventeuracnoi", success = true, error = "" });
                 }
             }
+            catch (Exception ex)
+            {
+                WriteLog.LogToConsole(idtoreturn, "dataimport", "single.eventeuracnoi", new ImportLog() { sourceid = idtoreturn, sourceinterface = "ebms.eventeuracnoi", success = false, error = ex.Message });
 
-            if (resulttuple.Select(x => x.Item1).Count() > 0)
-                deletecounter = await DeleteDeletedEvents(resulttuple.Select(x => x.Item1).ToList(), currenteventshort.ToList());
+                errorcounter = errorcounter + 1;
+            }
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
+
         }
 
         private async Task<PGCRUDResult> InsertDataToDB(EventShortLinked eventshort, KeyValuePair<string, EBMSEventREST> ebmsevent)
@@ -168,7 +191,6 @@ namespace OdhApiImporter.Helpers
                         });
         }
 
-
         private static List<string>? AssignTechnologyfieldsautomatically(string companyname, List<string>? technologyfields)
         {
             if (technologyfields == null)
@@ -195,36 +217,38 @@ namespace OdhApiImporter.Helpers
                     automatictechnologyfields.Add(toassign);
         }
 
-        private async Task<int> DeleteDeletedEvents(List<EventShortLinked> eventshortfromnow, List<EventShortLinked> eventshortinDB)
+        private async Task<UpdateDetail> DeleteDeletedEvents(List<Tuple<EventShortLinked, EBMSEventREST>> resulttuple, List<EventShortLinked> eventshortinDB)
         {
-            //TODO CHECK if Event is in list, if not, DELETE!
-            //TODO CHECK IF THIS IS WORKING CORRECTLY
-
-            var idsonListinDB = eventshortinDB.Select(x => x.EventId).ToList();
-            var idsonService = eventshortfromnow.Select(x => x.EventId).ToList();
-
             var deletecounter = 0;
 
-            var idstodelete = idsonListinDB.Where(p => !idsonService.Any(p2 => p2 == p));
-
-            if (idstodelete.Count() > 0)
+            if (resulttuple.Select(x => x.Item1).Count() > 0)
             {
-                foreach (var idtodelete in idstodelete)
+                List<EventShortLinked> eventshortfromnow = resulttuple.Select(x => x.Item1).ToList();
+
+                var idsonListinDB = eventshortinDB.Select(x => x.EventId).ToList();
+                var idsonService = eventshortfromnow.Select(x => x.EventId).ToList();
+
+                var idstodelete = idsonListinDB.Where(p => !idsonService.Any(p2 => p2 == p));
+
+                if (idstodelete.Count() > 0)
                 {
-                    //Set to inactive or delete?
-
-                    var eventshorttodeactivate = eventshortinDB.Where(x => x.EventId == idtodelete).FirstOrDefault();
-
-                    //TODO CHECK IF IT WORKS
-                    if (eventshorttodeactivate != null)
+                    foreach (var idtodelete in idstodelete)
                     {
-                        await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
-                        deletecounter++;
+                        //Set to inactive or delete?
+
+                        var eventshorttodeactivate = eventshortinDB.Where(x => x.EventId == idtodelete).FirstOrDefault();
+
+                        //TODO CHECK IF IT WORKS
+                        if (eventshorttodeactivate != null)
+                        {
+                            await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
+                            deletecounter++;
+                        }
                     }
                 }
             }
 
-            return deletecounter;
+            return new UpdateDetail() { created = 0, updated = 0, deleted = deletecounter, error = 0 };
         }
 
         private async Task<IEnumerable<EventShortLinked>> GetAllEventsShort(DateTime now)
