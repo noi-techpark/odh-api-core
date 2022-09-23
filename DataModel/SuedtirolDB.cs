@@ -127,20 +127,20 @@ namespace DataModel
 
     public interface IVideoItems
     {
-        string Name { get; set; }
-        string Url { get; set; }
-        string VideoSource { get; set; }
-        string VideoType { get; set; }
+        string? Name { get; set; }
+        string? Url { get; set; }
+        string? VideoSource { get; set; }
+        string? VideoType { get; set; }
 
-        string StreamingSource { get; set; }
+        string? StreamingSource { get; set; }
 
         IDictionary<string, string> VideoTitle { get; set; }
         IDictionary<string, string> VideoDesc { get; set; }
 
-        bool Active { get; set; }
-        string CopyRight { get; set; }
-        string License { get; set; }
-        string LicenseHolder { get; set; }
+        bool? Active { get; set; }
+        string? CopyRight { get; set; }
+        string? License { get; set; }
+        string? LicenseHolder { get; set; }
     }
 
     public interface IVideoItemsAware
