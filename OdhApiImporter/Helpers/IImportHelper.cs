@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OdhApiImporter.Helpers
 {
@@ -14,7 +15,7 @@ namespace OdhApiImporter.Helpers
 
         Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete);
 
-        //Task<UpdateDetail> ImportData();
+        //Task<UpdateDetail> ImportData(ImportObject importobject, CancellationToken cancellationToken);
     }
 
     public class ImportHelper
@@ -66,4 +67,10 @@ namespace OdhApiImporter.Helpers
         }
 
     }
+
+    //public class ImportObject
+    //{
+    //    public XDocument XdocumentList { get; set; }
+    //    public Dictionary<string, XDocument> XdocumentDictionary { get; set; }
+    //}
 }

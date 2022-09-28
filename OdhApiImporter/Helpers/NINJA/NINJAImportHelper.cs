@@ -77,7 +77,7 @@ namespace OdhApiImporter.Helpers
                             }
 
                             eventtosave.Active = true;
-                            eventtosave.SmgActive = false;
+                            eventtosave.SmgActive = true;
 
                             var idtocheck = kvp.Key;
 
