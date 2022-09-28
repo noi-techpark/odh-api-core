@@ -173,9 +173,9 @@ namespace OdhApiImporter.Helpers
             {
                 var importresult = await ImportDataSingle(mymuseumelement, languagelistcategories, validtagsforcategories);
 
-                newcounter = newcounter + importresult.created.Value;
-                updatecounter = updatecounter + importresult.updated.Value;
-                errorcounter = errorcounter + importresult.error.Value;
+                newcounter = newcounter + importresult.created ?? newcounter;
+                updatecounter = updatecounter + importresult.updated ?? updatecounter;
+                errorcounter = errorcounter + importresult.error ?? errorcounter;
             }
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
@@ -441,7 +441,7 @@ namespace OdhApiImporter.Helpers
                 }
 
                 //Setting Common Infos
-                mymuseum.Source = "SIAG";
+                mymuseum.Source = "siag";
                 mymuseum.SyncSourceInterface = "museumdata";
                 mymuseum.SyncUpdateMode = "Full";
                 mymuseum.LastChange = DateTime.Now;

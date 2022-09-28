@@ -13,6 +13,8 @@ namespace OdhApiImporter.Helpers
         Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default);
 
         Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete);
+
+        //Task<UpdateDetail> ImportData();
     }
 
     public class ImportHelper
