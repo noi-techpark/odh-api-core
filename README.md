@@ -183,7 +183,7 @@ AS $function$ begin
 end; $function$
 ```
 
-* extract_tagkeys
+* is_valid_jsonb
 
 ```sql
 CREATE OR REPLACE FUNCTION is_valid_jsonb(p_json text) 
