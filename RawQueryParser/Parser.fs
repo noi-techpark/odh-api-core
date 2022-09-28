@@ -10,7 +10,7 @@ type Parser<'a> = Parser<'a, unit>
 /// <c>Detail.de.Title => Field ["Detail"; "de"; "Title"]</c>
 /// </summary>
 let field =
-    let lettersDigitsAndUnderscore c = isAsciiLetter c || isDigit c || c = '_'
+    let lettersDigitsAndUnderscore c = isAsciiLetter c || isDigit c || c = '_' || c = '@'
     let options = IdentifierOptions(isAsciiIdStart = lettersDigitsAndUnderscore,
                                     isAsciiIdContinue = lettersDigitsAndUnderscore)
     let identifierSegment = identifier options |>> IdentifierSegment
