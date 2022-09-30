@@ -206,19 +206,23 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                var numericid = Convert.ToInt32((string)id);
-
-                var query =
+                if (Int32.TryParse(id, out var numericid))
+                {
+                    var query =
                     QueryFactory.Query("rawdata")
                         .Where("id", numericid)
                         .When(FilterClosedData, q => q.FilterClosedData_Raw());
 
-                var data = await query.FirstOrDefaultAsync<RawDataStoreWithId?>();
+                    var data = await query.FirstOrDefaultAsync<RawDataStoreWithId?>();
 
-                var fieldsTohide = FieldsToHide;
+                    var fieldsTohide = FieldsToHide;
 
-                //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
-                return data != null ? data.UseJsonRaw() : new RawDataStoreWithId();
+                    //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                    return data != null ? data.UseJsonRaw() : new RawDataStoreWithId();
+                }
+                else
+                    return BadRequest("Id could not be found");
+                
             });
         }
 
