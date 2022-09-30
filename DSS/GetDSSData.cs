@@ -18,7 +18,7 @@ namespace DSS
         alpinehuts,
         taxi,
         healthcare,
-        meteo
+        weather
     };
 
     public class GetDSSData
@@ -42,7 +42,7 @@ namespace DSS
         public const string serviceurltaxi = "taxi";
 
         public const string serviceurlhealthcare = "healthcare";
-        public const string serviceurlwetter = "wetter";
+        public const string serviceurlweather = "wetter";
 
         private static async Task<HttpResponseMessage> RequestDSSInfo(DSSRequestType dssRequestType,  string dssuser, string dsspswd, string serviceurl)
         {
@@ -61,6 +61,36 @@ namespace DSS
                         break;
                     case DSSRequestType.slopestatus:
                         serviceurl = serviceurl + serviceurlslopestatus;
+                        break;
+                    case DSSRequestType.overview:
+                        serviceurl = serviceurl + serviceurloverview;
+                        break;
+                    case DSSRequestType.skiresorts:
+                        serviceurl = serviceurl + serviceurlskiresorts;
+                        break;
+                    case DSSRequestType.skicircuits:
+                        serviceurl = serviceurl + serviceurlskicircuits;
+                        break;
+                    case DSSRequestType.snowparks:
+                        serviceurl = serviceurl + serviceurlsnowpark;
+                        break;
+                    case DSSRequestType.webcams:
+                        serviceurl = serviceurl + serviceurlwebcams;
+                        break;
+                    case DSSRequestType.healthcare:
+                        serviceurl = serviceurl + serviceurlhealthcare;
+                        break;
+                    case DSSRequestType.weather:
+                        serviceurl = serviceurl + serviceurlweather;
+                        break;
+                    case DSSRequestType.taxi:
+                        serviceurl = serviceurl + serviceurltaxi;
+                        break;
+                    case DSSRequestType.alpinehuts:
+                        serviceurl = serviceurl + serviceurlmountainhuts;
+                        break;
+                    case DSSRequestType.sellingpoints:
+                        serviceurl = serviceurl + serviceurlsellingpoints;
                         break;
                 }
 

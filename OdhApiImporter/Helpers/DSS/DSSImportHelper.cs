@@ -37,15 +37,16 @@ namespace OdhApiImporter.Helpers.DSS
         {
             requesttypelist = new List<DSSRequestType>();
 
-            if (entitytype.ToLower() == "lift")
+            switch(entitytype.ToLower())
             {
-                requesttypelist.Add(DSSRequestType.liftbase);
-                requesttypelist.Add(DSSRequestType.liftstatus);
-            }
-            else if (entitytype.ToLower() == "slope")
-            {
-                requesttypelist.Add(DSSRequestType.slopebase);
-                requesttypelist.Add(DSSRequestType.slopestatus);
+                case "lift":
+                    requesttypelist.Add(DSSRequestType.liftbase);
+                    requesttypelist.Add(DSSRequestType.liftstatus);
+                    break;
+                case "slope":
+                    requesttypelist.Add(DSSRequestType.slopebase);
+                    requesttypelist.Add(DSSRequestType.slopestatus);
+                    break;
             }
 
             List<dynamic> dssdata = new List<dynamic>();
