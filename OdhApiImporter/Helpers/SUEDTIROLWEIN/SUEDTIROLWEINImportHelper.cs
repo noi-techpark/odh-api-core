@@ -28,10 +28,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             var updateresult = await ImportData(winegastrolist, cancellationToken);
 
             var deleteresult = await SetDataNotinListToInactive(winegastrolist["de"], cancellationToken);
-
-            //SetMuseumsnotinListToInactive()
-            //SetSuedtirolWineCompanyToInactive(documentStore, tracesource, log, winedatalistde);
-
+            
             return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
         }
 
