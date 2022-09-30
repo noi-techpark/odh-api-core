@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers.api
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     public class RawdataApiController : OdhController
     {
         public RawdataApiController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory)
@@ -47,7 +47,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<TagLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
@@ -86,7 +86,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(LTSPoiLinked), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RawDataStoreWithId), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,PoiReader")]
@@ -206,9 +206,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                var numericid = Convert.ToInt32((string)id);
+
                 var query =
                     QueryFactory.Query("rawdata")
-                        .Where("id", id)
+                        .Where("id", numericid)
                         .When(FilterClosedData, q => q.FilterClosedData_Raw());
 
                 var data = await query.FirstOrDefaultAsync<RawDataStoreWithId?>();
@@ -216,7 +218,7 @@ namespace OdhApiCore.Controllers.api
                 var fieldsTohide = FieldsToHide;
 
                 //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
-                return data;
+                return data != null ? data.UseJsonRaw() : new RawDataStoreWithId();
             });
         }
 
