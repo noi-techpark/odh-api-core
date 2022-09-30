@@ -8,7 +8,17 @@ namespace DSS
         liftbase,
         liftstatus,
         slopebase,
-        slopestatus
+        slopestatus,
+        overview,
+        skiresorts,
+        skicircuits,
+        webcams,
+        sellingpoints,
+        snowparks,
+        alpinehuts,
+        taxi,
+        healthcare,
+        meteo
     };
 
     public class GetDSSData
@@ -18,7 +28,22 @@ namespace DSS
 
         public const string serviceurlslopebase = "pistebasis";
         public const string serviceurlslopestatus = "pistenstatus";
-                
+
+        public const string serviceurloverview = "overview";
+        public const string serviceurlskiresorts = "talschaften";
+
+        public const string serviceurlskicircuits = "ski-circuits";
+        public const string serviceurlwebcams = "webcams";
+
+        public const string serviceurlsellingpoints = "selling-points";
+        public const string serviceurlsnowpark = "snowpark";
+
+        public const string serviceurlmountainhuts = "mountain-huts";
+        public const string serviceurltaxi = "taxi";
+
+        public const string serviceurlhealthcare = "healthcare";
+        public const string serviceurlwetter = "wetter";
+
         private static async Task<HttpResponseMessage> RequestDSSInfo(DSSRequestType dssRequestType,  string dssuser, string dsspswd, string serviceurl)
         {
             try
