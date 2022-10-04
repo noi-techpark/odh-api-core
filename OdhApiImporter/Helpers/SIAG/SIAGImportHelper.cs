@@ -367,7 +367,7 @@ namespace OdhApiImporter.Helpers
                     if (mymuseum.SubType == "Naturparkhäuser")
                         subtype = "Naturparkhäuser";
 
-                    //Suedtirol Type laden
+                    //Load Suedtirol Type
                     var mysmgmaintype = await ODHTagHelper.GeODHTagByID(QueryFactory, "Kultur Sehenswürdigkeiten");
                     var mysmgsubtype = await ODHTagHelper.GeODHTagByID(QueryFactory, subtype);
                     var mysmgpoipoitype = new List<SmgTags>();
@@ -451,6 +451,11 @@ namespace OdhApiImporter.Helpers
 
                 //Special get all Taglist and traduce it on import
                 await GenericTaggingHelper.AddMappingToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
+
+                //TODO: Calculate GPS Distance to District and Municipality
+
+                //Set Main Type as Poi
+                ODHActivityPoiHelper.SetMainCategorizationForODHActivityPoi(mymuseum);
 
                 if (mymuseumdata?.Root is { })
                 {
