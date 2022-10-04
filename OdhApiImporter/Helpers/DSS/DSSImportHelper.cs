@@ -14,38 +14,53 @@ using System.Linq;
 namespace OdhApiImporter.Helpers.DSS
 {
     public class DSSImportHelper : ImportHelper, IImportHelper
-    {
-        //private readonly QueryFactory QueryFactory;
-        //private readonly ISettings settings;
-
-        //public DSSImportHelper(ISettings settings, QueryFactory queryfactory)
-        //{
-        //    this.QueryFactory = queryfactory;
-        //    this.settings = settings;
-        //}
-
+    {        
         public DSSImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
             requesttypelist = new();
             entitytype = "";
+            rawonly = true;
+            idlistdssinterface = new();
         }
 
         public List<DSSRequestType> requesttypelist { get; set; }
         public string entitytype { get; set; }
 
+        public bool rawonly { get; set; }
+
+        public List<string> idlistdssinterface { get; set; }
+
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        {
+            //GET DATA
+            var dssdata = await GetData(cancellationToken);
+
+            //Import Data to rawtable and odh TODO ADD THE Other types
+            var updateresult = await ImportData(dssdata, cancellationToken);
+
+            //Disable Data no
+            var deleteresult = await SetDataNotinListToInactive(cancellationToken);
+
+            return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });            
+        }
+
+        //Imports DSS Data
+        private async Task<List<dynamic>> GetData(CancellationToken cancellationToken)
         {
             requesttypelist = new List<DSSRequestType>();
 
-            if (entitytype.ToLower() == "lift")
+            switch (entitytype.ToLower())
             {
-                requesttypelist.Add(DSSRequestType.liftbase);
-                requesttypelist.Add(DSSRequestType.liftstatus);
-            }
-            else if (entitytype.ToLower() == "slope")
-            {
-                requesttypelist.Add(DSSRequestType.slopebase);
-                requesttypelist.Add(DSSRequestType.slopestatus);
+                case "lift":
+                    requesttypelist.Add(DSSRequestType.liftbase);
+                    //requesttypelist.Add(DSSRequestType.liftstatus); // not needed at the moment
+                    rawonly = false;
+                    break;
+                case "slope":
+                    requesttypelist.Add(DSSRequestType.slopebase);
+                    //requesttypelist.Add(DSSRequestType.slopestatus); // not needed at the moment
+                    rawonly = false;
+                    break;
             }
 
             List<dynamic> dssdata = new List<dynamic>();
@@ -56,9 +71,7 @@ namespace OdhApiImporter.Helpers.DSS
                 dssdata.Add(await GetDSSData.GetDSSDataAsync(requesttype, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl));
             }
 
-            var updateresult = await ImportData(dssdata, cancellationToken);
-
-            return updateresult;
+            return dssdata;
         }
 
         public async Task<UpdateDetail> ImportData(List<dynamic> dssinput, CancellationToken cancellationToken)
@@ -261,27 +274,47 @@ namespace OdhApiImporter.Helpers.DSS
                 }
             }
 
-            //Begin SetDataNotinListToInactive
-            var idlistdb = await GetAllDSSDataByInterface(new List<string>() { "dss" + entitytype + "base" });
-
-            var idstodelete = idlistdb.Where(p => !idlistdssinterface.Any(p2 => p2 == p));
-
-            foreach (var idtodelete in idstodelete)
-            {
-                var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
-
-                if (deletedisableresult.Item1 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
-                else if (deletedisableresult.Item2 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
-
-
-                deletecounter = deletecounter + deletedisableresult.Item1 + deletedisableresult.Item2;
-            }
-
+           
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
         }
+
+        private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
+        {
+            int updateresult = 0;
+            int deleteresult = 0;
+            int errorresult = 0;
+
+            try
+            {
+                //Begin SetDataNotinListToInactive
+                var idlistdb = await GetAllDSSDataByInterface(new List<string>() { "dss" + entitytype + "base" });
+
+                var idstodelete = idlistdb.Where(p => !idlistdssinterface.Any(p2 => p2 == p));
+
+                foreach (var idtodelete in idstodelete)
+                {
+                    var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+
+                    if (deletedisableresult.Item1 > 0)
+                        WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
+                    else if (deletedisableresult.Item2 > 0)
+                        WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
+
+
+                    deleteresult = deleteresult + deletedisableresult.Item1 + deletedisableresult.Item2;
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog.LogToConsole("", "dataimport", "deactivate.dss" + entitytype, new ImportLog() { sourceid = "", sourceinterface = "dss." + entitytype, success = false, error = ex.Message });
+
+                errorresult = errorresult + 1;
+            }
+
+            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult, error = errorresult };
+        }
+
 
         //Parse the dss interface content
         public async Task<ODHActivityPoiLinked?> ParseDSSDataToODHActivityPoi(dynamic dssinput)

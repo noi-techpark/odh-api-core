@@ -90,6 +90,9 @@ namespace Helper
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "ltsactivity", "lts", reduced.LastChange, true);
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltsactivity", reduced.SmgActive);
 
+            //ImageGallery
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myactivity.ImageGallery);
+
             return reduced;
         }
 
@@ -133,6 +136,9 @@ namespace Helper
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "ltspoi", "lts", reduced.LastChange, true);
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltspoi", reduced.SmgActive);
 
+            //ImageGallery
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(mypoi.ImageGallery);
+
             return reduced;
         }
 
@@ -173,6 +179,9 @@ namespace Helper
             reduced.LicenseInfo = mypoi.LicenseInfo;
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "ltsgastronomy", "lts", reduced.LastChange, true);
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltsgastronomy", reduced.SmgActive);
+
+            //ImageGallery
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(mypoi.ImageGallery);
 
             return reduced;
         }
@@ -254,6 +263,9 @@ namespace Helper
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "odhactivitypoi", reduced.Source?.ToLower(), reduced.LastChange, true);
             reduced.PublishedOn = mypoi.PublishedOn;
 
+            //ImageGallery
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(mypoi.ImageGallery);
+
             return reduced;
         }
 
@@ -303,6 +315,9 @@ namespace Helper
             reduced.LicenseInfo = myacco.LicenseInfo;
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "accommodation", "lts", reduced.LastChange, true);
             reduced.PublishedOn = myacco.PublishedOn;
+
+            //ImageGallery
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myacco.ImageGallery);
 
             return reduced;
         }
@@ -358,6 +373,9 @@ namespace Helper
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "event", "lts", reduced.LastChange, true);
             reduced.PublishedOn = myevent.PublishedOn;
 
+            //ImageGallery
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myevent.ImageGallery);
+
             return reduced;
         }
 
@@ -403,7 +421,7 @@ namespace Helper
             reduced.LicenseInfo = measuringpoint.LicenseInfo;
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "measuringpoint", "lts", reduced.LastChange, true);
             reduced.PublishedOn = measuringpoint.PublishedOn;
-
+            
             return reduced;
         }
 
@@ -830,6 +848,21 @@ namespace Helper
             }
 
             return roomdetails;
+        }
+
+        public static ICollection<ImageGallery> ReduceImagesToCC0Only(ICollection<ImageGallery> imagegallery)
+        {
+            if (imagegallery != null)
+            {
+                var imagescc0 = imagegallery.Where(x => x.License == "CC0").ToList();
+
+                if (imagescc0.Count == 0)
+                    return null;
+                else
+                    return imagescc0;
+            }
+            else
+                return null;
         }
     }
 
