@@ -91,7 +91,7 @@ namespace Helper
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltsactivity", reduced.SmgActive);
 
             //ImageGallery
-            reduced.ImageGallery = ReduceImagesToCC0Only(myactivity.ImageGallery);
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myactivity.ImageGallery);
 
             return reduced;
         }
@@ -137,7 +137,7 @@ namespace Helper
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltspoi", reduced.SmgActive);
 
             //ImageGallery
-            reduced.ImageGallery = ReduceImagesToCC0Only(mypoi.ImageGallery);
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(mypoi.ImageGallery);
 
             return reduced;
         }
@@ -181,7 +181,7 @@ namespace Helper
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltsgastronomy", reduced.SmgActive);
 
             //ImageGallery
-            reduced.ImageGallery = ReduceImagesToCC0Only(mypoi.ImageGallery);
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(mypoi.ImageGallery);
 
             return reduced;
         }
@@ -264,7 +264,7 @@ namespace Helper
             reduced.PublishedOn = mypoi.PublishedOn;
 
             //ImageGallery
-            reduced.ImageGallery = ReduceImagesToCC0Only(mypoi.ImageGallery);
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(mypoi.ImageGallery);
 
             return reduced;
         }
@@ -317,7 +317,7 @@ namespace Helper
             reduced.PublishedOn = myacco.PublishedOn;
 
             //ImageGallery
-            reduced.ImageGallery = ReduceImagesToCC0Only(myacco.ImageGallery);
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myacco.ImageGallery);
 
             return reduced;
         }
@@ -374,7 +374,7 @@ namespace Helper
             reduced.PublishedOn = myevent.PublishedOn;
 
             //ImageGallery
-            reduced.ImageGallery = ReduceImagesToCC0Only(myevent.ImageGallery);
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myevent.ImageGallery);
 
             return reduced;
         }
