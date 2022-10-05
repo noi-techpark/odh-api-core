@@ -16,9 +16,6 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 {
     public class SuedtirolWeinImportHelper: ImportHelper, IImportHelper
     {
-        private readonly QueryFactory QueryFactory;
-        private readonly ISettings settings;
-
         public SuedtirolWeinImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
             
@@ -30,8 +27,11 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
             var updateresult = await ImportData(winegastrolist, cancellationToken);
 
-            var deleteresult = await SetDataNotinListToInactive(winegastrolist["de"], cancellationToken);
-            
+            //to check other languages
+            //var deleteresult = await SetDataNotinListToInactive(winegastrolist["de"], cancellationToken);
+            var deleteresult = new UpdateDetail();
+
+
             return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
         }
 
@@ -66,7 +66,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             List<string> languagelistcategories = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
 
             //Getting valid Tags for Weinkellereien
-            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>() { "Weinkellereien" }); //Essen Trinken ??
+            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>() { "Essen Trinken" }); //Essen Trinken ??
 
             //Load Type + Subtype fore each language
             var suedtiroltypemain = await ODHTagHelper.GeODHTagByID(QueryFactory, "Essen Trinken");
