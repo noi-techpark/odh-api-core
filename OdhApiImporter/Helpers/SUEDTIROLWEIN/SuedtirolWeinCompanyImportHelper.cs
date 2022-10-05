@@ -325,7 +325,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 updatecounter = updatecounter + result.updated ?? 0;
                 
                 if (suedtirolweinpoi.Id is { })
-                    WriteLog.LogToConsole(dataid, "dataimport", "single.suedtirolweincompany", new ImportLog() { sourceid = dataid, sourceinterface = "suedtirolweincompany.company", success = true, error = "" });
+                    WriteLog.LogToConsole(dataid, "dataimport", "single.suedtirolweincompany", new ImportLog() { sourceid = dataid, sourceinterface = "suedtirolwein.company", success = true, error = "" });
 
             }
             catch (Exception ex)
@@ -347,15 +347,15 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             try
             {               
                 //The service returns always the same ids in each language
-                List<string?> mymuseumroot = mywinecompanylist["de"].Root?.Elements("item").Select(x => x.Attribute("ID")?.Value).ToList() ?? new();
+                List<string?> winecompaniesonsource = mywinecompanylist["de"].Root?.Elements("item").Select(x => x.Attribute("id")?.Value).ToList() ?? new();
 
                 var myquery = QueryFactory.Query("smgpois")
                     .SelectRaw("data->>'CustomId'")
                     .Where("gen_syncsourceinterface", "suedtirolwein");
 
-                var mymuseumsonraven = await myquery.GetAsync<string>();
+                var winecompaniesondb = await myquery.GetAsync<string>();
 
-                var idstodelete = mymuseumsonraven.Where(p => !mymuseumroot.Any(p2 => p2 == p));
+                var idstodelete = winecompaniesondb.Where(p => !winecompaniesonsource.Any(p2 => p2 == p));
 
                 foreach (var idtodelete in idstodelete)
                 {
