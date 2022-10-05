@@ -445,10 +445,7 @@ namespace OdhApiImporter.Helpers
                 mymuseum.SyncSourceInterface = "museumdata";
                 mymuseum.SyncUpdateMode = "Full";
                 mymuseum.LastChange = DateTime.Now;
-
-                //Setting LicenseInfo
-                mymuseum.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(mymuseum, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
-
+                
                 //Special get all Taglist and traduce it on import
                 await GenericTaggingHelper.AddMappingToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
 

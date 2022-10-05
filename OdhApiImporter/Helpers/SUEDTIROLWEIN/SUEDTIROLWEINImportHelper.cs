@@ -350,10 +350,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 suedtirolweinpoi.SyncSourceInterface = "suedtirolwein-company";
                 suedtirolweinpoi.SyncUpdateMode = "Full";
                 suedtirolweinpoi.LastChange = DateTime.Now;
-
-                //Setting LicenseInfo
-                suedtirolweinpoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(suedtirolweinpoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
-
+     
                 //Special get all Taglist and traduce it on import
                 await GenericTaggingHelper.AddMappingToODHActivityPoi(suedtirolweinpoi, settings.JsonConfig.Jsondir);
 
@@ -432,7 +429,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                             datasource = "suedtirolwein",
                             importdate = DateTime.Now,
                             raw = suedtirolweindata.Value.ToString(),
-                            sourceinterface = "suedtirolwein-company",
+                            sourceinterface = "suedtirolweincompany",
                             sourceid = suedtirolweindata.Key,
                             sourceurl = "https://suedtirolwein.secure.consisto.net/companies.ashx",
                             type = "suedtirolwein-company",
