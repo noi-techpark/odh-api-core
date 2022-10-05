@@ -319,7 +319,7 @@ namespace OdhApiImporter.Helpers.DSS
                 newcounter = newcounter + pgcrudresult.created ?? 0;
                 updatecounter = updatecounter + pgcrudresult.updated ?? 0;
 
-                WriteLog.LogToConsole(parsedobject.Id ?? returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype, success = true, error = "" });
+                WriteLog.LogToConsole(parsedobject.Id ?? returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id ?? returnid, sourceinterface = "dss." + entitytype, success = true, error = "" });
             }
             catch
             {
