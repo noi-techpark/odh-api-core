@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
 {
-    public class STAImportHelper //: ImportHelper, IImportHelper
+    public class StaVendingpointsImportHelper //: ImportHelper, IImportHelper
     {
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
 
-        public STAImportHelper(ISettings settings, QueryFactory queryfactory)
+        public StaVendingpointsImportHelper(ISettings settings, QueryFactory queryfactory)
         {
             this.QueryFactory = queryfactory;
             this.settings = settings;
@@ -130,7 +130,7 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "csv",
                             sourceid = stavendingpoint?.STA_ID ?? "",
                             sourceurl = "csvfile",
-                            type = "poi_sta_vendingpoint",
+                            type = "odhactivitypoi_vendingpoint",
                             license = "open",
                             rawformat = "json"
                         });

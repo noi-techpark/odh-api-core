@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
 {
-    public class EBMSImportHelper : ImportHelper, IImportHelper
+    public class EbmsEventsImportHelper : ImportHelper, IImportHelper
     {        
-        public EBMSImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public EbmsEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
 
         }

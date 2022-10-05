@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
 {
-    public class RAVENImportHelper
+    public class RavenImportHelper
     {
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
 
-        public RAVENImportHelper(ISettings settings, QueryFactory queryfactory)
+        public RavenImportHelper(ISettings settings, QueryFactory queryfactory)
         {
             this.QueryFactory = queryfactory;
             this.settings = settings;

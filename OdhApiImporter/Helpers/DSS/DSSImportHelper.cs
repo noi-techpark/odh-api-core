@@ -25,7 +25,6 @@ namespace OdhApiImporter.Helpers.DSS
 
         public List<DSSRequestType> requesttypelist { get; set; }
         public string entitytype { get; set; }
-
         public bool rawonly { get; set; }
 
         public List<string> idlistdssinterface { get; set; }

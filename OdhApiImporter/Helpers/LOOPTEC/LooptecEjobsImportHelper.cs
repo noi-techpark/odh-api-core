@@ -9,11 +9,11 @@ using Helper;
 
 namespace OdhApiImporter.Helpers.LOOPTEC
 {
-    public class LOOPTECImportHelper : ImportHelper, IImportHelper
+    public class LooptecEjobsImportHelper : ImportHelper, IImportHelper
     {
         public const string serviceurl = @"https://app.onboard-staging.org/exports/v1/jobs/open_data_hub.json";
 
-        public LOOPTECImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public LooptecEjobsImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
 
         }
