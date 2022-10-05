@@ -394,7 +394,7 @@ namespace OdhApiImporter.Helpers.DSS
             return odhactivitypoi;
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, KeyValuePair<string, dynamic> dssdata, bool rawonly = false)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, KeyValuePair<string, dynamic> dssdata)
         {
             var rawdataid = await InsertInRawDataDB(dssdata);
 
