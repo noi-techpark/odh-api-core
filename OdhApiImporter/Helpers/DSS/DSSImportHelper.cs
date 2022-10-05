@@ -190,7 +190,7 @@ namespace OdhApiImporter.Helpers.DSS
                 {
                     //Parse DSS Data
                     parsedobject = await ParseDSSDataToODHActivityPoi(item);
-                    if (parsedobject == null || parsedobject?.Id is { })
+                    if (parsedobject == null)
                         throw new Exception();
              
                     //Add to list
@@ -324,6 +324,8 @@ namespace OdhApiImporter.Helpers.DSS
             catch
             {
                 WriteLog.LogToConsole(returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = returnid, sourceinterface = "dss." + entitytype, success = false, error = entitytype + " could not be parsed" });
+
+                errorcounter = errorcounter + 1;
             }
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
@@ -423,7 +425,7 @@ namespace OdhApiImporter.Helpers.DSS
                             datasource = "dss",
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(dssdata.Value),
-                            sourceinterface = entitytype + "base",
+                            sourceinterface = entitytype,
                             sourceid = dssdata.Key,
                             sourceurl = settings.DSSConfig.ServiceUrl,
                             type = "odhactivitypoi-" + entitytype,
