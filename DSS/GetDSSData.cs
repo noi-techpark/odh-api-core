@@ -36,7 +36,7 @@ namespace DSS
         public const string serviceurlwebcams = "webcams";
 
         public const string serviceurlsellingpoints = "selling-points";
-        public const string serviceurlsnowpark = "snowpark";
+        public const string serviceurlsnowpark = "snowparks";
 
         public const string serviceurlmountainhuts = "mountain-huts";
         public const string serviceurltaxi = "taxi";
