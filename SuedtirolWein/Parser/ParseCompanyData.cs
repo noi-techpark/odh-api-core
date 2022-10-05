@@ -508,8 +508,8 @@ namespace SuedtirolWein.Parser
             var suedtirolweinid = new Dictionary<string, string>() { { "id", mywinecompany.Id } };
             mywinecompany.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
 
-            mywinecompany.Source = "SuedtirolWein";
-            mywinecompany.SyncSourceInterface = "SuedtirolWein";
+            mywinecompany.Source = "suedtirolwein";
+            mywinecompany.SyncSourceInterface = "suedtirolwein";
             mywinecompany.SyncUpdateMode = "Full";
 
             mywinecompany.Type = "Essen Trinken";
@@ -539,7 +539,6 @@ namespace SuedtirolWein.Parser
             }
 
             //Wineids
-
             if (companydata["de"].Element("wineids") != null)
             {
                 List<string> poiServices = new List<string>();
@@ -570,28 +569,6 @@ namespace SuedtirolWein.Parser
             {
                 ParseImporterData(language, companydata[language], mywinecompany);
             }
-
-            //importercontactInfos
-
-            //Fix for not working Link on Suedtirol Wein (Interface returns example https://intranet.suedtirolwein.com/media/ca823aee-1aee-4746-8ff6-a69c3b68f44a/eberle-logo.jpg instead of https://suedtirolwein.com/media/b7094f82-f2e6-42ad-9533-96ca5641945d/eberlehof.jpg
-            //if (mywinecompany.ContactInfos != null)
-            //{
-            //	foreach (var contactinfo in mywinecompany.ContactInfos.Values)
-            //	{
-            //                 if (!String.IsNullOrEmpty(contactinfo.LogoUrl))
-            //                     contactinfo.LogoUrl = contactinfo.LogoUrl; //.Replace("intranet.", "");
-            //	}
-            //}
-
-            //if (mywinecompany.ImageGallery != null)
-            //{
-            //	foreach (var image in mywinecompany.ImageGallery)
-            //	{
-            //                 if (!String.IsNullOrEmpty(image.ImageUrl))
-            //                     image.ImageUrl = image.ImageUrl; //.Replace("intranet.", "");
-            //	}
-            //}
-
 
             return mywinecompany;
         }       
