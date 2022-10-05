@@ -73,14 +73,17 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             var suedtiroltypesub = await ODHTagHelper.GeODHTagByID(QueryFactory, "Weinkellereien");
 
             //Loading District & Municipality data
-            var districtreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(QueryFactory, "district");
-            var municipalityreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(QueryFactory, "municipality");
+            var districtreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(QueryFactory, "districts");
+            var municipalityreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(QueryFactory, "municipalities");
+
+            //Loading WineAwards
+            var wineawardlist = await WineAwardHelper.GetReducedWithWineAwardList(QueryFactory);
 
             foreach (var winedata in wineddatalist["de"].Root?.Elements("item") ?? Enumerable.Empty<XElement>())
             {
                 var importresult = await ImportDataSingle(winedata, 
                     wineddatalist, languagelistcategories, validtagsforcategories, 
-                    suedtiroltypemain, suedtiroltypesub, 
+                    suedtiroltypemain, suedtiroltypesub, wineawardlist.ToList(),
                     municipalityreducedinfo.ToList(), districtreducedinfo.ToList());
 
                 newcounter = newcounter + importresult.created ?? newcounter;
@@ -98,6 +101,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             IEnumerable<SmgTags> validtagsforcategories, 
             SmgTags suedtiroltypemain, 
             SmgTags suedtiroltypesub,
+            List<ReducedWineAward> wineawardreducelist,
             List<ReducedWithGPSInfo> municipalityreducedlist,
             List<ReducedWithGPSInfo> districtreducedlist
             )
@@ -151,9 +155,13 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 }
 
                 //Improve Performance this query is very slow!!!!
+                //var mysuedtirolweinquery = QueryFactory.Query("smgpois")
+                //    .Select("data")
+                //    .WhereRaw("data->>'CustomId' = $$", dataid.ToLower());
                 var mysuedtirolweinquery = QueryFactory.Query("smgpois")
                     .Select("data")
-                    .WhereRaw("data->>'CustomId' = $$", dataid.ToLower());
+                    .Where("id", dataid.ToLower());
+
 
                 var suedtirolweinpoi = await mysuedtirolweinquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
 
@@ -281,33 +289,28 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 //Set Main Type as Gastronomy
                 ODHActivityPoiHelper.SetMainCategorizationForODHActivityPoi(suedtirolweinpoi);
 
-                //TODO: RELATED CONTENT
+                //RELATED CONTENT
                 //Wineids als RElated Content
-                //if (!String.IsNullOrEmpty(winedata.Element("wineids").Value))
-                //{
-                //    List<RelatedContent> myrelatedcontentlist = new List<RelatedContent>();
+                if (!String.IsNullOrEmpty(winedata.Element("wineids").Value))
+                {
+                    List<RelatedContent> myrelatedcontentlist = new List<RelatedContent>();
 
-                //    using (var session = documentStore.OpenSession())
-                //    {
-                //        var mywines = session.Query<Wine, WineFilter>()
-                //            .Where(x => x.CompanyId == dataid)
-                //           .ToList();
+                    var mywines = wineawardreducelist
+                        .Where(x => x.CompanyId == dataid)
+                       .ToList();
 
+                    foreach (var mywine in mywines)
+                    {
+                        RelatedContent relatedcontent = new RelatedContent();
+                        relatedcontent.Id = mywine.Id;
+                        relatedcontent.Name = mywine.Name;
+                        relatedcontent.Type = "WineAward";
 
-                //        foreach (var mywine in mywines)
-                //        {
-                //            RelatedContent relatedcontent = new RelatedContent();
-                //            relatedcontent.Id = mywine.Id;
-                //            relatedcontent.Name = mywine.Detail["de"].Title;
-                //            relatedcontent.Type = "WineAward";
+                        myrelatedcontentlist.Add(relatedcontent);
+                    }
 
-                //            myrelatedcontentlist.Add(relatedcontent);
-                //        }
-
-                //    }                    
-
-                //    smgpoi.RelatedContent = myrelatedcontentlist.ToList();
-                //}
+                    suedtirolweinpoi.RelatedContent = myrelatedcontentlist.ToList();
+                }
 
                 if (setinactive)
                 {
@@ -359,7 +362,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 updatecounter = updatecounter + result.updated ?? 0;
                 
                 if (suedtirolweinpoi.Id is { })
-                    WriteLog.LogToConsole(dataid, "dataimport", "single.suedtirolweincompany", new ImportLog() { sourceid = dataid, sourceinterface = "siag.museum", success = true, error = "" });
+                    WriteLog.LogToConsole(dataid, "dataimport", "single.suedtirolweincompany", new ImportLog() { sourceid = dataid, sourceinterface = "suedtirolweincompany.company", success = true, error = "" });
 
             }
             catch (Exception ex)

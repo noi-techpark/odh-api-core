@@ -176,6 +176,14 @@ namespace OdhApiCore.Controllers.api
             return Ok(subcategories);
         }
 
+        [HttpGet, Route("TestLocReduced")]
+        public async Task<IActionResult> GetTestLocReduced()
+        {
+            var municipalityreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(QueryFactory, "municipalities");
+
+            return Ok(municipalityreducedinfo);
+        }
+
         ////Not working
         //[HttpGet, Route("TestDateTimeConversion6")]
         //public IActionResult GetDatetimeConversiont6()

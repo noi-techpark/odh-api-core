@@ -16,20 +16,19 @@ namespace Helper
             {
                 List<ReducedWithGPSInfo> reducedlist = new List<ReducedWithGPSInfo>();
 
-                string select = "select data#>>'{Id}' as Id, (data#>>'{Latitude}')::double precision as Latitude, (data#>>'{Longitude}')::double precision as Longitude, data#>>'{_Meta,Type}' as Type";
+                string select = "data#>>'\\{Id\\}' as Id, (data#>>'\\{Latitude\\}')::double precision as Latitude, (data#>>'\\{Longitude\\}')::double precision as Longitude, data#>>'\\{_Meta,Type\\}' as Type";
 
-                var query = QueryFactory.Query("smgtags")
-                        .SelectRaw(select)
-                        .From(table);
+                var query = QueryFactory.Query(table)
+                        .SelectRaw(select);
 
                 var data =
                     await query
-                        .GetAllAsObject<ReducedWithGPSInfo>();
+                        .GetAsync<ReducedWithGPSInfo>();
 
                 return data;
             }
-            catch (Exception)
-            {
+            catch (Exception ex)
+            {                
                 return new List<ReducedWithGPSInfo>();
             }
         }   
