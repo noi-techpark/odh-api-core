@@ -11,7 +11,7 @@ namespace SuedtirolWein.Parser
 {
     public class ParseCompanyData
     {
-        private static void ParseContactInfo(string language, XElement companydata, ODHActivityPoi mywinecompany)
+        private static void ParseContactInfo(string language, XElement companydata, ODHActivityPoiLinked mywinecompany)
         {
             ContactInfos contactinfo = new ContactInfos();
 
@@ -45,7 +45,7 @@ namespace SuedtirolWein.Parser
             mywinecompany.ContactInfos.TryAddOrUpdate(language, contactinfo);
         }
 
-        private static void ParseDetailInfo(string language, XElement companydata, ODHActivityPoi mywinecompany)
+        private static void ParseDetailInfo(string language, XElement companydata, ODHActivityPoiLinked mywinecompany)
         {
             //Detail IT
             Detail mydetail = new Detail();
@@ -68,7 +68,7 @@ namespace SuedtirolWein.Parser
             mywinecompany.Detail.TryAddOrUpdate(language, mydetail);
         }
 
-        private static void ParseImageGalleryData(IDictionary<string, XElement> companydata, ODHActivityPoi mywinecompany)
+        private static void ParseImageGalleryData(IDictionary<string, XElement> companydata, ODHActivityPoiLinked mywinecompany)
         {
             //ImageGallery
             List<ImageGallery> myimagegallerylist = new List<ImageGallery>();
@@ -83,7 +83,8 @@ namespace SuedtirolWein.Parser
                 myimagegallery.IsInGallery = true;
                 myimagegallery.ListPosition = 0;
                 myimagegallery.CopyRight = "Suedtirol Wein";
-                myimagegallery.License = null; //"CC0";
+                myimagegallery.License = "";
+                myimagegallery.LicenseHolder = "https://www.suedtirolwein.com/";
 
                 //Image Title
                 if (companydata["de"].Element("imagemetatitle") != null)
@@ -159,8 +160,10 @@ namespace SuedtirolWein.Parser
                 myimagegallery2.IsInGallery = true;
                 myimagegallery2.ListPosition = 1;
                 myimagegallery2.CopyRight = "Suedtirol Wein";
+                myimagegallery2.License = "";
+                myimagegallery2.LicenseHolder = "https://www.suedtirolwein.com/";
 
-                if(imageurlmedia != myimagegallery2.ImageUrl)
+                if (imageurlmedia != myimagegallery2.ImageUrl)
                     myimagegallerylist.Add(myimagegallery2);
             }
             //if (companydata["de"].Element("logo") != null)
@@ -171,6 +174,8 @@ namespace SuedtirolWein.Parser
             //    myimagegallery3.IsInGallery = true;
             //    myimagegallery3.ListPosition = 2;
             //    myimagegallery3.CopyRight = "Suedtirol Wein";
+            //    myimagegallery3.License = "";
+            //    myimagegallery3.LicenseHolder = "https://www.suedtirolwein.com/";
 
             //    if (imageurlmedia != myimagegallery3.ImageUrl)
             //        myimagegallerylist.Add(myimagegallery3);
@@ -179,7 +184,7 @@ namespace SuedtirolWein.Parser
             mywinecompany.ImageGallery = myimagegallerylist;
         }
 
-        private static void ParsePropertyData(string language, XElement companydata, ODHActivityPoi mywinecompany)
+        private static void ParsePropertyData(string language, XElement companydata, ODHActivityPoiLinked mywinecompany)
         {
             //PROPS DE
             List<PoiProperty> mypropertylist = new List<PoiProperty>();
@@ -415,6 +420,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop27);
             }
 
+            //new <imagesparklingwineproducer>
             if (companydata.Element("imagesparklingwineproducer") != null)
             {
                 PoiProperty myprop28 = new PoiProperty();
@@ -437,7 +443,7 @@ namespace SuedtirolWein.Parser
             mywinecompany.PoiProperty.TryAddOrUpdate(language, mypropertylist);
         }
 
-        private static void ParseImporterData(string language, XElement companydata, ODHActivityPoi mywinecompany)
+        private static void ParseImporterData(string language, XElement companydata, ODHActivityPoiLinked mywinecompany)
         {
             List<AdditionalContact> importercontactInfos = new List<AdditionalContact>();
 
@@ -491,7 +497,7 @@ namespace SuedtirolWein.Parser
             }
         }
 
-        public static ODHActivityPoi ParsetheCompanyData(ODHActivityPoi mywinecompany, IDictionary<string, XElement> companydata, List<string> haslanguage)
+        public static ODHActivityPoiLinked ParsetheCompanyData(ODHActivityPoiLinked mywinecompany, IDictionary<string, XElement> companydata, List<string> haslanguage)
         {
             mywinecompany.LastChange = DateTime.Now;
 
@@ -588,495 +594,6 @@ namespace SuedtirolWein.Parser
 
 
             return mywinecompany;
-        }
-
-        //public static ODHActivityPoi ParsetheCompanyDataPG(ODHActivityPoi mywinecompany, XElement companydata["de"], XElement companydata["it"], XElement companydata["en"], List<string> haslanguage)
-        //{
-        //    mywinecompany.LastChange = DateTime.Now;
-
-        //    mywinecompany.Id = companydata["de"].Element("id").Value;
-        //    mywinecompany.CustomId = companydata["de"].Element("id").Value;
-
-        //    mywinecompany.Source = "SuedtirolWein";
-        //    mywinecompany.SyncSourceInterface = "SuedtirolWein";
-        //    mywinecompany.SyncUpdateMode = "Full";
-
-        //    mywinecompany.Type = "Essen Trinken";
-        //    mywinecompany.SubType = "Weinkellereien";
-
-        //    mywinecompany.Shortname = companydata["de"].Element("title").Value;
-
-        //    //Contactinfo DE
-        //    ContactInfos contactinfode = new ContactInfos();
-
-        //    contactinfode.CompanyName = companydata["de"].Element("title").Value;
-        //    contactinfode.Address = companydata["de"].Element("address").Value;
-        //    contactinfode.ZipCode = companydata["de"].Element("zipcode").Value;
-        //    contactinfode.CountryCode = "IT";
-        //    contactinfode.City = companydata["de"].Element("place").Value;
-        //    contactinfode.CountryName = "Italien";
-        //    contactinfode.Phonenumber = companydata["de"].Element("phone").Value;
-
-        //    string webadresseDE = "";
-        //    //Webadress gschicht
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("homepage").Value))
-        //    {
-        //        webadresseDE = companydata["de"].Element("homepage").Value.Contains("http") ? companydata["de"].Element("homepage").Value : "http://" + companydata["de"].Element("homepage").Value;
-        //    }
-
-        //    contactinfode.Url = webadresseDE;
-        //    contactinfode.Email = companydata["de"].Element("email").Value;
-        //    contactinfode.LogoUrl = companydata["de"].Element("logo").Value;
-        //    contactinfode.Language = "de";
-
-        //    mywinecompany.ContactInfos.TryAddOrUpdate("de", contactinfode);
-
-        //    if (haslanguage.Contains("it"))
-        //    {
-        //        //Contactinfo IT
-        //        ContactInfos contactinfoit = new ContactInfos();
-
-        //        contactinfoit.CompanyName = companydata["it"].Element("title").Value;
-        //        contactinfoit.Address = companydata["it"].Element("address").Value;
-        //        contactinfoit.ZipCode = companydata["it"].Element("zipcode").Value;
-        //        contactinfoit.City = companydata["it"].Element("place").Value;
-        //        contactinfoit.CountryName = "Italia";
-        //        contactinfoit.CountryCode = "IT";
-        //        contactinfoit.Phonenumber = companydata["it"].Element("phone").Value;
-
-        //        string webadresseIT = "";
-        //        //Webadress gschicht
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("homepage").Value))
-        //        {
-        //            webadresseIT = companydata["it"].Element("homepage").Value.Contains("http") ? companydata["it"].Element("homepage").Value : "http://" + companydata["it"].Element("homepage").Value;
-        //        }
-        //        else
-        //        {
-        //            webadresseIT = webadresseDE;
-        //        }
-
-        //        contactinfoit.Url = webadresseIT;
-        //        contactinfoit.Email = companydata["it"].Element("email").Value;
-        //        contactinfoit.LogoUrl = companydata["it"].Element("logo").Value;
-        //        contactinfoit.Language = "it";
-
-        //        mywinecompany.ContactInfos.TryAddOrUpdate("it", contactinfoit);
-        //    }
-
-        //    if (haslanguage.Contains("en"))
-        //    {
-        //        //Contactinfo EN
-        //        ContactInfos contactinfoen = new ContactInfos();
-
-        //        contactinfoen.CompanyName = companydata["en"].Element("title").Value;
-        //        contactinfoen.Address = companydata["en"].Element("address").Value;
-        //        contactinfoen.ZipCode = companydata["en"].Element("zipcode").Value;
-        //        contactinfoen.City = companydata["en"].Element("place").Value;
-        //        contactinfoen.CountryName = "Italy";
-        //        contactinfoen.CountryCode = "IT";
-        //        contactinfoen.Phonenumber = companydata["en"].Element("phone").Value;
-
-        //        string webadresseEN = "";
-        //        //Webadress gschicht
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("homepage").Value))
-        //        {
-        //            webadresseEN = companydata["en"].Element("homepage").Value.Contains("http") ? companydata["en"].Element("homepage").Value : "http://" + companydata["en"].Element("homepage").Value;
-        //        }
-        //        else
-        //        {
-        //            webadresseEN = webadresseDE;
-        //        }
-
-        //        contactinfoen.Url = webadresseEN;
-        //        contactinfoen.Email = companydata["en"].Element("email").Value;
-        //        contactinfoen.LogoUrl = companydata["en"].Element("logo").Value;
-        //        contactinfoen.Language = "en";
-
-        //        mywinecompany.ContactInfos.TryAddOrUpdate("en", contactinfoen);
-        //    }
-
-        //    //Detail DE
-        //    Detail mydetailde = new Detail();
-
-        //    if (mywinecompany.Detail != null)
-        //        if (mywinecompany.Detail.ContainsKey("de"))
-        //            mydetailde = mywinecompany.Detail["de"];
-
-        //    mydetailde.Title = companydata["de"].Element("title").Value; ;
-        //    mydetailde.BaseText = companydata["de"].Element("content").Value;
-        //    //mydetailde.AdditionalText = companydata["de"].Element("wines").Value;
-        //    mydetailde.Language = "de";
-        //    mywinecompany.Detail.TryAddOrUpdate("de", mydetailde);
-
-        //    if (haslanguage.Contains("it"))
-        //    {
-        //        //Detail IT
-        //        Detail mydetailit = new Detail();
-
-        //        if (mywinecompany.Detail != null)
-        //            if (mywinecompany.Detail.ContainsKey("it"))
-        //                mydetailit = mywinecompany.Detail["it"];
-
-        //        mydetailit.Title = companydata["it"].Element("title").Value; ;
-        //        mydetailit.BaseText = companydata["it"].Element("content").Value;
-        //        //mydetailit.AdditionalText = companydata["it"].Element("wines").Value;
-        //        mydetailit.Language = "it";
-        //        mywinecompany.Detail.TryAddOrUpdate("it", mydetailit);
-        //    }
-
-        //    if (haslanguage.Contains("en"))
-        //    {
-        //        //Detail EN
-        //        Detail mydetailen = new Detail();
-
-        //        if (mywinecompany.Detail != null)
-        //            if (mywinecompany.Detail.ContainsKey("en"))
-        //                mydetailen = mywinecompany.Detail["en"];
-
-        //        mydetailen.Title = companydata["en"].Element("title").Value; ;
-        //        mydetailen.BaseText = companydata["en"].Element("content").Value;
-        //        //mydetailen.AdditionalText = companydata["en"].Element("wines").Value;
-        //        mydetailen.Language = "en";
-        //        mywinecompany.Detail.TryAddOrUpdate("en", mydetailen);
-        //    }
-
-
-        //    //ImageGallery
-        //    List<ImageGallery> myimagegallerylist = new List<ImageGallery>();
-
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("media").Value))
-        //    {
-        //        ImageGallery myimagegallery = new ImageGallery();
-        //        myimagegallery.ImageUrl = companydata["de"].Element("media").Value;
-        //        myimagegallery.ImageSource = "SuedtirolWein";
-        //        myimagegallery.IsInGallery = true;
-        //        myimagegallery.ListPosition = 0;
-        //        myimagegallery.CopyRight = "Suedtirol Wein";
-
-        //        myimagegallerylist.Add(myimagegallery);
-        //    }
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("mediadetail").Value))
-        //    {
-        //        ImageGallery myimagegallery2 = new ImageGallery();
-        //        myimagegallery2.ImageUrl = companydata["de"].Element("mediadetail").Value;
-        //        myimagegallery2.ImageSource = "SuedtirolWein";
-        //        myimagegallery2.IsInGallery = true;
-        //        myimagegallery2.ListPosition = 1;
-        //        myimagegallery2.CopyRight = "Suedtirol Wein";
-        //        myimagegallerylist.Add(myimagegallery2);
-        //    }
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("logo").Value))
-        //    {
-        //        ImageGallery myimagegallery3 = new ImageGallery();
-        //        myimagegallery3.ImageUrl = companydata["de"].Element("logo").Value;
-        //        myimagegallery3.ImageSource = "SuedtirolWein";
-        //        myimagegallery3.IsInGallery = true;
-        //        myimagegallery3.ListPosition = 2;
-        //        myimagegallery3.CopyRight = "Suedtirol Wein";
-        //        myimagegallerylist.Add(myimagegallery3);
-        //    }
-
-        //    mywinecompany.ImageGallery = myimagegallerylist;
-
-        //    //PROPS DE
-        //    List<PoiProperty> mypropertylist = new List<PoiProperty>();
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("openingtimeswineshop").Value))
-        //    {
-        //        PoiProperty myprop = new PoiProperty();
-        //        myprop.Name = "openingtimeswineshop";
-        //        myprop.Value = companydata["de"].Element("openingtimeswineshop").Value;
-        //        mypropertylist.Add(myprop);
-        //    }
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("openingtimesguides").Value))
-        //    {
-        //        PoiProperty myprop2 = new PoiProperty();
-        //        myprop2.Name = "openingtimesguides";
-        //        myprop2.Value = companydata["de"].Element("openingtimesguides").Value;
-        //        mypropertylist.Add(myprop2);
-        //    }
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("openingtimesgastronomie").Value))
-        //    {
-        //        PoiProperty myprop3 = new PoiProperty();
-        //        myprop3.Name = "openingtimesgastronomie";
-        //        myprop3.Value = companydata["de"].Element("openingtimesgastronomie").Value;
-        //        mypropertylist.Add(myprop3);
-        //    }
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("companyholiday").Value))
-        //    {
-        //        PoiProperty myprop4 = new PoiProperty();
-        //        myprop4.Name = "companyholiday";
-        //        myprop4.Value = companydata["de"].Element("companyholiday").Value;
-        //        mypropertylist.Add(myprop4);
-        //    }
-
-        //    //De sochen glabi war besser als boolwerte ozuspeichern lei schaugn wohin.............
-        //    //hallo hasvisits, hasovernichtgs, hasbiowine........
-
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("hasvisits").Value))
-        //    {
-        //        PoiProperty myprop5 = new PoiProperty();
-        //        myprop5.Name = "hasvisits";
-
-        //        //string hasvisitsstr = "false";
-
-        //        //if (companydata["de"].Element("hasvisits").Value == "True")
-        //        //    hasvisitsstr = "true";
-
-        //        myprop5.Value = companydata["de"].Element("hasvisits").Value;
-        //        mypropertylist.Add(myprop5);
-        //    }
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("hasovernights").Value))
-        //    {
-        //        PoiProperty myprop6 = new PoiProperty();
-        //        myprop6.Name = "hasovernights";
-
-        //        //string hasovernightsstr = "nein";
-
-        //        //if (companydata["de"].Element("hasovernights").Value == "True")
-        //        //    hasovernightsstr = "ja";
-
-        //        myprop6.Value = companydata["de"].Element("hasovernights").Value;
-        //        mypropertylist.Add(myprop6);
-        //    }
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("hasbiowine").Value))
-        //    {
-        //        PoiProperty myprop7 = new PoiProperty();
-        //        myprop7.Name = "hasbiowine";
-
-        //        //string hasbiowinestr = "nein";
-
-        //        //if (companydata["de"].Element("hasbiowine").Value == "True")
-        //        //    hasbiowinestr = "ja";
-
-        //        myprop7.Value = companydata["de"].Element("hasbiowine").Value;
-        //        mypropertylist.Add(myprop7);
-        //    }
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("wines").Value))
-        //    {
-        //        PoiProperty myprop8 = new PoiProperty();
-        //        myprop8.Name = "wines";
-        //        myprop8.Value = companydata["de"].Element("wines").Value;
-        //        mypropertylist.Add(myprop8);
-        //    }
-
-        //    mywinecompany.PoiProperty.TryAddOrUpdate("de", mypropertylist);
-
-        //    if (haslanguage.Contains("it"))
-        //    {
-
-        //        //PROPS IT
-        //        List<PoiProperty> mypropertylistit = new List<PoiProperty>();
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("openingtimeswineshop").Value))
-        //        {
-        //            PoiProperty myprop = new PoiProperty();
-        //            myprop.Name = "openingtimeswineshop";
-        //            myprop.Value = companydata["it"].Element("openingtimeswineshop").Value;
-        //            mypropertylistit.Add(myprop);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("openingtimesguides").Value))
-        //        {
-        //            PoiProperty myprop2 = new PoiProperty();
-        //            myprop2.Name = "openingtimesguides";
-        //            myprop2.Value = companydata["it"].Element("openingtimesguides").Value;
-        //            mypropertylistit.Add(myprop2);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("openingtimesgastronomie").Value))
-        //        {
-        //            PoiProperty myprop3 = new PoiProperty();
-        //            myprop3.Name = "openingtimesgastronomie";
-        //            myprop3.Value = companydata["it"].Element("openingtimesgastronomie").Value;
-        //            mypropertylistit.Add(myprop3);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("companyholiday").Value))
-        //        {
-        //            PoiProperty myprop4 = new PoiProperty();
-        //            myprop4.Name = "companyholiday";
-        //            myprop4.Value = companydata["it"].Element("companyholiday").Value;
-        //            mypropertylistit.Add(myprop4);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("hasvisits").Value))
-        //        {
-        //            PoiProperty myprop5 = new PoiProperty();
-        //            myprop5.Name = "hasvisits";
-
-        //            //string hasvisitsstr = "no";
-
-        //            //if (companydata["it"].Element("hasvisits").Value == "True")
-        //            //    hasvisitsstr = "si";
-
-        //            myprop5.Value = companydata["it"].Element("hasvisits").Value;
-        //            mypropertylistit.Add(myprop5);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("hasovernights").Value))
-        //        {
-        //            PoiProperty myprop6 = new PoiProperty();
-        //            myprop6.Name = "hasovernights";
-
-        //            //string hasovernightsstr = "no";
-
-        //            //if (companydata["it"].Element("hasovernights").Value == "True")
-        //            //    hasovernightsstr = "si";
-
-        //            myprop6.Value = companydata["it"].Element("hasovernights").Value;
-        //            mypropertylistit.Add(myprop6);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("hasbiowine").Value))
-        //        {
-        //            PoiProperty myprop7 = new PoiProperty();
-        //            myprop7.Name = "hasbiowine";
-
-        //            //string hasbiowinestr = "no";
-
-        //            //if (companydata["it"].Element("hasbiowine").Value == "True")
-        //            //    hasbiowinestr = "si";
-
-        //            myprop7.Value = companydata["it"].Element("hasbiowine").Value;
-        //            mypropertylistit.Add(myprop7);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["it"].Element("wines").Value))
-        //        {
-        //            PoiProperty myprop8 = new PoiProperty();
-        //            myprop8.Name = "wines";
-        //            myprop8.Value = companydata["it"].Element("wines").Value;
-        //            mypropertylistit.Add(myprop8);
-        //        }
-
-        //        mywinecompany.PoiProperty.TryAddOrUpdate("it", mypropertylistit);
-        //    }
-
-        //    if (haslanguage.Contains("en"))
-        //    {
-
-        //        //PROPS EN
-        //        List<PoiProperty> mypropertylisten = new List<PoiProperty>();
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("openingtimeswineshop").Value))
-        //        {
-        //            PoiProperty myprop = new PoiProperty();
-        //            myprop.Name = "openingtimeswineshop";
-        //            myprop.Value = companydata["en"].Element("openingtimeswineshop").Value;
-        //            mypropertylisten.Add(myprop);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("openingtimesguides").Value))
-        //        {
-        //            PoiProperty myprop2 = new PoiProperty();
-        //            myprop2.Name = "openingtimesguides";
-        //            myprop2.Value = companydata["en"].Element("openingtimesguides").Value;
-        //            mypropertylisten.Add(myprop2);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("openingtimesgastronomie").Value))
-        //        {
-        //            PoiProperty myprop3 = new PoiProperty();
-        //            myprop3.Name = "openingtimesgastronomie";
-        //            myprop3.Value = companydata["en"].Element("openingtimesgastronomie").Value;
-        //            mypropertylisten.Add(myprop3);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("companyholiday").Value))
-        //        {
-        //            PoiProperty myprop4 = new PoiProperty();
-        //            myprop4.Name = "companyholiday";
-        //            myprop4.Value = companydata["en"].Element("companyholiday").Value;
-        //            mypropertylisten.Add(myprop4);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("hasvisits").Value))
-        //        {
-        //            PoiProperty myprop5 = new PoiProperty();
-        //            myprop5.Name = "hasvisits";
-
-        //            //string hasvisitsstr = "no";
-
-        //            //if (companydata["en"].Element("hasvisits").Value == "True")
-        //            //    hasvisitsstr = "yes";
-
-        //            myprop5.Value = companydata["en"].Element("hasvisits").Value;
-        //            mypropertylisten.Add(myprop5);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("hasovernights").Value))
-        //        {
-        //            PoiProperty myprop6 = new PoiProperty();
-        //            myprop6.Name = "hasovernights";
-
-        //            //string hasovernightsstr = "no";
-
-        //            //if (companydata["en"].Element("hasovernights").Value == "True")
-        //            //    hasovernightsstr = "yes";
-
-        //            myprop6.Value = companydata["en"].Element("hasovernights").Value;
-        //            mypropertylisten.Add(myprop6);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("hasbiowine").Value))
-        //        {
-        //            PoiProperty myprop7 = new PoiProperty();
-        //            myprop7.Name = "hasbiowine";
-
-        //            //string hasbiowinestr = "no";
-
-        //            //if (companydata["en"].Element("hasbiowine").Value == "True")
-        //            //    hasbiowinestr = "yes";
-
-        //            myprop7.Value = companydata["en"].Element("hasbiowine").Value;
-        //            mypropertylisten.Add(myprop7);
-        //        }
-        //        if (!String.IsNullOrEmpty(companydata["en"].Element("wines").Value))
-        //        {
-        //            PoiProperty myprop8 = new PoiProperty();
-        //            myprop8.Name = "wines";
-        //            myprop8.Value = companydata["en"].Element("wines").Value;
-        //            mypropertylisten.Add(myprop8);
-        //        }
-
-        //        mywinecompany.PoiProperty.TryAddOrUpdate("en", mypropertylisten);
-        //    }
-
-        //    //Wineids
-
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("wineids").Value))
-        //    {
-        //        List<string> poiServices = new List<string>();
-        //        var wineids = companydata["de"].Element("wines").Value.Split(',');
-        //        poiServices = wineids.ToList();
-        //        mywinecompany.PoiServices = poiServices;
-        //    }
-
-
-
-        //    if (!String.IsNullOrEmpty(companydata["de"].Element("latidude").Value) && !String.IsNullOrEmpty(companydata["de"].Element("longitude").Value))
-        //    {
-        //        List<GpsInfo> gpsinfolist = new List<GpsInfo>();
-        //        GpsInfo mygps = new GpsInfo();
-        //        mygps.Latitude = Convert.ToDouble(companydata["de"].Element("latidude").Value, CultureInfo.InvariantCulture);
-        //        mygps.Longitude = Convert.ToDouble(companydata["de"].Element("longitude").Value, CultureInfo.InvariantCulture);
-        //        mygps.Gpstype = "position";
-        //        gpsinfolist.Add(mygps);
-        //        mywinecompany.GpsInfo = gpsinfolist;
-        //        //Locationinfo in basis auf GPSPunkt ausrechnen!!! mochmer dernoch
-
-
-        //        mywinecompany.GpsPoints.TryAddOrUpdate("position", mygps);
-
-        //    }
-
-        //    //Fix for not working Link on Suedtirol Wein (Interface returns example https://intranet.suedtirolwein.com/media/ca823aee-1aee-4746-8ff6-a69c3b68f44a/eberle-logo.jpg instead of https://suedtirolwein.com/media/b7094f82-f2e6-42ad-9533-96ca5641945d/eberlehof.jpg
-        //    if (mywinecompany.ContactInfos != null)
-        //    {
-        //        foreach (var contactinfo in mywinecompany.ContactInfos.Values)
-        //        {
-        //            if (!String.IsNullOrEmpty(contactinfo.LogoUrl))
-        //                contactinfo.LogoUrl = contactinfo.LogoUrl.Replace("intranet.", "");
-        //        }
-        //    }
-
-        //    if (mywinecompany.ImageGallery != null)
-        //    {
-        //        foreach (var image in mywinecompany.ImageGallery)
-        //        {
-        //            if (!String.IsNullOrEmpty(image.ImageUrl))
-        //                image.ImageUrl = image.ImageUrl.Replace("intranet.", "");
-        //        }
-        //    }
-
-        //    return mywinecompany;
-        //}
-
-
+        }       
     }
 }
