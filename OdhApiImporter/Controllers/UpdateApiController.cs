@@ -24,6 +24,7 @@ using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers;
 using OdhApiImporter.Helpers.DSS;
 using OdhApiImporter.Helpers.LOOPTEC;
+using OdhApiImporter.Helpers.SuedtirolWein;
 
 namespace OdhApiImporter.Controllers
 {
@@ -228,7 +229,7 @@ namespace OdhApiImporter.Controllers
         #region SIAG DATA SYNC MUSEUMS
 
         [HttpGet, Route("Siag/Museum/UpdateAll")]
-        public async Task<IActionResult> ImportMuseum(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportSiagMuseum(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import SIAG Museum data";
@@ -254,6 +255,30 @@ namespace OdhApiImporter.Controllers
         #endregion
 
         #region SUEDTIROLWEIN DATA SYNC
+
+        [HttpGet, Route("SuedtirolWein/Company/UpdateAll")]
+        public async Task<IActionResult> ImportSuedtirolWeinCompany(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import Suedtirol Wein Company data";
+            string updatetype = "all";
+            string source = "suedtirolwein";
+
+            try
+            {
+                SuedtirolWeinImportHelper sweinimporthelper = new SuedtirolWeinImportHelper(settings, QueryFactory, "smgpois");
+                updatedetail = await sweinimporthelper.SaveDataToODH(null, cancellationToken);
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Suedtirol Wein Company data succeeded", "actual", updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Suedtirol Wein Company data failed", "actual", updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
 
         #endregion
 
