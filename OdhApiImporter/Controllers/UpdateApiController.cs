@@ -24,6 +24,7 @@ using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers;
 using OdhApiImporter.Helpers.DSS;
 using OdhApiImporter.Helpers.LOOPTEC;
+using OdhApiImporter.Helpers.SuedtirolWein;
 
 namespace OdhApiImporter.Controllers
 {
@@ -58,7 +59,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                RAVENImportHelper ravenimporthelper = new RAVENImportHelper(settings, QueryFactory);
+                RavenImportHelper ravenimporthelper = new RavenImportHelper(settings, QueryFactory);
                 var resulttuple = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
                 updatedetail = resulttuple.Item2;
 
@@ -88,7 +89,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                EBMSImportHelper ebmsimporthelper = new EBMSImportHelper(settings, QueryFactory, "eventeuracnoi");
+                EbmsEventsImportHelper ebmsimporthelper = new EbmsEventsImportHelper(settings, QueryFactory, "eventeuracnoi");
 
                 updatedetail = await ebmsimporthelper.SaveDataToODH(null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "EBMS Eventshorts update succeeded", "", updatedetail, true);
@@ -154,7 +155,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                NINJAImportHelper ninjaimporthelper = new NINJAImportHelper(settings, QueryFactory);
+                MobilityEventsImportHelper ninjaimporthelper = new MobilityEventsImportHelper(settings, QueryFactory);
                 updatedetail = await ninjaimporthelper.SaveDataToODH(null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja Events update succeeded", "", updatedetail, true);
 
@@ -187,7 +188,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
+                SiagWeatherImportHelper siagimporthelper = new SiagWeatherImportHelper(settings, QueryFactory, "weatherdatahistory");
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Weather data succeeded", "actual", updatedetail, true);
 
@@ -210,7 +211,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "weatherdatahistory");
+                SiagWeatherImportHelper siagimporthelper = new SiagWeatherImportHelper(settings, QueryFactory, "weatherdatahistory");
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(id, source, operation, updatetype, "Import Weather data succeeded id:" + id.ToString(), "byid", updatedetail, true);
 
@@ -228,7 +229,7 @@ namespace OdhApiImporter.Controllers
         #region SIAG DATA SYNC MUSEUMS
 
         [HttpGet, Route("Siag/Museum/UpdateAll")]
-        public async Task<IActionResult> ImportMuseum(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportSiagMuseum(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import SIAG Museum data";
@@ -237,7 +238,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SIAGImportHelper siagimporthelper = new SIAGImportHelper(settings, QueryFactory, "smgpois");
+                SiagMuseumImportHelper siagimporthelper = new SiagMuseumImportHelper(settings, QueryFactory, "smgpois");
                 updatedetail = await siagimporthelper.SaveDataToODH(null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data succeeded", "actual", updatedetail, true);
@@ -254,6 +255,55 @@ namespace OdhApiImporter.Controllers
         #endregion
 
         #region SUEDTIROLWEIN DATA SYNC
+
+        [HttpGet, Route("SuedtirolWein/Company/UpdateAll")]
+        public async Task<IActionResult> ImportSuedtirolWineCompany(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import SuedtirolWein Company data";
+            string updatetype = "all";
+            string source = "suedtirolwein";
+
+            try
+            {
+                SuedtirolWeinCompanyImportHelper sweinimporthelper = new SuedtirolWeinCompanyImportHelper(settings, QueryFactory, "smgpois");
+                updatedetail = await sweinimporthelper.SaveDataToODH(null, cancellationToken);
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein Company data succeeded", "actual", updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein Company data failed", "actual", updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        [HttpGet, Route("SuedtirolWein/WineAward/UpdateAll")]
+        public async Task<IActionResult> ImportSuedtirolWineAward(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import SuedtirolWein WineAward data";
+            string updatetype = "all";
+            string source = "suedtirolwein";
+
+            try
+            {
+                SuedtirolWeinAwardImportHelper sweinimporthelper = new SuedtirolWeinAwardImportHelper(settings, QueryFactory, "wines");
+                updatedetail = await sweinimporthelper.SaveDataToODH(null, cancellationToken);
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein WineAward data succeeded", "actual", updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein WineAward data failed", "actual", updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
 
         #endregion
 
@@ -303,7 +353,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                STAImportHelper staimporthelper = new STAImportHelper(settings, QueryFactory);
+                StaVendingpointsImportHelper staimporthelper = new StaVendingpointsImportHelper(settings, QueryFactory);
 
                 updatedetail = await staimporthelper.PostVendingPointsFromSTA(Request, cancellationToken);
 
@@ -402,7 +452,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                LOOPTECImportHelper looptecejobsimporthelper = new LOOPTECImportHelper(settings, QueryFactory, "");
+                LooptecEjobsImportHelper looptecejobsimporthelper = new LooptecEjobsImportHelper(settings, QueryFactory, "");
 
                 updatedetail = await looptecejobsimporthelper.SaveDataToODH(null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs succeeded", "rawonly", updatedetail, true);

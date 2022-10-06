@@ -9,35 +9,13 @@ using System.Xml.Linq;
 namespace SuedtirolWein.Parser
 {
     public class ParseAwardData
-    {
-        //<item>
-        //<id>ddaf48f2-ab83-48bf-b354-14734c893d37</id>
-        //<title>
-        //<![CDATA[ Südtirol Terlaner Chardonnay Rarität ]]>
-        //</title>
-        //<vintage>2003</vintage>
-        //<awardyear>2016</awardyear>
-        //<company>Kellerei Terlan</company>
-        //<companyid>18635009-4610-4c1b-b403-54480c77ece9</companyid>
-        //<wine>Chardonnay</wine>
-        //<wineid>2090c3d2-42d1-45cc-bd53-7ecbb1e027e1</wineid>
-        //<awards>Veronelli,Slow Wine,Bibenda,AIS</awards>
-        //<media>
-        //http://www.suedtirolwein.com/media/045d51a5-edf7-4f55-8328-43eebae2fc3a/kellerei-terlan-terlaner-weissburgunder-raritaet-2002-kopie.png
-        //</media>
-        //</item>
-
-        public static Wine ParsetheAwardData(Wine mywine, XElement myawardde, XElement myawardit, XElement myawarden, List<string> haslanguage)
+    {      
+        public static WineLinked ParsetheAwardData(WineLinked mywine, XElement myawardde, XElement myawardit, XElement myawarden, List<string> haslanguage)
         {
             mywine.LastChange = DateTime.Now;
 
-            mywine.Id = myawardde.Element("id").Value;
-
-            //ADD MAPPING
-            var suedtirolweinid = new Dictionary<string, string>() { { "id", mywine.Id } };
-            mywine.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
-
-
+            mywine.Id = myawardde.Element("id").Value.ToUpper();
+        
             string titlede = myawardde.Element("title").Value;
             string winenamede = myawardde.Element("wine").Value;
 
@@ -82,6 +60,7 @@ namespace SuedtirolWein.Parser
 
             mywine.CustomId = myawardde.Element("wineid").Value;
 
+            mywine.Shortname = myawardde.Element("title").Value;
 
 
             if (!String.IsNullOrEmpty(myawardde.Element("media").Value))
@@ -111,6 +90,9 @@ namespace SuedtirolWein.Parser
 
                 myimage.Height = 0;
                 myimage.Width = 0;
+                myimage.License = "";
+                myimage.LicenseHolder = "https://www.suedtirolwein.com/";
+                myimage.CopyRight = "Suedtirol Wein";
 
                 myimglist.Add(myimage);
 
@@ -121,6 +103,5 @@ namespace SuedtirolWein.Parser
 
             return mywine;
         }
-
     }
 }

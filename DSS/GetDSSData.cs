@@ -35,13 +35,13 @@ namespace DSS
         public const string serviceurlskicircuits = "ski-circuits";
         public const string serviceurlwebcams = "webcams";
 
-        public const string serviceurlsellingpoints = "selling-points";
-        public const string serviceurlsnowpark = "snowpark";
+        public const string serviceurlsellingpoints = "selling-points"; //not working
+        public const string serviceurlsnowpark = "snowparks";
 
-        public const string serviceurlmountainhuts = "mountain-huts";
-        public const string serviceurltaxi = "taxi";
+        public const string serviceurlmountainhuts = "mountain-huts"; //not working
+        public const string serviceurltaxi = "taxi"; //not working
 
-        public const string serviceurlhealthcare = "healthcare";
+        public const string serviceurlhealthcare = "healthcare"; //not working
         public const string serviceurlweather = "wetter";
 
         private static async Task<HttpResponseMessage> RequestDSSInfo(DSSRequestType dssRequestType,  string dssuser, string dsspswd, string serviceurl)

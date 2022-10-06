@@ -260,13 +260,13 @@ namespace OdhApiCore.Controllers.api
 
             if (!String.IsNullOrEmpty(tagfilter))
             {
-                if (tagfilter.ToLower().StartsWith("and_"))
+                if (tagfilter.ToLower().StartsWith("and"))
                     tagfilterbehaviour = "and";
                 else
                     tagfilterbehaviour = "or";
 
-                tagfilter = tagfilter.Replace("and_", "");
-                tagfilter = tagfilter.Replace("or_", "");
+                tagfilter = tagfilter.Replace("and", "");
+                tagfilter = tagfilter.Replace("or", "");
             }
 
             taglist = Helper.CommonListCreator.CreateIdList(tagfilter);

@@ -152,7 +152,22 @@ namespace Helper
             if (data.Source.ToLower() == "dss")
                 licenseholder = @"https://www.dolomitisuperski.com/";
 
-            List<string?> allowedsources = new List<string?>() { "magnolia", "none", "museumdata", "suedtirolwein", "archapp", "activitydata", "poidata", "beacondata", "gastronomicdata", "common","sta", "dssliftbase", "dssslopebase" };
+            List<string?> allowedsources = new List<string?>() { 
+                "magnolia", 
+                "none", 
+                "museumdata", 
+                "suedtirolwein",
+                "suedtirolweincompany",
+                "suedtirolweinaward",
+                "archapp", 
+                "activitydata", 
+                "poidata", 
+                "beacondata", 
+                "gastronomicdata", 
+                "common",
+                "sta", 
+                "dssliftbase", 
+                "dssslopebase" };
 
             if (data.Active)
             {

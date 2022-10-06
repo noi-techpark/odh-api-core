@@ -10,6 +10,9 @@ using System.Globalization;
 using Helper;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Xml.Linq;
+using ServiceReferenceLCS;
+using System.Collections;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -25,7 +28,6 @@ namespace OdhApiImporter.Helpers.DSS
 
         public List<DSSRequestType> requesttypelist { get; set; }
         public string entitytype { get; set; }
-
         public bool rawonly { get; set; }
 
         public List<string> idlistdssinterface { get; set; }
@@ -61,6 +63,46 @@ namespace OdhApiImporter.Helpers.DSS
                     //requesttypelist.Add(DSSRequestType.slopestatus); // not needed at the moment
                     rawonly = false;
                     break;
+                case "snowpark":
+                    requesttypelist.Add(DSSRequestType.snowparks);                    
+                    rawonly = true;
+                    break;
+                case "alpinehut":
+                    requesttypelist.Add(DSSRequestType.alpinehuts);                    
+                    rawonly = true;
+                    break;
+                case "skicircuit":
+                    requesttypelist.Add(DSSRequestType.skicircuits);
+                    rawonly = true;
+                    break;
+                case "sellingpoint":
+                    requesttypelist.Add(DSSRequestType.sellingpoints);
+                    rawonly = true;
+                    break;
+                case "taxi":
+                    requesttypelist.Add(DSSRequestType.taxi);
+                    rawonly = true;
+                    break;
+                case "healthcare":
+                    requesttypelist.Add(DSSRequestType.healthcare);
+                    rawonly = true;
+                    break;
+                case "skiresort":
+                    requesttypelist.Add(DSSRequestType.skiresorts);
+                    rawonly = true;
+                    break;
+                case "webcam":
+                    requesttypelist.Add(DSSRequestType.webcams);
+                    rawonly = true;
+                    break;
+                case "overview":
+                    requesttypelist.Add(DSSRequestType.overview);
+                    rawonly = true;
+                    break;
+                case "weather":
+                    requesttypelist.Add(DSSRequestType.weather);
+                    rawonly = true;
+                    break;                
             }
 
             List<dynamic> dssdata = new List<dynamic>();
@@ -133,154 +175,179 @@ namespace OdhApiImporter.Helpers.DSS
                 //loop trough dss items
                 foreach (var item in dssinput[0].items)
                 {
-                    //Parse DSS Data
-                    ODHActivityPoiLinked parsedobject = await ParseDSSDataToODHActivityPoi(item);
-                    if (parsedobject?.Id is not { })
-                        continue;
+                    var importresult = await ImportDataSingle(item, validcategories, arealist);
 
-                    //Add to list
-                    idlistdssinterface.Add(parsedobject.Id);
-
-                    if (parsedobject != null)
-                    {
-                        //Add the LocationInfo
-                        //TODO if Area can be mapped return locationinfo
-                        if (parsedobject.GpsInfo != null && parsedobject.GpsInfo.Count > 0)
-                        {
-                            if (parsedobject.GpsInfo.FirstOrDefault()?.Latitude != 0 && parsedobject.GpsInfo.FirstOrDefault()?.Longitude != 0)
-                            {
-                                var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault()!.Latitude, parsedobject.GpsInfo.FirstOrDefault()!.Longitude, 30000);
-
-                                if (district != null)
-                                {
-                                    var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
-
-                                    parsedobject.LocationInfo = locinfo;
-                                    parsedobject.TourismorganizationId = locinfo.TvInfo?.Id;
-                                }
-                            }
-                        }
-
-                        //Add AreaInfo from DSS skiarea
-                        var dssskiarearid = (int?)item["skiresort"]["pid"];
-                        if (dssskiarearid != null)
-                        {
-                            //TODO Select Area which has the mapping to dss/rid and fill AreaId Array and LocationInfo.Area
-                            var area = arealist.Where(x => x.Mapping.ContainsKey("dss") && x.Mapping["dss"].ContainsKey("pid") && x.Mapping["dss"]["pid"] == dssskiarearid.ToString()).FirstOrDefault();
-
-                            if (area?.Id != null)
-                            {
-                                parsedobject.AreaId = new List<string>() { area.Id };
-                                if (parsedobject.LocationInfo == null)
-                                    parsedobject.LocationInfo = new LocationInfoLinked();
-
-                                Dictionary<string, string> areanames = new Dictionary<string, string>();
-                                if (area.Shortname is { })
-                                {
-                                    areanames.Add("de", area.Shortname);
-                                    areanames.Add("it", area.Shortname);
-                                    areanames.Add("en", area.Shortname);
-                                    areanames.Add("nl", area.Shortname);
-                                    areanames.Add("cs", area.Shortname);
-                                    areanames.Add("pl", area.Shortname);
-                                    areanames.Add("fr", area.Shortname);
-                                    areanames.Add("ru", area.Shortname);
-                                }
-
-                                parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
-
-                                //Use RegionId, TVId from Area
-                                if (parsedobject.LocationInfo.RegionInfo == null)
-                                    if (!String.IsNullOrEmpty(area.RegionId))
-                                        parsedobject.LocationInfo.RegionInfo = new RegionInfoLinked() { Id = area.RegionId, Name = null };
-                                
-                                if (parsedobject.LocationInfo.TvInfo == null)
-                                    if (!String.IsNullOrEmpty(area.TourismvereinId))
-                                    {
-                                        parsedobject.LocationInfo.TvInfo = new TvInfoLinked() { Id = area.TourismvereinId, Name = null };
-                                        parsedobject.TourismorganizationId = area.TourismvereinId;
-                                    }
-                                        
-
-                                if (parsedobject.LocationInfo.MunicipalityInfo == null)
-                                    if (!String.IsNullOrEmpty(area.MunicipalityId))
-                                        parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = area.MunicipalityId, Name = null };
-
-                            }
-                        }
-
-                        //Setting Categorization by Valid Tags
-                        var currentcategories = validcategories.Where(x => parsedobject.SmgTags?.Select(y => y.ToLower()).Contains(x.Id.ToLower()) ?? false);
-
-                        foreach (var languagecategory in parsedobject.HasLanguage ?? new List<string>())
-                        {
-                            if (parsedobject.AdditionalPoiInfos == null)
-                                parsedobject.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
-
-                            //Set MainType, SubType, PoiType
-                            var additionalpoiinfo = new AdditionalPoiInfos();
-                            additionalpoiinfo.Language = languagecategory;
-
-                            var maintypeobj = validcategories.Where(x => x.Id == parsedobject.Type?.ToLower()).FirstOrDefault();
-                            var subtypeobj = validcategories.Where(x => x.Id == parsedobject.SubType?.ToLower()).FirstOrDefault();
-
-                            additionalpoiinfo.MainType = maintypeobj != null && maintypeobj.TagName != null && maintypeobj.TagName.ContainsKey(languagecategory) ? maintypeobj.TagName[languagecategory] : "";
-                            additionalpoiinfo.SubType = subtypeobj != null && subtypeobj.TagName != null && subtypeobj.TagName.ContainsKey(languagecategory) ? subtypeobj.TagName[languagecategory] : "";
-
-                            //Add the AdditionalPoi Info (include Novelty)
-                            if (entitytype.ToLower() == "lift")
-                                additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
-                            if (entitytype.ToLower() == "slope")
-                                additionalpoiinfo.Novelty = (string)item["info-text-winter"][languagecategory];
-
-                            foreach (var smgtagtotranslate in currentcategories.Where(x => x.DisplayAsCategory == true))
-                            {
-                                if (additionalpoiinfo.Categories == null)
-                                    additionalpoiinfo.Categories = new List<string>();
-
-                                if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && !additionalpoiinfo.Categories.Contains(smgtagtotranslate.TagName[languagecategory].Trim()))
-                                    additionalpoiinfo.Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
-                            }
-
-                            parsedobject.AdditionalPoiInfos.TryAddOrUpdate(languagecategory, additionalpoiinfo);
-                        }
-
-                        //Set shortname
-                        if (!String.IsNullOrEmpty(parsedobject.Detail["de"].Title))
-                            parsedobject.Shortname = parsedobject.Detail["de"].Title;
-                        else if (!String.IsNullOrEmpty(parsedobject.Detail["it"].Title))
-                            parsedobject.Shortname = parsedobject.Detail["it"].Title;
-                        else if (!String.IsNullOrEmpty(parsedobject.Detail["en"].Title))
-                            parsedobject.Shortname = parsedobject.Detail["en"].Title;
-
-                        ODHTagHelper.SetMainCategorizationForODHActivityPoi(parsedobject);
-
-                        //Special get all Taglist and traduce it on import
-                        
-                        await GenericTaggingHelper.AddMappingToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
-
-                        //Save parsedobject to DB + Save Rawdata to DB
-                        var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
-
-                        newcounter = newcounter + pgcrudresult.created ?? 0;
-                        updatecounter = updatecounter + pgcrudresult.updated ?? 0;
-
-                        WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "dss." + entitytype + "base", success = true, error = "" });
-                    }
-                    else
-                    {
-                        WriteLog.LogToConsole(parsedobject?.Id ?? "-1", "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject?.Id ?? "-1", sourceinterface = "dss." + entitytype + "base", success = false, error = entitytype + " could not be parsed" });
-                    }
+                    newcounter = newcounter + importresult.created ?? newcounter;
+                    updatecounter = updatecounter + importresult.updated ?? updatecounter;
+                    errorcounter = errorcounter + importresult.error ?? errorcounter;
                 }
             }
-
-           
 
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
         }
 
-        private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
+        public async Task<UpdateDetail> ImportDataSingle(dynamic item, List<ODHTagLinked>? validcategories, IEnumerable<AreaLinked> arealist)
         {
+            int updatecounter = 0;
+            int newcounter = 0;
+            int deletecounter = 0;
+            int errorcounter = 0;
+
+            //id
+            string returnid = "";
+
+            try
+            {
+                ODHActivityPoiLinked parsedobject = default(ODHActivityPoiLinked);
+
+                returnid = item.pid;
+
+                if (!rawonly)
+                {
+                    //Parse DSS Data
+                    parsedobject = await ParseDSSDataToODHActivityPoi(item);
+                    if (parsedobject == null)
+                        throw new Exception();
+             
+                    //Add to list
+                    idlistdssinterface.Add(parsedobject.Id);
+
+                    //Add the LocationInfo
+                    //TODO if Area can be mapped return locationinfo
+                    if (parsedobject.GpsInfo != null && parsedobject.GpsInfo.Count > 0)
+                    {
+                        if (parsedobject.GpsInfo.FirstOrDefault()?.Latitude != 0 && parsedobject.GpsInfo.FirstOrDefault()?.Longitude != 0)
+                        {
+                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault()!.Latitude, parsedobject.GpsInfo.FirstOrDefault()!.Longitude, 30000);
+
+                            if (district != null)
+                            {
+                                var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+
+                                parsedobject.LocationInfo = locinfo;
+                                parsedobject.TourismorganizationId = locinfo.TvInfo?.Id;
+                            }
+                        }
+                    }
+
+                    //Add AreaInfo from DSS skiarea
+                    var dssskiarearid = (int?)item["skiresort"]["pid"];
+                    if (dssskiarearid != null)
+                    {
+                        //TODO Select Area which has the mapping to dss/rid and fill AreaId Array and LocationInfo.Area
+                        var area = arealist.Where(x => x.Mapping.ContainsKey("dss") && x.Mapping["dss"].ContainsKey("pid") && x.Mapping["dss"]["pid"] == dssskiarearid.ToString()).FirstOrDefault();
+
+                        if (area?.Id != null)
+                        {
+                            parsedobject.AreaId = new List<string>() { area.Id };
+                            if (parsedobject.LocationInfo == null)
+                                parsedobject.LocationInfo = new LocationInfoLinked();
+
+                            Dictionary<string, string> areanames = new Dictionary<string, string>();
+                            if (area.Shortname is { })
+                            {
+                                areanames.Add("de", area.Shortname);
+                                areanames.Add("it", area.Shortname);
+                                areanames.Add("en", area.Shortname);
+                                areanames.Add("nl", area.Shortname);
+                                areanames.Add("cs", area.Shortname);
+                                areanames.Add("pl", area.Shortname);
+                                areanames.Add("fr", area.Shortname);
+                                areanames.Add("ru", area.Shortname);
+                            }
+
+                            parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
+
+                            //Use RegionId, TVId from Area
+                            if (parsedobject.LocationInfo.RegionInfo == null)
+                                if (!String.IsNullOrEmpty(area.RegionId))
+                                    parsedobject.LocationInfo.RegionInfo = new RegionInfoLinked() { Id = area.RegionId, Name = null };
+
+                            if (parsedobject.LocationInfo.TvInfo == null)
+                                if (!String.IsNullOrEmpty(area.TourismvereinId))
+                                {
+                                    parsedobject.LocationInfo.TvInfo = new TvInfoLinked() { Id = area.TourismvereinId, Name = null };
+                                    parsedobject.TourismorganizationId = area.TourismvereinId;
+                                }
+
+
+                            if (parsedobject.LocationInfo.MunicipalityInfo == null)
+                                if (!String.IsNullOrEmpty(area.MunicipalityId))
+                                    parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = area.MunicipalityId, Name = null };
+
+                        }
+                    }
+
+                    //Setting Categorization by Valid Tags
+                    var currentcategories = validcategories.Where(x => parsedobject.SmgTags?.Select(y => y.ToLower()).Contains(x.Id.ToLower()) ?? false);
+
+                    foreach (var languagecategory in parsedobject.HasLanguage ?? new List<string>())
+                    {
+                        if (parsedobject.AdditionalPoiInfos == null)
+                            parsedobject.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
+
+                        //Set MainType, SubType, PoiType
+                        var additionalpoiinfo = new AdditionalPoiInfos();
+                        additionalpoiinfo.Language = languagecategory;
+
+                        var maintypeobj = validcategories.Where(x => x.Id == parsedobject.Type?.ToLower()).FirstOrDefault();
+                        var subtypeobj = validcategories.Where(x => x.Id == parsedobject.SubType?.ToLower()).FirstOrDefault();
+
+                        additionalpoiinfo.MainType = maintypeobj != null && maintypeobj.TagName != null && maintypeobj.TagName.ContainsKey(languagecategory) ? maintypeobj.TagName[languagecategory] : "";
+                        additionalpoiinfo.SubType = subtypeobj != null && subtypeobj.TagName != null && subtypeobj.TagName.ContainsKey(languagecategory) ? subtypeobj.TagName[languagecategory] : "";
+
+                        //Add the AdditionalPoi Info (include Novelty)
+                        if (entitytype.ToLower() == "lift")
+                            additionalpoiinfo.Novelty = (string)item["info-text"][languagecategory];
+                        if (entitytype.ToLower() == "slope")
+                            additionalpoiinfo.Novelty = (string)item["info-text-winter"][languagecategory];
+
+                        foreach (var smgtagtotranslate in currentcategories.Where(x => x.DisplayAsCategory == true))
+                        {
+                            if (additionalpoiinfo.Categories == null)
+                                additionalpoiinfo.Categories = new List<string>();
+
+                            if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && !additionalpoiinfo.Categories.Contains(smgtagtotranslate.TagName[languagecategory].Trim()))
+                                additionalpoiinfo.Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
+                        }
+
+                        parsedobject.AdditionalPoiInfos.TryAddOrUpdate(languagecategory, additionalpoiinfo);
+                    }
+
+                    //Set shortname
+                    if (!String.IsNullOrEmpty(parsedobject.Detail["de"].Title))
+                        parsedobject.Shortname = parsedobject.Detail["de"].Title;
+                    else if (!String.IsNullOrEmpty(parsedobject.Detail["it"].Title))
+                        parsedobject.Shortname = parsedobject.Detail["it"].Title;
+                    else if (!String.IsNullOrEmpty(parsedobject.Detail["en"].Title))
+                        parsedobject.Shortname = parsedobject.Detail["en"].Title;
+
+                    ODHTagHelper.SetMainCategorizationForODHActivityPoi(parsedobject);
+
+                    //Special get all Taglist and traduce it on import
+
+                    await GenericTaggingHelper.AddMappingToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
+                }
+
+                //Save parsedobject to DB + Save Rawdata to DB
+                var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
+
+                newcounter = newcounter + pgcrudresult.created ?? 0;
+                updatecounter = updatecounter + pgcrudresult.updated ?? 0;
+
+                WriteLog.LogToConsole(parsedobject?.Id ?? returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject?.Id ?? returnid, sourceinterface = "dss." + entitytype, success = true, error = "" });
+            }
+            catch
+            {
+                WriteLog.LogToConsole(returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = returnid, sourceinterface = "dss." + entitytype, success = false, error = entitytype + " could not be parsed" });
+
+                errorcounter = errorcounter + 1;
+            }
+
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
+        }
+        private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
+{
             int updateresult = 0;
             int deleteresult = 0;
             int errorresult = 0;
@@ -315,7 +382,6 @@ namespace OdhApiImporter.Helpers.DSS
             return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult, error = errorresult };
         }
 
-
         //Parse the dss interface content
         public async Task<ODHActivityPoiLinked?> ParseDSSDataToODHActivityPoi(dynamic dssinput)
         {
@@ -346,15 +412,15 @@ namespace OdhApiImporter.Helpers.DSS
 
         private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, KeyValuePair<string, dynamic> dssdata)
         {
-            try
+            var rawdataid = await InsertInRawDataDB(dssdata);
+
+            if (!rawonly)
             {
                 odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
 
                 //Set LicenseInfo
                 odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
-                var rawdataid = await InsertInRawDataDB(dssdata);
-                
                 var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid);
 
                 //Hack insert also in Activity table
@@ -362,10 +428,9 @@ namespace OdhApiImporter.Helpers.DSS
 
                 return pgcrudresult;
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            else
+                return new PGCRUDResult { created = 1, deleted = 0, updated = 0, error = 0, operation = "RAW_INSERT", id = rawdataid.ToString() };
+
         }
 
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, dynamic> dssdata)
@@ -376,7 +441,7 @@ namespace OdhApiImporter.Helpers.DSS
                             datasource = "dss",
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(dssdata.Value),
-                            sourceinterface = entitytype + "base",
+                            sourceinterface = entitytype,
                             sourceid = dssdata.Key,
                             sourceurl = settings.DSSConfig.ServiceUrl,
                             type = "odhactivitypoi-" + entitytype,
