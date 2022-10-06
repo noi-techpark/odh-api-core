@@ -58,7 +58,10 @@ namespace OdhApiCore.Controllers
                 //Examples
                 //tagfilter = and(idm.Winter,idm.Sommer)
                 //tagfilter = or(lts.Winter,lts.Sommer)
-                //tagfilter = or(lts.Winter,idm.Sommer)and(lts.Winter,idm.Sommer) not wokring at the moment
+                
+                //TODO
+                //tagfilter = or(lts.Winter,idm.Sommer)and(lts.Winter,idm.Sommer) not wokring at the moment 
+                //tagfilter = or(winter) searches trough lts and 
 
                 //Get Tagoperator
                 string tagoperator = tagfilter.Split('(').First();
@@ -83,8 +86,6 @@ namespace OdhApiCore.Controllers
 
                     tagstofilter.Add(tagoperator, splitdict);
                 }
-
-
 
                 return tagstofilter;
             }
