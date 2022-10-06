@@ -282,7 +282,7 @@ namespace Helper
 
             return query
                 .IdLowerFilter(idlist)
-                .DistrictFilter(districtlist)
+                .LocFilterDistrictFilter(districtlist)
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
