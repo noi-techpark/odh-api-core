@@ -86,6 +86,22 @@ namespace OdhApiImporter.Helpers.DSS
                 case "healthcare":
                     requesttypelist.Add(DSSRequestType.healthcare);
                     rawonly = true;
+                    break;
+                case "skiresort":
+                    requesttypelist.Add(DSSRequestType.skiresorts);
+                    rawonly = true;
+                    break;
+                case "webcam":
+                    requesttypelist.Add(DSSRequestType.webcams);
+                    rawonly = true;
+                    break;
+                case "overview":
+                    requesttypelist.Add(DSSRequestType.overview);
+                    rawonly = true;
+                    break;
+                case "weather":
+                    requesttypelist.Add(DSSRequestType.weather);
+                    rawonly = true;
                     break;                
             }
 
@@ -319,7 +335,7 @@ namespace OdhApiImporter.Helpers.DSS
                 newcounter = newcounter + pgcrudresult.created ?? 0;
                 updatecounter = updatecounter + pgcrudresult.updated ?? 0;
 
-                WriteLog.LogToConsole(parsedobject.Id ?? returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject.Id ?? returnid, sourceinterface = "dss." + entitytype, success = true, error = "" });
+                WriteLog.LogToConsole(parsedobject?.Id ?? returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject?.Id ?? returnid, sourceinterface = "dss." + entitytype, success = true, error = "" });
             }
             catch
             {
