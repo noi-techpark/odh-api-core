@@ -6,16 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Connected Services\**" />
-    <EmbeddedResource Remove="Connected Services\**" />
-    <None Remove="Connected Services\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Combinatorics" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Npgsql" Version="6.0.0" />
     <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="SqlKata.Execution" Version="2.4.0" />
     <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.9.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.9.0" />
@@ -27,12 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DataModel\DataModel.csproj" />
     <ProjectReference Include="..\RawQueryParser\RawQueryParser.fsproj" />
-    <ProjectReference Include="..\sqlkata\QueryBuilder\QueryBuilder.csproj" />
-    <ProjectReference Include="..\sqlkata\SqlKata.Execution\SqlKata.Execution.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 </Project>

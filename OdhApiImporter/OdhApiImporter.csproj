@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
+    <PackageReference Include="SqlKata.Execution" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,10 +34,5 @@
     <Folder Include="Helpers\LCS\" />
     <Folder Include="Models\" />
     <Folder Include="json\" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\sqlkata\SqlKata.Execution\SqlKata.Execution.csproj" />
-    <ProjectReference Include="..\sqlkata\QueryBuilder\QueryBuilder.csproj" />
   </ItemGroup>
 </Project>
