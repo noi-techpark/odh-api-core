@@ -4,6 +4,7 @@ using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -975,8 +976,20 @@ namespace Helper
 
         #endregion
 
+        #region Tagging Generated Column
+
+        public static Query TaggingFilter_GeneratedColumn(this Query query, IDictionary<string, List<string>> tags) =>
+            query.Where(q => tags.Aggregate(q, (q, tag) =>
+                    tag.Key == "and" ? q.WhereArrayInListAnd(tag.Value, "gen_tags") : q.WhereArrayInListOr(tag.Value, "gen_tags"))
+                ));
+
+
+        #endregion
+
+
         #region Generated Columns Basic
 
+        //Where Array is in List OR
         public static Query WhereArrayInListOr(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
                 query.Where(q =>
                 {
@@ -989,13 +1002,15 @@ namespace Helper
                     return q;
                 });
 
+        //Where Array is in List AND
         public static Query WhereArrayInListAnd(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
             query.Where(q =>
             q.WhereRaw(
                 generatedcolumn + " @> array\\[$$\\]", list.Select(x => x.ToLower())
                 )
             );
-        
+
+        //Where Array is in List OR alternative
         public static Query WhereStringInListOr(this Query query, IReadOnlyCollection<string> list, string generatedcolumn) =>
            query.Where(q =>
            {

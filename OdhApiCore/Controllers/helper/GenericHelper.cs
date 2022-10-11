@@ -1,4 +1,5 @@
-﻿using DataModel;
+﻿using Amazon.Runtime.Internal.Transform;
+using DataModel;
 using Helper;
 using Newtonsoft.Json;
 using SqlKata;
@@ -46,19 +47,20 @@ namespace OdhApiCore.Controllers
 
         #region Tag Filter
 
-        public static IDictionary<string,IDictionary<string,string>> RetrieveTagFilter(string? tagfilter)
+        public static IDictionary<string,List<string>> RetrieveTagFilter(string? tagfilter)
         {            
             try
             {
                 if (tagfilter == null)
-                    return new Dictionary<string, IDictionary<string, string>>();
+                    return new Dictionary<string, List<string>>();
 
-                var tagstofilter = new Dictionary<string, IDictionary<string, string>>();
+                var tagstofilter = new Dictionary<string, List<string>>();
 
                 //Examples
                 //tagfilter = and(idm.Winter,idm.Sommer)
                 //tagfilter = or(lts.Winter,lts.Sommer)
-                
+                //tagfilter = or(lts.Winter,Sommer,idm.Wellness)
+
                 //TODO
                 //tagfilter = or(lts.Winter,idm.Sommer)and(lts.Winter,idm.Sommer) not wokring at the moment 
                 //tagfilter = or(winter) searches trough lts and 
@@ -72,26 +74,15 @@ namespace OdhApiCore.Controllers
                 foreach(var bracketdata in bracketdatalist)
                 {
                     var splittedelements = bracketdata.Split(",");
-
-                    var splitdict = new Dictionary<string, string>();
-
-                    foreach (var splittedelement in splittedelements)
-                    {
-                        var splittedtag = splittedelement.Split(".");
-                        if (splittedtag.Length > 1)
-                        {
-                            splitdict.Add(splittedtag[1], splittedtag[0]);                         
-                        }
-                    }
-
-                    tagstofilter.Add(tagoperator, splitdict);
+                    
+                    tagstofilter.Add(tagoperator, splittedelements.ToList());
                 }
 
                 return tagstofilter;
             }
             catch (Exception)
             {
-                return new Dictionary<string, IDictionary<string, string>>();
+                return new Dictionary<string, List<string>>();
             }
         }
 

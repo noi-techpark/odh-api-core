@@ -47,11 +47,8 @@ namespace OdhApiCore.Controllers.api
         public bool duration;
         public int durationmin;
         public int durationmax;
-
-        public string tagfilterbehaviour = "";
-        public List<string> taglist;
         
-        public IDictionary<string, IDictionary<string,string>> tagdict;
+        public IDictionary<string, List<string>> tagdict;
 
         //New Publishedonlist
         public List<string> publishedonlist;
@@ -257,20 +254,7 @@ namespace OdhApiCore.Controllers.api
 
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
-
-            if (!String.IsNullOrEmpty(tagfilter))
-            {
-                if (tagfilter.ToLower().StartsWith("and"))
-                    tagfilterbehaviour = "and";
-                else
-                    tagfilterbehaviour = "or";
-
-                tagfilter = tagfilter.Replace("and", "");
-                tagfilter = tagfilter.Replace("or", "");
-            }
-
-            taglist = Helper.CommonListCreator.CreateIdList(tagfilter);
-
+            
             tagdict = GenericHelper.RetrieveTagFilter(tagfilter);
 
             this.lastchange = lastchange;
