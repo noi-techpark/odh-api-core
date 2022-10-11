@@ -980,9 +980,10 @@ namespace Helper
 
         public static Query TaggingFilter_GeneratedColumn(this Query query, IDictionary<string, List<string>> tags) =>
             query.Where(q => tags.Aggregate(q, (q, tag) =>
-                    tag.Key == "and" ? q.WhereArrayInListAnd(tag.Value, "gen_tags") : q.WhereArrayInListOr(tag.Value, "gen_tags"))
+                q.When(tag.Key == "and", v => q.WhereArrayInListAnd(tag.Value, "gen_tags"), v => q.WhereArrayInListOr(tag.Value, "gen_tags"))                
                 ));
 
+        //? q.WhereArrayInListAnd(tag.Value, "gen_tags") : q.WhereArrayInListOr(tag.Value, "gen_tags"))
 
         #endregion
 
