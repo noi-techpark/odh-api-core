@@ -66,17 +66,40 @@ namespace OdhApiCore.Controllers
                 //tagfilter = or(winter) searches trough lts and 
 
                 //Get Tagoperator
-                string tagoperator = tagfilter.Split('(').First();
+                char[] splitParams = new char[] { '(', ')' };
+                string[] tagoperators = tagfilter.ToLower().Split(splitParams);
 
-                //Get data inside brackets
-                var bracketdatalist = GetSubStrings(tagfilter, "(", ")");
+                //TODO and or combination
 
-                foreach(var bracketdata in bracketdatalist)
+                foreach (string tagoperator in tagoperators)
                 {
-                    var splittedelements = bracketdata.Split(",");
-                    
-                    tagstofilter.Add(tagoperator, splittedelements.ToList());
+                    if(tagoperator.Equals("and") || tagoperator.Equals("or"))
+                    {
+
+                    }
                 }
+
+                int i = 0;
+
+                foreach(string tagoperator in tagoperators)
+                {
+                    if (tagoperator.Equals("and") || tagoperator.Equals("or"))
+                    {
+                        //Get data inside brackets
+                        var bracketdatalist = GetSubStrings(tagfilter, "(", ")");
+
+                        var bracketdataarr = bracketdatalist.ToArray();
+
+                        if (bracketdataarr[i] != null)
+                        {
+                            var splittedelements = bracketdataarr[i].Split(",");
+
+                            tagstofilter.Add(tagoperator, splittedelements.ToList());
+
+                            i++;
+                        }
+                    }
+                }                
 
                 return tagstofilter;
             }
@@ -89,6 +112,14 @@ namespace OdhApiCore.Controllers
         private static IEnumerable<string> GetSubStrings(string input, string start, string end)
         {
             Regex r = new Regex(Regex.Escape(start) + "(.*?)" + Regex.Escape(end));
+            MatchCollection matches = r.Matches(input);
+            foreach (Match match in matches)
+                yield return match.Groups[1].Value;
+        }
+
+        private static IEnumerable<string> GetOperators(string input, string start, string end)
+        {
+            Regex r = new Regex(Regex.Escape(start) + "^(.*?)" + Regex.Escape(end));
             MatchCollection matches = r.Matches(input);
             foreach (Match match in matches)
                 yield return match.Groups[1].Value;
