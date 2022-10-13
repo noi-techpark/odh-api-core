@@ -67,6 +67,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
         /// <param name="durationfilter">Duration Range Filter (Separator ',' example Value: 1,3 Duration from 1 to 3 hours), (default:'null')</param>
         /// <param name="difficultyfilter">Difficulty Filter (possible values: '1' = easy, '2' = medium, '3' = difficult), (default:'null')</param>
+        /// <param name="hascc0image">Image CC0 Filter (Return only Data with at least one Image tagged with a CC0 License, possible Values: 'true', 'false'), (default:'null')</param>        
         /// <param name="tagfilter">Filter on Tags. Syntax =and/or(TagSource.TagId,TagSource.TagId,TagId) example or(idm.summer,lts.hiking) and(idm.themed hikes,lts.family hikings), or(hiking)and(idm.summer), default: 'null')</param>
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
@@ -114,6 +115,7 @@ namespace OdhApiCore.Controllers.api
             string? distancefilter = null,
             string? altitudefilter = null,
             string? durationfilter = null,
+            LegacyBool hascc0image = null!,
             string? tagfilter = null,
             string? publishedon = null,            
             string? updatefrom = null,
@@ -138,7 +140,7 @@ namespace OdhApiCore.Controllers.api
                 smgactive: odhactive?.Value, smgtags: odhtagfilter, smgtagsand: odhtagfilter_and,
                 categorycodefilter: categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                 activitytypefilter: activitytype, poitypefilter: poitype, difficultyfilter: difficultyfilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
-                tagfilter: tagfilter, publishedon: publishedon, seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
+                hascc0image: hascc0image?.Value, tagfilter: tagfilter, publishedon: publishedon, seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
                 removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -236,7 +238,7 @@ namespace OdhApiCore.Controllers.api
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? smgtagsand,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? difficultyfilter, string? distancefilter, string? altitudefilter, string? durationfilter,
-            string? tagfilter, string? publishedon,
+            bool? hascc0image, string? tagfilter, string? publishedon,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
@@ -248,6 +250,7 @@ namespace OdhApiCore.Controllers.api
                     highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, smgtagsand: smgtagsand, lastchange: lastchange, 
                     categorycodefilter : categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                     activitytypefilter: activitytypefilter, poitypefilter: poitypefilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter, difficultyfilter: difficultyfilter,
+                    hascc0imagefilter: hascc0image,
                     tagfilter: tagfilter, publishedonfilter: publishedon,
                     cancellationToken);
 
@@ -270,6 +273,7 @@ namespace OdhApiCore.Controllers.api
                             difficultylist: myodhactivitypoihelper.difficultylist, distance: myodhactivitypoihelper.distance,
                             distancemin: myodhactivitypoihelper.distancemin, distancemax: myodhactivitypoihelper.distancemax, duration: myodhactivitypoihelper.duration, durationmin: myodhactivitypoihelper.durationmin, 
                             durationmax: myodhactivitypoihelper.durationmax, altitude: myodhactivitypoihelper.altitude, altitudemin: myodhactivitypoihelper.altitudemin, altitudemax: myodhactivitypoihelper.altitudemax,
+                            hascc0image: myodhactivitypoihelper.hascc0image,
                             tagdict: myodhactivitypoihelper.tagdict, publishedonlist: myodhactivitypoihelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             filterClosedData: FilterClosedData, reducedData: ReducedData)

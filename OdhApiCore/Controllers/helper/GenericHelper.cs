@@ -85,6 +85,8 @@ namespace OdhApiCore.Controllers
                     }
                 }
 
+
+
                 //int i = 0;
 
                 //foreach(string tagoperator in tagoperators)

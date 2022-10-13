@@ -265,7 +265,7 @@ namespace Helper
             IReadOnlyCollection<string> categorycodeslist, IReadOnlyCollection<string> dishcodeslist, IReadOnlyCollection<string> ceremonycodeslist, IReadOnlyCollection<string> facilitycodeslist,
             IReadOnlyCollection<string> activitytypelist, IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> difficultylist, 
             bool distance, int distancemin, int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin, int altitudemax,
-            IDictionary<string, List<string>>? tagdict,
+            IDictionary<string, List<string>>? tagdict, bool? hascc0image,
             IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
         {
             LogMethodInfo(
@@ -275,8 +275,8 @@ namespace Helper
                 subtypelist, level3typelist, poitypelist, languagelist, sourcelist,
                 smgtaglist, districtlist,
                 municipalitylist, tourismvereinlist,
-                regionlist, arealist, highlight, activefilter,
-                smgactivefilter, searchfilter,
+                regionlist, arealist, tagdict, highlight, activefilter,
+                smgactivefilter, hascc0image, searchfilter,
                 language, lastchange
             );
 
@@ -295,6 +295,7 @@ namespace Helper
                 .HighlightFilter(highlight)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
+                .HasCC0Image_GeneratedColumn(hascc0image)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
                 .When(smgtaglistand.Count > 0, q => q.SmgTagFilterAnd_GeneratedColumn(smgtaglistand))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                //New GastronomyFilters
                 .CeremonyCodeFilter(ceremonycodeslist)

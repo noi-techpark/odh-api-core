@@ -98,7 +98,7 @@ namespace OdhApiCore.Filters
                     {
                         actualdict.TryAdd(item.Key, ((PageSize?)item.Value)?.Value.ToString());
                     }
-                    else if (item.Key == "highlight" || item.Key == "active" || item.Key == "odhactive")
+                    else if (item.Key == "highlight" || item.Key == "active" || item.Key == "odhactive" || item.Key == "hascc0image")
                     {
                         if (((LegacyBool?)item.Value)?.Value != null)
                             actualdict.TryAdd(item.Key, ((LegacyBool)item.Value).Value.ToString());

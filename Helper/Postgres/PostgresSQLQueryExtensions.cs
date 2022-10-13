@@ -1112,8 +1112,18 @@ namespace Helper
                     "gen_odhactive = $$",
                     odhactive ?? false
                 )
-            );             
-       
+            );
+
+        //Filter on Generated Field gen_odhactive 
+        public static Query HasCC0Image_GeneratedColumn(this Query query, bool? odhactive) =>
+            query.When(
+                odhactive != null,
+                query => query.WhereRaw(
+                    "gen_hascc0image = $$",
+                    odhactive ?? false
+                )
+            );
+
         //Filter on Generated Field gen_eventtopic OR
         public static Query EventTopicFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> eventtopiclist) =>
         query.Where(q =>
