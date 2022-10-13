@@ -1,4 +1,5 @@
-﻿using DataModel;
+﻿using Amazon.Runtime.Internal.Transform;
+using DataModel;
 using Helper;
 using Newtonsoft.Json;
 using SqlKata;
@@ -46,58 +47,87 @@ namespace OdhApiCore.Controllers
 
         #region Tag Filter
 
-        public static IDictionary<string,IDictionary<string,string>> RetrieveTagFilter(string? tagfilter)
+        public static IDictionary<string,List<string>> RetrieveTagFilter(string? tagfilter)
         {            
             try
             {
                 if (tagfilter == null)
-                    return new Dictionary<string, IDictionary<string, string>>();
+                    return new Dictionary<string, List<string>>();
 
-                var tagstofilter = new Dictionary<string, IDictionary<string, string>>();
+                var tagstofilter = new Dictionary<string, List<string>>();
 
                 //Examples
                 //tagfilter = and(idm.Winter,idm.Sommer)
                 //tagfilter = or(lts.Winter,lts.Sommer)
-                
+                //tagfilter = or(lts.Winter,Sommer,idm.Wellness)
+
                 //TODO
                 //tagfilter = or(lts.Winter,idm.Sommer)and(lts.Winter,idm.Sommer) not wokring at the moment 
                 //tagfilter = or(winter) searches trough lts and 
 
                 //Get Tagoperator
-                string tagoperator = tagfilter.Split('(').First();
+                char[] splitParams = new char[] { '(', ')' };
+                string[] tagoperators = tagfilter.ToLower().Split(splitParams);
 
-                //Get data inside brackets
-                var bracketdatalist = GetSubStrings(tagfilter, "(", ")");
+                //TODO and or combination
+                string currentoperator = "";
 
-                foreach(var bracketdata in bracketdatalist)
+                foreach (string tagoperator in tagoperators)
                 {
-                    var splittedelements = bracketdata.Split(",");
-
-                    var splitdict = new Dictionary<string, string>();
-
-                    foreach (var splittedelement in splittedelements)
+                    if(tagoperator.Equals("and") || tagoperator.Equals("or"))
                     {
-                        var splittedtag = splittedelement.Split(".");
-                        if (splittedtag.Length > 1)
-                        {
-                            splitdict.Add(splittedtag[1], splittedtag[0]);                         
-                        }
+                        currentoperator = tagoperator;
                     }
-
-                    tagstofilter.Add(tagoperator, splitdict);
+                    else if(!String.IsNullOrEmpty(tagoperator))
+                    {
+                        var splittedelements = tagoperator.Split(",");
+                        tagstofilter.Add(currentoperator, splittedelements.ToList());
+                    }
                 }
+
+
+
+                //int i = 0;
+
+                //foreach(string tagoperator in tagoperators)
+                //{
+                //    if (tagoperator.Equals("and") || tagoperator.Equals("or"))
+                //    {
+                //        //Get data inside brackets
+                //        var bracketdatalist = GetSubStrings(tagfilter, "(", ")");
+
+                //        var bracketdataarr = bracketdatalist.ToArray();
+
+                //        if (bracketdataarr[i] != null)
+                //        {
+                //            var splittedelements = bracketdataarr[i].Split(",");
+
+                //            tagstofilter.Add(tagoperator, splittedelements.ToList());
+
+                //            i++;
+                //        }
+                //    }
+                //}                
 
                 return tagstofilter;
             }
             catch (Exception)
             {
-                return new Dictionary<string, IDictionary<string, string>>();
+                return new Dictionary<string, List<string>>();
             }
         }
 
         private static IEnumerable<string> GetSubStrings(string input, string start, string end)
         {
             Regex r = new Regex(Regex.Escape(start) + "(.*?)" + Regex.Escape(end));
+            MatchCollection matches = r.Matches(input);
+            foreach (Match match in matches)
+                yield return match.Groups[1].Value;
+        }
+
+        private static IEnumerable<string> GetOperators(string input, string start, string end)
+        {
+            Regex r = new Regex(Regex.Escape(start) + "^(.*?)" + Regex.Escape(end));
             MatchCollection matches = r.Matches(input);
             foreach (Match match in matches)
                 yield return match.Groups[1].Value;

@@ -26,6 +26,7 @@ namespace OdhApiCore.Controllers.api
         public bool? highlight;
         public bool? active;
         public bool? smgactive;
+        public bool? hascc0image;
         public string? lastchange;
         //Gastronomy
         public List<string> dishcodesids;
@@ -47,11 +48,8 @@ namespace OdhApiCore.Controllers.api
         public bool duration;
         public int durationmin;
         public int durationmax;
-
-        public string tagfilterbehaviour = "";
-        public List<string> taglist;
         
-        public IDictionary<string, IDictionary<string,string>> tagdict;
+        public IDictionary<string, List<string>> tagdict;
 
         //New Publishedonlist
         public List<string> publishedonlist;
@@ -76,6 +74,7 @@ namespace OdhApiCore.Controllers.api
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter,
             string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
+            bool? hascc0imagefilter,
             string? tagfilter,
             string? publishedonfilter,
             CancellationToken cancellationToken)
@@ -92,7 +91,7 @@ namespace OdhApiCore.Controllers.api
             return new ODHActivityPoiHelper(typefilter, subtypefilter, level3typefilter, idfilter, locfilter, arealist, languagefilter, sourcefilter, 
                 highlightfilter, activefilter, smgactivefilter, smgtags, smgtagsand,
                 categorycodefilter, dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
-                activitytypefilter, poitypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter,
+                activitytypefilter, poitypefilter, distancefilter, altitudefilter, durationfilter, difficultyfilter, hascc0imagefilter,
                 tagfilter, publishedonfilter,
                 lastchange, tourismusvereinids);
         }
@@ -113,6 +112,7 @@ namespace OdhApiCore.Controllers.api
             string? smgtagsand,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter,  string? facilitycodefilter,  string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
+            bool? hascc0imagefilter,
             string? tagfilter, string? publishedonfilter,
             string? lastchange,             
             IEnumerable<string>? tourismusvereinids)
@@ -185,6 +185,8 @@ namespace OdhApiCore.Controllers.api
             active = activefilter;
             //smgactive
             smgactive = smgactivefilter;
+            //has cc0image
+            hascc0image = hascc0imagefilter;
 
             //Using Gastronomy Filters
             dishcodesids = GastronomyListCreator.CreateGastroDishCodeListfromFlag(dishcodefilter);
@@ -257,20 +259,7 @@ namespace OdhApiCore.Controllers.api
 
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
-
-            if (!String.IsNullOrEmpty(tagfilter))
-            {
-                if (tagfilter.ToLower().StartsWith("and"))
-                    tagfilterbehaviour = "and";
-                else
-                    tagfilterbehaviour = "or";
-
-                tagfilter = tagfilter.Replace("and", "");
-                tagfilter = tagfilter.Replace("or", "");
-            }
-
-            taglist = Helper.CommonListCreator.CreateIdList(tagfilter);
-
+            
             tagdict = GenericHelper.RetrieveTagFilter(tagfilter);
 
             this.lastchange = lastchange;
