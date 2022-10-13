@@ -70,36 +70,42 @@ namespace OdhApiCore.Controllers
                 string[] tagoperators = tagfilter.ToLower().Split(splitParams);
 
                 //TODO and or combination
+                string currentoperator = "";
 
                 foreach (string tagoperator in tagoperators)
                 {
                     if(tagoperator.Equals("and") || tagoperator.Equals("or"))
                     {
-
+                        currentoperator = tagoperator;
+                    }
+                    else if(!String.IsNullOrEmpty(tagoperator))
+                    {
+                        var splittedelements = tagoperator.Split(",");
+                        tagstofilter.Add(currentoperator, splittedelements.ToList());
                     }
                 }
 
-                int i = 0;
+                //int i = 0;
 
-                foreach(string tagoperator in tagoperators)
-                {
-                    if (tagoperator.Equals("and") || tagoperator.Equals("or"))
-                    {
-                        //Get data inside brackets
-                        var bracketdatalist = GetSubStrings(tagfilter, "(", ")");
+                //foreach(string tagoperator in tagoperators)
+                //{
+                //    if (tagoperator.Equals("and") || tagoperator.Equals("or"))
+                //    {
+                //        //Get data inside brackets
+                //        var bracketdatalist = GetSubStrings(tagfilter, "(", ")");
 
-                        var bracketdataarr = bracketdatalist.ToArray();
+                //        var bracketdataarr = bracketdatalist.ToArray();
 
-                        if (bracketdataarr[i] != null)
-                        {
-                            var splittedelements = bracketdataarr[i].Split(",");
+                //        if (bracketdataarr[i] != null)
+                //        {
+                //            var splittedelements = bracketdataarr[i].Split(",");
 
-                            tagstofilter.Add(tagoperator, splittedelements.ToList());
+                //            tagstofilter.Add(tagoperator, splittedelements.ToList());
 
-                            i++;
-                        }
-                    }
-                }                
+                //            i++;
+                //        }
+                //    }
+                //}                
 
                 return tagstofilter;
             }
