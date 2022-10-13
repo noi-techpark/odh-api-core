@@ -329,8 +329,16 @@ namespace OdhApiImporter.Helpers.DSS
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
                 }
 
+                var sourceid = (string)item.pid;
+
+                //TODO GET ID based on item type
+
+                //IF no id is provided timestamp generated
+                if(String.IsNullOrEmpty(sourceid))
+                    sourceid = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
                 //Save parsedobject to DB + Save Rawdata to DB
-                var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
+                var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(sourceid, item));
 
                 newcounter = newcounter + pgcrudresult.created ?? 0;
                 updatecounter = updatecounter + pgcrudresult.updated ?? 0;
