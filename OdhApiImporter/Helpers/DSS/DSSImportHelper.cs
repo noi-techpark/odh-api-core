@@ -116,6 +116,46 @@ namespace OdhApiImporter.Helpers.DSS
             return dssdata;
         }
 
+        private string GetSourceId(dynamic input)
+        {
+            requesttypelist = new List<DSSRequestType>();
+
+            switch (entitytype.ToLower())
+            {
+                case "lift":
+                    return (string)input.pid;
+                case "slope":
+                    return (string)input.pid;
+                case "snowpark":
+                    //pid
+                    return (string)input.pid;
+                case "alpinehut":
+                    return (string)input.pid;
+                case "skicircuit":
+                    //no id there name + clockwise?
+                    return (string)input.pid;
+                case "sellingpoint":
+                    return (string)input.pid;
+                case "taxi":
+                    return (string)input.pid;
+                case "healthcare":
+                    return (string)input.pid;
+                case "skiresort":
+                    return (string)input.pid;
+                case "webcam":
+                    //pid
+                    return (string)input.pid;
+                case "overview":
+                    return (string)input.pid;
+                case "weather":
+                    //rrid
+                    return (string)input.rrid;
+                default:
+                    return (string)input.pid;
+            }
+        }
+
+
         public async Task<UpdateDetail> ImportData(List<dynamic> dssinput, CancellationToken cancellationToken)
         {
             int updatecounter = 0;
@@ -329,11 +369,11 @@ namespace OdhApiImporter.Helpers.DSS
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
                 }
 
-                var sourceid = (string)item.pid;
+                var sourceid = (string)GetSourceId(parsedobject);
 
                 //TODO GET ID based on item type
 
-                //IF no id is provided timestamp generated
+                //IF no id is provided timestamp generated WRONG i need a unique identifier to group on!
                 if(String.IsNullOrEmpty(sourceid))
                     sourceid = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
