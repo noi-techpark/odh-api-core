@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Xml.Linq;
+using DataModel;
 using ServiceReferenceCDBData;
 
 namespace CDB
@@ -562,5 +564,55 @@ namespace CDB
 
             return myresponse;
         }
+
+
+
+        //Create List of Accommodations using GetHotelChanged Method
+        public static void GetAccommodationListLTS(DateTime mystartdate, string destinationpath, bool updatelist, string user, string pswd, string serviceurl)
+        {
+            try
+            {
+                string accolistname = "AccommodationFullList";
+                if (updatelist)
+                    accolistname = "AccommodationUpdateList";
+
+                XDocument myaccoschanged = GetAccommodationDataCDB.GetHotelChangedfromCDB(mystartdate.Date, "1", user, pswd, serviceurl);
+
+                string destionationdir = "";
+
+                if (destinationpath != "")
+                    destionationdir = destinationpath;
+                
+                myaccoschanged.Save(destionationdir + accolistname + ".xml");             
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error on import Accommodation List: " + ex.Message);
+            }
+        }
+
+        //Create TIN List
+        public static void GetTinListLTS(string destinationpath, string showall, string user, string pswd, string serviceurl)
+        {
+            try
+            {
+                XDocument mytins = GetAccommodationDataCDB.GetTinfromCDB("1", user, pswd, serviceurl);
+
+                //TODO CHECK If this resolves empty response problem
+                if (mytins.Root.HasElements)
+                {
+                    string destionationdir = "";
+
+                    if (destinationpath != "")
+                        destionationdir = destinationpath;
+                    //new DateTime(2010, 1, 1)
+                    mytins.Save(destionationdir + "Features.xml");                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error on import TIN List: " + ex.Message);
+            }
+        }        
     }
 }
