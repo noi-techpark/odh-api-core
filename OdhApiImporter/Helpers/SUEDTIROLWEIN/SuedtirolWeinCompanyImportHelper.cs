@@ -21,7 +21,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             
         }
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             var winegastrolist = await ImportList(cancellationToken);
 

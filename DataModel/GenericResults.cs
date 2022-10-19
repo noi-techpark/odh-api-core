@@ -62,10 +62,10 @@ namespace DataModel
 
             foreach (var updatedetail in updatedetails)
             {
-                created = updatedetail.created + created;
-                updated = updatedetail.updated + updated;
-                deleted = updatedetail.deleted + deleted;
-                error = updatedetail.error + error;
+                    created = updatedetail.created + created;
+                    updated = updatedetail.updated + updated;
+                    deleted = updatedetail.deleted + deleted;
+                    error = updatedetail.error + error;                
             }
 
             return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error };

@@ -91,7 +91,7 @@ namespace OdhApiImporter.Controllers
             {
                 EbmsEventsImportHelper ebmsimporthelper = new EbmsEventsImportHelper(settings, QueryFactory, "eventeuracnoi");
 
-                updatedetail = await ebmsimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await ebmsimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "EBMS Eventshorts update succeeded", "", updatedetail, true);
 
                 return Ok(updateResult);
@@ -156,7 +156,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 MobilityEventsImportHelper ninjaimporthelper = new MobilityEventsImportHelper(settings, QueryFactory);
-                updatedetail = await ninjaimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await ninjaimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja Events update succeeded", "", updatedetail, true);
 
                 return Ok(updateResult);
@@ -239,7 +239,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 SiagMuseumImportHelper siagimporthelper = new SiagMuseumImportHelper(settings, QueryFactory, "smgpois");
-                updatedetail = await siagimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await siagimporthelper.SaveDataToODH(null, null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data succeeded", "actual", updatedetail, true);
 
@@ -267,7 +267,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 SuedtirolWeinCompanyImportHelper sweinimporthelper = new SuedtirolWeinCompanyImportHelper(settings, QueryFactory, "smgpois");
-                updatedetail = await sweinimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await sweinimporthelper.SaveDataToODH(null, null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein Company data succeeded", "actual", updatedetail, true);
 
@@ -291,7 +291,7 @@ namespace OdhApiImporter.Controllers
             try
             {
                 SuedtirolWeinAwardImportHelper sweinimporthelper = new SuedtirolWeinAwardImportHelper(settings, QueryFactory, "wines");
-                updatedetail = await sweinimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await sweinimporthelper.SaveDataToODH(null, null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein WineAward data succeeded", "actual", updatedetail, true);
 
@@ -386,7 +386,7 @@ namespace OdhApiImporter.Controllers
                 DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois");
                 dssimporthelper.entitytype = dssentity;
 
-                updatedetail = await dssimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await dssimporthelper.SaveDataToODH(null, null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update succeeded", "", updatedetail, true);
 
@@ -454,7 +454,7 @@ namespace OdhApiImporter.Controllers
             {
                 LooptecEjobsImportHelper looptecejobsimporthelper = new LooptecEjobsImportHelper(settings, QueryFactory, "");
 
-                updatedetail = await looptecejobsimporthelper.SaveDataToODH(null, cancellationToken);
+                updatedetail = await looptecejobsimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs succeeded", "rawonly", updatedetail, true);
 
                 return Ok(updateResult);

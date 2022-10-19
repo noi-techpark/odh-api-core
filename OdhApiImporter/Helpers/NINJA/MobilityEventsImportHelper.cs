@@ -25,7 +25,7 @@ namespace OdhApiImporter.Helpers
 
         #region NINJA Helpers
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //Import the data from Mobility Api
             var culturelist = await ImportList(cancellationToken);

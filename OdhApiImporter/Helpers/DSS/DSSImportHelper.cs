@@ -32,7 +32,7 @@ namespace OdhApiImporter.Helpers.DSS
 
         public List<string> idlistdssinterface { get; set; }
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET DATA
             var dssdata = await GetData(cancellationToken);
