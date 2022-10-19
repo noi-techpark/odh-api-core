@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CDB\CDB.csproj" />
     <ProjectReference Include="..\DSS\DSS.csproj" />
     <ProjectReference Include="..\EBMS\EBMS.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />

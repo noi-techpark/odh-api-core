@@ -1,9 +1,12 @@
-﻿using DataModel;
+﻿using CDB;
+using DataModel;
+using LCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OdhApiImporter.Helpers.LTSCDB
 {
@@ -26,9 +29,9 @@ namespace OdhApiImporter.Helpers.LTSCDB
             throw new NotImplementedException();
         }
 
-        private async Task<> ImportList()
+        private async Task<XDocument> ImportList(DateTime? lastchanged)
         {
-
+            return GetAccommodationDataCDB.GetHotelChangedfromCDB(lastchanged, "1", settings.CDBConfig.Username, settings.CDBConfig.Password, settings.CDBConfig.Url);
         }
     }
 }

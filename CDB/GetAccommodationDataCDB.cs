@@ -432,9 +432,13 @@ namespace CDB
             return myresponse;
         }
 
-        //Geänderte Hotels
-        public static XDocument GetHotelChangedfromCDB(DateTime startdate, string A0Ene, string user, string pswd, string serviceurl)
+        //Changed Accommodations
+        public static XDocument GetHotelChangedfromCDB(DateTime? startdate, string A0Ene, string user, string pswd, string serviceurl)
         {
+            //TODO what should we set on startdate null
+            if (startdate == null)
+                startdate = new DateTime(1900, 1, 1);
+
             var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
 
             proxy.ClientCredentials.UserName.UserName = user;
