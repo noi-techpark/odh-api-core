@@ -1,0 +1,31 @@
+﻿<AccoTypes>
+  <AccoType RID="522000BB51CA11D18F1400A02427D15E" Name="nicht definiert" SmgType="Notdefined"></AccoType>
+  <AccoType RID="52281FAE51CA11D18F1400A02427D15E" Name="Hotel" SmgType="HotelPension"></AccoType>
+  <AccoType RID="52281FAF51CA11D18F1400A02427D15E" Name="Garni-Hotel" SmgType="HotelPension"></AccoType>
+  <AccoType RID="E58B7CE76D4B11D18F2500A02427D15E" Name="Aparthotel" SmgType="HotelPension"></AccoType>
+  <AccoType RID="52281FB851CA11D18F1400A02427D15E" Name="Motel" SmgType="HotelPension"></AccoType>
+  <AccoType RID="52281FB951CA11D18F1400A02427D15E" Name="Gasthof" SmgType="HotelPension"></AccoType>
+  <AccoType RID="67979F0262FF11D18F2100A02427D15E" Name="Berggasthof" SmgType="Mountain"></AccoType>
+  <AccoType RID="52281FBA51CA11D18F1400A02427D15E" Name="Pension" SmgType="HotelPension"></AccoType>
+  <AccoType RID="52281FBB51CA11D18F1400A02427D15E" Name="Garni" SmgType="HotelPension"></AccoType>
+  <AccoType RID="5228203A51CA11D18F1400A02427D15E" Name="Privatvermieter" SmgType="BedBreakfast"></AccoType>
+  <AccoType RID="67979F0462FF11D18F2100A02427D15E" Name="Residence" SmgType="HotelPension"></AccoType>
+  <AccoType RID="5228203B51CA11D18F1400A02427D15E" Name="Ferienwohnung" SmgType="HotelPension"></AccoType>
+  <AccoType RID="5228203C51CA11D18F1400A02427D15E" Name="Feriendorf" SmgType="Notdefined"></AccoType>
+  <AccoType RID="5228203D51CA11D18F1400A02427D15E" Name="Sanatorium/Kurklinik" SmgType="HotelPension"></AccoType>
+  <AccoType RID="5228203E51CA11D18F1400A02427D15E" Name="Urlaub auf dem Bauernhof" SmgType="Farm"></AccoType>
+  <AccoType RID="5228203F51CA11D18F1400A02427D15E" Name="Jugendherberge" SmgType="Youth"></AccoType>
+  <AccoType RID="5228204051CA11D18F1400A02427D15E" Name="Campingplatz" SmgType="Camping"></AccoType>
+  <AccoType RID="5228204151CA11D18F1400A02427D15E" Name="Kurhotel" SmgType="HotelPension"></AccoType>
+  <AccoType RID="5228204251CA11D18F1400A02427D15E" Name="Kurhotel/Garni" SmgType="HotelPension"></AccoType>
+  <AccoType RID="5228204351CA11D18F1400A02427D15E" Name="Kurapartmenthotel" SmgType="HotelPension"></AccoType>
+  <AccoType RID="5228204451CA11D18F1400A02427D15E" Name="Kurpension" SmgType="HotelPension"></AccoType>
+  <AccoType RID="5228204551CA11D18F1400A02427D15E" Name="Kurpension/Garni" SmgType="HotelPension"></AccoType>
+  <AccoType RID="52281FCE51CA11D18F1400A02427D15E" Name="Golfhotel" SmgType="HotelPension"></AccoType>
+  <AccoType RID="52281FD551CA11D18F1400A02427D15E" Name="Kinderhotel" SmgType="HotelPension"></AccoType>
+  <AccoType RID="67979F0362FF11D18F2100A02427D15E" Name="Schutzhütte" SmgType="Mountain"></AccoType>
+  <AccoType RID="52282ABCDECA11D18F1400A02427D15E" Name="Ferienheim" SmgType="HotelPension"></AccoType>
+  <AccoType RID="884546DAAE734879BBB2F30074A14862" Name="Bildungshaus" SmgType="Notdefined"></AccoType>
+  <AccoType RID="DFF0EA860A2D40DB81CD6FC52C152947" Name="Wohnmobilstellplatz" SmgType="Camping"></AccoType>
+  <AccoType RID="392729AC06384156B6D82E4FDAE6483B" Name="Streuhotel" SmgType="HotelPension"></AccoType>
+</AccoTypes>

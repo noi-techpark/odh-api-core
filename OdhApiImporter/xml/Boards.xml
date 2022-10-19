@@ -1,0 +1,44 @@
+﻿<Board>
+  <Data T0RID="52281FB151CA11D18F1400A02427D15E" T0ID="A.004.000.000.000" T0Typ="0" T0Va1="" T0Va2="" T0Va3="" T0SID="0" T0AcR="0">
+    <DataLng T1Des="board-type" LngID="FL" />
+    <DataLng T1Des="tipo di vitto" LngID="IT" />
+    <DataLng T1Des="type de pension" LngID="FR" />
+    <DataLng T1Des="Type of accommodation" LngID="EN" />
+    <DataLng T1Des="Verpflegungsart" LngID="DE" />
+  </Data>
+  <Data T0RID="5228204D51CA11D18F1400A02427D15E" T0ID="A.004.005.000.000" T0Typ="1" T0Va1="OS" T0Va2="" T0Va3="NACHT" T0SID="0" T0AcR="0">
+    <DataLng T1Des="ohne Verpflegung" LngID="DE" />
+    <DataLng T1Des="sans repas" LngID="FR" />
+    <DataLng T1Des="senza vitto" LngID="IT" />
+    <DataLng T1Des="without board" LngID="EN" />
+    <DataLng T1Des="without board" LngID="FL" />
+  </Data>
+  <Data T0RID="5228204E51CA11D18F1400A02427D15E" T0ID="A.004.010.000.000" T0Typ="1" T0Va1="UF" T0Va2="" T0Va3="" T0SID="0" T0AcR="0">
+    <DataLng T1Des="breakfast" LngID="EN" />
+    <DataLng T1Des="breakfast" LngID="FL" />
+    <DataLng T1Des="colazione" LngID="IT" />
+    <DataLng T1Des="Frühstück" LngID="DE" />
+    <DataLng T1Des="petit-déjeuner" LngID="FR" />
+  </Data>
+  <Data T0RID="5228204F51CA11D18F1400A02427D15E" T0ID="A.004.015.000.000" T0Typ="1" T0Va1="HP" T0Va2="" T0Va3="HP" T0SID="0" T0AcR="0">
+    <DataLng T1Des="demi-pension" LngID="FR" />
+    <DataLng T1Des="Halbpension" LngID="DE" />
+    <DataLng T1Des="half board" LngID="EN" />
+    <DataLng T1Des="half board" LngID="FL" />
+    <DataLng T1Des="mezza pensione" LngID="IT" />
+  </Data>
+  <Data T0RID="5228205051CA11D18F1400A02427D15E" T0ID="A.004.020.000.000" T0Typ="1" T0Va1="VP" T0Va2="" T0Va3="" T0SID="0" T0AcR="0">
+    <DataLng T1Des="full board" LngID="EN" />
+    <DataLng T1Des="full board" LngID="FL" />
+    <DataLng T1Des="pension complète" LngID="FR" />
+    <DataLng T1Des="pensione completa" LngID="IT" />
+    <DataLng T1Des="Vollpension" LngID="DE" />
+  </Data>
+  <Data T0RID="CC4D041D3DFE44CB8915BB8153E7EF6F" T0ID="A.004.025.000.000" T0Typ="1" T0Va1="AI" T0Va2="" T0Va3="" T0SID="0" T0AcR="0">
+    <DataLng T1Des="All Inclusive" LngID="DE" />
+    <DataLng T1Des="All Inclusive" LngID="EN" />
+    <DataLng T1Des="All Inclusive" LngID="FL" />
+    <DataLng T1Des="All Inclusive" LngID="FR" />
+    <DataLng T1Des="All Inclusive" LngID="IT" />
+  </Data>
+</Board>

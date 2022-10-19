@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Fractions>
+  <!--<Fraction>79CBD78051C911D18F1400A02427D15E</Fraction>--><!-- Algund -->
+  <!--<Fraction>79CBD77C51C911D18F1400A02427D15E</Fraction>--><!-- Mitterplars -->
+  <!--<Fraction>79CBD77F51C911D18F1400A02427D15E</Fraction>--><!-- Oberplars -->
+  <!--<Fraction>79CBD5F251C911D18F1400A02427D15E</Fraction>--><!-- Neustift -->
+  <!--<Fraction>79CBD69451C911D18F1400A02427D15E</Fraction>--><!-- Pfeffersberg -->
+  <!--<Fraction>79CBD5F151C911D18F1400A02427D15E</Fraction>--><!-- Vahrn -->
+  <!--<Fraction>79CBD69B51C911D18F1400A02427D15E</Fraction>--><!-- Dietenheim -->
+  <!--<Fraction>79CBD69C51C911D18F1400A02427D15E</Fraction>--><!-- St. Georgen -->
+  <!--<Fraction>79CBD69F51C911D18F1400A02427D15E</Fraction>--><!-- Stegen -->
+  <!--<Fraction>79CBD82751C911D18F1400A02427D15E</Fraction>--><!-- Birchabruck -->
+  <!--<Fraction>79CBD82551C911D18F1400A02427D15E</Fraction>--><!-- Rauth -->
+  <!--<Fraction>79CBD9A251C911D18F1400A02427D15E</Fraction>--><!-- Tirol -->
+  <!--<Fraction>79CBD76F51C911D18F1400A02427D15E</Fraction>--><!-- Gais -->
+  <!--<Fraction>79CBD76951C911D18F1400A02427D15E</Fraction>--><!-- Mühlbach -->
+  <!--<Fraction>79CBD67851C911D18F1400A02427D15E</Fraction>--><!-- Brennerbad -->
+  <!--<Fraction>79CBD5FD51C911D18F1400A02427D15E</Fraction>--><!-- Aschl -->
+  <!--<Fraction>D8667074078C415BB7C53C62B15AB0A7</Fraction>--><!-- St. Kathrein -->
+  <!--<Fraction>79CBD6DF51C911D18F1400A02427D15E</Fraction>--><!-- Tisens  -->
+  <!--<Fraction>79CBD6F151C911D18F1400A02427D15E</Fraction>--><!-- Ehrenburg  -->
+  <!--<Fraction>79CBD6F651C911D18F1400A02427D15E</Fraction>--><!-- Kiens  -->
+  <!--<Fraction>79CBD79551C911D18F1400A02427D15E</Fraction>--><!-- Lana  -->
+  <!--<Fraction>79CBD79851C911D18F1400A02427D15E</Fraction>--><!-- Mitterlana  -->
+  <!--<Fraction>79CBD79A51C911D18F1400A02427D15E</Fraction>--><!-- Niederlana  -->
+  <!--<Fraction>79CBD79951C911D18F1400A02427D15E</Fraction>--><!-- Oberlana  -->
+  <!--<Fraction>79CBD7AA51C911D18F1400A02427D15E</Fraction>--><!-- Lüsen  -->
+  <!--<Fraction>79CBD81851C911D18F1400A02427D15E</Fraction>--><!-- Natz  -->
+  <!--<Fraction>79CBD81951C911D18F1400A02427D15E</Fraction>--><!-- Raas  -->
+  <!--<Fraction>79CBD81C51C911D18F1400A02427D15E</Fraction>--><!-- Schabs  -->
+  <!--<Fraction>79CBD81A51C911D18F1400A02427D15E</Fraction>--><!-- Viums  -->
+  <!--<Fraction>79CBD89B51C911D18F1400A02427D15E</Fraction>--><!-- Nauders  -->
+  <!--<Fraction>79CBD5EF51C911D18F1400A02427D15E</Fraction>--><!-- Obervintl  -->
+  <!--<Fraction>79CBD89F51C911D18F1400A02427D15E</Fraction>--><!-- Spisses  -->
+  <!--<Fraction>79CBD89A51C911D18F1400A02427D15E</Fraction>--><!-- St. Pauls  -->
+  <!--<Fraction>79CBD5F051C911D18F1400A02427D15E</Fraction>--><!-- Vintl  -->
+  <!--<Fraction>79CBD74351C911D18F1400A02427D15E</Fraction>--><!-- Pfalzen  -->
+  <!--<Fraction>79CBD71A51C911D18F1400A02427D15E</Fraction>--><!-- Langtaufers  -->
+  <!--<Fraction>79CBD76351C911D18F1400A02427D15E</Fraction>--><!-- St. Magdalena -->
+  <!--<Fraction>79CBD76751C911D18F1400A02427D15E</Fraction>--><!-- St. Peter -->
+  <!--<Fraction>79CBD74C51C911D18F1400A02427D15E</Fraction>--><!-- St. Konstantin -->
+  <!--<Fraction>79CBD75751C911D18F1400A02427D15E</Fraction>--><!-- Völs -->
+  <!--<Fraction>79CBD77251C911D18F1400A02427D15E</Fraction>--><!-- Glurns -->
+  <!--<Fraction>79CBD7C051C911D18F1400A02427D15E</Fraction>--><!-- Laatsch -->
+  <!--<Fraction>79CBD7BD51C911D18F1400A02427D15E</Fraction>--><!-- Mals -->
+  <!--<Fraction>79CBD7BA51C911D18F1400A02427D15E</Fraction>--><!-- Plawenn -->
+  <!--<Fraction>79CBD87E51C911D18F1400A02427D15E</Fraction>--><!-- Lengmoos  -->
+  <!--<Fraction>79CBD88451C911D18F1400A02427D15E</Fraction>--><!-- Lengstein  -->
+  <!--<Fraction>79CBD90B51C911D18F1400A02427D15E</Fraction>--><!-- Astfeld  -->
+  <!--<Fraction>79CBD90E51C911D18F1400A02427D15E</Fraction>--><!-- Durnholz  -->
+  <!--<Fraction>79CBD93351C911D18F1400A02427D15E</Fraction>--><!-- Schenna	  -->
+  <!--<Fraction>79CBD92F51C911D18F1400A02427D15E</Fraction>--><!-- Schennaberg  -->
+  <!--<Fraction>79CBD93651C911D18F1400A02427D15E</Fraction>--><!-- St. Georgen (Schenna)  -->
+  <!--<Fraction>79CBD92E51C911D18F1400A02427D15E</Fraction>--><!-- Sarnthein  -->
+  <!--<Fraction>79CBD95251C911D18F1400A02427D15E</Fraction>--><!-- Unser Frau  -->
+  <!--<Fraction>79CBD95751C911D18F1400A02427D15E</Fraction>--><!-- Vernagt	  -->
+  <!--<Fraction>79CBD8C151C911D18F1400A02427D15E</Fraction>--><!-- Pflaurenz  -->
+  <!--<Fraction>79CBD6B551C911D18F1400A02427D15E</Fraction>--><!-- Trens -->
+  <!--<Fraction>79CBD7BF51C911D18F1400A02427D15E</Fraction>--><!-- Schleis -->
+  <!--<Fraction>79CBD7B751C911D18F1400A02427D15E</Fraction>--><!-- Schlinig  -->  
+  <!--<Fraction>79CBD85551C911D18F1400A02427D15E</Fraction>--><!-- Prettau -->
+  <!--<Fraction>79CBD9EA51C911D18F1400A02427D15E</Fraction>--><!-- St. Peter -->
+  <!--<Fraction>79CBD9E851C911D18F1400A02427D15E</Fraction>--><!-- Weissenbach -->
+  <!--<Fraction>79CBD84151C911D18F1400A02427D15E</Fraction>--><!-- Aschbach -->
+  <!--<Fraction>79CBD69A51C911D18F1400A02427D15E</Fraction>--><!-- Aufhofen -->
+  <!--<Fraction>79CBD83F51C911D18F1400A02427D15E</Fraction>--><!-- Unterwielenbach -->
+  <!--<Fraction>79CBD84051C911D18F1400A02427D15E</Fraction>--><!-- Litschbach -->
+  <!--<Fraction>79CBD69E51C911D18F1400A02427D15E</Fraction>--><!-- Luns -->
+  <!--<Fraction>79CBD84251C911D18F1400A02427D15E</Fraction>--><!-- Nasen -->
+  <!--<Fraction>79CBD84551C911D18F1400A02427D15E</Fraction>--><!-- Oberwielenbach -->
+  <!--<Fraction>79CBD69151C911D18F1400A02427D15E</Fraction>--><!-- Brixen Stadt -->
+  <!--<Fraction>79CBD81B51C911D18F1400A02427D15E</Fraction>--><!-- Aicha  -->
+  <!--<Fraction>79CBD5FF51C911D18F1400A02427D15E</Fraction>--><!-- Niederdorf  -->
+  <!--<Fraction>79CBD67551C911D18F1400A02427D15E</Fraction>--><!-- Pontigl -->
+  <!--<Fraction>79CBD8A451C911D18F1400A02427D15E</Fraction>--><!-- Winnebach -->
+  <!--<Fraction>79CBD6D851C911D18F1400A02427D15E</Fraction>--><!-- St. Michael -->
+  <!--<Fraction>79CBD6DA51C911D18F1400A02427D15E</Fraction>--><!-- St. Oswald -->
+  <!--<Fraction>79CBD74151C911D18F1400A02427D15E</Fraction>--><!-- Issing	  -->
+  <!--<Fraction>E2D3E5252BD2473BBB06597AD133B407</Fraction>--><!-- Kofl  -->
+  <!--<Fraction>79CBD74851C911D18F1400A02427D15E</Fraction>--><!-- Platten  -->
+  <!--<Fraction>79CBD87151C911D18F1400A02427D15E</Fraction>--><!-- Neunhäusern  -->
+  <!--<Fraction>79CBD86651C911D18F1400A02427D15E</Fraction>--><!-- Mareit  -->
+  <!--<Fraction>79CBD87051C911D18F1400A02427D15E</Fraction>--><!-- Stange  -->
+  <!--<Fraction>79CBD86951C911D18F1400A02427D15E</Fraction>--><!-- Telfes  -->
+  <!--<Fraction>79CBD86851C911D18F1400A02427D15E</Fraction>--><!-- Gasteig  -->
+  <!--<Fraction>79CBD6C551C911D18F1400A02427D15E</Fraction>--><!-- Ahornach  -->
+  <!--<Fraction>79CBD6C751C911D18F1400A02427D15E</Fraction>--><!-- Kematen  -->
+  <!--<Fraction>79CBD6C651C911D18F1400A02427D15E</Fraction>--><!-- Mühlen in Taufers  -->  
+  <!--<Fraction>79CBD9EB51C911D18F1400A02427D15E</Fraction>--><!-- St. Jakob -->
+  <!--<Fraction>79CBD9E751C911D18F1400A02427D15E</Fraction>--><!-- St. Johann -->  
+  <!--<Fraction>79CBD6A051C911D18F1400A02427D15E</Fraction>--><!-- Bruneck -->
+  <!--<Fraction>79CBD81F51C911D18F1400A02427D15E</Fraction>--><!-- Eggen -->
+  <!--<Fraction>79CBD82251C911D18F1400A02427D15E</Fraction>--><!-- Deutschnofen Dorf -->  
+  <!--<Fraction>79CBD97451C911D18F1400A02427D15E</Fraction>--><!-- Gomagoi -->
+  <!--<Fraction>79CBD97D51C911D18F1400A02427D15E</Fraction>--><!-- Stilfs -->
+  <!--<Fraction>79CBD64E51C911D18F1400A02427D15E</Fraction>--><!-- Hafling Dorf -->
+  <!--<Fraction>79CBD6EB51C911D18F1400A02427D15E</Fraction>--><!-- Kastelruth -->
+  <!--<Fraction>79CBD6DE51C911D18F1400A02427D15E</Fraction>--><!-- St. Valentin -->  
+  <!--<Fraction>79CBD61951C911D18F1400A02427D15E</Fraction>--><!-- La Val  -->
+  <!--<Fraction>79CBD7ED51C911D18F1400A02427D15E</Fraction>--><!-- Meran  -->
+  <!--<Fraction>79CBD89651C911D18F1400A02427D15E</Fraction>--><!--Spinges-->  
+  <!--<Fraction>79CBD8A051C911D18F1400A02427D15E</Fraction>--><!-- Vill	 -->    
+  <!--<Fraction>79CBD9C251C911D18F1400A02427D15E</Fraction>--><!-- Mitterolang	  -->
+  <!--<Fraction>79CBD9C151C911D18F1400A02427D15E</Fraction>--><!-- Niederolang  -->
+  <!--<Fraction>79CBD9BE51C911D18F1400A02427D15E</Fraction>--><!-- Oberolang	  -->
+  <!--<Fraction>79CBD80251C911D18F1400A02427D15E</Fraction>--><!-- Moos in Passeier  -->
+  <!--<Fraction>79CBD74251C911D18F1400A02427D15E</Fraction>--><!-- Greinwalden  -->  
+  <!--<Fraction>79CBD87951C911D18F1400A02427D15E</Fraction>--><!-- Niederrasen  -->
+  <!--<Fraction>79CBD87551C911D18F1400A02427D15E</Fraction>--><!-- Oberrasen  -->
+  <!--<Fraction>79CBD71851C911D18F1400A02427D15E</Fraction>--><!-- Graun	  -->  
+  <!--<Fraction>E90509F1ED274ECC8F330D63F86240B6</Fraction>--><!-- Brixen Umland -->  
+  <!--<Fraction>79CBD86C51C911D18F1400A02427D15E</Fraction>--><!-- Jaufental  -->  
+  <!--<Fraction>79CBD91E51C911D18F1400A02427D15E</Fraction>--><!-- Riedelsberg  -->  
+  <!--<Fraction>79CBD92051C911D18F1400A02427D15E</Fraction>--><!-- Steet  -->
+  <!--<Fraction>79CBD92151C911D18F1400A02427D15E</Fraction>--><!-- Trienbach  -->
+  <!--<Fraction>79CBD92251C911D18F1400A02427D15E</Fraction>--><!-- Unterreinswald  -->
+  <!--<Fraction>79CBD92351C911D18F1400A02427D15E</Fraction>--><!-- Vormeswald  -->  
+  <!--<Fraction>79CBD93A51C911D18F1400A02427D15E</Fraction>--><!-- Videgg	  -->
+  <!--<Fraction>79CBD90A51C911D18F1400A02427D15E</Fraction>--><!-- Aberstückl  -->
+  <!--<Fraction>79CBD91451C911D18F1400A02427D15E</Fraction>--><!-- Agratsberg  -->  
+  <!--<Fraction>79CBD90F51C911D18F1400A02427D15E</Fraction>--><!-- Nordheim  -->
+  <!--<Fraction>79CBD8C451C911D18F1400A02427D15E</Fraction>--><!-- Runggen  -->
+  <!--<Fraction>79CBD8C951C911D18F1400A02427D15E</Fraction>--><!-- Saalen  -->
+  <!--<Fraction>79CBD8CC51C911D18F1400A02427D15E</Fraction>--><!-- Sonnenburg  -->
+  <!--<Fraction>79CBD8CB51C911D18F1400A02427D15E</Fraction>--><!-- St. Lorenzen  -->
+  <!--<Fraction>79CBD8CA51C911D18F1400A02427D15E</Fraction>--><!-- St. Martin  -->
+  <!--<Fraction>79CBD8D051C911D18F1400A02427D15E</Fraction>--><!-- Campill  -->
+  <!--<Fraction>79CBD76151C911D18F1400A02427D15E</Fraction>--><!-- Koll -->
+  <!--<Fraction>79CBD75F51C911D18F1400A02427D15E</Fraction>--><!-- St. Valentin -->
+  <!--<Fraction>79CBD76051C911D18F1400A02427D15E</Fraction>--><!-- St. Jakob -->  
+  <!--<Fraction>79CBD84E51C911D18F1400A02427D15E</Fraction>--><!-- Prad	 -->
+  <!--<Fraction>79CBD73151C911D18F1400A02427D15E</Fraction>--><!-- Aufkirchen -->
+  <!--<Fraction>79CBD72451C911D18F1400A02427D15E</Fraction>--><!-- Haselsberg -->  
+  <!--<Fraction>79CBD72951C911D18F1400A02427D15E</Fraction>--><!-- Kandellen-Frondeigen-Stadlern -->
+  <!--<Fraction>79CBD72E51C911D18F1400A02427D15E</Fraction>--><!-- Ratsberg/Mellaten -->
+  <!--<Fraction>79CBD73351C911D18F1400A02427D15E</Fraction>--><!-- Wahlen -->
+  <!--<Fraction>79CBD6C451C911D18F1400A02427D15E</Fraction>--><!-- Stilfes  -->
+  <!--<Fraction>79CBD60751C911D18F1400A02427D15E</Fraction>--><!-- Thuins -->  
+  <!--<Fraction>A75F1D1AAD7F46BC81FDF7FB38DA16BC</Fraction>--><!-- Unterackern -->
+  <!--<Fraction>79CBD6B651C911D18F1400A02427D15E</Fraction>--><!-- Valgenäun -->
+  <!--<Fraction>79CBD9E651C911D18F1400A02427D15E</Fraction>--><!-- Wiesen -->
+  <!--<Fraction>79CBD99F51C911D18F1400A02427D15E</Fraction>--><!-- Tiers -->
+  <!--<Fraction>79CBD60651C911D18F1400A02427D15E</Fraction>--><!-- Ried  -->
+  <!--<Fraction>79CBD6BD51C911D18F1400A02427D15E</Fraction>--><!-- Rizzail  -->
+  <!--<Fraction>79CBD9D051C911D18F1400A02427D15E</Fraction>--><!-- Schmuders  -->
+  <!--<Fraction>79CBD9E151C911D18F1400A02427D15E</Fraction>--><!-- St. Jakob  -->
+  <!--<Fraction>79CBD9E251C911D18F1400A02427D15E</Fraction>--><!-- Stein  -->
+  <!--<Fraction>79CBD9D151C911D18F1400A02427D15E</Fraction>--><!-- Afens  -->
+  <!--<Fraction>79CBD6B951C911D18F1400A02427D15E</Fraction>--><!-- Egg  -->
+  <!--<Fraction>79CBD6BB51C911D18F1400A02427D15E</Fraction>--><!-- Elzenbaum  -->
+  <!--<Fraction>79CBD6B751C911D18F1400A02427D15E</Fraction>--><!-- Flans  -->
+  <!--<Fraction>79CBD9D451C911D18F1400A02427D15E</Fraction>--><!-- Kematen  -->
+  <!--<Fraction>45836AA1203140469EEBC5EEDAE84275</Fraction>--><!-- Matzes	  -->
+  <!--<Fraction>79CBD6B451C911D18F1400A02427D15E</Fraction>--><!-- Mauls  -->
+  <!--<Fraction>79CBD6BC51C911D18F1400A02427D15E</Fraction>--><!-- Niederried  -->
+  <!--<Fraction>79CBD6B351C911D18F1400A02427D15E</Fraction>--><!-- Pfulters  -->
+  <!--<Fraction>79CBD8D151C911D18F1400A02427D15E</Fraction>--><!-- Untermoj  -->
+  <!--<Fraction>79CBD82D51C911D18F1400A02427D15E</Fraction>--><!-- Runggaditsch  -->
+  <!--<Fraction>79CBD82E51C911D18F1400A02427D15E</Fraction>--><!-- St. Jakob  -->
+  <!--<Fraction>79CBD7C451C911D18F1400A02427D15E</Fraction>--><!-- Enneberg Pfarre  -->
+  <Fraction>79CBD9F051C911D18F1400A02427D15E</Fraction><!-- Luttach -->
+  <Fraction>79CBD9E951C911D18F1400A02427D15E</Fraction><!-- Steinhaus -->      
+  <Fraction>79CBD69651C911D18F1400A02427D15E</Fraction><!-- Plose -->
+  <Fraction>79CBD69051C911D18F1400A02427D15E</Fraction><!-- St. Andrä -->    
+  <Fraction>79CBD84651C911D18F1400A02427D15E</Fraction><!-- Percha -->
+  <Fraction>79CBD69D51C911D18F1400A02427D15E</Fraction><!-- Reischach -->    
+  <Fraction>79CBD71251C911D18F1400A02427D15E</Fraction><!-- Colfosco -->
+  <Fraction>79CBD71451C911D18F1400A02427D15E</Fraction><!-- Corvara -->
+  <Fraction>79CBD71351C911D18F1400A02427D15E</Fraction><!-- Pescosta -->    
+  <Fraction>1F2D6C32749344B99EB4404835E48F7E</Fraction><!-- Obereggen -->    
+  <Fraction>79CBD97A51C911D18F1400A02427D15E</Fraction><!-- Stilfserjoch -->
+  <Fraction>79CBD97951C911D18F1400A02427D15E</Fraction><!-- Sulden -->
+  <Fraction>79CBD97551C911D18F1400A02427D15E</Fraction><!-- Trafoi -->  
+  <Fraction>79CBD67A51C911D18F1400A02427D15E</Fraction><!-- Gossensaß -->
+  <Fraction>79CBD67651C911D18F1400A02427D15E</Fraction><!-- Pflersch -->
+  <Fraction>79CBD64F51C911D18F1400A02427D15E</Fraction><!-- Falzeben -->  
+  <Fraction>821718E6DB584CD8A3A6DF1CB9698F4B</Fraction><!-- Hafling Oberdorf -->  
+  <Fraction>79CBD8A651C911D18F1400A02427D15E</Fraction><!-- Innichen -->
+  <Fraction>79CBD8A551C911D18F1400A02427D15E</Fraction><!-- Vierschach -->  
+  <Fraction>79CBD6DD51C911D18F1400A02427D15E</Fraction><!-- Bula/Pufels -->  
+  <Fraction>79CBD6DC51C911D18F1400A02427D15E</Fraction><!-- Runggaditsch -->    
+  <Fraction>79CBD6E051C911D18F1400A02427D15E</Fraction><!-- St. Vigil  -->
+  <Fraction>79CBD6DB51C911D18F1400A02427D15E</Fraction><!-- Sureghes/Überwasser  -->    
+  <Fraction>79CBD65A51C911D18F1400A02427D15E</Fraction><!-- Badia  -->
+  <Fraction>79CBD94951C911D18F1400A02427D15E</Fraction><!-- La Villa  -->
+  <Fraction>79CBD65251C911D18F1400A02427D15E</Fraction><!-- San Cassiano  -->  
+  <Fraction>B8BDE406D5094C8595EE7DDDFE854EB8</Fraction><!-- Vigiljoch  -->    
+  <Fraction>79CBD89751C911D18F1400A02427D15E</Fraction><!-- Meransen	  -->
+  <Fraction>79CBD89851C911D18F1400A02427D15E</Fraction><!--Mühlbach-->      
+  <Fraction>79CBD89551C911D18F1400A02427D15E</Fraction><!--Vals-->    
+  <Fraction>79CBD9BF51C911D18F1400A02427D15E</Fraction><!-- Geiselsberg  -->
+  <Fraction>79CBD7FE51C911D18F1400A02427D15E</Fraction><!-- Pfelders  -->    
+  <Fraction>79CBD86A51C911D18F1400A02427D15E</Fraction><!-- Ausserratschings  -->  
+  <Fraction>79CBD86751C911D18F1400A02427D15E</Fraction><!-- Innerratschings  -->  
+  <Fraction>79CBD71E51C911D18F1400A02427D15E</Fraction><!-- Reschen  -->
+  <Fraction>79CBD71F51C911D18F1400A02427D15E</Fraction><!-- St. Valentin auf der Haide  -->
+  <Fraction>79CBD88251C911D18F1400A02427D15E</Fraction><!-- Gissmann  -->
+  <Fraction>79CBD88C51C911D18F1400A02427D15E</Fraction><!-- Klobenstein  -->
+  <Fraction>79CBD87F51C911D18F1400A02427D15E</Fraction><!-- Mittelberg  -->
+  <Fraction>79CBD6C851C911D18F1400A02427D15E</Fraction><!-- Rein in Taufers  -->
+  <Fraction>79CBD6C951C911D18F1400A02427D15E</Fraction><!-- Sand in Taufers  -->  
+  <Fraction>79CBD91D51C911D18F1400A02427D15E</Fraction><!-- Reinswald  -->
+  <Fraction>79CBD95351C911D18F1400A02427D15E</Fraction><!-- Kurzras  -->
+  <Fraction>79CBD6D751C911D18F1400A02427D15E</Fraction><!-- Seis  -->
+  <Fraction>79CBD6E151C911D18F1400A02427D15E</Fraction><!-- Seiseralm  -->
+  <Fraction>79CBD95F51C911D18F1400A02427D15E</Fraction><!-- Moos in Sexten  -->
+  <Fraction>79CBD95951C911D18F1400A02427D15E</Fraction><!-- Sexten	  -->
+  <Fraction>79CBD96251C911D18F1400A02427D15E</Fraction><!-- St. Veit  -->
+  <Fraction>79CBD8FE51C911D18F1400A02427D15E</Fraction><!-- S.Cristina Gherdëina/St.Christina in Gröden  -->  
+  <Fraction>79CBD8C551C911D18F1400A02427D15E</Fraction><!-- Stefansdorf  -->  
+  <Fraction>79CBD8CF51C911D18F1400A02427D15E</Fraction><!-- Pikolein  -->
+  <Fraction>79CBD8D251C911D18F1400A02427D15E</Fraction><!-- St. Martin in Thurn -->  
+  <Fraction>79CBD82C51C911D18F1400A02427D15E</Fraction><!-- St. Ulrich/Urtijëi  -->
+  <Fraction>79CBD7D251C911D18F1400A02427D15E</Fraction><!-- St. Vigil in Enneberg  -->
+  <Fraction>79CBD9DC51C911D18F1400A02427D15E</Fraction><!-- Flains  -->  
+  <Fraction>9B1FCD6E688943BDB181984D7C0ADEBB</Fraction><!-- Raminges  --> 
+  <Fraction>79CBD60851C911D18F1400A02427D15E</Fraction><!-- Sterzing  -->
+  <Fraction>79CBD60551C911D18F1400A02427D15E</Fraction><!-- Tschöfs -->
+  <Fraction>79CBD72251C911D18F1400A02427D15E</Fraction><!-- Alttoblach -->
+  <Fraction>404F037C36884004BA706B600444AF1D</Fraction><!-- Neutoblach -->  
+  <Fraction>79CBD9B651C911D18F1400A02427D15E</Fraction><!-- St. Walburg -->
+  <Fraction>79CBD9B351C911D18F1400A02427D15E</Fraction><!-- St. Nikolaus in Ulten -->
+  <Fraction>79CBD81E51C911D18F1400A02427D15E</Fraction><!-- Karersee -->
+  <Fraction>79CBD81D51C911D18F1400A02427D15E</Fraction><!-- Welschnofen -->
+  <Fraction>79CBD94651C911D18F1400A02427D15E</Fraction><!-- Wolkenstein/Sëlva -->
+  <Fraction>79CBD7BE51C911D18F1400A02427D15E</Fraction><!-- Burgeis -->
+  <Fraction>79CBD63251C911D18F1400A02427D15E</Fraction><!-- Radein -->
+</Fractions>

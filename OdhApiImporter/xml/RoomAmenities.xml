@@ -1,0 +1,1662 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ltshgv-amenities-mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<amenity>
+		<hgvid>1</hgvid>
+		<ltsrid>00C625C6BE45455FBE32D9534705E311</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Beautyfarm</de>
+			<it>Beautyfarm</it>
+			<en>Beauty farm</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>2</hgvid>
+		<ltsrid>0CB41C05A6E04A019D08CE607985B382</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Offener Parkplatz</de>
+			<it>Parcheggio non coperto</it>
+			<en>Open car park</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>3</hgvid>
+		<ltsrid>4EE5A0766C2C4B4D8AA07A834E476E99</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Aufzug/Lift</de>
+			<it>Ascensore</it>
+			<en>Elevator</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>4</hgvid>
+		<ltsrid>5E57209D17244BA09A0400A498E549AE</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Dampfbad</de>
+			<it>Bagno turco</it>
+			<en>Steam bath</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>5</hgvid>
+		<ltsrid>61FA44655E824DA3A274D311E4EBC9C0</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Direkt an der Piste</de>
+			<it>Direttamente sulla pista</it>
+			<en>Directly at the slope</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>6</hgvid>
+		<ltsrid>6A1D63B6999E49D9BB15BBEA0BB4A024</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Zentrale Lage</de>
+			<it>Posizione centrale</it>
+			<en>Central location</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>7</hgvid>
+		<ltsrid>7BCAF604E17B46F2A2C6CAE70C5B621F</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Hallenbad</de>
+			<it>Piscina coperta</it>
+			<en>Indoor pool</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>8</hgvid>
+		<ltsrid>93BDE34283FF41899CCF530BE80201E2</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Garten</de>
+			<it>Giardino</it>
+			<en>Garden</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>9</hgvid>
+		<ltsrid>B2103635BD224E64A812FD2BF53C8DCA</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Freibad</de>
+			<it>Piscina all'aperto</it>
+			<en>Outdoor pool</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>10</hgvid>
+		<ltsrid>B3E9391E6FD841C5ACCBDD60CFC88799</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Überdachter Parkplatz</de>
+			<it>Parcheggio coperto</it>
+			<en>Roofed car park</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>11</hgvid>
+		<ltsrid>B6BD3F6011E5488DBF802B0C58F87AA1</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Ruhig gelegen</de>
+			<it>Zona tranquilla</it>
+			<en>Quiet location</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>12</hgvid>
+		<ltsrid>B7E9EE4A91544849B69D5A5564DDCDFB</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Barrierefrei</de>
+			<it>Senza barriere architettoniche</it>
+			<en>Barrier-free</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>13</hgvid>
+		<ltsrid>BF36D006830847759A48A24A696E5C6D</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Whirlpool</de>
+			<it>Whirlpool</it>
+			<en>Whirlpool</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>14</hgvid>
+		<ltsrid>D417529377CB430389E07787D8A3A483</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Sauna</de>
+			<it>Sauna</it>
+			<en>Sauna</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>15</hgvid>
+		<ltsrid>D579D1C8EA8445018CA5BB6DABEA0C26</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Garage</de>
+			<it>Garage</it>
+			<en>Underground car park</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>16</hgvid>
+		<ltsrid>FC80F2ECCE5A40AA8EDE458CBECC3D45</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Kleine Haustiere erlaubt</de>
+			<it>Si accettano animali di piccola taglia</it>
+			<en>Small pets allowed</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>17</hgvid>
+		<ltsrid>E72CE3544DA2475E97B9C034DA6F1595</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Massagen</de>
+			<it>Massaggi</it>
+			<en>Massages</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>18</hgvid>
+		<ltsrid>982F14840F3E44FCB67418F3A7C5A2D0</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Restaurant</de>
+			<it>Ristorante</it>
+			<en>Restaurant</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>19</hgvid>
+		<ltsrid>8A746463BE2347AEA347BBA38DACE7F0</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Fitnessraum</de>
+			<it>Palestra</it>
+			<en>Fitness room</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>20</hgvid>
+		<ltsrid>B5CFA063BEEB4631B7A0DE836030E2ED</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Wellness</de>
+			<it>Wellness</it>
+			<en>Wellness</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>21</hgvid>
+		<ltsrid>F93AC710E4EE4786916555EC6C93350F</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Hausbar</de>
+			<it>Bar della casa</it>
+			<en>Residence bar</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>22</hgvid>
+		<ltsrid>700A920BE6D6426CBF3EC623C2E922C2</ltsrid>
+		<type>0</type>
+		<description>
+			<de>WLAN</de>
+			<it>WLAN</it>
+			<en>WLAN</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>23</hgvid>
+		<ltsrid>C98F18D120AF41B8B9CB770CB140E29F</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Shuttle-Dienst</de>
+			<it>Shuttle</it>
+			<en>Shuttle service</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>24</hgvid>
+		<ltsrid>45C7D8C1732244659AC10F02EBE5D899</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Kinderbetreuung</de>
+			<it>Assistenza bambini</it>
+			<en>Child care</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>25</hgvid>
+		<ltsrid>1B6A850DE0A04CF29A409D949629280E</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Diätküche/Schonkost</de>
+			<it>Menu dietetico</it>
+			<en>Dietary cuisine</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>26</hgvid>
+		<ltsrid>C1A8A40E353346E98CF6FA81F769F690</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Frühstück kontinental/Gabelfrühstück</de>
+			<it>Prima colazione continentale / Brunch</it>
+			<en>Continental breakfast/Brunch</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>27</hgvid>
+		<ltsrid>DFCB90E084B943A48D2DA6CCD1093671</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Frühstücksbuffet</de>
+			<it>Buffet di prima colazione</it>
+			<en>Breakfast buffet</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>28</hgvid>
+		<ltsrid>3091F5B92F534F67986C08151E6F4454</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Vegetarisches Menü</de>
+			<it>Menu vegetariano</it>
+			<en>Vegetarian menu</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>29</hgvid>
+		<ltsrid>0C7FC95AF8354D3791B384FC39AAF6B3</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Menüwahl möglich</de>
+			<it>Menu a scelta</it>
+			<en>Choice of menus possible</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>30</hgvid>
+		<ltsrid>60F2408993E249F9A847F1B28C5B11E8</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Abholservice</de>
+			<it>Servizio navetta</it>
+			<en>Pick-up service</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>31</hgvid>
+		<ltsrid>FE910F3D5FBE48D38FBFBAD35E0537E2</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Gepäcktransport</de>
+			<it>Trasporto bagagli</it>
+			<en>Luggage transfer</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>32</hgvid>
+		<ltsrid>A59DB949777348988AC40463AE37D71F</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Skibus</de>
+			<it>Skibus</it>
+			<en>Ski shuttle</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>33</hgvid>
+		<ltsrid>D17AEEA375F54134B61D38BFEBFE0C4D</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Wäscherei/Wäscheservice</de>
+			<it>Servizio lavanderia</it>
+			<en>Laundry/Laundry service</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>34</hgvid>
+		<ltsrid>B41FB7B9EB894E9A9DCA7A9523AEF4A7</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Trockner</de>
+			<it>Asciugatrice</it>
+			<en>Tumble drier</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>35</hgvid>
+		<ltsrid>C0D482D69BCD4C2FB4F7AC46CECEF7D9</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Waschmaschine</de>
+			<it>Lavatrice</it>
+			<en>Washing machine</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>36</hgvid>
+		<ltsrid>26480BACF80A42A280CE2D96D0B1F7DA</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Freier Zugang zum See/Privatstrand</de>
+			<it>Accesso gratuito al lago/spiaggia</it>
+			<en>Free access to lake/private beach</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>37</hgvid>
+		<ltsrid>3A89DBB5F633473096C902D2CBFD2FA3</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Raucherraum</de>
+			<it>Stanza fumatori</it>
+			<en>Raucherraum</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>38</hgvid>
+		<ltsrid>3D12F5149A7B4DB2A58EC2749E81D57D</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Trockenraum</de>
+			<it>Stenditoio</it>
+			<en>Drying room</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>39</hgvid>
+		<ltsrid>979FE8FAD1C74FB3BFD7E39161429EB9</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Öffentliche Bar</de>
+			<it>Bar pubblico</it>
+			<en>Public bar</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>40</hgvid>
+		<ltsrid>64E0AC93E259425B8A90BF833A5ED0FA</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Weinkeller</de>
+			<it>Cantina vini/taverna</it>
+			<en>Wine cellar</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>41</hgvid>
+		<ltsrid>36C354DC30F14DD7B1CCFEE78E82132C</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Spielzimmer</de>
+			<it>Stanza giochi</it>
+			<en>Playroom</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>42</hgvid>
+		<ltsrid>188A9BADC0324C10B0013F108CE5EA5C</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Spielplatz</de>
+			<it>Parco giochi</it>
+			<en>Playground</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>43</hgvid>
+		<ltsrid>AB1384A6DAD04FB3A8D0A9B2B062FFD3</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Surfpoint</de>
+			<it>Surfpoint</it>
+			<en>Surf point</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>44</hgvid>
+		<ltsrid>596EE6498752478D9CBFA9886D257D21</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Internetanschluss im Zimmer/Apartment</de>
+			<it>Collegamento internet in camera/appartamento</it>
+			<en>Internet access in room/apartment</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>45</hgvid>
+		<ltsrid>761C8C9FD3D44658B6405CC0716227BE</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Direkt an der Loipe</de>
+			<it>Direttamente sulla pista da fondo</it>
+			<en>Directly at the cross-country track</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>46</hgvid>
+		<ltsrid>3101F60F0A594C0B9BBC8F4E2D7A2919</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Seminarraum</de>
+			<it>Sale di conferenza</it>
+			<en>Seminar room</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>47</hgvid>
+		<ltsrid>D9DCDD52FE444818AAFAB0E02FD92D91</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Hunde erlaubt</de>
+			<it>Si accettano cani</it>
+			<en>Dogs allowed</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>48</hgvid>
+		<ltsrid>FC80F2ECCE5A40AA8EDE458CBECC3D45</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Keine Haustiere</de>
+			<it>Animali domestici non ammessi</it>
+			<en>No pets or domestic animals</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>49</hgvid>
+		<ltsrid>2527E6DAE3B34740A8A74BE04584125E</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Sportanimation</de>
+			<it>Animazione sportiva</it>
+			<en>Sports animation</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>50</hgvid>
+		<ltsrid>42E4EFB64AD14393BC28DBC20F273B9D</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Geführte Touren und Wanderungen</de>
+			<it>Escursioni e gite guidate</it>
+			<en>Guided tours and hikes</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>51</hgvid>
+		<ltsrid>349A4D98B26B448A908679142C3394D6</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Geführte Radtouren</de>
+			<it>Escursioni in bicicletta guidate</it>
+			<en>Guided cycling tours</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>52</hgvid>
+		<ltsrid>3B0F6BBA06664BB2B292C957626306C2</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Tennisanlage</de>
+			<it>Campi da tennis</it>
+			<en>Tennis court</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>53</hgvid>
+		<ltsrid>ACB4BCD3D3334B74B75E507B620E7B11</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Eigener Reiterhof</de>
+			<it>Maneggio privato</it>
+			<en>Own horse riding stable</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>54</hgvid>
+		<ltsrid>BF108AD2B62042DF9FEAD4E865E11E75</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Fahrradverleih</de>
+			<it>Noleggio biciclette</it>
+			<en>Bicycle rental</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>55</hgvid>
+		<ltsrid>581E38CF2ED64E16A5B694957FB0FEFD</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Skiverleih</de>
+			<it>Noleggio sci</it>
+			<en>Ski rental</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>56</hgvid>
+		<ltsrid>018DDEC2B01A441180B9D9437E456D3E</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Schneeschuhverleih</de>
+			<it>Noleggio ciaspole</it>
+			<en>Snow-shoe rental</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>57</hgvid>
+		<ltsrid>754074F8417D41E3AD1F47285DB50527</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Wanderausrüstung</de>
+			<it>Noleggio attrezzatura escursionistica</it>
+			<en>Hiking equipment</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>58</hgvid>
+		<ltsrid>0E83FC69ABD6400A8515137F19AE1E98</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Unterhaltungsabende</de>
+			<it>Serate d’intrattenimento</it>
+			<en>Entertainment evenings</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>59</hgvid>
+		<ltsrid>A90B92CA30E44AB9939C2F782AF5102A</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Animation</de>
+			<it>Animazione</it>
+			<en>Animation</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>60</hgvid>
+		<ltsrid>7BAF52E23F7D4F759F446F95A7723DCD</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Kurlizenz (Staatliche Lizenz/Abkommen)</de>
+			<it>Cure convenzionate</it>
+			<en>Spa licence (state license/agreement)</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>61</hgvid>
+		<ltsrid>3707FC3B46DC4AFE9378C1F41F47110E</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Kuranwendungen</de>
+			<it>Trattamenti curativi</it>
+			<en>Spa treatments</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>62</hgvid>
+		<ltsrid>33FD4CB94A3542D489DB31200CE35A9D</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Natürliche, örtliche Kurmittel</de>
+			<it>Trattamenti curativi naturali</it>
+			<en>Natural, local remedies</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>63</hgvid>
+		<ltsrid>737068CB85DA492AAC93C66B7675A7FC</ltsrid>
+		<type>0</type>
+		<description>
+			<de>Solarium</de>
+			<it>Solarium</it>
+			<en>Solarium</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>64</hgvid>
+		<ltsrid>232F57B2ED1C43E483A538BC98D259F7</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Einzelbett</de>
+			<it>Letto singolo</it>
+			<en>Single bed</en>
+		</description>
+		<ota_codes>203</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>65</hgvid>
+		<ltsrid>98ED3F914E55486DA37C1D74787C40D4</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Doppelbett</de>
+			<it>Letto matrimoniale</it>
+			<en>Double bed</en>
+		</description>
+		<ota_codes>33</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>66</hgvid>
+		<ltsrid>D0E66A49742C412597968C8390BD5B2F</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Zustellbett möglich</de>
+			<it>Letto aggiuntivo</it>
+			<en>Double bed</en>
+		</description>
+		<ota_codes>91</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>67</hgvid>
+		<ltsrid>481C2E87152B4509BDD48857E9929947</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Baby Bett möglich</de>
+			<it>Lettino</it>
+			<en>Baby cot possible</en>
+		</description>
+		<ota_codes>26</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>68</hgvid>
+		<ltsrid>5DC8F51E60114E539F6D54DAA5E8CB2D</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Etagenbett</de>
+			<it>Letto a castello</it>
+			<en>Bunk bed</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>69</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Einzelschlafcouch</de>
+			<it>Divano letto singolo</it>
+			<en>Single bed couch</en>
+		</description>
+		<ota_codes>102</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>70</hgvid>
+		<ltsrid>FF81B9AF2A74451081246EBBF1124333</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Doppelschlafcouch</de>
+			<it>Divano letto doppio</it>
+			<en>Double bed couch</en>
+		</description>
+		<ota_codes>102</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>71</hgvid>
+		<ltsrid>221894CE38864B19BAB1B816060D73AA</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Balkon</de>
+			<it>Balcone</it>
+			<en>Balcony</en>
+		</description>
+		<ota_codes>7</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>72</hgvid>
+		<ltsrid>6B17730D7A384CEE85779C4A4D39F0F8</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Terrasse</de>
+			<it>Terrazza</it>
+			<en>Terrace</en>
+		</description>
+		<ota_codes>7</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>73</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Garten</de>
+			<it>Giardino</it>
+			<en>Garden</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>74</hgvid>
+		<ltsrid>A75F020E65BC467FB9A9A5EAE8523431</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Klimaanlage</de>
+			<it>Aria condizionata</it>
+			<en>Air condition</en>
+		</description>
+		<ota_codes>2,126</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>75</hgvid>
+		<ltsrid>A3FC20358F26424FB50C67864AA997E6</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Allergiker Zimmer</de>
+			<it>Camera antiallergica</it>
+			<en>Room for allergy-sufferers</en>
+		</description>
+		<ota_codes>268</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>76</hgvid>
+		<ltsrid>5A0FDD4ECC154BA9BD5898E646587B3C</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Barrierefrei</de>
+			<it>Senza barriere architettoniche</it>
+			<en>Barrier-free</en>
+		</description>
+		<ota_codes>161</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>77</hgvid>
+		<ltsrid>E751B69E635B429DA53EDC7AC08A41A3</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Kachelofen / Offener Kamin</de>
+			<it>Stufa di maiolica / caminetto</it>
+			<en>Tiled stove / fireplace</en>
+		</description>
+		<ota_codes>41</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>78</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Separater Wohnraum</de>
+			<it>Soggiorno</it>
+			<en>Separate living-room</en>
+		</description>
+		<ota_codes>270</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>79</hgvid>
+		<ltsrid>3B526458B82D422E80EB4FB456BE119D</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Safe</de>
+			<it>Cassaforte</it>
+			<en>Safe</en>
+		</description>
+		<ota_codes>92</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>80</hgvid>
+		<ltsrid>A60A9A8C35644837A2F908D274D42BE0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Zimmer mit Verbindungstür</de>
+			<it>Camera comunicante</it>
+			<en>Connecting rooms</en>
+		</description>
+		<ota_codes>22</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>81</hgvid>
+		<ltsrid>6F30F561FACC4B48A0E45E31663185D8</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Kaffeemaschine</de>
+			<it>Macchina del caffè</it>
+			<en>Coffee machine</en>
+		</description>
+		<ota_codes>19</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>82</hgvid>
+		<ltsrid>2C937776F5224B3394F9E336EAEC36D5</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Minibar</de>
+			<it>Frigobar</it>
+			<en>Minibar</en>
+		</description>
+		<ota_codes>69</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>83</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Wasserkocher</de>
+			<it>Bollitore per acqua</it>
+			<en>Water boiler</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>84</hgvid>
+		<ltsrid>23181B30F458431482A5C547607BE7CB</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Dusche / Bad</de>
+			<it>Doccia / bagno</it>
+			<en>Shower/bath</en>
+		</description>
+		<ota_codes>15,13,142,276</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>85</hgvid>
+		<ltsrid>407691E3EC4E4C938F8F6A26D75CB5AF</ltsrid>
+		<type>1</type>
+		<description>
+			<de>2 oder mehr Bäder</de>
+			<it>2 oppure più bagni</it>
+			<en>2 or more baths</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>86</hgvid>
+		<ltsrid>F9A8A18F7FC24D8D9C5184102C2A7359</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Separates WC</de>
+			<it>WC separato</it>
+			<en>Separate WC</en>
+		</description>
+		<ota_codes>271</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>87</hgvid>
+		<ltsrid>8B7B6E624D5E4CCAB69451E400253F95</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Bidet</de>
+			<it>Bidet</it>
+			<en>Bidet</en>
+		</description>
+		<ota_codes>16</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>88</hgvid>
+		<ltsrid>AFDCC833CF4E4E31A00D4C06ACF00EA4</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Haar Fön</de>
+			<it>Asciugacapelli</it>
+			<en>Hairdryer</en>
+		</description>
+		<ota_codes>50</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>89</hgvid>
+		<ltsrid>82474342C9E946F69A12281DD4DBD36E</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Bademantel</de>
+			<it>Accappatoio</it>
+			<en>Bathrobe</en>
+		</description>
+		<ota_codes>10</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>90</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Badetücher</de>
+			<it>Asciugamani</it>
+			<en>Bath towel</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>91</hgvid>
+		<ltsrid>88759690620547048C636C3FEF97DDE0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>WC auf der Etage</de>
+			<it>WC sul piano</it>
+			<en>WC on the floor</en>
+		</description>
+		<ota_codes>193</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>92</hgvid>
+		<ltsrid>D23C442B15024E619C7B89DCA6ABB7E5</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Hi-Fi</de>
+			<it>Hi-fi</it>
+			<en>Hi-fi</en>
+		</description>
+		<ota_codes>104</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>93</hgvid>
+		<ltsrid>FE565CF79FFD4C69AF1194C1DAC283DD</ltsrid>
+		<type>1</type>
+		<description>
+			<de>TV</de>
+			<it>TV</it>
+			<en>TV</en>
+		</description>
+		<ota_codes>251</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>94</hgvid>
+		<ltsrid>A98DD2F6102847DAA43E763B70AFB0F7</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Satellit / Kabel</de>
+			<it>TV satellitare / via cavo</it>
+			<en>Satellite / cable</en>
+		</description>
+		<ota_codes>210,18</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>95</hgvid>
+		<ltsrid>997A8E97583545E0B5A7881FD41ECCAF</ltsrid>
+		<type>1</type>
+		<description>
+			<de>W-LAN</de>
+			<it>WLAN</it>
+			<en>WLAN</en>
+		</description>
+		<ota_codes>123</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>96</hgvid>
+		<ltsrid>76DA43C9DD454D7FB2D77F105AD2247A</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Internetanschluss</de>
+			<it>Collegamento internet</it>
+			<en>Internet access</en>
+		</description>
+		<ota_codes>54,225,51,207</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>97</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Reinigung auf Anfrage</de>
+			<it>Pulizia su richiesta</it>
+			<en>Cleaning upon request</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>98</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Tägliche Reinigung inbegriffen</de>
+			<it>Pulizia giornaliera inclusa</it>
+			<en>Daily cleaning service included</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>99</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Saisons Miete möglich</de>
+			<it>Affitto stagionale possibile</it>
+			<en>Seasonal renting possible</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>100</hgvid>
+		<ltsrid>DA5198121E344A06B7CB6F1BAEE8DA92</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Haupthaus</de>
+			<it>Edificio principale</it>
+			<en>Main house</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>101</hgvid>
+		<ltsrid>EFD2DFB560BA45A0A959861BD45A8D43</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Dependance</de>
+			<it>Dependance</it>
+			<en>Dependence</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>102</hgvid>
+		<ltsrid>3E6CB144FCC149F892CC87921B61A651</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Seeblick</de>
+			<it>Vista lago</it>
+			<en>Lake view</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>103</hgvid>
+		<ltsrid>990612183EF541888027D1EBC8258DAF</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Panoramablick</de>
+			<it>Vista panoramica</it>
+			<en>Panoramic view</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>104</hgvid>
+		<ltsrid>45265AD0BE2442238C63C96DDCC4A1B7</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Südseite</de>
+			<it>Lato sud</it>
+			<en>South side</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>105</hgvid>
+		<ltsrid>0D6965F976714A169A05B3EFA39315FF</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Doppelbett</de>
+			<it>Letto matrimoniale</it>
+			<en>Double bed</en>
+		</description>
+		<ota_codes>33</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>106</hgvid>
+		<ltsrid>91A0D428878C4F809C74A03A3982A3D1</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Zustellbett möglich</de>
+			<it>Letto aggiuntivo</it>
+			<en>Double bed</en>
+		</description>
+		<ota_codes>91</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>107</hgvid>
+		<ltsrid>420A3DB616B14D9195A7BCFE111026CD</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Baby Bett möglich</de>
+			<it>Lettino</it>
+			<en>Baby cot possible</en>
+		</description>
+		<ota_codes>26</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>108</hgvid>
+		<ltsrid>BF8CA248A904440B9B1FD35FC778261D</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Etagenbett</de>
+			<it>Letto a castello</it>
+			<en>Bunk bed</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>109</hgvid>
+		<ltsrid>97423639C56B4AD8A2691D5ABDAD1116</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Einzelschlafcouch</de>
+			<it>Divano letto singolo</it>
+			<en>Single bed couch</en>
+		</description>
+		<ota_codes>102</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>110</hgvid>
+		<ltsrid>25F15E3233E549CEB934CC13C83C016C</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Doppelschlafcouch</de>
+			<it>Divano letto doppio</it>
+			<en>Double bed couch</en>
+		</description>
+		<ota_codes>102</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>111</hgvid>
+		<ltsrid>1153CA365A5E45708062918E38810F50</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Balkon</de>
+			<it>Balcone</it>
+			<en>Balcony</en>
+		</description>
+		<ota_codes>7</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>112</hgvid>
+		<ltsrid>91E9479EFDA04B2CAC1550D026049C77</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Terrasse</de>
+			<it>Terrazza</it>
+			<en>Terrace</en>
+		</description>
+		<ota_codes>7</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>113</hgvid>
+		<ltsrid>4337CFE187534CCCB152F8B1A0F55BFD</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Garten</de>
+			<it>Giardino</it>
+			<en>Garden</en>
+		</description>
+		<ota_codes>243</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>114</hgvid>
+		<ltsrid>62EBF1670BA94F9786D03BD6626FD789</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Klimaanlage</de>
+			<it>Aria condizionata</it>
+			<en>Air condition</en>
+		</description>
+		<ota_codes>2,126</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>115</hgvid>
+		<ltsrid>E42DE1964EC54AB995C1283F98B3D98B</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Allergiker Zimmer</de>
+			<it>Camera antiallergica</it>
+			<en>Room for allergy-sufferers</en>
+		</description>
+		<ota_codes>268</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>116</hgvid>
+		<ltsrid>58D9BE0DA16440FF94CE75CFEC4062C1</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Barrierefrei</de>
+			<it>Senza barriere architettoniche</it>
+			<en>Barrier-free</en>
+		</description>
+		<ota_codes>161</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>117</hgvid>
+		<ltsrid>AF143C89201D4AC5881DF31A4AF60D87</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Kachelofen / Offener Kamin</de>
+			<it>Stufa di maiolica / caminetto</it>
+			<en>Tiled stove / fireplace</en>
+		</description>
+		<ota_codes>41</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>118</hgvid>
+		<ltsrid>87A6AFB0F88F4E44B1B2F61082CF56D0</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Separater Wohnraum</de>
+			<it>Soggiorno</it>
+			<en>Separate living-room</en>
+		</description>
+		<ota_codes>270</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>119</hgvid>
+		<ltsrid>5EC689CE60AC473F9FE0D80DD857C755</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Bettwäsche vorhanden</de>
+			<it>Biancheria da letto disponibile</it>
+			<en>Bed linen provided</en>
+		</description>
+		<ota_codes>263</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>120</hgvid>
+		<ltsrid>75D416AA01C74028BD49EFC3FD631B5D</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Safe</de>
+			<it>Cassaforte</it>
+			<en>Safe</en>
+		</description>
+		<ota_codes>92</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>121</hgvid>
+		<ltsrid>03D94FAC04C84EA7B706FDB30B82EC5F</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Separate Küche</de>
+			<it>Cucina separata</it>
+			<en>Separate kitchen</en>
+		</description>
+		<ota_codes>59,126</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>122</hgvid>
+		<ltsrid>C8940E926A1044A5B37F6DFD56F83231</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Wohnküche</de>
+			<it>Cucina abitabile</it>
+			<en>Eat-in kitchen</en>
+		</description>
+		<ota_codes>61</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>123</hgvid>
+		<ltsrid>63C93D7CF2844F56821E3DD0E04BFEEF</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Kaffeemaschine</de>
+			<it>Macchina del caffè</it>
+			<en>Coffee machine</en>
+		</description>
+		<ota_codes>19</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>124</hgvid>
+		<ltsrid>3C378EBEB1BB406AA1DD23AEF7DA9C79</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Minibar</de>
+			<it>Frigobar</it>
+			<en>Minibar</en>
+		</description>
+		<ota_codes>69</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>125</hgvid>
+		<ltsrid>B0D26ACBDD0449AC9360195DD943515E</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Geschirrspülmaschine</de>
+			<it>Lavastoviglie</it>
+			<en>Dishwasher</en>
+		</description>
+		<ota_codes>32</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>126</hgvid>
+		<ltsrid>E5ED79B2DCC14E16866A605C22151574</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Gasherd</de>
+			<it>Fornello a gas</it>
+			<en>Gas stove</en>
+		</description>
+		<ota_codes>105</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>127</hgvid>
+		<ltsrid>363A530B0FA5487CA2BF91CBDB08C288</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Elektroherd</de>
+			<it>Fornello elettrico</it>
+			<en>Electric stove</en>
+		</description>
+		<ota_codes>105</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>128</hgvid>
+		<ltsrid>53E35A54F1E84439B8E47852A41FDF6E</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Mikrowelle</de>
+			<it>Microonde</it>
+			<en>Microwave</en>
+		</description>
+		<ota_codes>68</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>129</hgvid>
+		<ltsrid>64FD0E58F32346B2923D81937E5B9737</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Geschirrausstattung</de>
+			<it>Arredamento cucina</it>
+			<en>Crockery</en>
+		</description>
+		<ota_codes>60,81,261,82,183</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>130</hgvid>
+		<ltsrid>342042F6A9DA46CF90B601CFE3495050</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Wasserkocher</de>
+			<it>Bollitore per acqua</it>
+			<en>Water boiler</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>131</hgvid>
+		<ltsrid>DE807A019F42472FAFA141006A4920B6</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Dusche / Bad</de>
+			<it>Doccia / bagno</it>
+			<en>Shower/bath</en>
+		</description>
+		<ota_codes>15,13,142,276</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>132</hgvid>
+		<ltsrid>4E6D2DAF499D4953AE036E28289ED98D</ltsrid>
+		<type>2</type>
+		<description>
+			<de>2 oder mehr Bäder</de>
+			<it>2 oppure più bagni</it>
+			<en>2 or more baths</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>133</hgvid>
+		<ltsrid>E4745D769397464A854D61B49FBC459B</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Separates WC</de>
+			<it>WC separato</it>
+			<en>Separate WC</en>
+		</description>
+		<ota_codes>271</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>134</hgvid>
+		<ltsrid>2EE74C2C607644A996340DB72D46408B</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Bidet</de>
+			<it>Bidet</it>
+			<en>Bidet</en>
+		</description>
+		<ota_codes>16</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>135</hgvid>
+		<ltsrid>8AE34B212A49450199B9F3F884521294</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Haar Fön</de>
+			<it>Asciugacapelli</it>
+			<en>Hairdryer</en>
+		</description>
+		<ota_codes>50</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>136</hgvid>
+		<ltsrid>D742F89D494E43B0AF3BA88571E54FCE</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Bademantel</de>
+			<it>Accappatoio</it>
+			<en>Bathrobe</en>
+		</description>
+		<ota_codes>10</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>137</hgvid>
+		<ltsrid>499D2BFB486D49229929B297E2C10E7E</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Badetücher</de>
+			<it>Asciugamani</it>
+			<en>Bath towel</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>138</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>2</type>
+		<description>
+			<de>WC auf der Etage</de>
+			<it>WC sul piano</it>
+			<en>WC on the floor</en>
+		</description>
+		<ota_codes>193</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>139</hgvid>
+		<ltsrid>0</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Dusche auf der Etage</de>
+			<it>Doccia / bagno sul piano</it>
+			<en>Shower on the floor</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>140</hgvid>
+		<ltsrid>9F342FE9BBD0410081AD1F9CDEC3426F</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Hi-Fi</de>
+			<it>Hi-fi</it>
+			<en>Hi-fi</en>
+		</description>
+		<ota_codes>104</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>141</hgvid>
+		<ltsrid>E5D896AC1B3A4B00ABA405BE5002CE78</ltsrid>
+		<type>2</type>
+		<description>
+			<de>TV</de>
+			<it>TV</it>
+			<en>TV</en>
+		</description>
+		<ota_codes>251</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>142</hgvid>
+		<ltsrid>92033892DF3C4C32A2B104AED6201443</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Satellit / Kabel</de>
+			<it>TV satellitare / via cavo</it>
+			<en>Satellite / cable</en>
+		</description>
+		<ota_codes>210,18</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>143</hgvid>
+		<ltsrid>2A2CC8211F114FC198249460AB358E69</ltsrid>
+		<type>2</type>
+		<description>
+			<de>W-LAN</de>
+			<it>WLAN</it>
+			<en>WLAN</en>
+		</description>
+		<ota_codes>123</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>144</hgvid>
+		<ltsrid>D5758A7BA8D24E01A35E3BCF00314FEA</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Internetanschluss</de>
+			<it>Collegamento internet</it>
+			<en>Internet access</en>
+		</description>
+		<ota_codes>54,225,51,207</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>145</hgvid>
+		<ltsrid>656BFC0C2D1742889F173D67CACF2421</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Reinigung auf Anfrage</de>
+			<it>Pulizia su richiesta</it>
+			<en>Cleaning upon request</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>146</hgvid>
+		<ltsrid>D05668339A8845BD8E004FB90B909B8D</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Tägliche Reinigung inbegriffen</de>
+			<it>Pulizia giornaliera inclusa</it>
+			<en>Daily cleaning service included</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>147</hgvid>
+		<ltsrid>0968949A1B3E4D12BFF7454EAFE19931</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Endreinigung inbegriffen</de>
+			<it>Pulizia finale inclusa</it>
+			<en>Final cleaning included</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>148</hgvid>
+		<ltsrid>43FFAA66ED6F4108B504E9956AEA1357</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Saisons Miete möglich</de>
+			<it>Affitto stagionale possibile</it>
+			<en>Seasonal renting possible</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>149</hgvid>
+		<ltsrid>AD8D922A26E94E82BECE21B1272DDE9F</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Haupthaus</de>
+			<it>Edificio principale</it>
+			<en>Main house</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>150</hgvid>
+		<ltsrid>097815DD4BD54751BBF3D39EFD711755</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Dependance</de>
+			<it>Dependance</it>
+			<en>Dependence</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>151</hgvid>
+		<ltsrid>A54112C5B2DF4EE2914428E051BACA45</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Seeblick</de>
+			<it>Vista lago</it>
+			<en>Lake view</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>152</hgvid>
+		<ltsrid>2DD69816D87749C5A70DA10F50F967C9</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Panoramablick</de>
+			<it>Vista panoramica</it>
+			<en>Panoramic view</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>153</hgvid>
+		<ltsrid>6FDA479E713F4C51BBADFB9F25FF2F76</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Südseite</de>
+			<it>Lato sud</it>
+			<en>South side</en>
+		</description>
+	</amenity>
+	<amenity>
+		<hgvid>0</hgvid>
+		<ltsrid>B5E9BF35EE84407AB8B4B97F7A96024F</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Wohnecke</de>
+			<it>Soggiorno</it>
+			<en>Living area</en>
+		</description>
+		<ota_codes>99</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>0</hgvid>
+		<ltsrid>A8C7A6D96D7A4917866370A76B21BE2D</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Dusche / Bad in der Etage</de>
+			<it>Doccia/bagno sul piano</it>
+			<en>Shared shower / bathroom on floor</en>
+		</description>
+		<ota_codes>193</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>0</hgvid>
+		<ltsrid>790A823C937A484AADC074CB8129C87E</ltsrid>
+		<type>1</type>
+		<description>
+			<de>Telefon</de>
+			<it>Telefono</it>
+			<en>Telephone</en>
+		</description>
+		<ota_codes>107</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>0</hgvid>
+		<ltsrid>A943A1C791B14A3BB0E6024236228E08</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Einzelbett</de>
+			<it>Letto singolo</it>
+			<en>Single bed</en>
+		</description>
+		<ota_codes>203</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>0</hgvid>
+		<ltsrid>5F11F0241AE74A5184F61C0F30783E1E</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Schreibtisch</de>
+			<it>Scrivania</it>
+			<en>Desk</en>
+		</description>
+		<ota_codes>28</ota_codes>
+	</amenity>
+	<amenity>
+		<hgvid>0</hgvid>
+		<ltsrid>C53C3434A58A4A90B80D6CCC85FA88DD</ltsrid>
+		<type>2</type>
+		<description>
+			<de>Backrohr</de>
+			<it>Forno</it>
+			<en>Oven</en>
+		</description>
+		<ota_codes>77</ota_codes>
+	</amenity>
+</ltshgv-amenities-mapping>

@@ -18,11 +18,17 @@ namespace OdhApiImporter.Helpers.LTSCDB
         {
             //Import the List
 
+
             //Import Single Data
 
             //Deactivate Data
 
             throw new NotImplementedException();
+        }
+
+        private async Task<> ImportList()
+        {
+
         }
     }
 }

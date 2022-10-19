@@ -35,7 +35,7 @@ namespace OdhApiImporter.Helpers
             return result;
         }
 
-        private async Task<Tuple<NinjaObject<NinjaEvent>,NinjaObject<NinjaPlaceRoom>> > ImportList(CancellationToken cancellationToken)
+        private async Task<Tuple<NinjaObject<NinjaEvent>,NinjaObject<NinjaPlaceRoom>>> ImportList(CancellationToken cancellationToken)
         {
             var responseevents = await GetNinjaData.GetNinjaEvent();
             var responseplaces = await GetNinjaData.GetNinjaPlaces();
