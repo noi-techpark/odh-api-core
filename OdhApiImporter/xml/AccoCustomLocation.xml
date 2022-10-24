@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Accommodations>
+  <Accommodation RID="824d853f29e711d599d20050da7125db" DistrictRIDtoassign="79CBD6DD51C911D18F1400A02427D15E" SetSmgActive="true"></Accommodation> 
+  <Accommodation RID="32001b84aa1311d1926f00805a150b0b" DistrictRIDtoassign="79CBD82C51C911D18F1400A02427D15E" SetSmgActive="true"></Accommodation>
+  <Accommodation RID="cb3cb9c880a44362999d739132dffeb5" DistrictRIDtoassign="79CBD6D851C911D18F1400A02427D15E" SetSmgActive="true"></Accommodation>
+  <Accommodation RID="c0df8fdc76d911d18f2900a02427d15e" DistrictRIDtoassign="79CBD8FE51C911D18F1400A02427D15E" SetSmgActive="true"></Accommodation>
+</Accommodations>

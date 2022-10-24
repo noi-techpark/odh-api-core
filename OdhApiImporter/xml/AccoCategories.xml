@@ -1,0 +1,135 @@
+﻿<Category>
+  <Data T0RID="52281FA251CA11D18F1400A02427D15E" T0ID="A.001.000.000.000" T0Typ="0" T0Va1="" T0Va2="" T0Va3="" T0SID="0" T0AcR="0">
+    <DataLng T1Des="categoria" LngID="IT" />
+    <DataLng T1Des="catégorie" LngID="FR" />
+    <DataLng T1Des="category" LngID="EN" />
+    <DataLng T1Des="category" LngID="FL" />
+    <DataLng T1Des="Kategorie" LngID="DE" />
+  </Data>
+  <Data T0RID="52281FA351CA11D18F1400A02427D15E" T0ID="A.001.001.000.000" T0Typ="1" T0Va1="6" T0Va2="01" T0Va3="ST5" T0SID="0" T0AcR="0">
+    <DataLng T1Des="5stars" LngID="EN" />
+    <DataLng T1Des="5stars" LngID="FL" />
+    <DataLng T1Des="5stars" LngID="FR" />
+    <DataLng T1Des="5stelle" LngID="IT" />
+    <DataLng T1Des="5Sterne" LngID="DE" />
+  </Data>
+  <Data T0RID="52281FA451CA11D18F1400A02427D15E" T0ID="A.001.002.000.000" T0Typ="1" T0Va1="5" T0Va2="02" T0Va3="ST4S" T0SID="0" T0AcR="0">
+    <DataLng T1Des="4sstars" LngID="EN" />
+    <DataLng T1Des="4sstars" LngID="FL" />
+    <DataLng T1Des="4sstars" LngID="FR" />
+    <DataLng T1Des="4sstelle" LngID="IT" />
+    <DataLng T1Des="4sSterne" LngID="DE" />
+  </Data>
+  <Data T0RID="52281FA551CA11D18F1400A02427D15E" T0ID="A.001.003.000.000" T0Typ="1" T0Va1="4" T0Va2="03" T0Va3="ST4" T0SID="0" T0AcR="0">
+    <DataLng T1Des="4stars" LngID="EN" />
+    <DataLng T1Des="4stars" LngID="FL" />
+    <DataLng T1Des="4stars" LngID="FR" />
+    <DataLng T1Des="4stelle" LngID="IT" />
+    <DataLng T1Des="4Sterne" LngID="DE" />
+  </Data>
+  <Data T0RID="52281FA651CA11D18F1400A02427D15E" T0ID="A.001.004.000.000" T0Typ="1" T0Va1="3" T0Va2="05" T0Va3="ST3" T0SID="0" T0AcR="0">
+    <DataLng T1Des="3stars" LngID="EN" />
+    <DataLng T1Des="3stars" LngID="FL" />
+    <DataLng T1Des="3stars" LngID="FR" />
+    <DataLng T1Des="3stelle" LngID="IT" />
+    <DataLng T1Des="3Sterne" LngID="DE" />
+  </Data>
+  <Data T0RID="52281FA751CA11D18F1400A02427D15E" T0ID="A.001.005.000.000" T0Typ="1" T0Va1="2" T0Va2="06" T0Va3="ST2" T0SID="0" T0AcR="0">
+    <DataLng T1Des="2stars" LngID="EN" />
+    <DataLng T1Des="2stars" LngID="FL" />
+    <DataLng T1Des="2stars" LngID="FR" />
+    <DataLng T1Des="2stelle" LngID="IT" />
+    <DataLng T1Des="2Sterne" LngID="DE" />
+  </Data>
+  <Data T0RID="52281FA851CA11D18F1400A02427D15E" T0ID="A.001.006.000.000" T0Typ="1" T0Va1="1" T0Va2="07" T0Va3="ST1" T0SID="0" T0AcR="0">
+    <DataLng T1Des="1star" LngID="EN" />
+    <DataLng T1Des="1star" LngID="FL" />
+    <DataLng T1Des="1star" LngID="FR" />
+    <DataLng T1Des="1stella" LngID="IT" />
+    <DataLng T1Des="1Stern" LngID="DE" />
+  </Data>
+  <Data T0RID="52281FA951CA11D18F1400A02427D15E" T0ID="A.001.007.000.000" T0Typ="1" T0Va1="3" T0Va2="09" T0Va3="SO3" T0SID="0" T0AcR="0">
+    <DataLng T1Des="3soli" LngID="IT" />
+    <DataLng T1Des="3Sonnen" LngID="DE" />
+    <DataLng T1Des="3suns" LngID="EN" />
+    <DataLng T1Des="3suns" LngID="FL" />
+    <DataLng T1Des="3suns" LngID="FR" />
+  </Data>
+  <Data T0RID="52281FAA51CA11D18F1400A02427D15E" T0ID="A.001.008.000.000" T0Typ="1" T0Va1="2" T0Va2="10" T0Va3="SO2" T0SID="0" T0AcR="0">
+    <DataLng T1Des="2soli" LngID="IT" />
+    <DataLng T1Des="2Sonnen" LngID="DE" />
+    <DataLng T1Des="2suns" LngID="EN" />
+    <DataLng T1Des="2suns" LngID="FL" />
+    <DataLng T1Des="2suns" LngID="FR" />
+  </Data>
+  <Data T0RID="52281FAB51CA11D18F1400A02427D15E" T0ID="A.001.009.000.000" T0Typ="1" T0Va1="1" T0Va2="11" T0Va3="SO1" T0SID="0" T0AcR="0">
+    <DataLng T1Des="1sole" LngID="IT" />
+    <DataLng T1Des="1Sonne" LngID="DE" />
+    <DataLng T1Des="1sun" LngID="EN" />
+    <DataLng T1Des="1sun" LngID="FL" />
+    <DataLng T1Des="1sun" LngID="FR" />
+  </Data>
+  <Data T0RID="86179E19DAA811D28E25006097B896BA" T0ID="A.001.010.000.000" T0Typ="1" T0Va1="1" T0Va2="15" T0Va3="BL1" T0SID="0" T0AcR="0">
+    <DataLng T1Des="1Blume" LngID="DE" />
+    <DataLng T1Des="1fiore" LngID="IT" />
+    <DataLng T1Des="1flower" LngID="EN" />
+    <DataLng T1Des="1flower" LngID="FL" />
+    <DataLng T1Des="1flower" LngID="FR" />
+  </Data>
+  <Data T0RID="86179E1BDAA811D28E25006097B896BA" T0ID="A.001.011.000.000" T0Typ="1" T0Va1="2" T0Va2="14" T0Va3="BL2" T0SID="0" T0AcR="0">
+    <DataLng T1Des="2Blumen" LngID="DE" />
+    <DataLng T1Des="2fiori" LngID="IT" />
+    <DataLng T1Des="2flowers" LngID="EN" />
+    <DataLng T1Des="2flowers" LngID="FL" />
+    <DataLng T1Des="2flowers" LngID="FR" />
+  </Data>
+  <Data T0RID="86179E1CDAA811D28E25006097B896BA" T0ID="A.001.012.000.000" T0Typ="1" T0Va1="3" T0Va2="13" T0Va3="BL3" T0SID="0" T0AcR="0">
+    <DataLng T1Des="3Blumen" LngID="DE" />
+    <DataLng T1Des="3fiori" LngID="IT" />
+    <DataLng T1Des="3flowers" LngID="EN" />
+    <DataLng T1Des="3flowers" LngID="FL" />
+    <DataLng T1Des="3flowers" LngID="FR" />
+  </Data>
+  <Data T0RID="5BTTTTTT52F144A4BAF718259634F9AD" T0ID="A.001.013.000.000" T0Typ="1" T0Va1="" T0Va2="" T0Va3="BL0" T0SID="0" T0AcR="0">
+    <DataLng T1Des="Nicht kategorisiert" LngID="DE" />
+    <DataLng T1Des="Non categorizzato" LngID="IT" />
+    <DataLng T1Des="Not categorized" LngID="EN" />
+    <DataLng T1Des="Not categorized" LngID="FL" />
+    <DataLng T1Des="Not categorized" LngID="FR" />
+  </Data>
+  <Data T0RID="522AA59151CA11D18F1400A02427D15E" T0ID="A.001.014.000.000" T0Typ="1" T0Va1="7" T0Va2="04" T0Va3="ST3S" T0SID="0" T0AcR="0">
+    <DataLng T1Des="3sstars" LngID="EN" />
+    <DataLng T1Des="3sstars" LngID="FL" />
+    <DataLng T1Des="3sstars" LngID="FR" />
+    <DataLng T1Des="3sstelle" LngID="IT" />
+    <DataLng T1Des="3sSterne" LngID="DE" />
+  </Data>
+  <Data T0RID="522AC59151CA11D18F1400A02427D15E" T0ID="A.001.015.000.000" T0Typ="1" T0Va1="4" T0Va2="08" T0Va3="SO4" T0SID="0" T0AcR="0">
+    <DataLng T1Des="4soli" LngID="IT" />
+    <DataLng T1Des="4Sonnen" LngID="DE" />
+    <DataLng T1Des="4suns" LngID="EN" />
+    <DataLng T1Des="4suns" LngID="FL" />
+    <DataLng T1Des="4suns" LngID="FR" />
+  </Data>
+  <Data T0RID="522AD59151CA11D18F1400A02427D15E" T0ID="A.001.016.000.000" T0Typ="1" T0Va1="4" T0Va2="12" T0Va3="BL4" T0SID="0" T0AcR="0">
+    <DataLng T1Des="4bloemen" LngID="FL" />
+    <DataLng T1Des="4Blumen" LngID="DE" />
+    <DataLng T1Des="4fiori" LngID="IT" />
+    <DataLng T1Des="4flowers" LngID="EN" />
+    <DataLng T1Des="4flowers" LngID="FR" />
+  </Data>
+  <Data T0RID="1C7553B159E3472BA92AC263AA06DBAB" T0ID="A.001.018.000.000" T0Typ="1" T0Va1="4" T0Va2="08" T0Va3="SO5" T0SID="0" T0AcR="0">
+    <DataLng T1Des="5soli" LngID="IT" />
+    <DataLng T1Des="5Sonnen" LngID="DE" />
+    <DataLng T1Des="5suns" LngID="EN" />
+    <DataLng T1Des="5suns" LngID="FL" />
+    <DataLng T1Des="5suns" LngID="FR" />
+  </Data>
+  <Data T0RID="767AB790A7C848E5A54D2D6B03D1879C" T0ID="A.002.055.000.000" T0Typ="" T0Va1="" T0Va2="" T0Va3="BL5" T0SID="0" T0AcR="0">
+    <DataLng T1Des="5bloemen" LngID="FL" />
+    <DataLng T1Des="5Blumen" LngID="DE" />
+    <DataLng T1Des="5fiori" LngID="IT" />
+    <DataLng T1Des="5flowers" LngID="EN" />
+    <DataLng T1Des="5flowers" LngID="FR" />
+  </Data>
+</Category>

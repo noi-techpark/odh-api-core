@@ -32,7 +32,7 @@ namespace OdhApiImporter.Helpers.DSS
 
         public List<string> idlistdssinterface { get; set; }
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET DATA
             var dssdata = await GetData(cancellationToken);
@@ -49,72 +49,19 @@ namespace OdhApiImporter.Helpers.DSS
         //Imports DSS Data
         private async Task<List<dynamic>> GetData(CancellationToken cancellationToken)
         {
-            requesttypelist = new List<DSSRequestType>();
-
-            switch (entitytype.ToLower())
-            {
-                case "lift":
-                    requesttypelist.Add(DSSRequestType.liftbase);
-                    //requesttypelist.Add(DSSRequestType.liftstatus); // not needed at the moment
-                    rawonly = false;
-                    break;
-                case "slope":
-                    requesttypelist.Add(DSSRequestType.slopebase);
-                    //requesttypelist.Add(DSSRequestType.slopestatus); // not needed at the moment
-                    rawonly = false;
-                    break;
-                case "snowpark":
-                    requesttypelist.Add(DSSRequestType.snowparks);                    
-                    rawonly = true;
-                    break;
-                case "alpinehut":
-                    requesttypelist.Add(DSSRequestType.alpinehuts);                    
-                    rawonly = true;
-                    break;
-                case "skicircuit":
-                    requesttypelist.Add(DSSRequestType.skicircuits);
-                    rawonly = true;
-                    break;
-                case "sellingpoint":
-                    requesttypelist.Add(DSSRequestType.sellingpoints);
-                    rawonly = true;
-                    break;
-                case "taxi":
-                    requesttypelist.Add(DSSRequestType.taxi);
-                    rawonly = true;
-                    break;
-                case "healthcare":
-                    requesttypelist.Add(DSSRequestType.healthcare);
-                    rawonly = true;
-                    break;
-                case "skiresort":
-                    requesttypelist.Add(DSSRequestType.skiresorts);
-                    rawonly = true;
-                    break;
-                case "webcam":
-                    requesttypelist.Add(DSSRequestType.webcams);
-                    rawonly = true;
-                    break;
-                case "overview":
-                    requesttypelist.Add(DSSRequestType.overview);
-                    rawonly = true;
-                    break;
-                case "weather":
-                    requesttypelist.Add(DSSRequestType.weather);
-                    rawonly = true;
-                    break;                
-            }
-
+            
             List<dynamic> dssdata = new List<dynamic>();
 
-            foreach (var requesttype in requesttypelist)
-            {
-                //Get DSS data
-                dssdata.Add(await GetDSSData.GetDSSDataAsync(requesttype, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl));
-            }
+            var requesttype = DSSImportUtil.GetRequestTypeList(entitytype);
+            rawonly = requesttype.Item2;
+
+            //Get DSS data
+            dssdata.Add(await GetDSSData.GetDSSDataAsync(requesttype.Item1, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl));
 
             return dssdata;
         }
+
+      
 
         public async Task<UpdateDetail> ImportData(List<dynamic> dssinput, CancellationToken cancellationToken)
         {
@@ -329,16 +276,16 @@ namespace OdhApiImporter.Helpers.DSS
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
                 }
 
-                var sourceid = (string)item.pid;
+                var sourceid = (string)DSSImportUtil.GetSourceId(parsedobject, entitytype);
 
                 //TODO GET ID based on item type
 
-                //IF no id is provided timestamp generated
+                //IF no id is provided timestamp generated WRONG i need a unique identifier to group on!
                 if(String.IsNullOrEmpty(sourceid))
                     sourceid = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
                 //Save parsedobject to DB + Save Rawdata to DB
-                var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(sourceid, item));
+                var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>((string)item.pid, item));
 
                 newcounter = newcounter + pgcrudresult.created ?? 0;
                 updatecounter = updatecounter + pgcrudresult.updated ?? 0;

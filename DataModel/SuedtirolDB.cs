@@ -665,9 +665,7 @@ namespace DataModel
 
         public IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }
         public ICollection<string>? PoiServices { get; set; }
-
-        //Neu        
-        //public string? Source { get; set; }
+        
         public string? SyncSourceInterface { get; set; }
         public string? SyncUpdateMode { get; set; }
 
@@ -679,10 +677,11 @@ namespace DataModel
         public ICollection<DishRates>? DishRates { get; set; }
         public ICollection<CapacityCeremony>? CapacityCeremony { get; set; }
         public ICollection<Facilities>? Facilities { get; set; }
-
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
         public IDictionary<string, List<AdditionalContact>>? AdditionalContact { get; set; }
+
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get

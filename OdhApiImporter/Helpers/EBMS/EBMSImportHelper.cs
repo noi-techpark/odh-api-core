@@ -20,7 +20,7 @@ namespace OdhApiImporter.Helpers
 
         #region EBMS Helpers
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, CancellationToken cancellationToken)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
          

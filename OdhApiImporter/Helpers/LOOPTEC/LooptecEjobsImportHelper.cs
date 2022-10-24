@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LOOPTEC;
 using Newtonsoft.Json;
 using Helper;
+using System.Collections.Generic;
 
 namespace OdhApiImporter.Helpers.LOOPTEC
 {
@@ -23,7 +24,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
             throw new NotImplementedException();
         }
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET Data and Deserialize to Json
             var data = await GetEJobsData.GetEjobsDataAsync("", "", serviceurl);

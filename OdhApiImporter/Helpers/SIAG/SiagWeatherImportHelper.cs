@@ -19,16 +19,27 @@ namespace OdhApiImporter.Helpers
 
         }
 
-        public Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var updateresult = new UpdateDetail();
+
+            if (idlist != null)
+            {
+                var updateresulttemp = new UpdateDetail();
+
+                foreach (var id in idlist)
+                {
+                    updateresulttemp = await SaveWeatherToHistoryTable(cancellationToken, id);
+
+                    updateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, updateresulttemp });
+                }
+            }
+            else
+                updateresult = await SaveWeatherToHistoryTable(cancellationToken, null);
+
+            return updateresult;
         }
 
-        /// <summary>
-        /// Save Weather to History Table
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public async Task<UpdateDetail> SaveWeatherToHistoryTable(CancellationToken cancellationToken, string? id = null)
         {
             string? weatherresponsetaskde = "";

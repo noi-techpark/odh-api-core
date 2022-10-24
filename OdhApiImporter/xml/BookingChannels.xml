@@ -1,0 +1,17 @@
+﻿<BookingChannels>
+  <BookingChannel Pos1ID="0F41198A98244216B92C1FD6972412C3" Portalname="valgardena.com" Shortname="valgardena"></BookingChannel>
+  <BookingChannel Pos1ID="2" Portalname="HGV Booking" Shortname="hgv"></BookingChannel>
+  <BookingChannel Pos1ID="2313018779054362969E1A47B514678E" Portalname="rosengarten-latemar.com" Shortname="eggental"></BookingChannel>
+  <BookingChannel Pos1ID="3" Portalname="Booking.com" Shortname="bok"></BookingChannel>
+  <BookingChannel Pos1ID="3C9A4171C7A84AB881FB07FCE3F972EF" Portalname="valgardena.it" Shortname="valgardena2"></BookingChannel>
+  <BookingChannel Pos1ID="4" Portalname="Hotel.de" Shortname="htl"></BookingChannel>
+  <BookingChannel Pos1ID="5" Portalname="Expedia" Shortname="exp"></BookingChannel>
+  <BookingChannel Pos1ID="6" Portalname="HRS" Shortname="hrs"></BookingChannel>
+  <BookingChannel Pos1ID="679490C3D4CE4864B0F1063ECEA9354D" Portalname="AltaBadia.org" Shortname="altabadia"></BookingChannel>
+  <BookingChannel Pos1ID="A3F616771D0547D98496810C14F7FDE8" Portalname="hochpustertal.info" Shortname="hochpustertal"></BookingChannel>
+  <BookingChannel Pos1ID="D396337B6995467693054ACB6E12D57D" Portalname="seiseralm.it" Shortname="seiseralm"></BookingChannel>
+  <BookingChannel Pos1ID="DD6216B423FF4ABFA0F272B4B2343260" Portalname="Crontour" Shortname="crontour"></BookingChannel>
+  <BookingChannel Pos1ID="917D6175386A4EAEAB0564482E3F0728" Portalname="www.suedtirols-sueden.info" Shortname="suedtirolssueden"></BookingChannel>
+  <BookingChannel Pos1ID="A0979D8D3A084C319A221E2F09AD372F" Portalname="www.roterhahn.it" Shortname="roterhahn"></BookingChannel>
+  <BookingChannel Pos1ID="998" Portalname="HGV Booking" Shortname="hgv"></BookingChannel>
+</BookingChannels>
