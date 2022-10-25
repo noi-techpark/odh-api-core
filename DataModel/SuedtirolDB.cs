@@ -2774,6 +2774,7 @@ namespace DataModel
         public string? CopyRight { get; set; }
         public string? License { get; set; }
         public string? LicenseHolder { get; set; }
+        public string? Language { get; set; }
     }
 
 

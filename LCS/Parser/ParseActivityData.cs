@@ -199,8 +199,6 @@ namespace LCS
                     mycontactinfo.Phonenumber = parsedcontactinfode.Phones != null ? parsedcontactinfode.Phones.Phone.Where(x => x.PhoneTechType == "1").Count() > 0 ? parsedcontactinfode.Phones.Phone.Where(x => x.PhoneTechType == "1").FirstOrDefault().PhoneNumber : "" : "";
                     mycontactinfo.Faxnumber = parsedcontactinfode.Phones != null ? parsedcontactinfode.Phones.Phone.Where(x => x.PhoneTechType == "3").Count() > 0 ? parsedcontactinfode.Phones.Phone.Where(x => x.PhoneTechType == "3").FirstOrDefault().PhoneNumber : "" : "";
 
-
-
                     mycontactinfo.Url = parsedcontactinfode.URLs.URL.FirstOrDefault().InnerText;
 
                     //contactinfolist.Add(mycontactinfo);
@@ -633,6 +631,121 @@ namespace LCS
             }
 
             hike.ImageGallery = imagegallerylist.ToList();
+
+            //Multimedia Infos VIDEOITEMS   
+
+            List<VideoItems> videoitemlist = new List<VideoItems>();
+
+            if (parsedmultimediainfode != null)
+            {
+                if (parsedmultimediainfode.VideoItems.VideoItem != null)
+                {
+                    int i = 0;
+
+                    foreach (var videoelement in parsedmultimediainfode.VideoItems.VideoItem)
+                    {
+                        //TODO ESCAPING
+                        VideoItems videoItem = new VideoItems();
+                        videoItem.CopyRight = videoelement.VideoFormat.CopyrightOwner;
+                        videoItem.License = videoelement.VideoFormat.License;
+                        if (videoelement.VideoFormat.Description.InnerText != null)
+                            videoItem.VideoDesc = videoelement.VideoFormat.Description.InnerText;
+                        videoItem.VideoTitle = videoelement.VideoFormat.Title;
+                        videoItem.StreamingSource = videoelement.VideoFormat.StreamingSource;
+                        videoItem.Name = videoelement.RID;
+                        videoItem.Url = videoelement.VideoFormat.URL.InnerText;
+                        //videoItems.Active = videoelement.isEnabled; // not working!;
+                        videoItem.Active = true;
+                        videoItem.Language = "de";
+                        //Set videotype & videosource in english
+                        if (videoelement.EnumCodes != null && videoelement.EnumCodes.EnumCode != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
+                            videoItem.VideoType = videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText; //TODO PARSE VideoType
+
+                        if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
+                            videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
+
+                        videoitemlist.Add(videoItem);
+                        i++;
+                    }
+
+                    hike.VideoItems.TryAddOrUpdate("de", videoitemlist);
+                }
+            }
+
+            //it
+            if (parsedmultimediainfoit != null)
+            {
+                if (parsedmultimediainfoit.VideoItems.VideoItem != null)
+                {
+                    int i = 0;
+
+                    foreach (var videoelement in parsedmultimediainfoit.VideoItems.VideoItem)
+                    {
+                        //TODO ESCAPING
+                        VideoItems videoItem = new VideoItems();
+                        videoItem.CopyRight = videoelement.VideoFormat.CopyrightOwner;
+                        videoItem.License = videoelement.VideoFormat.License;
+                        if (videoelement.VideoFormat.Description.InnerText != null)
+                            videoItem.VideoDesc = videoelement.VideoFormat.Description.InnerText;
+                        videoItem.VideoTitle = videoelement.VideoFormat.Title;
+                        videoItem.StreamingSource = videoelement.VideoFormat.StreamingSource;
+                        videoItem.Name = videoelement.RID;
+                        videoItem.Url = videoelement.VideoFormat.URL.InnerText;
+                        //videoItems.Active = videoelement.isEnabled; // not working!;
+                        videoItem.Active = true;
+                        videoItem.Language = "it";
+                        //Set videotype & videosource in english
+                        if (videoelement.EnumCodes != null && videoelement.EnumCodes.EnumCode != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
+                            videoItem.VideoType = videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText; //TODO PARSE VideoType
+
+                        if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
+                            videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
+
+                        videoitemlist.Add(videoItem);
+                        i++;
+                    }
+
+                    hike.VideoItems.TryAddOrUpdate("it", videoitemlist);
+                }
+            }
+
+            //en
+            if (parsedmultimediainfoen != null)
+            {
+
+                if (parsedmultimediainfoen.VideoItems.VideoItem != null)
+                {
+                    int i = 0;
+
+                    foreach (var videoelement in parsedmultimediainfoen.VideoItems.VideoItem)
+                    {
+                        //TODO ESCAPING
+                        VideoItems videoItem = new VideoItems();
+                        videoItem.CopyRight = videoelement.VideoFormat.CopyrightOwner;
+                        videoItem.License = videoelement.VideoFormat.License;
+                        if (videoelement.VideoFormat.Description.InnerText != null)
+                            videoItem.VideoDesc = videoelement.VideoFormat.Description.InnerText;
+                        videoItem.VideoTitle = videoelement.VideoFormat.Title;
+                        videoItem.StreamingSource = videoelement.VideoFormat.StreamingSource;
+                        videoItem.Name = videoelement.RID;
+                        videoItem.Url = videoelement.VideoFormat.URL.InnerText;
+                        //videoItems.Active = videoelement.isEnabled; // not working!;
+                        videoItem.Active = true;
+                        videoItem.Language = "en";
+                        //Set videotype & videosource in english
+                        if (videoelement.EnumCodes != null && videoelement.EnumCodes.EnumCode != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
+                            videoItem.VideoType = videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText; //TODO PARSE VideoType
+
+                        if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
+                            videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
+
+                        videoitemlist.Add(videoItem);
+                        i++;
+                    }
+
+                    hike.VideoItems.TryAddOrUpdate("en", videoitemlist);
+                }
+            }
 
             //Ende MultimediaInfos
 
