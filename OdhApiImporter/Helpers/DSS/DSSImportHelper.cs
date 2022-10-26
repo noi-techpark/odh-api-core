@@ -276,7 +276,7 @@ namespace OdhApiImporter.Helpers.DSS
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
                 }
 
-                var sourceid = (string)DSSImportUtil.GetSourceId(parsedobject, entitytype);
+                var sourceid = (string)DSSImportUtil.GetSourceId(item, entitytype);
 
                 //TODO GET ID based on item type
 
@@ -292,7 +292,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                 WriteLog.LogToConsole(parsedobject?.Id ?? returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = parsedobject?.Id ?? returnid, sourceinterface = "dss." + entitytype, success = true, error = "" });
             }
-            catch
+            catch(Exception ex)
             {
                 WriteLog.LogToConsole(returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = returnid, sourceinterface = "dss." + entitytype, success = false, error = entitytype + " could not be parsed" });
 
