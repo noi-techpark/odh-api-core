@@ -134,8 +134,8 @@ namespace DataModel
 
         string? StreamingSource { get; set; }
 
-        IDictionary<string, string> VideoTitle { get; set; }
-        IDictionary<string, string> VideoDesc { get; set; }
+        string VideoTitle { get; set; }
+        string VideoDesc { get; set; }
 
         bool? Active { get; set; }
         string? CopyRight { get; set; }
@@ -146,7 +146,7 @@ namespace DataModel
     public interface IVideoItemsAware
     {
         //brauchts nix?
-        ICollection<VideoItems>? VideoItems { get; set; }
+        IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }
 
     public interface ILocationInfoAware
@@ -2155,6 +2155,7 @@ namespace DataModel
             AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();            
             Mapping = new Dictionary<string, IDictionary<string, string>>();
             Tags = new Dictionary<string, List<Tags>>();
+            VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
         public string? Id { get; set; }
@@ -2249,7 +2250,7 @@ namespace DataModel
 
         public IDictionary<string, List<Tags>> Tags { get; set; }
 
-        public ICollection<VideoItems>? VideoItems { get; set; }
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }
 
     //BaseInfo Article
@@ -2762,23 +2763,18 @@ namespace DataModel
 
     public class VideoItems : IVideoItems
     {
-        public VideoItems()
-        {
-            VideoTitle = new Dictionary<string, string>();
-            VideoDesc = new Dictionary<string, string>();
-        }
-
         public string? Name { get; set; }
         public string? Url { get; set; }
         public string? VideoSource { get; set; }
         public string? VideoType { get; set; }
         public string? StreamingSource { get; set; }
-        public IDictionary<string, string> VideoTitle { get; set; }
-        public IDictionary<string, string> VideoDesc { get; set; }
+        public string VideoTitle { get; set; }
+        public string VideoDesc { get; set; }
         public bool? Active { get; set; }
         public string? CopyRight { get; set; }
         public string? License { get; set; }
         public string? LicenseHolder { get; set; }
+        public string? Language { get; set; }
     }
 
 
