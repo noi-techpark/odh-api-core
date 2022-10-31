@@ -1191,24 +1191,37 @@ namespace DataModel
         public int categoryId { get; set; }
         public string? code { get; set; }
         public string? id { get; set; }
+        [SwaggerSchema("Wind direction")]
         public string? dd { get; set; }
+        [SwaggerSchema("Average wind speed (km/h)")]
         public string? ff { get; set; }
+        [SwaggerSchema("Snow depth (cm)")]
         public string? hs { get; set; }
         public DateTime lastUpdated { get; set; }
         public double latitude { get; set; }
         public double longitude { get; set; }
         public string? lwdType { get; set; }
+        [SwaggerSchema("Precipitation sum starting from midnight")]
         public string? n { get; set; }
         public string? name { get; set; }
+        [SwaggerSchema("Atmospheric pressure (hPa)")]
         public string? p { get; set; }
+        [SwaggerSchema("Flow rate (m³/s)")]
         public string? q { get; set; }
+        [SwaggerSchema("Relative humidity (rH)")]
         public string? rh { get; set; }
+        [SwaggerSchema("Air temperature (°C)")]
         public string? t { get; set; }
         public string? vaxcode { get; set; }
+        [SwaggerSchema("Water level (cm)")]
         public string? w { get; set; }
-        public string? wMax { get; set; }
+        [SwaggerSchema("Wind gust")]
+        public string? wMax { get; set; } 
+        [SwaggerSchema("Sunshine duration (h)")]
         public string? sd { get; set; }
+        [SwaggerSchema("Global radiation")]
         public string? gs { get; set; }
+        [SwaggerSchema("Water temperature (°C)")]
         public string? wt { get; set; }
         public string? visibility { get; set; }
         public string? zoomLevel { get; set; }
