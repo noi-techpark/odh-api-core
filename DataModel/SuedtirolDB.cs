@@ -1188,7 +1188,7 @@ namespace DataModel
     public class WeatherRealTime
     {
         public double altitude { get; set; }
-        [SwaggerSchema("Indicates whether the weather stations are: [1] in the valley, [2] gauge stations or [3] the mountain")]
+        [SwaggerSchema("Indicates whether the weather stations are: [1] in the valley, [2] gauge stations, [3] on the mountain")]
         public int categoryId { get; set; }
         public string? code { get; set; }
         public string? id { get; set; }
