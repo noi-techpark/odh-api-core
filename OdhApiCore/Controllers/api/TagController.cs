@@ -210,6 +210,7 @@ namespace OdhApiCore.Controllers
         /// <param name="tag">Tag Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetTagAsync))]
         [Authorize(Roles = "DataWriter,DataCreate,TagManager,TagCreate")]
         [HttpPost, Route("Tag")]
         public Task<IActionResult> Post([FromBody] TagLinked tag)
@@ -228,6 +229,7 @@ namespace OdhApiCore.Controllers
         /// <param name="tag">Tag Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetTagAsync))]
         [Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify")]
         [HttpPut, Route("Tag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] TagLinked tag)
@@ -245,6 +247,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Tag Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetTagAsync))]
         [Authorize(Roles = "DataWriter,DataDelete,TagManager,TagDelete")]
         [HttpDelete, Route("Tag/{id}")]
         public Task<IActionResult> Delete(string id)

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -374,14 +375,17 @@ namespace OdhApiCore.Controllers
         /// <param name="odhevent">Event Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetEventList))]
         [Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
         [HttpPost, Route("Event")]
         public Task<IActionResult> Post([FromBody] EventLinked odhevent)
         {
             return DoAsyncReturn(async () =>
             {
-                odhevent.Id = !String.IsNullOrEmpty(odhevent.Id) ? odhevent.Id.ToUpper() : "noId";
-                return await UpsertData<EventLinked>(odhevent, "events");
+                odhevent.Id = Helper.IdGenerator.GenerateIDFromType(odhevent);
+                odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<EventLinked>(odhevent, "events", true);
             });
         }
 
@@ -392,14 +396,17 @@ namespace OdhApiCore.Controllers
         /// <param name="odhevent">Event Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetEventList))]
         [Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify")]
         [HttpPut, Route("Event/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] EventLinked odhevent)
         {
             return DoAsyncReturn(async () =>
             {
-                odhevent.Id = id.ToUpper();
-                return await UpsertData<EventLinked>(odhevent, "events");
+                odhevent.Id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
+                odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<EventLinked>(odhevent, "events", false, true);
             });
         }
 
@@ -409,13 +416,15 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Event Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetEventList))]
         [Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
         [HttpDelete, Route("Event/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
+
                 return await DeleteData(id, "events");
             });
         }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using Schema.NET;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -368,14 +369,17 @@ namespace OdhApiCore.Controllers.api
         /// <param name="poi">Poi Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetPoiList))]
         [Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
         [HttpPost, Route("Poi")]
         public Task<IActionResult> Post([FromBody] LTSPoiLinked poi)
         {
             return DoAsyncReturn(async () =>
             {
-                poi.Id = !String.IsNullOrEmpty(poi.Id) ? poi.Id.ToUpper() : "noId";
-                return await UpsertData<LTSPoiLinked>(poi, "pois");
+                poi.Id = Helper.IdGenerator.GenerateIDFromType(poi);
+                poi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<LTSPoiLinked>(poi, "pois", true);
             });
         }
 
@@ -386,14 +390,17 @@ namespace OdhApiCore.Controllers.api
         /// <param name="poi">Poi Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetPoiList))]
         [Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
         [HttpPut, Route("Poi/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] LTSPoiLinked poi)
         {
             return DoAsyncReturn(async () =>
             {
-                poi.Id = id.ToUpper();
-                return await UpsertData<LTSPoiLinked>(poi, "pois");
+                poi.Id = Helper.IdGenerator.CheckIdFromType<LTSPoiLinked>(id);
+                poi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<LTSPoiLinked>(poi, "pois", false, true);
             });
         }
 
@@ -403,13 +410,15 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Poi Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetPoiList))]
         [Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
         [HttpDelete, Route("Poi/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<LTSPoiLinked>(id);
+
                 return await DeleteData(id, "pois");
             });
         }

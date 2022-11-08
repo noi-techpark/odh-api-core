@@ -366,7 +366,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Check ID uppercase lowercase
-                Helper.IdGenerator.CheckIdFromType(article);
+                article.Id = Helper.IdGenerator.CheckIdFromType<ArticlesLinked>(id);
 
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 

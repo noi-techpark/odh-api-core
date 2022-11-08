@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using MSS;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -924,14 +925,17 @@ namespace OdhApiCore.Controllers
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         [Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationWriter,AccommodationManager,AccommodationCreate")]
         [HttpPost, Route("Accommodation")]
         public Task<IActionResult> Post([FromBody] AccommodationLinked accommodation)
         {
             return DoAsyncReturn(async () =>
             {
-                accommodation.Id = !String.IsNullOrEmpty(accommodation.Id) ? accommodation.Id.ToUpper() : "NOID";
-                return await UpsertData<AccommodationLinked>(accommodation, "accommodations");
+                accommodation.Id = Helper.IdGenerator.GenerateIDFromType(accommodation);
+                //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<AccommodationLinked>(accommodation, "accommodations", true);
             });
         }
 
@@ -942,14 +946,17 @@ namespace OdhApiCore.Controllers
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         [Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationWriter,AccommodationManager,AccommodationModify")]
         [HttpPut, Route("Accommodation/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] AccommodationLinked accommodation)
         {
             return DoAsyncReturn(async () =>
             {
-                accommodation.Id = id.ToUpper();
-                return await UpsertData<AccommodationLinked>(accommodation, "accommodations");
+                accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
+                //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<AccommodationLinked>(accommodation, "accommodations", false, true);
             });
         }
 
@@ -959,13 +966,15 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Accommodation Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         [Authorize(Roles = "DataWriter,DataDelete,AccoManager,AccoDelete,AccommodationWriter,AccommodationManager,AccommodationDelete")]
         [HttpDelete, Route("Accommodation/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
+
                 return await DeleteData(id, "accommodations");
             });
         }

@@ -61,6 +61,12 @@ namespace OdhApiCore.Controllers
                         
             return tourismdatalist;
         }
+
+        #region POST PUT DELETE
+
+
+
+        #endregion
     }
 
     public class TourismData
@@ -105,6 +111,6 @@ namespace OdhApiCore.Controllers
 
         public bool Deprecated { get; set; }
 
-        public bool SingleDataset { get; set; }
+        public bool SingleDataset { get; set; }        
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using Schema.NET;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -329,14 +330,17 @@ namespace OdhApiCore.Controllers
         /// <param name="gastronomy">Gastronomy Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetGastronomyList))]
         [Authorize(Roles = "DataWriter,DataCreate,GastronomyManager,GastronomyCreate")]
         [HttpPost, Route("Gastronomy")]
         public Task<IActionResult> Post([FromBody] GastronomyLinked gastronomy)
         {
             return DoAsyncReturn(async () =>
-            {
-                gastronomy.Id = !String.IsNullOrEmpty(gastronomy.Id) ? gastronomy.Id.ToUpper() : "noId";
-                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies");
+            {             
+                gastronomy.Id = Helper.IdGenerator.GenerateIDFromType(gastronomy);
+                gastronomy.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", true);
             });
         }
 
@@ -347,14 +351,17 @@ namespace OdhApiCore.Controllers
         /// <param name="gastronomy">Gastronomy Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetGastronomyList))]
         [Authorize(Roles = "DataWriter,DataModify,GastronomyManager,GastronomyModify")]
         [HttpPut, Route("Gastronomy/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] GastronomyLinked gastronomy)
         {
             return DoAsyncReturn(async () =>
             {
-                gastronomy.Id = id.ToUpper();
-                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies");
+                gastronomy.Id = Helper.IdGenerator.CheckIdFromType<GastronomyLinked>(id);
+                gastronomy.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", false, true);
             });
         }
 
@@ -364,13 +371,15 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Gastronomy Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetGastronomyList))]
         [Authorize(Roles = "DataWriter,DataDelete,GastronomyManager,GastronomyDelete")]
         [HttpDelete, Route("Gastronomy/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<GastronomyLinked>(id);
+
                 return await DeleteData(id, "gastronomies");
             });
         }

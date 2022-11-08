@@ -17,6 +17,8 @@ using Serilog.Context;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using OdhApiCore.Filters;
+using ServiceReferenceLCS;
+using OdhApiCore.Controllers.api;
 
 namespace OdhApiCore.Controllers
 {
@@ -378,14 +380,17 @@ namespace OdhApiCore.Controllers
         /// <param name="activity">Activity Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
         [Authorize(Roles = "DataWriter,DataCreate,ActivityManager,ActivityCreate")]
         [HttpPost, Route("Activity")]
         public Task<IActionResult> Post([FromBody] LTSActivityLinked activity)
         {
             return DoAsyncReturn(async () =>
             {
-                activity.Id = !String.IsNullOrEmpty(activity.Id) ? activity.Id.ToUpper() : "noId";
-                return await UpsertData<LTSActivityLinked>(activity, "activities");
+                activity.Id = Helper.IdGenerator.GenerateIDFromType(activity);
+                activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<LTSActivityLinked>(activity, "activities", true);
             });
         }
 
@@ -396,14 +401,17 @@ namespace OdhApiCore.Controllers
         /// <param name="activity">Activity Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
         [Authorize(Roles = "DataWriter,DataModify,ActivityManager,ActivityModify")]
         [HttpPut, Route("Activity/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] LTSActivityLinked activity)
         {
             return DoAsyncReturn(async () =>
             {
-                activity.Id = id.ToUpper();
-                return await UpsertData<LTSActivityLinked>(activity, "activities");
+                activity.Id = Helper.IdGenerator.CheckIdFromType<LTSActivityLinked>(id);
+                activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                return await UpsertData<LTSActivityLinked>(activity, "activities", false, true);
             });
         }
 
@@ -413,13 +421,15 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Activity Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
         [Authorize(Roles = "DataWriter,DataDelete,ActivityManager,ActivityDelete")]
         [HttpDelete, Route("Activity/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<LTSActivityLinked>(id);
+
                 return await DeleteData(id, "activities");
             });
         }

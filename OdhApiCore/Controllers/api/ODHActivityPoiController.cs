@@ -385,6 +385,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactivitypoi">ODHActivityPoi Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         [Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
         [HttpPost, Route("ODHActivityPoi")]
         public Task<IActionResult> Post([FromBody] ODHActivityPoiLinked odhactivitypoi)
@@ -395,9 +396,7 @@ namespace OdhApiCore.Controllers.api
                 odhactivitypoi.Id = Helper.IdGenerator.GenerateIDFromType(odhactivitypoi);
 
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it","nl","cs","pl","ru","fr" });
-
-
-                //odhactivitypoi.Id = !String.IsNullOrEmpty(odhactivitypoi.Id) ? odhactivitypoi.Id.ToLower() : "noid";
+                
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true);
             });
         }
@@ -409,6 +408,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactivitypoi">ODHActivityPoi Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         [Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiModify,SmgPoiManager,SmgPoiModify")]
         [HttpPut, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHActivityPoiLinked odhactivitypoi)
@@ -419,8 +419,7 @@ namespace OdhApiCore.Controllers.api
                 Helper.IdGenerator.CheckIdFromType(odhactivitypoi);
 
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
-
-                //odhactivitypoi.Id = id.ToLower();
+                
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true);
             });
         }
@@ -431,6 +430,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ODHActivityPoi Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         [Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
         [HttpDelete, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Delete(string id)
@@ -443,7 +443,6 @@ namespace OdhApiCore.Controllers.api
                 return await DeleteData(id, "smgpois");
             });
         }
-
 
         #endregion
     }
