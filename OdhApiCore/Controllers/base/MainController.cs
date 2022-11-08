@@ -34,6 +34,7 @@ namespace OdhApiCore.Controllers
         //Solved with Redirect
         //[HttpGet, Route("api")]
         [HttpGet, Route("v1", Name = "TourismApi")]
+        [HttpGet, Route("v1/Metadata", Name = "TourismApi")]
         public async Task<IActionResult> Get()
         {
             //var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
