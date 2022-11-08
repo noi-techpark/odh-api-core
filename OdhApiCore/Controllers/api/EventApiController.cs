@@ -374,7 +374,7 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="odhevent">Event Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
         [Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
         [HttpPost, Route("Event")]
@@ -395,7 +395,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Event Id</param>
         /// <param name="odhevent">Event Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
         [Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify")]
         [HttpPut, Route("Event/{id}")]
@@ -415,7 +415,7 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Event Id</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
         [Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
         [HttpDelete, Route("Event/{id}")]

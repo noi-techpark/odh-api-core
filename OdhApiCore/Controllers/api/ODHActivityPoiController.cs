@@ -384,7 +384,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="odhactivitypoi">ODHActivityPoi Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         [Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
         [HttpPost, Route("ODHActivityPoi")]
@@ -407,7 +407,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ODHActivityPoi Id</param>
         /// <param name="odhactivitypoi">ODHActivityPoi Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         [Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiModify,SmgPoiManager,SmgPoiModify")]
         [HttpPut, Route("ODHActivityPoi/{id}")]
@@ -429,7 +429,7 @@ namespace OdhApiCore.Controllers.api
         /// </summary>
         /// <param name="id">ODHActivityPoi Id</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         [Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
         [HttpDelete, Route("ODHActivityPoi/{id}")]
