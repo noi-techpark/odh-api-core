@@ -57,7 +57,7 @@ namespace DataModel
     {
         public ODHData()
         {
-            GpsPoints = new Dictionary<string, GpsInfo>();
+            //GpsPoints = new Dictionary<string, GpsInfo>();
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
@@ -95,7 +95,12 @@ namespace DataModel
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
         //added
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+        public IDictionary<string, GpsInfo> GpsPoints {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary(true);
+            }
+        }
 
         public List<string>? PublishedOn { get; set; }
 
@@ -103,7 +108,82 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo DistanceInfo { get; set; }
+
+        public IDictionary<string, Detail> Detail { get; set; }
+
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+
+        public ImageGallery ImageGallery { get; set; }
     }
+
+
+    public class ODHVenue : IIdentifiable, IMetaData, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn
+    {
+        public ODHVenue()
+        {
+            GpsPoints = new Dictionary<string, GpsInfo>();
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
+        }
+
+        public string Self
+        {
+            get
+            {
+                return "Venue/" + Uri.EscapeDataString(this.Id);
+            }
+        }
+
+        public Metadata? _Meta { get; set; }
+
+        public LicenseInfo? LicenseInfo { get; set; }
+
+        public string? Id { get; set; }
+
+        public string? Shortname { get; set; }
+        
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }        
+
+        public bool Active { get; set; }
+        public bool ODHActive { get; set; }
+        //public ICollection<ODHTags> ODHTags { get; set; }
+
+        public ICollection<ODHTags> ODHTags
+        {
+            get
+            {
+                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+            }
+        }
+
+        public ICollection<string> SmgTags { get; set; }
+
+        public LocationInfoLinked LocationInfo { get; set; }
+        public ICollection<string> HasLanguage { get; set; }
+
+        public ICollection<VenueType> VenueCategory { get; set; }
+
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        public string Source { get; set; }
+        public string SyncSourceInterface { get; set; }
+
+        //New Details
+        public Nullable<int> RoomCount { get; set; }
+        public ICollection<VenueRoomDetails> RoomDetails { get; set; }
+
+        //added
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+
+        public ICollection<string>? PublishedOn { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
+    }
+
 
     public class VenueType
     {
