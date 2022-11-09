@@ -145,7 +145,6 @@ namespace DataModel
 
     public interface IVideoItemsAware
     {
-        //brauchts nix?
         IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }
 
@@ -328,8 +327,7 @@ namespace DataModel
     //Article
 
     public interface IAdditionalArticleInfosAware
-    {
-        //brauchts nix?
+    {        
         IDictionary<string, AdditionalArticleInfos> AdditionalArticleInfos { get; set; }
     }
 

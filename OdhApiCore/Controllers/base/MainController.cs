@@ -4,32 +4,31 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DataModel;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OdhApiCore.Controllers.api;
 using ServiceReferenceLCS;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    [ApiController]
-    public class MainController : ControllerBase
+    [EnableCors("CorsPolicy")]
+    public class MainController : OdhController
     {
-        private readonly IWebHostEnvironment env;
+        private static string absoluteUri = "";
         private readonly ISettings settings;
-        private static string absoluteUri = ""; 
 
-        public MainController(IWebHostEnvironment env, ISettings settings)
+        public MainController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory) : base(env, settings, logger, queryFactory)
         {
-            this.env = env;
-            this.settings = settings;            
+            this.settings = settings;
         }
 
-        public static string GetAbsoluteUri()
-        {
-            return absoluteUri;
-        }
+       
 
         [HttpGet, Route("v1", Name = "TourismApi")]
         [HttpGet, Route("v1/Metadata", Name = "TourismApiMetaData")]
@@ -44,6 +43,16 @@ namespace OdhApiCore.Controllers
             return Ok(result);
         }
 
+
+
+        #region POST PUT DELETE
+
+
+
+        #endregion
+
+        #region HELPERS
+
         private async Task<IEnumerable<TourismData>> GetMainApi()
         {
             List<TourismData> tourismdatalist = new List<TourismData>();
@@ -54,14 +63,28 @@ namespace OdhApiCore.Controllers
             {
                 string json = await r.ReadToEndAsync();
 
-                tourismdatalist = JsonConvert.DeserializeObject<List<TourismData>>(json);                
-            }     
-                        
+                tourismdatalist = JsonConvert.DeserializeObject<List<TourismData>>(json);
+            }
+
             return tourismdatalist;
         }
 
-        #region POST PUT DELETE
+        private static string GetAbsoluteUri()
+        {
+            return absoluteUri;
+        }
 
+        private async Task<ActionResult> WriteJsonToTable()
+        {
+            var jsondata = await GetMainApi();
+
+            foreach(var json in jsondata)
+            {
+                await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "metadata", true);
+            }
+
+            return Ok();
+        }
 
 
         #endregion

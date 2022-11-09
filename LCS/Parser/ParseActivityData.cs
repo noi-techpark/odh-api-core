@@ -634,12 +634,13 @@ namespace LCS
 
             //Multimedia Infos VIDEOITEMS   
 
-            List<VideoItems> videoitemlist = new List<VideoItems>();
-
+          
             if (parsedmultimediainfode != null)
             {
                 if (parsedmultimediainfode.VideoItems.VideoItem != null)
                 {
+                    List<VideoItems> videoitemlistde = new List<VideoItems>();
+
                     int i = 0;
 
                     foreach (var videoelement in parsedmultimediainfode.VideoItems.VideoItem)
@@ -664,11 +665,11 @@ namespace LCS
                         if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
                             videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
 
-                        videoitemlist.Add(videoItem);
+                        videoitemlistde.Add(videoItem);
                         i++;
                     }
 
-                    hike.VideoItems.TryAddOrUpdate("de", videoitemlist);
+                    hike.VideoItems.TryAddOrUpdate("de", videoitemlistde);
                 }
             }
 
@@ -677,6 +678,8 @@ namespace LCS
             {
                 if (parsedmultimediainfoit.VideoItems.VideoItem != null)
                 {
+                    List<VideoItems> videoitemlistit = new List<VideoItems>();
+
                     int i = 0;
 
                     foreach (var videoelement in parsedmultimediainfoit.VideoItems.VideoItem)
@@ -701,11 +704,11 @@ namespace LCS
                         if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
                             videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
 
-                        videoitemlist.Add(videoItem);
+                        videoitemlistit.Add(videoItem);
                         i++;
                     }
 
-                    hike.VideoItems.TryAddOrUpdate("it", videoitemlist);
+                    hike.VideoItems.TryAddOrUpdate("it", videoitemlistit);
                 }
             }
 
@@ -715,6 +718,8 @@ namespace LCS
 
                 if (parsedmultimediainfoen.VideoItems.VideoItem != null)
                 {
+                    List<VideoItems> videoitemlisten = new List<VideoItems>();
+
                     int i = 0;
 
                     foreach (var videoelement in parsedmultimediainfoen.VideoItems.VideoItem)
@@ -739,11 +744,11 @@ namespace LCS
                         if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
                             videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
 
-                        videoitemlist.Add(videoItem);
+                        videoitemlisten.Add(videoItem);
                         i++;
                     }
 
-                    hike.VideoItems.TryAddOrUpdate("en", videoitemlist);
+                    hike.VideoItems.TryAddOrUpdate("en", videoitemlisten);
                 }
             }
 
