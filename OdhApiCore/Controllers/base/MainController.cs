@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Controllers.api;
+using Schema.NET;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 
@@ -69,7 +70,7 @@ namespace OdhApiCore.Controllers
             return tourismdatalist;
         }
 
-        private static string GetAbsoluteUri()
+        public static string GetAbsoluteUri()
         {
             return absoluteUri;
         }
@@ -77,13 +78,32 @@ namespace OdhApiCore.Controllers
         private async Task<ActionResult> WriteJsonToTable()
         {
             var jsondata = await GetMainApi();
+            string table = "metadata";
+            int result = 0;
 
             foreach(var json in jsondata)
             {
-                await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "metadata", true);
+                //Check if data exists
+                var query = QueryFactory.Query(table)
+                          .Select("data")
+                          .Where("id", json.Id);
+
+                var queryresult = await query.GetAsync<TourismData>();
+
+                if (queryresult == null || queryresult.Count() == 0)
+                {                    
+                    result = await QueryFactory.Query(table)
+                       .InsertAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
+                }
+                else
+                {
+                    result = await QueryFactory.Query(table).Where("id", json.Id)
+                            .UpdateAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
+                }
+
             }
 
-            return Ok();
+            return Ok("Result: " + result);
         }
 
 
