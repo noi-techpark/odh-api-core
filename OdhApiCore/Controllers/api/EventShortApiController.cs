@@ -734,10 +734,10 @@ namespace OdhApiCore.Controllers.api
 
                     //Event Title IT EN
                     if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-                        eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+                        eventshort.EventTitle.TryAddOrUpdate("it",eventshort.EventDescriptionDE);
 
                     if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
-                        eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+                        eventshort.EventTitle.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
 
                     //TraceSource tracesource = new TraceSource("CustomData");
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
@@ -822,10 +822,10 @@ namespace OdhApiCore.Controllers.api
 
                     //Event Title IT EN
                     if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-                        eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+                        eventshort.EventTitle.TryAddOrUpdate("it", eventshort.EventDescriptionDE);
 
                     if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
-                        eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+                        eventshort.EventTitle.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
 
                     //TODO CHECK IF THIS WORKS     
                     //var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)

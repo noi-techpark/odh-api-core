@@ -1632,17 +1632,26 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextDE {
-            get; set;
-            //get
-            //{
-            //    return EventText.ContainsKey("de") ? EventText["de"] : null;
-            //}
+            get
+            {
+                return EventText.ContainsKey("de") ? EventText["de"] : null;
+            }
         }
 
         [SwaggerDeprecated("Deprecated, use EventText")]
-        public string? EventTextIT { get; set; }
+        public string? EventTextIT {
+            get
+            {
+                return EventText.ContainsKey("it") ? EventText["it"] : null;
+            }
+        }
         [SwaggerDeprecated("Deprecated, use EventText")]
-        public string? EventTextEN { get; set; }
+        public string? EventTextEN {
+            get
+            {
+                return EventText.ContainsKey("en") ? EventText["en"] : null;
+            }
+        }
 
      
 
@@ -1651,13 +1660,28 @@ namespace DataModel
         public string? EventDescription { get; set; }
         //Beschreibung DE
         [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionDE { get; set; }
+        public string? EventDescriptionDE {
+            get
+            {
+                return EventTitle.ContainsKey("de") ? EventTitle["de"] : "";
+            }
+        }
         //Beschreibung IT
         [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionIT { get; set; }
+        public string? EventDescriptionIT {
+            get
+            {
+                return EventTitle.ContainsKey("it") ? EventTitle["it"] : "";
+            }
+        }
         //Beschreibung EN
         [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionEN { get; set; }
+        public string? EventDescriptionEN {
+            get
+            {
+                return EventTitle.ContainsKey("en") ? EventTitle["en"] : "";
+            }
+        }
         //Hauptsaal/ort
         public string? AnchorVenue { get; set; }
         //Hauptsaal/ort soll für die Ausgabe verwendet werden
