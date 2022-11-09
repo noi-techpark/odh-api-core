@@ -75,12 +75,25 @@ namespace EBMS
                 if (!String.IsNullOrEmpty(myevent.EventDescriptionAlt3))
                     eventtosave.EventTitle.TryAddOrUpdate("en", myevent.EventDescriptionAlt3);
 
-                //Beschreibung DE
-                eventtosave.EventDescriptionDE = myevent.EventDescriptionAlt1 ?? "";
-                //Beschreibung IT
-                eventtosave.EventDescriptionIT = myevent.EventDescriptionAlt2 ?? "";
-                //Beschreibung EN
-                eventtosave.EventDescriptionEN = myevent.EventDescriptionAlt3 ?? "";
+
+                //Sonderfall
+                if(!String.IsNullOrEmpty(myevent.EventDescription) && !eventtosave.EventTitle.ContainsKey("de"))
+                {
+                    eventtosave.EventTitle.TryAddOrUpdate("de", myevent.EventDescription);
+                }
+                //Sonderfall
+                if (!String.IsNullOrEmpty(myevent.EventDescription) && !eventtosave.EventTitle.ContainsKey("en"))
+                {
+                    eventtosave.EventTitle.TryAddOrUpdate("en", myevent.EventDescription);
+                }
+
+
+                ////Beschreibung DE
+                //eventtosave.EventDescriptionDE = myevent.EventDescriptionAlt1 ?? "";
+                ////Beschreibung IT
+                //eventtosave.EventDescriptionIT = myevent.EventDescriptionAlt2 ?? "";
+                ////Beschreibung EN
+                //eventtosave.EventDescriptionEN = myevent.EventDescriptionAlt3 ?? "";
 
 
                 eventtosave.Shortname = eventtosave.EventDescription;

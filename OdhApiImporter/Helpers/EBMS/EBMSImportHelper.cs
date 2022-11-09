@@ -116,9 +116,9 @@ namespace OdhApiImporter.Helpers
                 if (changedonDB != eventshort.ChangedOn)
                 {
                     eventshort.ImageGallery = imagegallery;
-                    eventshort.EventTextDE = eventTextDE;
-                    eventshort.EventTextIT = eventTextIT;
-                    eventshort.EventTextEN = eventTextEN;
+                    //eventshort.EventTextDE = eventTextDE;
+                    //eventshort.EventTextIT = eventTextIT;
+                    //eventshort.EventTextEN = eventTextEN;
 
                     eventshort.EventText = eventText;
 
