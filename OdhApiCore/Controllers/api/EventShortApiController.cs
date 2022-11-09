@@ -741,7 +741,7 @@ namespace OdhApiCore.Controllers.api
 
                     //TraceSource tracesource = new TraceSource("CustomData");
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
-                   
+
                     string author = "unknown";
                     if (User.Identity != null && User.Identity.Name != null)
                         author = User.Identity.Name;

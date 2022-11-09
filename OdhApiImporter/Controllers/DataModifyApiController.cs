@@ -45,7 +45,7 @@ namespace OdhApiImporter.Controllers
         public async Task<IActionResult> ModifyEventShort(CancellationToken cancellationToken)
         {
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.UpdateAllEventShortstonewDataModel();
+            var objectscount = await customdataoperation.UpdateAllEventShortstonewDataModelV2();
 
             return Ok(new UpdateResult
             {

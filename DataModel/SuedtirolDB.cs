@@ -6,6 +6,7 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Converters;
 using DataModel.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DataModel
 {
@@ -1609,6 +1610,8 @@ namespace DataModel
         public EventShort()
         {
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            EventText = new Dictionary<string, string>();
+            EventTitle = new Dictionary<string, string>();
         }
 
         public LicenseInfo? LicenseInfo { get; set; }
@@ -1621,21 +1624,39 @@ namespace DataModel
 
         public int EventId { get; set; }
 
+        //Dictionary with EventTextDE + EventDescriptionDE infos
+        public IDictionary<string, string> EventText { get; set; }
+        public IDictionary<string, string> EventTitle { get; set; }
 
-        public string? EventTextDE { get; set; }
+
+
+        [SwaggerDeprecated("Deprecated, use EventText")]
+        public string? EventTextDE {
+            get; set;
+            //get
+            //{
+            //    return EventText.ContainsKey("de") ? EventText["de"] : null;
+            //}
+        }
+
+        [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextIT { get; set; }
+        [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextEN { get; set; }
 
-        //TODO ADD A Dictionary with EventTextDE + EventDescriptionDE infos
-
+     
 
         //Hauptbeschreibung
+        [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescription { get; set; }
         //Beschreibung DE
+        [SwaggerDeprecated("Deprecated, use EventTitle")] 
         public string? EventDescriptionDE { get; set; }
         //Beschreibung IT
+        [SwaggerDeprecated("Deprecated, use EventTitle")] 
         public string? EventDescriptionIT { get; set; }
         //Beschreibung EN
+        [SwaggerDeprecated("Deprecated, use EventTitle")] 
         public string? EventDescriptionEN { get; set; }
         //Hauptsaal/ort
         public string? AnchorVenue { get; set; }

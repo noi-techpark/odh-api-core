@@ -314,7 +314,7 @@ namespace DataModel
 
     public class DDVenueCodes
     {
-        [JsonProperty("id")]
+        //[JsonProperty("id")]
         public string Id { get; set; }
         public string Code { get; set; }
         public IDictionary<string, string> TypeDesc { get; set; }

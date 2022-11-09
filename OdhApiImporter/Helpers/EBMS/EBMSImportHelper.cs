@@ -88,6 +88,7 @@ namespace OdhApiImporter.Helpers
                 List<DocumentPDF>? eventdocument = new List<DocumentPDF>();
                 bool? soldout = false;
                 bool? externalorganizer = false;
+                IDictionary<string, string> eventText = new Dictionary<string,string>();
 
                 if (eventindb != null)
                 {
@@ -96,6 +97,9 @@ namespace OdhApiImporter.Helpers
                     eventTextDE = eventindb.EventTextDE;
                     eventTextIT = eventindb.EventTextIT;
                     eventTextEN = eventindb.EventTextEN;
+
+                    eventText = eventindb.EventText;
+
                     activeweb = eventindb.ActiveWeb;
                     activecommunity = eventindb.ActiveCommunityApp;
                     videourl = eventindb.VideoUrl;
@@ -115,6 +119,9 @@ namespace OdhApiImporter.Helpers
                     eventshort.EventTextDE = eventTextDE;
                     eventshort.EventTextIT = eventTextIT;
                     eventshort.EventTextEN = eventTextEN;
+
+                    eventshort.EventText = eventText;
+
                     eventshort.ActiveWeb = activeweb;
                     eventshort.ActiveCommunityApp = activecommunity;
                     eventshort.VideoUrl = videourl;
