@@ -733,15 +733,15 @@ namespace OdhApiCore.Controllers.api
                     }
 
                     //Event Title IT EN
-                    //if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-                    //    eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
+                        eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
 
-                    //if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
-                    //    eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
+                        eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
 
                     //TraceSource tracesource = new TraceSource("CustomData");
                     //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
-                   
+
                     string author = "unknown";
                     if (User.Identity != null && User.Identity.Name != null)
                         author = User.Identity.Name;
@@ -821,11 +821,11 @@ namespace OdhApiCore.Controllers.api
                     }
 
                     //Event Title IT EN
-                    //if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-                    //    eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
+                        eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
 
-                    //if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
-                    //    eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
+                    if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
+                        eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
 
                     //TODO CHECK IF THIS WORKS     
                     //var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)

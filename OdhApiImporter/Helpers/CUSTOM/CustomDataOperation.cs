@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Helper;
+using Microsoft.FSharp.Control;
 
 namespace OdhApiImporter.Helpers
 {
@@ -52,6 +53,50 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        public async Task<int> UpdateAllEventShortstonewDataModelV2()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                if (!String.IsNullOrEmpty(eventshort.EventTextDE))
+                    eventshort.EventText.TryAddOrUpdate("de", eventshort.EventTextDE);
+                //Beschreibung IT
+                if (!String.IsNullOrEmpty(eventshort.EventTextIT))
+                    eventshort.EventText.TryAddOrUpdate("it", eventshort.EventTextIT);
+                //Beschreibung EN
+                if (!String.IsNullOrEmpty(eventshort.EventTextEN))
+                    eventshort.EventText.TryAddOrUpdate("en", eventshort.EventTextEN);
+
+                if (!String.IsNullOrEmpty(eventshort.EventDescriptionDE))
+                    eventshort.EventTitle.TryAddOrUpdate("de", eventshort.EventDescriptionDE);
+                //Beschreibung IT
+                if (!String.IsNullOrEmpty(eventshort.EventDescriptionIT))
+                    eventshort.EventTitle.TryAddOrUpdate("it", eventshort.EventDescriptionIT);
+                //Beschreibung EN
+                if (!String.IsNullOrEmpty(eventshort.EventDescriptionEN))
+                    eventshort.EventTitle.TryAddOrUpdate("en", eventshort.EventDescriptionEN);
+
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
 
         public async Task<int> UpdateAllSTAVendingpoints()
         {

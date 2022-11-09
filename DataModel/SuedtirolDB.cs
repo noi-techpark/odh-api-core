@@ -1632,7 +1632,7 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextDE {
-            get;
+            get; set;
             //get
             //{
             //    return EventText.ContainsKey("de") ? EventText["de"] : null;
@@ -1640,9 +1640,9 @@ namespace DataModel
         }
 
         [SwaggerDeprecated("Deprecated, use EventText")]
-        public string? EventTextIT { get; }
+        public string? EventTextIT { get; set; }
         [SwaggerDeprecated("Deprecated, use EventText")]
-        public string? EventTextEN { get; }
+        public string? EventTextEN { get; set; }
 
      
 
@@ -1651,13 +1651,13 @@ namespace DataModel
         public string? EventDescription { get; set; }
         //Beschreibung DE
         [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionDE { get; }
+        public string? EventDescriptionDE { get; set; }
         //Beschreibung IT
         [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionIT { get;  }
+        public string? EventDescriptionIT { get; set; }
         //Beschreibung EN
         [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionEN { get;  }
+        public string? EventDescriptionEN { get; set; }
         //Hauptsaal/ort
         public string? AnchorVenue { get; set; }
         //Hauptsaal/ort soll für die Ausgabe verwendet werden

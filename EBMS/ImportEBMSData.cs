@@ -76,11 +76,11 @@ namespace EBMS
                     eventtosave.EventTitle.TryAddOrUpdate("en", myevent.EventDescriptionAlt3);
 
                 //Beschreibung DE
-                //eventtosave.EventDescriptionDE = myevent.EventDescriptionAlt1 ?? "";
-                ////Beschreibung IT
-                //eventtosave.EventDescriptionIT = myevent.EventDescriptionAlt2 ?? "";
-                ////Beschreibung EN
-                //eventtosave.EventDescriptionEN = myevent.EventDescriptionAlt3 ?? "";
+                eventtosave.EventDescriptionDE = myevent.EventDescriptionAlt1 ?? "";
+                //Beschreibung IT
+                eventtosave.EventDescriptionIT = myevent.EventDescriptionAlt2 ?? "";
+                //Beschreibung EN
+                eventtosave.EventDescriptionEN = myevent.EventDescriptionAlt3 ?? "";
 
 
                 eventtosave.Shortname = eventtosave.EventDescription;
