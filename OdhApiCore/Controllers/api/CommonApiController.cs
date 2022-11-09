@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Responses;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -1137,8 +1138,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<MetaRegionLinked>(data, "metaregions");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<MetaRegionLinked>(data, "metaregions", true);
             });
         }
 
@@ -1154,8 +1155,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<RegionLinked>(data, "regions");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<RegionLinked>(data, "regions", true);
             });
         }
 
@@ -1171,8 +1172,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas", true);
             });
         }
 
@@ -1188,8 +1189,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<TourismvereinLinked>(data, "tvs");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<TourismvereinLinked>(data, "tvs", true);
             });
         }
 
@@ -1205,8 +1206,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<MunicipalityLinked>(data, "municipalities");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<MunicipalityLinked>(data, "municipalities", true);
             });
         }
 
@@ -1222,8 +1223,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<DistrictLinked>(data, "districts");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<DistrictLinked>(data, "districts", true);
             });
         }
 
@@ -1239,8 +1240,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<AreaLinked>(data, "areas");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<AreaLinked>(data, "areas", true);
             });
         }
 
@@ -1256,8 +1257,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<SkiRegionLinked>(data, "skiregions");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<SkiRegionLinked>(data, "skiregions", true);
             });
         }
 
@@ -1273,8 +1274,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<SkiAreaLinked>(data, "skiareas");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<SkiAreaLinked>(data, "skiareas", true);
             });
         }
 
@@ -1290,8 +1291,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = !String.IsNullOrEmpty(data.Id) ? data.Id.ToUpper() : "noId";
-                return await UpsertData<WineLinked>(data, "wines");
+                data.Id = Helper.IdGenerator.GenerateIDFromType(data);
+                return await UpsertData<WineLinked>(data, "wines", true);
             });
         }
 
@@ -1307,9 +1308,9 @@ namespace OdhApiCore.Controllers.api
         public Task<IActionResult> Put(string id, [FromBody] MetaRegionLinked data)
         {
             return DoAsyncReturn(async () =>
-            {
-                data.Id = id.ToUpper();
-                return await UpsertData<MetaRegionLinked>(data, "metaregions");
+            {                
+                data.Id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
+                return await UpsertData<MetaRegionLinked>(data, "metaregions", false, true);
             });
         }
 
@@ -1326,8 +1327,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<RegionLinked>(data, "regions");
+                data.Id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
+                return await UpsertData<RegionLinked>(data, "regions", false, true);
             });
         }
 
@@ -1344,8 +1345,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas");
+                data.Id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
+                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas", false, true);
             });
         }
 
@@ -1362,8 +1363,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<TourismvereinLinked>(data, "tvs");
+                data.Id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
+                return await UpsertData<TourismvereinLinked>(data, "tvs", false, true);
             });
         }
 
@@ -1380,8 +1381,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<MunicipalityLinked>(data, "municipalities");
+                data.Id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
+                return await UpsertData<MunicipalityLinked>(data, "municipalities", false, true);
             });
         }
 
@@ -1398,8 +1399,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<DistrictLinked>(data, "districts");
+                data.Id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
+                return await UpsertData<DistrictLinked>(data, "districts", false, true);
             });
         }
 
@@ -1416,8 +1417,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<AreaLinked>(data, "areas");
+                data.Id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
+                return await UpsertData<AreaLinked>(data, "areas", false, true);
             });
         }
 
@@ -1434,8 +1435,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<SkiRegionLinked>(data, "skiregions");
+                data.Id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
+                return await UpsertData<SkiRegionLinked>(data, "skiregions", false, true);
             });
         }
 
@@ -1452,8 +1453,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<SkiAreaLinked>(data, "skiareas");
+                data.Id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
+                return await UpsertData<SkiAreaLinked>(data, "skiareas", false, true);
             });
         }
 
@@ -1470,8 +1471,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                data.Id = id.ToUpper();
-                return await UpsertData<WineLinked>(data, "wines");
+                data.Id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
+                return await UpsertData<WineLinked>(data, "wines", false, true);
             });
         }
 
@@ -1487,7 +1488,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
                 return await DeleteData(id, "metaregions");
             });
         }
@@ -1504,7 +1505,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
                 return await DeleteData(id, "regions");
             });
         }
@@ -1521,7 +1522,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
                 return await DeleteData(id, "experienceareas");
             });
         }
@@ -1538,7 +1539,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
                 return await DeleteData(id, "tvs");
             });
         }
@@ -1555,7 +1556,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
                 return await DeleteData(id, "municipalities");
             });
         }
@@ -1572,7 +1573,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
                 return await DeleteData(id, "districts");
             });
         }
@@ -1589,7 +1590,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
                 return await DeleteData(id, "areas");
             });
         }
@@ -1606,7 +1607,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
                 return await DeleteData(id, "skiregions");
             });
         }
@@ -1623,7 +1624,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
                 return await DeleteData(id, "skiareas");
             });
         }
@@ -1640,7 +1641,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
                 return await DeleteData(id, "wines");
             });
         }

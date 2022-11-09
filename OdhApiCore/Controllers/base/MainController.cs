@@ -4,36 +4,35 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DataModel;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OdhApiCore.Controllers.api;
+using Schema.NET;
 using ServiceReferenceLCS;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    [ApiController]
-    public class MainController : ControllerBase
+    [EnableCors("CorsPolicy")]
+    public class MainController : OdhController
     {
-        private readonly IWebHostEnvironment env;
+        private static string absoluteUri = "";
         private readonly ISettings settings;
-        private static string absoluteUri = ""; 
 
-        public MainController(IWebHostEnvironment env, ISettings settings)
+        public MainController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory) : base(env, settings, logger, queryFactory)
         {
-            this.env = env;
-            this.settings = settings;            
+            this.settings = settings;
         }
 
-        public static string GetAbsoluteUri()
-        {
-            return absoluteUri;
-        }
+       
 
-        //Solved with Redirect
-        //[HttpGet, Route("api")]
         [HttpGet, Route("v1", Name = "TourismApi")]
+        [HttpGet, Route("v1/Metadata", Name = "TourismApiMetaData")]
         public async Task<IActionResult> Get()
         {
             //var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
@@ -45,6 +44,16 @@ namespace OdhApiCore.Controllers
             return Ok(result);
         }
 
+
+
+        #region POST PUT DELETE
+
+
+
+        #endregion
+
+        #region HELPERS
+
         private async Task<IEnumerable<TourismData>> GetMainApi()
         {
             List<TourismData> tourismdatalist = new List<TourismData>();
@@ -55,11 +64,50 @@ namespace OdhApiCore.Controllers
             {
                 string json = await r.ReadToEndAsync();
 
-                tourismdatalist = JsonConvert.DeserializeObject<List<TourismData>>(json);                
-            }     
-                        
+                tourismdatalist = JsonConvert.DeserializeObject<List<TourismData>>(json);
+            }
+
             return tourismdatalist;
         }
+
+        public static string GetAbsoluteUri()
+        {
+            return absoluteUri;
+        }
+
+        private async Task<ActionResult> WriteJsonToTable()
+        {
+            var jsondata = await GetMainApi();
+            string table = "metadata";
+            int result = 0;
+
+            foreach(var json in jsondata)
+            {
+                //Check if data exists
+                var query = QueryFactory.Query(table)
+                          .Select("data")
+                          .Where("id", json.Id);
+
+                var queryresult = await query.GetAsync<TourismData>();
+
+                if (queryresult == null || queryresult.Count() == 0)
+                {                    
+                    result = await QueryFactory.Query(table)
+                       .InsertAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
+                }
+                else
+                {
+                    result = await QueryFactory.Query(table).Where("id", json.Id)
+                            .UpdateAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
+                }
+
+            }
+
+            return Ok("Result: " + result);
+        }
+
+
+        #endregion
     }
 
     public class TourismData
@@ -104,6 +152,6 @@ namespace OdhApiCore.Controllers
 
         public bool Deprecated { get; set; }
 
-        public bool SingleDataset { get; set; }
+        public bool SingleDataset { get; set; }        
     }
 }

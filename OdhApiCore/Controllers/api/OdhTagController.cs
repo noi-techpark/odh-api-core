@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -219,14 +220,16 @@ namespace OdhApiCore.Controllers
         /// <param name="odhtag">ODHTag Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
         [Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
         [HttpPost, Route("ODHTag")]
         public Task<IActionResult> Post([FromBody] ODHTagLinked odhtag)
         {
             return DoAsyncReturn(async () =>
             {
-                odhtag.Id = !String.IsNullOrEmpty(odhtag.Id) ? odhtag.Id.ToUpper() : "noId";
-                return await UpsertData<ODHTagLinked>(odhtag, "smgtags");
+                odhtag.Id = Helper.IdGenerator.GenerateIDFromType(odhtag);
+
+                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", true);
             });
         }
 
@@ -237,14 +240,16 @@ namespace OdhApiCore.Controllers
         /// <param name="odhtag">ODHTag Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
         [Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify")]
         [HttpPut, Route("ODHTag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHTagLinked odhtag)
         {
             return DoAsyncReturn(async () =>
             {
-                odhtag.Id = id.ToUpper();
-                return await UpsertData<ODHTagLinked>(odhtag, "smgtags");
+                odhtag.Id = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
+
+                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", false, true);
             });
         }
 
@@ -254,13 +259,15 @@ namespace OdhApiCore.Controllers
         /// <param name="id">ODHTag Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
+        [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
         [Authorize(Roles = "DataWriter,DataDelete,ODHTagManager,ODHTagDelete")]
         [HttpDelete, Route("ODHTag/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
+
                 return await DeleteData(id, "smgtags");
             });
         }

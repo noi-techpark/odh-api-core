@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -205,14 +206,14 @@ namespace OdhApiCore.Controllers
         {
             //TODO IGNORE Fields
             //AreaIds, LicenseInfo, SmgTags, WebcamAssignedOn, Meta
-
+            //TO check if this is needed
             webcam.LicenseInfo = LicenseHelper.GetLicenseforWebcam(webcam);
-            webcam._Meta = MetadataHelper.GetMetadataforWebcam(webcam);
-
+            
             return DoAsyncReturn(async () =>
             {
-                webcam.Id = !String.IsNullOrEmpty(webcam.Id) ? webcam.Id.ToUpper() : "noId";
-                return await UpsertData<WebcamInfoLinked>(webcam, "webcams");
+                webcam.Id = Helper.IdGenerator.GenerateIDFromType(webcam);
+
+                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", true);
             });
         }
 
@@ -229,12 +230,12 @@ namespace OdhApiCore.Controllers
         public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
         {
             webcam.LicenseInfo = LicenseHelper.GetLicenseforWebcam(webcam);
-            webcam._Meta = MetadataHelper.GetMetadataforWebcam(webcam);
-
+            
             return DoAsyncReturn(async () =>
             {
-                webcam.Id = id.ToUpper();
-                return await UpsertData<WebcamInfoLinked>(webcam, "webcams");
+                webcam.Id = Helper.IdGenerator.CheckIdFromType<WebcamInfoLinked>(id);
+
+                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", false, true);
             });
         }
 
@@ -253,7 +254,8 @@ namespace OdhApiCore.Controllers
 
             return DoAsyncReturn(async () =>
             {
-                id = id.ToUpper();
+                id = Helper.IdGenerator.CheckIdFromType<WebcamInfoLinked>(id);
+
                 return await DeleteData(id, "webcams");
             });
         }

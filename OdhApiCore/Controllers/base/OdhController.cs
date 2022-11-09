@@ -197,6 +197,8 @@ namespace OdhApiCore.Controllers
 
         protected async Task<IActionResult> UpsertData<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
+            //TODO Username and provenance of the insert/edit
+
             return Ok(await QueryFactory.UpsertData<T>(data, table, errorwhendataexists, errorwhendataisnew));          
         }
 

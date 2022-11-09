@@ -333,15 +333,15 @@ namespace OdhApiCore
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { 
-                    Title = "OdhApi Tourism .Net Core", 
+                    Title = "Open Data Hub Tourism Api", 
                     Version = "v1",
-                    Description = "ODH Tourism Api based on .Net Core with PostgreSQL",
+                    Description = "Open Data Hub Tourism Api based on .Net Core with PostgreSQL",
                     TermsOfService = new System.Uri("https://opendatahub.readthedocs.io/en/latest/"),
                     Contact = new OpenApiContact
                     {
                         Name = "Open Data Hub Team",
-                        Email = "help@opendatahub.bz.it",
-                        Url = new System.Uri("https://opendatahub.bz.it/"),
+                        Email = "help@opendatahub.com",
+                        Url = new System.Uri("https://opendatahub.com/"),
                     },
                 });                               
                 c.MapType<LegacyBool>(() => new OpenApiSchema
@@ -455,7 +455,7 @@ namespace OdhApiCore
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ODH Tourism API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Open Data Hub Tourism API V1");
                 c.RoutePrefix = "swagger";
                 c.OAuthClientSecret("");
                 c.OAuthRealm("noi");
