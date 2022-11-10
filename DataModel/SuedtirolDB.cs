@@ -1026,6 +1026,70 @@ namespace DataModel
 
     #endregion
 
+    #region Venues
+
+    public class Venue : IIdentifiable, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware
+    {
+        public Venue()
+        {
+            //Mapping New
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
+        }
+             
+        public LicenseInfo? LicenseInfo { get; set; }
+
+        public string? Id { get; set; }
+
+        public string? Shortname { get; set; }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        public bool Active { get; set; }
+        public bool ODHActive { get; set; }
+        
+        public ICollection<string> SmgTags { get; set; }
+
+        public LocationInfo LocationInfo { get; set; }
+        public ICollection<string> HasLanguage { get; set; }
+
+        public ICollection<VenueType> VenueCategory { get; set; }
+
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        public string Source { get; set; }
+        public string SyncSourceInterface { get; set; }
+
+        //New Details
+        public Nullable<int> RoomCount { get; set; }
+        public ICollection<VenueRoomDetails> RoomDetails { get; set; }
+
+        //added
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary(true);
+            }
+        }
+
+        public IDictionary<string, Detail> Detail { get; set; }
+
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+
+        public ICollection<ImageGallery> ImageGallery { get; set; }
+
+        public ICollection<string>? PublishedOn { get; set; }
+
+        //New Mapping
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo DistanceInfo { get; set; }
+    }
+
+
+    #endregion
+
     #region Articles    
 
     public class Article : ArticleBaseInfos

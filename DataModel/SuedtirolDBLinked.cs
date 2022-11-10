@@ -8,7 +8,7 @@ namespace DataModel
     /// <summary>
     /// This class contains the classes used by Open Data Hub PG Instance with linked data
     /// </summary>
-    #region Linked Classes
+    #region Linked Sub Classes
 
     public class AccoFeatureLinked : AccoFeature
     {
@@ -275,6 +275,10 @@ namespace DataModel
         public string Self { get; set; }
     }
 
+    #endregion
+
+    #region Linked Main Classes
+
     public class GastronomyLinked : Gastronomy, IMetaData
     {
         public Metadata _Meta { get; set; }
@@ -414,7 +418,7 @@ namespace DataModel
         }
 
         //Overwrites The Features
-        public new ICollection<AccoFeatureLinked>? Features { get; set; }       
+        public new ICollection<AccoFeatureLinked>? Features { get; set; }
     }
 
     public class EventPG : Event
@@ -496,6 +500,30 @@ namespace DataModel
         public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
+    public class VenueLinked : Venue, IMetaData
+    {
+        public string Self
+        {
+            get
+            {
+                return "Venue/" + Uri.EscapeDataString(this.Id);
+            }
+        }
+
+        public Metadata? _Meta { get; set; }
+
+        public ICollection<ODHTags> ODHTags
+        {
+            get
+            {
+                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+            }
+        }
+
+        //Overwrites The LocationInfo
+        public new LocationInfoLinked? LocationInfo { get; set; }
+    }
+
     public class PackageLinked : Package, IMetaData
     {
         public Metadata _Meta { get; set; }
@@ -565,7 +593,7 @@ namespace DataModel
                 returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.Type, Type = "Type" });
                 returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.SubType, Type = "SubType" });
                 if (!String.IsNullOrEmpty(this.PoiType))
-                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self =ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.PoiType, Type = "PoiType" });
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.PoiType, Type = "PoiType" });
 
                 return returnlist;
             }
@@ -588,7 +616,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }        
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class LTSPoiLinked : LTSPoi, IMetaData
@@ -646,7 +674,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }        
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class LTSActivityLinked : LTSActivity, IMetaData
@@ -704,7 +732,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }        
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     public class ArticlesLinked : ArticleBaseInfos, IMetaData
@@ -1220,7 +1248,7 @@ namespace DataModel
             {
                 return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
             }
-        }       
+        }
     }
 
     public class MeasuringpointLinked : Measuringpoint, IMetaData
@@ -1252,7 +1280,7 @@ namespace DataModel
         }
 
         //Overwrites The LocationInfo
-        public new LocationInfoLinked? LocationInfo { get; set; }       
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class WineLinked : Wine, IMetaData
@@ -1338,7 +1366,7 @@ namespace DataModel
 
     public class ODHTagLinked : SmgTags, IMetaData
     {
-        public Metadata _Meta { get; set; }        
+        public Metadata _Meta { get; set; }
 
         public string Self
         {
@@ -1376,8 +1404,6 @@ namespace DataModel
     //GastronomyTypes
     //VenueTypes
     //Location??
-
-
 
     #endregion
 
