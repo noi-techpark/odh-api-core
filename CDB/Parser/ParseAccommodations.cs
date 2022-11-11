@@ -433,6 +433,10 @@ namespace CDB.Parser
                             mainimagede.ImageTags = imagetaglist;
                         }
 
+                        //TODO Add Image ID from URL
+                       
+
+
                         imagegallerylist.Add(mainimagede);
                     }
                     
