@@ -47,7 +47,8 @@ namespace Helper
                 MeasuringpointLinked ml => GetMetadataforMeasuringpoint(ml),
                 WebcamInfoLinked wil => GetMetadataforWebcam(wil),
                 ArticlesLinked al => GetMetadataforArticle(al),
-                DDVenue ddv => GetMetadataforVenue(ddv),
+                DDVenue ddv => GetMetadataforDDVenue(ddv),
+                VenueLinked vl => GetMetadataforVenue(vl),
                 EventShortLinked esl => GetMetadataforEventShort(esl),
                 ExperienceAreaLinked eal => GetMetadataforExperienceArea(eal),
                 MetaRegionLinked mrl => GetMetadataforMetaRegion(mrl),
@@ -200,13 +201,22 @@ namespace Helper
             return GetMetadata(data, sourcemeta, data.LastChange, false);
         }
 
-        public static Metadata GetMetadataforVenue(DDVenue data)
+        public static Metadata GetMetadataforDDVenue(DDVenue data)
         {
             bool reduced = false;
             if (data._Meta != null)
                 reduced = (bool)data._Meta.Reduced;
 
             return data._Meta = GetMetadata(data, "lts", data.meta?.lastUpdate, reduced);
+        }
+
+        public static Metadata GetMetadataforVenue(VenueLinked data)
+        {
+            bool reduced = false;
+            if (data._Meta != null)
+                reduced = (bool)data._Meta.Reduced;
+
+            return data._Meta = GetMetadata(data, "lts", data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforEventShort(EventShortLinked data)

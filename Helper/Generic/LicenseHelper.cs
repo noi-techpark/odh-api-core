@@ -255,6 +255,21 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
+        public static LicenseInfo GetLicenseforVenue(Venue data)
+        {
+            var isopendata = false;
+            var licensetype = "Closed";
+            var licenseholder = @"https://www.lts.it";
+
+            if (data.SmgTags is { } && !data.SmgTags.Contains("lts/visi_unpublishedOnODH") && data.SmgTags.Contains("lts/visi_publishedOnODH"))
+            {
+                isopendata = true;
+                licensetype = "CC0";
+            }
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
         public static LicenseInfo GetLicenseforEventShort(EventShort data)
         {
             var isopendata = true;

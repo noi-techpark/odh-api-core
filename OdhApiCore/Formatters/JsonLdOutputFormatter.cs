@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Formatters
@@ -23,7 +27,7 @@ namespace OdhApiCore.Formatters
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
-        private object? Transform(PathString path, JsonRaw jsonRaw)
+        private List<object>? Transform(PathString path, JsonRaw jsonRaw)
         {
             //TODO: extract language
 
@@ -99,13 +103,23 @@ namespace OdhApiCore.Formatters
                 var transformed = Transform(context.HttpContext.Request.Path, jsonRaw);
                 if (transformed != null)
                 {
-                    var jsonLD = JsonConvert.SerializeObject(transformed, Newtonsoft.Json.Formatting.None,
-                                    new JsonSerializerSettings
-                                    {
-                                        DefaultValueHandling = DefaultValueHandling.Ignore,
-                                        NullValueHandling = NullValueHandling.Ignore
-                                    });
+                    var jsonLD = "";
+                    var options = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault };
+
+                    if (transformed.Count == 1)
+                    {
+                        jsonLD = System.Text.Json.JsonSerializer.Serialize(transformed.FirstOrDefault(), options); //TODO REMOVE NULL VALUES
+                            //JsonConvert.SerializeObject(transformed.FirstOrDefault(), Newtonsoft.Json.Formatting.None, jsonsettings);
+                                    
+                    }
+                    else if (transformed.Count > 1)
+                    {
+                        jsonLD = System.Text.Json.JsonSerializer.Serialize(transformed, options);
+                    }
+
+                    
                     await context.HttpContext.Response.WriteAsync(jsonLD);
+                    //await context.HttpContext.Response.WriteAsync(transformed);
                 }
                 else
                 {

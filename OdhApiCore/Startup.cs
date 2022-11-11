@@ -272,7 +272,7 @@ namespace OdhApiCore
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());                
                 //{
                 //    CamelCaseText = true
                 //});

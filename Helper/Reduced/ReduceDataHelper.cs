@@ -457,7 +457,7 @@ namespace Helper
                 reduced.odhdata.HasLanguage = venue.odhdata.HasLanguage;
                 reduced.odhdata.Source = venue.odhdata.Source;
                 reduced.odhdata.GpsInfo = ReducedDataHelper.ReduceGpsInfo(venue.odhdata.GpsInfo);
-                reduced.odhdata.GpsPoints = venue.odhdata.GpsPoints;
+                //reduced.odhdata.GpsPoints = venue.odhdata.GpsPoints;
                 reduced.odhdata.RoomCount = venue.odhdata.RoomCount;
                 reduced.odhdata.SyncSourceInterface = venue.odhdata.SyncSourceInterface;
                 reduced.odhdata.VenueCategory = venue.odhdata.VenueCategory;

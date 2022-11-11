@@ -57,7 +57,7 @@ namespace DataModel
     {
         public ODHData()
         {
-            GpsPoints = new Dictionary<string, GpsInfo>();
+            //GpsPoints = new Dictionary<string, GpsInfo>();
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
@@ -95,7 +95,12 @@ namespace DataModel
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
         //added
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
+        public IDictionary<string, GpsInfo> GpsPoints {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary(true);
+            }
+        }
 
         public List<string>? PublishedOn { get; set; }
 
@@ -103,7 +108,13 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo DistanceInfo { get; set; }
-    }
+
+        public IDictionary<string, Detail> Detail { get; set; }
+
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+
+        public ICollection<ImageGallery> ImageGallery { get; set; }
+    }   
 
     public class VenueType
     {
