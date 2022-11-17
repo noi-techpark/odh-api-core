@@ -313,7 +313,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop16);
             }
 
-            //new hasonlineshop
+            //hasonlineshop
             if (companydata.Element("hasonlineshop") != null)
             {
                 PoiProperty myprop17 = new PoiProperty();
@@ -323,7 +323,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop17);
             }
 
-            //new hasdeliveryservice
+            //hasdeliveryservice
             if (companydata.Element("hasdeliveryservice") != null)
             {
                 PoiProperty myprop18 = new PoiProperty();
@@ -333,7 +333,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop18);
             }
 
-            //new onlineshopurl
+            //onlineshopurl
             if (companydata.Element("onlineshopurl") != null)
             {
                 PoiProperty myprop19 = new PoiProperty();
@@ -342,7 +342,7 @@ namespace SuedtirolWein.Parser
                 myprop19.Value = companydata.Element("onlineshopurl").Value;
                 mypropertylist.Add(myprop19);
             }
-            // new deliveryserviceurl
+            //deliveryserviceurl
             if (companydata.Element("deliveryserviceurl") != null)
             {
                 PoiProperty myprop20 = new PoiProperty();
@@ -351,7 +351,7 @@ namespace SuedtirolWein.Parser
                 myprop20.Value = companydata.Element("deliveryserviceurl").Value;
                 mypropertylist.Add(myprop20);
             }
-            //new h1
+            //h1
             if (companydata.Element("h1") != null)
             {
                 PoiProperty myprop21 = new PoiProperty();
@@ -360,7 +360,7 @@ namespace SuedtirolWein.Parser
                 myprop21.Value = companydata.Element("h1").Value;
                 mypropertylist.Add(myprop21);
             }
-            //new h2
+            //h2
             if (companydata.Element("h2") != null)
             {
                 PoiProperty myprop22 = new PoiProperty();
@@ -370,7 +370,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop22);
             }
        
-            //new quote
+            //quote
             if (companydata.Element("quote") != null)
             {
                 PoiProperty myprop23 = new PoiProperty();
@@ -380,7 +380,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop23);
             }
 
-            //new quote author
+            //quote author
             if (companydata.Element("quoteauthor") != null)
             {
                 PoiProperty myprop24 = new PoiProperty();
@@ -390,7 +390,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop24);
             }
 
-            //new descriptionsparklingwineproducer
+            //descriptionsparklingwineproducer
             if (companydata.Element("descriptionsparklingwineproducer") != null)
             {
                 PoiProperty myprop25 = new PoiProperty();
@@ -400,7 +400,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop25);
             }
 
-            //new h1sparklingwineproducer
+            //h1sparklingwineproducer
             if (companydata.Element("h1sparklingwineproducer") != null)
             {
                 PoiProperty myprop26 = new PoiProperty();
@@ -410,7 +410,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop26);
             }
 
-            //new h2sparklingwineproducer
+            //h2sparklingwineproducer
             if (companydata.Element("h2sparklingwineproducer") != null)
             {
                 PoiProperty myprop27 = new PoiProperty();
@@ -420,7 +420,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop27);
             }
 
-            //new <imagesparklingwineproducer>
+            //<imagesparklingwineproducer>
             if (companydata.Element("imagesparklingwineproducer") != null)
             {
                 PoiProperty myprop28 = new PoiProperty();
@@ -430,7 +430,7 @@ namespace SuedtirolWein.Parser
                 mypropertylist.Add(myprop28);
             }
 
-            //new <hasdirectsales>
+            //<hasdirectsales>
             if (companydata.Element("hasdirectsales") != null)
             {
                 PoiProperty myprop29 = new PoiProperty();
@@ -438,6 +438,16 @@ namespace SuedtirolWein.Parser
 
                 myprop29.Value = companydata.Element("hasdirectsales").Value;
                 mypropertylist.Add(myprop29);
+            }
+
+            //isskyalpspartner
+            if (companydata.Element("isskyalpspartner") != null)
+            {
+                PoiProperty myprop30 = new PoiProperty();
+                myprop30.Name = "isskyalpspartner";
+
+                myprop30.Value = companydata.Element("isskyalpspartner").Value;
+                mypropertylist.Add(myprop30);
             }
 
             mywinecompany.PoiProperty.TryAddOrUpdate(language, mypropertylist);
