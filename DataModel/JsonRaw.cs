@@ -53,5 +53,5 @@ namespace DataModel
         }
 
         public static explicit operator JsonRaw(string x) => new JsonRaw(x);
-    }
+    }    
 }
