@@ -390,7 +390,7 @@ namespace Helper
                 => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
                 //"measuringpoint" => PostgresSQLWhereBuilder.,
                 "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
-                "venue" => PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor,
+                "venue" => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
                 //"eventshort" => "eventeuracnoi",           
                 //"area" => "areas",
                 //"wineaward" => "wines",
@@ -429,11 +429,10 @@ namespace Helper
                 "accommodation" => $"AccoDetail.{language}.Name",
                 "accommodationroom" => $"AccoRoomDetail.{language}.Name",
                 "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
-                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
+                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea" or "venue"
                 => $"Detail.{language}.Title",
                 "measuringpoint" => $"Shortname",
-                "webcam" => $"Webcamname.{language}",
-                "venue" => $"attributes.name.{PostgresSQLWhereBuilder.TransformLanguagetoDDStandard(language)}",
+                "webcam" => $"Webcamname.{language}",                
                 //"eventshort" => "eventeuracnoi",           
                 //"area" => "areas",
                 //"wineaward" => "wines",

@@ -301,7 +301,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("venuetypes")
                         .SelectRaw("data")
                         .When(FilterClosedData, q => q.FilterClosedData())
-                        .SearchFilter(PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor(language), searchfilter)
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 

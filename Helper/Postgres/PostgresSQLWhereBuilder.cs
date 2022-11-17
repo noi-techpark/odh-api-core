@@ -48,20 +48,20 @@ namespace Helper
             ).ToArray();
 
         //TODO TRANSFORM LANGUAGE to deu,eng,ita
-        public static string[] VenueTitleFieldsToSearchFor(string? language) =>
-           _languagesToSearchFor.Where(lang =>
-               language != null ? lang == language : true
-           ).Select(lang =>
-               $"attributes.name.{TransformLanguagetoDDStandard(lang)}"
-           ).ToArray();     
+        //public static string[] VenueTitleFieldsToSearchFor(string? language) =>
+        //   _languagesToSearchFor.Where(lang =>
+        //       language != null ? lang == language : true
+        //   ).Select(lang =>
+        //       $"attributes.name.{TransformLanguagetoDDStandard(lang)}"
+        //   ).ToArray();     
 
-        public static string TransformLanguagetoDDStandard(string language) => language switch
-        {
-            "de" =>  "deu",
-            "it" =>  "ita",
-            "en" =>  "eng",
-            _ => language
-        };
+        //public static string TransformLanguagetoDDStandard(string language) => language switch
+        //{
+        //    "de" =>  "deu",
+        //    "it" =>  "ita",
+        //    "en" =>  "eng",
+        //    _ => language
+        //};
 
 
         //TODO search name example
@@ -677,10 +677,10 @@ namespace Helper
             //TODO
             return query
                 .IdUpperFilter(idlist)
-                .VenueLocFilterDistrictFilter(districtlist)
-                .VenueLocFilterMunicipalityFilter(municipalitylist)
-                .VenueLocFilterTvsFilter(tourismvereinlist)
-                .VenueLocFilterRegionFilter(regionlist)
+                .LocFilterDistrictFilter(districtlist) //.VenueLocFilterDistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist) //.VenueLocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist) //.VenueLocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)    //.VenueLocFilterRegionFilter(regionlist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.VenueActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.VenueODHActiveFilter(smgactivefilter)
                 .VenueCategoryFilter(categorylist)
@@ -694,7 +694,7 @@ namespace Helper
                 //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
                 .PublishedOnFilter(publishedonlist)
-                .SearchFilter(VenueTitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedDataVenues());
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);

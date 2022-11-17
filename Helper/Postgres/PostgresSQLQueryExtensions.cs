@@ -813,103 +813,103 @@ namespace Helper
 
         //Venue Filters (Special case)
 
-        public static Query VenueLocFilterDistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
-          query.WhereInJsonb(
-              list: districtlist,
-              jsonPath: "odhdata.LocationInfo.DistrictInfo.Id"
-          );
+        //public static Query VenueLocFilterDistrictFilter(this Query query, IReadOnlyCollection<string> districtlist) =>
+        //  query.WhereInJsonb(
+        //      list: districtlist,
+        //      jsonPath: "odhdata.LocationInfo.DistrictInfo.Id"
+        //  );
 
-        public static Query VenueLocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
-            query.WhereInJsonb(
-                list: municipalitylist,
-                jsonPath: "odhdata.LocationInfo.MunicipalityInfo.Id"
-            );
+        //public static Query VenueLocFilterMunicipalityFilter(this Query query, IReadOnlyCollection<string> municipalitylist) =>
+        //    query.WhereInJsonb(
+        //        list: municipalitylist,
+        //        jsonPath: "odhdata.LocationInfo.MunicipalityInfo.Id"
+        //    );
 
-        public static Query VenueLocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
-            query.WhereInJsonb(
-                list: tourismvereinlist,
-                jsonPath: "odhdata.LocationInfo.TvInfo.Id"
-            );
+        //public static Query VenueLocFilterTvsFilter(this Query query, IReadOnlyCollection<string> tourismvereinlist) =>
+        //    query.WhereInJsonb(
+        //        list: tourismvereinlist,
+        //        jsonPath: "odhdata.LocationInfo.TvInfo.Id"
+        //    );
 
-        public static Query VenueLocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
-            query.WhereInJsonb(
-                list: regionlist,
-                jsonPath: "odhdata.LocationInfo.RegionInfo.Id"
-            );
+        //public static Query VenueLocFilterRegionFilter(this Query query, IReadOnlyCollection<string> regionlist) =>
+        //    query.WhereInJsonb(
+        //        list: regionlist,
+        //        jsonPath: "odhdata.LocationInfo.RegionInfo.Id"
+        //    );
 
-        public static Query VenueActiveFilter(this Query query, bool? active) =>
-            query.When(
-                active != null,
-                query => query.WhereJsonb(
-                    "odhdata.Active",
-                    active ?? false
-                )
-            );
+        //public static Query VenueActiveFilter(this Query query, bool? active) =>
+        //    query.When(
+        //        active != null,
+        //        query => query.WhereJsonb(
+        //            "odhdata.Active",
+        //            active ?? false
+        //        )
+        //    );
 
-        public static Query VenueODHActiveFilter(this Query query, bool? odhactive) =>
-            query.When(
-                odhactive != null,
-                query => query.WhereJsonb(
-                    "odhdata.ODHActive",
-                    odhactive ?? false
-                )
-            );
+        //public static Query VenueODHActiveFilter(this Query query, bool? odhactive) =>
+        //    query.When(
+        //        odhactive != null,
+        //        query => query.WhereJsonb(
+        //            "odhdata.ODHActive",
+        //            odhactive ?? false
+        //        )
+        //    );
 
         public static Query VenueCategoryFilter(this Query query, IReadOnlyCollection<string> categorylist) =>
            query.WhereInJsonb(
                    categorylist,
-                   tag => new { odhdata = new { VenueCategory = new[] { new { Id = tag.ToUpper() } } } }
+                   tag => new { VenueCategory = new[] { new { Id = tag.ToUpper() } } }
                );
 
         public static Query VenueFeatureFilter(this Query query, IReadOnlyCollection<string> featurelist) =>
            query.WhereInJsonb(
                    featurelist,
-                   tag => new { odhdata = new { RoomDetails = new[] { new { VenueFeatures = new[] { new { Id = tag.ToUpper() } } } } } }
+                   tag => new { RoomDetails = new[] { new { VenueFeatures = new[] { new { Id = tag.ToUpper() } } } } }
                );
 
         public static Query VenueSetupTypeFilter(this Query query, IReadOnlyCollection<string> setuptypelist) =>
           query.WhereInJsonb(
                   setuptypelist,
-                  tag => new { odhdata = new { RoomDetails = new[] { new { VenueSetup = new[] { new { Id = tag.ToUpper() } } } } } }
+                  tag => new { RoomDetails = new[] { new { VenueSetup = new[] { new { Id = tag.ToUpper() } } } } }
               );
 
         public static Query VenueRoomCountFilter(this Query query, bool roomcount, int roomcountmin, int roomcountmax) =>
             query.When(
                 roomcount,
                 query => query.WhereRaw(
-                    "(data#>>'\\{odhdata,RoomCount\\}')::numeric > ? AND (data#>>'\\{odhdata,RoomCount\\}')::numeric < ?",
+                    "(data#>>'\\{RoomCount\\}')::numeric > ? AND (data#>>'\\{RoomCount\\}')::numeric < ?",
                     roomcountmin,
                     roomcountmax
                 )
             );
 
-        public static Query VenueODHTagFilter(this Query query, IReadOnlyCollection<string> smgtaglist) =>
-          query.WhereInJsonb(
-              smgtaglist,
-              tag => new { odhdata = new { ODHTags = new[] { tag.ToLower() } } }
-          );
+        //public static Query VenueODHTagFilter(this Query query, IReadOnlyCollection<string> smgtaglist) =>
+        //  query.WhereInJsonb(
+        //      smgtaglist,
+        //      tag => new { odhdata = new { ODHTags = new[] { tag.ToLower() } } }
+        //  );
 
-        public static Query VenueLastChangedFilter(this Query query, string? updatefrom) =>
-           query.When(
-               updatefrom != null,
-               query => query.WhereRaw(
-                   "to_date(data#>>'\\{meta,lastUpdate\\}', 'YYYY-MM-DD') > date($$)",
-                   updatefrom
-               )
-           );
+        //public static Query VenueLastChangedFilter(this Query query, string? updatefrom) =>
+        //   query.When(
+        //       updatefrom != null,
+        //       query => query.WhereRaw(
+        //           "to_date(data#>>'\\{meta,lastUpdate\\}', 'YYYY-MM-DD') > date($$)",
+        //           updatefrom
+        //       )
+        //   );
 
         public static Query VenueSourceFilter(this Query query, IReadOnlyCollection<string> sourcelist) =>
             query.WhereInJsonb(
                 list: sourcelist,
-                "odhdata.SyncSourceInterface",
+                "SyncSourceInterface",
                 id => id.ToUpper()
             );
 
-        public static Query VenueHasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
-            query.WhereInJsonb(
-               languagelist,
-               lang => new { odhdata = new { HasLanguage = new[] { lang.ToLower() } } }
-           );
+        //public static Query VenueHasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
+        //    query.WhereInJsonb(
+        //       languagelist,
+        //       lang => new { odhdata = new { HasLanguage = new[] { lang.ToLower() } } }
+        //   );
 
         //private static Query VenueCapacityFilterWhere(bool capacity, int capacitymin, int capacitymax)
         //{
@@ -943,14 +943,14 @@ namespace Helper
                 )
             );
 
-        public static Query FilterClosedDataVenues(this Query query) =>
-            query.Where(q =>
-                q.WhereRaw(
-                    "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' IS NULL"
-                ).OrWhereRaw(
-                    "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' = 'false'"
-                )
-            );
+        //public static Query FilterClosedDataVenues(this Query query) =>
+        //    query.Where(q =>
+        //        q.WhereRaw(
+        //            "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' IS NULL"
+        //        ).OrWhereRaw(
+        //            "data#>>'\\{odhdata,LicenseInfo,ClosedData\\}' = 'false'"
+        //        )
+        //    );
 
         #region Tagging
 
