@@ -134,5 +134,32 @@ namespace OdhApiImporter.Controllers
         }
 
         #endregion
+
+        #region ODHActivitzPoi
+
+        [HttpGet, Route("ModifyOldODHActivityPoi")]
+        public async Task<IActionResult> ModifyODHActivityPoiTags(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateAllODHActivityPoiOldTags("sta");
+            var objectscount2 = await customdataoperation.UpdateAllODHActivityPoiOldTags("dss");
+
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify ODHActivityPoi",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = 0,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        #endregion
     }
 }
