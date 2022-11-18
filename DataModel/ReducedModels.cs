@@ -53,5 +53,10 @@ namespace DataModel
 
     }
 
+    public class VenueReduced : VenueLinked
+    {
+
+    }
+
     #endregion
 }

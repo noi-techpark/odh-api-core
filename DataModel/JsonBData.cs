@@ -10,6 +10,13 @@ namespace DataModel
         public JsonRaw? data { get; set; }
     }
 
+    public class JsonBDataDestinationData
+    {
+        public string? id { get; set; }
+        public JsonRaw? data { get; set; }
+        public JsonRaw? destinationdata { get; set; }
+    }
+
     public class JsonBDataRaw
     {
         public string id { get; set; }
