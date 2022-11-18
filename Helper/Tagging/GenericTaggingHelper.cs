@@ -52,9 +52,9 @@ namespace Helper
         }
 
         //Translates OLD Tags with german keys to new English Tags
-        public static IDictionary<string, List<Tags>> GenerateNewTags(ICollection<string> currenttags, List<TagLinked> alltaglist)
+        public static List<Tags> GenerateNewTags(ICollection<string> currenttags, List<TagLinked> alltaglist)
         {
-            var returnDict = new Dictionary<string, List<Tags>>();
+            var returnDict = new List<Tags>();
 
             foreach (var tag in currenttags)
             {
@@ -64,15 +64,16 @@ namespace Helper
                 {
                     var listtoadd = new List<Tags>();
 
-                    if (returnDict.ContainsKey(kvp.Key))
-                        listtoadd = returnDict[kvp.Key];
+                    //if (returnDict.ContainsKey(kvp.Key))
+                    //    listtoadd = returnDict[kvp.Key];
 
                     var tagtoadd = new Tags() { Id = kvp.Value, Source = kvp.Key };
 
                     if (!listtoadd.Select(x => x.Id).Contains(tagtoadd.Id))
                         listtoadd.Add(tagtoadd);
 
-                    returnDict.TryAddOrUpdate(kvp.Key, listtoadd);
+                    //returnDict.TryAddOrUpdate(kvp.Key, listtoadd);
+                    returnDict.AddRange(listtoadd);
                 }
             }
 

@@ -211,5 +211,53 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> UpdateAllODHActivityPoiOldTags(string source)
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("smgpois")
+                   .Where("gen_source", source);
+
+            var data = await query.GetObjectListAsync<ODHActivityPoiOld>();
+            int i = 0;
+
+            foreach (var stapoi in data)
+            {
+                if(stapoi.Tags != null)
+                { 
+                //CopyClassHelper.CopyPropertyValues
+                var tags = stapoi.Tags;
+
+                
+                stapoi.Tags = null;
+
+                var stapoiv2 = (ODHActivityPoiLinked)stapoi;
+
+                stapoiv2.Tags = new List<Tags>();
+                foreach(var tagdict in tags)
+                {
+                    stapoiv2.Tags.AddRange(tagdict.Value);
+                }
+                
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("smgpois").Where("id", stapoiv2.Id)
+                    .UpdateAsync(new JsonBData() { id = stapoiv2.Id?.ToLower() ?? "", data = new JsonRaw(stapoiv2) });
+
+                i++;
+                }
+            }
+
+            return i;
+        }
+
+
+    }
+
+    public class ODHActivityPoiOld : ODHActivityPoiLinked
+    {
+        public new IDictionary<string, List<Tags>> Tags { get; set; }
     }
 }

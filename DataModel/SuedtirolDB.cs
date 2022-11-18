@@ -2276,7 +2276,7 @@ namespace DataModel
             ContactInfos = new Dictionary<string, ContactInfos>();
             AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
             Mapping = new Dictionary<string, IDictionary<string, string>>();
-            Tags = new Dictionary<string, List<Tags>>();
+            Tags = new List<Tags>();
             VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
@@ -2370,7 +2370,7 @@ namespace DataModel
 
         public DistanceInfo? DistanceInfo { get; set; }
 
-        public IDictionary<string, List<Tags>> Tags { get; set; }
+        public List<Tags> Tags { get; set; }
 
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }

@@ -90,6 +90,10 @@ namespace OdhApiImporter.Helpers
                 bool? externalorganizer = false;
                 IDictionary<string, string> eventText = new Dictionary<string,string>();
 
+                if (eventindb == null)
+                    eventshort.FirstImport = DateTime.Now;
+
+
                 if (eventindb != null)
                 {
                     changedonDB = eventindb.ChangedOn;

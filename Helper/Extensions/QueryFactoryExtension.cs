@@ -87,7 +87,67 @@ namespace Helper
 
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };
         }
-        
+
+        public static async Task<PGCRUDResult> UpsertDataDestinationData<T,V>(this QueryFactory QueryFactory, T data, V destinationdata, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false) 
+            where T : IIdentifiable, IImportDateassigneable, IMetaData
+            where V : IIdentifiable, IImportDateassigneable, IMetaData
+        {
+         
+            if (data == null)
+                throw new ArgumentNullException(nameof(data), "no data");
+
+            //Check if data exists
+            var query = QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", data.Id);
+
+            var queryresult = await query.GetAsync<T>();
+
+            string operation = "";
+
+            int createresult = 0;
+            int updateresult = 0;
+            int errorresult = 0;
+
+            data.LastChange = DateTime.Now;
+            destinationdata.LastChange = DateTime.Now;
+            //Setting MetaInfo
+            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+            destinationdata._Meta = MetadataHelper.GetMetadataobject<V>(destinationdata);
+
+
+            if (data.FirstImport == null)
+            {
+                data.FirstImport = DateTime.Now;
+                destinationdata.FirstImport = DateTime.Now;
+            }
+
+            if (queryresult == null || queryresult.Count() == 0)
+            {
+                if (errorwhendataisnew)
+                    throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
+
+                createresult = await QueryFactory.Query(table)
+                   .InsertAsync(new JsonBDataDestinationData() { id = data.Id, data = new JsonRaw(data), destinationdata = new JsonRaw(destinationdata) });
+                operation = "INSERT";
+            }
+            else
+            {
+                if (errorwhendataexists)
+                    throw new ArgumentNullException(nameof(data.Id), "Id exists already");
+
+                updateresult = await QueryFactory.Query(table).Where("id", data.Id)
+                        .UpdateAsync(new JsonBDataDestinationData() { id = data.Id, data = new JsonRaw(data), destinationdata = new JsonRaw(destinationdata) });
+                operation = "UPDATE";
+            }
+
+            if (createresult == 0 && updateresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };
+        }
+
+
         public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
         {
             if (string.IsNullOrEmpty(id))

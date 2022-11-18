@@ -99,6 +99,7 @@ namespace OdhApiCore.Controllers
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool compatibilitymode = true,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -110,7 +111,7 @@ namespace OdhApiCore.Controllers
                     featurefilter: featurefilter, setuptypefilter: setuptypefilter, sourcefilter: source,
                     active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
                     publishedon: publishedon,
-                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
+                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, compatibilitymode: compatibilitymode,
                     cancellationToken: cancellationToken);
         }
 
@@ -136,9 +137,10 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             bool removenullvalues = false,
+            bool compatibilitymode = true,
             CancellationToken cancellationToken = default)
         {
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, compatibilitymode: compatibilitymode, cancellationToken);
         }
 
         /// <summary>
@@ -209,7 +211,7 @@ namespace OdhApiCore.Controllers
           string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
           string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? publishedon,
-          PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues,
+          PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, bool compatibilitymode,
           CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -219,10 +221,12 @@ namespace OdhApiCore.Controllers
                     langfilter, sourcefilter, active, smgactive, smgtags, lastchange, publishedon,
                     cancellationToken);
 
+                var venuecolumn = compatibilitymode ? "destinationdata as data" : "data";
+
                 var query =
                     QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From("venues")
+                        .SelectRaw(venuecolumn)
+                        .From("venues_v2")
                         .VenueWhereExpression(
                             languagelist: myvenuehelper.languagelist, idlist: myvenuehelper.idlist, categorylist: myvenuehelper.categorylist,
                             featurelist: myvenuehelper.featurelist, setuptypelist: myvenuehelper.setuptypelist,
@@ -264,13 +268,15 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, bool compatibilitymode, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                var venuecolumn = compatibilitymode ? "destinationdata as data" : "data";
+
                 var query =
-                    QueryFactory.Query("venues")
-                        .Select("data")
+                    QueryFactory.Query("venue_v2")
+                        .Select(venuecolumn)
                         .Where("id", id.ToUpper())
                         .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
                 //.When(FilterClosedData, q => q.FilterClosedData());
@@ -295,7 +301,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("venuetypes")
                         .SelectRaw("data")
                         .When(FilterClosedData, q => q.FilterClosedData())
-                        .SearchFilter(PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor(language), searchfilter)
+                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 

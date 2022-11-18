@@ -27,6 +27,7 @@ namespace Helper
                 ODHActivityPoi or ODHActivityPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 Measuringpoint or MeasuringpointLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 WebcamInfo or WebcamInfoLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                VenueLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 DDVenue => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 _ => false
             };
@@ -475,6 +476,57 @@ namespace Helper
             return reduced;
         }
 
+        public static VenueReduced CopyLTSVenueToReducedObject(VenueLinked venue)
+        {
+            var reduced = new VenueReduced();
+
+            //LTS ID(RID) (EvRID)
+            reduced.Id = venue.Id + "_REDUCED";
+            reduced.LastChange = venue.LastChange;
+            reduced.Source = venue.Source;
+
+            //TODO
+            //REDUCE DETAIL
+            reduced.Detail = venue.Detail != null ? ReducedDataHelper.ReduceDetailInfo(venue.Detail) : null;
+            //REDUCE CONTACTINFO
+            reduced.ContactInfos = venue.ContactInfos != null ? ReducedDataHelper.ReduceContactInfoForVenue(venue.ContactInfos) : null;
+
+            //if (reduced.relationships != null)
+            //{
+            //    reduced.relationships.multimediaDescriptions = null;
+            //    reduced.relationships.subVenues = venue.relationships.subVenues != null ? ReduceSubVenues(venue.relationships.subVenues) : null;
+            //}
+
+            //ODH Fields TODO
+            reduced.Active = venue.Active;
+            reduced.ODHActive = venue.ODHActive;
+            reduced.Shortname = venue.Shortname;
+            reduced.SmgTags = venue.SmgTags;
+            reduced.HasLanguage = venue.HasLanguage;
+            reduced.Source = venue.Source;
+            reduced.GpsInfo = ReducedDataHelper.ReduceGpsInfo(venue.GpsInfo);
+            //reduced.GpsPoints = venue.odhdata.GpsPoints;
+            reduced.RoomCount = venue.RoomCount;
+            reduced.SyncSourceInterface = venue.SyncSourceInterface;
+            reduced.VenueCategory = venue.VenueCategory;
+            //REDUCE SUBVENUES
+            reduced.RoomDetails = ReducedDataHelper.ReduceVenueRoomDetails(venue.RoomDetails);
+
+            ///LocationInfo, ODH Object calculated with
+            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(venue.LocationInfo);
+
+            //License + Meta
+            reduced.LicenseInfo = venue.LicenseInfo;
+            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "venue", "lts", reduced.LastChange, true);
+            reduced.PublishedOn = venue.PublishedOn;
+
+            //ImageGallery
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(venue.ImageGallery);
+
+            return reduced;
+        }
+
+
         //LTS WebcamInfo
         public static WebcamInfoLinkedReduced CopyLTSWebcamInfoToReducedObject(WebcamInfoLinked webcam)
         {
@@ -663,6 +715,31 @@ namespace Helper
             return mycontactinfo;
         }
 
+        public static IDictionary<string, ContactInfos> ReduceContactInfoForVenue(IDictionary<string, ContactInfos> mycontactinfo)
+        {
+            foreach (var value in mycontactinfo.Values)
+            {
+                value.Address = null;
+                //value.City = null;
+                value.CompanyName = null;
+                //value.CountryCode = null;
+                //value.CountryName = null;
+                value.Email = null;
+                value.Faxnumber = null;
+                value.Givenname = null;
+                value.LogoUrl = null;
+                value.NamePrefix = null;
+                value.Phonenumber = null;
+                value.Surname = null;
+                value.Tax = null;
+                //value.Url = null;  //ContactInfo/URL
+                value.Vat = null;
+                value.ZipCode = null;
+            }
+
+            return mycontactinfo;
+        }
+
 
         public static IDictionary<string, AccoDetail> ReduceAccoDetail(IDictionary<string, AccoDetail> mydetail)
         {
@@ -844,7 +921,11 @@ namespace Helper
                 roomdetail.Indoor = null;
                 roomdetail.Id = null;
                 //roomdetail.VenueSetup = null;
-                //roomdetail.Shortname = null;                
+                //roomdetail.Shortname = null;
+                //
+
+                roomdetail.Detail = roomdetail.Detail != null ? ReduceDetailInfo(roomdetail.Detail) : null;
+                roomdetail.ImageGallery = ReduceImagesToCC0Only(roomdetail.ImageGallery);
             }
 
             return roomdetails;

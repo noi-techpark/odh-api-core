@@ -323,20 +323,32 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "venue":
+                    //TODO ADD new Venue Model
+
                     mydata = await GetDataFromRaven.GetRavenData<DDVenue>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+
+                    var myvenuedata = default(IIdentifiable);
+                    
                     if (mydata != null)
+                    {
                         mypgdata = TransformToPGObject.GetPGObject<DDVenue, DDVenue>((DDVenue)mydata, TransformToPGObject.GetVenuePGObject);
+                        mydata = TransformToPGObject.GetPGObject<DDVenue, VenueLinked>((DDVenue)mydata, TransformToPGObject.GetVenuePGObjectV2);
+                    }                        
                     else
                         throw new Exception("No data found!");
 
-                    myupdateresult = await SaveRavenObjectToPG<DDVenue>((DDVenue)mypgdata, "venues");
+
+
+
+                    myupdateresult = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueLinked)mydata, (DDVenue)mypgdata, "venues_v2");
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<DDVenue>((DDVenue)mypgdata) == true)
                     {
-                        var reducedobject = ReduceDataTransformer.GetReducedObject((DDVenue)mypgdata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((VenueLinked)mypgdata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
+                        var reducedobjectdd = ReduceDataTransformer.GetReducedObject((DDVenue)mypgdata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<DDVenue>((DDVenueReduced)reducedobject, "venues");
+                        updateresultreduced = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueReduced)reducedobject, (DDVenueReduced)reducedobjectdd, "venues_v2");
                     }
 
                     break;
@@ -364,6 +376,17 @@ namespace OdhApiImporter.Helpers
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
             var result = await QueryFactory.UpsertData<T>(datatosave, table);
+
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
+        }
+
+        private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table) 
+            where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
+            where V : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
+        {
+            datatosave._Meta.LastUpdate = datatosave.LastChange;
+
+            var result = await QueryFactory.UpsertDataDestinationData<T,V>(datatosave, destinationdatatosave, table);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
         }

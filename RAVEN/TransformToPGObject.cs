@@ -409,6 +409,39 @@ namespace RAVEN
             return data;
         }
 
+        public static VenueLinked GetVenuePGObjectV2(DDVenue destinationdata)
+        {
+            //Transform to Venuelinked
+            var venueLinked = new VenueLinked();
+            venueLinked.Active = destinationdata.odhdata.Active;
+            venueLinked.ContactInfos = destinationdata.odhdata.ContactInfos;
+            venueLinked.Detail = destinationdata.odhdata.Detail;
+            venueLinked.DistanceInfo = destinationdata.odhdata.DistanceInfo;
+            venueLinked.FirstImport = destinationdata.FirstImport;
+            venueLinked.GpsInfo = destinationdata.odhdata.GpsInfo;
+            //venueLinked.GpsPoints = destinationdata.odhdata.GpsPoints;
+            venueLinked.HasLanguage = destinationdata.odhdata.HasLanguage;
+            venueLinked.Id = destinationdata.Id;
+            venueLinked.ImageGallery = destinationdata.odhdata.ImageGallery;
+            venueLinked.LastChange = destinationdata.LastChange;
+            venueLinked.LicenseInfo = destinationdata.LicenseInfo;
+            venueLinked.LocationInfo = destinationdata.odhdata.LocationInfo;
+            venueLinked.Mapping = destinationdata.Mapping;
+            venueLinked.ODHActive = destinationdata.odhdata.ODHActive;
+            //venueLinked.ODHTags = destinationdata.odhdata.ODHTags;
+            venueLinked.PublishedOn = destinationdata.odhdata.PublishedOn;
+            venueLinked.RoomCount = destinationdata.odhdata.RoomCount;
+            venueLinked.RoomDetails = destinationdata.odhdata.RoomDetails;
+            venueLinked.Shortname = destinationdata.odhdata.Shortname;
+            venueLinked.SmgTags = destinationdata.odhdata.SmgTags;
+            venueLinked.Source = destinationdata.odhdata.Source;
+            venueLinked.SyncSourceInterface = destinationdata.odhdata.SyncSourceInterface;
+            venueLinked.VenueCategory = destinationdata.odhdata.VenueCategory;
+            venueLinked._Meta = destinationdata._Meta;
+
+            return venueLinked;
+        }
+
         public static MetaRegionLinked GetMetaRegionPGObject(MetaRegionLinked data)
         {
             data.Id = data.Id.ToUpper();

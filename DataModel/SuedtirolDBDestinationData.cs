@@ -157,6 +157,11 @@ namespace DataModel
 
         public ICollection<VenueType>? VenueFeatures { get; set; }
         public ICollection<VenueSetup> VenueSetup { get; set; }
+
+        //NEW
+        public IDictionary<string, Detail> Detail { get; set; }
+
+        public ICollection<ImageGallery> ImageGallery { get; set; }
     }
 
     public class DDMeta

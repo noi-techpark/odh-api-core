@@ -45,7 +45,7 @@ namespace OdhApiImporter.Controllers
         public async Task<IActionResult> ModifyEventShort(CancellationToken cancellationToken)
         {
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.UpdateAllEventShortstonewDataModelV2();
+            //var objectscount = await customdataoperation.UpdateAllEventShortstonewDataModelV2();
 
             return Ok(new UpdateResult
             {
@@ -53,11 +53,11 @@ namespace OdhApiImporter.Controllers
                 updatetype = "custom",
                 otherinfo = "",
                 message = "Done",
-                recordsmodified = objectscount,
+                recordsmodified = 0,
                 created = 0,
                 deleted = 0,
                 id = "",
-                updated = objectscount,
+                updated = 0,
                 success = true
             });
         }
@@ -129,6 +129,33 @@ namespace OdhApiImporter.Controllers
                 deleted = 0,
                 id = "",
                 updated = objectscount,
+                success = true
+            });
+        }
+
+        #endregion
+
+        #region ODHActivitzPoi
+
+        [HttpGet, Route("ModifyOldODHActivityPoi")]
+        public async Task<IActionResult> ModifyODHActivityPoiTags(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateAllODHActivityPoiOldTags("sta");
+            var objectscount2 = await customdataoperation.UpdateAllODHActivityPoiOldTags("dss");
+
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify ODHActivityPoi",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = 0,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
                 success = true
             });
         }
