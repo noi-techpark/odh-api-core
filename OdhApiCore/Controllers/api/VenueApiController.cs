@@ -275,7 +275,7 @@ namespace OdhApiCore.Controllers
                 var venuecolumn = compatibilitymode ? "destinationdata as data" : "data";
 
                 var query =
-                    QueryFactory.Query("venue_v2")
+                    QueryFactory.Query("venues_v2")
                         .Select(venuecolumn)
                         .Where("id", id.ToUpper())
                         .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
