@@ -82,7 +82,7 @@ namespace Helper
                 SkiRegion or SkiRegionLinked => IDStyle.uppercase,
                 Area or AreaLinked => IDStyle.uppercase,
                 Wine or WineLinked => IDStyle.uppercase,
-                SmgTags or ODHTagLinked => IDStyle.lowercase,
+                SmgTags or ODHTagLinked => IDStyle.lowercase,                
                 _ => throw new Exception("not known odh type")
             };
         }
