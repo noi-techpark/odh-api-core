@@ -127,7 +127,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: new List<string>())
+                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: new List<string>())
                     );
 
                 //TODO WRITE A NEW urlGenerator for metadata

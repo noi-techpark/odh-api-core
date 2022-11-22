@@ -151,6 +151,19 @@ namespace OdhApiCore.Controllers
             }
         }        
 
+        protected Func<string,string> UrlGeneratorStatic
+        {
+            get
+            {
+                return self =>
+                {
+                    var location = new Uri($"{Request.Scheme}://{Request.Host}" + self);
+                    return location.AbsoluteUri;
+                };
+            }
+            
+        }
+
         protected async Task<IActionResult> DoAsync(Func<Task<IActionResult>> f)
         {
             try
