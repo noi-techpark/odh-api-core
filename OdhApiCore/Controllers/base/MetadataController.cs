@@ -33,10 +33,11 @@ namespace OdhApiCore.Controllers
         {
             this.settings = settings;
         }
-       
+
         [HttpGet, Route("", Name = "TourismApi")]
         [HttpGet, Route("Metadata", Name = "TourismApiMetaData")]
         public async Task<IActionResult> Get(
+            bool writetotable = false,
             bool fromtable = false,
             string? language = null,
             uint pagenumber = 1,
@@ -56,7 +57,10 @@ namespace OdhApiCore.Controllers
             var location = new Uri($"{Request.Scheme}://{Request.Host}");
             absoluteUri = location.AbsoluteUri;
 
-            if(!fromtable)
+            if (writetotable)
+                await WriteJsonToTable();
+
+            if (!fromtable)
             {
                 var result = await GetMetadata();
                 return Ok(result);
@@ -67,6 +71,93 @@ namespace OdhApiCore.Controllers
                     seed: seed, lastchange: updatefrom, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);                    
             }           
         }
+
+        /// <summary>
+        /// GET Metadata Single 
+        /// </summary>
+        /// <param name="id">ID of the Metadata</param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <returns>TourismMetadata Object</returns>
+        /// <response code="200">Object created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(TourismMetaData), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Metadata/{id}", Name = "SingleMetadata")]
+        public async Task<IActionResult> GetArticleSingle(
+            string id,
+            string? language,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
+        }
+
+        #region GET
+
+        private Task<IActionResult> GetMetadataFromTable(
+          string[] fields, string? language, uint pagenumber, int? pagesize,
+          string? seed, string? lastchange,
+          string? rawfilter, string? rawsort, bool removenullvalues, 
+          CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query()
+                        .SelectRaw("data")
+                        .From("metadata")
+                        .ApplyRawFilter(rawfilter)
+                        .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: pagesize ?? 25);
+
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: new List<string>())
+                    );
+
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
+
+                return ResponseHelpers.GetResult(
+                    pagenumber,
+                    totalpages,
+                    totalcount,
+                    seed,
+                    dataTransformed,
+                    Url);
+            });
+        }
+
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                var query =
+                    QueryFactory.Query("metadata")
+                        .Select("data")
+                        .Where("id", id.ToLower());
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+                var fieldsTohide = FieldsToHide;
+
+                return data?.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+            });
+        }
+
+        #endregion
 
         #region POST PUT DELETE
 
@@ -161,48 +252,7 @@ namespace OdhApiCore.Controllers
             return tourismdatalist;
         }
 
-        private Task<IActionResult> GetMetadataFromTable(
-            string[] fields, string? language, uint pagenumber, int? pagesize,
-            string? seed, string? lastchange,
-            string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
-        {
-            return DoAsyncReturn(async () =>
-            {               
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From("metadata")                           
-                        .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
-
-                // Get paginated data
-                var data =
-                    await query
-                        .PaginateAsync<JsonRaw>(
-                            page: (int)pagenumber,
-                            perPage: pagesize ?? 25);
-
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
-                    data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                uint totalpages = (uint)data.TotalPages;
-                uint totalcount = (uint)data.Count;
-
-                return ResponseHelpers.GetResult(
-                    pagenumber,
-                    totalpages,
-                    totalcount,
-                    seed,
-                    dataTransformed,
-                    Url);
-            });
-        }
-
-
+      
         public static string GetAbsoluteUri()
         {
             return absoluteUri;
@@ -216,6 +266,11 @@ namespace OdhApiCore.Controllers
 
             foreach(var json in jsondata)
             {
+                json.FirstImport = DateTime.Now;
+                json.LastChange = DateTime.Now;
+                json.Shortname = json.ApiIdentifier;
+                json._Meta = new Metadata() { Id = json.Id, LastUpdate  = json.LastChange, Reduced = false, Source = "odh", Type = "odhmetadata" };
+
                 //Check if data exists
                 var query = QueryFactory.Query(table)
                           .Select("data")
