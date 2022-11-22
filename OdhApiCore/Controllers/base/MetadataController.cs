@@ -130,6 +130,8 @@ namespace OdhApiCore.Controllers
                         raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: new List<string>())
                     );
 
+                //TODO WRITE A NEW urlGenerator for metadata
+
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
 
