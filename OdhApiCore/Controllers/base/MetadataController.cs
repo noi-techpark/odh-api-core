@@ -108,6 +108,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                if (rawsort == null)
+                    rawsort = "Id";
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
@@ -316,7 +319,7 @@ namespace OdhApiCore.Controllers
         private string swaggerUrl = default!;
         public string SwaggerUrl
         {
-            get { return Uri.EscapeUriString(MetadataController.GetAbsoluteUri() + "swagger/index.html#/" + swaggerUrl); }
+            get { return "swagger/index.html#/" + swaggerUrl; }
             set { swaggerUrl = value; }
         }
 
@@ -324,7 +327,7 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                return Uri.EscapeUriString(MetadataController.GetAbsoluteUri() + "v1/") + this.ApiIdentifier + this.ApiFilter;                
+                return this.ApiIdentifier + this.ApiFilter;                
             }
         }
 
