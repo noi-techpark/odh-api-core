@@ -284,9 +284,20 @@ namespace OdhApiCore.Controllers
                 json.DatabrowserActive = false;
                 json.ApiAccess = new Dictionary<string, string>();
                 json.ApiAccess.TryAddOrUpdate(json.Source, json.LicenseType);
-
+                json.Output = new Dictionary<string, string>();
+                json.Output.TryAddOrUpdate("default","application/json");
+                json.Output.TryAddOrUpdate("ld+json", "application/ld+json");
                 json.PathParam = json.ApiIdentifier.Split('/').ToList();
 
+
+                if (json.ApiIdentifier != "Find")
+                {                    
+                    var currentloc = new Uri($"{Request.Scheme}://{Request.Host}/v1/" + json.ApiIdentifier);
+
+                    json.RecordCount = Convert.ToInt32(await MetaDataApiRecordCount.GetApiRecordCount(currentloc.AbsoluteUri, json.ApiFilter, ""));
+                }
+
+         
                 //Check if data exists
                 var query = QueryFactory.Query(table)
                           .Select("data")
@@ -364,7 +375,7 @@ namespace OdhApiCore.Controllers
 
         public int? RecordCount { get; set; }
 
-        public string? Output { get; set; }
+        public IDictionary<string, string> Output { get; set; }
 
         public IDictionary<string,string> ApiDescription { get; set; }
 

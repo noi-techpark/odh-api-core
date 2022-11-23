@@ -157,7 +157,7 @@ namespace OdhApiCore.Controllers
             {
                 return self =>
                 {
-                    var location = new Uri($"{Request.Scheme}://{Request.Host}" + self);
+                    var location = new Uri($"{Request.Scheme}://{Request.Host}/" + self);
                     return location.AbsoluteUri;
                 };
             }
