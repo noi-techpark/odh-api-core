@@ -276,6 +276,17 @@ namespace OdhApiCore.Controllers
                 json.Shortname = json.ApiIdentifier;
                 json._Meta = new Metadata() { Id = json.Id, LastUpdate  = json.LastChange, Reduced = false, Source = "odh", Type = "odhmetadata" };
 
+                json.ApiVersion = "v1";
+                json.ApiDescription = new Dictionary<string, string>();
+                json.ApiDescription.TryAddOrUpdate("en", json.Description);
+                json.Sources = new List<string>();
+                json.Sources.Add(json.Source);
+                json.DatabrowserActive = false;
+                json.ApiAccess = new Dictionary<string, string>();
+                json.ApiAccess.TryAddOrUpdate(json.Source, json.LicenseType);
+
+                json.PathParam = json.ApiIdentifier.Split('/').ToList();
+
                 //Check if data exists
                 var query = QueryFactory.Query(table)
                           .Select("data")
@@ -334,7 +345,7 @@ namespace OdhApiCore.Controllers
         }
 
         public string Source { get; set; }
-
+     
         public string License { get; set; } = default!;
 
         public string LicenseType { get; set; }
@@ -348,5 +359,21 @@ namespace OdhApiCore.Controllers
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
         public string? Shortname { get; set; }
+
+        public ICollection<string> Sources { get; set; }
+
+        public int? RecordCount { get; set; }
+
+        public string? Output { get; set; }
+
+        public IDictionary<string,string> ApiDescription { get; set; }
+
+        public string? ApiVersion { get; set; }
+
+        public ICollection<string>? PathParam { get; set; }
+
+        public bool? DatabrowserActive { get; set; }
+
+        public IDictionary<string, string> ApiAccess { get; set; }
     }
 }
