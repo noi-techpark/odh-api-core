@@ -47,18 +47,13 @@ namespace OdhApiCore.Controllers
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
-            bool removenullvalues = false,
-            //Temporary parameters
-            bool writetotable = false,
+            bool removenullvalues = false,            
             CancellationToken cancellationToken = default
             )
         {
             //var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
             var location = new Uri($"{Request.Scheme}://{Request.Host}");
             absoluteUri = location.AbsoluteUri;
-
-            if (writetotable)
-                await WriteJsonToTable();
 
             return await GetMetadataFromTable(fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 seed: seed, lastchange: updatefrom, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
@@ -256,64 +251,64 @@ namespace OdhApiCore.Controllers
             return absoluteUri;
         }
 
-        private async Task<ActionResult> WriteJsonToTable()
-        {
-            var jsondata = await GetMetadata();
-            string table = "metadata";
-            int result = 0;
+        //private async Task<ActionResult> WriteJsonToTable()
+        //{
+        //    var jsondata = await GetMetadata();
+        //    string table = "metadata";
+        //    int result = 0;
 
-            foreach(var json in jsondata)
-            {
-                json.FirstImport = DateTime.Now;
-                json.LastChange = DateTime.Now;
-                json.Shortname = json.ApiIdentifier;
-                json._Meta = new Metadata() { Id = json.Id, LastUpdate  = json.LastChange, Reduced = false, Source = "odh", Type = "odhmetadata" };
+        //    foreach(var json in jsondata)
+        //    {
+        //        json.FirstImport = DateTime.Now;
+        //        json.LastChange = DateTime.Now;
+        //        json.Shortname = json.ApiIdentifier;
+        //        json._Meta = new Metadata() { Id = json.Id, LastUpdate  = json.LastChange, Reduced = false, Source = "odh", Type = "odhmetadata" };
 
-                json.ApiVersion = "v1";
-                json.ApiDescription = new Dictionary<string, string>();
-                json.ApiDescription.TryAddOrUpdate("en", json.Description);
-                json.Sources = new List<string>();
-                json.Sources.Add(json.Source);
-                json.PublishedOn = new List<string>();
-                json.ApiAccess = new Dictionary<string, string>();
-                json.ApiAccess.TryAddOrUpdate(json.Source, json.License);
-                json.Output = new Dictionary<string, string>();
-                json.Output.TryAddOrUpdate("default","application/json");
-                json.Output.TryAddOrUpdate("ld+json", "application/ld+json");
-                json.PathParam = json.ApiIdentifier.Split('/').ToList();
+        //        json.ApiVersion = "v1";
+        //        json.ApiDescription = new Dictionary<string, string>();
+        //        //json.ApiDescription.TryAddOrUpdate("en", json.Description);
+        //        json.Sources = new List<string>();
+        //        //json.Sources.Add(json.Source);
+        //        json.PublishedOn = new List<string>();
+        //        json.ApiAccess = new Dictionary<string, string>();
+        //        json.ApiAccess.TryAddOrUpdate(json.Source, json.License);
+        //        json.Output = new Dictionary<string, string>();
+        //        json.Output.TryAddOrUpdate("default","application/json");
+        //        json.Output.TryAddOrUpdate("ld+json", "application/ld+json");
+        //        json.PathParam = json.ApiIdentifier.Split('/').ToList();
 
 
-                if (json.ApiIdentifier != "Find")
-                {                    
-                    var currentloc = new Uri($"{Request.Scheme}://{Request.Host}/v1/" + json.ApiIdentifier);
+        //        if (json.ApiIdentifier != "Find")
+        //        {                    
+        //            var currentloc = new Uri($"{Request.Scheme}://{Request.Host}/v1/" + json.ApiIdentifier);
 
-                    //json.RecordCount = Convert.ToInt32(await MetaDataApiRecordCount.GetApiRecordCount(currentloc.AbsoluteUri, json.ApiFilter, ""));
+        //            //json.RecordCount = Convert.ToInt32(await MetaDataApiRecordCount.GetApiRecordCount(currentloc.AbsoluteUri, json.ApiFilter, ""));
 
-                    json.RecordCount =  await MetaDataApiRecordCount.GetRecordCountfromDB(json.ApiFilter, json.OdhType, QueryFactory);
-                }
+        //            json.RecordCount =  await MetaDataApiRecordCount.GetRecordCountfromDB(json.ApiFilter, json.OdhType, QueryFactory);
+        //        }
 
          
-                //Check if data exists
-                var query = QueryFactory.Query(table)
-                          .Select("data")
-                          .Where("id", json.Id);
+        //        //Check if data exists
+        //        var query = QueryFactory.Query(table)
+        //                  .Select("data")
+        //                  .Where("id", json.Id);
 
-                var queryresult = await query.GetAsync<TourismMetaData>();
+        //        var queryresult = await query.GetAsync<TourismMetaData>();
 
-                if (queryresult == null || queryresult.Count() == 0)
-                {                    
-                    result = await QueryFactory.Query(table)
-                       .InsertAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
-                }
-                else
-                {
-                    result = await QueryFactory.Query(table).Where("id", json.Id)
-                            .UpdateAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
-                }
-            }
+        //        if (queryresult == null || queryresult.Count() == 0)
+        //        {                    
+        //            result = await QueryFactory.Query(table)
+        //               .InsertAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
+        //        }
+        //        else
+        //        {
+        //            result = await QueryFactory.Query(table).Where("id", json.Id)
+        //                    .UpdateAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
+        //        }
+        //    }
 
-            return Ok("Result: " + result);
-        }
+        //    return Ok("Result: " + result);
+        //}
 
 
         #endregion

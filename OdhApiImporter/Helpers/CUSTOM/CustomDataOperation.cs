@@ -23,6 +23,32 @@ namespace OdhApiImporter.Helpers
             this.settings = settings;
         }
 
+        public async Task<int> UpdateMetaDataApiRecordCount()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("metadata");
+
+            var data = await query.GetObjectListAsync<TourismMetaData>();
+            int i = 0;
+
+            foreach (var metadata in data)
+            {
+                metadata.RecordCount = await MetaDataApiRecordCount.GetRecordCountfromDB(metadata.ApiFilter, metadata.OdhType, QueryFactory);
+
+                //Save tp DB                 
+                var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)                    
+                    .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
+
+                i++;
+            }
+
+            return i;            
+        }
+
+
+
         public async Task<int> UpdateAllEventShortstonewDataModel()
         {
             //Load all data from PG and resave
