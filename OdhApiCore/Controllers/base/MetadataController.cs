@@ -283,7 +283,7 @@ namespace OdhApiCore.Controllers
                 json.Sources.Add(json.Source);
                 json.DatabrowserActive = false;
                 json.ApiAccess = new Dictionary<string, string>();
-                json.ApiAccess.TryAddOrUpdate(json.Source, json.LicenseType);
+                json.ApiAccess.TryAddOrUpdate(json.Source, json.License);
                 json.Output = new Dictionary<string, string>();
                 json.Output.TryAddOrUpdate("default","application/json");
                 json.Output.TryAddOrUpdate("ld+json", "application/ld+json");
@@ -351,7 +351,15 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                return this.ApiIdentifier + this.ApiFilter;                
+                return this.Id;                
+            }
+        }
+
+        public string ApiUrl
+        {
+            get
+            {
+                return this.ApiIdentifier + this.ApiFilter;
             }
         }
 
@@ -359,9 +367,9 @@ namespace OdhApiCore.Controllers
      
         public string License { get; set; } = default!;
 
-        public string LicenseType { get; set; }
+        //public string LicenseType { get; set; }
 
-        public string LicenseInfo { get; set; }
+        //public string LicenseInfo { get; set; }
 
         public bool Deprecated { get; set; }
 
