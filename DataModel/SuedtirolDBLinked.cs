@@ -1439,7 +1439,7 @@ namespace DataModel
         {
             get
             {
-                return this.ApiVersion + "/" + this.ApiIdentifier + this.ApiFilter;
+                return this.ApiVersion + "/" + this.ApiIdentifier + "?" + this.ApiFilter;
             }
         }
 
