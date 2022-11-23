@@ -1418,7 +1418,7 @@ namespace DataModel
 
         public string Id { get; set; } = default!;
         public string OdhType { get; set; } = default!;
-        public string Description { get; set; } = default!;
+        //public string Description { get; set; } = default!;
 
         private string swaggerUrl = default!;
         public string SwaggerUrl
@@ -1443,9 +1443,9 @@ namespace DataModel
             }
         }
 
-        public string Source { get; set; }
+        //public string Source { get; set; }
 
-        public string License { get; set; } = default!;
+        //public string License { get; set; } = default!;
 
         //public string LicenseType { get; set; }
 
