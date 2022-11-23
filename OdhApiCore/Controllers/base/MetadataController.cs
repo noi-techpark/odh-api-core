@@ -294,7 +294,9 @@ namespace OdhApiCore.Controllers
                 {                    
                     var currentloc = new Uri($"{Request.Scheme}://{Request.Host}/v1/" + json.ApiIdentifier);
 
-                    json.RecordCount = Convert.ToInt32(await MetaDataApiRecordCount.GetApiRecordCount(currentloc.AbsoluteUri, json.ApiFilter, ""));
+                    //json.RecordCount = Convert.ToInt32(await MetaDataApiRecordCount.GetApiRecordCount(currentloc.AbsoluteUri, json.ApiFilter, ""));
+
+                    json.RecordCount =  await MetaDataApiRecordCount.GetRecordCountfromDB(json.ApiFilter, json.OdhType, QueryFactory);
                 }
 
          
@@ -315,7 +317,6 @@ namespace OdhApiCore.Controllers
                     result = await QueryFactory.Query(table).Where("id", json.Id)
                             .UpdateAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
                 }
-
             }
 
             return Ok("Result: " + result);

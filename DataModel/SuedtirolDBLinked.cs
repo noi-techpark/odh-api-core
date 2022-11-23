@@ -1461,7 +1461,7 @@ namespace DataModel
 
         public ICollection<string> Sources { get; set; }
 
-        public int? RecordCount { get; set; }
+        public IDictionary<string, int> RecordCount { get; set; }
 
         public IDictionary<string, string> Output { get; set; }
 

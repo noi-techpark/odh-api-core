@@ -1,6 +1,7 @@
 ﻿using DataModel;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,60 @@ namespace Helper
             return recordcount;
         }
 
+        public static async Task<IDictionary<string,int>> GetRecordCountfromDB(string filter, string odhtype, QueryFactory QueryFactory)
+        {
+            var result = new Dictionary<string, int> { };
+
+            try
+            {
+                string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
+
+                string source = "";
+
+                if (filter != null)
+                {
+                    if (filter.StartsWith("?source="))
+                    {
+                        source = filter.Replace("?source=", "");
+                    }
+                }
+
+                //Get Reduced
+                var reducedcount = await QueryFactory.Query()
+                    .From(table)
+                    .Where("gen_reduced", true)
+                    .Where("gen_licenseinfo_closeddata", false)
+                    .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
+                    .CountAsync<int>();
+
+                //Get Closed
+                var closedcount = await QueryFactory.Query()
+                    .From(table)
+                    .Where("gen_licenseinfo_closeddata", true)
+                    .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
+                    .CountAsync<int>();
+
+                //Get Open
+                var opencount = await QueryFactory.Query()
+                    .From(table)
+                    .Where("gen_licenseinfo_closeddata", false)
+                    .Where("gen_reduced", false)
+                    .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
+                    .CountAsync<int>();
+
+                result.TryAddOrUpdate("reduced", reducedcount);
+                result.TryAddOrUpdate("closed", closedcount);
+                result.TryAddOrUpdate("open", opencount);
+
+                return result;
+            }
+        
+            catch(Exception ex)
+            {
+                return result;
+            }
+        }
+
         public static bool PropertyExists(dynamic obj, string name)
         {
             if (obj == null) return false;
@@ -52,3 +107,5 @@ namespace Helper
         }
     }    
 }
+
+
