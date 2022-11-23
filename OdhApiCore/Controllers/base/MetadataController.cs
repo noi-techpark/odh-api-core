@@ -281,7 +281,7 @@ namespace OdhApiCore.Controllers
                 json.ApiDescription.TryAddOrUpdate("en", json.Description);
                 json.Sources = new List<string>();
                 json.Sources.Add(json.Source);
-                json.DatabrowserActive = false;
+                json.PublishedOn = new List<string>();
                 json.ApiAccess = new Dictionary<string, string>();
                 json.ApiAccess.TryAddOrUpdate(json.Source, json.License);
                 json.Output = new Dictionary<string, string>();
@@ -325,74 +325,4 @@ namespace OdhApiCore.Controllers
         #endregion
     }
 
-    public class TourismMetaData : IMetaData, IImportDateassigneable, IIdentifiable
-    {        
-        public TourismMetaData()
-        {
-            _Meta = new Metadata();
-        }
-
-        public string ApiIdentifier { get; set; } = default!;
-        
-        public string ApiFilter { get; set; }
-
-        public string Id { get; set; } = default!;
-        public string OdhType { get; set; } = default!;
-        public string Description { get; set; } = default!;
-
-        private string swaggerUrl = default!;
-        public string SwaggerUrl
-        {
-            get { return "swagger/index.html#/" + swaggerUrl; }
-            set { swaggerUrl = value; }
-        }
-
-        public string Self
-        {
-            get
-            {
-                return this.Id;                
-            }
-        }
-
-        public string ApiUrl
-        {
-            get
-            {
-                return this.ApiIdentifier + this.ApiFilter;
-            }
-        }
-
-        public string Source { get; set; }
-     
-        public string License { get; set; } = default!;
-
-        //public string LicenseType { get; set; }
-
-        //public string LicenseInfo { get; set; }
-
-        public bool Deprecated { get; set; }
-
-        public bool SingleDataset { get; set; }
-        public Metadata _Meta { get; set; }
-        public DateTime? FirstImport { get; set; }
-        public DateTime? LastChange { get; set; }
-        public string? Shortname { get; set; }
-
-        public ICollection<string> Sources { get; set; }
-
-        public int? RecordCount { get; set; }
-
-        public IDictionary<string, string> Output { get; set; }
-
-        public IDictionary<string,string> ApiDescription { get; set; }
-
-        public string? ApiVersion { get; set; }
-
-        public ICollection<string>? PathParam { get; set; }
-
-        public bool? DatabrowserActive { get; set; }
-
-        public IDictionary<string, string> ApiAccess { get; set; }
-    }
 }

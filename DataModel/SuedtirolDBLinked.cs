@@ -1405,6 +1405,77 @@ namespace DataModel
     //VenueTypes
     //Location??
 
+
+    public class TourismMetaData : IMetaData, IImportDateassigneable, IIdentifiable, IPublishedOn
+    {
+        public TourismMetaData()
+        {
+            _Meta = new Metadata();
+        }
+        public string ApiIdentifier { get; set; } = default!;
+
+        public string ApiFilter { get; set; }
+
+        public string Id { get; set; } = default!;
+        public string OdhType { get; set; } = default!;
+        public string Description { get; set; } = default!;
+
+        private string swaggerUrl = default!;
+        public string SwaggerUrl
+        {
+            get { return "swagger/index.html#/" + swaggerUrl; }
+            set { swaggerUrl = value; }
+        }
+
+        public string Self
+        {
+            get
+            {
+                return this.ApiVersion + "/MetaData/" + this.Id;
+            }
+        }
+
+        public string ApiUrl
+        {
+            get
+            {
+                return this.ApiVersion + "/" + this.ApiIdentifier + this.ApiFilter;
+            }
+        }
+
+        public string Source { get; set; }
+
+        public string License { get; set; } = default!;
+
+        //public string LicenseType { get; set; }
+
+        //public string LicenseInfo { get; set; }
+
+        public bool Deprecated { get; set; }
+
+        public bool SingleDataset { get; set; }
+        public Metadata _Meta { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+        public string? Shortname { get; set; }
+
+        public ICollection<string> Sources { get; set; }
+
+        public int? RecordCount { get; set; }
+
+        public IDictionary<string, string> Output { get; set; }
+
+        public IDictionary<string, string> ApiDescription { get; set; }
+
+        public string? ApiVersion { get; set; }
+
+        public ICollection<string>? PathParam { get; set; }
+
+        public ICollection<string>? PublishedOn { get; set; }
+
+        public IDictionary<string, string> ApiAccess { get; set; }
+    }
+
     #endregion
 
     public static class ODHConstant
