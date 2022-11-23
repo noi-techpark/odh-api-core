@@ -74,11 +74,11 @@ namespace OdhApiImporter.Controllers
                 updatetype = "custom",
                 otherinfo = "",
                 message = "Done",
-                recordsmodified = objectscount,
+                recordsmodified = 0,
                 created = 0,
                 deleted = 0,
                 id = "",
-                updated = objectscount,
+                updated = 0,
                 success = true
             });
         }

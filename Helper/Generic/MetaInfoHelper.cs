@@ -63,6 +63,7 @@ namespace Helper
                 ODHTagLinked odhtl => GetMetadataforOdhTag(odhtl),
                 WeatherHistoryLinked wh => GetMetaDataForWeatherHistory(wh),
                 WeatherLinked we => GetMetaDataForWeather(we),
+                TourismMetaData tm => GetMetaDataForMetaData(tm),
                 _ => throw new Exception("not known odh type")
             };            
         }
@@ -293,6 +294,11 @@ namespace Helper
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherLinked>(data);
 
             return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.date, Source = "siag", Reduced = false };            
+        }
+
+        public static Metadata GetMetaDataForMetaData(TourismMetaData data)
+        {
+            return GetMetadata(data, "noi", data.LastChange, false);
         }
     }
 }
