@@ -37,8 +37,6 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("", Name = "TourismApi")]
         [HttpGet, Route("Metadata", Name = "TourismApiMetaData")]
         public async Task<IActionResult> Get(
-            bool writetotable = false,
-            bool fromtable = false,
             string? language = null,
             uint pagenumber = 1,
             PageSize pagesize = null!,
@@ -50,6 +48,8 @@ namespace OdhApiCore.Controllers
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            //Temporary parameters
+            bool writetotable = false,
             CancellationToken cancellationToken = default
             )
         {
@@ -60,16 +60,9 @@ namespace OdhApiCore.Controllers
             if (writetotable)
                 await WriteJsonToTable();
 
-            if (!fromtable)
-            {
-                var result = await GetMetadata();
-                return Ok(result);
-            }
-            else
-            {
-                return await GetMetadataFromTable(fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
-                    seed: seed, lastchange: updatefrom, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);                    
-            }           
+            return await GetMetadataFromTable(fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
+                seed: seed, lastchange: updatefrom, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+
         }
 
         /// <summary>
