@@ -22,7 +22,7 @@ using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     [EnableCors("CorsPolicy")]
     public class MetadataController : OdhController
     {
@@ -34,6 +34,28 @@ namespace OdhApiCore.Controllers
             this.settings = settings;
         }
 
+        //Standard GETTER
+
+        /// <summary>
+        /// GET Article List
+        /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
+        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="updatefrom">[not implemented] Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
+        /// <param name="searchfilter">[not implemented] String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
+        /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
+        /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <returns>Collection of Article Objects</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(JsonResult<TourismMetaData>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("", Name = "TourismApi")]
         [HttpGet, Route("Metadata", Name = "TourismApiMetaData")]
         public async Task<IActionResult> Get(
@@ -50,14 +72,9 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,            
             CancellationToken cancellationToken = default
             )
-        {
-            //var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
-            var location = new Uri($"{Request.Scheme}://{Request.Host}");
-            absoluteUri = location.AbsoluteUri;
-
+        {            
             return await GetMetadataFromTable(fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
-                seed: seed, lastchange: updatefrom, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
-
+                seed: seed, lastchange: updatefrom, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, searchfilter: searchfilter, cancellationToken);
         }
 
         /// <summary>
@@ -91,7 +108,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetMetadataFromTable(
           string[] fields, string? language, uint pagenumber, int? pagesize,
           string? seed, string? lastchange,
-          string? rawfilter, string? rawsort, bool removenullvalues, 
+          string? rawfilter, string? rawsort, bool removenullvalues, string? searchfilter,
           CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -171,7 +188,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //GENERATE ID
-                //metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
+                metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
                 
                 return await UpsertData<TourismMetaData>(metadata, "metadata", true);
             });
@@ -195,7 +212,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Check ID uppercase lowercase
-                //metadata.Id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
+                metadata.Id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
                 return await UpsertData<TourismMetaData>(metadata, "metadata", false, true);
             });
@@ -229,6 +246,7 @@ namespace OdhApiCore.Controllers
 
         #region HELPERS
 
+        //Deprecated helper
         private async Task<IEnumerable<TourismMetaData>> GetMetadata()
         {
             List<TourismMetaData> tourismdatalist = new List<TourismMetaData>();
@@ -243,73 +261,7 @@ namespace OdhApiCore.Controllers
             }
 
             return tourismdatalist;
-        }
-
-      
-        public static string GetAbsoluteUri()
-        {
-            return absoluteUri;
-        }
-
-        //private async Task<ActionResult> WriteJsonToTable()
-        //{
-        //    var jsondata = await GetMetadata();
-        //    string table = "metadata";
-        //    int result = 0;
-
-        //    foreach(var json in jsondata)
-        //    {
-        //        json.FirstImport = DateTime.Now;
-        //        json.LastChange = DateTime.Now;
-        //        json.Shortname = json.ApiIdentifier;
-        //        json._Meta = new Metadata() { Id = json.Id, LastUpdate  = json.LastChange, Reduced = false, Source = "odh", Type = "odhmetadata" };
-
-        //        json.ApiVersion = "v1";
-        //        json.ApiDescription = new Dictionary<string, string>();
-        //        //json.ApiDescription.TryAddOrUpdate("en", json.Description);
-        //        json.Sources = new List<string>();
-        //        //json.Sources.Add(json.Source);
-        //        json.PublishedOn = new List<string>();
-        //        json.ApiAccess = new Dictionary<string, string>();
-        //        json.ApiAccess.TryAddOrUpdate(json.Source, json.License);
-        //        json.Output = new Dictionary<string, string>();
-        //        json.Output.TryAddOrUpdate("default","application/json");
-        //        json.Output.TryAddOrUpdate("ld+json", "application/ld+json");
-        //        json.PathParam = json.ApiIdentifier.Split('/').ToList();
-
-
-        //        if (json.ApiIdentifier != "Find")
-        //        {                    
-        //            var currentloc = new Uri($"{Request.Scheme}://{Request.Host}/v1/" + json.ApiIdentifier);
-
-        //            //json.RecordCount = Convert.ToInt32(await MetaDataApiRecordCount.GetApiRecordCount(currentloc.AbsoluteUri, json.ApiFilter, ""));
-
-        //            json.RecordCount =  await MetaDataApiRecordCount.GetRecordCountfromDB(json.ApiFilter, json.OdhType, QueryFactory);
-        //        }
-
-         
-        //        //Check if data exists
-        //        var query = QueryFactory.Query(table)
-        //                  .Select("data")
-        //                  .Where("id", json.Id);
-
-        //        var queryresult = await query.GetAsync<TourismMetaData>();
-
-        //        if (queryresult == null || queryresult.Count() == 0)
-        //        {                    
-        //            result = await QueryFactory.Query(table)
-        //               .InsertAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
-        //        }
-        //        else
-        //        {
-        //            result = await QueryFactory.Query(table).Where("id", json.Id)
-        //                    .UpdateAsync(new JsonBData() { id = json.Id, data = new JsonRaw(json) });                    
-        //        }
-        //    }
-
-        //    return Ok("Result: " + result);
-        //}
-
+        }                    
 
         #endregion
     }

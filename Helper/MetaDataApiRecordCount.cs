@@ -49,12 +49,18 @@ namespace Helper
                 string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
                 string source = "";
+                string tag = "";
 
                 if (filter != null)
                 {
                     if (filter.StartsWith("?source="))
                     {
                         source = filter.Replace("?source=", "");
+                    }
+
+                    if (filter.StartsWith("?tagfilter="))
+                    {
+                        tag = filter.Replace("?tagfilter=", "");
                     }
                 }
 
@@ -64,6 +70,7 @@ namespace Helper
                     .Where("gen_reduced", true)
                     .Where("gen_licenseinfo_closeddata", false)
                     .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
+                    .When(!String.IsNullOrEmpty(tag), q => q.WhereArrayInListOr(new List<string>() { tag }, "gen_tags"))
                     .CountAsync<int>();
 
                 //Get Closed
@@ -71,6 +78,7 @@ namespace Helper
                     .From(table)
                     .Where("gen_licenseinfo_closeddata", true)
                     .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
+                    .When(!String.IsNullOrEmpty(tag), q => q.WhereArrayInListOr(new List<string>() { tag }, "gen_tags"))
                     .CountAsync<int>();
 
                 //Get Open
@@ -79,6 +87,7 @@ namespace Helper
                     .Where("gen_licenseinfo_closeddata", false)
                     .Where("gen_reduced", false)
                     .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
+                    .When(!String.IsNullOrEmpty(tag), q => q.WhereArrayInListOr(new List<string>() { tag }, "gen_tags"))
                     .CountAsync<int>();
 
                 result.TryAddOrUpdate("reduced", reducedcount);
