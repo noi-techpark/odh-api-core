@@ -49,6 +49,7 @@ namespace Helper
                 SmgTags or ODHTagLinked => "odhtag",
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
                 Weather or WeatherLinked => "weather",
+                TourismMetaData => "odhmetadata",
                 //BezirksWeather or DistrictWeatherLinked => "weatherdistrict",
                 _ => throw new Exception("not known odh type")
             };
@@ -90,6 +91,7 @@ namespace Helper
                 Wine or WineLinked => "wines",
                 ODHTags or ODHTagLinked => "smgtags",
                 WeatherHistory or WeatherHistoryLinked => "weatherdatahistory",
+                TourismMetaData => "metadata",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -132,6 +134,7 @@ namespace Helper
                 "wineaward" => "wines",
                 "odhtag" => "smgtags",
                 "weatherhistory" => "weatherdatahistory",
+                "odhmetadata" => "metadata",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -148,7 +151,7 @@ namespace Helper
                 "accommodation" => typeof(AccommodationLinked),
                 "accommodationroom" => typeof(AccommodationRoomLinked),
                 "ltsactivity" => typeof(LTSActivityLinked),
-                "pois" => typeof(LTSPoiLinked),
+                "ltspoi" => typeof(LTSPoiLinked),
                 "ltsgastronomy" => typeof(GastronomyLinked),
                 "event" => typeof(EventLinked),
                 "odhactivitypoi" => typeof(ODHActivityPoiLinked),
@@ -170,6 +173,7 @@ namespace Helper
                 "wineaward" => typeof(WineLinked),
                 "odhtag" => typeof(ODHTagLinked),
                 "weatherhistory" => typeof(WeatherHistoryLinked),
+                "odhmetadata" => typeof(TourismMetaData),
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -212,6 +216,7 @@ namespace Helper
                 "wines" => "wineaward",
                 "smgtags" => "odhtag",
                 "weatherdatahistory" => "weatherhistory",
+                "metadata" => "odhmetadata",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -250,6 +255,7 @@ namespace Helper
                 "wines" => typeof(WineLinked),
                 "smgtags" => typeof(ODHTagLinked),
                 "weatherdatahistory" => typeof(WeatherHistoryLinked),
+                "metadata" => typeof(TourismMetaData),
                 _ => throw new Exception("not known table name")
             };
         }
@@ -293,6 +299,7 @@ namespace Helper
                 "wineaward" => id.ToUpper(),
                 "odhtag" => id.ToLower(),
                 "weatherhistory" => id,
+                "odhmetadata" => id.ToLower(),
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -330,6 +337,7 @@ namespace Helper
                 "wineaward" => JsonConvert.DeserializeObject<WineLinked>(raw.Value)!,
                 "odhtag" => JsonConvert.DeserializeObject<ODHTagLinked>(raw.Value)!,
                 "weatherhistory" => JsonConvert.DeserializeObject<WeatherHistoryLinked>(raw.Value)!,
+                "odhmetadata" => JsonConvert.DeserializeObject<TourismMetaData>(raw.Value)!,
                 _ => throw new Exception("not known odh type")
             };
         }
