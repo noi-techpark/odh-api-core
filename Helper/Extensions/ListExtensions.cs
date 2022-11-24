@@ -33,7 +33,9 @@ namespace Helper.Extensions
             if (smgtags == null)
                 smgtags = new List<string>();
 
-            smgtags.Add(tagToAdd);
+
+            if (!smgtags.Contains(tagToAdd))
+                smgtags.Add(tagToAdd);
         }
     }
 }
