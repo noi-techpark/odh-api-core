@@ -2160,6 +2160,10 @@ namespace DataModel
         public DateTime? LastUpdate { get; set; }
         public string? Source { get; set; }
         public bool Reduced { get; set; }
+
+        public string? EditedBy { get; set; }
+
+        public string? EditSource { get; set; }
     }
 
     public class LicenseInfo
