@@ -111,7 +111,7 @@ namespace OdhApiCore.Controllers
                     featurefilter: featurefilter, setuptypefilter: setuptypefilter, sourcefilter: source,
                     active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
                     publishedon: publishedon,
-                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, destindationdataformat: destindationdataformat,
+                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, destinationdataformat: destinationdataformat,
                     cancellationToken: cancellationToken);
         }
 
@@ -137,10 +137,10 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             bool removenullvalues = false,
-            bool destindationdataformat = true,
+            bool destinationdataformat = true,
             CancellationToken cancellationToken = default)
         {
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, destindationdataformat: destindationdataformat, cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, destinationdataformat: destinationdataformat, cancellationToken);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace OdhApiCore.Controllers
           string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
           string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? publishedon,
-          PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, bool destindationdataformat,
+          PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, bool destinationdataformat,
           CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -221,7 +221,7 @@ namespace OdhApiCore.Controllers
                     langfilter, sourcefilter, active, smgactive, smgtags, lastchange, publishedon,
                     cancellationToken);
 
-                var venuecolumn = destindationdataformat ? "destinationdata as data" : "data";
+                var venuecolumn = destinationdataformat ? "destinationdata as data" : "data";
 
                 var query =
                     QueryFactory.Query()
@@ -268,11 +268,11 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, bool destindationdataformat, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, bool destinationdataformat, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
-                var venuecolumn = destindationdataformat ? "destinationdata as data" : "data";
+                var venuecolumn = destinationdataformat ? "destinationdata as data" : "data";
 
                 var query =
                     QueryFactory.Query("venues_v2")
