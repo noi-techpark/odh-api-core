@@ -99,7 +99,7 @@ namespace OdhApiCore.Controllers
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            bool destindationdataformat = true,
+            bool destinationdataformat = true,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
