@@ -17,18 +17,18 @@ namespace Helper.Extensions
                 .ToList();
         }
 
-        public static void TryAddOrUpdateOnTagList(this IList<string> smgtags, IList<string> tagsToAdd)
+        public static void TryAddOrUpdateOnList(this ICollection<string> smgtags, ICollection<string> tagsToAdd)
         {
             if (smgtags == null)
                 smgtags = new List<string>();
 
-            foreach (var tag in smgtags)
+            foreach (var tag in tagsToAdd)
             {
-                tagsToAdd.TryAddOrUpdateOnTagList(tag);
+                smgtags.TryAddOrUpdateOnList(tag);
             }
         }
 
-        public static void TryAddOrUpdateOnTagList(this IList<string> smgtags, string tagToAdd)
+        public static void TryAddOrUpdateOnList(this ICollection<string> smgtags, string tagToAdd)
         {
             if (smgtags == null)
                 smgtags = new List<string>();
