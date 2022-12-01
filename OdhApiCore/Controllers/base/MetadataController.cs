@@ -37,7 +37,7 @@ namespace OdhApiCore.Controllers
         //Standard GETTER
 
         /// <summary>
-        /// GET Article List
+        /// GET TourismMetaData List
         /// </summary>
         /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page, (default:10)</param>
@@ -78,7 +78,7 @@ namespace OdhApiCore.Controllers
         }
 
         /// <summary>
-        /// GET Metadata Single 
+        /// GET TourismMetaData Single 
         /// </summary>
         /// <param name="id">ID of the Metadata</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
