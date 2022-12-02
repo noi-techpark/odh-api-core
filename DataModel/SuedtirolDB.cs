@@ -580,7 +580,7 @@ namespace DataModel
         //Generic Mapping Object
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public ICollection<string> MappedIds { get; set; }
+        public ICollection<string> MappedTagIds { get; set; }
     }
 
     public class LTSTaggingInfo
