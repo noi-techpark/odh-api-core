@@ -146,11 +146,11 @@ namespace Helper
             if (data.Source.ToLower() == "suedtirolwein")
                 licenseholder = "https://www.suedtirolwein.com";
             if (data.Source.ToLower() == "sta")
-                licenseholder = "https://www.sta.bz.it/";
+                licenseholder = "https://www.sta.bz.it";
             if (data.Source.ToLower() == "lts")
                 licenseholder = @"https://www.lts.it";
             if (data.Source.ToLower() == "dss")
-                licenseholder = @"https://www.dolomitisuperski.com/";
+                licenseholder = @"https://www.dolomitisuperski.com";
 
             List<string?> allowedsources = new List<string?>() { 
                 "magnolia", 
@@ -222,6 +222,11 @@ namespace Helper
                 licenseholder = @"https://www.idm-suedtirol.com";
             }
 
+            if (data.Source?.ToLower() == "dss")
+            {
+                licenseholder = @"https://www.dolomitisuperski.com";
+            }
+
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
@@ -233,6 +238,13 @@ namespace Helper
 
             if (data.SmgActive == true)
             {
+                isopendata = true;
+                licensetype = "CC0";
+            }
+
+            if (data.Source?.ToLower() == "noi")
+            {
+                licenseholder = @"https://noi.bz.it";
                 isopendata = true;
                 licensetype = "CC0";
             }
@@ -298,11 +310,11 @@ namespace Helper
         {
             var isopendata = false;
             var licensetype = "Closed";
-            var licenseholder = @"https://www.idm-suedtirol.com/";
+            var licenseholder = @"https://www.idm-suedtirol.com";
 
             if (data.SmgActive)
             {
-                licenseholder = @"https://www.idm-suedtirol.com/";
+                licenseholder = @"https://www.idm-suedtirol.com";
                 isopendata = true;
                 licensetype = "CC0";
             }
@@ -314,7 +326,7 @@ namespace Helper
         {
             var isopendata = false;
             var licensetype = "Closed";
-            var licenseholder = @"https://www.lts.it/";
+            var licenseholder = @"https://www.lts.it";
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
