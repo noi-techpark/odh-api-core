@@ -383,14 +383,26 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois");
-                dssimporthelper.entitytype = dssentity;
+                switch(dssentity)
+                {
+                    case "webcam":
+                        DSSWebcamImportHelper dsswebcamimporthelper = new DSSWebcamImportHelper(settings, QueryFactory, "webcams");                        
 
-                updatedetail = await dssimporthelper.SaveDataToODH(null, null, cancellationToken);
+                        updatedetail = await dsswebcamimporthelper.SaveDataToODH(null, null, cancellationToken);
+                        break;
+                   
+                    default:
+                        DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois");
+                        dssimporthelper.entitytype = dssentity;
+
+                       updatedetail = await dssimporthelper.SaveDataToODH(null, null, cancellationToken);
+                        break;
+                }
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update succeeded", "", updatedetail, true);
 
                 return Ok(updateResult);
+
             }
             catch (Exception ex)
             {
