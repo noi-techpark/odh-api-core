@@ -1,203 +1,0 @@
-[1mdiff --git a/CDB/Parser/ParseAccommodations.cs b/CDB/Parser/ParseAccommodations.cs[m
-[1mindex 3248a9c3..182d7e9f 100644[m
-[1m--- a/CDB/Parser/ParseAccommodations.cs[m
-[1m+++ b/CDB/Parser/ParseAccommodations.cs[m
-[36m@@ -433,6 +433,10 @@[m [mnamespace CDB.Parser[m
-                             mainimagede.ImageTags = imagetaglist;[m
-                         }[m
- [m
-[32m+[m[32m                        //TODO Add Image ID from URL[m
-[32m+[m[41m                       [m
-[32m+[m
-[32m+[m
-                         imagegallerylist.Add(mainimagede);[m
-                     }[m
-                     [m
-[1mdiff --git a/Helper/Generic/IdGenerator.cs b/Helper/Generic/IdGenerator.cs[m
-[1mindex 2b9e7a8d..5f222cd4 100644[m
-[1m--- a/Helper/Generic/IdGenerator.cs[m
-[1m+++ b/Helper/Generic/IdGenerator.cs[m
-[36m@@ -70,6 +70,7 @@[m [mnamespace Helper[m
-                 WebcamInfo or WebcamInfoLinked => IDStyle.uppercase,[m
-                 Article or ArticlesLinked => IDStyle.uppercase,[m
-                 DDVenue => IDStyle.uppercase,[m
-[32m+[m[32m                Venue or VenueLinked => IDStyle.uppercase,[m
-                 EventShort or EventShortLinked => IDStyle.lowercase,[m
-                 ExperienceArea or ExperienceAreaLinked => IDStyle.uppercase,[m
-                 MetaRegion or MetaRegionLinked => IDStyle.uppercase,[m
-[36m@@ -102,6 +103,7 @@[m [mnamespace Helper[m
-                 Type _ when odhtype == typeof(WebcamInfo) || odhtype == typeof(WebcamInfoLinked) => IDStyle.uppercase,[m
-                 Type _ when odhtype == typeof(Article) || odhtype == typeof(ArticlesLinked) => IDStyle.uppercase,[m
-                 Type _ when odhtype == typeof(DDVenue)  => IDStyle.uppercase,[m
-[32m+[m[32m                Type _ when odhtype == typeof(Venue)|| odhtype == typeof(VenueLinked) => IDStyle.uppercase,[m
-                 Type _ when odhtype == typeof(EventShort) || odhtype == typeof(EventShortLinked) => IDStyle.lowercase,[m
-                 Type _ when odhtype == typeof(ExperienceArea) || odhtype == typeof(ExperienceAreaLinked) => IDStyle.uppercase,[m
-                 Type _ when odhtype == typeof(MetaRegion) || odhtype == typeof(MetaRegionLinked) => IDStyle.uppercase,[m
-[1mdiff --git a/Helper/Generic/LicenseHelper.cs b/Helper/Generic/LicenseHelper.cs[m
-[1mindex 1b65f3e2..cc125b7a 100644[m
-[1m--- a/Helper/Generic/LicenseHelper.cs[m
-[1m+++ b/Helper/Generic/LicenseHelper.cs[m
-[36m@@ -255,6 +255,22 @@[m [mnamespace Helper[m
-             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);[m
-         }[m
- [m
-[32m+[m[32m        public static LicenseInfo GetLicenseforVenue(Venue data)[m
-[32m+[m[32m        {[m
-[32m+[m[32m            var isopendata = false;[m
-[32m+[m[32m            var licensetype = "Closed";[m
-[32m+[m[32m            var licenseholder = @"https://www.lts.it";[m
-[32m+[m
-[32m+[m[32m            //TODO if this info is into TAGS[m
-[32m+[m[32m            //if (data.attributes.categories is { } && !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH"))[m
-[32m+[m[32m            //{[m
-[32m+[m[32m            //    isopendata = true;[m
-[32m+[m[32m            //    licensetype = "CC0";[m
-[32m+[m[32m            //}[m
-[32m+[m
-[32m+[m[32m            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);[m
-[32m+[m[32m        }[m
-[32m+[m
-         public static LicenseInfo GetLicenseforEventShort(EventShort data)[m
-         {[m
-             var isopendata = true;[m
-[1mdiff --git a/Helper/Generic/MetaInfoHelper.cs b/Helper/Generic/MetaInfoHelper.cs[m
-[1mindex adcc2ec9..235df90d 100644[m
-[1m--- a/Helper/Generic/MetaInfoHelper.cs[m
-[1m+++ b/Helper/Generic/MetaInfoHelper.cs[m
-[36m@@ -47,7 +47,8 @@[m [mnamespace Helper[m
-                 MeasuringpointLinked ml => GetMetadataforMeasuringpoint(ml),[m
-                 WebcamInfoLinked wil => GetMetadataforWebcam(wil),[m
-                 ArticlesLinked al => GetMetadataforArticle(al),[m
-[31m-                DDVenue ddv => GetMetadataforVenue(ddv),[m
-[32m+[m[32m                DDVenue ddv => GetMetadataforDDVenue(ddv),[m
-[32m+[m[32m                VenueLinked vl => GetMetadataforVenue(vl),[m
-                 EventShortLinked esl => GetMetadataforEventShort(esl),[m
-                 ExperienceAreaLinked eal => GetMetadataforExperienceArea(eal),[m
-                 MetaRegionLinked mrl => GetMetadataforMetaRegion(mrl),[m
-[36m@@ -200,7 +201,7 @@[m [mnamespace Helper[m
-             return GetMetadata(data, sourcemeta, data.LastChange, false);[m
-         }[m
- [m
-[31m-        public static Metadata GetMetadataforVenue(DDVenue data)[m
-[32m+[m[32m        public static Metadata GetMetadataforDDVenue(DDVenue data)[m
-         {[m
-             bool reduced = false;[m
-             if (data._Meta != null)[m
-[36m@@ -209,6 +210,15 @@[m [mnamespace Helper[m
-             return data._Meta = GetMetadata(data, "lts", data.meta?.lastUpdate, reduced);[m
-         }[m
- [m
-[32m+[m[32m        public static Metadata GetMetadataforVenue(VenueLinked data)[m
-[32m+[m[32m        {[m
-[32m+[m[32m            bool reduced = false;[m
-[32m+[m[32m            if (data._Meta != null)[m
-[32m+[m[32m                reduced = (bool)data._Meta.Reduced;[m
-[32m+[m
-[32m+[m[32m            return data._Meta = GetMetadata(data, "lts", data.LastChange, reduced);[m
-[32m+[m[32m        }[m
-[32m+[m
-         public static Metadata GetMetadataforEventShort(EventShortLinked data)[m
-         {[m
-             string sourcemeta = data.Source != null ? data.Source.ToLower() : "ebms";[m
-[1mdiff --git a/Helper/Generic/ODHTypeHelper.cs b/Helper/Generic/ODHTypeHelper.cs[m
-[1mindex 2e0b9a4b..890db789 100644[m
-[1m--- a/Helper/Generic/ODHTypeHelper.cs[m
-[1m+++ b/Helper/Generic/ODHTypeHelper.cs[m
-[36m@@ -34,6 +34,7 @@[m [mnamespace Helper[m
-                 WebcamInfo or WebcamInfoLinked => "webcam",[m
-                 Article or ArticlesLinked => "article",[m
-                 DDVenue => "venue",[m
-[32m+[m[32m                Venue or VenueLinked => "venue",[m
-                 EventShort or EventShortLinked => "eventshort",[m
-                 ExperienceArea or ExperienceAreaLinked => "experiencearea",[m
-                 MetaRegion or MetaRegionLinked => "metaregion",[m
-[36m@@ -75,6 +76,7 @@[m [mnamespace Helper[m
-                 WebcamInfo or WebcamInfoLinked => "webcams",[m
-                 Article or ArticlesLinked => "articles",[m
-                 DDVenue => "venues",[m
-[32m+[m[32m                Venue or VenueLinked => "venues",[m
-                 EventShort or EventShortLinked => "eventeuracnoi",[m
-                 ExperienceArea or ExperienceAreaLinked => "experienceareas",[m
-                 MetaRegion or MetaRegionLinked => "metaregions",[m
-[1mdiff --git a/OdhApiCore/Formatters/JsonLdOutputFormatter.cs b/OdhApiCore/Formatters/JsonLdOutputFormatter.cs[m
-[1mindex 5c8a5750..e4223bf0 100644[m
-[1m--- a/OdhApiCore/Formatters/JsonLdOutputFormatter.cs[m
-[1m+++ b/OdhApiCore/Formatters/JsonLdOutputFormatter.cs[m
-[36m@@ -5,8 +5,12 @@[m [musing Microsoft.AspNetCore.Mvc.Formatters;[m
- using Microsoft.Net.Http.Headers;[m
- using Newtonsoft.Json;[m
- using Newtonsoft.Json.Linq;[m
-[32m+[m[32musing Newtonsoft.Json.Serialization;[m[41m[m
- using System.Collections.Generic;[m
-[32m+[m[32musing System.Linq;[m[41m[m
- using System.Text;[m
-[32m+[m[32musing System.Text.Json;[m[41m[m
-[32m+[m[32musing System.Text.Json.Serialization;[m[41m[m
- using System.Threading.Tasks;[m
- [m
- namespace OdhApiCore.Formatters[m
-[36m@@ -23,7 +27,7 @@[m [mnamespace OdhApiCore.Formatters[m
-             SupportedEncodings.Add(Encoding.Unicode);[m
-         }[m
- [m
-[31m-        private object? Transform(PathString path, JsonRaw jsonRaw)[m
-[32m+[m[32m        private List<object>? Transform(PathString path, JsonRaw jsonRaw)[m[41m[m
-         {[m
-             //TODO: extract language[m
- [m
-[36m@@ -99,13 +103,23 @@[m [mnamespace OdhApiCore.Formatters[m
-                 var transformed = Transform(context.HttpContext.Request.Path, jsonRaw);[m
-                 if (transformed != null)[m
-                 {[m
-[31m-                    var jsonLD = JsonConvert.SerializeObject(transformed, Newtonsoft.Json.Formatting.None,[m
-[31m-                                    new JsonSerializerSettings[m
-[31m-                                    {[m
-[31m-                                        DefaultValueHandling = DefaultValueHandling.Ignore,[m
-[31m-                                        NullValueHandling = NullValueHandling.Ignore[m
-[31m-                                    });[m
-[32m+[m[32m                    var jsonLD = "";[m[41m[m
-[32m+[m[32m                    var options = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault };[m[41m[m
-[32m+[m[41m[m
-[32m+[m[32m                    if (transformed.Count == 1)[m[41m[m
-[32m+[m[32m                    {[m[41m[m
-[32m+[m[32m                        jsonLD = System.Text.Json.JsonSerializer.Serialize(transformed.FirstOrDefault(), options); //TODO REMOVE NULL VALUES[m[41m[m
-[32m+[m[32m                            //JsonConvert.SerializeObject(transformed.FirstOrDefault(), Newtonsoft.Json.Formatting.None, jsonsettings);[m[41m[m
-[32m+[m[41m                                    [m
-[32m+[m[32m                    }[m[41m[m
-[32m+[m[32m                    else if (transformed.Count > 1)[m[41m[m
-[32m+[m[32m                    {[m[41m[m
-[32m+[m[32m                        jsonLD = System.Text.Json.JsonSerializer.Serialize(transformed, options);[m[41m[m
-[32m+[m[32m                    }[m[41m[m
-[32m+[m[41m[m
-[32m+[m[41m                    [m
-                     await context.HttpContext.Response.WriteAsync(jsonLD);[m
-[32m+[m[32m                    //await context.HttpContext.Response.WriteAsync(transformed);[m[41m[m
-                 }[m
-                 else[m
-                 {[m
-[1mdiff --git a/OdhApiCore/Startup.cs b/OdhApiCore/Startup.cs[m
-[1mindex c2a4cc60..344fd9e1 100644[m
-[1m--- a/OdhApiCore/Startup.cs[m
-[1m+++ b/OdhApiCore/Startup.cs[m
-[36m@@ -272,7 +272,7 @@[m [mnamespace OdhApiCore[m
-             services.AddControllers().AddNewtonsoftJson(options =>[m
-             {[m
-                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();[m
-[31m-                options.SerializerSettings.Converters.Add(new StringEnumConverter());[m
-[32m+[m[32m                options.SerializerSettings.Converters.Add(new StringEnumConverter());[m[41m                [m
-                 //{[m
-                 //    CamelCaseText = true[m
-                 //});[m
-[1mdiff --git a/RAVEN/TransformToPGObject.cs b/RAVEN/TransformToPGObject.cs[m
-[1mindex 0fdd78e6..a9692d17 100644[m
-[1m--- a/RAVEN/TransformToPGObject.cs[m
-[1m+++ b/RAVEN/TransformToPGObject.cs[m
-[36m@@ -397,7 +397,7 @@[m [mnamespace RAVEN[m
-             data.odhdata.ODHActive = !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH") ? true : false;[m
-             data.links.self = ODHConstant.ApplicationURL + "Venue/" + data.Id;[m
- [m
-[31m-            data._Meta = MetadataHelper.GetMetadataobject<DDVenue>(data, MetadataHelper.GetMetadataforVenue);[m
-[32m+[m[32m            data._Meta = MetadataHelper.GetMetadataobject<DDVenue>(data, MetadataHelper.GetMetadataforDDVenue);[m
-             data.odhdata.PublishedOn = PublishedOnHelper.GetPublishenOnList("venue", data.odhdata.ODHActive);[m
- [m
-             //fixes[m
