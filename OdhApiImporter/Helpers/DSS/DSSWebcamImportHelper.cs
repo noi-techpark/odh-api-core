@@ -103,6 +103,16 @@ namespace OdhApiImporter.Helpers.DSS
                 if (parsedobject == null)
                     throw new Exception();
 
+                //Get Areas to Assign
+
+                //Set Shortname
+                if (!String.IsNullOrEmpty(parsedobject.Webcamname["de"]))
+                    parsedobject.Shortname = parsedobject.Webcamname["de"];
+                else if (!String.IsNullOrEmpty(parsedobject.Webcamname["it"]))
+                    parsedobject.Shortname = parsedobject.Webcamname["it"];
+                else if (!String.IsNullOrEmpty(parsedobject.Webcamname["en"]))
+                    parsedobject.Shortname = parsedobject.Webcamname["en"];
+
                 var sourceid = (string)DSSImportUtil.GetSourceId(item, entitytype);                
                 
                 if (String.IsNullOrEmpty(sourceid))
