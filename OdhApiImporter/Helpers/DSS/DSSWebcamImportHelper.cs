@@ -20,13 +20,11 @@ namespace OdhApiImporter.Helpers.DSS
     {        
         public DSSWebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
         {
-            entitytype = "webcam";
-            rawonly = true;
+            entitytype = "webcam";            
             idlistdssinterface = new();
         }
 
-        string entitytype;
-        public bool rawonly { get; set; }
+        string entitytype;        
         public List<string> idlistdssinterface { get; set; }
 
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
@@ -94,17 +92,15 @@ namespace OdhApiImporter.Helpers.DSS
 
                 returnid = item.pid;
 
-                if (!rawonly)
-                {
-                    //Parse DSS Data
-                    parsedobject = await ParseDSSDataToWebcam(item);
-                    if (parsedobject == null)
-                        throw new Exception();                                              
-                }
+
+                //Parse DSS Data
+                parsedobject = await ParseDSSDataToWebcam(item);
+                if (parsedobject == null)
+                    throw new Exception();
+
 
                 var sourceid = (string)DSSImportUtil.GetSourceId(parsedobject, entitytype);
-
-                //TODO GET ID based on item type
+                
 
                 //IF no id is provided timestamp generated WRONG i need a unique identifier to group on!
                 if (String.IsNullOrEmpty(sourceid))
@@ -186,19 +182,14 @@ namespace OdhApiImporter.Helpers.DSS
         {
             var rawdataid = await InsertInRawDataDB(dssdata);
 
-            if (!rawonly)
-            {
-                webcam.Id = webcam.Id?.ToLower();
+            webcam.Id = webcam.Id?.ToLower();
 
-                //Set LicenseInfo
-                webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
+            //Set LicenseInfo
+            webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
 
-                var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid);
+            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid);
 
-                return pgcrudresult;
-            }
-            else
-                return new PGCRUDResult { created = 1, deleted = 0, updated = 0, error = 0, operation = "RAW_INSERT", id = rawdataid.ToString() };
+            return pgcrudresult;
 
         }
 

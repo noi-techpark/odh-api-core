@@ -33,6 +33,14 @@ namespace DSS.Parser
 
             dssidmap.TryAddOrUpdate("rid", (string)dssitem.rid);
             dssidmap.TryAddOrUpdate("pid", (string)dssitem.pid);
+            //ADD DSS Region ID
+            var regionid = (string)dssitem["regionId"];
+            dssidmap.TryAddOrUpdate("regionId", regionid);
+
+            //ADD DSS skiresort Mapping 
+            dssidmap.TryAddOrUpdate("skiresort_rid", (string)dssitem["skiresort"]["pid"]);
+            dssidmap.TryAddOrUpdate("skiresort_pid", (string)dssitem["skiresort"]["rid"]);
+
 
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssidmap);
 
@@ -80,8 +88,8 @@ namespace DSS.Parser
             var additionaltexten = !String.IsNullOrEmpty(infotextwinteren) ? infotextwinteren : !String.IsNullOrEmpty(infotextsummeren) ? infotextsummeren : null;
 
             myodhactivitypoilinked.Detail.TryAddOrUpdate("de", new Detail() { Language = "de", Title= namede, BaseText = descde, AdditionalText = additionaltextde });
-            myodhactivitypoilinked.Detail.TryAddOrUpdate("it", new Detail() { Language = "it", Title = nameit, BaseText = descit });
-            myodhactivitypoilinked.Detail.TryAddOrUpdate("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
+            myodhactivitypoilinked.Detail.TryAddOrUpdate("it", new Detail() { Language = "it", Title = nameit, BaseText = descit, AdditionalText = additionaltextit });
+            myodhactivitypoilinked.Detail.TryAddOrUpdate("en", new Detail() { Language = "en", Title = nameen, BaseText = descen, AdditionalText = additionaltexten });
 
             //lifttype TODO Mapping
             if(dssitem["lifttype"] != null)
@@ -93,7 +101,7 @@ namespace DSS.Parser
                 }
             }
                         
-            //skiresort TODO Mapping 
+
 
             //Operationschedule (opening-times, opening-times-summer, season-summer, season-winter)
             myodhactivitypoilinked.OperationSchedule = new List<OperationSchedule>();
@@ -139,8 +147,6 @@ namespace DSS.Parser
             var number = (string)dssitem["number"];
             myodhactivitypoilinked.Number = number;
 
-
-            var regionid = (int?)dssitem["regionId"];
             //Isopen
             var statewinter = (int?)dssitem["state-winter"];            
             //isopen?
@@ -192,11 +198,18 @@ namespace DSS.Parser
             myodhactivitypoilinked.CustomId = (string)dssitem.rid;
 
             //ADD MAPPING
-            //ADD MAPPING
             var dssidmap = new Dictionary<string, string>();
 
             dssidmap.TryAddOrUpdate("rid", (string)dssitem.rid);
             dssidmap.TryAddOrUpdate("pid", (string)dssitem.pid);
+
+            //Add DSS Region ID
+            var regionid = (string)dssitem["regionId"];
+            dssidmap.TryAddOrUpdate("regionId", regionid);
+
+            //Add DSS skiresort Mapping            
+            dssidmap.TryAddOrUpdate("skiresort_rid", (string)dssitem["skiresort"]["pid"]);
+            dssidmap.TryAddOrUpdate("skiresort_pid", (string)dssitem["skiresort"]["rid"]);
 
             myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssidmap);
 
@@ -295,7 +308,7 @@ namespace DSS.Parser
             myodhactivitypoilinked.Number = number;
 
 
-            var regionid = (int?)dssitem["regionId"];
+      
             //isopen?
             var state = (int?)dssitem["state"];
             myodhactivitypoilinked.IsOpen = Convert.ToBoolean(state);
@@ -331,159 +344,69 @@ namespace DSS.Parser
 
             mywebcaminfolinked.Source = "dss";
 
-            //myodhactivitypoilinked.Active = true;
-            //myodhactivitypoilinked.SmgActive = true;
+            mywebcaminfolinked.Id = "dss_" + (string)dssitem.pid;
 
-
-            //myodhactivitypoilinked.SyncSourceInterface = "dssliftbase";
-            //myodhactivitypoilinked.SyncUpdateMode = "Full";
-
-            //myodhactivitypoilinked.Id = "dss_" + (string)dssitem.pid;
-            //myodhactivitypoilinked.CustomId = (string)dssitem.rid;
 
             ////ADD MAPPING
-            //var dssidmap = new Dictionary<string, string>();
+            var dssidmap = new Dictionary<string, string>();
 
-            //dssidmap.TryAddOrUpdate("rid", (string)dssitem.rid);
-            //dssidmap.TryAddOrUpdate("pid", (string)dssitem.pid);
+            dssidmap.TryAddOrUpdate("pid", (string)dssitem.pid);
 
-            //myodhactivitypoilinked.Mapping.TryAddOrUpdate("dss", dssidmap);
+            if ((string)dssitem.rid != "0")
+                dssidmap.TryAddOrUpdate("rid", (string)dssitem.rid);
+            if (!String.IsNullOrEmpty((string)dssitem.feratelId))
+                dssidmap.TryAddOrUpdate("feratelId", (string)dssitem.feratelId);
 
+            //ADD DSS skiresort Mapping ONLY skiresort string present?
+            dssidmap.TryAddOrUpdate("skiresort", (string)dssitem["skiresort"]);            
 
-            //myodhactivitypoilinked.Type = "Anderes";
-            //myodhactivitypoilinked.SubType = "Aufstiegsanlagen";
+            mywebcaminfolinked.Mapping.TryAddOrUpdate("dss", dssidmap);
 
-            //myodhactivitypoilinked.SmgTags = new List<string>();
-            //myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
-            //myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
-            //myodhactivitypoilinked.SmgTags.Add("weitere aufstiegsanlagen"); //?                        
+            //NAME
 
-            //myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
+            var namede = (string)dssitem["name"]["de"];
+            var nameit = (string)dssitem["name"]["it"];
+            var nameen = (string)dssitem["name"]["en"];
 
-            //if (myodhactivitypoilinked.FirstImport == null)
-            //    myodhactivitypoilinked.FirstImport = DateTime.Now;
+            if (!String.IsNullOrEmpty(namede))
+                mywebcaminfolinked.Webcamname.TryAddOrUpdate("de", namede);
+            if (!String.IsNullOrEmpty(namede))
+                mywebcaminfolinked.Webcamname.TryAddOrUpdate("it", nameit);
+            if (!String.IsNullOrEmpty(namede))
+                mywebcaminfolinked.Webcamname.TryAddOrUpdate("en", nameen);
 
-            //var lastchangeobj = (string)dssitem["update-date"];
+            //LOCATION
 
-            //if (double.TryParse(lastchangeobj, out double updatedate))
-            //    myodhactivitypoilinked.LastChange = Helper.DateTimeHelper.UnixTimeStampToDateTime(updatedate);
+            List<GpsInfo> gpsinfolist = ParseDSSSlopeToODHGpsInfo(dssitem["location"], dssitem["altitude"]);
+            if (gpsinfolist.Count > 0)
+                mywebcaminfolinked.GpsInfo = gpsinfolist.FirstOrDefault();
 
-            ////name
-            //var namede = (string)dssitem["name"]["de"];
-            //var nameit = (string)dssitem["name"]["it"];
-            //var nameen = (string)dssitem["name"]["en"];
+            //WEBCAMIMAGE
+            var webcamurl = dssitem["original-image"];
+            mywebcaminfolinked.Webcamurl = webcamurl;
 
-            ////description
-            //var descde = (string)dssitem["description"]["de"];
-            //var descit = (string)dssitem["description"]["it"];
-            //var descen = (string)dssitem["description"]["en"];
-
-            ////info-text TODO
-            //var infotextwinterde = (string)dssitem["info-text"]["de"];
-            //var infotextwinterit = (string)dssitem["info-text"]["it"];
-            //var infotextwinteren = (string)dssitem["info-text"]["en"];
-
-            ////info-text-summer TODO
-            //var infotextsummerde = (string)dssitem["info-text-summer"]["de"];
-            //var infotextsummerit = (string)dssitem["info-text-summer"]["it"];
-            //var infotextsummeren = (string)dssitem["info-text-summer"]["en"];
-
-            //var additionaltextde = !String.IsNullOrEmpty(infotextwinterde) ? infotextwinterde : !String.IsNullOrEmpty(infotextsummerde) ? infotextsummerde : null;
-            //var additionaltextit = !String.IsNullOrEmpty(infotextwinterit) ? infotextwinterit : !String.IsNullOrEmpty(infotextsummerit) ? infotextsummerit : null;
-            //var additionaltexten = !String.IsNullOrEmpty(infotextwinteren) ? infotextwinteren : !String.IsNullOrEmpty(infotextsummeren) ? infotextsummeren : null;
-
-            //myodhactivitypoilinked.Detail.TryAddOrUpdate("de", new Detail() { Language = "de", Title = namede, BaseText = descde, AdditionalText = additionaltextde });
-            //myodhactivitypoilinked.Detail.TryAddOrUpdate("it", new Detail() { Language = "it", Title = nameit, BaseText = descit });
-            //myodhactivitypoilinked.Detail.TryAddOrUpdate("en", new Detail() { Language = "en", Title = nameen, BaseText = descen });
-
-            ////lifttype TODO Mapping
-            //if (dssitem["lifttype"] != null)
-            //{
-            //    List<string> lifftype = ParseDSSTypeToODHType(dssitem["lifttype"]);
-            //    foreach (var tag in lifftype)
-            //    {
-            //        myodhactivitypoilinked.SmgTags.Add(tag);
-            //    }
-            //}
-
-            ////skiresort TODO Mapping 
-
-            ////Operationschedule (opening-times, opening-times-summer, season-summer, season-winter)
-            //myodhactivitypoilinked.OperationSchedule = new List<OperationSchedule>();
-
-            //var winteroperationschedule = ParseDSSLiftToODHOperationScheduleFormat("winter", dssitem.data);
-
-            //if (winteroperationschedule != null)
-            //    myodhactivitypoilinked.OperationSchedule.Add(winteroperationschedule);
-
-            //var summeroperationschedule = ParseDSSLiftToODHOperationScheduleFormat("summer", dssitem.data);
-
-            //if (summeroperationschedule != null)
-            //    myodhactivitypoilinked.OperationSchedule.Add(summeroperationschedule);
-
-            ////Properties (length, capacity, capacity-per-hour, altitude-start, altitude-end, height-difference, summercard-points, bike-transport, duration)
-            //var length = (double?)dssitem["data"]["length"];
-            //myodhactivitypoilinked.DistanceLength = length;
-
-            //var altitudestart = (int?)dssitem["data"]["altitude-start"];
-            //myodhactivitypoilinked.AltitudeLowestPoint = altitudestart;
-
-            //var altitudeend = (int?)dssitem["data"]["altitude-end"];
-            //myodhactivitypoilinked.AltitudeHighestPoint = altitudeend;
-
-            //var heightdifference = (int?)dssitem["data"]["height-difference"];
-            //myodhactivitypoilinked.AltitudeDifference = heightdifference;
-
-            //var biketransport = (bool?)dssitem["data"]["bike-transport"];
-            //myodhactivitypoilinked.BikeTransport = biketransport;
+            var webcamiframe = dssitem["iframe"]["it"];
+            if(!String.IsNullOrEmpty(webcamiframe))
+                mywebcaminfolinked.Streamurl = webcamiframe;
 
 
-            //var capacity = (int?)dssitem["data"]["capacity"];
-            //var capacityperhour = (int?)dssitem["data"]["capacity-per-hour"];
-            //var summercardpointsup = (int?)dssitem["data"]["summercard-points"]["up"];
-            //var summercardpointsdown = (int?)dssitem["data"]["summercard-points"]["down"];
+
+            //TODO showonSummer?
+            mywebcaminfolinked.Active = true;
+            mywebcaminfolinked.SmgActive = true;
 
 
-            ////Other (regionId, duration, state-winter, state-summer, datacenterId, number, winterOperation, sorter, summerOperation, sorterSummer)
-
-            //var duration = (string)dssitem["duration"];
-            //myodhactivitypoilinked.DistanceDuration = ConvertToDistanceDuration(duration);
-
-            //var number = (string)dssitem["number"];
-            //myodhactivitypoilinked.Number = number;
+            if (mywebcaminfolinked.FirstImport == null)
+                mywebcaminfolinked.FirstImport = DateTime.Now;
 
 
-            //var regionid = (int?)dssitem["regionId"];
-            ////Isopen
-            //var statewinter = (int?)dssitem["state-winter"];
-            ////isopen?
-            //var statesummer = (int?)dssitem["state-summer"];
+            mywebcaminfolinked.WebcamId = "dss_" + (string)dssitem.pid;
 
-            //if (statewinter == 1 || statesummer == 1)
-            //    myodhactivitypoilinked.IsOpen = true;
-            //else
-            //    myodhactivitypoilinked.IsOpen = false;
 
-            ////?
-            //var datacenterId = (string?)dssitem["datacenterId"];
 
-            //var winterOperation = (bool?)dssitem["winterOperation"];
-            //var summerOperation = (bool?)dssitem["summerOperation"];
 
-            //var sorter = (bool?)dssitem["sorter"];
-            //var sorterSummer = (bool?)dssitem["sorterSummer"];
 
-            ////TODO SKIAREAINFO
 
-            //myodhactivitypoilinked.GpsTrack = ParseToODHGpsTrack((string)dssitem["geoPositionFile"]);
-
-            //List<GpsInfo> gpsinfolist = ParseDSSLiftToODHGpsInfo(dssitem["location"], dssitem["locationMountain"], altitudestart, altitudeend);
-
-            //myodhactivitypoilinked.GpsInfo = gpsinfolist;
-            ////myodhactivitypoilinked.GpsPoints = gpsinfolist.ConvertGpsInfoToGpsPointsLinq();
-
-            ////TODO LOCATIONINFO DONE OUTSIDE
-            ////var skiresort = MapSkiresort(dssitem["skiresort"]);
 
 
             return mywebcaminfolinked;
