@@ -60,6 +60,7 @@ namespace OdhApiCore.Controllers
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="destinationdataformat">If set to true, data will be returned in AlpineBits Destinationdata Format</param>        
         /// <returns>Collection of DDVenue Objects</returns>    
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -99,7 +100,7 @@ namespace OdhApiCore.Controllers
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            bool compatibilitymode = true,
+            bool destinationdataformat = false,
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
@@ -111,7 +112,7 @@ namespace OdhApiCore.Controllers
                     featurefilter: featurefilter, setuptypefilter: setuptypefilter, sourcefilter: source,
                     active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
                     publishedon: publishedon,
-                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, compatibilitymode: compatibilitymode,
+                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, destinationdataformat: destinationdataformat,
                     cancellationToken: cancellationToken);
         }
 
@@ -122,6 +123,7 @@ namespace OdhApiCore.Controllers
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="destinationdataformat">If set to true, data will be returned in AlpineBits Destinationdata Format</param>        
         /// <returns>DDVenue Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
@@ -137,10 +139,10 @@ namespace OdhApiCore.Controllers
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             bool removenullvalues = false,
-            bool compatibilitymode = true,
+            bool destinationdataformat = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, compatibilitymode: compatibilitymode, cancellationToken);
+            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, destinationdataformat: destinationdataformat, cancellationToken);
         }
 
         /// <summary>
@@ -211,7 +213,7 @@ namespace OdhApiCore.Controllers
           string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
           string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? publishedon,
-          PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, bool compatibilitymode,
+          PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, bool destinationdataformat,
           CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -221,7 +223,7 @@ namespace OdhApiCore.Controllers
                     langfilter, sourcefilter, active, smgactive, smgtags, lastchange, publishedon,
                     cancellationToken);
 
-                var venuecolumn = compatibilitymode ? "destinationdata as data" : "data";
+                var venuecolumn = destinationdataformat ? "destinationdata as data" : "data";
 
                 var query =
                     QueryFactory.Query()
@@ -268,11 +270,11 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, bool compatibilitymode, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, bool destinationdataformat, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
-                var venuecolumn = compatibilitymode ? "destinationdata as data" : "data";
+                var venuecolumn = destinationdataformat ? "destinationdata as data" : "data";
 
                 var query =
                     QueryFactory.Query("venues_v2")
