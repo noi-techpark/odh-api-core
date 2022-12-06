@@ -1,5 +1,6 @@
 ﻿namespace GeoConverter;
 
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Geo;
@@ -9,6 +10,8 @@ using Geo.IO.GeoJson;
 
 public static class GeoJsonConverter
 {
+    private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
+
     private static string? ExtractCoordinates(string xml)
     {
         var doc = XDocument.Parse(xml);
@@ -28,7 +31,7 @@ public static class GeoJsonConverter
     {
         var res = Regex.Matches(geo, @"(?<lat>\d+\.\d+),(?<long>\d+\.\d+)")
             .Select(m => (m.Groups["lat"].Value, m.Groups["long"].Value))
-            .Select(x => (float.Parse(x.Item2), float.Parse(x.Item1)))
+            .Select(x => (double.Parse(x.Item2, _culture), double.Parse(x.Item1, _culture)))
             .Select(x => new Coordinate(x.Item1, x.Item2));
         return new LineString(res);
     }
