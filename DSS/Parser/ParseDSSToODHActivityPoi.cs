@@ -377,15 +377,15 @@ namespace DSS.Parser
 
             //LOCATION
 
-            List<GpsInfo> gpsinfolist = ParseDSSSlopeToODHGpsInfo(dssitem["location"], dssitem["altitude"]);
+            List<GpsInfo> gpsinfolist = ParseDSSSlopeToODHGpsInfo(dssitem["location"], (int?)dssitem["altitude"]);
             if (gpsinfolist.Count > 0)
                 mywebcaminfolinked.GpsInfo = gpsinfolist.FirstOrDefault();
 
             //WEBCAMIMAGE
-            var webcamurl = dssitem["original-image"];
+            var webcamurl = (string)dssitem["original-image"];
             mywebcaminfolinked.Webcamurl = webcamurl;
 
-            var webcamiframe = dssitem["iframe"]["it"];
+            var webcamiframe = (string)dssitem["iframe"]["it"];
             if(!String.IsNullOrEmpty(webcamiframe))
                 mywebcaminfolinked.Streamurl = webcamiframe;
 
