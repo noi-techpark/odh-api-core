@@ -103,11 +103,8 @@ namespace OdhApiImporter.Helpers.DSS
                 if (parsedobject == null)
                     throw new Exception();
 
-
-                var sourceid = (string)DSSImportUtil.GetSourceId(parsedobject, entitytype);
+                var sourceid = (string)DSSImportUtil.GetSourceId(item, entitytype);                
                 
-
-                //IF no id is provided timestamp generated WRONG i need a unique identifier to group on!
                 if (String.IsNullOrEmpty(sourceid))
                     sourceid = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
