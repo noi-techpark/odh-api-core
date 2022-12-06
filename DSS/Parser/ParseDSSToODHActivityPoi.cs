@@ -370,9 +370,9 @@ namespace DSS.Parser
 
             if (!String.IsNullOrEmpty(namede))
                 mywebcaminfolinked.Webcamname.TryAddOrUpdate("de", namede);
-            if (!String.IsNullOrEmpty(namede))
+            if (!String.IsNullOrEmpty(nameit))
                 mywebcaminfolinked.Webcamname.TryAddOrUpdate("it", nameit);
-            if (!String.IsNullOrEmpty(namede))
+            if (!String.IsNullOrEmpty(nameen))
                 mywebcaminfolinked.Webcamname.TryAddOrUpdate("en", nameen);
 
             //LOCATION

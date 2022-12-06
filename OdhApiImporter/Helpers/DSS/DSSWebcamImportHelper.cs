@@ -44,7 +44,12 @@ namespace OdhApiImporter.Helpers.DSS
         //Imports DSS Data
         private async Task<List<dynamic>> GetData(CancellationToken cancellationToken)
         {
-            return await GetDSSData.GetDSSDataAsync(DSSRequestType.webcams, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl);            
+            List<dynamic> dssdata = new List<dynamic>();
+            
+            //Get DSS data
+            dssdata.Add(await GetDSSData.GetDSSDataAsync(DSSRequestType.webcams, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl));
+
+            return dssdata;            
         }
 
         public async Task<UpdateDetail> ImportData(List<dynamic> dssinput, CancellationToken cancellationToken)
