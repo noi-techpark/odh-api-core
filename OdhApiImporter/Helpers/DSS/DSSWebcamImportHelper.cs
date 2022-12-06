@@ -176,9 +176,8 @@ namespace OdhApiImporter.Helpers.DSS
 
             var webcamindb = await mydssquery.GetFirstOrDefaultAsObject<WebcamInfoLinked>();
             var webcam = default(WebcamInfoLinked);
-
-            //TODO
-            //webcam = ParseDSSToODHActivityPoi.ParseDSSLiftDataToODHActivityPoi(odhactivitypoiindb, dssinput);            
+            
+            webcam = ParseDSSToODH.ParseDSSWebcamToWebcamInfoLinked(webcamindb, dssinput);            
 
             return webcam;
         }

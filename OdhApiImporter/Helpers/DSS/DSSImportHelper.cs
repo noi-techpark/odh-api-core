@@ -353,11 +353,11 @@ namespace OdhApiImporter.Helpers.DSS
 
             if (entitytype.ToLower() == "lift")
             {
-                odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSLiftDataToODHActivityPoi(odhactivitypoiindb, dssinput);
+                odhactivitypoi = ParseDSSToODH.ParseDSSLiftDataToODHActivityPoi(odhactivitypoiindb, dssinput);
             }
             else if (entitytype.ToLower() == "slope")
             {
-                odhactivitypoi = ParseDSSToODHActivityPoi.ParseDSSSlopeDataToODHActivityPoi(odhactivitypoiindb, dssinput);
+                odhactivitypoi = ParseDSSToODH.ParseDSSSlopeDataToODHActivityPoi(odhactivitypoiindb, dssinput);
             }
 
             //TODOS all of this stuff, Tags, Categories etc....
