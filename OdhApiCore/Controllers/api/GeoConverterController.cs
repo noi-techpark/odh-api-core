@@ -43,7 +43,7 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// Converts the KML provided as the body to GeoJSON.
         /// </summary>
-        /// <param name="body">The KML file.</param>
+        /// <param name="body">The KML file content.</param>
         /// <returns>application/geo+json</returns>
         /// <returns>The generated GeoJSON file.</returns>
         [HttpPost]
