@@ -1,0 +1,58 @@
+﻿using GeoConverter;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SqlKata.Execution;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace OdhApiCore.Controllers.api
+{
+    public class GeoConverterController : OdhController
+    {
+        private readonly IHttpClientFactory _clientFactory;
+
+        public GeoConverterController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory, IHttpClientFactory clientFactory) : base(env, settings, logger, queryFactory)
+        {
+            _clientFactory = clientFactory;
+        }
+
+        /// <summary>
+        /// Converts the KML file from the supplied URL to GeoJSON.
+        /// </summary>
+        /// <param name="url">The URL to the KML file.</param>
+        /// <returns>The generated GeoJSON file.</returns>
+        [HttpGet]
+        [Route("GeoConverter/KmlToGeoJson")]
+        [Produces("application/geo+json")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult> GetKmlToGeoJson([FromQuery] string url)
+        {
+            var client = _clientFactory.CreateClient();
+            var response = await client.GetAsync(url);
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return NotFound($"URL {url} not found.");
+            }
+            var body = await response.Content.ReadAsStringAsync();
+            return PostKmlToGeoJson(body);
+        }
+
+        /// <summary>
+        /// Converts the KML provided as the body to GeoJSON.
+        /// </summary>
+        /// <param name="body">The KML file.</param>
+        /// <returns>application/geo+json</returns>
+        /// <returns>The generated GeoJSON file.</returns>
+        [HttpPost]
+        [Route("GeoConverter/KmlToGeoJson")]
+        [Produces("application/geo+json")]
+        [ProducesResponseType(200)]
+        public ActionResult PostKmlToGeoJson(string body)
+        {
+            return Content(GeoJsonConverter.ConvertFromKml(body), "application/geo+json");
+        }
+    }
+}
