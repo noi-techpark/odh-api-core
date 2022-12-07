@@ -46,7 +46,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PushServer", "PushServer\Pu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSS", "DSS\DSS.csproj", "{E456CF5E-25E8-4DBF-92A4-575E352BD448}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LOOPTEC", "LOOPTEC\LOOPTEC.csproj", "{59907348-4EE1-4FD6-AD9A-28889EF83A22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LOOPTEC", "LOOPTEC\LOOPTEC.csproj", "{59907348-4EE1-4FD6-AD9A-28889EF83A22}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoConverter", "GeoConverter\GeoConverter.csproj", "{7192CDA4-4C08-4580-8DF8-3055FEF33629}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoConverterTests", "GeoConverterTests\GeoConverterTests.csproj", "{875F0429-6B54-4734-B3E2-C532EE4899D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -134,6 +138,14 @@ Global
 		{59907348-4EE1-4FD6-AD9A-28889EF83A22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59907348-4EE1-4FD6-AD9A-28889EF83A22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59907348-4EE1-4FD6-AD9A-28889EF83A22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7192CDA4-4C08-4580-8DF8-3055FEF33629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7192CDA4-4C08-4580-8DF8-3055FEF33629}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7192CDA4-4C08-4580-8DF8-3055FEF33629}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7192CDA4-4C08-4580-8DF8-3055FEF33629}.Release|Any CPU.Build.0 = Release|Any CPU
+		{875F0429-6B54-4734-B3E2-C532EE4899D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{875F0429-6B54-4734-B3E2-C532EE4899D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{875F0429-6B54-4734-B3E2-C532EE4899D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{875F0429-6B54-4734-B3E2-C532EE4899D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
