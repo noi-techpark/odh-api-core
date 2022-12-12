@@ -2163,6 +2163,11 @@ namespace DataModel
         public string? Source { get; set; }
         public bool Reduced { get; set; }
 
+        public EditInfo? EditInfo { get; set; }
+    }
+
+    public class EditInfo
+    {
         public string? EditedBy { get; set; }
 
         public string? EditSource { get; set; }

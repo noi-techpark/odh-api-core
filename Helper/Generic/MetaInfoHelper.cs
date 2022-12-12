@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace Helper
             //If source is already set use the old source
             if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
                 source = data._Meta.Source;            
+
+            
 
             return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }

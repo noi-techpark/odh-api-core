@@ -60,6 +60,9 @@ namespace Helper
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
 
+            //Setting Editinfo
+            //data._Meta.EditInfo = new EditInfo() { EditedBy = editor, EditSource = editedby };
+
             if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
 
