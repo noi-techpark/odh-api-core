@@ -305,10 +305,12 @@ namespace OdhApiCore
                     {     
                         OnAuthenticationFailed = c =>
                         {
-                            c.NoResult();
-
+                            c.NoResult();                            
                             c.Response.StatusCode = 401;
                             c.Response.ContentType = "text/plain";
+
+                            HttpRequestExtensions.GenerateLogResponse(c.HttpContext);
+
                             return c.Response.WriteAsync("");
                         },                        
                     };
