@@ -145,7 +145,7 @@ jobs:
           X_S3_BUCKET_ACCESSPOINT: ${{ secrets.S3_BUCKET_ACCESSPOINT_TEST }}
           X_S3_IMAGEUPLOADER_ACCESSKEY: ${{ secrets.S3_IMAGEUPLOADER_ACCESSKEY_TEST }}
           X_S3_IMAGEUPLOADER_SECRETKEY: ${{ secrets.S3_IMAGEUPLOADER_SECRETKEY_TEST }}
-          X_OAUTH_AUTORITY: "https://auth.opendatahub.bz.it/auth/realms/noi/"
+          X_OAUTH_AUTORITY: "https://auth.opendatahub.com/auth/realms/noi/"
           X_ELK_URL: ${{ secrets.ELK_URL_TEST }}
           X_ELK_TOKEN: ${{ secrets.ELK_TOKEN_TEST }}
           X_JSONPATH: "./wwwroot/json/"
