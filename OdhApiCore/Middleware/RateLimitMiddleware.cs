@@ -76,7 +76,7 @@ namespace OdhApiCore
                     return;
                 }
 
-                await UpdateClientStatisticsStorage(key, rlConfig.MaxRequests, TimeSpan.FromSeconds(rlConfig.TimeWindow));
+                await UpdateClientStatisticsStorage(key, rlConfig.MaxRequests, TimeSpan.FromSeconds(rlConfig.TimeWindow));                
             }
 
             await _next(context);

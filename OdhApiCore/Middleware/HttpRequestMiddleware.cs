@@ -88,6 +88,11 @@ namespace OdhApiCore
             //To check
             var remoteip = RemoteIpHelper.GetRequestIP(context, true);
 
+            //Rate Limit Policy
+            var ratelimitpolicy = quotaapplied;
+            if (context.Response.Headers.ContainsKey("X-Rate-Limit-Policy"))
+                ratelimitpolicy = context.Response.Headers["X-Rate-Limit-Policy"].ToString();
+
             //TODO Add Response Size?
 
             HttpRequestLog httplog = new HttpRequestLog()
@@ -103,7 +108,7 @@ namespace OdhApiCore
                 statuscode = context.Response.StatusCode,
                 origin = origin,
                 elapsedtime = elapsedtime,
-                appliedquota = quotaapplied,
+                appliedquota = ratelimitpolicy,
                 ratelimitkey = cachekey
             };
             LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
