@@ -375,7 +375,7 @@ namespace OdhApiImporter.Helpers
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            var result = await QueryFactory.UpsertData<T>(datatosave, table);
+            var result = await QueryFactory.UpsertData<T>(datatosave, table, "lts.push.import", "import");
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
         }

@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 using SqlKata;
 using SqlKata.Execution;
@@ -34,7 +35,7 @@ namespace Helper
 
         #region PG Helpers
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             //TODO: What if no id is passed? Generate ID
             //TODO: Id Uppercase or Lowercase depending on table
@@ -61,7 +62,7 @@ namespace Helper
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
 
             //Setting Editinfo
-            //data._Meta.EditInfo = new EditInfo() { EditedBy = editor, EditSource = editedby };
+            data._Meta.EditInfo = new EditInfo() { EditedBy = editor, EditSource = editsource };
 
             if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
@@ -185,7 +186,7 @@ namespace Helper
 
         #region RawDataStore
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, int rawdataid, bool errorwhendataexists = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, int rawdataid, string editor, string editsource, bool errorwhendataexists = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
@@ -209,6 +210,9 @@ namespace Helper
 
             if(data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
+
+            //Setting Editinfo
+            data._Meta.EditInfo = new EditInfo() { EditedBy = editor, EditSource = editsource };
 
             if (queryresult == null || queryresult.Count() == 0)
             {

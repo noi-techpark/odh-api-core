@@ -99,7 +99,7 @@ namespace OdhApiImporter.Helpers
 
                             //Save to PG
                             //Check if data exists                    
-                            var result = await QueryFactory.UpsertData(odhactivitypoi, "smgpois", rawdataid);
+                            var result = await QueryFactory.UpsertData(odhactivitypoi, "smgpois", rawdataid, "sta.vendingpoint.import", "importer");
 
                             if (result.updated != null)
                                 updatecounter = updatecounter + result.updated.Value;

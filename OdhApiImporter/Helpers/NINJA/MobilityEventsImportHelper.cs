@@ -142,7 +142,7 @@ namespace OdhApiImporter.Helpers
 
                 var rawdataid = await InsertInRawDataDB(ninjaevent);
 
-                return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid);                
+                return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid, "mobility.event.import", "importer");                
             }
             catch (Exception ex)
             {

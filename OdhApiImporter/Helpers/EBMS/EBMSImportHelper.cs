@@ -177,7 +177,7 @@ namespace OdhApiImporter.Helpers
 
                 var rawdataid = await InsertInRawDataDB(ebmsevent);
 
-                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid);
+                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid, "ebms.eventshort.import", "importer");
             }
             catch (Exception ex)
             {

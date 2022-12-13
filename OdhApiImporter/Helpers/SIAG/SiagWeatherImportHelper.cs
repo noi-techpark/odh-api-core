@@ -107,7 +107,7 @@ namespace OdhApiImporter.Helpers
                 myweatherhistory.Shortname = odhweatherresultde.evolutiontitle;
 
 
-                var insertresult = await QueryFactory.UpsertData<WeatherHistoryLinked>(myweatherhistory, "weatherdatahistory", insertresultraw, true);
+                var insertresult = await QueryFactory.UpsertData<WeatherHistoryLinked>(myweatherhistory, "weatherdatahistory", insertresultraw, "siag.weather.import","importer", true);
 
                 //var insertresult = await QueryFactory.Query("weatherdatahistory")
                 //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });

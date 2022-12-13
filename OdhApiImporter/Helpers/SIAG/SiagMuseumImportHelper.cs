@@ -465,7 +465,7 @@ namespace OdhApiImporter.Helpers
 
             var rawdataid = await InsertInRawDataDB(siagmuseumdata);
 
-            return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid);
+            return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid, "siag.museum.import", "importer");
         }
 
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, XElement> siagmuseumdata)

@@ -384,7 +384,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
             var rawdataid = await InsertInRawDataDB(suedtirolweindata);
 
-            return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid);
+            return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid, "suedtirolwein.company.import", "importer");
         }
 
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, XElement> suedtirolweindata)
