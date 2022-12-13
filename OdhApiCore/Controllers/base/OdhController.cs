@@ -212,10 +212,10 @@ namespace OdhApiCore.Controllers
         {
             //TODO Username and provenance of the insert/edit
             //Get the Username
-            string editor = "";
-            string editedby = "";
+            //string editor = "";
+            //string editedby = "";
 
-            return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editedby, errorwhendataexists, errorwhendataisnew));          
+            return Ok(await QueryFactory.UpsertData<T>(data, table, errorwhendataexists, errorwhendataisnew));          
         }
 
 
