@@ -1,4 +1,5 @@
 using AspNetCore.CacheOutput.InMemory.Extensions;
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -309,10 +310,17 @@ namespace OdhApiCore
                             c.Response.StatusCode = 401;
                             c.Response.ContentType = "text/plain";
 
+                            //Generate Log
                             HttpRequestExtensions.GenerateLogResponse(c.HttpContext);
-
+                            
                             return c.Response.WriteAsync("");
-                        },                        
+                            //return Task.CompletedTask;
+                        },
+                        //OnChallenge = c =>
+                        //{
+                        //    c.HandleResponse();
+                        //    return Task.CompletedTask;
+                        //}
                     };
                 });
 

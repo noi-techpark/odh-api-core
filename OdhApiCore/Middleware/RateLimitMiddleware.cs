@@ -29,6 +29,12 @@ namespace OdhApiCore
             var ratelimitconfig = settings.RateLimitConfig;
             var endpoint = context.GetEndpoint();
 
+            //If already a 401 Response is waiting do nothing
+            if(context.Response.HasStarted)
+            {
+                return;
+            }
+
             // If no config present do nothing
             if (ratelimitconfig is null)
             {
