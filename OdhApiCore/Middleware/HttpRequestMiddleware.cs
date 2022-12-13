@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.Security.Claims;
+using System.Linq;
 
 namespace OdhApiCore
 {
@@ -91,9 +93,15 @@ namespace OdhApiCore
             //Rate Limit Policy
             var ratelimitpolicy = quotaapplied;
             if (context.Response.Headers.ContainsKey("X-Rate-Limit-Policy"))
-                ratelimitpolicy = context.Response.Headers["X-Rate-Limit-Policy"].ToString();
+                ratelimitpolicy = context.Response.Headers["X-Rate-Limit-Policy"].ToString();            
 
-            //TODO Add Response Size?
+            //TODO Add Response Size
+            //var responsesize = context.Response.ContentLength;  always null
+
+            //TODO Add Roles
+            //var roles = ((ClaimsIdentity)context.User.Identity).Claims
+            //    .Where(c => c.Type == ClaimTypes.Role)
+            //    .Select(c => c.Value);
 
             HttpRequestLog httplog = new HttpRequestLog()
             {
