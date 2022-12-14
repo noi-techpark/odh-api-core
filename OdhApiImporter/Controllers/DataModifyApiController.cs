@@ -44,7 +44,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("ModifyEventShort")]
         public async Task<IActionResult> ModifyEventShort(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.UpdateAllEventShortstonewDataModelV2();
 
             return Ok(new UpdateResult
@@ -65,7 +65,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("ModifySTAVendingpoint")]
         public async Task<IActionResult> ModifySTAVendingpoint(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.UpdateAllSTAVendingpoints();
 
             return Ok(new UpdateResult
@@ -90,7 +90,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("FillDummyNews")]
         public async Task<IActionResult> FillDBWithDummynews(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.FillDBWithDummyNews();
 
             return Ok(new UpdateResult
@@ -115,7 +115,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("ModifyWeatherHistory")]
         public async Task<IActionResult> ModifyWeatherHistory(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.UpdateAllWeatherHistoryWithMetainfo();
 
             return Ok(new UpdateResult
@@ -140,7 +140,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("ModifyOldODHActivityPoi")]
         public async Task<IActionResult> ModifyODHActivityPoiTags(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.UpdateAllODHActivityPoiOldTags("sta");
             //var objectscount2 = await customdataoperation.UpdateAllODHActivityPoiOldTags("dss");
 
