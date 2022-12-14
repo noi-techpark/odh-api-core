@@ -13,7 +13,7 @@ namespace OdhApiImporter.Helpers
 {
     public class EbmsEventsImportHelper : ImportHelper, IImportHelper
     {        
-        public EbmsEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public EbmsEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
@@ -177,7 +177,7 @@ namespace OdhApiImporter.Helpers
 
                 var rawdataid = await InsertInRawDataDB(ebmsevent);
 
-                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid, "ebms.eventshort.import", "importer");
+                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid, "ebms.eventshort.import", importerURL);
             }
             catch (Exception ex)
             {

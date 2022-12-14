@@ -18,7 +18,7 @@ namespace OdhApiImporter.Helpers.DSS
 {
     public class DSSWebcamImportHelper : ImportHelper, IImportHelper
     {        
-        public DSSWebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public DSSWebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
             entitytype = "webcam";            
             idlistdssinterface = new();
@@ -199,7 +199,7 @@ namespace OdhApiImporter.Helpers.DSS
             //Set LicenseInfo
             webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
 
-            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "dss.webcam.import", "importer");
+            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "dss.webcam.import", importerURL);
 
             return pgcrudresult;
 

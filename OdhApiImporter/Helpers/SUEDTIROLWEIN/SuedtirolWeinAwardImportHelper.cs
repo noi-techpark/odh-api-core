@@ -16,7 +16,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 {
     public class SuedtirolWeinAwardImportHelper : ImportHelper, IImportHelper
     {
-        public SuedtirolWeinAwardImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public SuedtirolWeinAwardImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
             
         }
@@ -185,7 +185,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             var rawdataid = await InsertInRawDataDB(suedtirolweindata);
 
             //TODO Add column rawdataid
-            return await QueryFactory.UpsertData<WineLinked>(wineaward, "wines", rawdataid, "suedtirolwein.weinaward.import", "importer");
+            return await QueryFactory.UpsertData<WineLinked>(wineaward, "wines", rawdataid, "suedtirolwein.weinaward.import", importerURL);
         }
 
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, XElement> suedtirolweindata)
