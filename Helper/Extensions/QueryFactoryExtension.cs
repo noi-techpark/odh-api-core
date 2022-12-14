@@ -212,7 +212,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             //Setting Editinfo
-            data._Meta.EditInfo = new EditInfo() { EditedBy = editor, EditSource = editsource };
+            data._Meta.UpdateInfo = new UpdateInfo() { UpdatedBy = editor, UpdateSource = editsource };
 
             if (queryresult == null || queryresult.Count() == 0)
             {
