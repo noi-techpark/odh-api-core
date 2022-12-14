@@ -62,7 +62,7 @@ namespace Helper
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
 
             //Setting Editinfo
-            data._Meta.EditInfo = new EditInfo() { EditedBy = editor, EditSource = editsource };
+            data._Meta.UpdateInfo = new UpdateInfo() { UpdatedBy = editor, UpdateSource = editsource };
 
             if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;

@@ -2163,14 +2163,14 @@ namespace DataModel
         public string? Source { get; set; }
         public bool Reduced { get; set; }
 
-        public EditInfo? EditInfo { get; set; }
+        public UpdateInfo? UpdateInfo { get; set; }
     }
 
-    public class EditInfo
+    public class UpdateInfo
     {
-        public string? EditedBy { get; set; }
+        public string? UpdatedBy { get; set; }
 
-        public string? EditSource { get; set; }
+        public string? UpdateSource { get; set; }
     }
 
     public class LicenseInfo
