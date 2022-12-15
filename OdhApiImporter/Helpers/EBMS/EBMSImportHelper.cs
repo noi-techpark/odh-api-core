@@ -91,11 +91,12 @@ namespace OdhApiImporter.Helpers
                 IDictionary<string, string> eventText = new Dictionary<string,string>();
 
                 if (eventindb == null)
+                {                    
                     eventshort.FirstImport = DateTime.Now;
-
+                }
 
                 if (eventindb != null)
-                {
+                {                 
                     changedonDB = eventindb.ChangedOn;
                     imagegallery = eventindb.ImageGallery;
                     eventTextDE = eventindb.EventTextDE;
