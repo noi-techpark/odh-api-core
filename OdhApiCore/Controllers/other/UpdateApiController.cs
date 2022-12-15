@@ -444,7 +444,7 @@ namespace OdhApiCore.Controllers.api
 
             //Temporary Hack will be moved to the importer workerservice
 
-            var result = await QueryFactory.UpsertData<T>(datatosave, table);
+            var result = await QueryFactory.UpsertData<T>(datatosave, table, "lts.import.push", "importer");
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted };
         }        

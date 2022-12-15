@@ -17,11 +17,13 @@ namespace OdhApiImporter.Helpers
     {
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
+        private string importerURL;
 
-        public StaVendingpointsImportHelper(ISettings settings, QueryFactory queryfactory)
+        public StaVendingpointsImportHelper(ISettings settings, QueryFactory queryfactory, string importerURL)
         {
             this.QueryFactory = queryfactory;
             this.settings = settings;
+            this.importerURL = importerURL;
         }
 
         private static async Task<string> ReadStringDataManual(HttpRequest request)
@@ -99,7 +101,7 @@ namespace OdhApiImporter.Helpers
 
                             //Save to PG
                             //Check if data exists                    
-                            var result = await QueryFactory.UpsertData(odhactivitypoi, "smgpois", rawdataid);
+                            var result = await QueryFactory.UpsertData(odhactivitypoi, "smgpois", rawdataid, "sta.vendingpoint.import", importerURL);
 
                             if (result.updated != null)
                                 updatecounter = updatecounter + result.updated.Value;

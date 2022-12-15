@@ -18,7 +18,7 @@ namespace OdhApiImporter.Helpers.DSS
 {
     public class DSSImportHelper : ImportHelper, IImportHelper
     {        
-        public DSSImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public DSSImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
             requesttypelist = new();
             entitytype = "";
@@ -376,7 +376,7 @@ namespace OdhApiImporter.Helpers.DSS
                 //Set LicenseInfo
                 odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
-                var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid);
+                var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid, "dss." + entitytype + ".import" , importerURL);
 
                 //Hack insert also in Activity table
                 await InsertInLegacyActivityTable(odhactivitypoi);
@@ -429,7 +429,7 @@ namespace OdhApiImporter.Helpers.DSS
             var activity = TransformODHActivityPoiToActivity(odhactivitypoi);
             
             //Insert in Table
-            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, "activities");
+            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, "activities", "dss." + entitytype + ".import", importerURL);
 
             return pgcrudresult;
         }

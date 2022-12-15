@@ -47,6 +47,13 @@ namespace Helper
                 $"AccoRoomDetail.{lang}.Name"
             ).ToArray();
 
+        public static string[] EventShortTitleFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"EventTitle.{lang}"
+            ).ToArray();
+
         //TODO TRANSFORM LANGUAGE to deu,eng,ita
         //public static string[] VenueTitleFieldsToSearchFor(string? language) =>
         //   _languagesToSearchFor.Where(lang =>
@@ -642,7 +649,7 @@ namespace Helper
                 .EventShortDateFilterBeginByRoom(start, end, getbyrooms)
                 .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
                 .PublishedOnFilter(publishedonlist)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
+                .SearchFilter(EventShortTitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }

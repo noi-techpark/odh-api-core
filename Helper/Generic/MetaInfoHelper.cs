@@ -225,7 +225,7 @@ namespace Helper
 
         public static Metadata GetMetadataforEventShort(EventShortLinked data)
         {
-            string sourcemeta = data.Source != null ? data.Source.ToLower() : "ebms";
+            string sourcemeta = data.Source != null ? data.Source.ToLower() : "noi";
 
             string sourcestr = sourcemeta switch
             {

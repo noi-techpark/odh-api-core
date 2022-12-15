@@ -59,7 +59,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                RavenImportHelper ravenimporthelper = new RavenImportHelper(settings, QueryFactory);
+                RavenImportHelper ravenimporthelper = new RavenImportHelper(settings, QueryFactory, UrlGeneratorStatic("Raven/" + datatype));
                 var resulttuple = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
                 updatedetail = resulttuple.Item2;
 
@@ -89,7 +89,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                EbmsEventsImportHelper ebmsimporthelper = new EbmsEventsImportHelper(settings, QueryFactory, "eventeuracnoi");
+                EbmsEventsImportHelper ebmsimporthelper = new EbmsEventsImportHelper(settings, QueryFactory, "eventeuracnoi", UrlGeneratorStatic("EBMS/EventShort"));
 
                 updatedetail = await ebmsimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "EBMS Eventshorts update succeeded", "", updatedetail, true);
@@ -155,7 +155,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                MobilityEventsImportHelper ninjaimporthelper = new MobilityEventsImportHelper(settings, QueryFactory);
+                MobilityEventsImportHelper ninjaimporthelper = new MobilityEventsImportHelper(settings, QueryFactory, "events", UrlGeneratorStatic("NINJA/Events"));
                 updatedetail = await ninjaimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja Events update succeeded", "", updatedetail, true);
 
@@ -188,7 +188,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SiagWeatherImportHelper siagimporthelper = new SiagWeatherImportHelper(settings, QueryFactory, "weatherdatahistory");
+                SiagWeatherImportHelper siagimporthelper = new SiagWeatherImportHelper(settings, QueryFactory, "weatherdatahistory", UrlGeneratorStatic("Siag/Weather"));
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Weather data succeeded", "actual", updatedetail, true);
 
@@ -211,7 +211,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SiagWeatherImportHelper siagimporthelper = new SiagWeatherImportHelper(settings, QueryFactory, "weatherdatahistory");
+                SiagWeatherImportHelper siagimporthelper = new SiagWeatherImportHelper(settings, QueryFactory, "weatherdatahistory", UrlGeneratorStatic("Siag/Weather"));
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(id, source, operation, updatetype, "Import Weather data succeeded id:" + id.ToString(), "byid", updatedetail, true);
 
@@ -238,7 +238,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SiagMuseumImportHelper siagimporthelper = new SiagMuseumImportHelper(settings, QueryFactory, "smgpois");
+                SiagMuseumImportHelper siagimporthelper = new SiagMuseumImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("Siag/Museum"));
                 updatedetail = await siagimporthelper.SaveDataToODH(null, null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data succeeded", "actual", updatedetail, true);
@@ -266,7 +266,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SuedtirolWeinCompanyImportHelper sweinimporthelper = new SuedtirolWeinCompanyImportHelper(settings, QueryFactory, "smgpois");
+                SuedtirolWeinCompanyImportHelper sweinimporthelper = new SuedtirolWeinCompanyImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("SuedtirolWein/Company"));
                 updatedetail = await sweinimporthelper.SaveDataToODH(null, null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein Company data succeeded", "actual", updatedetail, true);
@@ -290,7 +290,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                SuedtirolWeinAwardImportHelper sweinimporthelper = new SuedtirolWeinAwardImportHelper(settings, QueryFactory, "wines");
+                SuedtirolWeinAwardImportHelper sweinimporthelper = new SuedtirolWeinAwardImportHelper(settings, QueryFactory, "wines", UrlGeneratorStatic("SuedtirolWein/WineAward"));
                 updatedetail = await sweinimporthelper.SaveDataToODH(null, null, cancellationToken);
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein WineAward data succeeded", "actual", updatedetail, true);
@@ -353,7 +353,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                StaVendingpointsImportHelper staimporthelper = new StaVendingpointsImportHelper(settings, QueryFactory);
+                StaVendingpointsImportHelper staimporthelper = new StaVendingpointsImportHelper(settings, QueryFactory, UrlGeneratorStatic("STA/Vendingpoints"));
 
                 updatedetail = await staimporthelper.PostVendingPointsFromSTA(Request, cancellationToken);
 
@@ -374,7 +374,7 @@ namespace OdhApiImporter.Controllers
         #region DSS DATA SYNC
 
         [HttpGet, Route("DSS/{dssentity}/UpdateAll")]
-        public async Task<IActionResult> UpdateAllDSSLifts(string dssentity, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllDSSData(string dssentity, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update DSS " + dssentity;
@@ -386,13 +386,14 @@ namespace OdhApiImporter.Controllers
                 switch(dssentity)
                 {
                     case "webcam":
-                        DSSWebcamImportHelper dsswebcamimporthelper = new DSSWebcamImportHelper(settings, QueryFactory, "webcams");                        
+                   
+                        DSSWebcamImportHelper dsswebcamimporthelper = new DSSWebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("DSS/Webcam"));                        
 
                         updatedetail = await dsswebcamimporthelper.SaveDataToODH(null, null, cancellationToken);
                         break;
                    
                     default:
-                        DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois");
+                        DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("DSS/" + dssentity));
                         dssimporthelper.entitytype = dssentity;
 
                        updatedetail = await dssimporthelper.SaveDataToODH(null, null, cancellationToken);
@@ -464,7 +465,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                LooptecEjobsImportHelper looptecejobsimporthelper = new LooptecEjobsImportHelper(settings, QueryFactory, "");
+                LooptecEjobsImportHelper looptecejobsimporthelper = new LooptecEjobsImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("LOOPTEC/Ejobs"));
 
                 updatedetail = await looptecejobsimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs succeeded", "rawonly", updatedetail, true);
@@ -481,5 +482,17 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+
+        protected Func<string, string> UrlGeneratorStatic
+        {
+            get
+            {
+                return self =>
+                {
+                    var location = new Uri($"{Request.Scheme}://{Request.Host}/" + self);
+                    return location.AbsoluteUri;
+                };
+            }
+        }
     }
 }

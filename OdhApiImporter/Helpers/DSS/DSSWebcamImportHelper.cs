@@ -18,7 +18,7 @@ namespace OdhApiImporter.Helpers.DSS
 {
     public class DSSWebcamImportHelper : ImportHelper, IImportHelper
     {        
-        public DSSWebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public DSSWebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
             entitytype = "webcam";            
             idlistdssinterface = new();
@@ -106,11 +106,11 @@ namespace OdhApiImporter.Helpers.DSS
                 //Get Areas to Assign
 
                 //Set Shortname
-                if (!String.IsNullOrEmpty(parsedobject.Webcamname["de"]))
+                if (parsedobject.Webcamname.ContainsKey("de") && !String.IsNullOrEmpty(parsedobject.Webcamname["de"]))
                     parsedobject.Shortname = parsedobject.Webcamname["de"];
-                else if (!String.IsNullOrEmpty(parsedobject.Webcamname["it"]))
+                else if (parsedobject.Webcamname.ContainsKey("it") && !String.IsNullOrEmpty(parsedobject.Webcamname["it"]))
                     parsedobject.Shortname = parsedobject.Webcamname["it"];
-                else if (!String.IsNullOrEmpty(parsedobject.Webcamname["en"]))
+                else if (parsedobject.Webcamname.ContainsKey("en") && !String.IsNullOrEmpty(parsedobject.Webcamname["en"]))
                     parsedobject.Shortname = parsedobject.Webcamname["en"];
 
                 var sourceid = (string)DSSImportUtil.GetSourceId(item, entitytype);                
@@ -199,7 +199,7 @@ namespace OdhApiImporter.Helpers.DSS
             //Set LicenseInfo
             webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
 
-            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid);
+            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "dss.webcam.import", importerURL);
 
             return pgcrudresult;
 

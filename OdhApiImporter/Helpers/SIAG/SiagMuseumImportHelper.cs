@@ -14,7 +14,7 @@ namespace OdhApiImporter.Helpers
 {
     public class SiagMuseumImportHelper : ImportHelper, IImportHelper
     {
-        public SiagMuseumImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public SiagMuseumImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
@@ -465,7 +465,7 @@ namespace OdhApiImporter.Helpers
 
             var rawdataid = await InsertInRawDataDB(siagmuseumdata);
 
-            return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid);
+            return await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", rawdataid, "siag.museum.import", importerURL);
         }
 
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, XElement> siagmuseumdata)

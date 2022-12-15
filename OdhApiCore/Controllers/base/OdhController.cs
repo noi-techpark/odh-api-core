@@ -160,8 +160,7 @@ namespace OdhApiCore.Controllers
                     var location = new Uri($"{Request.Scheme}://{Request.Host}/" + self);
                     return location.AbsoluteUri;
                 };
-            }
-            
+            }            
         }
 
         protected async Task<IActionResult> DoAsync(Func<Task<IActionResult>> f)
@@ -212,9 +211,12 @@ namespace OdhApiCore.Controllers
         {
             //TODO Username and provenance of the insert/edit
             //Get the Username
-            string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";            
+            string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";
 
-            return Ok(await QueryFactory.UpsertData<T>(data, table, errorwhendataexists, errorwhendataisnew));          
+            if (this.HttpContext.Request.Headers.ContainsKey("Referer"))
+                editsource = this.HttpContext.Request.Headers["Referer"];
+
+            return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew));          
         }
 
 

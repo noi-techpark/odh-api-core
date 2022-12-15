@@ -14,7 +14,7 @@ namespace OdhApiImporter.Helpers
 {
     public class SiagWeatherImportHelper : ImportHelper, IImportHelper
     {
-        public SiagWeatherImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public SiagWeatherImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
@@ -107,7 +107,7 @@ namespace OdhApiImporter.Helpers
                 myweatherhistory.Shortname = odhweatherresultde.evolutiontitle;
 
 
-                var insertresult = await QueryFactory.UpsertData<WeatherHistoryLinked>(myweatherhistory, "weatherdatahistory", insertresultraw, true);
+                var insertresult = await QueryFactory.UpsertData<WeatherHistoryLinked>(myweatherhistory, "weatherdatahistory", insertresultraw, "siag.weather.import", importerURL, true);
 
                 //var insertresult = await QueryFactory.Query("weatherdatahistory")
                 //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id.ToString(), data = new JsonRaw(myweatherhistory), rawdataid = insertresultraw });

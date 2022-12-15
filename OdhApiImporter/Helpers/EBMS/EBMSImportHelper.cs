@@ -13,7 +13,7 @@ namespace OdhApiImporter.Helpers
 {
     public class EbmsEventsImportHelper : ImportHelper, IImportHelper
     {        
-        public EbmsEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public EbmsEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
@@ -91,11 +91,12 @@ namespace OdhApiImporter.Helpers
                 IDictionary<string, string> eventText = new Dictionary<string,string>();
 
                 if (eventindb == null)
+                {                    
                     eventshort.FirstImport = DateTime.Now;
-
+                }
 
                 if (eventindb != null)
-                {
+                {                 
                     changedonDB = eventindb.ChangedOn;
                     imagegallery = eventindb.ImageGallery;
                     eventTextDE = eventindb.EventTextDE;
@@ -177,7 +178,7 @@ namespace OdhApiImporter.Helpers
 
                 var rawdataid = await InsertInRawDataDB(ebmsevent);
 
-                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid);
+                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid, "ebms.eventshort.import", importerURL);
             }
             catch (Exception ex)
             {

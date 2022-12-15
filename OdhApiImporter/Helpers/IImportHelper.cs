@@ -22,13 +22,15 @@ namespace OdhApiImporter.Helpers
     {
         protected readonly QueryFactory QueryFactory;
         protected readonly ISettings settings;
-        protected readonly string table;        
+        protected readonly string table;
+        protected readonly string importerURL;
 
-        public ImportHelper(ISettings settings, QueryFactory queryfactory, string table)
+        public ImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL)
         {
             this.QueryFactory = queryfactory;
             this.settings = settings;
             this.table = table;
+            this.importerURL = importerURL;
         }
 
         public async Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete)
@@ -65,7 +67,6 @@ namespace OdhApiImporter.Helpers
 
             return Tuple.Create(updateresult, deleteresult);
         }
-
     }
 
     //public class ImportObject

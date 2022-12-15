@@ -15,11 +15,13 @@ namespace OdhApiImporter.Helpers
     {
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
+        private string importerURL;
 
-        public RavenImportHelper(ISettings settings, QueryFactory queryfactory)
+        public RavenImportHelper(ISettings settings, QueryFactory queryfactory, string importerURL)
         {
             this.QueryFactory = queryfactory;
             this.settings = settings;
+            this.importerURL = importerURL;
         }
 
         #region ODHRAVEN Helpers
@@ -375,7 +377,7 @@ namespace OdhApiImporter.Helpers
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            var result = await QueryFactory.UpsertData<T>(datatosave, table);
+            var result = await QueryFactory.UpsertData<T>(datatosave, table, "lts.push.import", importerURL);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
         }

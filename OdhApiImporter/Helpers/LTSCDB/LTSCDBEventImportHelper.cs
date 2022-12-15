@@ -9,7 +9,7 @@ namespace OdhApiImporter.Helpers.LTSCDB
 {
     public class LTSCDBEventImportHelper : ImportHelper, IImportHelper
     {
-        public LTSCDBEventImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public LTSCDBEventImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }

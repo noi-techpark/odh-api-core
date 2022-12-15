@@ -12,16 +12,22 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
 {
-    public class MobilityEventsImportHelper
+    public class MobilityEventsImportHelper : ImportHelper, IImportHelper
     {
-        private readonly QueryFactory QueryFactory;
-        private readonly ISettings settings;
+        //private readonly QueryFactory QueryFactory;
+        //private readonly ISettings settings;
 
-        public MobilityEventsImportHelper(ISettings settings, QueryFactory queryfactory)
+        //public MobilityEventsImportHelper(ISettings settings, QueryFactory queryfactory)
+        //{
+        //    this.QueryFactory = queryfactory;
+        //    this.settings = settings;
+        //}
+
+        public MobilityEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
-            this.QueryFactory = queryfactory;
-            this.settings = settings;
+
         }
+
 
         #region NINJA Helpers
 
@@ -142,7 +148,7 @@ namespace OdhApiImporter.Helpers
 
                 var rawdataid = await InsertInRawDataDB(ninjaevent);
 
-                return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid);                
+                return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid, "mobility.event.import", importerURL);                
             }
             catch (Exception ex)
             {

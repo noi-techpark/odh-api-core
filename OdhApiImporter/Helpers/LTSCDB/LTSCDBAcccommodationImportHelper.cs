@@ -13,7 +13,7 @@ namespace OdhApiImporter.Helpers.LTSCDB
 {
     public class LTSCDBAcccommodationImportHelper : ImportHelper, IImportHelper
     {
-        public LTSCDBAcccommodationImportHelper(ISettings settings, QueryFactory queryfactory, string table) : base(settings, queryfactory, table)
+        public LTSCDBAcccommodationImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
