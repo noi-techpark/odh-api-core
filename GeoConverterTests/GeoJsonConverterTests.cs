@@ -19,6 +19,7 @@ namespace GeoConverterTests
 
         [Theory]
         [InlineData("Sample1")]
+        [InlineData("Sample2")]
         public void TestGpxConversion(string input)
         {
             string gpx = GetContent(input, "gpx");
