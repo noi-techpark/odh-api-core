@@ -54,5 +54,42 @@ namespace OdhApiCore.Controllers.api
         {
             return Content(GeoJsonConverter.ConvertFromKml(body), "application/geo+json");
         }
+
+        /// <summary>
+        /// Converts the GPX file from the supplied URL to GeoJSON.
+        /// </summary>
+        /// <param name="url">The URL to the GPX file.</param>
+        /// <returns>The generated GeoJSON file.</returns>
+        [HttpGet]
+        [Route("GeoConverter/GpxToGeoJson")]
+        [Produces("application/geo+json")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult> GetGpxToGeoJson([FromQuery] string url)
+        {
+            var client = _clientFactory.CreateClient();
+            var response = await client.GetAsync(url);
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return NotFound($"URL {url} not found.");
+            }
+            var body = await response.Content.ReadAsStringAsync();
+            return PostGpxToGeoJson(body);
+        }
+
+        /// <summary>
+        /// Converts the GPX provided as the body to GeoJSON.
+        /// </summary>
+        /// <param name="body">The GPX file content.</param>
+        /// <returns>application/geo+json</returns>
+        /// <returns>The generated GeoJSON file.</returns>
+        [HttpPost]
+        [Route("GeoConverter/GpxToGeoJson")]
+        [Produces("application/geo+json")]
+        [ProducesResponseType(200)]
+        public ActionResult PostGpxToGeoJson(string body)
+        {
+            return Content(GeoJsonConverter.ConvertFromGpx(body), "application/geo+json");
+        }
     }
 }

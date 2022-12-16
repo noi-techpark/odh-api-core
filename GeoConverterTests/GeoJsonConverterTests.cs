@@ -9,11 +9,22 @@ namespace GeoConverterTests
         [InlineData("216051")]
         [InlineData("216052")]
         [InlineData("216053")]
-        public void TestConversion(string input)
+        public void TestKmlConversion(string input)
         {
             string kml = GetContent(input, "kml");
             var actual = GeoJsonConverter.ConvertFromKml(kml);
             string expected = GetContent(input ,"json");
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("Sample1")]
+        [InlineData("Sample2")]
+        public void TestGpxConversion(string input)
+        {
+            string gpx = GetContent(input, "gpx");
+            var actual = GeoJsonConverter.ConvertFromGpx(gpx);
+            string expected = GetContent(input, "json");
             Assert.Equal(expected, actual);
         }
 
