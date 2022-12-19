@@ -60,8 +60,12 @@ public static class GeoJsonConverter
         var stream = new MemoryStream(bytes);
         var serializer = new Gpx11Serializer();
         var serialized = serializer.DeSerialize(new StreamWrapper(stream));
-        var geometry = serialized.Waypoints.Select(x => x.Coordinate);
+        var geometry =
+            serialized.Waypoints.Any() ?
+            serialized.Waypoints :
+            serialized.Tracks.SelectMany(x => x.Segments).SelectMany(x => x.Waypoints);
+        var coordinates = geometry.Select(x => x.Coordinate);
         var writer = new GeoJsonWriter();
-        return ConvertToGeoJson(new LineString(geometry));
+        return ConvertToGeoJson(new LineString(coordinates));
     }
 }
