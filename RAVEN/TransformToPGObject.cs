@@ -604,6 +604,9 @@ namespace RAVEN
             if (!data.ValidForEntity.Contains(data.MainEntity))
                 data.ValidForEntity.Add(data.MainEntity);
 
+            if (data.MainEntity == "smgpoi" && !data.ValidForEntity.Contains("odhactivitypoi"))
+                validforentitynew.Add("odhactivitypoi");
+
             data._Meta = MetadataHelper.GetMetadataobject<ODHTagLinked>(data, MetadataHelper.GetMetadataforOdhTag);  //GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
 
             return data;
