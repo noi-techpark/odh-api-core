@@ -3097,7 +3097,7 @@ namespace DataModel
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
         // Here for compatibility reasons
-        [SwaggerDeprecated("Will be removed within 2021-12-31")]
+        [SwaggerDeprecated("Will be removed within 2023-12-31")]
         public bool Thuresday { get; set; }
         public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }
