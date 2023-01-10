@@ -6,21 +6,22 @@ using System.Text.Json.Serialization;
 namespace OdhNotifier
 {
     public class OdhPushNotifier
-    {
-        public static void NotifyAsPost(NotifyMeta notify)
+    {        
+        public static void SendNotify(NotifyMeta notify, string notifymode, string notifydestination)
         {
 
         }
 
-        public static void NotifyAsGet(NotifyMeta notify)
+        private static void NotifyAsPost(NotifyMeta notify)
         {
 
         }
 
-    }
+        private static void NotifyAsGet(NotifyMeta notify)
+        {
 
-
-  
+        }        
+    }  
 
     public class NotifyMeta
     {
