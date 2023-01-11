@@ -7,27 +7,140 @@ namespace OdhNotifier
 {
     public class OdhPushNotifier
     {        
-        public static void SendNotify(NotifyMeta notify, string notifymode, string notifydestination)
+        public static async Task<HttpResponseMessage> SendNotify(NotifyMeta notify)
         {
+            if(notify.Mode == "get")
+            {
+                return await NotifyAsGet(notify);
+            }
+            else if (notify.Mode == "post")
+            {
+                return await NotifyAsPost(notify);
+            }
 
+            return null;
         }
 
-        private static void NotifyAsPost(NotifyMeta notify)
+        private static async Task<HttpResponseMessage> NotifyAsPost(NotifyMeta notify)
         {
-
+            return null;
         }
 
-        private static void NotifyAsGet(NotifyMeta notify)
+        private static async Task<HttpResponseMessage> NotifyAsGet(NotifyMeta notify)
+        {
+            var requesturl = notify.Url;
+
+            try
+            {
+                if (CheckValidTypes(notify.Type))
+                {
+                    //tracesource.TraceEvent(TraceEventType.Information, 0, "Calling Pimcore update service on:" + requesturl);
+
+                    using (var client = new HttpClient())
+                    {
+                        if(!String.IsNullOrEmpty(notify.Referer))
+                            client.DefaultRequestHeaders.Referrer = new Uri(notify.Referer);
+
+                        var myresponse = await client.GetAsync(requesturl);
+                        //tracesource.TraceEvent(TraceEventType.Information, 0, "Pimcore Service response:" + myresponse.);
+
+                        if (myresponse.StatusCode == HttpStatusCode.OK)
+                        {
+                            GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, null, null);
+
+                            return myresponse;
+                        }
+                        else
+                        {
+                            throw new Exception("http status error code: " + myresponse.StatusCode);
+                        }
+                    }
+                }
+                else
+                    throw new Exception("type not valid!");
+            }
+            catch (Exception ex)
+            {
+                await WriteToFailureQueue(notify.Id, notify.Type, notify.Url, notify.Destination, ex.Message);
+
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, null, ex.Message);
+
+                var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                response.Content = new StringContent(ex.Message);
+
+                return response;
+            }
+        }
+
+        public static void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? exception)
         {
 
-        }        
+            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode };
+            Console.WriteLine(JsonSerializer.Serialize(log));
+        }
+
+        public static async Task WriteToFailureQueue(string id, string type, string url, string service, string exmessage)
+        {
+            PushFailureQueue myfailure = new PushFailureQueue();
+            myfailure.Id = "";
+            myfailure.ItemId = id;
+            myfailure.Type = type;
+            myfailure.Exception = exmessage;
+            myfailure.LastChange = DateTime.Now;
+            myfailure.Service = service;
+            myfailure.PushUrl = url;
+            myfailure.Status = "open";
+            myfailure.RetryCount = 1;
+
+            ////Not best practice but should work
+            //using (var session = GlobalDocumentStore.DocumentStore.OpenAsyncSession())
+            //{
+            //    await session.StoreAsync(myfailure);
+            //    await session.SaveChangesAsync();
+            //}
+        }
+
+        private static bool CheckValidTypes(string type)
+        {
+            List<string> validtypelist = new List<string>()
+            {
+                "accommodation",
+                "activity",
+                "article",
+                "event",
+                "metaregion",
+                "region",
+                "experiencearea",
+                "municipality",
+                "tvs",
+                "district",
+                "skiregion",
+                "skiarea",
+                "gastronomy",
+                "odhactivitypoi",
+                "smgtags"
+            };
+
+            if (validtypelist.Contains(type.ToLower()))
+                return true;
+            else
+                return false;
+        }
     }  
-
+    
     public class NotifyMeta
     {
         public string Id { get; set; }
         public string Url { get; set; }
         public string Type { get; set; }
+        public string Mode { get; set; }
+
+        public string Destination { get; set; }
+
+        public string UdateMode { get; set; }
+        public string Origin { get; set; }
+
+        public string Referer { get; set; }
     }
 
     public class NotifyLog
@@ -36,7 +149,7 @@ namespace OdhNotifier
         public string id { get; set; }
         public string origin { get; set; }
         public string destination { get; set; }
-        public bool imageupdate { get; set; }
+        public bool? imageupdate { get; set; }
         public string updatemode { get; set; }
     }
 
@@ -51,8 +164,7 @@ namespace OdhNotifier
         public string Service { get; set; }
         public DateTime LastChange { get; set; }
         public Nullable<int> RetryCount { get; set; }
-    }
-
+    }   
 }
 
 public class SinfoUpdateController
@@ -67,9 +179,7 @@ public class SinfoUpdateController
         {
             if (CheckValidTypes(type))
             {
-                NotifyLog log = new NotifyLog() { id = id, destination = "sinfo", message = type.ToLower() + ".push.trigger", origin = "api" };
-                Console.WriteLine(JsonSerializer.Serialize(log));
-
+              
                 using (var client = new HttpClient())
                 {
                     var myresponse = await client.GetAsync(requesturl);
@@ -85,7 +195,7 @@ public class SinfoUpdateController
         }
         catch (Exception ex)
         {
-            await WriteToFailureQueue(id, type, requesturl, "sinfo", ex.Message);
+            //await WriteToFailureQueue(id, type, requesturl, "sinfo", ex.Message);
 
             NotifyLog log = new NotifyLog() { id = id, destination = "sinfo", message = type.ToLower() + ".push.error", origin = "api" };
             Console.WriteLine(JsonSerializer.Serialize(log));
@@ -128,7 +238,7 @@ public class SinfoUpdateController
         }
         catch (Exception ex)
         {
-            await WriteToFailureQueue(id, type, requesturl, "sinfo", ex.Message);
+            //await WriteToFailureQueue(id, type, requesturl, "sinfo", ex.Message);
 
             NotifyLog log = new NotifyLog() { id = id, destination = "sinfo", message = type.ToLower() + ".push.error", origin = "api" };
             Console.WriteLine(JsonSerializer.Serialize(log));            
@@ -169,33 +279,13 @@ public class SinfoUpdateController
         }
         catch (Exception ex)
         {
-            await WriteToFailureQueue(id, type, requesturl, "sinfo", ex.Message);
+            //await WriteToFailureQueue(id, type, requesturl, "sinfo", ex.Message);
 
             NotifyLog log = new NotifyLog() { id = id, destination = "sinfo", message = type.ToLower() + ".push.error", origin = "api" };
             Console.WriteLine(JsonSerializer.Serialize(log));
         }
     }
 
-    public static async Task WriteToFailureQueue(string id, string type, string url, string service, string exmessage)
-    {
-        PushFailureQueue myfailure = new PushFailureQueue();
-        myfailure.Id = "";
-        myfailure.ItemId = id;
-        myfailure.Type = type;
-        myfailure.Exception = exmessage;
-        myfailure.LastChange = DateTime.Now;
-        myfailure.Service = service;
-        myfailure.PushUrl = url;
-        myfailure.Status = "open";
-        myfailure.RetryCount = 1;
-
-        ////Not best practice but should work
-        //using (var session = GlobalDocumentStore.DocumentStore.OpenAsyncSession())
-        //{
-        //    await session.StoreAsync(myfailure);
-        //    await session.SaveChangesAsync();
-        //}
-    }
 
     private static bool CheckValidTypes(string type)
     {
