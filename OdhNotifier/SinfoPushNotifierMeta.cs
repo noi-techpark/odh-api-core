@@ -11,7 +11,8 @@ namespace OdhNotifier
         public SinfoPushNotifierMeta()
         {
             this.Destination = "sinfo";
-
+            this.Mode = "post";
+            
             this.ValidTypes = new List<string>()
             {
                 "accommodation",

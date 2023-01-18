@@ -104,7 +104,7 @@ namespace OdhNotifier
                 await WriteToFailureQueue(notify.Id, notify.Type, notify.Url, notify.Destination, ex.Message);
 
                 GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, ex.Message);
-
+               
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                 response.Content = new StringContent(ex.Message);
 

@@ -34,7 +34,7 @@ namespace OdhApiImporter.Controllers
             return Ok("importer alive");
         }
 
-        [HttpGet, Route("TestNotify")]
+        [HttpGet, Route("TestNotifyMP")]
         public async Task<HttpResponseMessage> TestNotify()
         {
             var marketplaceconfig = settings.NotifierConfig.Where(x => x.ServiceName == "Marketplace").FirstOrDefault();
@@ -50,6 +50,26 @@ namespace OdhApiImporter.Controllers
                     { "client_secret", marketplaceconfig.Password }
                 },
                 Type = "ACCOMMODATION"
+            };
+
+            return await OdhPushNotifier.SendNotify(mymeta);
+        }
+
+        [HttpGet, Route("TestNotifySinfo")]
+        public async Task<HttpResponseMessage> TestNotifySinfo()
+        {
+            var sinfoconfig = settings.NotifierConfig.Where(x => x.ServiceName == "Sinfo").FirstOrDefault();
+
+            SinfoPushNotifierMeta mymeta = new SinfoPushNotifierMeta()
+            {
+                Id = "2657B7CBCB85380B253D2FBE28AF100E",
+                Url = sinfoconfig.Url + "accommodation/2657B7CBCB85380B253D2FBE28AF100E",
+                Origin = "api",
+                UdateMode = "forced",
+                Parameters = new Dictionary<string, string>() {
+                    { "skipimage", "true" }
+                },
+                Type = "accommodation"
             };
 
             return await OdhPushNotifier.SendNotify(mymeta);
