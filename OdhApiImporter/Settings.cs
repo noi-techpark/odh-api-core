@@ -215,10 +215,15 @@ namespace OdhApiImporter
 
             var notifierconfiglist = this.configuration.GetSection("NotifierConfig").GetChildren();
             this.notifierConfig = new List<NotifierConfig>();
-            foreach (var notifiercfg in notifierconfiglist)
+
+            var notifierconfigdict = this.configuration.GetSection("NotifierConfig").GetChildren();
+            if (notifierconfigdict != null)
             {
-                this.notifierConfig.Add(new NotifierConfig(notifiercfg.GetValue<string>("Service", ""), notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
-            }
+                foreach (var notifiercfg in notifierconfiglist)
+                {
+                    this.notifierConfig.Add(new NotifierConfig(notifiercfg.Key, notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
+                }
+            }                
         }
 
         public string PostgresConnectionString => this.connectionString.Value;

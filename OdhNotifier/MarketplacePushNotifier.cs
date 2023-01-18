@@ -11,6 +11,7 @@ namespace OdhNotifier
         public MarketplacePushNotifierMeta()
         {
             this.Destination = "marketplace";
+            this.Mode = "post";
 
             this.ValidTypes = new List<string>()
             {

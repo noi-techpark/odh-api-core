@@ -142,7 +142,7 @@ namespace OdhNotifier
         //Valid Types for Push
         private static bool CheckValidTypes(NotifyMeta notify)
         {
-            if (notify.ValidTypes.Contains(notify.Type.ToLower()))
+            if (notify.ValidTypes.Select(x => x.ToLower()).Contains(notify.Type.ToLower()))
                 return true;
             else
                 return false;
