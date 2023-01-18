@@ -14,11 +14,11 @@ using System.Text.Json.Serialization;
 namespace OdhNotifier
 {
     public class OdhPushNotifier
-    {        
+    {
         public static async Task<HttpResponseMessage> SendNotify(NotifyMeta notify)
         {
             return await Notify(notify);
-        }        
+        }
 
         private static async Task<HttpResponseMessage> Notify(NotifyMeta notify)
         {
@@ -28,20 +28,20 @@ namespace OdhNotifier
             try
             {
                 if (CheckValidTypes(notify))
-                {                    
+                {
                     using (var client = new HttpClient())
                     {
                         //Add all Headers
-                        if(notify.Headers != null)
+                        if (notify.Headers != null)
                         {
                             foreach (var header in notify.Headers)
                             {
                                 client.DefaultRequestHeaders.Add(header.Key, header.Value);
                             }
-                        }                        
+                        }
 
                         //Add Referer Header
-                        if(!String.IsNullOrEmpty(notify.Referer))
+                        if (!String.IsNullOrEmpty(notify.Referer))
                             client.DefaultRequestHeaders.Referrer = new Uri(notify.Referer);
 
                         //Add Additional Parameters
@@ -62,10 +62,10 @@ namespace OdhNotifier
                             }
                         }
 
-                        HttpResponseMessage response = default(HttpResponseMessage);                        
+                        HttpResponseMessage response = default(HttpResponseMessage);
 
                         //GET or POST the data to the service
-                        if(notify.Mode.ToLower() == "get")
+                        if (notify.Mode.ToLower() == "get")
                         {
                             response = await client.GetAsync(requesturl);
                         }
@@ -77,7 +77,7 @@ namespace OdhNotifier
                                 entity = notify.Type
                             }));
 
-                            data.Headers.ContentType = new MediaTypeHeaderValue("application/json");                            
+                            data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                             response = await client.PostAsync(requesturl, data);
                         }
@@ -101,7 +101,7 @@ namespace OdhNotifier
                     throw new Exception("type not valid!");
             }
             catch (Exception ex)
-            {                
+            {
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                 return ReturnHttpResponse(response, notify, imageupdate, ex.Message);
             }
@@ -109,7 +109,7 @@ namespace OdhNotifier
 
         public static HttpResponseMessage ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
         {
-            if(response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);
 
@@ -155,7 +155,7 @@ namespace OdhNotifier
             //    await session.SaveChangesAsync();
             //}
         }
-        
+
         //Valid Types for Push
         private static bool CheckValidTypes(NotifyMeta notify)
         {
@@ -164,9 +164,9 @@ namespace OdhNotifier
             else
                 return false;
         }
-    }  
-    
-  
+    }
+
+
     public class NotifyLog
     {
         public string message { get; set; }
@@ -188,36 +188,42 @@ namespace OdhNotifier
         public string Service { get; set; }
         public DateTime LastChange { get; set; }
         public Nullable<int> RetryCount { get; set; }
-    }   
+    }
 
     public class PushToAll
     {
-        public static void PushToAllRegisteredServices(List<NotifierConfig> notifierconfiglist, NotifyMeta mymeta)
+        public static async Task PushToAllRegisteredServices(List<NotifierConfig> notifierconfiglist, string id, string type, string updatemode, string origin, string referer, List<string> excludeservices)
         {
-            foreach(var notifyconfig in notifierconfiglist)
+            foreach (var notifyconfig in notifierconfiglist)
             {
+                if (excludeservices != null && excludeservices.Contains(notifyconfig.ServiceName))
+                    continue;
 
+                NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, updatemode, origin, referer);
+
+                await OdhPushNotifier.SendNotify(meta);
             }
         }
     }
 
     public class NotifyMetaGenerated : NotifyMeta
     {
-        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, string updatemode, string origin)
+        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, string updatemode, string origin, string? referer = null)
         {
             //Set by parameters
             this.Id = id;
             this.Type = type;
             this.UdateMode = updatemode;
-
+            this.Origin = origin;
+            this.Referer = referer;
 
             switch (notifyconfig.ServiceName.ToLower())
             {
                 case "marketplace":
-                
+
                     //From Config
                     this.Url = notifyconfig.Url;
-                    this.Headers = new Dictionary<string, string>() { 
+                    this.Headers = new Dictionary<string, string>() {
                         { "client_id", notifyconfig.User },
                         { "client_secret", notifyconfig.Password }
                     };
@@ -237,9 +243,13 @@ namespace OdhNotifier
                             "EVENT",
                             "ODH_TAG"
                         };
+
+                    //Translate Type
+                    this.Type = TransformType(type, "marketplace");
+
                     break;
                 case "sinfo":
-               
+
                     //From Config
                     this.Url = notifyconfig.Url + "accommodation/2657B7CBCB85380B253D2FBE28AF100E";
                     this.Parameters = new Dictionary<string, string>() {
@@ -276,5 +286,33 @@ namespace OdhNotifier
             }
         }
 
-    }
+        public string TransformType(string type, string servicename)
+        {
+            if (servicename == "marketplace")
+            {
+                return type switch
+                {
+                    "accommodation" => "ACCOMMODATION",
+                    "activity" => "NOT SUPPORTED", //ok deprecated
+                    "article" => "NOT SUPPORTED", //Recipes?
+                    "event" => "EVENT",
+                    "metaregion" => "NOT SUPPORTED", //to check
+                    "region" => "REGION",
+                    "experiencearea" => "NOT SUPPORTED", //to check
+                    "municipality" => "MUNICIPALITY",
+                    "tvs" => "TOURISM_ASSOCIATION",
+                    "district" => "DISTRICT",
+                    "skiregion" => "NOT SUPPORTED",  //to check
+                    "skiarea" => "NOT SUPPORTED", //to check
+                    "gastronomy" => "NOT SUPPORTED", //ok deprecated
+                    "odhactivitypoi" => "ODH_ACTIVITY_POI",
+                    "smgtags" => "ODH_TAG",
+                    _ => "NOT SUPPORTED"
+                };
+            }
+            else
+                return type;
+        }
+
+    } 
 }

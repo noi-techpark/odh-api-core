@@ -257,7 +257,7 @@ namespace Helper
         public string UdateMode { get; set; }
         public string Origin { get; set; }
 
-        public string Referer { get; set; }
+        public string? Referer { get; set; }
 
         public IDictionary<string, string> Headers { get; set; }
 
