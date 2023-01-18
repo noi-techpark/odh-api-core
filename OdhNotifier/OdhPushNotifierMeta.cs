@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using OdhNotifier;
 using System.ComponentModel;
 using System.Net;
@@ -84,17 +85,15 @@ namespace OdhNotifier
 
                         if (response != null && response.StatusCode == HttpStatusCode.OK)
                         {
-                            GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);
-
-                            return response;
+                            return ReturnHttpResponse(response, notify, imageupdate, "");
                         }
                         else if (response != null)
                         {
-                            throw new Exception("http status error code: " + response.StatusCode);
+                            return ReturnHttpResponse(response, notify, imageupdate, response.ReasonPhrase);
                         }
                         else
                         {
-                            throw new Exception("no response");
+                            return ReturnHttpResponse(response, notify, imageupdate, "no response");
                         }
                     }
                 }
@@ -102,13 +101,29 @@ namespace OdhNotifier
                     throw new Exception("type not valid!");
             }
             catch (Exception ex)
-            {
-                await WriteToFailureQueue(notify.Id, notify.Type, notify.Url, notify.Destination, ex.Message);
-
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, ex.Message);
-               
+            {                
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                response.Content = new StringContent(ex.Message);
+                return ReturnHttpResponse(response, notify, imageupdate, ex.Message);
+            }
+        }
+
+        public static HttpResponseMessage ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
+        {
+            if(response.StatusCode == HttpStatusCode.OK)
+            {
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);
+
+                //clear requestmessage
+                response.RequestMessage = null;
+
+                return response;
+            }
+            else
+            {
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, error);
+
+                //clear requestmessage
+                response.RequestMessage = null;
 
                 return response;
             }
