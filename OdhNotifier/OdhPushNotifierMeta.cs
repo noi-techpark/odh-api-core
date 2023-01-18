@@ -1,4 +1,6 @@
-﻿using OdhNotifier;
+﻿using Helper;
+using OdhNotifier;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -149,27 +151,7 @@ namespace OdhNotifier
         }
     }  
     
-    public class NotifyMeta
-    {
-        public string Id { get; set; }
-        public string Url { get; set; }
-        public string Type { get; set; }
-        public string Mode { get; set; }
-
-        public string Destination { get; set; }
-
-        public string UdateMode { get; set; }
-        public string Origin { get; set; }
-
-        public string Referer { get; set; }
-
-        public IDictionary<string,string> Headers { get; set; }
-
-        public IDictionary<string, string> Parameters { get; set; }
-
-        public List<string> ValidTypes { get; set; }
-    }
-
+  
     public class NotifyLog
     {
         public string message { get; set; }
@@ -192,4 +174,92 @@ namespace OdhNotifier
         public DateTime LastChange { get; set; }
         public Nullable<int> RetryCount { get; set; }
     }   
+
+    public class PushToAll
+    {
+        public static void PushToAllRegisteredServices(List<NotifierConfig> notifierconfiglist, NotifyMeta mymeta)
+        {
+            foreach(var notifyconfig in notifierconfiglist)
+            {
+
+            }
+        }
+    }
+
+    public class NotifyMetaGenerated : NotifyMeta
+    {
+        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, string updatemode, string origin)
+        {
+            //Set by parameters
+            this.Id = id;
+            this.Type = type;
+            this.UdateMode = updatemode;
+
+
+            switch (notifyconfig.ServiceName.ToLower())
+            {
+                case "marketplace":
+                
+                    //From Config
+                    this.Url = notifyconfig.Url;
+                    this.Headers = new Dictionary<string, string>() { 
+                        { "client_id", notifyconfig.User },
+                        { "client_secret", notifyconfig.Password }
+                    };
+
+                    //Prefilled
+                    this.Destination = "marketplace";
+                    this.Mode = "post";
+
+                    this.ValidTypes = new List<string>()
+                        {
+                            "ACCOMMODATION",
+                            "REGION",
+                            "MUNICIPALITY",
+                            "DISTRICT",
+                            "TOURISM_ASSOCIATION",
+                            "ODH_ACTIVITY_POI",
+                            "EVENT",
+                            "ODH_TAG"
+                        };
+                    break;
+                case "sinfo":
+               
+                    //From Config
+                    this.Url = notifyconfig.Url + "accommodation/2657B7CBCB85380B253D2FBE28AF100E";
+                    this.Parameters = new Dictionary<string, string>() {
+                        { "skipimage", "true" }
+                    };
+
+                    //Prefilled
+                    this.Destination = "sinfo";
+                    this.Mode = "get";
+
+                    this.ValidTypes = new List<string>()
+                        {
+                            "accommodation",
+                            "activity",
+                            "article",
+                            "event",
+                            "metaregion",
+                            "region",
+                            "experiencearea",
+                            "municipality",
+                            "tvs",
+                            "district",
+                            "skiregion",
+                            "skiarea",
+                            "gastronomy",
+                            "odhactivitypoi",
+                            "smgtags"
+                        };
+                    break;
+                default:
+                    this.Mode = "get";
+                    this.Url = notifyconfig.Url;
+                    break;
+            }
+        }
+
+    }
 }

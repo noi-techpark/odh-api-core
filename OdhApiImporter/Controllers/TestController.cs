@@ -39,20 +39,9 @@ namespace OdhApiImporter.Controllers
         {
             var marketplaceconfig = settings.NotifierConfig.Where(x => x.ServiceName == "Marketplace").FirstOrDefault();
 
-            MarketplacePushNotifierMeta mymeta = new MarketplacePushNotifierMeta()
-            {
-                Id = "2657B7CBCB85380B253D2FBE28AF100E",
-                Url = marketplaceconfig.Url,
-                Origin = "api",
-                UdateMode = "forced",
-                Headers = new Dictionary<string, string>() {
-                    { "client_id", marketplaceconfig.User },
-                    { "client_secret", marketplaceconfig.Password }
-                },
-                Type = "ACCOMMODATION"
-            };
-
-            return await OdhPushNotifier.SendNotify(mymeta);
+            NotifyMetaGenerated meta = new NotifyMetaGenerated(marketplaceconfig, "2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", "api");
+            
+            return await OdhPushNotifier.SendNotify(meta);
         }
 
         [HttpGet, Route("TestNotifySinfo")]
@@ -60,19 +49,9 @@ namespace OdhApiImporter.Controllers
         {
             var sinfoconfig = settings.NotifierConfig.Where(x => x.ServiceName == "Sinfo").FirstOrDefault();
 
-            SinfoPushNotifierMeta mymeta = new SinfoPushNotifierMeta()
-            {
-                Id = "2657B7CBCB85380B253D2FBE28AF100E",
-                Url = sinfoconfig.Url + "accommodation/2657B7CBCB85380B253D2FBE28AF100E",
-                Origin = "api",
-                UdateMode = "forced",
-                Parameters = new Dictionary<string, string>() {
-                    { "skipimage", "true" }
-                },
-                Type = "accommodation"
-            };
-
-            return await OdhPushNotifier.SendNotify(mymeta);
+            NotifyMetaGenerated meta = new NotifyMetaGenerated(sinfoconfig, "2657B7CBCB85380B253D2FBE28AF100E", "accommodation", "forced", "api");
+            
+            return await OdhPushNotifier.SendNotify(meta);
         }
     }
 }
