@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OdhApiImporter
 {
@@ -137,6 +139,22 @@ namespace OdhApiImporter
         public string ServiceUrl { get; private set; }
     }
 
+    public class NotifierConfig
+    {
+        public NotifierConfig(string servicename, string url, string user, string pswd)
+        {
+            this.ServiceName = servicename;
+            this.Url = url;
+            this.User = user;
+            this.Password = pswd;
+        }
+
+        public string ServiceName { get; private set; }
+        public string Url { get; private set; }
+        public string User { get; private set; }
+        public string Password { get; private set; }        
+    }
+
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -150,6 +168,7 @@ namespace OdhApiImporter
         EBMSConfig EbmsConfig { get; }
         RavenConfig RavenConfig { get; }
         DSSConfig DSSConfig { get; }
+        List<NotifierConfig> NotifierConfig { get; }
     }
 
     public class Settings : ISettings
@@ -166,6 +185,7 @@ namespace OdhApiImporter
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
         private readonly DSSConfig dssConfig;
+        private readonly List<NotifierConfig> notifierConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -192,6 +212,13 @@ namespace OdhApiImporter
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
             var dss = this.configuration.GetSection("DSSConfig");
             this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+
+            var notifierconfiglist = this.configuration.GetSection("NotifierConfig").GetChildren();
+            this.notifierConfig = new List<NotifierConfig>();
+            foreach (var notifiercfg in notifierconfiglist)
+            {
+                this.notifierConfig.Add(new NotifierConfig(notifiercfg.GetValue<string>("Service", ""), notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -206,5 +233,6 @@ namespace OdhApiImporter
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
         public DSSConfig DSSConfig => this.dssConfig;
+        public List<NotifierConfig> NotifierConfig => this.notifierConfig;
     }
 }
