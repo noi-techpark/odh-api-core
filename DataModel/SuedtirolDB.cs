@@ -633,6 +633,7 @@ namespace DataModel
 
     public class LTSPoi : PoiBaseInfos, IGPSPointsAware
     {
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -644,6 +645,7 @@ namespace DataModel
 
     public class LTSActivity : PoiBaseInfos, IGPSPointsAware
     {
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -823,6 +825,7 @@ namespace DataModel
 
         public ICollection<AccoRoomInfo>? AccoRoomInfo { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -996,6 +999,7 @@ namespace DataModel
 
     public class Gastronomy : GastronomyBaseInfos, IGPSPointsAware
     {
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -1066,7 +1070,8 @@ namespace DataModel
         public Nullable<int> RoomCount { get; set; }
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
-        //added
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -1512,6 +1517,7 @@ namespace DataModel
 
         public List<string>? AreaIds { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -1887,6 +1893,7 @@ namespace DataModel
 
         public ICollection<GpsInfo>? GpsInfo { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2243,7 +2250,7 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
 
-        //new Add GPS Points from Root Representation
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2446,6 +2453,7 @@ namespace DataModel
 
         public ICollection<string>? HasLanguage { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2646,6 +2654,7 @@ namespace DataModel
 
         public EventOperationScheduleOverview EventOperationScheduleOverview { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2822,6 +2831,7 @@ namespace DataModel
 
         public ICollection<string>? SmgTags { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -3087,7 +3097,7 @@ namespace DataModel
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
         // Here for compatibility reasons
-        [SwaggerDeprecated("Will be removed within 2021-12-31")]
+        [SwaggerDeprecated("Will be removed within 2023-12-31")]
         public bool Thuresday { get; set; }
         public bool Thursday { get { return Thuresday; } }
         public bool Friday { get; set; }

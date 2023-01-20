@@ -34,6 +34,7 @@
     <ProjectReference Include="..\LOOPTEC\LOOPTEC.csproj" />
     <ProjectReference Include="..\MSS\MSS.csproj" />
     <ProjectReference Include="..\NINJA\NINJA.csproj" />
+    <ProjectReference Include="..\OdhNotifier\OdhNotifier.csproj" />
     <ProjectReference Include="..\PushServer\PushServer.csproj" />
     <ProjectReference Include="..\RAVEN\RAVEN.csproj" />
     <ProjectReference Include="..\SIAG\SIAG.csproj" />

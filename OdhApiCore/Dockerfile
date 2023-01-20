@@ -18,6 +18,7 @@ COPY NINJA/NINJA.csproj NINJA/
 COPY RAVEN/RAVEN.csproj RAVEN/
 COPY STA/STA.csproj STA/
 COPY LOOPTEC/LOOPTEC.csproj LOOPTEC/
+COPY OdhNotifier/OdhNotifier.csproj OdhNotifier/
 COPY PushServer/PushServer.csproj EBMS/
 COPY JsonLDTransformer/JsonLDTransformer.csproj JsonLDTransformer/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/

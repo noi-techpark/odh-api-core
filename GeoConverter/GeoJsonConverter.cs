@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Geo;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
+using Geo.Gps.Serialization;
 using Geo.IO.GeoJson;
 
 public static class GeoJsonConverter
@@ -51,5 +52,20 @@ public static class GeoJsonConverter
         }
         var geo = ParseGeo(coordinates);
         return ConvertToGeoJson(geo);
+    }
+
+    public static string ConvertFromGpx(string gpx)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(gpx);
+        var stream = new MemoryStream(bytes);
+        var serializer = new Gpx11Serializer();
+        var serialized = serializer.DeSerialize(new StreamWrapper(stream));
+        var geometry =
+            serialized.Waypoints.Any() ?
+            serialized.Waypoints :
+            serialized.Tracks.SelectMany(x => x.Segments).SelectMany(x => x.Waypoints);
+        var coordinates = geometry.Select(x => x.Coordinate);
+        var writer = new GeoJsonWriter();
+        return ConvertToGeoJson(new LineString(coordinates));
     }
 }

@@ -1,142 +1,11 @@
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Helper;
 
 namespace OdhApiImporter
-{
-    public class MssConfig
-    {
-        public MssConfig(string username, string password)
-        {
-            this.Username = username;
-            this.Password = password;
-        }
-
-        public string Username { get; private set; }
-        public string Password { get; private set;  }
-    }
-
-    public class LcsConfig
-    {
-        public LcsConfig(string username, string password, string messagepassword)
-        {
-            this.Username = username;
-            this.Password = password;
-            this.MessagePassword = messagepassword;
-        }
-
-        public string Username { get; private set; }
-        public string Password { get; private set; }
-
-        public string MessagePassword { get; private set; }
-    }
-
-    public class CDBConfig
-    {
-        public CDBConfig(string username, string password, string url)
-        {
-            this.Username = username;
-            this.Password = password;
-            this.Url = url;
-        }
-
-        public string Username { get; private set; }
-        public string Password { get; private set; }
-
-        public string Url { get; private set; }
-    }
-
-    public class SiagConfig
-    {
-        public SiagConfig(string username, string password)
-        {
-            this.Username = username;
-            this.Password = password;            
-        }
-
-        public string Username { get; private set; }
-        public string Password { get; private set; }        
-    }
-
-    public class XmlConfig
-    {
-        public XmlConfig(string xmldir, string xmldirweather)
-        {
-            this.Xmldir = xmldir;
-            this.XmldirWeather = xmldirweather;
-        }
-
-        public string Xmldir { get; private set; }
-        public string XmldirWeather { get; private set; }        
-    }
-
-    public class JsonConfig
-    {
-        public JsonConfig(string jsondir)
-        {
-            this.Jsondir = jsondir;            
-        }
-
-        public string Jsondir { get; private set; }
-    }
-
-    public class S3ImageresizerConfig
-    {
-        public S3ImageresizerConfig(string url, string docurl, string bucketaccesspoint, string accesskey, string secretkey)
-        {
-            this.Url = url;
-            this.DocUrl = docurl;
-            this.BucketAccessPoint = bucketaccesspoint;
-            this.AccessKey = accesskey;
-            this.SecretKey = secretkey;
-        }
-
-        public string Url { get; private set; }
-        public string DocUrl { get; private set; }
-        public string BucketAccessPoint { get; private set; }
-        public string AccessKey { get; private set; }
-        public string SecretKey { get; private set; }
-    }
-
-    public class EBMSConfig
-    {
-        public EBMSConfig(string user, string password)
-        {
-            this.User = user;
-            this.Password = password;
-        }
-
-        public string User { get; private set; }
-        public string Password { get; private set; }
-    }
-
-    public class RavenConfig
-    {
-        public RavenConfig(string user, string password, string serviceurl)
-        {
-            this.User = user;
-            this.Password = password;
-            this.ServiceUrl = serviceurl;
-        }
-
-        public string User { get; private set; }
-        public string Password { get; private set; }
-        public string ServiceUrl { get; private set; }
-    }
-
-    public class DSSConfig
-    {
-        public DSSConfig(string user, string password, string serviceurl)
-        {
-            this.User = user;
-            this.Password = password;
-            this.ServiceUrl = serviceurl;
-        }
-
-        public string User { get; private set; }
-        public string Password { get; private set; }
-        public string ServiceUrl { get; private set; }
-    }
-
+{      
     public interface ISettings
     {
         string PostgresConnectionString { get; }
@@ -150,6 +19,7 @@ namespace OdhApiImporter
         EBMSConfig EbmsConfig { get; }
         RavenConfig RavenConfig { get; }
         DSSConfig DSSConfig { get; }
+        List<NotifierConfig> NotifierConfig { get; }
     }
 
     public class Settings : ISettings
@@ -166,6 +36,7 @@ namespace OdhApiImporter
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
         private readonly DSSConfig dssConfig;
+        private readonly List<NotifierConfig> notifierConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -192,6 +63,18 @@ namespace OdhApiImporter
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
             var dss = this.configuration.GetSection("DSSConfig");
             this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+
+            var notifierconfiglist = this.configuration.GetSection("NotifierConfig").GetChildren();
+            this.notifierConfig = new List<NotifierConfig>();
+
+            var notifierconfigdict = this.configuration.GetSection("NotifierConfig").GetChildren();
+            if (notifierconfigdict != null)
+            {
+                foreach (var notifiercfg in notifierconfiglist)
+                {
+                    this.notifierConfig.Add(new NotifierConfig(notifiercfg.Key, notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
+                }
+            }                
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -206,5 +89,6 @@ namespace OdhApiImporter
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
         public DSSConfig DSSConfig => this.dssConfig;
+        public List<NotifierConfig> NotifierConfig => this.notifierConfig;
     }
 }
