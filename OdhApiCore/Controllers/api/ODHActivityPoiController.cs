@@ -115,7 +115,7 @@ namespace OdhApiCore.Controllers.api
             string? distancefilter = null,
             string? altitudefilter = null,
             string? durationfilter = null,
-            LegacyBool hascc0image = null!,
+            LegacyBool hasimage = null!,
             string? tagfilter = null,
             string? publishedon = null,            
             string? updatefrom = null,
@@ -140,7 +140,7 @@ namespace OdhApiCore.Controllers.api
                 smgactive: odhactive?.Value, smgtags: odhtagfilter, smgtagsand: odhtagfilter_and,
                 categorycodefilter: categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                 activitytypefilter: activitytype, poitypefilter: poitype, difficultyfilter: difficultyfilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
-                hascc0image: hascc0image?.Value, tagfilter: tagfilter, publishedon: publishedon, seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
+                hasimage: hasimage?.Value, tagfilter: tagfilter, publishedon: publishedon, seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
                 removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -238,7 +238,7 @@ namespace OdhApiCore.Controllers.api
             string? areafilter, bool? highlightfilter, bool? active, bool? smgactive, string? smgtags, string? smgtagsand,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? difficultyfilter, string? distancefilter, string? altitudefilter, string? durationfilter,
-            bool? hascc0image, string? tagfilter, string? publishedon,
+            bool? hasimage, string? tagfilter, string? publishedon,
             string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
@@ -250,7 +250,7 @@ namespace OdhApiCore.Controllers.api
                     highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, smgtagsand: smgtagsand, lastchange: lastchange, 
                     categorycodefilter : categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                     activitytypefilter: activitytypefilter, poitypefilter: poitypefilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter, difficultyfilter: difficultyfilter,
-                    hascc0imagefilter: hascc0image,
+                    hasimagefilter: hasimage,
                     tagfilter: tagfilter, publishedonfilter: publishedon,
                     cancellationToken);
 
@@ -273,7 +273,7 @@ namespace OdhApiCore.Controllers.api
                             difficultylist: myodhactivitypoihelper.difficultylist, distance: myodhactivitypoihelper.distance,
                             distancemin: myodhactivitypoihelper.distancemin, distancemax: myodhactivitypoihelper.distancemax, duration: myodhactivitypoihelper.duration, durationmin: myodhactivitypoihelper.durationmin, 
                             durationmax: myodhactivitypoihelper.durationmax, altitude: myodhactivitypoihelper.altitude, altitudemin: myodhactivitypoihelper.altitudemin, altitudemax: myodhactivitypoihelper.altitudemax,
-                            hascc0image: myodhactivitypoihelper.hascc0image,
+                            hasimage: myodhactivitypoihelper.hasimage,
                             tagdict: myodhactivitypoihelper.tagdict, publishedonlist: myodhactivitypoihelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             filterClosedData: FilterClosedData, reducedData: ReducedData)
