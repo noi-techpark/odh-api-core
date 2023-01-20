@@ -1,6 +1,7 @@
 using AspNetCore.CacheOutput.InMemory.Extensions;
 using DataModel;
 using Helper;
+using Helper.Factories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections;
@@ -22,7 +23,6 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
-using OdhApiCore.Factories;
 using OdhApiCore.Swagger;
 using Serilog;
 using Serilog.Core;

@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Helper;
+using Helper.Factories;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OdhApiImporter.Factories;
+using OdhNotifier;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -32,6 +34,8 @@ namespace OdhApiImporter
         {
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
+
+            services.AddScoped<IOdhPushNotifier, OdhPushNotifier>();
 
             //TODO CONFIGURATION for Keycloak
 

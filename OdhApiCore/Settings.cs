@@ -5,30 +5,7 @@ using System.Linq;
 using Helper;
 
 namespace OdhApiCore
-{
-    
-    public interface ISettings
-    {
-        string PostgresConnectionString { get; }
-        MssConfig MssConfig { get; }
-        LcsConfig LcsConfig { get; }
-        CDBConfig CDBConfig { get; }
-        SiagConfig SiagConfig { get; }
-        XmlConfig XmlConfig { get; }
-        JsonConfig JsonConfig { get; }
-        S3ImageresizerConfig S3ImageresizerConfig { get; }
-        EBMSConfig EbmsConfig { get; }
-        RavenConfig RavenConfig { get; }
-        PushServerConfig PushServerConfig { get; }
-        //FCMConfig FCMConfig { get; }
-        List<Field2HideConfig> Field2HideConfig { get; }
-        List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
-        List<RateLimitConfig> RateLimitConfig { get; }
-        NoRateLimitConfig NoRateLimitConfig { get; }
-
-        List<FCMConfig> FCMConfig { get; }
-    }
-
+{       
     public class Settings : ISettings
     {
         private readonly IConfiguration configuration;
@@ -140,5 +117,8 @@ namespace OdhApiCore
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
         public List<RateLimitConfig> RateLimitConfig => this.rateLimitConfig;
         public NoRateLimitConfig NoRateLimitConfig => this.noRateLimitConfig;
+
+        public DSSConfig DSSConfig => throw new NotImplementedException();
+        public List<NotifierConfig> NotifierConfig => throw new NotImplementedException();
     }
 }

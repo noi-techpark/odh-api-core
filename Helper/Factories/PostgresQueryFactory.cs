@@ -5,7 +5,7 @@ using SqlKata.Compilers;
 using SqlKata.Execution;
 using System;
 
-namespace OdhApiCore.Factories
+namespace Helper.Factories
 {
     class OdhPostgresCompiler : PostgresCompiler
     {
@@ -14,7 +14,7 @@ namespace OdhApiCore.Factories
             parameterPlaceholder = "$$";
         }
     }
-        
+
     /// <summary>
     /// For the time of writing QueryFactory doesn't implement IDisposable
     /// so it is a bit dangerous to use with ASP.NET's DI when used directly.

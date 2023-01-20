@@ -5,23 +5,7 @@ using System.Linq;
 using Helper;
 
 namespace OdhApiImporter
-{      
-    public interface ISettings
-    {
-        string PostgresConnectionString { get; }
-        MssConfig MssConfig { get; }
-        LcsConfig LcsConfig { get; }
-        CDBConfig CDBConfig { get; }
-        SiagConfig SiagConfig { get; }
-        XmlConfig XmlConfig { get; }
-        JsonConfig JsonConfig { get; }
-        S3ImageresizerConfig S3ImageresizerConfig { get; }
-        EBMSConfig EbmsConfig { get; }
-        RavenConfig RavenConfig { get; }
-        DSSConfig DSSConfig { get; }
-        List<NotifierConfig> NotifierConfig { get; }
-    }
-
+{             
     public class Settings : ISettings
     {
         private readonly IConfiguration configuration;
@@ -90,5 +74,13 @@ namespace OdhApiImporter
         public RavenConfig RavenConfig => this.ravenConfig;
         public DSSConfig DSSConfig => this.dssConfig;
         public List<NotifierConfig> NotifierConfig => this.notifierConfig;
+
+        public List<Field2HideConfig> Field2HideConfig => throw new NotImplementedException();
+        public List<RequestInterceptorConfig> RequestInterceptorConfig => throw new NotImplementedException();
+        public List<RateLimitConfig> RateLimitConfig => throw new NotImplementedException();
+        public NoRateLimitConfig NoRateLimitConfig => throw new NotImplementedException();
+        public List<FCMConfig> FCMConfig => throw new NotImplementedException();
+
+        public PushServerConfig PushServerConfig => throw new NotImplementedException();
     }
 }
