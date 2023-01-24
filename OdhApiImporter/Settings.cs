@@ -10,6 +10,7 @@ namespace OdhApiImporter
     {
         private readonly IConfiguration configuration;
         private readonly Lazy<string> connectionString;
+        private readonly Lazy<string> mongoDBConnectionString;
         private readonly MssConfig mssConfig;
         private readonly LcsConfig lcsConfig; 
         private readonly CDBConfig cdbConfig;
@@ -27,6 +28,8 @@ namespace OdhApiImporter
             this.configuration = configuration;
             this.connectionString = new Lazy<string>(() =>
             this.configuration.GetConnectionString("PGConnection"));
+            this.mongoDBConnectionString = new Lazy<string>(() =>
+            this.configuration.GetConnectionString("MongoDBConnection"));
             var mss = this.configuration.GetSection("MssConfig");
             this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
             var lcs = this.configuration.GetSection("LcsConfig");
@@ -62,6 +65,7 @@ namespace OdhApiImporter
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
+        public string MongoDBConnectionString => this.mongoDBConnectionString.Value;
 
         public MssConfig MssConfig => this.mssConfig;
         public LcsConfig LcsConfig => this.lcsConfig;
