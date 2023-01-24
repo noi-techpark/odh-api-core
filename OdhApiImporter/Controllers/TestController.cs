@@ -26,15 +26,15 @@ namespace OdhApiImporter.Controllers
         private readonly ILogger<JsonGeneratorController> logger;
         private readonly IWebHostEnvironment env;
         private IOdhPushNotifier odhpushnotifier;
-        private readonly MongoDBConnection MongoDB;
+        private readonly MongoDBFactory MongoDBFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory, MongoDBConnection mongoDB, IOdhPushNotifier odhpushnotifier)
+        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory, MongoDBFactory mongoDBFactory, IOdhPushNotifier odhpushnotifier)
         {
             this.env = env;
             this.settings = settings;
             this.logger = logger;
             this.QueryFactory = queryFactory;
-            this.MongoDB = mongoDB;
+            this.MongoDBFactory = mongoDBFactory;
             this.odhpushnotifier = odhpushnotifier;
         }
 
@@ -55,44 +55,10 @@ namespace OdhApiImporter.Controllers
 
         [HttpGet, Route("TestMongoDB")]
         public async Task<IActionResult> TestMongoDB()
-        {
-            var dblist = MongoDB.mongoDBClient.ListDatabases().ToList();
-
-            var database = MongoDB.mongoDBClient.GetDatabase("TestDB");
-            var collection = database.GetCollection<BsonDocument>("TestDB");
-
-            var document = collection.Find(
-                                Builders<BsonDocument>.Filter.Eq("_id", "63cfa30278b2fc0eda271a28")
-                            ).FirstOrDefault();
-
-
-            return Ok(document);
+        {            
+            return Ok(MongoDBFactory.GetDocumentById<BsonDocument>("TestDB", "TestDB", "63cfa30278b2fc0eda271a28"));
         }
-
-        //[HttpGet, Route("TestNotifyMP")]
-        //public async Task<HttpResponseMessage> TestNotifyMP()
-        //{
-        //    var marketplaceconfig = settings.NotifierConfig.Where(x => x.ServiceName == "Marketplace").FirstOrDefault();
-
-        //    NotifyMetaGenerated meta = new NotifyMetaGenerated(marketplaceconfig, "2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", "api");
-
-        //    return await odhpushnotifier.SendNotify(meta);
-        //}
-
-        //[HttpGet, Route("TestNotifySinfo")]
-        //public async Task<HttpResponseMessage> TestNotifySinfo()
-        //{
-        //    var sinfoconfig = settings.NotifierConfig.Where(x => x.ServiceName == "Sinfo").FirstOrDefault();
-
-        //    NotifyMetaGenerated meta = new NotifyMetaGenerated(sinfoconfig, "2657B7CBCB85380B253D2FBE28AF100E", "accommodation", "forced", "api");
-
-        //    return await OdhPushNotifier.SendNotify(meta);
-        //}
     }
 
-    public class MongoDBDocument
-    {
-        [BsonId]
-        public ObjectId Id { get; set; }
-    }
+
 }

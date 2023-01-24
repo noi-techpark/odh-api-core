@@ -35,7 +35,7 @@ namespace OdhApiImporter
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
             services.AddScoped<IOdhPushNotifier, OdhPushNotifier>();
-            services.AddSingleton<MongoDBConnection>();
+            services.AddSingleton<IMongoDBFactory, MongoDBFactory>();
 
             //TODO CONFIGURATION for Keycloak
 
