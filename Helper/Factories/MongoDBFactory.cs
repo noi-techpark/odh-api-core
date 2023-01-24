@@ -14,7 +14,7 @@ namespace Helper.Factories
 
         IMongoCollection<T> GetCollection<T>(string databasename, string collectionname);
 
-        T GetDocumentById<T>(string databasename, string collectionname, string documentId)
+        T GetDocumentById<T>(string databasename, string collectionname, string documentId);
     }
 
     public class MongoDBFactory : IMongoDBFactory,IDisposable
