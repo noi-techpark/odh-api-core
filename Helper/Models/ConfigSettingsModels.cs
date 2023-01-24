@@ -9,6 +9,7 @@ namespace Helper
     public interface ISettings
     {
         string PostgresConnectionString { get; }
+        string MongoDBConnectionString { get; }
         MssConfig MssConfig { get; }
         LcsConfig LcsConfig { get; }
         CDBConfig CDBConfig { get; }
