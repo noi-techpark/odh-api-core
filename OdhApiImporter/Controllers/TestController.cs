@@ -26,9 +26,9 @@ namespace OdhApiImporter.Controllers
         private readonly ILogger<JsonGeneratorController> logger;
         private readonly IWebHostEnvironment env;
         private IOdhPushNotifier odhpushnotifier;
-        private readonly MongoDBFactory MongoDBFactory;
+        private readonly IMongoDBFactory MongoDBFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory, MongoDBFactory mongoDBFactory, IOdhPushNotifier odhpushnotifier)
+        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory, IMongoDBFactory mongoDBFactory, IOdhPushNotifier odhpushnotifier)
         {
             this.env = env;
             this.settings = settings;
@@ -55,8 +55,10 @@ namespace OdhApiImporter.Controllers
 
         [HttpGet, Route("TestMongoDB")]
         public async Task<IActionResult> TestMongoDB()
-        {            
-            return Ok(MongoDBFactory.GetDocumentById<BsonDocument>("TestDB", "TestDB", "63cfa30278b2fc0eda271a28"));
+        {
+            var test = MongoDBFactory.GetDocumentById<BsonDocument>("TestDB", "TestDB", "63cfa30278b2fc0eda271a28");
+            
+            return Ok(test.ToString());
         }
     }
 

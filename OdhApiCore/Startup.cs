@@ -55,7 +55,6 @@ namespace OdhApiCore
             Configuration = configuration;
             CurrentEnvironment = env;
         }
-
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment CurrentEnvironment { get; }
 

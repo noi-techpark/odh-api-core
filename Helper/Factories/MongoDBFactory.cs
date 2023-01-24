@@ -20,9 +20,8 @@ namespace Helper.Factories
     public class MongoDBFactory : IMongoDBFactory,IDisposable
     {       
         public MongoDBFactory(ISettings settings) //, ILogger<QueryFactory> logger)
-        {
-            if(!String.IsNullOrEmpty(settings.MongoDBConnectionString))
-                mongoDBClient = new MongoClient(settings.MongoDBConnectionString);            
+        {           
+            mongoDBClient = new MongoClient(settings.MongoDBConnectionString);            
             //Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
 
@@ -55,9 +54,11 @@ namespace Helper.Factories
         public T GetDocumentById<T>(string databasename, string collectionname, string documentId)
         {
             var collection =  mongoDBClient.GetDatabase(databasename).GetCollection<T>(collectionname);
-            return collection.Find(
-                         Builders<T>.Filter.Eq("_id", documentId)
+            var document = collection.Find(
+                         Builders<T>.Filter.Eq("_id", ObjectId.Parse(documentId))
                      ).FirstOrDefault();
+            
+            return document;
         }
 
 
