@@ -1693,14 +1693,11 @@ namespace DataModel
 
         [SwaggerEnum(new[] { "NOI", "EC" })]
         public string? EventLocation { get; set; }
-
         public int EventId { get; set; }
 
         //Dictionary with EventTextDE + EventDescriptionDE infos
         public IDictionary<string, string> EventText { get; set; }
         public IDictionary<string, string> EventTitle { get; set; }
-
-
 
         [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextDE {
@@ -1724,9 +1721,7 @@ namespace DataModel
                 return EventText.ContainsKey("en") ? EventText["en"] : null;
             }
         }
-
      
-
         //Hauptbeschreibung
         [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescription { get; set; }
@@ -1854,8 +1849,6 @@ namespace DataModel
         //public string Documents { get; set; }
         public List<ImageGallery>? ImageGallery { get; set; }
         public string? VideoUrl { get; set; }
-
-
         public List<string>? TechnologyFields { get; set; }
 
         public List<string>? CustomTagging { get; set; }
@@ -1880,6 +1873,9 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool? SoldOut { get; set; }
+
+        [SwaggerSchema(" ActiveToday Indicates if Event is shown on the today NOI Website")]
+        public bool? ActiveToday { get; set; }
 
         [SwaggerSchema(" ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI")]
         public bool? ActiveWeb { get; set; }
