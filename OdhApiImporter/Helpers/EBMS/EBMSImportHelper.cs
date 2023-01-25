@@ -148,6 +148,12 @@ namespace OdhApiImporter.Helpers
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 
+                    //Set ActiveToday in base of Display1
+                    if (eventshort.Display1 == "Y")
+                        eventshort.ActiveToday = true;
+                    if (eventshort.Display1 == "N")
+                        eventshort.ActiveToday = false;
+
                     var queryresult = await InsertDataToDB(eventshort, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
 
                     newcounter = newcounter + queryresult.created ?? 0;
