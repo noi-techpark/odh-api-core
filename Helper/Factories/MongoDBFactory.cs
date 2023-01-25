@@ -20,8 +20,11 @@ namespace Helper.Factories
     public class MongoDBFactory : IMongoDBFactory,IDisposable
     {       
         public MongoDBFactory(ISettings settings) //, ILogger<QueryFactory> logger)
-        {           
-            mongoDBClient = new MongoClient(settings.MongoDBConnectionString);            
+        {
+            if (!string.IsNullOrEmpty(settings.MongoDBConnectionString))
+                mongoDBClient = new MongoClient(settings.MongoDBConnectionString);
+            else
+                mongoDBClient = null;
             //Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
 
