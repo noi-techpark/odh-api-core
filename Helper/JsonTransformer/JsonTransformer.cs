@@ -21,7 +21,8 @@ namespace Helper
             //Filter by given fields
             if (fields != null && fields.Length > 0) token = JsonTransformerMethods.FilterByFields(token, fields, language);
             // Filter out all data where the LicenseInfo does not contain `CC0`
-            if (checkCC0) token = JsonTransformerMethods.FilterImagesByCC0License(token);
+            // Show all images
+            //if (checkCC0) token = JsonTransformerMethods.FilterImagesByCC0License(token);
             // Filter out all data where the LicenseInfo contains `hgv` as source.
             if (filterClosedData) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
 

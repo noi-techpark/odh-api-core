@@ -51,6 +51,7 @@
 
   <ItemGroup>
     <Folder Include="docker\postgres\" />
+    <Folder Include="Factories\" />
   </ItemGroup>
 
   <ItemGroup>

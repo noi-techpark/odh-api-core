@@ -1115,11 +1115,11 @@ namespace Helper
             );
 
         //Filter on Generated Field gen_odhactive 
-        public static Query HasCC0Image_GeneratedColumn(this Query query, bool? odhactive) =>
+        public static Query HasImage_GeneratedColumn(this Query query, bool? odhactive) =>
             query.When(
                 odhactive != null,
                 query => query.WhereRaw(
-                    "gen_hascc0image = $$",
+                    "gen_hasimage = $$",
                     odhactive ?? false
                 )
             );

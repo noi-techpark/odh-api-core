@@ -6,6 +6,31 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
+    public interface ISettings
+    {
+        string PostgresConnectionString { get; }
+        string MongoDBConnectionString { get; }
+        MssConfig MssConfig { get; }
+        LcsConfig LcsConfig { get; }
+        CDBConfig CDBConfig { get; }
+        SiagConfig SiagConfig { get; }
+        XmlConfig XmlConfig { get; }
+        JsonConfig JsonConfig { get; }
+        S3ImageresizerConfig S3ImageresizerConfig { get; }
+        EBMSConfig EbmsConfig { get; }
+        RavenConfig RavenConfig { get; }
+        PushServerConfig PushServerConfig { get; }
+        //FCMConfig FCMConfig { get; }
+        List<Field2HideConfig> Field2HideConfig { get; }
+        List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
+        List<RateLimitConfig> RateLimitConfig { get; }
+        NoRateLimitConfig NoRateLimitConfig { get; }
+        List<FCMConfig> FCMConfig { get; }
+        DSSConfig DSSConfig { get; }
+
+        List<NotifierConfig> NotifierConfig { get; }
+    }    
+
     //Classes for Settings shared between Projects
     public class MssConfig
     {

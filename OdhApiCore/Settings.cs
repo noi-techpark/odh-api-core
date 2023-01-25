@@ -5,34 +5,12 @@ using System.Linq;
 using Helper;
 
 namespace OdhApiCore
-{
-    
-    public interface ISettings
-    {
-        string PostgresConnectionString { get; }
-        MssConfig MssConfig { get; }
-        LcsConfig LcsConfig { get; }
-        CDBConfig CDBConfig { get; }
-        SiagConfig SiagConfig { get; }
-        XmlConfig XmlConfig { get; }
-        JsonConfig JsonConfig { get; }
-        S3ImageresizerConfig S3ImageresizerConfig { get; }
-        EBMSConfig EbmsConfig { get; }
-        RavenConfig RavenConfig { get; }
-        PushServerConfig PushServerConfig { get; }
-        //FCMConfig FCMConfig { get; }
-        List<Field2HideConfig> Field2HideConfig { get; }
-        List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
-        List<RateLimitConfig> RateLimitConfig { get; }
-        NoRateLimitConfig NoRateLimitConfig { get; }
-
-        List<FCMConfig> FCMConfig { get; }
-    }
-
+{       
     public class Settings : ISettings
     {
         private readonly IConfiguration configuration;
         private readonly Lazy<string> connectionString;
+        private readonly Lazy<string> mongoDBConnectionString;
         private readonly MssConfig mssConfig;
         private readonly LcsConfig lcsConfig;
         private readonly CDBConfig cdbConfig;        
@@ -55,6 +33,8 @@ namespace OdhApiCore
             this.configuration = configuration;
             this.connectionString = new Lazy<string>(() =>
             this.configuration.GetConnectionString("PGConnection"));
+            this.mongoDBConnectionString = new Lazy<string>(() =>
+            this.configuration.GetConnectionString("MongoDBConnection"));
             var mss = this.configuration.GetSection("MssConfig");
             this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
             var lcs = this.configuration.GetSection("LcsConfig");
@@ -124,7 +104,7 @@ namespace OdhApiCore
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
-
+        public string MongoDBConnectionString => this.mongoDBConnectionString.Value;
         public MssConfig MssConfig => this.mssConfig;
         public LcsConfig LcsConfig => this.lcsConfig;
         public CDBConfig CDBConfig => this.cdbConfig;
@@ -140,5 +120,8 @@ namespace OdhApiCore
         public List<RequestInterceptorConfig> RequestInterceptorConfig => this.requestInterceptorConfig;
         public List<RateLimitConfig> RateLimitConfig => this.rateLimitConfig;
         public NoRateLimitConfig NoRateLimitConfig => this.noRateLimitConfig;
+
+        public DSSConfig DSSConfig => throw new NotImplementedException();
+        public List<NotifierConfig> NotifierConfig => throw new NotImplementedException();
     }
 }

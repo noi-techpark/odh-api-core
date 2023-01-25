@@ -5,27 +5,12 @@ using System.Linq;
 using Helper;
 
 namespace OdhApiImporter
-{      
-    public interface ISettings
-    {
-        string PostgresConnectionString { get; }
-        MssConfig MssConfig { get; }
-        LcsConfig LcsConfig { get; }
-        CDBConfig CDBConfig { get; }
-        SiagConfig SiagConfig { get; }
-        XmlConfig XmlConfig { get; }
-        JsonConfig JsonConfig { get; }
-        S3ImageresizerConfig S3ImageresizerConfig { get; }
-        EBMSConfig EbmsConfig { get; }
-        RavenConfig RavenConfig { get; }
-        DSSConfig DSSConfig { get; }
-        List<NotifierConfig> NotifierConfig { get; }
-    }
-
+{             
     public class Settings : ISettings
     {
         private readonly IConfiguration configuration;
         private readonly Lazy<string> connectionString;
+        private readonly Lazy<string> mongoDBConnectionString;
         private readonly MssConfig mssConfig;
         private readonly LcsConfig lcsConfig; 
         private readonly CDBConfig cdbConfig;
@@ -43,6 +28,8 @@ namespace OdhApiImporter
             this.configuration = configuration;
             this.connectionString = new Lazy<string>(() =>
             this.configuration.GetConnectionString("PGConnection"));
+            this.mongoDBConnectionString = new Lazy<string>(() =>
+            this.configuration.GetConnectionString("MongoDBConnection"));
             var mss = this.configuration.GetSection("MssConfig");
             this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
             var lcs = this.configuration.GetSection("LcsConfig");
@@ -78,6 +65,7 @@ namespace OdhApiImporter
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
+        public string MongoDBConnectionString => this.mongoDBConnectionString.Value;
 
         public MssConfig MssConfig => this.mssConfig;
         public LcsConfig LcsConfig => this.lcsConfig;
@@ -90,5 +78,13 @@ namespace OdhApiImporter
         public RavenConfig RavenConfig => this.ravenConfig;
         public DSSConfig DSSConfig => this.dssConfig;
         public List<NotifierConfig> NotifierConfig => this.notifierConfig;
+
+        public List<Field2HideConfig> Field2HideConfig => throw new NotImplementedException();
+        public List<RequestInterceptorConfig> RequestInterceptorConfig => throw new NotImplementedException();
+        public List<RateLimitConfig> RateLimitConfig => throw new NotImplementedException();
+        public NoRateLimitConfig NoRateLimitConfig => throw new NotImplementedException();
+        public List<FCMConfig> FCMConfig => throw new NotImplementedException();
+
+        public PushServerConfig PushServerConfig => throw new NotImplementedException();
     }
 }

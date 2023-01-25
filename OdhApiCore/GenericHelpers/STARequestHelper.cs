@@ -115,7 +115,7 @@ namespace OdhApiCore.GenericHelpers
                             activitytypelist: new List<string>(), poitypelist: new List<string>(), difficultylist: new List<string>(), distance: false,
                             distancemin: 0, distancemax: 0, duration: false, durationmin: 0,
                             durationmax: 0, altitude: false, altitudemin: 0, altitudemax: 0,
-                            hascc0image: null, tagdict: null, publishedonlist: new List<string>(),
+                            hasimage: null, tagdict: null, publishedonlist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null,
                             filterClosedData: true, reducedData: true)
                     .OrderByRaw(orderby);

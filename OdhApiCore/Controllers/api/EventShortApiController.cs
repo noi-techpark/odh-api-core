@@ -761,6 +761,12 @@ namespace OdhApiCore.Controllers.api
                     //GENERATE ID
                     eventshort.Id = Helper.IdGenerator.GenerateIDFromType(eventshort);
 
+                    //Take Display1 value and set it to ActiveToday
+                    if (eventshort.ActiveToday == true)
+                        eventshort.Display1 = "Y";
+                    if (eventshort.ActiveToday == false)
+                        eventshort.Display1 = "N";
+
                     return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true);
                 }
                 else
@@ -832,6 +838,12 @@ namespace OdhApiCore.Controllers.api
                     //    .UpdateAsync(new JsonBData() { id = eventshort.Id ?? "", data = eventshort != null ? new JsonRaw(eventshort) : null });
 
                     //return Ok(new GenericResultExtended() { Message = String.Format("UPDATE eventshort succeeded, Id:{0}", eventshort?.Id), Id = eventshort?.Id });
+
+                    //Take Display1 value and set it to ActiveToday
+                    if (eventshort.ActiveToday == true)
+                        eventshort.Display1 = "Y";
+                    if (eventshort.ActiveToday == false)
+                        eventshort.Display1 = "N";
 
                     //Check ID uppercase lowercase
                     eventshort.Id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
