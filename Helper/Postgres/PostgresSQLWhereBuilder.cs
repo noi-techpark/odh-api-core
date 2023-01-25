@@ -8,7 +8,7 @@ namespace Helper
     public static class PostgresSQLWhereBuilder
     {
         private static readonly string[] _languagesToSearchFor =
-            new[] { "de", "it", "en" };
+            new[] { "de", "it", "en", "nl", "cs", "pl", "fr", "pl" };
 
         /// <summary>
         /// Provide title fields as JsonPath
