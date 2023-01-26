@@ -17,7 +17,7 @@ namespace OdhNotifier
     public interface IOdhPushNotifier
     {
         Task<IEnumerable<NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, string origin, string? referer = null, List<string>? excludeservices = null);
-        //Task<HttpResponseMessage> SendNotify(NotifyMeta notify);
+        Task<IEnumerable<NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, string origin, List<string> publishedonlist, string? referer = null);
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -35,6 +35,16 @@ namespace OdhNotifier
             this.notifierconfiglist = settings.NotifierConfig;
         }
 
+        /// <summary>
+        /// Pushes to all registered Services in config, a service can be manually excluded by passing and exclude list
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="updatemode"></param>
+        /// <param name="origin"></param>
+        /// <param name="referer"></param>
+        /// <param name="excludeservices"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, string origin, string? referer = null, List<string>? excludeservices = null)
         {
             List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
@@ -55,6 +65,41 @@ namespace OdhNotifier
 
             return notifierresponselist;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="updatemode"></param>
+        /// <param name="origin"></param>
+        /// <param name="referer"></param>
+        /// <param name="excludeservices"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, string origin, List<string> publishedonlist, string? referer = null)
+        {
+            List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
+
+            foreach (var notifyconfig in notifierconfiglist)
+            {
+                //if 
+                if(publishedonlist.Contains(notifyconfig.ServiceName))
+                {
+                    //Compare and push?
+
+                    NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, updatemode, origin, referer);
+
+                    NotifierResponse notifierresponse = new NotifierResponse();
+                    notifierresponse.Response = await SendNotify(meta);
+                    notifierresponse.Service = notifyconfig.ServiceName;
+
+                    notifierresponselist.Add(notifierresponse);
+                }                
+            }
+
+            return notifierresponselist;
+        }
+
 
         private async Task<HttpResponseMessage> SendNotify(NotifyMeta notify)
         {

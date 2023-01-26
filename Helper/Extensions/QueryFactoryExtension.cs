@@ -1,4 +1,5 @@
 ﻿using DataModel;
+using Helper.Generic;
 using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 using SqlKata;
@@ -151,7 +152,6 @@ namespace Helper
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };
         }
 
-
         public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
         {
             if (string.IsNullOrEmpty(id))
@@ -181,6 +181,71 @@ namespace Helper
 
             return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
         }
+
+        //TODO Insert Compare and Push
+        public static async Task<PGCRUDResult> UpsertDataAndCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, new()
+        {
+            //TODO: What if no id is passed? Generate ID
+            //TODO: Id Uppercase or Lowercase depending on table
+            //TODO: Shortname population?
+
+            if (data == null)
+                throw new ArgumentNullException(nameof(data), "no data");
+
+            //Check if data exists
+            var query = QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", data.Id);
+
+            var queryresult = await query.GetAsync<T>();       
+
+            string operation = "";
+
+            int createresult = 0;
+            int updateresult = 0;
+            int errorresult = 0;
+            bool compareresult = false;
+
+            data.LastChange = DateTime.Now;
+            //Setting MetaInfo
+            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+
+            //Setting Editinfo
+            data._Meta.UpdateInfo = new UpdateInfo() { UpdatedBy = editor, UpdateSource = editsource };
+
+            if (data.FirstImport == null)
+                data.FirstImport = DateTime.Now;
+
+
+            if (queryresult == null || queryresult.Count() == 0)
+            {
+                if (errorwhendataisnew)
+                    throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
+
+                createresult = await QueryFactory.Query(table)
+                   .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                operation = "INSERT";
+            }
+            else
+            {
+                //Compare the data
+                compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" });
+
+
+                if (errorwhendataexists)
+                    throw new ArgumentNullException(nameof(data.Id), "Id exists already");
+
+                updateresult = await QueryFactory.Query(table).Where("id", data.Id)
+                        .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                operation = "UPDATE";
+            }
+
+            if (createresult == 0 && updateresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, objectchanged = compareresult };
+        }
+
 
         #endregion
 

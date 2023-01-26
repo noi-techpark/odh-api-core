@@ -49,6 +49,8 @@ namespace DataModel
         public int? deleted { get; init; }
 
         public int? error { get; init; }
+
+        public bool? objectchanged { get; init; }
     }
 
     public class GenericResultsHelper
