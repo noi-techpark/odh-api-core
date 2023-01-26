@@ -294,7 +294,7 @@ namespace OdhApiImporter.Helpers.DSS
             }
             catch(Exception ex)
             {
-                WriteLog.LogToConsole(returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = returnid, sourceinterface = "dss." + entitytype, success = false, error = entitytype + " could not be parsed" });
+                WriteLog.LogToConsole(returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = returnid, sourceinterface = "dss." + entitytype, success = false, error = entitytype + " could not be parsed: " + ex.Message });
 
                 errorcounter = errorcounter + 1;
             }
