@@ -280,7 +280,8 @@ namespace OdhApiCore.Controllers.api
                     if (!sourcelistnew.Contains("magnolia"))
                         sourcelistnew.Add("magnolia");
                     if (!sourcelistnew.Contains("common"))
-                        sourcelistnew.Add("common");                    
+                        sourcelistnew.Add("common");
+
                 }
                 else if(source == "lts")
                 {
@@ -306,6 +307,11 @@ namespace OdhApiCore.Controllers.api
                         sourcelistnew.Add("dssliftbase");
                     if (!sourcelistnew.Contains("dssslopebase"))
                         sourcelistnew.Add("dssslopebase");
+                }
+                else if (source == "content")
+                {
+                    if (!sourcelistnew.Contains("none"))
+                        sourcelistnew.Add("none");
                 }
             }
 
