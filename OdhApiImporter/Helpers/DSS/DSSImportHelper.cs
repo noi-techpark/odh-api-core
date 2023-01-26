@@ -302,7 +302,7 @@ namespace OdhApiImporter.Helpers.DSS
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
         }
         private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
-{
+        {
             int updateresult = 0;
             int deleteresult = 0;
             int errorresult = 0;
