@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,12 +26,12 @@ namespace Helper.Generic
                 {
                     //Set the fields null (DateTime sets DateTime min
                     var property1 = compareclass1.GetType().GetProperty(s);
-                    if (property1 != null)
+                    if (property1 != null && property1.GetSetMethod() != null)
                         property1.SetValue(compareclass1, null, null);
 
                     //Set the fields null 
                     var property2 = compareclass2.GetType().GetProperty(s);
-                    if (property2 != null)
+                    if (property2 != null && property2.GetSetMethod() != null)
                         property2.SetValue(compareclass2, null, null);
                 }
             }
@@ -52,12 +53,12 @@ namespace Helper.Generic
                 {
                     //Set the fields null (DateTime sets DateTime min
                     var property1 = compareclass1.GetType().GetProperty(s);
-                    if (property1 != null)
+                    if (property1 != null && property1.GetSetMethod() != null)
                         property1.SetValue(compareclass1, null, null);
 
                     //Set the fields null 
                     var property2 = compareclass2.GetType().GetProperty(s);
-                    if (property2 != null)
+                    if (property2 != null && property2.GetSetMethod() != null)
                         property2.SetValue(compareclass2, null, null);
                 }
             }
