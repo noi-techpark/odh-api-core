@@ -243,7 +243,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = compareresult, objectchanged = compareresult ? 1 : 0 };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = compareresult ? 1 : 0 };
         }
 
 
