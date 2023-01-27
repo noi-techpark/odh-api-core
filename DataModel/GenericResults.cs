@@ -76,13 +76,15 @@ namespace DataModel
             int? objectchanged = 0;
             IDictionary<string,string> pushed = new Dictionary<string,string>();
 
+            if(updatedetails.Any(x => x.compareobject != null && x.compareobject == true))
+                compareobject = true;
+
             foreach (var updatedetail in updatedetails)
             {
                     created = updatedetail.created + created;
                     updated = updatedetail.updated + updated;
                     deleted = updatedetail.deleted + deleted;
                     error = updatedetail.error + error;
-                compareobject = updatedetail.compareobject;
                 objectchanged = updatedetail.objectchanged + objectchanged;
                 if(updatedetail.pushed != null)
                 {
