@@ -2,6 +2,7 @@
 using Helper;
 using OdhNotifier;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Http.Headers;
@@ -16,8 +17,8 @@ namespace OdhNotifier
 {
     public interface IOdhPushNotifier
     {
-        Task<IEnumerable<NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, string origin, string? referer = null, List<string>? excludeservices = null);
-        Task<IEnumerable<NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, string origin, List<string> publishedonlist, string? referer = null);
+        Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, string origin, string? referer = null, List<string>? excludeservices = null);
+        Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, string origin, List<string> publishedonlist, string? referer = null);
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -45,9 +46,9 @@ namespace OdhNotifier
         /// <param name="referer"></param>
         /// <param name="excludeservices"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, string origin, string? referer = null, List<string>? excludeservices = null)
+        public async Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, string origin, string? referer = null, List<string>? excludeservices = null)
         {
-            List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
+            IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
 
             foreach (var notifyconfig in notifierconfiglist)
             {
@@ -60,7 +61,7 @@ namespace OdhNotifier
                 notifierresponse.Response = await SendNotify(meta);
                 notifierresponse.Service = notifyconfig.ServiceName;
 
-                notifierresponselist.Add(notifierresponse);
+                notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
             }
 
             return notifierresponselist;
@@ -76,9 +77,9 @@ namespace OdhNotifier
         /// <param name="referer"></param>
         /// <param name="excludeservices"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, string origin, List<string> publishedonlist, string? referer = null)
+        public async Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, string origin, List<string> publishedonlist, string? referer = null)
         {
-            List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
+            IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
 
             foreach (var notifyconfig in notifierconfiglist)
             {
@@ -93,7 +94,7 @@ namespace OdhNotifier
                     notifierresponse.Response = await SendNotify(meta);
                     notifierresponse.Service = notifyconfig.ServiceName;
 
-                    notifierresponselist.Add(notifierresponse);
+                    notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
                 }                
             }
 

@@ -144,7 +144,8 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
+                    //duplicate
+                    //myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
 
                     //Special get all Taglist and traduce it on import
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
@@ -155,7 +156,13 @@ namespace OdhApiImporter.Helpers
                     if(myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
                     {
                         //to implement, check if image has changed
-                        await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", "api", new List<string>() { "marketplace" });
+                        var pushresults = await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", "api", new List<string>() { "marketplace" });
+
+                        foreach(var pushresult in pushresults)
+                        {
+                            myupdateresult.pushdetail.TryAddOrUpdate(pushresult.Key, pushresult.Value.Response.StatusCode + ":" + pushresult.Value.Response.Content);
+                        }
+                        
                     }
 
 

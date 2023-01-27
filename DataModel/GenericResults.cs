@@ -41,6 +41,8 @@ namespace DataModel
 
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
+
+        public Dictionary<string,string> pushdetail { get; init; }
     }
 
     public struct PGCRUDResult
