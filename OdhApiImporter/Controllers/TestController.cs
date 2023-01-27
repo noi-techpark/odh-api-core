@@ -25,7 +25,7 @@ namespace OdhApiImporter.Controllers
         private readonly QueryFactory QueryFactory;
         private readonly ILogger<JsonGeneratorController> logger;
         private readonly IWebHostEnvironment env;
-        private IOdhPushNotifier odhpushnotifier;
+        private IOdhPushNotifier OdhPushnotifier;
         private readonly IMongoDBFactory MongoDBFactory;
 
         public TestController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory, IMongoDBFactory mongoDBFactory, IOdhPushNotifier odhpushnotifier)
@@ -35,7 +35,7 @@ namespace OdhApiImporter.Controllers
             this.logger = logger;
             this.QueryFactory = queryFactory;
             this.MongoDBFactory = mongoDBFactory;
-            this.odhpushnotifier = odhpushnotifier;
+            this.OdhPushnotifier = odhpushnotifier;
         }
 
         [HttpGet, Route("Test")]
@@ -48,7 +48,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("TestNotify")]
         public async Task<IActionResult> TestNotify()
         {            
-            var responses = await odhpushnotifier.PushToAllRegisteredServices("2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", "api");
+            var responses = await OdhPushnotifier.PushToAllRegisteredServices("2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", "api");
 
             return Ok();
         }

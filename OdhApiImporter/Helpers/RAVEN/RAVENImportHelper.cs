@@ -1,6 +1,7 @@
 ﻿using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Mvc;
+using OdhNotifier;
 using RAVEN;
 using SqlKata.Execution;
 using System;
@@ -16,12 +17,15 @@ namespace OdhApiImporter.Helpers
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
         private string importerURL;
+        private IOdhPushNotifier OdhPushnotifier;
 
-        public RavenImportHelper(ISettings settings, QueryFactory queryfactory, string importerURL)
+
+        public RavenImportHelper(ISettings settings, QueryFactory queryfactory, string importerURL, IOdhPushNotifier odhpushnotifier)
         {
             this.QueryFactory = queryfactory;
             this.settings = settings;
             this.importerURL = importerURL;
+            this.OdhPushnotifier = odhpushnotifier;
         }
 
         #region ODHRAVEN Helpers
@@ -148,6 +152,12 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true);
 
                     //Check if data has changed and Push To all channels
+                    if(myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
+                    {
+                        //to implement, check if image has changed
+                        await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", "api", new List<string>() { "marketplace" });
+                    }
+
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata) == true)
