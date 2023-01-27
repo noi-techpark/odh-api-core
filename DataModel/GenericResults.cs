@@ -50,7 +50,8 @@ namespace DataModel
 
         public int? error { get; init; }
 
-        public bool? objectchanged { get; init; }
+        public bool? compareobject { get; init; }
+        public int? objectchanged { get; init; }
     }
 
     public class GenericResultsHelper
