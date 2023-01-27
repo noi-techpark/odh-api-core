@@ -25,6 +25,7 @@ using OdhApiImporter.Helpers;
 using OdhApiImporter.Helpers.DSS;
 using OdhApiImporter.Helpers.LOOPTEC;
 using OdhApiImporter.Helpers.SuedtirolWein;
+using OdhNotifier;
 
 namespace OdhApiImporter.Controllers
 {
@@ -36,13 +37,15 @@ namespace OdhApiImporter.Controllers
         private readonly QueryFactory QueryFactory;
         private readonly ILogger<UpdateApiController> logger;
         private readonly IWebHostEnvironment env;
+        private IOdhPushNotifier OdhPushnotifier;
 
-        public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<UpdateApiController> logger, QueryFactory queryFactory)
+        public UpdateApiController(IWebHostEnvironment env, ISettings settings, ILogger<UpdateApiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
         {
             this.env = env;
             this.settings = settings;
             this.logger = logger;
             this.QueryFactory = queryFactory;
+            this.OdhPushnotifier = odhpushnotifier;
         }
 
         #region UPDATE FROM RAVEN INSTANCE
@@ -59,7 +62,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                RavenImportHelper ravenimporthelper = new RavenImportHelper(settings, QueryFactory, UrlGeneratorStatic("Raven/" + datatype));
+                RavenImportHelper ravenimporthelper = new RavenImportHelper(settings, QueryFactory, UrlGeneratorStatic("Raven/" + datatype), OdhPushnotifier);
                 var resulttuple = await ravenimporthelper.GetFromRavenAndTransformToPGObject(id, datatype, cancellationToken);
                 updatedetail = resulttuple.Item2;
 
