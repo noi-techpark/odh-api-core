@@ -183,7 +183,7 @@ namespace Helper
         }
 
         //TODO Insert Compare and Push
-        public static async Task<PGCRUDResult> UpsertDataAndCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, new()
+        public static async Task<PGCRUDResult> UpsertDataAndCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, new()
         {
             //TODO: What if no id is passed? Generate ID
             //TODO: Id Uppercase or Lowercase depending on table
@@ -229,8 +229,8 @@ namespace Helper
             else
             {
                 //Compare the data
-                compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" });
-
+                if(comparedata)
+                    compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" });
 
                 if (errorwhendataexists)
                     throw new ArgumentNullException(nameof(data.Id), "Id exists already");
