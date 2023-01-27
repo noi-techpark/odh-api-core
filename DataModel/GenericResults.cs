@@ -47,7 +47,7 @@ namespace DataModel
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
 
-        public Dictionary<string,string> pushed { get; init; }
+        public IDictionary<string,string> pushed { get; init; }
     }
 
     public struct PGCRUDResult
@@ -74,7 +74,7 @@ namespace DataModel
             int? error = 0;
             bool? compareobject = false;
             int? objectchanged = 0;
-            IDictionary<string,string>? pushed = new Dictionary<string,string>();
+            IDictionary<string,string> pushed = new Dictionary<string,string>();
 
             foreach (var updatedetail in updatedetails)
             {
