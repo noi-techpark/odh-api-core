@@ -38,6 +38,9 @@ namespace DataModel
         public int? deleted { get; init; }
 
         public int? error { get; init; }
+
+        public bool? compareobject { get; init; }
+        public int? objectchanged { get; init; }
     }
 
     public struct PGCRUDResult
