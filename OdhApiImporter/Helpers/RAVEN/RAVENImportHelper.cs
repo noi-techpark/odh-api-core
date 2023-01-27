@@ -158,11 +158,13 @@ namespace OdhApiImporter.Helpers
                         //to implement, check if image has changed
                         var pushresults = await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", "api", new List<string>() { "marketplace" });
 
-                        foreach(var pushresult in pushresults)
+                        if(pushresults != null)
                         {
-                            myupdateresult.pushdetail.TryAddOrUpdate(pushresult.Key, pushresult.Value.Response.StatusCode + ":" + pushresult.Value.Response.Content);
+                            foreach (var pushresult in pushresults)
+                            {
+                                myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.Response.StatusCode + ":" + pushresult.Value.Response.Content);
+                            }
                         }
-                        
                     }
 
 

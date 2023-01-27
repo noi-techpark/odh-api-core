@@ -20,6 +20,11 @@ namespace DataModel
         public int? created { get; init; }
         public int? deleted { get; init; }
 
+        public int? objectcompared { get; init; }
+        public int? objectchanged { get; init; }
+
+        public IDictionary<string,string>? pushed { get; init; }
+
         public int? error { get; init; }
 
         public string id { get; init; }
@@ -42,7 +47,7 @@ namespace DataModel
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
 
-        public Dictionary<string,string> pushdetail { get; init; }
+        public Dictionary<string,string> pushed { get; init; }
     }
 
     public struct PGCRUDResult
@@ -67,16 +72,28 @@ namespace DataModel
             int? created = 0;
             int? deleted = 0;
             int? error = 0;
+            bool? compareobject = false;
+            int? objectchanged = 0;
+            IDictionary<string,string>? pushed = new Dictionary<string,string>();
 
             foreach (var updatedetail in updatedetails)
             {
                     created = updatedetail.created + created;
                     updated = updatedetail.updated + updated;
                     deleted = updatedetail.deleted + deleted;
-                    error = updatedetail.error + error;                
+                    error = updatedetail.error + error;
+                compareobject = updatedetail.compareobject;
+                objectchanged = updatedetail.objectchanged + objectchanged;
+                if(updatedetail.pushed != null)
+                {
+                    foreach (var updatedetailpushed in updatedetail.pushed)
+                        pushed.TryAdd(updatedetailpushed.Key, updatedetailpushed.Value);
+                }
+
+
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error };
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, compareobject = compareobject, objectchanged = objectchanged, pushed = pushed };
         }
 
         public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
@@ -93,6 +110,9 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
+                objectchanged = detail.objectchanged ,
+                objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
+                pushed = detail.pushed,
                 error = detail.error,
                 success = true,
                 exception = null,
