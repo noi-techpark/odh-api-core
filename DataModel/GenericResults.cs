@@ -47,6 +47,8 @@ namespace DataModel
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
 
+        public int? objectimagechanged { get; init; }
+
         public IDictionary<string,string> pushed { get; init; }
     }
 
@@ -62,6 +64,7 @@ namespace DataModel
 
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
+        public int? objectimageschanged { get; init; }
     }
 
     public class GenericResultsHelper

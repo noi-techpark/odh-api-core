@@ -150,13 +150,18 @@ namespace OdhApiImporter.Helpers
                     //Special get all Taglist and traduce it on import
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
 
-                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true);
+                    myupdateresult = await SaveRavenObjectToPGwithComparision<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true, true);
 
                     //Check if data has changed and Push To all channels
                     if(myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
                     {
                         //to implement, check if image has changed
-                        var pushresults = await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", "api", new List<string>() { "marketplace" });
+
+                        bool hasimagechanged = false;
+                        if (myupdateresult.objectimagechanged.Value > 0)
+                            hasimagechanged = true;
+
+                        var pushresults = await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", hasimagechanged, "api", new List<string>() { "marketplace" });
 
                         if(pushresults != null)
                         {
@@ -400,7 +405,16 @@ namespace OdhApiImporter.Helpers
 
             var result = await QueryFactory.UpsertDataAndCompare<T>(datatosave, table, "lts.push.import", importerURL, false, false, compareresult);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, compareobject = result.compareobject };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = 0, compareobject = result.compareobject };
+        }
+
+        private async Task<UpdateDetail> SaveRavenObjectToPGwithComparision<T>(T datatosave, string table, bool compareresult = false, bool compareimagechange = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IImageGalleryAware, new()
+        {
+            datatosave._Meta.LastUpdate = datatosave.LastChange;
+
+            var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "lts.push.import", importerURL, false, false, compareresult, compareimagechange);
+
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, compareobject = result.compareobject };
         }
 
         private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table) 

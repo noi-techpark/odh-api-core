@@ -41,14 +41,13 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("Test")]
         public IActionResult Get()
         {
-
             return Ok("importer alive");
         }
 
         [HttpGet, Route("TestNotify")]
         public async Task<IActionResult> TestNotify()
         {            
-            var responses = await OdhPushnotifier.PushToAllRegisteredServices("2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", "api");
+            var responses = await OdhPushnotifier.PushToAllRegisteredServices("2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", false, "api");
 
             return Ok();
         }

@@ -276,18 +276,13 @@ namespace Helper
         public string Url { get; set; }
         public string Type { get; set; }
         public string Mode { get; set; }
-
+        public bool HasImagechanged { get; set; }
         public string Destination { get; set; }
-
         public string UdateMode { get; set; }
         public string Origin { get; set; }
-
         public string? Referer { get; set; }
-
         public IDictionary<string, string> Headers { get; set; }
-
         public IDictionary<string, string> Parameters { get; set; }
-
         public List<string> ValidTypes { get; set; }
     }
 
