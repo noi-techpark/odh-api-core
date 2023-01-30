@@ -197,7 +197,7 @@ namespace Helper
                       .Select("data")
                       .Where("id", data.Id);
 
-            var queryresult = await query.GetAsync<T>();       
+            var queryresult = await query.GetObjectSingleAsync<T>();       
 
             string operation = "";
 
@@ -217,7 +217,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
 
-            if (queryresult == null || queryresult.Count() == 0)
+            if (queryresult == null)
             {
                 if (errorwhendataisnew)
                     throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
@@ -264,8 +264,8 @@ namespace Helper
                       .Select("data")
                       .Where("id", data.Id);
 
-            //NOT WORKING!
-            var queryresult = await query.GetAsync<T>();            
+            //NOT WORKING!            
+            var queryresult = await query.GetObjectSingleAsync<T>();
 
             string operation = "";
 
@@ -286,7 +286,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
 
-            if (queryresult == null || queryresult.Count() == 0)
+            if (queryresult == null)
             {
                 if (errorwhendataisnew)
                     throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
@@ -298,12 +298,12 @@ namespace Helper
             else
             {
                 //Compare the data
-                if (comparedata && queryresult != null && queryresult.Count() == 1)
-                    compareresult = EqualityHelper.CompareClassesTest<T>(queryresult.FirstOrDefault(), data, new List<string>() { "LastChange", "_Meta" });
+                if (comparedata && queryresult != null)
+                    compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" });
 
                 //Compare Image Gallery
-                if (compareimagedata && queryresult != null && queryresult.Count() == 1)
-                    imagecompareresult = EqualityHelper.CompareImageGallery(data.ImageGallery, queryresult.FirstOrDefault().ImageGallery, new List<string>() { });
+                if (compareimagedata && queryresult != null)
+                    imagecompareresult = EqualityHelper.CompareImageGallery(data.ImageGallery, queryresult.ImageGallery, new List<string>() { });
 
 
                 if (errorwhendataexists)

@@ -63,6 +63,8 @@ namespace Helper.Generic
                 }
             }
 
+            //NOT WORKING!!
+
             return (JsonConvert.SerializeObject(compareclass1) == JsonConvert.SerializeObject(compareclass2));
         }
 
