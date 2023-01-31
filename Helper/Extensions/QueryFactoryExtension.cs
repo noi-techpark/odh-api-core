@@ -21,6 +21,12 @@ namespace Helper
             return JsonConvert.DeserializeObject<T>(result.Value) ?? default!;
         }
 
+        public static async Task<T> GetObjectSingleAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
+        {
+            var result = await query.FirstOrDefaultAsync<JsonRaw>();
+            return System.Text.Json.JsonSerializer.Deserialize<T>(result.Value) ?? default!;
+        }
+
         public static async Task<IEnumerable<T>> GetObjectListAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         {
             var result = await query.GetAsync<JsonRaw>();
@@ -264,8 +270,8 @@ namespace Helper
                       .Select("data")
                       .Where("id", data.Id);
 
-            //NOT WORKING!            
-            var queryresult = await query.GetObjectSingleAsync<T>();
+            //Json.net Deserializer bug, AreaIds,AreaId has duplicate IDs
+            var queryresult = await query.GetObjectSingleAsyncV2<T>();            
 
             string operation = "";
 
@@ -311,6 +317,7 @@ namespace Helper
 
                 updateresult = await QueryFactory.Query(table).Where("id", data.Id)
                         .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+
                 operation = "UPDATE";
             }
 

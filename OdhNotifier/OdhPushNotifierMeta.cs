@@ -52,7 +52,7 @@ namespace OdhNotifier
 
             foreach (var notifyconfig in notifierconfiglist)
             {
-                if (excludeservices != null && excludeservices.Contains(notifyconfig.ServiceName))
+                if (excludeservices != null && excludeservices.Contains(notifyconfig.ServiceName.ToLower()))
                     continue;
 
                 NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, updatemode, origin, referer);
@@ -84,7 +84,7 @@ namespace OdhNotifier
             foreach (var notifyconfig in notifierconfiglist)
             {
                 //if 
-                if(publishedonlist.Contains(notifyconfig.ServiceName))
+                if(publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
                 {
                     //Compare and push?
 
