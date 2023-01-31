@@ -20,7 +20,7 @@ namespace NINJA
 
             using (var client = new HttpClient())
             {
-                client.Timeout = TimeSpan.FromSeconds(20);
+                client.Timeout = TimeSpan.FromSeconds(10);
 
                 var myresponse = await client.GetAsync(requesturl);
 

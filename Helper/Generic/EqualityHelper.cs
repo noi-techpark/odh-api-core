@@ -72,10 +72,12 @@ namespace Helper.Generic
             var jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.Converters.Add(new DictionaryOrderConverter());
 
-            var result1 = JsonConvert.SerializeObject(compareclass1, jsonSerializerSettings);
-            var result2 = JsonConvert.SerializeObject(compareclass2, jsonSerializerSettings);            
+            //To Test for Performance, Deep Equals vs String Comparision?
+            //var result1 = JsonConvert.SerializeObject(compareclass1, jsonSerializerSettings);
+            //var result2 = JsonConvert.SerializeObject(compareclass2, jsonSerializerSettings);
+            //return (result1 == result2);
 
-            return (result1 == result2);
+            return JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));            
         }
 
         public static bool CompareImageGallery(ICollection<ImageGallery> compareclass1, ICollection<ImageGallery> compareclass2, List<string> propertiestonotcheck)

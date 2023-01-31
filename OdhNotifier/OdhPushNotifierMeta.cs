@@ -107,13 +107,7 @@ namespace OdhNotifier
             return notifierresponselist;
         }
 
-
         private async Task<Tuple<HttpStatusCode, string>> SendNotify(NotifyMeta notify)
-        {
-            return await Notify(notify);
-        }
-
-        private async Task<Tuple<HttpStatusCode, string>> Notify(NotifyMeta notify)
         {
             var requesturl = notify.Url;
             bool imageupdate = true;
@@ -194,6 +188,11 @@ namespace OdhNotifier
                 }
                 else
                     throw new Exception("type not valid!");
+            }
+            catch (TaskCanceledException ex)
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.RequestTimeout);
+                return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
             }
             catch (Exception ex)
             {
