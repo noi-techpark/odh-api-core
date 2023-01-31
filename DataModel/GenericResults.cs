@@ -22,6 +22,7 @@ namespace DataModel
 
         public int? objectcompared { get; init; }
         public int? objectchanged { get; init; }
+        public int? objectimagechanged { get; init; }
 
         public IDictionary<string,string>? pushed { get; init; }
 
@@ -120,8 +121,9 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
-                objectchanged = detail.objectchanged ,
                 objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
+                objectchanged = detail.objectchanged ,                
+                objectimagechanged = detail.objectimagechanged,
                 pushed = detail.pushed,
                 error = detail.error,
                 success = true,
@@ -149,6 +151,10 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
+                objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
+                objectchanged = detail.objectchanged,
+                objectimagechanged = detail.objectimagechanged,
+                pushed = detail.pushed,
                 error = detail.error,
                 success = false,
                 exception = ex.Message,
