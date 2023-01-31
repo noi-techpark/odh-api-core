@@ -53,7 +53,7 @@ namespace DataModel
         public int? objectimagechanged { get; init; }
 
         //Push Info
-        public IDictionary<string,string> pushed { get; init; }
+        public IDictionary<string,string> pushed { get; set; }
     }
 
     public struct PGCRUDResult

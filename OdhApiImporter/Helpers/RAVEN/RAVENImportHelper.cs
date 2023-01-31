@@ -165,9 +165,13 @@ namespace OdhApiImporter.Helpers
 
                         if(pushresults != null)
                         {
+                            myupdateresult.pushed = new Dictionary<string, string>();
+
                             foreach (var pushresult in pushresults)
                             {
-                                myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.Response.StatusCode + ":" + pushresult.Value.Response.Content);
+
+
+                                var responsecontent = myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.HttpStatusCode + ":" + pushresult.Value.Response);
                             }
                         }
                     }

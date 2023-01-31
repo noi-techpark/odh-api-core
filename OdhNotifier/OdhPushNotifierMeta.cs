@@ -58,7 +58,10 @@ namespace OdhNotifier
                 NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, updatemode, origin, referer);
 
                 NotifierResponse notifierresponse = new NotifierResponse();
-                notifierresponse.Response = await SendNotify(meta);
+
+                var response = await SendNotify(meta);
+                notifierresponse.HttpStatusCode = response.Item1;
+                notifierresponse.Response = response.Item2;
                 notifierresponse.Service = notifyconfig.ServiceName;
 
                 notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
@@ -91,7 +94,10 @@ namespace OdhNotifier
                     NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, updatemode, origin, referer);
 
                     NotifierResponse notifierresponse = new NotifierResponse();
-                    notifierresponse.Response = await SendNotify(meta);
+
+                    var response = await SendNotify(meta);
+                    notifierresponse.HttpStatusCode = response.Item1;
+                    notifierresponse.Response = response.Item2;
                     notifierresponse.Service = notifyconfig.ServiceName;
 
                     notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
@@ -102,12 +108,12 @@ namespace OdhNotifier
         }
 
 
-        private async Task<HttpResponseMessage> SendNotify(NotifyMeta notify)
+        private async Task<Tuple<HttpStatusCode, string>> SendNotify(NotifyMeta notify)
         {
             return await Notify(notify);
         }
 
-        private async Task<HttpResponseMessage> Notify(NotifyMeta notify)
+        private async Task<Tuple<HttpStatusCode, string>> Notify(NotifyMeta notify)
         {
             var requesturl = notify.Url;
             bool imageupdate = true;
@@ -118,6 +124,8 @@ namespace OdhNotifier
                 {
                     using (var client = new HttpClient())
                     {
+                        client.Timeout = TimeSpan.FromSeconds(5);
+
                         //Add all Headers
                         if (notify.Headers != null)
                         {
@@ -172,15 +180,15 @@ namespace OdhNotifier
 
                         if (response != null && response.StatusCode == HttpStatusCode.OK)
                         {
-                            return ReturnHttpResponse(response, notify, imageupdate, "");
+                            return await ReturnHttpResponse(response, notify, imageupdate, "");
                         }
                         else if (response != null)
                         {
-                            return ReturnHttpResponse(response, notify, imageupdate, response.ReasonPhrase);
+                            return await ReturnHttpResponse(response, notify, imageupdate, response.ReasonPhrase);
                         }
                         else
                         {
-                            return ReturnHttpResponse(response, notify, imageupdate, "no response");
+                            return await ReturnHttpResponse(response, notify, imageupdate, "no response");
                         }
                     }
                 }
@@ -190,30 +198,24 @@ namespace OdhNotifier
             catch (Exception ex)
             {
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                return ReturnHttpResponse(response, notify, imageupdate, ex.Message);
+                return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
             }
         }
 
-        private HttpResponseMessage ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
+        private async Task<Tuple<HttpStatusCode, string>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
         {
+            var responsestring = await response.Content.ReadAsStringAsync();
+
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);
-
-                //clear requestmessage
-                response.RequestMessage = null;
-
-                return response;
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);                                
             }
             else
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, error);
-
-                //clear requestmessage
-                response.RequestMessage = null;
-
-                return response;
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, error);                
             }
+
+            return Tuple.Create(response.StatusCode, responsestring);
         }
 
         private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? exception)
@@ -284,7 +286,8 @@ namespace OdhNotifier
 
     public class NotifierResponse
     {
-        public HttpResponseMessage Response { get; set; }
+        public string Response { get; set; }
+        public HttpStatusCode HttpStatusCode { get; set; }
         public string Service { get; set; }
     }
 
