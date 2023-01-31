@@ -38,17 +38,20 @@ namespace DataModel
 
     public struct UpdateDetail
     {
+        //Crud
         public int? updated { get; init; }
         public int? created { get; init; }
         public int? deleted { get; init; }
 
+        //Error
         public int? error { get; init; }
 
+        //Comparision
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
-
         public int? objectimagechanged { get; init; }
 
+        //Push Info
         public IDictionary<string,string> pushed { get; init; }
     }
 
@@ -77,6 +80,8 @@ namespace DataModel
             int? error = 0;
             bool? compareobject = false;
             int? objectchanged = 0;
+            int? objectimagechanged = 0;
+
             IDictionary<string,string> pushed = new Dictionary<string,string>();
 
             if(updatedetails.Any(x => x.compareobject != null && x.compareobject == true))
@@ -84,21 +89,21 @@ namespace DataModel
 
             foreach (var updatedetail in updatedetails)
             {
-                    created = updatedetail.created + created;
-                    updated = updatedetail.updated + updated;
-                    deleted = updatedetail.deleted + deleted;
-                    error = updatedetail.error + error;
+                created = updatedetail.created + created;
+                updated = updatedetail.updated + updated;
+                deleted = updatedetail.deleted + deleted;
+                error = updatedetail.error + error;
                 objectchanged = updatedetail.objectchanged + objectchanged;
-                if(updatedetail.pushed != null)
+                objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
+
+                if (updatedetail.pushed != null)
                 {
                     foreach (var updatedetailpushed in updatedetail.pushed)
                         pushed.TryAdd(updatedetailpushed.Key, updatedetailpushed.Value);
                 }
-
-
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, compareobject = compareobject, objectchanged = objectchanged, pushed = pushed };
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, compareobject = compareobject, objectchanged = objectchanged, objectimagechanged =  , pushed = pushed };
         }
 
         public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
