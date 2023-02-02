@@ -85,7 +85,7 @@ namespace OdhApiImporter.Helpers.DSS
                 // Get all Areas
                 var arealist =
                     await areaquery
-                        .GetAllAsObject<AreaLinked>();
+                        .GetObjectListAsync<AreaLinked>();
 
                 var validforentity = new List<string>();
 
@@ -107,14 +107,14 @@ namespace OdhApiImporter.Helpers.DSS
                             .From("smgtags")
                             .ODHTagValidForEntityFilter(validforentity)
                             .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
-                            .GetAllAsObject<ODHTagLinked>();
+                            .GetObjectListAsync<ODHTagLinked>();
 
                 //Temporary get winter/anderes tag and add it to validcategories
                 var maincategories = await QueryFactory.Query()
                             .SelectRaw("data")
                             .From("smgtags")
                             .IdIlikeFilter(new List<string>() { "winter","anderes" })
-                            .GetAllAsObject<ODHTagLinked>();
+                            .GetObjectListAsync<ODHTagLinked>();
 
                 validcategories.AddRange(maincategories);
                 validcategories.AddRange(subcategories);
@@ -302,7 +302,7 @@ namespace OdhApiImporter.Helpers.DSS
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
         }
         private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
-{
+        {
             int updateresult = 0;
             int deleteresult = 0;
             int errorresult = 0;
@@ -348,7 +348,7 @@ namespace OdhApiImporter.Helpers.DSS
               .Select("data")
               .Where("id", odhdssid);
 
-            var odhactivitypoiindb = await mydssquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+            var odhactivitypoiindb = await mydssquery.GetObjectSingleAsync<ODHActivityPoiLinked>();
             var odhactivitypoi = default(ODHActivityPoiLinked);
 
             if (entitytype.ToLower() == "lift")

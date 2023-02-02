@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using Helper.JsonHelpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
@@ -30,55 +31,57 @@ namespace OdhApiCore.Formatters
         private List<object>? Transform(PathString path, JsonRaw jsonRaw)
         {
             //TODO: extract language
+            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+
 
             if (path.StartsWithSegments("/v1/Accommodation"))
             {
-                var acco = JsonConvert.DeserializeObject<Accommodation>(jsonRaw.Value);
+                var acco = JsonConvert.DeserializeObject<Accommodation>(jsonRaw.Value, settings);
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(acco, "accommodation", "de");
             }
             else if (path.StartsWithSegments("/v1/Gastronomy"))
             {
-                var gastro = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value);
+                var gastro = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value, settings);
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(gastro, "gastronomy", "de");
             }
             else if (path.StartsWithSegments("/v1/Event"))
             {
-                var @event = JsonConvert.DeserializeObject<Event>(jsonRaw.Value);
+                var @event = JsonConvert.DeserializeObject<Event>(jsonRaw.Value, settings);
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(@event, "event", "de");
             }
             else if (path.StartsWithSegments("/v1/ODHActivityPoi"))
             {
-                var poi = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value);
+                var poi = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value, settings);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(poi, "poi", "de");
             }
             else if (path.StartsWithSegments("/v1/Region"))
             {
-                var region = JsonConvert.DeserializeObject<Region>(jsonRaw.Value);
+                var region = JsonConvert.DeserializeObject<Region>(jsonRaw.Value, settings);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(region, "region", "de");
             }
             else if (path.StartsWithSegments("/v1/TourismAssociation"))
             {
-                var tv = JsonConvert.DeserializeObject<Tourismverein>(jsonRaw.Value);
+                var tv = JsonConvert.DeserializeObject<Tourismverein>(jsonRaw.Value, settings);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(tv, "tv", "de");
             }
             else if (path.StartsWithSegments("/v1/Municipality"))
             {
-                var municipality = JsonConvert.DeserializeObject<Municipality>(jsonRaw.Value);
+                var municipality = JsonConvert.DeserializeObject<Municipality>(jsonRaw.Value, settings);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(municipality, "municipality", "de");
             }
             else if (path.StartsWithSegments("/v1/District"))
             {
-                var district = JsonConvert.DeserializeObject<District>(jsonRaw.Value);
+                var district = JsonConvert.DeserializeObject<District>(jsonRaw.Value, settings);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(district, "district", "de");
             }
             else if (path.StartsWithSegments("/v1/SkiArea"))
             {
-                var skiarea = JsonConvert.DeserializeObject<SkiArea>(jsonRaw.Value);
+                var skiarea = JsonConvert.DeserializeObject<SkiArea>(jsonRaw.Value, settings);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(skiarea, "skiarea", "de");
             }
@@ -86,7 +89,7 @@ namespace OdhApiCore.Formatters
             {
                 //TODO Ensure that the article is of type Recipe or SpecialAnnouncement!
 
-                var recipe = JsonConvert.DeserializeObject<Article>(jsonRaw.Value);
+                var recipe = JsonConvert.DeserializeObject<Article>(jsonRaw.Value, settings);
                 //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(recipe, "recipe", "de");
             }

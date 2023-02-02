@@ -171,7 +171,7 @@ namespace OdhApiCore.Controllers.api
              .From("smgtags")
              .ODHTagValidForEntityFilter(validforentity)
              .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
-             .GetAllAsObject<ODHTagLinked>();
+             .GetObjectListAsync<ODHTagLinked>();
 
             return Ok(subcategories);
         }

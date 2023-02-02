@@ -20,6 +20,12 @@ namespace DataModel
         public int? created { get; init; }
         public int? deleted { get; init; }
 
+        public int? objectcompared { get; init; }
+        public int? objectchanged { get; init; }
+        public int? objectimagechanged { get; init; }
+
+        public IDictionary<string,string>? pushed { get; init; }
+
         public int? error { get; init; }
 
         public string id { get; init; }
@@ -33,11 +39,21 @@ namespace DataModel
 
     public struct UpdateDetail
     {
+        //Crud
         public int? updated { get; init; }
         public int? created { get; init; }
         public int? deleted { get; init; }
 
+        //Error
         public int? error { get; init; }
+
+        //Comparision
+        public bool? compareobject { get; init; }
+        public int? objectchanged { get; init; }
+        public int? objectimagechanged { get; init; }
+
+        //Push Info
+        public IDictionary<string,string> pushed { get; set; }
     }
 
     public struct PGCRUDResult
@@ -49,6 +65,10 @@ namespace DataModel
         public int? deleted { get; init; }
 
         public int? error { get; init; }
+
+        public bool? compareobject { get; init; }
+        public int? objectchanged { get; init; }
+        public int? objectimageschanged { get; init; }
     }
 
     public class GenericResultsHelper
@@ -59,16 +79,32 @@ namespace DataModel
             int? created = 0;
             int? deleted = 0;
             int? error = 0;
+            bool? compareobject = false;
+            int? objectchanged = 0;
+            int? objectimagechanged = 0;
+
+            IDictionary<string,string> pushed = new Dictionary<string,string>();
+
+            if(updatedetails.Any(x => x.compareobject != null && x.compareobject == true))
+                compareobject = true;
 
             foreach (var updatedetail in updatedetails)
             {
-                    created = updatedetail.created + created;
-                    updated = updatedetail.updated + updated;
-                    deleted = updatedetail.deleted + deleted;
-                    error = updatedetail.error + error;                
+                created = updatedetail.created + created;
+                updated = updatedetail.updated + updated;
+                deleted = updatedetail.deleted + deleted;
+                error = updatedetail.error + error;
+                objectchanged = updatedetail.objectchanged + objectchanged;
+                objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
+
+                if (updatedetail.pushed != null)
+                {
+                    foreach (var updatedetailpushed in updatedetail.pushed)
+                        pushed.TryAdd(updatedetailpushed.Key, updatedetailpushed.Value);
+                }
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error };
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, compareobject = compareobject, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushed = pushed };
         }
 
         public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
@@ -85,6 +121,10 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
+                objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
+                objectchanged = detail.objectchanged ,                
+                objectimagechanged = detail.objectimagechanged,
+                pushed = detail.pushed,
                 error = detail.error,
                 success = true,
                 exception = null,
@@ -111,6 +151,10 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
+                objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
+                objectchanged = detail.objectchanged,
+                objectimagechanged = detail.objectimagechanged,
+                pushed = detail.pushed,
                 error = detail.error,
                 success = false,
                 exception = ex.Message,

@@ -50,7 +50,7 @@ namespace OdhApiImporter.Helpers
                    .Select("data")
                    .Where("id", id);
 
-                var data = await query.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+                var data = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
 
                 if (data != null)
                 {

@@ -190,7 +190,7 @@ namespace OdhApiImporter.Helpers
                    .Select("data")
                    .Where("id", eventid);
 
-                var data = await query.GetFirstOrDefaultAsObject<EventLinked>();
+                var data = await query.GetObjectSingleAsync<EventLinked>();
 
                 if (data != null)                
                 {

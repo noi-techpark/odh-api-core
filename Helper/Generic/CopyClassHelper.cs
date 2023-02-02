@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Helper.JsonHelpers;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,10 +14,10 @@ namespace Helper
     public static class CopyClassHelper
     {
         /// <summary>
-        /// Methode die mir geändertes Objekt einer Aktivität POI kopiert für Aktivitäten Pois wo sich der HautpTyp geändert hat
+        /// Performs a Shallow Copy using Reflection
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="destination"></param>
+        /// <param name="source">The object instance to copy</param>
+        /// <param name="destination">The copied object</param>
         public static void CopyPropertyValues(object source, object destination)
         {
             var destProperties = destination.GetType().GetProperties();
@@ -21,8 +26,7 @@ namespace Helper
             {
                 foreach (var destProperty in destProperties)
                 {
-                    if (destProperty.Name == sourceProperty.Name &&
-                destProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType))
+                    if (destProperty.Name == sourceProperty.Name && destProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType) && destProperty.GetSetMethod() != null)
                     {
                         destProperty.SetValue(destination, sourceProperty.GetValue(
                             source, new object[] { }), new object[] { });
@@ -31,6 +35,58 @@ namespace Helper
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Perform a deep Copy of the object. Class has to be marked as Serializeable
+        /// </summary>
+        /// <typeparam name="T">The type of object being copied.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
+        public static T Clone<T>(T source)
+        {
+            if (!typeof(T).IsSerializable)
+            {
+                throw new ArgumentException("The type must be serializable.", nameof(source));
+            }
+
+            // Don't serialize a null object, simply return the default for that object
+            if (Object.ReferenceEquals(source, null))
+            {
+                return default(T);
+            }
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new MemoryStream();
+            using (stream)
+            {
+                formatter.Serialize(stream, source);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (T)formatter.Deserialize(stream);
+            }
+        }
+
+        /// <summary>
+        /// Perform a deep Copy of the object, using Json as a serialisation method. NOTE: Private members are not cloned using this method.
+        /// </summary>
+        /// <typeparam name="T">The type of object being copied.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
+        public static T CloneJson<T>(this T source)
+        {
+            // Don't serialize a null object, simply return the default for that object
+            if (Object.ReferenceEquals(source, null))
+            {
+                return default(T);
+            }
+
+            // initialize inner objects individually
+            // for example in default constructor some list property initialized with some values,
+            // but in 'source' these items are cleaned -
+            // without ObjectCreationHandling.Replace default constructor values will be added to result
+            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace, ContractResolver = new GetOnlyContractResolver() };
+
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), deserializeSettings);
         }
     }
 }

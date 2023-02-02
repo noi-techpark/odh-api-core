@@ -24,7 +24,7 @@ namespace Helper
                          //.WhereRaw("data->>'Key' LIKE $$", subtype);
             var subtypedata =
                 await subtypequery
-                    .GetFirstOrDefaultAsObject<SmgPoiTypes>();
+                    .GetObjectSingleAsync<SmgPoiTypes>();
 
             if (subtypedata != null)
             {
@@ -34,7 +34,7 @@ namespace Helper
                 //.WhereRaw("data->>'Key' LIKE $$",  subtypedata.TypeParent);
                 var maintypedata =
                     await maintypequery
-                        .GetFirstOrDefaultAsObject<SmgPoiTypes>();
+                        .GetObjectSingleAsync<SmgPoiTypes>();
 
                 var validtags = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>(), new List<string>() { maintypedata?.Key ?? "", subtypedata.Key });
 

@@ -329,6 +329,7 @@ namespace OdhApiCore
                     options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
 
                     options.OutputFormatters.Add(new Formatters.JsonLdOutputFormatter());
+                    //Hack only ldjson accepted
                     options.FormatterMappings.SetMediaTypeMappingForFormat("json-ld", "application/ldjson");
 
                     options.OutputFormatters.Add(new Formatters.RawdataOutputFormatter());

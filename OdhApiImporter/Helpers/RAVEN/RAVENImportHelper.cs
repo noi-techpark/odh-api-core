@@ -1,6 +1,7 @@
 ﻿using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Mvc;
+using OdhNotifier;
 using RAVEN;
 using SqlKata.Execution;
 using System;
@@ -16,12 +17,15 @@ namespace OdhApiImporter.Helpers
         private readonly QueryFactory QueryFactory;
         private readonly ISettings settings;
         private string importerURL;
+        private IOdhPushNotifier OdhPushnotifier;
 
-        public RavenImportHelper(ISettings settings, QueryFactory queryfactory, string importerURL)
+
+        public RavenImportHelper(ISettings settings, QueryFactory queryfactory, string importerURL, IOdhPushNotifier odhpushnotifier)
         {
             this.QueryFactory = queryfactory;
             this.settings = settings;
             this.importerURL = importerURL;
+            this.OdhPushnotifier = odhpushnotifier;
         }
 
         #region ODHRAVEN Helpers
@@ -140,12 +144,38 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
+                    //duplicate
+                    //myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
 
                     //Special get all Taglist and traduce it on import
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
 
-                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
+                    myupdateresult = await SaveRavenObjectToPGwithComparision<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true, true);
+
+                    //Check if data has changed and Push To all channels
+                    if(myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
+                    {
+                        //to implement, check if image has changed
+
+                        bool hasimagechanged = false;
+                        if (myupdateresult.objectimagechanged.Value > 0)
+                            hasimagechanged = true;
+
+                        var pushresults = await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", hasimagechanged, "api", new List<string>() { "marketplace" });
+
+                        if(pushresults != null)
+                        {
+                            myupdateresult.pushed = new Dictionary<string, string>();
+
+                            foreach (var pushresult in pushresults)
+                            {
+
+
+                                var responsecontent = myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.HttpStatusCode + ":" + pushresult.Value.Response);
+                            }
+                        }
+                    }
+
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata) == true)
@@ -373,13 +403,22 @@ namespace OdhApiImporter.Helpers
             return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, updateresultreduced }));
         }
 
-        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
+        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool compareresult = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, new()
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            var result = await QueryFactory.UpsertData<T>(datatosave, table, "lts.push.import", importerURL);
+            var result = await QueryFactory.UpsertDataAndCompare<T>(datatosave, table, "lts.push.import", importerURL, false, false, compareresult);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = 0, compareobject = result.compareobject };
+        }
+
+        private async Task<UpdateDetail> SaveRavenObjectToPGwithComparision<T>(T datatosave, string table, bool compareresult = false, bool compareimagechange = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IImageGalleryAware, new()
+        {
+            datatosave._Meta.LastUpdate = datatosave.LastChange;
+
+            var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "lts.push.import", importerURL, false, false, compareresult, compareimagechange);
+
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, compareobject = result.compareobject };
         }
 
         private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table) 

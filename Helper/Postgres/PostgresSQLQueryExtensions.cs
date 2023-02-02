@@ -1528,29 +1528,7 @@ namespace Helper
 
         #endregion
 
-        #region Query Extension Methods Common used
-
-        public static async Task<T?> GetFirstOrDefaultAsObject<T>(this Query query) {
-
-            var rawdata = await query.FirstOrDefaultAsync<JsonRaw>();
-            return rawdata != null ? JsonConvert.DeserializeObject<T>(rawdata.Value) : default(T);            
-        }
-
-        public static async Task<IEnumerable<T>> GetAllAsObject<T>(this Query query)
-        {
-            var rawdatalist = await query.GetAsync<JsonRaw>();
-            List<T> datalist = new List<T>();
-
-            foreach (var rawdata in rawdatalist)
-            {
-                var value = JsonConvert.DeserializeObject<T>(rawdata.Value);
-                if (value != null)
-                    datalist.Add(value);
-            }
-            return datalist;
-        }
-
-        #endregion
+        
 
     }
 }

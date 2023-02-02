@@ -599,6 +599,8 @@ namespace DataModel
             }
         }
 
+        //TO CHECK on GetObjectSingleAsync<T>() Areas is populated twice
+
         public ICollection<AreaLink>? Areas
         {
             get

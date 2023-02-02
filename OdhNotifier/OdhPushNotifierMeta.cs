@@ -2,6 +2,7 @@
 using Helper;
 using OdhNotifier;
 using SqlKata.Execution;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Http.Headers;
@@ -16,8 +17,8 @@ namespace OdhNotifier
 {
     public interface IOdhPushNotifier
     {
-        Task<IEnumerable<NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, string origin, string? referer = null, List<string>? excludeservices = null);
-        //Task<HttpResponseMessage> SendNotify(NotifyMeta notify);
+        Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, string origin, string? referer = null, List<string>? excludeservices = null);
+        Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, string origin, List<string> publishedonlist, string? referer = null);
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -35,33 +36,78 @@ namespace OdhNotifier
             this.notifierconfiglist = settings.NotifierConfig;
         }
 
-        public async Task<IEnumerable<NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, string origin, string? referer = null, List<string>? excludeservices = null)
+        /// <summary>
+        /// Pushes to all registered Services in config, a service can be manually excluded by passing and exclude list
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="updatemode"></param>
+        /// <param name="origin"></param>
+        /// <param name="referer"></param>
+        /// <param name="excludeservices"></param>
+        /// <returns></returns>
+        public async Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, string origin, string? referer = null, List<string>? excludeservices = null)
         {
-            List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
+            IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
 
             foreach (var notifyconfig in notifierconfiglist)
             {
-                if (excludeservices != null && excludeservices.Contains(notifyconfig.ServiceName))
+                if (excludeservices != null && excludeservices.Contains(notifyconfig.ServiceName.ToLower()))
                     continue;
 
-                NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, updatemode, origin, referer);
+                NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, updatemode, origin, referer);
 
                 NotifierResponse notifierresponse = new NotifierResponse();
-                notifierresponse.Response = await SendNotify(meta);
+
+                var response = await SendNotify(meta);
+                notifierresponse.HttpStatusCode = response.Item1;
+                notifierresponse.Response = response.Item2;
                 notifierresponse.Service = notifyconfig.ServiceName;
 
-                notifierresponselist.Add(notifierresponse);
+                notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
             }
 
             return notifierresponselist;
         }
 
-        private async Task<HttpResponseMessage> SendNotify(NotifyMeta notify)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="updatemode"></param>
+        /// <param name="origin"></param>
+        /// <param name="referer"></param>
+        /// <param name="excludeservices"></param>
+        /// <returns></returns>
+        public async Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, string origin, List<string> publishedonlist, string? referer = null)
         {
-            return await Notify(notify);
+            IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
+
+            foreach (var notifyconfig in notifierconfiglist)
+            {
+                //if 
+                if(publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
+                {
+                    //Compare and push?
+
+                    NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, updatemode, origin, referer);
+
+                    NotifierResponse notifierresponse = new NotifierResponse();
+
+                    var response = await SendNotify(meta);
+                    notifierresponse.HttpStatusCode = response.Item1;
+                    notifierresponse.Response = response.Item2;
+                    notifierresponse.Service = notifyconfig.ServiceName;
+
+                    notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
+                }                
+            }
+
+            return notifierresponselist;
         }
 
-        private async Task<HttpResponseMessage> Notify(NotifyMeta notify)
+        private async Task<Tuple<HttpStatusCode, string>> SendNotify(NotifyMeta notify)
         {
             var requesturl = notify.Url;
             bool imageupdate = true;
@@ -72,6 +118,8 @@ namespace OdhNotifier
                 {
                     using (var client = new HttpClient())
                     {
+                        client.Timeout = TimeSpan.FromSeconds(5);
+
                         //Add all Headers
                         if (notify.Headers != null)
                         {
@@ -126,48 +174,47 @@ namespace OdhNotifier
 
                         if (response != null && response.StatusCode == HttpStatusCode.OK)
                         {
-                            return ReturnHttpResponse(response, notify, imageupdate, "");
+                            return await ReturnHttpResponse(response, notify, imageupdate, "");
                         }
                         else if (response != null)
                         {
-                            return ReturnHttpResponse(response, notify, imageupdate, response.ReasonPhrase);
+                            return await ReturnHttpResponse(response, notify, imageupdate, response.ReasonPhrase);
                         }
                         else
                         {
-                            return ReturnHttpResponse(response, notify, imageupdate, "no response");
+                            return await ReturnHttpResponse(response, notify, imageupdate, "no response");
                         }
                     }
                 }
                 else
                     throw new Exception("type not valid!");
             }
+            catch (TaskCanceledException ex)
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.RequestTimeout);
+                return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
+            }
             catch (Exception ex)
             {
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                return ReturnHttpResponse(response, notify, imageupdate, ex.Message);
+                return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
             }
         }
 
-        private HttpResponseMessage ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
+        private async Task<Tuple<HttpStatusCode, string>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
         {
+            var responsestring = await response.Content.ReadAsStringAsync();
+
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);
-
-                //clear requestmessage
-                response.RequestMessage = null;
-
-                return response;
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);                                
             }
             else
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, error);
-
-                //clear requestmessage
-                response.RequestMessage = null;
-
-                return response;
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, error);                
             }
+
+            return Tuple.Create(response.StatusCode, responsestring);
         }
 
         private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? exception)
@@ -238,7 +285,8 @@ namespace OdhNotifier
 
     public class NotifierResponse
     {
-        public HttpResponseMessage Response { get; set; }
+        public string Response { get; set; }
+        public HttpStatusCode HttpStatusCode { get; set; }
         public string Service { get; set; }
     }
 
@@ -260,7 +308,7 @@ namespace OdhNotifier
 
     public class NotifyMetaGenerated : NotifyMeta
     {
-        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, string updatemode, string origin, string? referer = null)
+        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, bool hasimagechanged, string updatemode, string origin, string? referer = null)
         {
             //Set by parameters
             this.Id = id;
@@ -268,6 +316,7 @@ namespace OdhNotifier
             this.UdateMode = updatemode;
             this.Origin = origin;
             this.Referer = referer;
+            this.HasImagechanged = hasimagechanged;
 
             switch (notifyconfig.ServiceName.ToLower())
             {

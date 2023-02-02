@@ -128,7 +128,7 @@ namespace OdhApiImporter.Helpers
                     .Select("data")
                     .WhereRaw("data->>'CustomId' = $$", museumid.ToLower());
 
-                var mymuseum = await mymuseumquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+                var mymuseum = await mymuseumquery.GetObjectSingleAsync<ODHActivityPoiLinked>();
 
                 if (mymuseum == null)
                 {

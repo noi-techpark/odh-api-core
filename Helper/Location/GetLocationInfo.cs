@@ -20,7 +20,7 @@ namespace Helper
             
             var data =
                 await districtquery
-                    .GetAllAsObject<District>();
+                    .GetObjectListAsync<District>();
 
             return data;
         }
@@ -36,7 +36,7 @@ namespace Helper
                          .WhereRaw(wheregeo)
                          .OrderByRaw(orderbygeo);
 
-            return await query.GetFirstOrDefaultAsObject<District>();
+            return await query.GetObjectSingleAsync<District>();
         }
 
         public static async Task<LocationInfoLinked> GetTheLocationInfoDistrict(QueryFactory QueryFactory, string? districtid)
@@ -52,7 +52,7 @@ namespace Helper
                 var districtquery = QueryFactory.Query("districts")
                         .Select("data")
                         .Where("id", districtid.ToUpper());
-                var district = await districtquery.GetFirstOrDefaultAsObject<District>();
+                var district = await districtquery.GetObjectSingleAsync<District>();
 
                 var districtnames = (from x in district?.Detail
                                      select x).ToDictionary(x => x.Key, x => x.Value.Title);
@@ -60,7 +60,7 @@ namespace Helper
                 var munquery = QueryFactory.Query("municipalities")
                         .Select("data")
                         .Where("id", district?.MunicipalityId?.ToUpper());
-                var municipality = await munquery.GetFirstOrDefaultAsObject<Municipality>();
+                var municipality = await munquery.GetObjectSingleAsync<Municipality>();
                 
                 var municipalitynames = (from x in municipality?.Detail
                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
@@ -68,7 +68,7 @@ namespace Helper
                 var tvquery = QueryFactory.Query("tvs")
                         .Select("data")
                         .Where("id", district?.TourismvereinId?.ToUpper());
-                var tourismverein = await tvquery.GetFirstOrDefaultAsObject<Tourismverein>();
+                var tourismverein = await tvquery.GetObjectSingleAsync<Tourismverein>();
                 
                 var tourismvereinnames = (from x in tourismverein?.Detail
                                           select x).ToDictionary(x => x.Key, x => x.Value.Title);
@@ -76,7 +76,7 @@ namespace Helper
                 var regquery = QueryFactory.Query("regions")
                         .Select("data")
                         .Where("id", district?.RegionId?.ToUpper());
-                var region = await regquery.GetFirstOrDefaultAsObject<Region>();
+                var region = await regquery.GetObjectSingleAsync<Region>();
                 
                 var regionnames = (from x in region?.Detail
                                    select x).ToDictionary(x => x.Key, x => x.Value.Title);
@@ -100,7 +100,7 @@ namespace Helper
                          .Select("data")
                          .WhereRaw("data->>'SiagId' = $$", districtid_siag);
 
-            var district = await districtquery.GetFirstOrDefaultAsObject<District>();
+            var district = await districtquery.GetObjectSingleAsync<District>();
 
 
             if (district != null)
@@ -112,7 +112,7 @@ namespace Helper
                 var munquery = QueryFactory.Query("municipalities")
                         .Select("data")
                         .Where("id", district?.MunicipalityId?.ToUpper());
-                var municipality = await munquery.GetFirstOrDefaultAsObject<Municipality>();
+                var municipality = await munquery.GetObjectSingleAsync<Municipality>();
 
                 var municipalitynames = (from x in municipality?.Detail
                                          select x).ToDictionary(x => x.Key, x => x.Value.Title);
@@ -120,7 +120,7 @@ namespace Helper
                 var tvquery = QueryFactory.Query("tvs")
                         .Select("data")
                         .Where("id", district?.TourismvereinId?.ToUpper());
-                var tourismverein = await tvquery.GetFirstOrDefaultAsObject<Tourismverein>();
+                var tourismverein = await tvquery.GetObjectSingleAsync<Tourismverein>();
 
                 var tourismvereinnames = (from x in tourismverein?.Detail
                                           select x).ToDictionary(x => x.Key, x => x.Value.Title);
@@ -128,7 +128,7 @@ namespace Helper
                 var regquery = QueryFactory.Query("regions")
                         .Select("data")
                         .Where("id", district?.RegionId?.ToUpper());
-                var region = await regquery.GetFirstOrDefaultAsObject<Region>();
+                var region = await regquery.GetObjectSingleAsync<Region>();
 
                 var regionnames = (from x in region?.Detail
                                    select x).ToDictionary(x => x.Key, x => x.Value.Title);
@@ -153,7 +153,7 @@ namespace Helper
                          .Select("data")
                          .WhereRaw("data->>'SiagId' = $$", municipalityid_siag);
 
-            var municipality = await municipalityquery.GetFirstOrDefaultAsObject<District>();
+            var municipality = await municipalityquery.GetObjectSingleAsync<District>();
 
             if (municipality != null)
             {              
@@ -163,7 +163,7 @@ namespace Helper
                 var tvquery = QueryFactory.Query("tvs")
                         .Select("data")
                         .Where("id", municipality?.TourismvereinId?.ToUpper());
-                var tourismverein = await tvquery.GetFirstOrDefaultAsObject<Tourismverein>();
+                var tourismverein = await tvquery.GetObjectSingleAsync<Tourismverein>();
 
                 var tourismvereinnames = (from x in tourismverein?.Detail
                                           select x).ToDictionary(x => x.Key, x => x.Value.Title);
@@ -171,7 +171,7 @@ namespace Helper
                 var regquery = QueryFactory.Query("regions")
                         .Select("data")
                         .Where("id", municipality?.RegionId?.ToUpper());
-                var region = await regquery.GetFirstOrDefaultAsObject<Region>();
+                var region = await regquery.GetObjectSingleAsync<Region>();
 
                 var regionnames = (from x in region?.Detail
                                    select x).ToDictionary(x => x.Key, x => x.Value.Title);

@@ -65,7 +65,7 @@ namespace Helper
                   .SelectRaw("data")
                   .From("tags");
 
-            var data = await query.GetAllAsObject<TagLinked>();
+            var data = await query.GetObjectListAsync<TagLinked>();
 
             //Save json
             string fileName = Path.Combine(jsondir, $"{jsonName}.json");
