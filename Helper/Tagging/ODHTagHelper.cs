@@ -28,7 +28,7 @@ namespace Helper
 
                 var validtagdata =
                     await validtagquery
-                        .GetAllAsObject<SmgTags>();
+                        .GetObjectListAsync<SmgTags>();
 
                 return validtagdata;
             }
@@ -47,7 +47,7 @@ namespace Helper
                            .Select("data")
                            .Where("id", id.ToLower());
 
-                var result = await query.GetFirstOrDefaultAsObject<SmgTags>();
+                var result = await query.GetObjectSingleAsync<SmgTags>();
 
                 return result;
             }

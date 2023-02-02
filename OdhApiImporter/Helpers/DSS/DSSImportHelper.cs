@@ -85,7 +85,7 @@ namespace OdhApiImporter.Helpers.DSS
                 // Get all Areas
                 var arealist =
                     await areaquery
-                        .GetAllAsObject<AreaLinked>();
+                        .GetObjectListAsync<AreaLinked>();
 
                 var validforentity = new List<string>();
 
@@ -107,14 +107,14 @@ namespace OdhApiImporter.Helpers.DSS
                             .From("smgtags")
                             .ODHTagValidForEntityFilter(validforentity)
                             .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
-                            .GetAllAsObject<ODHTagLinked>();
+                            .GetObjectListAsync<ODHTagLinked>();
 
                 //Temporary get winter/anderes tag and add it to validcategories
                 var maincategories = await QueryFactory.Query()
                             .SelectRaw("data")
                             .From("smgtags")
                             .IdIlikeFilter(new List<string>() { "winter","anderes" })
-                            .GetAllAsObject<ODHTagLinked>();
+                            .GetObjectListAsync<ODHTagLinked>();
 
                 validcategories.AddRange(maincategories);
                 validcategories.AddRange(subcategories);
@@ -348,7 +348,7 @@ namespace OdhApiImporter.Helpers.DSS
               .Select("data")
               .Where("id", odhdssid);
 
-            var odhactivitypoiindb = await mydssquery.GetFirstOrDefaultAsObject<ODHActivityPoiLinked>();
+            var odhactivitypoiindb = await mydssquery.GetObjectSingleAsync<ODHActivityPoiLinked>();
             var odhactivitypoi = default(ODHActivityPoiLinked);
 
             if (entitytype.ToLower() == "lift")

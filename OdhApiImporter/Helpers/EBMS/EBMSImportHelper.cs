@@ -68,7 +68,7 @@ namespace OdhApiImporter.Helpers
                        .Select("data")
                        .Where("id", eventshort.Id);
 
-                var eventindb = await query.GetFirstOrDefaultAsObject<EventShortLinked>();
+                var eventindb = await query.GetObjectSingleAsync<EventShortLinked>();
 
                 //currenteventshort.Where(x => x.EventId == eventshort.EventId).FirstOrDefault();
 
@@ -278,7 +278,7 @@ namespace OdhApiImporter.Helpers
                              .Select("data")
                              .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = $$)", "EBMS");
 
-            return await query.GetAllAsObject<EventShortLinked>();
+            return await query.GetObjectListAsync<EventShortLinked>();
         }
         
         #endregion

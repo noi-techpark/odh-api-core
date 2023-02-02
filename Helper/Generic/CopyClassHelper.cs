@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Helper.JsonHelpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -83,7 +84,7 @@ namespace Helper
             // for example in default constructor some list property initialized with some values,
             // but in 'source' these items are cleaned -
             // without ObjectCreationHandling.Replace default constructor values will be added to result
-            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
+            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace, ContractResolver = new GetOnlyContractResolver() };
 
             return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), deserializeSettings);
         }

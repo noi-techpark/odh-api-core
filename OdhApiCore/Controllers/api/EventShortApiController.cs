@@ -883,7 +883,7 @@ namespace OdhApiCore.Controllers.api
                     //var myeventraw = await query.FirstOrDefaultAsync<JsonRaw>();                    
                     //var myevent = JsonConvert.DeserializeObject<EventShort>(myeventraw.Value);
 
-                    var myevent = await query.GetFirstOrDefaultAsObject<EventShort>();
+                    var myevent = await query.GetObjectSingleAsync<EventShort>();
 
                     if (myevent != null)
                     {

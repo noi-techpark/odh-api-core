@@ -93,7 +93,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                     .Select("data")
                     .Where("id", dataid.ToUpper());
 
-                var weinaward = await mysuedtirolweinquery.GetFirstOrDefaultAsObject<WineLinked>();
+                var weinaward = await mysuedtirolweinquery.GetObjectSingleAsync<WineLinked>();
 
                 if (weinaward == null)
                 {
