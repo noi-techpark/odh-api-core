@@ -341,6 +341,7 @@ namespace DataModel
         string? Location { get; set; }
     }
 
+
     public interface IEventPrice
     {
         double Price { get; set; }
@@ -513,6 +514,7 @@ namespace DataModel
         [SwaggerDeprecated("Deprecated use AreaIds")]
         public ICollection<string>? AreaId { get; set; }
 
+        [GetOnlyJsonProperty]
         public ICollection<string>? AreaIds { get { return AreaId; } }
 
         public ICollection<Webcam>? Webcam { get; set; }
@@ -2326,6 +2328,8 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated use AreaIds")]
         public ICollection<string>? AreaId { get; set; }
+        
+        [GetOnlyJsonProperty]
         public ICollection<string>? AreaIds { get { return AreaId; } }
 
         public double? AltitudeDifference { get; set; }

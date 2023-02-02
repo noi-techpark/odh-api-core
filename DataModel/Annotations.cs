@@ -27,4 +27,9 @@ namespace DataModel.Annotations
 
         public IEnumerable<string> EnumValues { get; }
     }
+
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class GetOnlyJsonPropertyAttribute : Attribute
+    {
+    }
 }

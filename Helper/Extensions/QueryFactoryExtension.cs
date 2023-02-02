@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper.Generic;
+using Helper.JsonHelpers;
 using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 using SqlKata;
@@ -11,26 +12,43 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+
 namespace Helper
 {
     public static class QueryFactoryExtension
-    {
+    {        
+        //Using Newtonsoft
         public static async Task<T> GetObjectSingleAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         {
+            //using this ContractResolver avoids duplicate Lists
+            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+
             var result = await query.FirstOrDefaultAsync<JsonRaw>();
-            return JsonConvert.DeserializeObject<T>(result.Value) ?? default!;
+            return JsonConvert.DeserializeObject<T>(result.Value, settings) ?? default!;
         }
 
+        //Using System.Text.Json
         public static async Task<T> GetObjectSingleAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         {
             var result = await query.FirstOrDefaultAsync<JsonRaw>();
             return System.Text.Json.JsonSerializer.Deserialize<T>(result.Value) ?? default!;
         }
 
+        //Using Newtonsoft
         public static async Task<IEnumerable<T>> GetObjectListAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         {
+            //using this ContractResolver avoids duplicate Lists
+            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+
             var result = await query.GetAsync<JsonRaw>();
-            return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value)!) ?? default!;
+            return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value, settings)!) ?? default!;
+        }
+
+        //Using System.Text.Json
+        public static async Task<IEnumerable<T>> GetObjectListAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
+        {
+            var result = await query.GetAsync<JsonRaw>();
+            return result.Select(x => System.Text.Json.JsonSerializer.Deserialize<T>(x.Value)!) ?? default!;
         }
 
         //Insert also data in Raw table
@@ -203,7 +221,7 @@ namespace Helper
                       .Select("data")
                       .Where("id", data.Id);
 
-            var queryresult = await query.GetObjectSingleAsync<T>();       
+            var queryresult = await query.GetObjectSingleAsyncV2<T>();       
 
             string operation = "";
 
