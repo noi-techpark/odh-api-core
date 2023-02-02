@@ -45,13 +45,14 @@ namespace Helper
 
 
         //Using Newtonsoft
-        public static async Task<T> GetObjectSingleAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
+        public static async Task<T?> GetObjectSingleAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         {
             //using this ContractResolver avoids duplicate Lists
             var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
 
             var result = await query.FirstOrDefaultAsync<JsonRaw>();
-            return JsonConvert.DeserializeObject<T>(result.Value, settings) ?? default!;
+            return result != null ? JsonConvert.DeserializeObject<T>(result.Value, settings) : default!;
+            //return JsonConvert.DeserializeObject<T>(result.Value, settings) ?? default(T);
         }
 
         //Using System.Text.Json
