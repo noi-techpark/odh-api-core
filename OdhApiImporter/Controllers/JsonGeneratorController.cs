@@ -1,9 +1,12 @@
-﻿using Helper;
+﻿using DataModel;
+using Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using SqlKata.Execution;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,6 +57,36 @@ namespace OdhApiImporter.Controllers
                 });
             }
         }
+
+        [HttpGet, Route("ODH/OdhTagAutoPublishlist")]
+        public async Task<IActionResult> ProduceOdhTagAutoPublishListJson(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
+
+                return Ok(new
+                {
+                    operation = "Json Generation",
+                    type = "ODHTagAutopublishlist",
+                    message = "Generate Json Taglist succeeded",
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    operation = "Json Generation",
+                    type = "ODHTagAutopublishlist",
+                    message = "Generate Json Taglist failed error: " + ex.Message,
+                    success = false
+                });
+            }
+        }
+
+
+        
 
         #endregion
     }

@@ -557,6 +557,7 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
+
         [SwaggerDeprecated("Deprecated, refer to TagName")]
         public string? Shortname { get; set; }
 
@@ -583,6 +584,8 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public ICollection<string> MappedTagIds { get; set; }
+
+        public ICollection<string>? AutoPublishOn { get; set; }
     }
 
     public class LTSTaggingInfo
