@@ -24,12 +24,12 @@ namespace OdhApiCore.Controllers
 {
     //[ApiExplorerSettings(IgnoreApi = true)]
     [EnableCors("CorsPolicy")]
-    public class MetadataController : OdhController
+    public class MetaDataController : OdhController
     {
         private static string absoluteUri = "";
         private readonly ISettings settings;
 
-        public MetadataController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory) : base(env, settings, logger, queryFactory)
+        public MetaDataController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory) : base(env, settings, logger, queryFactory)
         {
             this.settings = settings;
         }
@@ -37,7 +37,7 @@ namespace OdhApiCore.Controllers
         //Standard GETTER
 
         /// <summary>
-        /// GET TourismMetaData List
+        /// GET Tourism MetaData List
         /// </summary>
         /// <param name="pagenumber">Pagenumber</param>
         /// <param name="pagesize">Elements per Page, (default:10)</param>
@@ -49,7 +49,7 @@ namespace OdhApiCore.Controllers
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of Article Objects</returns>        
+        /// <returns>Collection of TourismMetaData Objects</returns>        
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -57,7 +57,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("", Name = "TourismApi")]
-        [HttpGet, Route("Metadata", Name = "TourismApiMetaData")]
+        [HttpGet, Route("MetaData", Name = "TourismApiMetaData")]
         public async Task<IActionResult> Get(
             string? language = null,
             uint pagenumber = 1,
@@ -73,25 +73,25 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default
             )
         {            
-            return await GetMetadataFromTable(fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
+            return await GetMetaDataFromTable(fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 seed: seed, lastchange: updatefrom, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, searchfilter: searchfilter, cancellationToken);
         }
 
         /// <summary>
         /// GET TourismMetaData Single 
         /// </summary>
-        /// <param name="id">ID of the Metadata</param>
+        /// <param name="id">ID of the MetaData</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>TourismMetadata Object</returns>
+        /// <returns>TourismMetaData Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         [ProducesResponseType(typeof(TourismMetaData), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("Metadata/{id}", Name = "SingleMetadata")]
+        [HttpGet, Route("MetaData/{id}", Name = "SingleMetaData")]
         public async Task<IActionResult> GetArticleSingle(
             string id,
             string? language,
@@ -105,7 +105,7 @@ namespace OdhApiCore.Controllers
 
         #region GET
 
-        private Task<IActionResult> GetMetadataFromTable(
+        private Task<IActionResult> GetMetaDataFromTable(
           string[] fields, string? language, uint pagenumber, int? pagesize,
           string? seed, string? lastchange,
           string? rawfilter, string? rawsort, bool removenullvalues, string? searchfilter,
@@ -174,7 +174,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// POST Insert new MetaData
         /// </summary>
-        /// <param name="metadata">TourismData Object</param>
+        /// <param name="metadata">TourismMetaData Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,MetadataManager,MetadataCreate")]
@@ -182,7 +182,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpPost, Route("Metadata")]
+        [HttpPost, Route("MetaData")]
         public Task<IActionResult> Post([FromBody] TourismMetaData metadata)
         {
             return DoAsyncReturn(async () =>
@@ -195,10 +195,10 @@ namespace OdhApiCore.Controllers
         }
 
         /// <summary>
-        /// PUT Modify existing Metadata
+        /// PUT Modify existing MetaData
         /// </summary>
-        /// <param name="id">Metadata Id</param>
-        /// <param name="metadata">TourismData Object</param>
+        /// <param name="id">MetaData Id</param>
+        /// <param name="metadata">TourismMetaData Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataModify,MetadataManager,MetadataModify")]
@@ -206,7 +206,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpPut, Route("Metadata/{id}")]
+        [HttpPut, Route("MetaData/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] TourismMetaData metadata)
         {
             return DoAsyncReturn(async () =>
@@ -219,9 +219,9 @@ namespace OdhApiCore.Controllers
         }
 
         /// <summary>
-        /// DELETE Metadata by Id
+        /// DELETE MetaData by Id
         /// </summary>
-        /// <param name="id">Metadata Id</param>
+        /// <param name="id">MetaData Id</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataDelete,MetadataManager,MetadataDelete")]
@@ -247,7 +247,7 @@ namespace OdhApiCore.Controllers
         #region HELPERS
 
         //Deprecated helper
-        private async Task<IEnumerable<TourismMetaData>> GetMetadata()
+        private async Task<IEnumerable<TourismMetaData>> GetMetaData()
         {
             List<TourismMetaData> tourismdatalist = new List<TourismMetaData>();
 
