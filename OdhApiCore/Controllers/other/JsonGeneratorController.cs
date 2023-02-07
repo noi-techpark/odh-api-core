@@ -99,7 +99,7 @@ namespace OdhApiCore.Controllers.other
         {
             try
             {
-                await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
+                await JsonGeneratorHelper.GenerateJSONODHTagAutoPublishlist(QueryFactory, settings.JsonConfig.Jsondir, "AutoPublishTags");
 
                 var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "ODHTagAutopublishlist", "Generate Json ODHTagAutopublishlist succeeded", true);
 

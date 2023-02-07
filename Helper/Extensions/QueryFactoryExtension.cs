@@ -55,12 +55,12 @@ namespace Helper
             //return JsonConvert.DeserializeObject<T>(result.Value, settings) ?? default(T);
         }
 
-        //Using System.Text.Json
-        public static async Task<T> GetObjectSingleAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
-        {
-            var result = await query.FirstOrDefaultAsync<JsonRaw>();
-            return System.Text.Json.JsonSerializer.Deserialize<T>(result.Value) ?? default!;
-        }
+        //Using System.Text.Json --> producing Exception when single object is not found!
+        //public static async Task<T> GetObjectSingleAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
+        //{
+        //    var result = await query.FirstOrDefaultAsync<JsonRaw>();
+        //    return System.Text.Json.JsonSerializer.Deserialize<T>(result.Value) ?? default!;
+        //}
 
         //Using Newtonsoft
         public static async Task<IEnumerable<T>> GetObjectListAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
@@ -73,11 +73,11 @@ namespace Helper
         }
 
         //Using System.Text.Json
-        public static async Task<IEnumerable<T>> GetObjectListAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
-        {
-            var result = await query.GetAsync<JsonRaw>();
-            return result.Select(x => System.Text.Json.JsonSerializer.Deserialize<T>(x.Value)!) ?? default!;
-        }
+        //public static async Task<IEnumerable<T>> GetObjectListAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
+        //{
+        //    var result = await query.GetAsync<JsonRaw>();
+        //    return result.Select(x => System.Text.Json.JsonSerializer.Deserialize<T>(x.Value)!) ?? default!;
+        //}
 
         //Insert also data in Raw table
         public static async Task<int> InsertInRawtableAndGetIdAsync(this QueryFactory queryfactory, RawDataStore rawData, CancellationToken cancellationToken = default)
@@ -249,7 +249,7 @@ namespace Helper
                       .Select("data")
                       .Where("id", data.Id);
 
-            var queryresult = await query.GetObjectSingleAsyncV2<T>();       
+            var queryresult = await query.GetObjectSingleAsync<T>();       
 
             string operation = "";
 
@@ -317,7 +317,7 @@ namespace Helper
                       .Where("id", data.Id);
 
             //Json.net Deserializer bug, AreaIds,AreaId has duplicate IDs
-            var queryresult = await query.GetObjectSingleAsyncV2<T>();            
+            var queryresult = await query.GetObjectSingleAsync<T>();            
 
             string operation = "";
 

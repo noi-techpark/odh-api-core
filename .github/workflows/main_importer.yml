@@ -117,6 +117,7 @@ jobs:
       - name: Generate Json
         run: |
           curl "${{ env.API_URL_IMPORTER }}ODH/Taglist"
+          curl "${{ env.API_URL_IMPORTER }}ODH/OdhTagAutoPublishlist"
 
   deploy-prod-importer:
     runs-on: ubuntu-20.04
@@ -193,3 +194,4 @@ jobs:
       - name: Generate Json
         run: |
           curl "${{ env.API_URL_IMPORTER }}ODH/Taglist"
+          curl "${{ env.API_URL_IMPORTER }}ODH/OdhTagAutoPublishlist"

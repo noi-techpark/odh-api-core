@@ -154,7 +154,7 @@ namespace DataModel
                 source = source,
                 operation = operation,
                 updatetype = updatetype,
-                otherinfo = "",
+                otherinfo = otherinfo,
                 message = message,
                 recordsmodified = (detail.created + detail.updated + detail.deleted),
                 created = detail.created,
