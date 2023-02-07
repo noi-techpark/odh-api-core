@@ -37,7 +37,7 @@ namespace Helper
     {
         public static void CreatePublishenOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
         {
-            //alowedsources
+            //alowedsources  Dictionary<odhtype, sourcelist> TODO Export in Config
             Dictionary<string, List<string>> allowedsources = new Dictionary<string, List<string>>()
             {
                 { "event", new List<string>(){ "lts" } },
@@ -45,7 +45,13 @@ namespace Helper
                 { "odhactivitypoi", new List<string>(){ "lts","suedtirolwein", "archapp" } }
             };
 
-            //Articles
+            //Blacklist for exceptions Dictionary<string, Tuple<string,string> TODO Export in Config
+            Dictionary<string, Tuple<string, string>> blacklistsourcesandtags = new Dictionary<string, Tuple<string, string>>()
+            {
+               { "odhactivitypoi", Tuple.Create("lts", "weinkellereien") }
+            };
+
+            //Whitelist on Types Deprecated? TODO Export in Config
             Dictionary<string, List<string>> allowedtypes = new Dictionary<string, List<string>>()
             {
                 { "article", new List<string>(){ "rezeptartikel" } }
@@ -89,7 +95,13 @@ namespace Helper
                         //IF category is whitelisted
                         if (allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags).Count() > 0)
                         {
-                            publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                            var isonblacklist = false;
+
+                            if (blacklistsourcesandtags[mydata._Meta.Type] != null && blacklistsourcesandtags[mydata._Meta.Type].Item1 == mydata._Meta.Source && (mydata as ODHActivityPoiLinked).SmgTags.Contains(blacklistsourcesandtags[mydata._Meta.Type].Item2))
+                                isonblacklist = true;
+
+                            if (!isonblacklist)
+                                publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                         }
                     }
 
