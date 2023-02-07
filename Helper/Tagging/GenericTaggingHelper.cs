@@ -126,6 +126,19 @@ namespace Helper
             return toreturn.Trim();
         }
 
+        //GETS all generic tags from json as object to avoid DB call on each Tag update
+        public static async Task<List<AllowedTags>> GetAllAutoPublishTagsfromJson(string jsondir)
+        {
+            using (StreamReader r = new StreamReader(Path.Combine(jsondir, $"AutoPublishTags.json")))
+            {
+                string json = await r.ReadToEndAsync();
+
+                return JsonConvert.DeserializeObject<List<AllowedTags>>(json) ?? new();
+            }
+        }
+
+
+
         //private static string RemoveSpecialCharsSimple(string id)
         //{
         //    var toreturn = id;

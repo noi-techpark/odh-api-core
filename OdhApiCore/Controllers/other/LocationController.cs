@@ -345,7 +345,7 @@ namespace OdhApiCore.Controllers.api
                                .Select("data")
                                .From("metaregions")
                                .Where("id", locid)
-                               .GetObjectSingleAsyncV2<MetaRegion>();
+                               .GetObjectSingleAsync<MetaRegion>();
 
                         var myskiarealistquery =
                           QueryFactory.Query()

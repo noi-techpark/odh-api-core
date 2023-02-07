@@ -9,7 +9,7 @@ namespace RAVEN
 {
     public class TransformToPGObject
     {
-        //TODO Make a HOF and apply all the rules
+        //HOF applies all the rules
         public static V GetPGObject<T, V>(T myobject, Func<T, V> pgmodelgenerator)
         {
             return pgmodelgenerator(myobject);
@@ -108,14 +108,9 @@ namespace RAVEN
             }
 
             //Remove empty dictionary keys
-            data.PoiProperty = data.PoiProperty == null ? new Dictionary<string, List<PoiProperty>>() : data.PoiProperty.Where(f => f.Value.Count > 0).ToDictionary(x => x.Key, x => x.Value);
-
-
-            //if (sourcemeta == "common" || sourcemeta == "magnolia" || sourcemeta == "content")
-            //    sourcemeta = "idm";
+            data.PoiProperty = data.PoiProperty == null ? new Dictionary<string, List<PoiProperty>>() : data.PoiProperty.Where(f => f.Value.Count > 0).ToDictionary(x => x.Key, x => x.Value);            
 
             data._Meta = MetadataHelper.GetMetadataobject<ODHActivityPoiLinked>(data, MetadataHelper.GetMetadataforOdhActivityPoi); //GetMetadata(data.Id, "odhactivitypoi", sourcemeta, data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("odhactivitypoi", data.SmgActive);
 
             ODHTagHelper.SetMainCategorizationForODHActivityPoi(data);
 

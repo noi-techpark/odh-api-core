@@ -3,6 +3,7 @@ using Helper;
 using Microsoft.AspNetCore.Mvc;
 using OdhNotifier;
 using RAVEN;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -143,20 +144,21 @@ namespace OdhApiImporter.Helpers
                         mypgdata = TransformToPGObject.GetPGObject<ODHActivityPoiLinked, ODHActivityPoiLinked>((ODHActivityPoiLinked)mydata, TransformToPGObject.GetODHActivityPoiPGObject);
                     else
                         throw new Exception("No data found!");
-
-                    //duplicate
-                    //myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois");
-
+                    
                     //Special get all Taglist and traduce it on import
                     await GenericTaggingHelper.AddMappingToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+
+                    //Add the PublishedOn Logic
+                    //Exception here all Tags with autopublish has to be passed
+                    var autopublishtaglist = await GenericTaggingHelper.GetAllAutoPublishTagsfromJson(settings.JsonConfig.Jsondir);
+                    ((ODHActivityPoiLinked)mypgdata).CreatePublishenOnList(autopublishtaglist);
 
                     myupdateresult = await SaveRavenObjectToPGwithComparision<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true, true);
 
                     //Check if data has changed and Push To all channels
                     if(myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
                     {
-                        //to implement, check if image has changed
-
+                        //Check if image has changed
                         bool hasimagechanged = false;
                         if (myupdateresult.objectimagechanged.Value > 0)
                             hasimagechanged = true;
@@ -169,8 +171,6 @@ namespace OdhApiImporter.Helpers
 
                             foreach (var pushresult in pushresults)
                             {
-
-
                                 var responsecontent = myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.HttpStatusCode + ":" + pushresult.Value.Response);
                             }
                         }
@@ -407,7 +407,9 @@ namespace OdhApiImporter.Helpers
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            var result = await QueryFactory.UpsertDataAndCompare<T>(datatosave, table, "lts.push.import", importerURL, false, false, compareresult);
+            //importerURL
+
+            var result = await QueryFactory.UpsertDataAndCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = 0, compareobject = result.compareobject };
         }
@@ -416,7 +418,7 @@ namespace OdhApiImporter.Helpers
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "lts.push.import", importerURL, false, false, compareresult, compareimagechange);
+            var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult, compareimagechange);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, compareobject = result.compareobject };
         }
