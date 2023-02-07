@@ -3,7 +3,10 @@ using Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
+using Newtonsoft.Json;
 using Npgsql;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -38,23 +41,15 @@ namespace OdhApiImporter.Controllers
             {
                 await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
 
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "Taglist",
-                    message = "Generate Json Taglist succeeded",
-                    success = true
-                });
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "Taglist", "Generate Json Taglist succeeded", true);
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "Taglist",
-                    message = "Generate Json Taglist failed error: " + ex.Message,
-                    success = false
-                });
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "Taglist", "Generate Json Taglist failed", ex, true);                
+
+                return BadRequest(result);
             }
         }
 
@@ -65,28 +60,17 @@ namespace OdhApiImporter.Controllers
             {
                 await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
 
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "ODHTagAutopublishlist",
-                    message = "Generate Json Taglist succeeded",
-                    success = true
-                });
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "ODHTagAutopublishlist", "Generate Json ODHTagAutopublishlist succeeded", true);
+
+                return Ok(result);
             }
             catch (Exception ex)
-            {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "ODHTagAutopublishlist",
-                    message = "Generate Json Taglist failed error: " + ex.Message,
-                    success = false
-                });
+            {                
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "ODHTagAutopublishlist", "Generate Json ODHTagAutopublishlist failed", ex, true);
+
+                return BadRequest(result);
             }
-        }
-
-
-        
+        }        
 
         #endregion
     }
