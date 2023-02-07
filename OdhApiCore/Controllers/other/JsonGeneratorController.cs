@@ -94,6 +94,25 @@ namespace OdhApiCore.Controllers.other
             }
         }
 
+        [HttpGet, Route("ODH/OdhTagAutoPublishlist")]
+        public async Task<IActionResult> ProduceOdhTagAutoPublishListJson(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
+
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "ODHTagAutopublishlist", "Generate Json ODHTagAutopublishlist succeeded", true);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "ODHTagAutopublishlist", "Generate Json ODHTagAutopublishlist failed", ex, true);
+
+                return BadRequest(result);
+            }
+        }
+
         #endregion
 
         #region STA
