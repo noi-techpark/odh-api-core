@@ -105,6 +105,7 @@ jobs:
           curl "${{ env.API_URL }}ODH/AccommodationBooklist"
           curl "${{ env.API_URL }}ODH/AccommodationFulllist"
           curl "${{ env.API_URL }}ODH/Taglist"
+          curl "${{ env.API_URL }}ODH/OdhTagAutoPublishlist"
 
   deploy-prod-api:
     runs-on: ubuntu-20.04
@@ -183,3 +184,4 @@ jobs:
           curl "${{ env.API_URL }}ODH/AccommodationBooklist"
           curl "${{ env.API_URL }}ODH/AccommodationFulllist"
           curl "${{ env.API_URL }}ODH/Taglist"
+          curl "${{ env.API_URL }}ODH/OdhTagAutoPublishlist"
