@@ -71,6 +71,15 @@ namespace DataModel
         public int? objectimageschanged { get; init; }
     }
 
+    public struct JsonGenerationResult
+    {
+        public string operation { get; init; }
+        public string type { get; init; }
+        public string message { get; init; }
+        public bool success { get; init; }
+        public string exception { get; init; }
+    }
+
     public class GenericResultsHelper
     {
         public static UpdateDetail MergeUpdateDetail(IEnumerable<UpdateDetail> updatedetails)
@@ -166,5 +175,41 @@ namespace DataModel
 
             return result;
         }
+
+
+        public static JsonGenerationResult GetSuccessJsonGenerateResult(string operation, string type, string message, bool createlog)
+        {
+            var result = new JsonGenerationResult()
+            {
+                operation = operation,
+                type = type,                
+                message = message,
+                success = true,
+                exception = null
+            };
+
+            if (createlog)
+                Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            return result;
+        }
+
+        public static JsonGenerationResult GetErrorJsonGenerateResult(string operation, string type, string message, Exception ex, bool createlog)
+        {
+            var result = new JsonGenerationResult()
+            {
+                operation = operation,
+                type = type,
+                message = message,
+                success = true,
+                exception = ex.Message
+            };
+
+            if (createlog)
+                Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            return result;
+        }
+
     }
 }

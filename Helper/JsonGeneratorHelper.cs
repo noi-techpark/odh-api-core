@@ -2,6 +2,7 @@
 using Helper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Npgsql;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -74,10 +75,38 @@ namespace Helper
                 serializer.Serialize(writer, data);
             }            
         }
+
+        public static async Task GenerateJSONODHTagAutoPublishlist(QueryFactory queryFactory, string jsondir, string jsonName)
+        {
+            var serializer = new JsonSerializer();
+
+            var query =
+                queryFactory.Query()
+                  .SelectRaw("data")
+                  .From("smgtags")
+                  .WhereRaw("data->>'AutoPublishOn' is not null and data->'AutoPublishOn' != '[]'");
+
+            var datafirst = await query.GetObjectListAsync<ODHTagLinked>();
+
+            var data = datafirst.Select(x => new AllowedTags() { Id = x.Id, AutoPublishOn = x.AutoPublishOn }).ToList();
+
+            //Save json
+            string fileName = Path.Combine(jsondir, $"{jsonName}.json");
+            using (var writer = File.CreateText(fileName))
+            {
+                serializer.Serialize(writer, data);
+            }
+        }
     }
 
     public struct AccoBooklist
     {
         public string Id { get; init; }
+    }
+
+    public class AllowedTags
+    {
+        public string Id { get; set; }
+        public ICollection<string> AutoPublishOn { get; set; }
     }
 }

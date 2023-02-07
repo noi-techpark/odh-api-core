@@ -40,23 +40,15 @@ namespace OdhApiCore.Controllers.other
             {
                 await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosBookable");
 
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "AccommodationBooklist",
-                    message = "Generate Json AccommodationBooklist succeeded",
-                    success = true
-                });
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "AccommodationBooklist", "Generate Json AccommodationBooklist succeeded", true);
+
+                return Ok(result);
             }
             catch(Exception ex)
             {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "AccommodationBooklist",
-                    message = "Generate Json AccommodationBooklist failed error:" + ex.Message,
-                    success = false
-                });
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "AccommodationBooklist", "Generate Json AccommodationBooklist succeeded", ex, true);
+
+                return BadRequest(result);
             }
         }
 
@@ -66,24 +58,16 @@ namespace OdhApiCore.Controllers.other
             try
             {
                 await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(QueryFactory, settings.JsonConfig.Jsondir, true, "AccosAll");
+                
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "AccommodationFullist", "Generate Json AccommodationFullist succeeded", true);
 
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "AccommodationFullist",
-                    message = "Generate Json AccommodationFullist succeeded",
-                    success = true
-                });
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "AccommodationFullist",
-                    message = "Generate Json AccommodationBooklist failed error: " + ex.Message,
-                    success = false
-                });
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "AccommodationFullist", "Generate Json AccommodationBooklist failed", ex, true);
+
+                return BadRequest(result);
             }
         }
 
@@ -98,23 +82,34 @@ namespace OdhApiCore.Controllers.other
             {
                 await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
 
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "Taglist",
-                    message = "Generate Json Taglist succeeded",
-                    success = true
-                });
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "Taglist", "Generate Json Taglist succeeded", true);
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "Taglist",
-                    message = "Generate Json Taglist failed error: " + ex.Message,
-                    success = false
-                });
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "Taglist", "Generate Json Taglist failed", ex, true);
+
+                return BadRequest(result);
+            }
+        }
+
+        [HttpGet, Route("ODH/OdhTagAutoPublishlist")]
+        public async Task<IActionResult> ProduceOdhTagAutoPublishListJson(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await JsonGeneratorHelper.GenerateJSONTaglist(QueryFactory, settings.JsonConfig.Jsondir, "GenericTags");
+
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "ODHTagAutopublishlist", "Generate Json ODHTagAutopublishlist succeeded", true);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "ODHTagAutopublishlist", "Generate Json ODHTagAutopublishlist failed", ex, true);
+
+                return BadRequest(result);
             }
         }
 
@@ -130,23 +125,15 @@ namespace OdhApiCore.Controllers.other
             {
                 await STARequestHelper.GenerateJSONODHActivityPoiForSTA(QueryFactory, settings.JsonConfig.Jsondir, settings.XmlConfig.Xmldir);
 
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "ODHActivityPoi",
-                    message = "Generate Json ODHActivityPoi for STA succeeded",
-                    success = true
-                });
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "ODHActivityPoiSTA", "Generate Json ODHActivityPoi for STA succeeded", true);
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "ODHActivityPoi",
-                    message = "Generate Json ODHActivityPoi for STA failed error:" + ex.Message,
-                    success = false
-                });
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "ODHActivityPoiSTA", "Generate Json ODHActivityPoi for STA failed", ex, true);
+
+                return BadRequest(result);
             }
         }
 
@@ -158,32 +145,19 @@ namespace OdhApiCore.Controllers.other
             {
                 await STARequestHelper.GenerateJSONAccommodationsForSTA(QueryFactory, settings.JsonConfig.Jsondir);
 
-                return Ok(new
-                {
-                    operation = "Json Generation",
-                    type = "Accommodation",
-                    message = "Generate Json Accommodation for STA succeeded",
-                    success = true
-                });
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "AccommodationSTA", "Generate Json Accommodation for STA succeeded", true);
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    operation = "Json Generation",
-                    type = "Accommodation",
-                    message = "Generate Json Accommodation for STA failed error:" + ex.Message,
-                    success = false
-                });
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "AccommodationSTA", "Generate Json Accommodation for STA failed", ex, true);
+
+                return BadRequest(result);
             }
         }
 
         #endregion
-
-        //TODO ADD the Json Generation for        
-        //Locationlists
-
-
-
+        
     }
 }
