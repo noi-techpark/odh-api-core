@@ -55,7 +55,7 @@ namespace OdhApiImporter.Helpers
                     ((AccommodationLinked)mypgdata).CreatePublishenOnList();
 
 
-                    myupdateresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
+                    myupdateresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations", true);
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<AccommodationLinked>((AccommodationLinked)mypgdata) == true)
@@ -66,6 +66,7 @@ namespace OdhApiImporter.Helpers
                     }
 
                     //UPDATE ACCOMMODATIONROOMS
+                    //TO CHECK, Remove all Accommodationrooms first?
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
 
                     if (myroomdatalist != null)
@@ -80,9 +81,9 @@ namespace OdhApiImporter.Helpers
                             var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
                             
                             //Add the PublishedOn Logic
-                            ((AccommodationRoomLinked)mypgdata).CreatePublishenOnList(null, roomsourcecheck);
+                            ((AccommodationRoomLinked)mypgroomdata).CreatePublishenOnList(null, roomsourcecheck);
 
-                            var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms");
+                            var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms", true);
 
                             //Merge with updateresult
                             myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, accoroomresult });
@@ -222,7 +223,7 @@ namespace OdhApiImporter.Helpers
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((EventLinked)mypgdata, ReduceDataTransformer.CopyLTSEventToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<EventLinked>((EventLinkedReduced)reducedobject, "events");
+                        updateresultreduced = await SaveRavenObjectToPG<EventLinked>((EventLinkedReduced)reducedobject, "events", true);
                     }
 
                     break;
@@ -237,7 +238,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((WebcamInfoLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams");
+                    myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams", true);
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<WebcamInfoLinked>((WebcamInfoLinked)mypgdata) == true)
@@ -259,7 +260,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((MetaRegionLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions");
+                    myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions", true);
 
                     break;
 
@@ -273,7 +274,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((RegionLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions");
+                    myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions", true);
 
                     break;
 
@@ -287,7 +288,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((TourismvereinLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs");
+                    myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs", true);
 
                     break;
 
@@ -301,7 +302,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((MunicipalityLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities");
+                    myupdateresult = await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities", true);
 
                     break;
 
@@ -315,7 +316,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((DistrictLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts");
+                    myupdateresult = await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts", true);
 
                     break;
 
@@ -329,7 +330,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((ExperienceAreaLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas");
+                    myupdateresult = await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas", true);
 
                     break;
 
@@ -343,7 +344,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((SkiAreaLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas");
+                    myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas", true);
 
                     break;
 
@@ -357,7 +358,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((SkiRegionLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");
+                    myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions", true);
 
                     break;
 
@@ -371,7 +372,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((ArticlesLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles");
+                    myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles", true);
 
                     break;
 
@@ -384,7 +385,7 @@ namespace OdhApiImporter.Helpers
 
                     //No publishedon Logic needed
 
-                    myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags");
+                    myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags", true);
 
                     break;
 
@@ -398,7 +399,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((MeasuringpointLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints");
+                    myupdateresult = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints", true);
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<MeasuringpointLinked>((MeasuringpointLinked)mypgdata) == true)
@@ -430,6 +431,7 @@ namespace OdhApiImporter.Helpers
                     ((VenueLinked)mydata).CreatePublishenOnList();
                     ((DDVenue)mypgdata).odhdata.PublishedOn = ((VenueLinked)mydata).PublishedOn.ToList();
 
+                    //TODO Compare result
                     myupdateresult = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueLinked)mydata, (DDVenue)mypgdata, "venues_v2");
 
                     //Check if data has to be reduced and save it
@@ -454,7 +456,7 @@ namespace OdhApiImporter.Helpers
                     ((WineLinked)mypgdata).CreatePublishenOnList();
 
 
-                    myupdateresult = await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines");
+                    myupdateresult = await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines", true);
 
                     break;
 
