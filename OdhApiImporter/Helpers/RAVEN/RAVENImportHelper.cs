@@ -51,6 +51,10 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Add the PublishedOn Logic
+                    ((AccommodationLinked)mypgdata).CreatePublishenOnList();
+
+
                     myupdateresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations");
 
                     //Check if data has to be reduced and save it
@@ -69,6 +73,13 @@ namespace OdhApiImporter.Helpers
                         foreach (var myroomdata in myroomdatalist)
                         {
                             var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
+
+                            Tuple<string, bool>? roomsourcecheck = null;
+                            if (((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
+                                roomsourcecheck = Tuple.Create("hgv", true);
+
+                            //Add the PublishedOn Logic
+                            ((AccommodationRoomLinked)mypgdata).CreatePublishenOnList(null, roomsourcecheck);
 
                             var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms");
 

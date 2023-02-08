@@ -33,7 +33,7 @@ namespace Helper
         //    return publishedonlist;
         //}
     
-        public static void CreatePublishenOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
+        public static void CreatePublishenOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null, Tuple<string,bool>? activatesourceonly = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
         {
             //alowedsources  Dictionary<odhtype, sourcelist> TODO Export in Config
             Dictionary<string, List<string>> allowedsources = new Dictionary<string, List<string>>()
@@ -66,6 +66,26 @@ namespace Helper
                         publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
+                    break;
+
+                //Accommodation Room publishedon
+                case "accommodationroom":
+                    
+                    //TO check add publishedon logic only for rooms with source hgv? for online bookable accommodations?
+
+                    if(activatesourceonly != null && activatesourceonly.Item2 == true)
+                    {
+                        if(activatesourceonly.Item1 == (mydata as AccommodationLinked)._Meta.Source)
+                        {
+                            publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                        }
+                    }
+                    else
+                    {
+                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                    }
+
+                    publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
 
                     break;
                 //Event Add all Active Events from now
