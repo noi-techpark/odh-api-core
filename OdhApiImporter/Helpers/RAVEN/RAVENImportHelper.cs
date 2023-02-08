@@ -70,14 +70,15 @@ namespace OdhApiImporter.Helpers
 
                     if (myroomdatalist != null)
                     {
+                        Tuple<string, bool>? roomsourcecheck = null;
+                        if (((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
+                            roomsourcecheck = Tuple.Create("hgv", true);
+
+
                         foreach (var myroomdata in myroomdatalist)
                         {
                             var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
-
-                            Tuple<string, bool>? roomsourcecheck = null;
-                            if (((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
-                                roomsourcecheck = Tuple.Create("hgv", true);
-
+                            
                             //Add the PublishedOn Logic
                             ((AccommodationRoomLinked)mypgdata).CreatePublishenOnList(null, roomsourcecheck);
 

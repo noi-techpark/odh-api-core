@@ -75,7 +75,7 @@ namespace Helper
 
                     if(activatesourceonly != null && activatesourceonly.Item2 == true)
                     {
-                        if(activatesourceonly.Item1 == (mydata as AccommodationLinked)._Meta.Source)
+                        if(activatesourceonly.Item1 == (mydata as AccommodationRoomLinked)._Meta.Source)
                         {
                             publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                         }
@@ -174,13 +174,6 @@ namespace Helper
                         publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
-                    break;
-
-                case "accommodationroom":
-
-                    publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
-                    publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
-
                     break;
 
                 case "region":

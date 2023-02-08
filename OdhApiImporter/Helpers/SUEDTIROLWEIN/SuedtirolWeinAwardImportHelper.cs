@@ -121,7 +121,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 weinaward.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
 
                 //Set Publishedon List
-                weinaward.PublishedOn = PublishedOnHelper.GetPublishenOnList("wine", weinaward.OdhActive);
+                weinaward.CreatePublishenOnList<WineLinked>();
 
                 var result = await InsertDataToDB(weinaward, new KeyValuePair<string, XElement>(dataid, winedata));
                 newcounter = newcounter + result.created ?? 0;
