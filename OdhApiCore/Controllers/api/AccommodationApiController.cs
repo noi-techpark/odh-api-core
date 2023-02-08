@@ -329,7 +329,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<AccoFeature>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Authorize(Roles = "DataReader,AccoReader")]
+        //[Authorize(Roles = "DataReader,AccoReader")]
         [HttpGet, Route("AccommodationFeatures")]
         public async Task<IActionResult> GetAllAccommodationFeaturesList(
             string? language,
