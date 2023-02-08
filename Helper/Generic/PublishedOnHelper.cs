@@ -8,33 +8,31 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
-    public class PublishedOnHelper
+    public static class PublishedOnHelper
     {
-        public static List<string> GetPublishenOnList(string type, bool smgactive)
-        {
-            List<string> publishedonlist = new List<string>();
+        //Deprecated
+        //public static List<string> GetPublishenOnList(string type, bool smgactive)
+        //{
+        //    List<string> publishedonlist = new List<string>();
 
-            if (type == "eventshort")
-            {
-                if (smgactive)
-                    publishedonlist.Add("https://noi.bz.it");
-            }
-            else if (type != "package")
-            {
-                if (smgactive)
-                    publishedonlist.Add("https://www.suedtirol.info");
-            }
+        //    if (type == "eventshort")
+        //    {
+        //        if (smgactive)
+        //            publishedonlist.Add("https://noi.bz.it");
+        //    }
+        //    else if (type != "package")
+        //    {
+        //        if (smgactive)
+        //            publishedonlist.Add("https://www.suedtirol.info");
+        //    }
 
-            //TODO ADD some ifs Create better logic
+        //    //TODO ADD some ifs Create better logic
 
-            //TODO ADD PublishedOn Marketplace Logic
+        //    //TODO ADD PublishedOn Marketplace Logic
 
-            return publishedonlist;
-        }
-    }
-
-    public static class PublishOnHelperV2
-    {
+        //    return publishedonlist;
+        //}
+    
         public static void CreatePublishenOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
         {
             //alowedsources  Dictionary<odhtype, sourcelist> TODO Export in Config

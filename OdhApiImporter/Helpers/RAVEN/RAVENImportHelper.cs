@@ -90,6 +90,8 @@ namespace OdhApiImporter.Helpers
 
                     myupdateresult = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
 
+                    //No need for Publishedon, neither comparing data since this data is from a deprecated endpoint
+
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<GastronomyLinked>((GastronomyLinked)mypgdata) == true)
                     {
@@ -109,6 +111,8 @@ namespace OdhApiImporter.Helpers
 
                     myupdateresult = await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinked)mypgdata, "activities");
 
+                    //No need for Publishedon, neither comparing data since this data is from a deprecated endpoint
+
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<LTSActivityLinked>((LTSActivityLinked)mypgdata) == true)
                     {
@@ -127,6 +131,8 @@ namespace OdhApiImporter.Helpers
                         throw new Exception("No data found!");
 
                     myupdateresult = await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
+
+                    //No need for Publishedon, neither comparing data since this data is from a deprecated endpoint
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<LTSPoiLinked>((LTSPoiLinked)mypgdata) == true)
@@ -194,6 +200,9 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Add the PublishedOn Logic
+                    ((EventLinked)mypgdata).CreatePublishenOnList();
+
                     myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
                     
                     //Check if data has to be reduced and save it
@@ -207,13 +216,16 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "webcam":
-                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "WebcamInfo/");
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<WebcamInfoLinked, WebcamInfoLinked>((WebcamInfoLinked)mydata, TransformToPGObject.GetWebcamInfoPGObject);
                     else
                         throw new Exception("No data found!");
 
-                    myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
+                    //Add the PublishedOn Logic
+                    ((WebcamInfoLinked)mypgdata).CreatePublishenOnList();
+
+                    myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams");
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<WebcamInfoLinked>((WebcamInfoLinked)mypgdata) == true)
@@ -232,6 +244,9 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Add the PublishedOn Logic
+                    ((MetaRegionLinked)mypgdata).CreatePublishenOnList();
+
                     myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions");
 
                     break;
@@ -243,16 +258,22 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Add the PublishedOn Logic
+                    ((RegionLinked)mypgdata).CreatePublishenOnList();
+
                     myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions");
 
                     break;
 
                 case "tv":
-                    mydata = await GetDataFromRaven.GetRavenData<TourismvereinLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<TourismvereinLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "TourismAssociation/");
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<TourismvereinLinked, TourismvereinLinked>((TourismvereinLinked)mydata, TransformToPGObject.GetTourismAssociationPGObject);
                     else
                         throw new Exception("No data found!");
+
+                    //Add the PublishedOn Logic
+                    ((TourismvereinLinked)mypgdata).CreatePublishenOnList();
 
                     myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs");
 
@@ -265,6 +286,9 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Add the PublishedOn Logic
+                    ((MunicipalityLinked)mypgdata).CreatePublishenOnList();
+
                     myupdateresult = await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities");
 
                     break;
@@ -275,6 +299,9 @@ namespace OdhApiImporter.Helpers
                         mypgdata = TransformToPGObject.GetPGObject<DistrictLinked, DistrictLinked>((DistrictLinked)mydata, TransformToPGObject.GetDistrictPGObject);
                     else
                         throw new Exception("No data found!");
+
+                    //Add the PublishedOn Logic
+                    ((DistrictLinked)mypgdata).CreatePublishenOnList();
 
                     myupdateresult = await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts");
 
@@ -287,6 +314,9 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Add the PublishedOn Logic
+                    ((ExperienceAreaLinked)mypgdata).CreatePublishenOnList();
+
                     myupdateresult = await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas");
 
                     break;
@@ -297,6 +327,9 @@ namespace OdhApiImporter.Helpers
                         mypgdata = TransformToPGObject.GetPGObject<SkiAreaLinked, SkiAreaLinked>((SkiAreaLinked)mydata, TransformToPGObject.GetSkiAreaPGObject);
                     else
                         throw new Exception("No data found!");
+
+                    //Add the PublishedOn Logic
+                    ((SkiAreaLinked)mypgdata).CreatePublishenOnList();
 
                     myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas");
 
@@ -309,6 +342,9 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Add the PublishedOn Logic
+                    ((SkiRegionLinked)mypgdata).CreatePublishenOnList();
+
                     myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions");
 
                     break;
@@ -319,6 +355,9 @@ namespace OdhApiImporter.Helpers
                         mypgdata = TransformToPGObject.GetPGObject<ArticlesLinked, ArticlesLinked>((ArticlesLinked)mydata, TransformToPGObject.GetArticlePGObject);
                     else
                         throw new Exception("No data found!");
+
+                    //Add the PublishedOn Logic
+                    ((ArticlesLinked)mypgdata).CreatePublishenOnList();
 
                     myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles");
 
@@ -331,6 +370,8 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //No publishedon Logic needed
+
                     myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags");
 
                     break;
@@ -341,6 +382,9 @@ namespace OdhApiImporter.Helpers
                         mypgdata = TransformToPGObject.GetPGObject<MeasuringpointLinked, MeasuringpointLinked>((MeasuringpointLinked)mydata, TransformToPGObject.GetMeasuringpointPGObject);
                     else
                         throw new Exception("No data found!");
+
+                    //Add the PublishedOn Logic
+                    ((MeasuringpointLinked)mypgdata).CreatePublishenOnList();
 
                     myupdateresult = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints");
 
@@ -370,7 +414,9 @@ namespace OdhApiImporter.Helpers
                         throw new Exception("No data found!");
 
 
-
+                    //Add the PublishedOn Logic
+                    ((VenueLinked)mydata).CreatePublishenOnList();
+                    ((DDVenue)mypgdata).odhdata.PublishedOn = ((VenueLinked)mydata).PublishedOn.ToList();
 
                     myupdateresult = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueLinked)mydata, (DDVenue)mypgdata, "venues_v2");
 
@@ -391,6 +437,10 @@ namespace OdhApiImporter.Helpers
                         mypgdata = TransformToPGObject.GetPGObject<WineLinked, WineLinked>((WineLinked)mydata, TransformToPGObject.GetWinePGObject);
                     else
                         throw new Exception("No data found!");
+
+                    //Add the PublishedOn Logic
+                    ((WineLinked)mypgdata).CreatePublishenOnList();
+
 
                     myupdateresult = await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines");
 
