@@ -484,7 +484,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = 0, compareobject = result.compareobject };
         }
 
-        private async Task<UpdateDetail> SaveRavenObjectToPGwithComparision<T>(T datatosave, string table, bool compareresult = false, bool compareimagechange = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IImageGalleryAware, new()
+        private async Task<UpdateDetail> SaveRavenObjectToPGwithComparision<T>(T datatosave, string table, bool compareresult = false, bool compareimagechange = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IImageGalleryAware, IPublishedOn, new()
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 

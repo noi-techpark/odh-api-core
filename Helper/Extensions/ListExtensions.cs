@@ -37,5 +37,17 @@ namespace Helper.Extensions
             if (!smgtags.Contains(tagToAdd))
                 smgtags.Add(tagToAdd);
         }
+
+        public static IEnumerable<string> UnionIfNotNull(this ICollection<string> sourceunion, ICollection<string> listtounion)
+        {
+            if (sourceunion != null && listtounion != null)
+                return sourceunion.Union(listtounion);
+            else if (sourceunion == null && listtounion != null)
+                return listtounion;
+            else if (sourceunion != null && listtounion == null)
+                return sourceunion;
+            else
+                return new List<string>();
+        }
     }
 }

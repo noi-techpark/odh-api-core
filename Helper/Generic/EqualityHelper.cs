@@ -68,8 +68,8 @@ namespace Helper.Generic
             //Postgres JsonB does a Dictionary Key sorting automatically. So the retrieved Json has the Dictionary Keys ordered by Keyname alphabetically, therefore a resort is needed to compare
             //both Serialized Objects
 
-            var jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.Converters.Add(new DictionaryOrderConverter());
+            //var jsonSerializerSettings = new JsonSerializerSettings();
+            //jsonSerializerSettings.Converters.Add(new DictionaryOrderConverter());
 
             //To Test for Performance, Deep Equals vs String Comparision?
             //var result1 = JsonConvert.SerializeObject(compareclass1, jsonSerializerSettings);
@@ -100,15 +100,21 @@ namespace Helper.Generic
                 }
             }
 
-            var jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.Converters.Add(new DictionaryOrderConverter());
+            //var jsonSerializerSettings = new JsonSerializerSettings();
+            //jsonSerializerSettings.Converters.Add(new DictionaryOrderConverter());
 
-            var result1 = JsonConvert.SerializeObject(compareclass1, jsonSerializerSettings);
-            var result2 = JsonConvert.SerializeObject(compareclass2, jsonSerializerSettings);
+            //var result1 = JsonConvert.SerializeObject(compareclass1, jsonSerializerSettings);
+            //var result2 = JsonConvert.SerializeObject(compareclass2, jsonSerializerSettings);
 
-            return (result1 == result2);
+            //return (result1 == result2);
+
+            return JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));
         }
 
+        public static bool ComparePublishedOn(ICollection<string> compareclass1, ICollection<string> compareclass2)
+        {
+            return JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));
+        }
     }
 
     public class OrderedContractResolver : DefaultContractResolver
