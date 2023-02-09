@@ -175,25 +175,29 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPGwithComparision<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true, true);
 
                     //Check if data has changed and Push To all channels
-                    if(myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
-                    {
-                        //Check if image has changed
-                        bool hasimagechanged = false;
-                        if (myupdateresult.objectimagechanged.Value > 0)
-                            hasimagechanged = true;
+                    //if(myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
+                    //{
+                    //    //Check if image has changed
+                    //    bool hasimagechanged = false;
+                    //    if (myupdateresult.objectimagechanged.Value > 0)
+                    //        hasimagechanged = true;
 
-                        var pushresults = await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", hasimagechanged, "api", new List<string>() { "marketplace" });
+                    //    var pushresults = await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", hasimagechanged, "api", new List<string>() { "marketplace" });
 
-                        if(pushresults != null)
-                        {
-                            myupdateresult.pushed = new Dictionary<string, string>();
+                    //    if(pushresults != null)
+                    //    {
+                    //        myupdateresult.pushed = new Dictionary<string, string>();
 
-                            foreach (var pushresult in pushresults)
-                            {
-                                var responsecontent = myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.HttpStatusCode + ":" + pushresult.Value.Response);
-                            }
-                        }
-                    }
+                    //        foreach (var pushresult in pushresults)
+                    //        {
+                    //            var responsecontent = myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.HttpStatusCode + ":" + pushresult.Value.Response);
+                    //        }
+                    //    }
+                    //}
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, ((ODHActivityPoiLinked)mypgdata).PublishedOn);
+
 
 
                     //Check if data has to be reduced and save it
@@ -487,6 +491,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, compareobject = result.compareobject };
         }
 
+        //For Destinationdata Venue
         private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table) 
             where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
             where V : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
@@ -496,6 +501,30 @@ namespace OdhApiImporter.Helpers
             var result = await QueryFactory.UpsertDataDestinationData<T,V>(datatosave, destinationdatatosave, table);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
+        }
+
+        private async Task CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype, ICollection<string> publishedonlist)
+        {
+            //Check if data has changed and Push To all channels
+            if (myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
+            {                
+                //Check if image has changed
+                bool hasimagechanged = false;
+                if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
+                    hasimagechanged = true;
+
+                var pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), "lts.push", hasimagechanged, "api", publishedonlist);
+
+                if (pushresults != null)
+                {
+                    myupdateresult.pushed = new Dictionary<string, string>();
+
+                    foreach (var pushresult in pushresults)
+                    {
+                        myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.HttpStatusCode + ":" + pushresult.Value.Response);
+                    }
+                }
+            }            
         }
 
         #endregion

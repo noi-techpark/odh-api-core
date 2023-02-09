@@ -320,7 +320,7 @@ namespace OdhNotifier
 
             switch (notifyconfig.ServiceName.ToLower())
             {
-                case "marketplace":
+                case "idm-marketplace":
 
                     //From Config
                     this.Url = notifyconfig.Url;
