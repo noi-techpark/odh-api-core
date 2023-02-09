@@ -561,7 +561,7 @@ namespace DataModel
         public ICollection<string>? PublishedOn { get; set; }
     }
 
-    public class SmgTags : IIdentifiable, IImportDateassigneable, ILicenseInfo
+    public class SmgTags : IIdentifiable, IImportDateassigneable, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -603,6 +603,8 @@ namespace DataModel
         public ICollection<string> MappedTagIds { get; set; }
 
         public ICollection<string>? AutoPublishOn { get; set; }
+
+        public ICollection<string>? PublishedOn { get; set; }
     }
 
     public class LTSTaggingInfo

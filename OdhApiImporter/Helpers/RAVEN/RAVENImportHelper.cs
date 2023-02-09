@@ -172,35 +172,10 @@ namespace OdhApiImporter.Helpers
                     var autopublishtaglist = await GenericTaggingHelper.GetAllAutoPublishTagsfromJson(settings.JsonConfig.Jsondir);
                     ((ODHActivityPoiLinked)mypgdata).CreatePublishenOnList(autopublishtaglist);
 
-                    myupdateresult = await SaveRavenObjectToPGwithComparision<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true, true);
-
-                    //Check if data has changed and Push To all channels
-                    //if(myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
-                    //{
-                    //    //Check if image has changed
-                    //    bool hasimagechanged = false;
-                    //    if (myupdateresult.objectimagechanged.Value > 0)
-                    //        hasimagechanged = true;
-
-                    //    var pushresults = await OdhPushnotifier.PushToPublishedOnServices(mypgdata.Id, datatype.ToLower(), "lts.push", hasimagechanged, "api", new List<string>() { "marketplace" });
-
-                    //    if(pushresults != null)
-                    //    {
-                    //        myupdateresult.pushed = new Dictionary<string, string>();
-
-                    //        foreach (var pushresult in pushresults)
-                    //        {
-                    //            var responsecontent = myupdateresult.pushed.TryAddOrUpdate(pushresult.Key, pushresult.Value.HttpStatusCode + ":" + pushresult.Value.Response);
-                    //        }
-                    //    }
-                    //}
-
-                    //TO CHECK! What if publishedon had the item before and after is deleted!
+                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true, true);                  
 
                     //Check if the Object has Changed and Push all infos to the channels
                     await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
-
-
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata) == true)
@@ -222,8 +197,11 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((EventLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events");
-                    
+                    myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events", true, true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<EventLinked>((EventLinked)mypgdata) == true)
                     {
@@ -246,6 +224,9 @@ namespace OdhApiImporter.Helpers
 
                     myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams", true);
 
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<WebcamInfoLinked>((WebcamInfoLinked)mypgdata) == true)
                     {
@@ -266,7 +247,10 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((MetaRegionLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions", true);
+                    myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions", true, true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     break;
 
@@ -280,7 +264,10 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((RegionLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions", true);
+                    myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions", true, true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     break;
 
@@ -294,7 +281,10 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((TourismvereinLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs", true);
+                    myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs", true, true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     break;
 
@@ -310,6 +300,9 @@ namespace OdhApiImporter.Helpers
 
                     myupdateresult = await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities", true);
 
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+
                     break;
 
                 case "district":
@@ -323,6 +316,9 @@ namespace OdhApiImporter.Helpers
                     ((DistrictLinked)mypgdata).CreatePublishenOnList();
 
                     myupdateresult = await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts", true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     break;
 
@@ -338,6 +334,9 @@ namespace OdhApiImporter.Helpers
 
                     myupdateresult = await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas", true);
 
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+
                     break;
 
                 case "skiarea":
@@ -350,7 +349,10 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((SkiAreaLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas", true);
+                    myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas", true, true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     break;
 
@@ -364,7 +366,10 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((SkiRegionLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions", true);
+                    myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions", true, true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     break;
 
@@ -378,7 +383,10 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((ArticlesLinked)mypgdata).CreatePublishenOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles", true);
+                    myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles", true, true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     break;
 
@@ -389,9 +397,12 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    //No publishedon Logic needed
+                    //TODO Add the PublishedOn Logic
 
                     myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags", true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     break;
 
@@ -406,6 +417,9 @@ namespace OdhApiImporter.Helpers
                     ((MeasuringpointLinked)mypgdata).CreatePublishenOnList();
 
                     myupdateresult = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints", true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<MeasuringpointLinked>((MeasuringpointLinked)mypgdata) == true)
@@ -440,6 +454,9 @@ namespace OdhApiImporter.Helpers
                     //TODO Compare result
                     myupdateresult = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueLinked)mydata, (DDVenue)mypgdata, "venues_v2");
 
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<DDVenue>((DDVenue)mypgdata) == true)
                     {
@@ -461,8 +478,11 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((WineLinked)mypgdata).CreatePublishenOnList();
 
-
                     myupdateresult = await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines", true);
+
+                    //Check if the Object has Changed and Push all infos to the channels
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+
 
                     break;
 
@@ -473,36 +493,67 @@ namespace OdhApiImporter.Helpers
             return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, updateresultreduced }));
         }
 
-        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool compareresult = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, new()
+        /// <summary>
+        /// Save only, requires Object implementing IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="datatosave"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, new()
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
+        
+            var result = await QueryFactory.UpsertData<T>(datatosave, table, "lts.push.import", "odh.importer", false, false);
 
-            //importerURL
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = 0, objectimagechanged = 0, compareobject = result.compareobject, pushchannels = result.pushchannels };
+        }
+
+        /// <summary>
+        /// Save and Compare Object changes, requires Object implementing IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, IPublishedOn
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="datatosave"></param>
+        /// <param name="table"></param>
+        /// <param name="compareresult"></param>
+        /// <returns></returns>
+        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool compareresult) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
+        {
+            datatosave._Meta.LastUpdate = datatosave.LastChange;            
 
             var result = await QueryFactory.UpsertDataAndCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = 0, compareobject = result.compareobject };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = 0, compareobject = result.compareobject, pushchannels = result.pushchannels };
         }
 
-        private async Task<UpdateDetail> SaveRavenObjectToPGwithComparision<T>(T datatosave, string table, bool compareresult = false, bool compareimagechange = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IImageGalleryAware, IPublishedOn, new()
+        /// <summary>
+        /// Save and Compare Object and Image Changes, requires Object implementing IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, IPublishedOn and IImageGalleryAware
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="datatosave"></param>
+        /// <param name="table"></param>
+        /// <param name="compareresult"></param>
+        /// <param name="compareimagechange"></param>
+        /// <returns></returns>
+        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool compareresult, bool compareimagechange) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IImageGalleryAware, IPublishedOn, new()
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
             var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult, compareimagechange);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, compareobject = result.compareobject };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, compareobject = result.compareobject, pushchannels = result.pushchannels };
         }
 
         //For Destinationdata Venue
         private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table) 
-            where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
+            where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, IImageGalleryAware, new()
             where V : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            var result = await QueryFactory.UpsertDataDestinationData<T,V>(datatosave, destinationdatatosave, table);
+            var result = await QueryFactory.UpsertDataDestinationData<T,V>(datatosave, destinationdatatosave, table, false, false, true, true);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, compareobject = result.compareobject, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, pushchannels = result.pushchannels };
         }
 
         private async Task CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype)
