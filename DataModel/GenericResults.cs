@@ -24,6 +24,9 @@ namespace DataModel
         public int? objectchanged { get; init; }
         public int? objectimagechanged { get; init; }
 
+        //Push Infos
+        public ICollection<string>? pushchannels { get; init; }
+
         public IDictionary<string,string>? pushed { get; init; }
 
         public int? error { get; init; }
@@ -52,8 +55,10 @@ namespace DataModel
         public int? objectchanged { get; init; }
         public int? objectimagechanged { get; init; }
 
-        //Push Info
-        public IDictionary<string,string> pushed { get; set; }
+        //Push Infos
+        public ICollection<string>? pushchannels { get; init; }
+
+        public IDictionary<string,string>? pushed { get; set; }
     }
 
     public struct PGCRUDResult
@@ -69,6 +74,8 @@ namespace DataModel
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
         public int? objectimageschanged { get; init; }
+
+        public ICollection<string>? pushchannels { get; init; }
     }
 
     public struct JsonGenerationResult
@@ -91,6 +98,7 @@ namespace DataModel
             bool? compareobject = false;
             int? objectchanged = 0;
             int? objectimagechanged = 0;
+            List<string>? channelstopush = new List<string>();
 
             IDictionary<string,string> pushed = new Dictionary<string,string>();
 
@@ -106,6 +114,11 @@ namespace DataModel
                 objectchanged = updatedetail.objectchanged + objectchanged;
                 objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
 
+                if(updatedetail.pushchannels != null)
+                {
+                    channelstopush.AddRange(updatedetail.pushchannels);
+                }
+
                 if (updatedetail.pushed != null)
                 {
                     foreach (var updatedetailpushed in updatedetail.pushed)
@@ -113,7 +126,7 @@ namespace DataModel
                 }
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, compareobject = compareobject, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushed = pushed };
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, compareobject = compareobject, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushchannels = channelstopush, pushed = pushed };
         }
 
         public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
@@ -133,6 +146,7 @@ namespace DataModel
                 objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
                 objectchanged = detail.objectchanged ,                
                 objectimagechanged = detail.objectimagechanged,
+                pushchannels = detail.pushchannels,               
                 pushed = detail.pushed,
                 error = detail.error,
                 success = true,
@@ -163,6 +177,7 @@ namespace DataModel
                 objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
                 objectchanged = detail.objectchanged,
                 objectimagechanged = detail.objectimagechanged,
+                pushchannels = detail.pushchannels,
                 pushed = detail.pushed,
                 error = detail.error,
                 success = false,
@@ -175,7 +190,6 @@ namespace DataModel
 
             return result;
         }
-
 
         public static JsonGenerationResult GetSuccessJsonGenerateResult(string operation, string type, string message, bool createlog)
         {

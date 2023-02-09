@@ -195,8 +195,10 @@ namespace OdhApiImporter.Helpers
                     //    }
                     //}
 
+                    //TO CHECK! What if publishedon had the item before and after is deleted!
+
                     //Check if the Object has Changed and Push all infos to the channels
-                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, ((ODHActivityPoiLinked)mypgdata).PublishedOn);
+                    await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
 
 
 
@@ -503,17 +505,17 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error };
         }
 
-        private async Task CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype, ICollection<string> publishedonlist)
+        private async Task CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype)
         {
             //Check if data has changed and Push To all channels
-            if (myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0)
+            if (myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0 && myupdateresult.pushchannels != null && myupdateresult.pushchannels.Count > 0)
             {                
                 //Check if image has changed
                 bool hasimagechanged = false;
                 if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
                     hasimagechanged = true;
 
-                var pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), "lts.push", hasimagechanged, "api", publishedonlist);
+                var pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), "lts.push", hasimagechanged, "api", myupdateresult.pushchannels.ToList());
 
                 if (pushresults != null)
                 {
