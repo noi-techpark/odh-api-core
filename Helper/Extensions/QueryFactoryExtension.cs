@@ -378,7 +378,7 @@ namespace Helper
             {
                 //Compare the data
                 if (comparedata && queryresult != null)
-                    compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" });
+                    compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" });
 
                 //Compare Image Gallery
                 if (compareimagedata && queryresult != null)
