@@ -317,7 +317,7 @@ namespace Helper
                 .DistanceFilter(distance, distancemin, distancemax)
                 .DurationFilter(duration, durationmin, durationmax)
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)  //.PublishedOnFilter(publishedonlist)
                 //.When(tagdict != null && tagdict.ContainsKey("and") && tagdict["and"].Any(), q => q.TaggingFilter_AND(tagdict!["and"]))
                 //.When(tagdict != null && tagdict.ContainsKey("or") && tagdict["or"].Any(), q => q.TaggingFilter_OR(tagdict!["or"]))
                 .When(tagdict != null && tagdict.Count > 0, q => q.TaggingFilter_GeneratedColumn(tagdict)) 
@@ -362,7 +362,7 @@ namespace Helper
                 .ArticleDateNewsFilterBeginWithIN_GeneratedColumn(articledate, articledateto)
                 .ArticleDateNewsFilterEndWithIN_GeneratedColumn(articledate, articledateto)
                 .ArticleDateNewsFilterBeginEndWithIN_GeneratedColumn(articledate, articledateto)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .LastChangedFilter(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
@@ -413,7 +413,7 @@ namespace Helper
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
@@ -464,7 +464,7 @@ namespace Helper
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .SourceFilter_GeneratedColumn(sourcelist)
@@ -488,7 +488,7 @@ namespace Helper
             return query
                 .IdUpperFilter(idlist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .VisibleInSearchFilter(visibleinsearch)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
@@ -544,7 +544,7 @@ namespace Helper
                 .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
@@ -604,7 +604,7 @@ namespace Helper
                 .AreaFilterMeasuringpoints(arealist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
                 .LastChangedFilter_GeneratedColumn(lastchange)             //.LastChangedFilter(lastchange)
                 .SourceFilter_GeneratedColumn(sourcelist)
@@ -648,7 +648,7 @@ namespace Helper
                 .EventShortDateFilterEndByRoom(start, end, getbyrooms)
                 .EventShortDateFilterBeginByRoom(start, end, getbyrooms)
                 .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .SearchFilter(EventShortTitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
@@ -700,7 +700,7 @@ namespace Helper
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.VenueHasLanguageFilter(languagelist)
                 //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
-                .PublishedOnFilter(publishedonlist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedDataVenues());
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());

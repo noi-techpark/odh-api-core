@@ -317,8 +317,8 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 //Set Tags based on OdhTags
                 await GenericTaggingHelper.AddMappingToODHActivityPoi(suedtirolweinpoi, settings.JsonConfig.Jsondir);
 
-                //Set Publishedon List
-                suedtirolweinpoi.PublishedOn = PublishedOnHelper.GetPublishenOnList("odhactivitypoi", suedtirolweinpoi.OdhActive);
+                //Set Publishedon List manually TODO automatism
+                suedtirolweinpoi.CreatePublishenOnList<ODHActivityPoiLinked>(new List<AllowedTags>() { new AllowedTags() { Id = "weinkellereien", AutoPublishOn = new List<string>() { "idm-marketplace" } } });
 
                 var result = await InsertDataToDB(suedtirolweinpoi, new KeyValuePair<string, XElement>(dataid, winedata));
                 newcounter = newcounter + result.created ?? 0;

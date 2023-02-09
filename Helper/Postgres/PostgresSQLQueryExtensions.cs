@@ -926,11 +926,11 @@ namespace Helper
 
         //}
 
-        public static Query PublishedOnFilter(this Query query, IReadOnlyCollection<string> publishedonlist) =>
-           query.WhereInJsonb(
-               publishedonlist,
-               publishedon => new { PublishedOn = new[] { publishedon.ToLower() } }
-           );
+        //public static Query PublishedOnFilter(this Query query, IReadOnlyCollection<string> publishedonlist) =>
+        //   query.WhereInJsonb(
+        //       publishedonlist,
+        //       publishedon => new { PublishedOn = new[] { publishedon.ToLower() } }
+        //   );
 
 
         //Standard JSON Filter
@@ -1023,7 +1023,6 @@ namespace Helper
                }
                return q;
            });
-
 
         #endregion
 
@@ -1308,6 +1307,20 @@ namespace Helper
                 }
                 return q;
             });
+
+        //PublishedOn Filter (SyncSourceInterface)
+        public static Query PublishedOnFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> publishedonlist) =>
+            query.Where(q =>
+            {
+                foreach (var item in publishedonlist)
+                {
+                    q = q.OrWhereRaw(
+                        "gen_publishedon @> array\\[$$\\]", item.ToLower()
+                    );
+                }
+                return q;
+            });
+
 
 
         //Source Filter for Alpinebits

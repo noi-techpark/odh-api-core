@@ -8,36 +8,34 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
-    public class PublishedOnHelper
+    public static class PublishedOnHelper
     {
-        public static List<string> GetPublishenOnList(string type, bool smgactive)
+        //Deprecated
+        //public static List<string> GetPublishenOnList(string type, bool smgactive)
+        //{
+        //    List<string> publishedonlist = new List<string>();
+
+        //    if (type == "eventshort")
+        //    {
+        //        if (smgactive)
+        //            publishedonlist.Add("https://noi.bz.it");
+        //    }
+        //    else if (type != "package")
+        //    {
+        //        if (smgactive)
+        //            publishedonlist.Add("https://www.suedtirol.info");
+        //    }
+
+        //    //TODO ADD some ifs Create better logic
+
+        //    //TODO ADD PublishedOn Marketplace Logic
+
+        //    return publishedonlist;
+        //}
+    
+        public static void CreatePublishenOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null, Tuple<string,bool>? activatesourceonly = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
         {
-            List<string> publishedonlist = new List<string>();
-
-            if (type == "eventshort")
-            {
-                if (smgactive)
-                    publishedonlist.Add("https://noi.bz.it");
-            }
-            else if (type != "package")
-            {
-                if (smgactive)
-                    publishedonlist.Add("https://www.suedtirol.info");
-            }
-
-            //TODO ADD some ifs Create better logic
-
-            //TODO ADD PublishedOn Marketplace Logic
-
-            return publishedonlist;
-        }
-    }
-
-    public static class PublishOnHelperV2
-    {
-        public static void CreatePublishenOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
-        {
-            //alowedsources
+            //alowedsources  Dictionary<odhtype, sourcelist> TODO Export in Config
             Dictionary<string, List<string>> allowedsources = new Dictionary<string, List<string>>()
             {
                 { "event", new List<string>(){ "lts" } },
@@ -45,7 +43,13 @@ namespace Helper
                 { "odhactivitypoi", new List<string>(){ "lts","suedtirolwein", "archapp" } }
             };
 
-            //Articles
+            //Blacklist for exceptions Dictionary<string, Tuple<string,string> TODO Export in Config
+            Dictionary<string, Tuple<string, string>> blacklistsourcesandtags = new Dictionary<string, Tuple<string, string>>()
+            {
+               { "odhactivitypoi", Tuple.Create("lts", "weinkellereien") }
+            };
+
+            //Whitelist on Types Deprecated? TODO Export in Config
             Dictionary<string, List<string>> allowedtypes = new Dictionary<string, List<string>>()
             {
                 { "article", new List<string>(){ "rezeptartikel" } }
@@ -62,6 +66,26 @@ namespace Helper
                         publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
+                    break;
+
+                //Accommodation Room publishedon
+                case "accommodationroom":
+                    
+                    //TO check add publishedon logic only for rooms with source hgv? for online bookable accommodations?
+
+                    if(activatesourceonly != null && activatesourceonly.Item2 == true)
+                    {
+                        if(activatesourceonly.Item1 == (mydata as AccommodationRoomLinked)._Meta.Source)
+                        {
+                            publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                        }
+                    }
+                    else
+                    {
+                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                    }
+
+                    publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
 
                     break;
                 //Event Add all Active Events from now
@@ -89,7 +113,13 @@ namespace Helper
                         //IF category is whitelisted
                         if (allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags).Count() > 0)
                         {
-                            publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                            var isonblacklist = false;
+
+                            if (blacklistsourcesandtags[mydata._Meta.Type] != null && blacklistsourcesandtags[mydata._Meta.Type].Item1 == mydata._Meta.Source && (mydata as ODHActivityPoiLinked).SmgTags.Contains(blacklistsourcesandtags[mydata._Meta.Type].Item2))
+                                isonblacklist = true;
+
+                            if (!isonblacklist)
+                                publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                         }
                     }
 
@@ -144,13 +174,6 @@ namespace Helper
                         publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
-                    break;
-
-                case "accommodationroom":
-
-                    publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
-                    publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
-
                     break;
 
                 case "region":

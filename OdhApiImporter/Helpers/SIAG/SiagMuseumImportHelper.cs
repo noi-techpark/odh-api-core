@@ -398,7 +398,7 @@ namespace OdhApiImporter.Helpers
                 await GenericTaggingHelper.AddMappingToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
 
                 //Set Publishedon
-                mymuseum.PublishedOn = PublishedOnHelper.GetPublishenOnList("odhactivitypoi", mymuseum.OdhActive);
+                mymuseum.CreatePublishenOnList<ODHActivityPoiLinked>();
 
                 if (mymuseumdata?.Root is { })
                 {

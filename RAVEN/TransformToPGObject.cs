@@ -36,7 +36,7 @@ namespace RAVEN
                 data.Source = "lts";
 
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(data, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
 
             return data;
         }
@@ -140,7 +140,7 @@ namespace RAVEN
             //}
 
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationRoomLinked>(data, MetadataHelper.GetMetadataforAccommodationRoom); //GetMetadata(data.Id, "accommodationroom", datasource, data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodationroom", true);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodationroom", true);
 
             return data;
         }
@@ -262,7 +262,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(data, MetadataHelper.GetMetadataforArticle); //GetMetadata(data.Id, "article", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("article", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("article", data.SmgActive);
 
             return data;
         }
@@ -279,7 +279,7 @@ namespace RAVEN
                 data.Source = "hgv";
 
             data._Meta = MetadataHelper.GetMetadataobject<PackageLinked>(data, MetadataHelper.GetMetadataforPackage); //GetMetadata(data.Id, "package", "hgv", data.LastUpdate);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("package", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("package", data.SmgActive);
 
             return data;
         }
@@ -294,7 +294,7 @@ namespace RAVEN
             data.Source = "lts";
 
             data._Meta = MetadataHelper.GetMetadataobject<EventLinked>(data, MetadataHelper.GetMetadataforEvent); //GetMetadata(data.Id, "event", "lts", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("event", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("event", data.SmgActive);
 
             return data;
         }
@@ -342,7 +342,7 @@ namespace RAVEN
             data._Meta = MetadataHelper.GetMetadataobject<WebcamInfoLinked>(data, MetadataHelper.GetMetadataforWebcam); //GetMetadata(data.Id, "webcam", sourcemeta, data.LastChange);
             var webcampublished = data.WebcamAssignedOn != null && data.WebcamAssignedOn.Count > 0 ? true : false;
 
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("webcam", webcampublished);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("webcam", webcampublished);
 
             return data;
         }
@@ -359,7 +359,7 @@ namespace RAVEN
             data._Meta = MetadataHelper.GetMetadataobject<MeasuringpointLinked>(data, MetadataHelper.GetMetadataforMeasuringpoint); //GetMetadata(data.Id, "measuringpoint", "lts", data.LastChange);
 
             
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("mesuringpoint", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("mesuringpoint", data.SmgActive);
 
             return data;
         }
@@ -393,7 +393,7 @@ namespace RAVEN
             data.links.self = ODHConstant.ApplicationURL + "Venue/" + data.Id;
 
             data._Meta = MetadataHelper.GetMetadataobject<DDVenue>(data, MetadataHelper.GetMetadataforDDVenue);
-            data.odhdata.PublishedOn = PublishedOnHelper.GetPublishenOnList("venue", data.odhdata.ODHActive);
+            //data.odhdata.PublishedOn = PublishedOnHelper.GetPublishenOnList("venue", data.odhdata.ODHActive);
 
             //fixes
             data.odhdata.Source = data.odhdata.Source.ToLower();
@@ -424,7 +424,6 @@ namespace RAVEN
             venueLinked.Mapping = destinationdata.Mapping;
             venueLinked.ODHActive = destinationdata.odhdata.ODHActive;
             //venueLinked.ODHTags = destinationdata.odhdata.ODHTags;
-            venueLinked.PublishedOn = destinationdata.odhdata.PublishedOn;
             venueLinked.RoomCount = destinationdata.odhdata.RoomCount;
             venueLinked.RoomDetails = destinationdata.odhdata.RoomDetails;
             venueLinked.Shortname = destinationdata.odhdata.Shortname;
@@ -433,6 +432,7 @@ namespace RAVEN
             venueLinked.SyncSourceInterface = destinationdata.odhdata.SyncSourceInterface;
             venueLinked.VenueCategory = destinationdata.odhdata.VenueCategory;
             venueLinked._Meta = destinationdata._Meta;
+            venueLinked.PublishedOn = destinationdata.odhdata.PublishedOn;
 
             return venueLinked;
         }
@@ -447,7 +447,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<MetaRegionLinked>(data, MetadataHelper.GetMetadataforMetaRegion); //GetMetadata(data.Id, "metaregion", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("metaregion", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("metaregion", data.SmgActive);
 
             return data;
         }
@@ -462,7 +462,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<RegionLinked>(data, MetadataHelper.GetMetadataforRegion); //GetMetadata(data.Id, "region", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("region", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("region", data.SmgActive);
 
             return data;
         }
@@ -477,7 +477,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<TourismvereinLinked>(data, MetadataHelper.GetMetadataforTourismverein);  //GetMetadata(data.Id, "tourismassociation", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("tourismassociation", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("tourismassociation", data.SmgActive);
 
             return data;
         }
@@ -492,7 +492,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<MunicipalityLinked>(data, MetadataHelper.GetMetadataforMunicipality); //GetMetadata(data.Id, "municipality", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("municipality", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("municipality", data.SmgActive);
 
             return data;
         }
@@ -507,7 +507,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<DistrictLinked>(data, MetadataHelper.GetMetadataforDistrict); //GetMetadata(data.Id, "district", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("district", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("district", data.SmgActive);
 
             return data;
         }
@@ -522,7 +522,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<ExperienceAreaLinked>(data, MetadataHelper.GetMetadataforExperienceArea); //GetMetadata(data.Id, "experiencearea", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("experiencearea", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("experiencearea", data.SmgActive);
 
             return data;
         }
@@ -545,7 +545,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<SkiAreaLinked>(data, MetadataHelper.GetMetadataforSkiArea); //GetMetadata(data.Id, "skiarea", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiarea", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiarea", data.SmgActive);
 
             return data;
         }
@@ -561,7 +561,7 @@ namespace RAVEN
                 data.Source = "idm";
 
             data._Meta = MetadataHelper.GetMetadataobject<SkiRegionLinked>(data, MetadataHelper.GetMetadataforSkiRegion); //GetMetadata(data.Id, "skiregion", "idm", data.LastChange);
-            data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiregion", data.SmgActive);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiregion", data.SmgActive);
 
             return data;
         }
@@ -605,11 +605,6 @@ namespace RAVEN
             data._Meta = MetadataHelper.GetMetadataobject<ODHTagLinked>(data, MetadataHelper.GetMetadataforOdhTag);  //GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
 
             return data;
-        }
-
-        //public static Metadata GetMetadata(string id, string type, string source, Nullable<DateTime> lastupdated = null)
-        //{
-        //    return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source };
-        //}
+        }        
     }
 }
