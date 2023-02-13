@@ -24,6 +24,9 @@ namespace DataModel
         public int? objectchanged { get; init; }
         public int? objectimagechanged { get; init; }
 
+        //Push Infos
+        public ICollection<string>? pushchannels { get; init; }
+
         public IDictionary<string,string>? pushed { get; init; }
 
         public int? error { get; init; }
@@ -48,12 +51,14 @@ namespace DataModel
         public int? error { get; init; }
 
         //Comparision
-        public bool? compareobject { get; init; }
+        public int? comparedobjects { get; init; }
         public int? objectchanged { get; init; }
         public int? objectimagechanged { get; init; }
 
-        //Push Info
-        public IDictionary<string,string> pushed { get; set; }
+        //Push Infos
+        public ICollection<string>? pushchannels { get; init; }
+
+        public IDictionary<string,string>? pushed { get; set; }
     }
 
     public struct PGCRUDResult
@@ -69,6 +74,8 @@ namespace DataModel
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
         public int? objectimageschanged { get; init; }
+
+        public ICollection<string>? pushchannels { get; init; }
     }
 
     public struct JsonGenerationResult
@@ -88,23 +95,32 @@ namespace DataModel
             int? created = 0;
             int? deleted = 0;
             int? error = 0;
-            bool? compareobject = false;
+            int? objectscompared = 0;
             int? objectchanged = 0;
             int? objectimagechanged = 0;
+            List<string>? channelstopush = new List<string>();
 
             IDictionary<string,string> pushed = new Dictionary<string,string>();
-
-            if(updatedetails.Any(x => x.compareobject != null && x.compareobject == true))
-                compareobject = true;
-
+         
             foreach (var updatedetail in updatedetails)
             {
+               objectscompared = updatedetail.comparedobjects + objectscompared;
+
                 created = updatedetail.created + created;
                 updated = updatedetail.updated + updated;
                 deleted = updatedetail.deleted + deleted;
                 error = updatedetail.error + error;
                 objectchanged = updatedetail.objectchanged + objectchanged;
                 objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
+
+                if(updatedetail.pushchannels != null)
+                {
+                    foreach(var pushchannel in updatedetail.pushchannels)
+                    {
+                        if(!channelstopush.Contains(pushchannel))
+                            channelstopush.Add(pushchannel);
+                    }
+                }
 
                 if (updatedetail.pushed != null)
                 {
@@ -113,7 +129,7 @@ namespace DataModel
                 }
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, compareobject = compareobject, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushed = pushed };
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, comparedobjects = objectscompared, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushchannels = channelstopush, pushed = pushed };
         }
 
         public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
@@ -130,9 +146,10 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
-                objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
+                objectcompared = detail.comparedobjects,
                 objectchanged = detail.objectchanged ,                
                 objectimagechanged = detail.objectimagechanged,
+                pushchannels = detail.pushchannels,               
                 pushed = detail.pushed,
                 error = detail.error,
                 success = true,
@@ -160,9 +177,10 @@ namespace DataModel
                 created = detail.created,
                 updated = detail.updated,
                 deleted = detail.deleted,
-                objectcompared = detail.compareobject == null ? 0 : detail.compareobject.Value ? 1 : 0,
+                objectcompared = detail.comparedobjects,
                 objectchanged = detail.objectchanged,
                 objectimagechanged = detail.objectimagechanged,
+                pushchannels = detail.pushchannels,
                 pushed = detail.pushed,
                 error = detail.error,
                 success = false,
@@ -175,7 +193,6 @@ namespace DataModel
 
             return result;
         }
-
 
         public static JsonGenerationResult GetSuccessJsonGenerateResult(string operation, string type, string message, bool createlog)
         {

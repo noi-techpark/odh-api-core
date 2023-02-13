@@ -191,6 +191,8 @@ namespace OdhNotifier
             }
             catch (TaskCanceledException ex)
             {
+                await WriteToFailureQueue(notify, ex.Message);
+
                 var response = new HttpResponseMessage(HttpStatusCode.RequestTimeout);
                 return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
             }
@@ -223,16 +225,16 @@ namespace OdhNotifier
             Console.WriteLine(JsonSerializer.Serialize(log));
         }
 
-        private async Task WriteToFailureQueue(string id, string type, string url, string service, string exmessage)
+        private async Task WriteToFailureQueue(NotifyMeta notify, string exmessage)
         {
             NotifierFailureQueue myfailure = new NotifierFailureQueue();
             myfailure.Id = Guid.NewGuid().ToString();
-            myfailure.ItemId = id;
-            myfailure.Type = type;
+            myfailure.ItemId = notify.Id;
+            myfailure.Type = notify.Type;
             myfailure.Exception = exmessage;
             myfailure.LastChange = DateTime.Now;
-            myfailure.Service = service;
-            myfailure.PushUrl = url;
+            myfailure.Service = notify.Destination;
+            myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
             myfailure.RetryCount = 1;
 
@@ -320,7 +322,7 @@ namespace OdhNotifier
 
             switch (notifyconfig.ServiceName.ToLower())
             {
-                case "marketplace":
+                case "idm-marketplace":
 
                     //From Config
                     this.Url = notifyconfig.Url;
@@ -330,7 +332,7 @@ namespace OdhNotifier
                     };
 
                     //Prefilled
-                    this.Destination = "marketplace";
+                    this.Destination = "idm-marketplace";
                     this.Mode = "post";
 
                     this.ValidTypes = new List<string>()

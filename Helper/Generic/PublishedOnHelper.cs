@@ -258,6 +258,10 @@ namespace Helper
                     }
                     break;
 
+                case "odhtag":
+                    publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                    break;
+
                 //obsolete do nothing
 
                 case "ltsactivity":
