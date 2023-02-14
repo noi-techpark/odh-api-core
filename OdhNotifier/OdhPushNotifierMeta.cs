@@ -17,8 +17,8 @@ namespace OdhNotifier
 {
     public interface IOdhPushNotifier
     {
-        Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, string origin, string? referer = null, List<string>? excludeservices = null);
-        Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, string origin, List<string> publishedonlist, string? referer = null);
+        Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null);
+        Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, List<string> publishedonlist, string? referer = null);
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -46,7 +46,7 @@ namespace OdhNotifier
         /// <param name="referer"></param>
         /// <param name="excludeservices"></param>
         /// <returns></returns>
-        public async Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, string origin, string? referer = null, List<string>? excludeservices = null)
+        public async Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null)
         {
             IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
 
@@ -55,7 +55,7 @@ namespace OdhNotifier
                 if (excludeservices != null && excludeservices.Contains(notifyconfig.ServiceName.ToLower()))
                     continue;
 
-                NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, updatemode, origin, referer);
+                NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, isdelete, updatemode, origin, referer);
 
                 NotifierResponse notifierresponse = new NotifierResponse();
 
@@ -80,18 +80,17 @@ namespace OdhNotifier
         /// <param name="referer"></param>
         /// <param name="excludeservices"></param>
         /// <returns></returns>
-        public async Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, string origin, List<string> publishedonlist, string? referer = null)
+        public async Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, List<string> publishedonlist, string? referer = null)
         {
             IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
 
             foreach (var notifyconfig in notifierconfiglist)
-            {
-                //if 
+            {                
                 if(publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
                 {
                     //Compare and push?
 
-                    NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, updatemode, origin, referer);
+                    NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, imagechanged, isdelete, updatemode, origin, referer);
 
                     NotifierResponse notifierresponse = new NotifierResponse();
 
@@ -163,7 +162,9 @@ namespace OdhNotifier
                             var data = new StringContent(JsonSerializer.Serialize(new
                             {
                                 id = notify.Id,
-                                entity = notify.Type
+                                entity = notify.Type,
+                                skipImage = notify.HasImagechanged ? false : true,
+                                isHardDelete = notify.IsDelete
                             }));
 
                             data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -310,7 +311,7 @@ namespace OdhNotifier
 
     public class NotifyMetaGenerated : NotifyMeta
     {
-        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, bool hasimagechanged, string updatemode, string origin, string? referer = null)
+        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, bool hasimagechanged, bool isdelete, string updatemode, string origin, string? referer = null)
         {
             //Set by parameters
             this.Id = id;
@@ -319,6 +320,7 @@ namespace OdhNotifier
             this.Origin = origin;
             this.Referer = referer;
             this.HasImagechanged = hasimagechanged;
+            this.IsDelete = isdelete;
 
             switch (notifyconfig.ServiceName.ToLower())
             {
