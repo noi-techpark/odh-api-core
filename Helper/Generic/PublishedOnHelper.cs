@@ -259,7 +259,9 @@ namespace Helper
                     break;
 
                 case "odhtag":
-                    publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                    var odhtag = (mydata as ODHTagLinked);
+                    if (odhtag != null && odhtag.DisplayAsCategory != null && odhtag.DisplayAsCategory.Value == true)
+                        publishedonlist.TryAddOrUpdateOnList("idm-marketplace");                    
                     break;
 
                 //obsolete do nothing
