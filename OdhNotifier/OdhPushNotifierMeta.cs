@@ -346,7 +346,8 @@ namespace OdhNotifier
                             "TOURISM_ASSOCIATION",
                             "ODH_ACTIVITY_POI",
                             "EVENT",
-                            "ODH_TAG"
+                            "ODH_TAG",
+                            "SKI_AREA"
                         };
 
                     //Translate Type
