@@ -277,6 +277,7 @@ namespace Helper
         public string Type { get; set; }
         public string Mode { get; set; }
         public bool HasImagechanged { get; set; }
+        public bool IsDelete { get; set; }
         public string Destination { get; set; }
         public string UdateMode { get; set; }
         public string Origin { get; set; }

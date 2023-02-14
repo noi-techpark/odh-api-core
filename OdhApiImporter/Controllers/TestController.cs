@@ -47,7 +47,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("TestNotify")]
         public async Task<IActionResult> TestNotify()
         {            
-            var responses = await OdhPushnotifier.PushToAllRegisteredServices("2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", false, "api");
+            var responses = await OdhPushnotifier.PushToAllRegisteredServices("2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", false, false, "api");
 
             return Ok();
         }

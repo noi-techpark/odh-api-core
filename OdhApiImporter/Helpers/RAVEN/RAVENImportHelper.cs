@@ -82,7 +82,7 @@ namespace OdhApiImporter.Helpers
 
                             var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms", true, true);
 
-                            //TO DO, delete all delted rooms
+                            //TO DO, delete all deleted rooms?
 
 
                             //Merge with updateresult
@@ -572,7 +572,7 @@ namespace OdhApiImporter.Helpers
                 if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
                     hasimagechanged = true;
 
-                var pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), "lts.push", hasimagechanged, "api", myupdateresult.pushchannels.ToList());
+                var pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), "lts.push", hasimagechanged, false, "api", myupdateresult.pushchannels.ToList());
 
                 if (pushresults != null)
                 {
