@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using Newtonsoft.Json.Linq;
 using OdhNotifier;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -11,7 +12,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 
 namespace OdhNotifier
 {
@@ -96,7 +96,7 @@ namespace OdhNotifier
 
                     var response = await SendNotify(meta);
                     notifierresponse.HttpStatusCode = response.Item1;
-                    notifierresponse.Response = response.Item2;
+                    notifierresponse.Response = response.Item2 ;
                     notifierresponse.Service = notifyconfig.ServiceName;
 
                     notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
@@ -106,7 +106,7 @@ namespace OdhNotifier
             return notifierresponselist;
         }
 
-        private async Task<Tuple<HttpStatusCode, JsonRaw>> SendNotify(NotifyMeta notify)
+        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify)
         {
             var requesturl = notify.Url;
             bool imageupdate = true;
@@ -175,7 +175,7 @@ namespace OdhNotifier
                         }
 
 
-                        if (response != null && response.StatusCode == HttpStatusCode.OK)
+                        if (response != null && (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created))
                         {
                             return await ReturnHttpResponse(response, notify, imageupdate, "");
                         }
@@ -208,27 +208,50 @@ namespace OdhNotifier
             }
         }
 
-        private async Task<Tuple<HttpStatusCode, JsonRaw>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
+        private async Task<Tuple<HttpStatusCode, object?>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
         {
-            var responsestring = await response.Content.ReadAsStringAsync();
+            var responsecontent = await ReadResponse(response, notify.Destination);
 
             if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);                                
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, responsecontent, null);                                
             }
             else
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, error);                
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, responsecontent, error);                
             }
 
+            //var responseobj = JObject.Parse(responsestring);
 
-            return Tuple.Create(response.StatusCode, new JsonRaw(responsestring));
+            return Tuple.Create(response.StatusCode, responsecontent);
         }
 
-        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? exception)
+        private async Task<object?> ReadResponse(HttpResponseMessage response, string service)
         {
-            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode };
+            try
+            {
+                //TODO Switch between response service types
+
+               return await response.Content.ReadFromJsonAsync<IdmMarketPlacePushResponse>();
+            }
+            catch
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+
+        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, object? response, string? exception)
+        {
+            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode, response = JsonSerializer.Serialize(response), exception = exception };
             
+            Console.WriteLine(JsonSerializer.Serialize(log));
+        }
+
+        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? response, string? exception)
+        {
+            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode, response = response, exception = exception };
+
             Console.WriteLine(JsonSerializer.Serialize(log));
         }
 

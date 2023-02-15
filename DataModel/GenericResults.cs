@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -241,6 +242,10 @@ namespace DataModel
         public string destination { get; set; }
         public bool? imageupdate { get; set; }
         public string updatemode { get; set; }
+
+        public string? response { get; set; }
+
+        public string? exception { get; set; }
     }
 
     public class NotifierFailureQueue
@@ -258,9 +263,14 @@ namespace DataModel
 
     public class NotifierResponse
     {
-        public JsonRaw Response { get; set; }
+        public object? Response { get; set; }
         public HttpStatusCode HttpStatusCode { get; set; }
         public string Service { get; set; }
+    }
+
+    public class IdmMarketPlacePushResponse
+    {
+        public string notificationId { get; set; }
     }
 
     #endregion
