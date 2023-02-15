@@ -35,6 +35,9 @@ services:
       ASPNETCORE_RavenConfig__MessagePassword: ${RAVEN_SERVICEURL}   
       ASPNETCORE_DSSConfig__Username: ${DSS_USER}
       ASPNETCORE_DSSConfig__Password: ${DSS_PSWD}
-      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}   
+      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}
+      ASPNETCORE_NotifierConfig__idm-marketplace__Url: ${MARKETPLACE_PUSH_URL}
+      ASPNETCORE_NotifierConfig__idm-marketplace__User: ${MARKETPLACE_PUSH_USER}
+      ASPNETCORE_NotifierConfig__idm-marketplace__Password: ${MARKETPLACE_PUSH_PSWD}
     ports:
       - "60210:80"
