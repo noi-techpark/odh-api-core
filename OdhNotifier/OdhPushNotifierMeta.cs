@@ -167,7 +167,7 @@ namespace OdhNotifier
                                 isHardDelete = notify.IsDelete
                             }));
 
-                            imageupdate = notify.HasImagechanged ? false : true;
+                            imageupdate = notify.HasImagechanged ? true : false;
 
                             data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
