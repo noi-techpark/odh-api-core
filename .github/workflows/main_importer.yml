@@ -173,6 +173,9 @@ jobs:
           X_DSS_USER: ${{ secrets.DSS_USER_TEST }}
           X_DSS_PSWD: ${{ secrets.DSS_PSWD_TEST }}
           X_API_URL: ${{ env.API_URL }}
+          X_MARKETPLACE_PUSH_URL: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_URL }}
+          X_MARKETPLACE_PUSH_USER: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_USERNAME }}
+          X_MARKETPLACE_PUSH_PSWD: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_PASSWORD }}
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
