@@ -152,7 +152,7 @@ namespace Helper
                     break;
 
                 case "venue":
-                    if ((mydata as VenueLinked).ODHActive == true)
+                    if ((mydata as VenueLinked).Active == true)
                     {
                         publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");

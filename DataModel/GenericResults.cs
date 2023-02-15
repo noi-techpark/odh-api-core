@@ -246,6 +246,8 @@ namespace DataModel
         public string? response { get; set; }
 
         public string? exception { get; set; }
+
+        public bool? success { get; set; }
     }
 
     public class NotifierFailureQueue
