@@ -214,11 +214,11 @@ namespace OdhNotifier
 
             if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, responsecontent, null);                                
+                GenerateLog(notify.Id, notify.Destination, notify.Type.ToLower() + ".push.trigger", "api", notify.UdateMode, imageupdate, responsecontent, null, true);                                
             }
             else
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, responsecontent, error);                
+                GenerateLog(notify.Id, notify.Destination, notify.Type.ToLower() + ".push.error", "api", notify.UdateMode, imageupdate, responsecontent, error, false);                
             }
 
             //var responseobj = JObject.Parse(responsestring);
@@ -241,16 +241,16 @@ namespace OdhNotifier
         }
 
 
-        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, object? response, string? exception)
+        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, object? response, string? exception, bool success)
         {
-            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode, response = JsonSerializer.Serialize(response), exception = exception };
+            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode, response = JsonSerializer.Serialize(response), exception = exception, success = success };
             
             Console.WriteLine(JsonSerializer.Serialize(log));
         }
 
-        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? response, string? exception)
+        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? response, string? exception, bool success)
         {
-            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode, response = response, exception = exception };
+            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode, response = response, exception = exception, success = success };
 
             Console.WriteLine(JsonSerializer.Serialize(log));
         }
