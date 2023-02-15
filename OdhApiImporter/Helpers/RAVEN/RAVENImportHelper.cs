@@ -561,9 +561,9 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, pushchannels = result.pushchannels };
         }
 
-        private async Task<IDictionary<string, string>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype)
+        private async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype)
         {
-            IDictionary<string,string>? result = default(IDictionary<string,string>);
+            IDictionary<string,NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
 
             //Check if data has changed and Push To all channels
             if (myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0 && myupdateresult.pushchannels != null && myupdateresult.pushchannels.Count > 0)
@@ -573,20 +573,10 @@ namespace OdhApiImporter.Helpers
                 if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
                     hasimagechanged = true;
 
-                var pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), "lts.push", hasimagechanged, false, "api", myupdateresult.pushchannels.ToList());
-
-                if (pushresults != null)
-                {
-                    result = new Dictionary<string, string>();
-
-                    foreach (var pushresult in pushresults)
-                    {
-                        result.TryAddOrUpdate(pushresult.Key, pushresult.Value.HttpStatusCode + ":" + pushresult.Value.Response);
-                    }
-                }
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), "lts.push", hasimagechanged, false, "api", myupdateresult.pushchannels.ToList());
             }
 
-            return result;
+            return pushresults;
         }
 
         #endregion

@@ -207,7 +207,13 @@ namespace Helper
         [Description("Südtirol Privat")]
         SuedtirolPrivat = 1 << 6,
         [Description("Vinumhotel")]
-        Vinumhotel = 1 << 7
+        Vinumhotel = 1 << 7,
+        [Description("SustainabilityLevel1")]
+        SustainabilityLevel1 = 1 << 8,
+        [Description("SustainabilityLevel2")]
+        SustainabilityLevel2 = 1 << 9,
+        [Description("SustainabilityLevel3")]
+        SustainabilityLevel3 = 1 << 10
     }
 
     //Themes für Packages
