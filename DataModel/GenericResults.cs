@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,7 +29,7 @@ namespace DataModel
         //Push Infos
         public ICollection<string>? pushchannels { get; init; }
 
-        public IDictionary<string,string>? pushed { get; init; }
+        public IDictionary<string, NotifierResponse>? pushed { get; init; }
 
         public int? error { get; init; }
 
@@ -58,7 +60,7 @@ namespace DataModel
         //Push Infos
         public ICollection<string>? pushchannels { get; init; }
 
-        public IDictionary<string,string>? pushed { get; set; }
+        public IDictionary<string, NotifierResponse>? pushed { get; set; }
     }
 
     public struct PGCRUDResult
@@ -100,7 +102,7 @@ namespace DataModel
             int? objectimagechanged = 0;
             List<string>? channelstopush = new List<string>();
 
-            IDictionary<string,string> pushed = new Dictionary<string,string>();
+            IDictionary<string, NotifierResponse> pushed = new Dictionary<string, NotifierResponse>();
          
             foreach (var updatedetail in updatedetails)
             {
@@ -229,4 +231,47 @@ namespace DataModel
         }
 
     }
+
+    #region Pushnotifications
+
+    public class NotifyLog
+    {
+        public string message { get; set; }
+        public string id { get; set; }
+        public string origin { get; set; }
+        public string destination { get; set; }
+        public bool? imageupdate { get; set; }
+        public string updatemode { get; set; }
+
+        public string? response { get; set; }
+
+        public string? exception { get; set; }
+    }
+
+    public class NotifierFailureQueue
+    {
+        public string Id { get; set; }
+        public string ItemId { get; set; }
+        public string Type { get; set; }
+        public string Exception { get; set; }
+        public string Status { get; set; }
+        public string PushUrl { get; set; }
+        public string Service { get; set; }
+        public DateTime LastChange { get; set; }
+        public Nullable<int> RetryCount { get; set; }
+    }
+
+    public class NotifierResponse
+    {
+        public object? Response { get; set; }
+        public HttpStatusCode HttpStatusCode { get; set; }
+        public string Service { get; set; }
+    }
+
+    public class IdmMarketPlacePushResponse
+    {
+        public string notificationId { get; set; }
+    }
+
+    #endregion
 }

@@ -753,7 +753,24 @@ namespace CDB.Parser
                 if (isinwinelist != null)
                 {
                     myacco.BadgeIds.Add("Vinumhotel");
-                }                
+                }
+
+                //Badge 9,10,11 Nachhaltigkeitslabel Südtirol Level 1 (B79228E62B5A4D14B2BF35E7B79B8580 ) + 2 (B5757D0688674594955606382A5E126C)  + 3 (31F741E8D6D8444A9BB571A2DF193F69 )
+                var badge9 = myacco.MarketingGroupIds.Where(x => x == "B79228E62B5A4D14B2BF35E7B79B8580").Count();
+                if (badge9 > 0)
+                {
+                    myacco.BadgeIds.Add("SustainabilityLevel1");
+                }
+                var badge10 = myacco.MarketingGroupIds.Where(x => x == "B5757D0688674594955606382A5E126C").Count();
+                if (badge10 > 0)
+                {
+                    myacco.BadgeIds.Add("SustainabilityLevel2");
+                }
+                var badge11 = myacco.MarketingGroupIds.Where(x => x == "31F741E8D6D8444A9BB571A2DF193F69").Count();
+                if (badge11 > 0)
+                {
+                    myacco.BadgeIds.Add("SustainabilityLevel3");
+                }
             }
         }
 

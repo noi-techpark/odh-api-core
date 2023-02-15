@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using Newtonsoft.Json.Linq;
 using OdhNotifier;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -11,7 +12,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 
 namespace OdhNotifier
 {
@@ -96,7 +96,7 @@ namespace OdhNotifier
 
                     var response = await SendNotify(meta);
                     notifierresponse.HttpStatusCode = response.Item1;
-                    notifierresponse.Response = response.Item2;
+                    notifierresponse.Response = response.Item2 ;
                     notifierresponse.Service = notifyconfig.ServiceName;
 
                     notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
@@ -106,7 +106,7 @@ namespace OdhNotifier
             return notifierresponselist;
         }
 
-        private async Task<Tuple<HttpStatusCode, string>> SendNotify(NotifyMeta notify)
+        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify)
         {
             var requesturl = notify.Url;
             bool imageupdate = true;
@@ -167,13 +167,15 @@ namespace OdhNotifier
                                 isHardDelete = notify.IsDelete
                             }));
 
+                            imageupdate = notify.HasImagechanged ? false : true;
+
                             data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                             response = await client.PostAsync(requesturl, data);
                         }
 
 
-                        if (response != null && response.StatusCode == HttpStatusCode.OK)
+                        if (response != null && (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created))
                         {
                             return await ReturnHttpResponse(response, notify, imageupdate, "");
                         }
@@ -199,30 +201,57 @@ namespace OdhNotifier
             }
             catch (Exception ex)
             {
+                await WriteToFailureQueue(notify, ex.Message);
+
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                 return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
             }
         }
 
-        private async Task<Tuple<HttpStatusCode, string>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
+        private async Task<Tuple<HttpStatusCode, object?>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, string error)
         {
-            var responsestring = await response.Content.ReadAsStringAsync();
+            var responsecontent = await ReadResponse(response, notify.Destination);
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, null);                                
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.trigger", "api", notify.UdateMode, imageupdate, responsecontent, null);                                
             }
             else
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, error);                
+                GenerateLog(notify.Id, notify.Destination, notify.Type + ".push.error", "api", notify.UdateMode, imageupdate, responsecontent, error);                
             }
 
-            return Tuple.Create(response.StatusCode, responsestring);
+            //var responseobj = JObject.Parse(responsestring);
+
+            return Tuple.Create(response.StatusCode, responsecontent);
         }
 
-        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? exception)
+        private async Task<object?> ReadResponse(HttpResponseMessage response, string service)
         {
-            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode };
+            try
+            {
+                //TODO Switch between response service types
+
+               return await response.Content.ReadFromJsonAsync<IdmMarketPlacePushResponse>();
+            }
+            catch
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+
+        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, object? response, string? exception)
+        {
+            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode, response = JsonSerializer.Serialize(response), exception = exception };
+            
+            Console.WriteLine(JsonSerializer.Serialize(log));
+        }
+
+        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, string? response, string? exception)
+        {
+            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, updatemode = updatemode, response = response, exception = exception };
+
             Console.WriteLine(JsonSerializer.Serialize(log));
         }
 
@@ -261,53 +290,6 @@ namespace OdhNotifier
             GC.SuppressFinalize(this);
         }
     }
-
-
-    public class NotifyLog
-    {
-        public string message { get; set; }
-        public string id { get; set; }
-        public string origin { get; set; }
-        public string destination { get; set; }
-        public bool? imageupdate { get; set; }
-        public string updatemode { get; set; }
-    }
-
-    public class NotifierFailureQueue
-    {
-        public string Id { get; set; }
-        public string ItemId { get; set; }
-        public string Type { get; set; }
-        public string Exception { get; set; }
-        public string Status { get; set; }
-        public string PushUrl { get; set; }
-        public string Service { get; set; }
-        public DateTime LastChange { get; set; }
-        public Nullable<int> RetryCount { get; set; }        
-    }
-
-    public class NotifierResponse
-    {
-        public string Response { get; set; }
-        public HttpStatusCode HttpStatusCode { get; set; }
-        public string Service { get; set; }
-    }
-
-    //public class PushToAll
-    //{
-    //    public static async Task PushToAllRegisteredServices(List<NotifierConfig> notifierconfiglist, string id, string type, string updatemode, string origin, string referer, List<string> excludeservices)
-    //    {
-    //        foreach (var notifyconfig in notifierconfiglist)
-    //        {
-    //            if (excludeservices != null && excludeservices.Contains(notifyconfig.ServiceName))
-    //                continue;
-
-    //            NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, updatemode, origin, referer);
-
-    //            await OdhPushNotifier.SendNotify(meta);
-    //        }
-    //    }
-    //}
 
     public class NotifyMetaGenerated : NotifyMeta
     {
