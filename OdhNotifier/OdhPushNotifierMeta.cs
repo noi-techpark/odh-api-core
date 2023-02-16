@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Newtonsoft.Json.Linq;
 using OdhNotifier;
 using SqlKata.Execution;
@@ -181,11 +182,11 @@ namespace OdhNotifier
                         }
                         else if (response != null)
                         {
-                            return await ReturnHttpResponse(response, notify, imageupdate, response.ReasonPhrase);
+                            throw new Exception(response.ReasonPhrase);
                         }
                         else
                         {
-                            return await ReturnHttpResponse(response, notify, imageupdate, "no response");
+                            throw new Exception("response null");
                         }
                     }
                 }

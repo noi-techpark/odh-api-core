@@ -81,8 +81,17 @@ namespace Helper.Generic
 
         public static bool CompareImageGallery(ICollection<ImageGallery> compareclass1, ICollection<ImageGallery> compareclass2, List<string> propertiestonotcheck)
         {
+            //If both ImageGalleries are null return equal
             if (compareclass1 == null && compareclass2 == null)
                 return true;
+
+            //If only one ImageGallery is null return not equal
+            if (compareclass1 == null && compareclass2 != null)
+                return false;
+
+            //If only one ImageGallery is null return not equal
+            if (compareclass1 != null && compareclass2 == null)
+                return false;
 
             //CopyClassHelper.CopyPropertyValues(class1, compareclass1);
             //CopyClassHelper.CopyPropertyValues(class2, compareclass2);
