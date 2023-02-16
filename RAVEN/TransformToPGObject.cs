@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Helper;
+using Helper.Extensions;
 
 namespace RAVEN
 {
@@ -601,6 +602,26 @@ namespace RAVEN
 
             if (data.MainEntity == "smgpoi" && !data.ValidForEntity.Contains("odhactivitypoi"))
                 validforentitynew.Add("odhactivitypoi");
+
+            //Lowercase Mappings
+            if (data.MappedTagIds != null && data.MappedTagIds.Count > 0)
+            {
+                data.MappedTagIds = data.MappedTagIds.ConverListToLowerCase().ToList();
+            }
+
+            //Lowercase MappedTagIds
+            if (data.Mapping != null && data.Mapping.Count > 0)
+            {
+                IDictionary<string, IDictionary<string, string>> mappingdict = new Dictionary<string, IDictionary<string, string>>();
+
+                foreach (var dictkvp in data.Mapping)
+                {
+                    mappingdict.Add(dictkvp.Key, dictkvp.Value.ConvertToLowercase(false, true));
+                }
+
+                data.Mapping = mappingdict;
+            }
+
 
             data._Meta = MetadataHelper.GetMetadataobject<ODHTagLinked>(data, MetadataHelper.GetMetadataforOdhTag);  //GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
 

@@ -49,5 +49,13 @@ namespace Helper.Extensions
             else
                 return new List<string>();
         }
+
+        public static ICollection<string>? ConverListToLowerCase(this ICollection<string>? smgtags)
+        {
+            if (smgtags != null && smgtags.Count > 0)
+                return smgtags.Select(d => d.ToLower()).ToList();
+            else
+                return smgtags;
+        }
     }
 }
