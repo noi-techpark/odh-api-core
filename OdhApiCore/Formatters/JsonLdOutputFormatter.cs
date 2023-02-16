@@ -52,39 +52,38 @@ namespace OdhApiCore.Formatters
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(@event, currentroute, "event", language);
             }
             else if (path.StartsWithSegments("/v1/ODHActivityPoi"))
-            {
+            {                
                 var poi = JsonConvert.DeserializeObject<ODHActivityPoi>(jsonRaw.Value, settings);
-                //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
-                return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(poi, currentroute, "poi", language);
+
+                //check if it is Gastronomy
+                if(poi != null && poi.SmgTags!= null && poi.SmgTags.Contains("gastronomy"))                   
+                    return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(poi, currentroute, "gastronomy", language);
+                else
+                    return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(poi, currentroute, "poi", language);
             }
             else if (path.StartsWithSegments("/v1/Region"))
             {
-                var region = JsonConvert.DeserializeObject<Region>(jsonRaw.Value, settings);
-                //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
+                var region = JsonConvert.DeserializeObject<Region>(jsonRaw.Value, settings);                
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(region, currentroute, "region", language);
             }
             else if (path.StartsWithSegments("/v1/TourismAssociation"))
             {
-                var tv = JsonConvert.DeserializeObject<Tourismverein>(jsonRaw.Value, settings);
-                //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
+                var tv = JsonConvert.DeserializeObject<Tourismverein>(jsonRaw.Value, settings);                
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(tv, "tv", currentroute, language);
             }
             else if (path.StartsWithSegments("/v1/Municipality"))
             {
-                var municipality = JsonConvert.DeserializeObject<Municipality>(jsonRaw.Value, settings);
-                //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
+                var municipality = JsonConvert.DeserializeObject<Municipality>(jsonRaw.Value, settings);                
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(municipality, currentroute, "municipality", language);
             }
             else if (path.StartsWithSegments("/v1/District"))
             {
-                var district = JsonConvert.DeserializeObject<District>(jsonRaw.Value, settings);
-                //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
+                var district = JsonConvert.DeserializeObject<District>(jsonRaw.Value, settings);                
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(district, currentroute, "district", language);
             }
             else if (path.StartsWithSegments("/v1/SkiArea"))
             {
-                var skiarea = JsonConvert.DeserializeObject<SkiArea>(jsonRaw.Value, settings);
-                //return JsonLDTransformer.TransformToLD.TransformEventToLD(@event, "de");
+                var skiarea = JsonConvert.DeserializeObject<SkiArea>(jsonRaw.Value, settings);                
                 return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(skiarea, currentroute, "skiarea", language);
             }
             else if (path.StartsWithSegments("/v1/Article"))
@@ -93,9 +92,9 @@ namespace OdhApiCore.Formatters
 
                 var article = JsonConvert.DeserializeObject<Article>(jsonRaw.Value, settings);
 
-                if (article.Type == "rezeptartikel")
+                if (article != null && article.Type == "rezeptartikel")
                     return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(article, currentroute, "recipe", language);
-                else if (article.Type == "specialannouncement")
+                else if (article != null && article.Type == "specialannouncement")
                     return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(article, currentroute, "specialannouncement", language);
                 else
                     return null;
