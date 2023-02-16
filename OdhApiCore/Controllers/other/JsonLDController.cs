@@ -39,39 +39,42 @@ namespace OdhApiCore.Controllers.api
         {
             try
             {
+                //TO CHECK
+                var currentroute = UrlGeneratorStatic;
+
                 var myobject = default(List<object>);
 
                 switch (type.ToLower())
                 {
                     case "accommodation":
-                        myobject = await LoadFromRavenDBSchemaNet<Accommodation>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Accommodation>(Id, currentroute + "/Accommodation/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "gastronomy":
-                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, currentroute + "/ODHActivityPoi/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "event":
-                        myobject = await LoadFromRavenDBSchemaNet<Event>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Event>(Id, currentroute + "/Event/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "recipe":
-                        myobject = await LoadFromRavenDBSchemaNet<Article>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Article>(Id, currentroute + "/Article/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "poi":
-                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<ODHActivityPoi>(Id, currentroute + "/ODHActivityPoi/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "region":
-                        myobject = await LoadFromRavenDBSchemaNet<Region>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Region>(Id, currentroute + "/Region/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "tv":
-                        myobject = await LoadFromRavenDBSchemaNet<Tourismverein>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Tourismverein>(Id, currentroute + "/TourismAssociation/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "municipality":
-                        myobject = await LoadFromRavenDBSchemaNet<Municipality>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<Municipality>(Id, currentroute + "/Municipality/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "district":
-                        myobject = await LoadFromRavenDBSchemaNet<District>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<District>(Id, currentroute + "/District/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     case "skiarea":
-                        myobject = await LoadFromRavenDBSchemaNet<SkiArea>(Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
+                        myobject = await LoadFromRavenDBSchemaNet<SkiArea>(Id, currentroute + "/SkiArea/" + Id, language, idtoshow, urltoshow, imageurltoshow, type.ToLower(), showid);
                         break;
                     default:
                         myobject = new List<object>();
@@ -128,7 +131,7 @@ namespace OdhApiCore.Controllers.api
             }
         }
 
-        private async Task<List<object>> LoadFromRavenDBSchemaNet<T>(string Id, string language, string idtoshow, string urltoshow, string imagetoshow, string type, bool showid)
+        private async Task<List<object>> LoadFromRavenDBSchemaNet<T>(string Id, string currentroute, string language, string idtoshow, string urltoshow, string imagetoshow, string type, bool showid)
         {
             var query =
                   QueryFactory.Query(type)
@@ -142,7 +145,7 @@ namespace OdhApiCore.Controllers.api
             {
                 var myparsedobject = JsonConvert.DeserializeObject<T>(myobject.Value);
                 if (myparsedobject is { })
-                    return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(myparsedobject, type, language, null, idtoshow, urltoshow, imagetoshow, showid);               
+                    return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(myparsedobject, currentroute, type, language, null, idtoshow, urltoshow, imagetoshow, showid);               
             }
 
             return new();

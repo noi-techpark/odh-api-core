@@ -13,45 +13,45 @@ namespace JsonLDTransformer
 {
     public class TransformToSchemaNet
     {
-        public static List<object> TransformDataToSchemaNet<T>(T data, string type,  string language, object parentobject = null, string idtoshow = "", string urltoshow = "", string imageurltoshow = "", bool showid = true)
+        public static List<object> TransformDataToSchemaNet<T>(T data, string currentroute, string type,  string language, object parentobject = null, string idtoshow = "", string urltoshow = "", string imageurltoshow = "", bool showid = true)
         {
             var objectlist = new List<object>();
 
             switch (type)
             {
                 case "accommodation":
-                    objectlist.Add(TransformAccommodationToLD((DataModel.Accommodation)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformAccommodationToLD((DataModel.Accommodation)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "gastronomy":
-                    objectlist.Add(TransformGastronomyToLD((DataModel.ODHActivityPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformGastronomyToLD((DataModel.ODHActivityPoi)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "poi":
-                    objectlist.Add(TransformActivityPoiToLD((DataModel.ODHActivityPoi)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformActivityPoiToLD((DataModel.ODHActivityPoi)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "skiarea":
-                    objectlist.Add(TransformSkiResortToLD((DataModel.SkiArea)(object)data, (DataModel.SkiRegion)(object)parentobject, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformSkiResortToLD((DataModel.SkiArea)(object)data, (DataModel.SkiRegion)(object)parentobject, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "region":
-                    objectlist.Add(TransformPlaceToLD((DataModel.Region)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformPlaceToLD((DataModel.Region)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "tv":
-                    objectlist.Add(TransformPlaceToLD((DataModel.Tourismverein)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformPlaceToLD((DataModel.Tourismverein)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "municipality":
-                    objectlist.Add(TransformPlaceToLD((DataModel.Municipality)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformPlaceToLD((DataModel.Municipality)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "district":
-                    objectlist.Add(TransformPlaceToLD((DataModel.District)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformPlaceToLD((DataModel.District)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "recipe":
-                    objectlist.Add(TransformRecipeToLD((DataModel.Article)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.Add(TransformRecipeToLD((DataModel.Article)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
                 case "event":
 
                     //Achtung pro EventDate Eintrag 1 Event anlegen
                     //des hoasst i muass a listen zruggeben
 
-                    objectlist.AddRange(TransformEventToLD((DataModel.Event)(object)data, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    objectlist.AddRange(TransformEventToLD((DataModel.Event)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
             }
 
@@ -61,7 +61,7 @@ namespace JsonLDTransformer
 
         #region Accommodation
 
-        private static Schema.NET.Hotel TransformAccommodationToLD(DataModel.Accommodation acco, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Hotel TransformAccommodationToLD(DataModel.Accommodation acco, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -70,7 +70,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    myhotel.Id = new Uri("http://service.suedtirol.info/api/Accommodation/" + acco.Id);
+                    myhotel.Id = new Uri(currentroute);
                 else
                     myhotel.Id = new Uri(passedid);
             }
@@ -226,7 +226,7 @@ namespace JsonLDTransformer
 
         #region Gastronomy
 
-        private static Schema.NET.Restaurant TransformGastronomyToLD(DataModel.ODHActivityPoi gastro, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Restaurant TransformGastronomyToLD(DataModel.ODHActivityPoi gastro, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             Schema.NET.Restaurant mygastro = new Schema.NET.Restaurant();
 
@@ -235,7 +235,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    mygastro.Id = new Uri("http://service.suedtirol.info/api/GBActivityPoi/" + gastro.Id);
+                    mygastro.Id = new Uri(currentroute);
                 else
                     mygastro.Id = new Uri(passedid);
             }
@@ -415,7 +415,7 @@ namespace JsonLDTransformer
 
         #region Event
 
-        private static List<Schema.NET.Event> TransformEventToLD(DataModel.Event theevent, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static List<Schema.NET.Event> TransformEventToLD(DataModel.Event theevent, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -429,7 +429,7 @@ namespace JsonLDTransformer
                 if (showid)
                 {
                     if (String.IsNullOrEmpty(passedid))
-                        myevent.Id = new Uri("http://service.suedtirol.info/api/Event/" + theevent.Id);
+                        myevent.Id = new Uri(currentroute);
                     else
                         myevent.Id = new Uri(passedid);
                     //myevent.type  = "Event";
@@ -558,7 +558,7 @@ namespace JsonLDTransformer
 
         #region Tourismattraction
 
-        private static Schema.NET.TouristAttraction TransformActivityPoiToLD(DataModel.ODHActivityPoi poi, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.TouristAttraction TransformActivityPoiToLD(DataModel.ODHActivityPoi poi, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -567,7 +567,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    mypoi.Id = new Uri("http://service.suedtirol.info/api/GBActivityPoi/" + poi.Id);
+                    mypoi.Id = new Uri(currentroute);
                 else
                     mypoi.Id = new Uri(passedid);
             }
@@ -810,7 +810,7 @@ namespace JsonLDTransformer
 
         #region Recipe
 
-        private static Schema.NET.Recipe TransformRecipeToLD(DataModel.Article recipe, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Recipe TransformRecipeToLD(DataModel.Article recipe, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -824,7 +824,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    myrecipe.Id = new Uri("http://service.suedtirol.info/api/Article/" + recipe.Id);
+                    myrecipe.Id = new Uri(currentroute);
                 else
                     myrecipe.Id = new Uri(passedid);
             }
@@ -1112,7 +1112,7 @@ namespace JsonLDTransformer
 
         #region Skiarea
 
-        private static Schema.NET.SkiResort TransformSkiResortToLD(DataModel.SkiArea skiarea, DataModel.SkiRegion skiregion, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.SkiResort TransformSkiResortToLD(DataModel.SkiArea skiarea, DataModel.SkiRegion skiregion, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -1121,7 +1121,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    myskiarea.Id = new Uri("http://service.suedtirol.info/api/Common/SkiArea/" + skiarea.Id);
+                    myskiarea.Id = new Uri(currentroute);
                 else
                     myskiarea.Id = new Uri(passedid);
             }
@@ -1307,7 +1307,7 @@ namespace JsonLDTransformer
 
         #region Place
 
-        private static Schema.NET.Place TransformPlaceToLD(DataModel.Region placetotrasform, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Place TransformPlaceToLD(DataModel.Region placetotrasform, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -1316,7 +1316,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    place.Id = new Uri("http://service.suedtirol.info/api/Common/Region/" + placetotrasform.Id);
+                    place.Id = new Uri(currentroute);
                 else
                     place.Id = new Uri(passedid);
             }
@@ -1392,7 +1392,7 @@ namespace JsonLDTransformer
             return place;
         }
 
-        private static Schema.NET.Place TransformPlaceToLD(DataModel.Tourismverein placetotrasform, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Place TransformPlaceToLD(DataModel.Tourismverein placetotrasform, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -1401,7 +1401,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    place.Id = new Uri("http://service.suedtirol.info/api/Common/TourismAssociation/" + placetotrasform.Id);
+                    place.Id = new Uri(currentroute);
                 else
                     place.Id = new Uri(passedid);
             }
@@ -1478,7 +1478,7 @@ namespace JsonLDTransformer
             return place;
         }
 
-        private static Schema.NET.Place TransformPlaceToLD(DataModel.Municipality placetotrasform, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Place TransformPlaceToLD(DataModel.Municipality placetotrasform, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
 
@@ -1487,7 +1487,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    place.Id = new Uri("http://service.suedtirol.info/api/Common/Municipality/" + placetotrasform.Id);
+                    place.Id = new Uri(currentroute);
                 else
                     place.Id = new Uri(passedid);
             }
@@ -1563,7 +1563,7 @@ namespace JsonLDTransformer
             return place;
         }
 
-        private static Schema.NET.Place TransformPlaceToLD(DataModel.District placetotrasform, string language, string passedid, string passedurl, string passedimage, bool showid)
+        private static Schema.NET.Place TransformPlaceToLD(DataModel.District placetotrasform, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
         {
             string fallbacklanguage = "en";
             //Winery, Museum
@@ -1573,7 +1573,7 @@ namespace JsonLDTransformer
             if (showid)
             {
                 if (String.IsNullOrEmpty(passedid))
-                    place.Id = new Uri("http://service.suedtirol.info/api/Common/District/" + placetotrasform.Id);
+                    place.Id = new Uri(currentroute);
                 else
                     place.Id = new Uri(passedid);
             }
