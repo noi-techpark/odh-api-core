@@ -93,7 +93,7 @@ namespace OdhApiCore.Formatters
 
                 var article = JsonConvert.DeserializeObject<Article>(jsonRaw.Value, settings);
 
-                if (article.Type == "recipe")
+                if (article.Type == "rezeptartikel")
                     return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(article, currentroute, "recipe", language);
                 else if (article.Type == "specialannouncement")
                     return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet(article, currentroute, "specialannouncement", language);
