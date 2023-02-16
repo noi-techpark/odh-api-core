@@ -17,10 +17,17 @@ namespace Helper
             return dict;
         }
 
-        //public static IDictionary<TKey, TValue> GetDesiredLanguage<TKey, TValue>(this IDictionary<TKey, TValue> dict, string language)
-        //{
-        //    return (IDictionary<TKey, TValue>)dict.Where(kvp.Key.ToString() == language);
-        //}
+        public static IDictionary<string, string> ConvertToLowercase(this IDictionary<string, string> dict, bool keys, bool values)
+        {
+            var newdict = new Dictionary<string, string>();
+
+            foreach (var kvp in dict)
+            {
+                newdict.Add(keys ? kvp.Key.ToLower() : kvp.Key, values ? kvp.Value.ToLower() : kvp.Value);
+            }
+
+            return newdict;
+        }
 
     }
 }
