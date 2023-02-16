@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers.api
@@ -33,14 +35,14 @@ namespace OdhApiCore.Controllers.api
         /// <param name="urltoshow">url to show on Json LD @id, not provided idtoshow is taken, idtoshow not provided url is filled with url of the data</param>
         /// <param name="showid">Show the @id property in Json LD default value true</param>
         /// <returns></returns>
-        [Authorize(Roles = "DataReader")]
+        //[Authorize(Roles = "DataReader")]
         [HttpGet, Route("JsonLD/DetailInLD")]
-        public async Task<IActionResult> GetDetailInLD(string type, string Id, string language = "en", string idtoshow = "", string urltoshow = "", string imageurltoshow = "", bool showid = true)
+        public async Task<IActionResult> GetDetailInLD(string type, string Id, string? language = "en", string? idtoshow = "", string? urltoshow = "", string? imageurltoshow = "", bool showid = true)
         {
             try
             {
-                //TO CHECK
-                var currentroute = UrlGeneratorStatic;
+                var location = new Uri($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/{HttpContext.Request.Path}");
+                var currentroute = location.AbsoluteUri;                
 
                 var myobject = default(List<object>);
 
@@ -89,44 +91,17 @@ namespace OdhApiCore.Controllers.api
 
                 if (myobject != null)
                 {
+                    var options = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault };
+
                     if (type.ToLower() == "event")
-                        myjson = JsonConvert.SerializeObject(myobject, Newtonsoft.Json.Formatting.None,
-                                    new JsonSerializerSettings
-                                    {
-                                        NullValueHandling = NullValueHandling.Ignore
-                                    });
+                        myjson = System.Text.Json.JsonSerializer.Serialize(myobject, options);
                     else
-                        myjson = JsonConvert.SerializeObject(myobject.FirstOrDefault(), Newtonsoft.Json.Formatting.None,
-                                    new JsonSerializerSettings
-                                    {
-                                        NullValueHandling = NullValueHandling.Ignore
-                                    });
-
-
-                    //switch(myobject.Item1)
-                    //{
-                    //    case "Accommodation":
-
-                    //        string typetoinsert = "\"@type\":\"Hotel\",";
-                    //        myjson = myjson.Insert(1, typetoinsert);
-                    //        break;
-                    //}
+                        myjson = System.Text.Json.JsonSerializer.Serialize(myobject.FirstOrDefault(), options);
 
                     return Ok(myjson);
-
-                    //return new HttpResponseMessage()
-                    //{
-                    //    StatusCode = HttpStatusCode.OK,
-                    //    Content = new StringContent(myjson, Encoding.UTF8, "application/ld+json")
-                    //};
                 }
                 else
-                    return NotFound();
-                    //return new HttpResponseMessage()
-                    //{
-                    //    StatusCode = HttpStatusCode.NotFound,
-                    //    Content = new StringContent("object not found", Encoding.UTF8, "application/ld+json")
-                    //};
+                    return NotFound();                    
             }
             catch (Exception ex)
             {
@@ -135,9 +110,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         private async Task<List<object>> LoadFromRavenDBSchemaNet<T>(string Id, string currentroute, string language, string idtoshow, string urltoshow, string imagetoshow, string type, bool showid, string table)
-        {
-            //Transform type 2 table
-            
+        {            
             //TO CHECK
             var query =
                   QueryFactory.Query(table)
@@ -149,7 +122,7 @@ namespace OdhApiCore.Controllers.api
             var myobject = await query.FirstOrDefaultAsync<JsonRaw?>();
 
             if (myobject != null)
-            {
+            {             
                 var myparsedobject = JsonConvert.DeserializeObject<T>(myobject.Value);
                 if (myparsedobject is { })
                     return JsonLDTransformer.TransformToSchemaNet.TransformDataToSchemaNet<T>(myparsedobject, currentroute, type, language, null, idtoshow, urltoshow, imagetoshow, showid);               
