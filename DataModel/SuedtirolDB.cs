@@ -2475,6 +2475,14 @@ namespace DataModel
 
         public ICollection<string>? HasLanguage { get; set; }
 
+        //public string CustomId { get; set; }
+
+        //New Article Expiration date
+        public DateTime? ExpirationDate { get; set; }
+
+        //NEW Adding SpatialCoverage
+        //public ICollection<SpatialCoverage> SpatialCoverage { get; set; }
+
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
@@ -2502,6 +2510,12 @@ namespace DataModel
 
         public DistanceInfo? DistanceInfo { get; set; }
     }
+
+    //public class SpatialCoverage
+    //{
+    //    public IDictionary<string, string> Name { get; set; }
+    //    public GpsInfo GpsInfo { get; set; }
+    //}
 
     //BaseInfo Gastronomy
     public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo

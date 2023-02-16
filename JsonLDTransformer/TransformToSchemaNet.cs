@@ -8,6 +8,7 @@ using Schema.NET;
 using System.Xml;
 using HtmlAgilityPack;
 using DataModel;
+using Newtonsoft.Json;
 
 namespace JsonLDTransformer
 {
@@ -46,6 +47,10 @@ namespace JsonLDTransformer
                 case "recipe":
                     objectlist.Add(TransformRecipeToLD((DataModel.Article)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
                     break;
+                case "specialannouncement":
+                    objectlist.Add(TransformSpecialAnnouncementToLD((DataModel.Article)(object)data, currentroute, language, idtoshow, urltoshow, imageurltoshow, showid));
+                    break;
+
                 case "event":
 
                     //Achtung pro EventDate Eintrag 1 Event anlegen
@@ -1653,6 +1658,225 @@ namespace JsonLDTransformer
 
         #endregion
 
+        #region SpecialAnnouncement
+
+        private static SpecialAnnouncement TransformSpecialAnnouncementToLD(DataModel.Article specialannouncement, string currentroute, string language, string passedid, string passedurl, string passedimage, bool showid)
+        {
+            string fallbacklanguage = "en";
+
+            //Check if data has this fallbacklanguage
+            if (!specialannouncement.HasLanguage.Contains(language))
+                language = specialannouncement.HasLanguage.FirstOrDefault();
+
+            //Schema.NET.CreativeWork SpecialAnnouncement
+            SpecialAnnouncement specialannouncementobj = new SpecialAnnouncement();
+
+            //Setting custom Type
+            specialannouncementobj.Type = "SpecialAnnouncement";
+
+            if (showid)
+            {
+                if (String.IsNullOrEmpty(passedid))
+                    specialannouncementobj.Id = new Uri(currentroute);
+                else
+                    specialannouncementobj.Id = new Uri(passedid);
+            }
+
+            //Image Overwrite
+            if (String.IsNullOrEmpty(passedimage))
+            {
+                if (specialannouncement.ImageGallery != null)
+                    if (specialannouncement.ImageGallery.Count > 0)
+                        if (!String.IsNullOrEmpty(specialannouncement.ImageGallery.FirstOrDefault().ImageUrl))
+                            specialannouncementobj.Image = new Uri(specialannouncement.ImageGallery.FirstOrDefault().ImageUrl);
+            }
+            else
+                specialannouncementobj.Image = new Uri(passedimage);
+
+
+            specialannouncementobj.Name = specialannouncement.Detail.ContainsKey(language) ? specialannouncement.Detail[language].Title : specialannouncement.Detail.ContainsKey(fallbacklanguage) ? specialannouncement.Detail[fallbacklanguage].Title : "";
+            specialannouncementobj.Description = specialannouncement.Detail.ContainsKey(language) ? specialannouncement.Detail[language].IntroText : specialannouncement.Detail.ContainsKey(fallbacklanguage) ? specialannouncement.Detail[fallbacklanguage].IntroText : "";
+
+            //NEW
+            specialannouncementobj.AlternateName = specialannouncement.Detail.ContainsKey(language) ? specialannouncement.Detail[language].AdditionalText : specialannouncement.Detail.ContainsKey(fallbacklanguage) ? specialannouncement.Detail[fallbacklanguage].AdditionalText : "";
+            specialannouncementobj.Text = specialannouncement.Detail.ContainsKey(language) ? specialannouncement.Detail[language].BaseText : specialannouncement.Detail.ContainsKey(fallbacklanguage) ? specialannouncement.Detail[fallbacklanguage].BaseText : "";
+
+            //URL OVERWRITE
+            if (String.IsNullOrEmpty(passedurl) && String.IsNullOrEmpty(passedid))
+            {
+                string url = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].Url : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].Url : "";
+                if (CheckURLValid(url))
+                    specialannouncementobj.Url = new Uri(url);
+            }
+            else if (!String.IsNullOrEmpty(passedurl))
+            {
+                specialannouncementobj.Url = new Uri(passedurl);
+            }
+            else if (!String.IsNullOrEmpty(passedid))
+            {
+                specialannouncementobj.Url = new Uri(passedid);
+            }
+
+            specialannouncementobj.InLanguage = language;
+            specialannouncementobj.DatePublished = new DateTimeOffset(specialannouncement.LastChange.Value);
+            specialannouncementobj.DateModified = new DateTimeOffset(specialannouncement.LastChange.Value);
+            specialannouncementobj.DateCreated = new DateTimeOffset(specialannouncement.FirstImport.Value);
+            specialannouncementobj.DatePosted = new DateTimeOffset(specialannouncement.LastChange.Value);
+            if (specialannouncement.ExpirationDate != null)
+                specialannouncementobj.Expires = (DateTime)specialannouncement.ExpirationDate;
+
+            //TODOS
+
+            //specialannouncementobj.Abstract
+            //specialannouncementobj.CopyrightNotice
+            //specialannouncementobj.License
+            //specialannouncementobj.SdPublisher
+            //specialannouncementobj.AnnouncementLocation
+            //specialannouncementobj.GovernmentBenefitsInfo
+
+
+            //Create Place for SpatialCoverage
+            //location.AddressCountry = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].CountryName : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].CountryName : "";
+
+            //Place location = new Place();
+            //location.Address = myaddress;
+            //location.type = "Place";
+            //location.Name = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].CompanyName : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].CompanyName : "";
+
+            //Deactivated at moment
+            //if (specialannouncement.SpatialCoverage != null && specialannouncement.SpatialCoverage.Count > 0)
+            //{
+            //    List<Place> placelist = new List<Place>();
+
+            //    foreach (var spatialcoverage in specialannouncement.SpatialCoverage)
+            //    {
+            //        Place location = new Place();
+            //        location.Name = spatialcoverage.Name[language];
+
+            //        if (spatialcoverage.GpsInfo != null)
+            //        {
+            //            GeoCoordinates mygeo = new GeoCoordinates();
+            //            //mygeo.type = "http://schema.org/GeoCoordinates";
+            //            mygeo.Latitude = spatialcoverage.GpsInfo.Latitude;
+            //            mygeo.Longitude = spatialcoverage.GpsInfo.Longitude;
+
+            //            location.Geo = mygeo;
+            //        }
+
+            //        placelist.Add(location);
+            //    }
+
+            //    specialannouncementobj.SpatialCoverage = new OneOrMany<IPlace>(placelist);
+            //}
+            //else
+            //{
+                //Create Place for SpatialCoverage
+                PostalAddress myaddress = new PostalAddress();
+                //myaddress.type = "http://schema.org/PostalAddress";
+                myaddress.StreetAddress = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].Address : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].Address : "";
+                myaddress.PostalCode = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].ZipCode : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].ZipCode : "";
+                myaddress.AddressLocality = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].City : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].City : "";
+                myaddress.AddressRegion = getRegionDependingonLanguage(language);
+                myaddress.AddressCountry = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].CountryName : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].CountryName : "";
+                //location.AddressCountry = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].CountryName : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].CountryName : "";
+
+                Place location = new Place();
+                location.Address = myaddress;
+
+                specialannouncementobj.SpatialCoverage = location;
+            //}
+
+            //LocalBusiness locbusiness = new LocalBusiness();
+            //locbusiness.Address = myaddress;
+            //locbusiness.Name = specialannouncement.ContactInfos.ContainsKey(language) ? specialannouncement.ContactInfos[language].CompanyName : specialannouncement.ContactInfos.ContainsKey(fallbacklanguage) ? specialannouncement.ContactInfos[fallbacklanguage].CompanyName : "";
+
+
+            //specialannouncementobj.AnnouncementLocation = locbusiness;
+
+            //New get trough the Article
+
+            var additionalinfos = specialannouncement.AdditionalArticleInfos.ContainsKey(language) ? specialannouncement.AdditionalArticleInfos[language] : specialannouncement.AdditionalArticleInfos.ContainsKey(fallbacklanguage) ? specialannouncement.AdditionalArticleInfos[fallbacklanguage] : null;
+
+            if (additionalinfos != null)
+            {
+                foreach (var additionalinfo in additionalinfos.Elements)
+                {
+                    if (additionalinfo.Key.ToLower() == "diseasepreventioninfo")
+                    {
+                        if (Uri.TryCreate(additionalinfo.Value, UriKind.Absolute, out var uriresult))
+                            specialannouncementobj.DiseasePreventionInfo = uriresult;
+                        else
+                            specialannouncementobj.DiseasePreventionInfo = additionalinfo.Value;
+                    }
+                    else if (additionalinfo.Key.ToLower() == "diseasespreadstatistics")
+                    {
+                        if (Uri.TryCreate(additionalinfo.Value, UriKind.Absolute, out var uriresult))
+                            specialannouncementobj.DiseaseSpreadStatistics = uriresult;
+                        else
+                            specialannouncementobj.DiseaseSpreadStatistics = additionalinfo.Value;
+                    }
+                    else if (additionalinfo.Key.ToLower() == "gettingtestedinfo")
+                    {
+                        if (Uri.TryCreate(additionalinfo.Value, UriKind.Absolute, out var uriresult))
+                            specialannouncementobj.GettingTestedInfo = uriresult;
+                        else
+                            specialannouncementobj.GettingTestedInfo = additionalinfo.Value;
+                    }
+                    else if (additionalinfo.Key.ToLower() == "newsupdatesandguidelines")
+                    {
+                        if (Uri.TryCreate(additionalinfo.Value, UriKind.Absolute, out var uriresult))
+                            specialannouncementobj.NewsUpdatesAndGuidelines = uriresult;
+                        else
+                            specialannouncementobj.NewsUpdatesAndGuidelines = additionalinfo.Value;
+                    }
+                    else if (additionalinfo.Key.ToLower() == "publictransportclosuresinfo")
+                    {
+                        if (Uri.TryCreate(additionalinfo.Value, UriKind.Absolute, out var uriresult))
+                            specialannouncementobj.PublicTransportClosuresInfo = uriresult;
+                        else
+                            specialannouncementobj.PublicTransportClosuresInfo = additionalinfo.Value;
+                    }
+                    else if (additionalinfo.Key.ToLower() == "quarantineguidelines")
+                    {
+                        if (Uri.TryCreate(additionalinfo.Value, UriKind.Absolute, out var uriresult))
+                            specialannouncementobj.QuarantineGuidelines = uriresult;
+                        else
+                            specialannouncementobj.QuarantineGuidelines = additionalinfo.Value;
+                    }
+                    else if (additionalinfo.Key.ToLower() == "schoolclosuresinfo")
+                    {
+                        if (Uri.TryCreate(additionalinfo.Value, UriKind.Absolute, out var uriresult))
+                            specialannouncementobj.SchoolClosuresInfo = uriresult;
+                        else
+                            specialannouncementobj.SchoolClosuresInfo = additionalinfo.Value;
+                    }
+                    else if (additionalinfo.Key.ToLower() == "travelbans")
+                    {
+                        if (Uri.TryCreate(additionalinfo.Value, UriKind.Absolute, out var uriresult))
+                            specialannouncementobj.TravelBans = uriresult;
+                        else
+                            specialannouncementobj.TravelBans = additionalinfo.Value;
+                    }
+                    //New expires and overwrite published date
+                    else if (additionalinfo.Key.ToLower() == "expires")
+                    {
+                        if (DateTime.TryParse(additionalinfo.Value, out var dateresult))
+                            specialannouncementobj.Expires = dateresult;
+                    }
+                    else if (additionalinfo.Key.ToLower() == "dateposted")
+                    {
+                        if (DateTime.TryParse(additionalinfo.Value, out var dateresult))
+                            specialannouncementobj.DatePosted = dateresult;
+                    }
+                }
+            }
+
+            return specialannouncementobj;
+        }
+
+        #endregion
+
+
         private static string getRegionDependingonLanguage(string language)
         {
             switch (language)
@@ -1738,5 +1962,74 @@ namespace JsonLDTransformer
         public AggregateRating aggregateRating { get; set; }
 
 
+    }
+
+    public class SpecialAnnouncement : Schema.NET.CreativeWork
+    {
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "@type", Order = 1)]
+        public new string Type { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "datePosted")]
+        [JsonConverter(typeof(DateTimeToIso8601DateValuesJsonConverter))]
+        public Values<int?, DateTime?, DateTimeOffset?> DatePosted { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "announcementLocation")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<ICivicStructure, ILocalBusiness> AnnouncementLocation { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "category")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<IPhysicalActivity, string, IThing, Uri> Category { get; set; }
+
+        //Webcontent is missing using text
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "diseasePreventionInfo")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<string, Uri> DiseasePreventionInfo { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "diseaseSpreadStatistics")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<string, Uri> DiseaseSpreadStatistics { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "gettingTestedInfo")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<string, Uri> GettingTestedInfo { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "governmentBenefitsInfo")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public OneOrMany<IGovernmentService> GovernmentBenefitsInfo { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "newsUpdatesAndGuidelines")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<string, Uri> NewsUpdatesAndGuidelines { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "publicTransportClosuresInfo")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<string, Uri> PublicTransportClosuresInfo { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "quarantineGuidelines")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<string, Uri> QuarantineGuidelines { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "schoolClosuresInfo")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<string, Uri> SchoolClosuresInfo { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "travelBans")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<string, Uri> TravelBans { get; set; }
+
+        //Missing props of CreativeWork
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "abstract")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public OneOrMany<string> Abstract { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "copyrightNotice")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public OneOrMany<string> CopyrightNotice { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(Name = "sdPublisher")]
+        [JsonConverter(typeof(ValuesJsonConverter))]
+        public Values<IOrganization, IPerson> SdPublisher { get; set; }
     }
 }
