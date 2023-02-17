@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Npgsql;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using ServiceReferenceLCS;
 using SIAG;
 using SqlKata.Execution;
 using System;
@@ -601,7 +602,13 @@ namespace OdhApiCore.Controllers
 
             var weatherresult = await GetWeatherData.GetCurrentBezirkWeatherAsync(language, bezirksid, tvrid, regid, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
 
-            if(pagenumber != null)
+            foreach(var wresult in weatherresult)
+            {
+                if(wresult != null)
+                    wresult._Meta = MetadataHelper.GetMetadataobject<WeatherDistrictLinked>(wresult);
+            }
+            
+            if (pagenumber != null)
             {
                 return Ok(ResponseHelpers.GetResult(
                    pagenumber.Value,
