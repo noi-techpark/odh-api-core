@@ -1277,6 +1277,10 @@ namespace DataModel
         public int Part4 { get; set; }
 
         public int Thunderstorm { get; set; }
+
+        public int SymbolId { get; set; }
+        
+        public int? Reliability { get; set; }
     }
 
     public class WeatherRealTime

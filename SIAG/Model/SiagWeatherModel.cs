@@ -17,7 +17,7 @@ namespace SIAG.WeatherModel
         public string type { get; set; }
         public string evolution { get; set; }
         public string evolutionTitle { get; set; }
-        public Dayforecast[] dayForecasts { get; set; }        
+        public Dayforecast[] dayForecasts { get; set; }
     }
 
     public class Today
@@ -159,4 +159,38 @@ namespace SIAG.WeatherModel
         public double min { get; set; }
         public double max { get; set; }
     }
+
+
+    public class SiagWeatherDistrict
+    {
+        public DateTime date { get; set; }
+        public string hour { get; set; }
+        public SiagDistrict district { get; set; }
+        public Forecast[] forecasts { get; set; }
+    }
+
+    public class SiagDistrict
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+    }
+
+    public class Forecast
+    {
+        public DateTime date { get; set; }
+        public int freeze { get; set; }
+        public int? rainTimespan1 { get; set; }
+        public int? rainTimespan2 { get; set; }
+        public int? rainTimespan3 { get; set; }
+        public int? rainTimespan4 { get; set; }
+        public float rainFrom { get; set; }
+        public float rainTo { get; set; }
+        public int? reliability { get; set; }
+        public int symbolId { get; set; }
+        public float temperatureMax { get; set; }
+        public float temperatureMin { get; set; }
+        public int? storms { get; set; }
+        public Symbol symbol { get; set; }
+    }
+
 }

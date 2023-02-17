@@ -54,11 +54,12 @@ namespace OdhApiCore.Controllers
             string? language = "en", 
             string? locfilter = null,
             bool extended = true,
+            string? source = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await Get(pagenumber, pagesize, language ?? "en", locfilter, extended, null, cancellationToken);
+                return await Get(pagenumber, pagesize, language ?? "en", locfilter, extended, source ?? "opendata", null, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -79,11 +80,12 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetWeatherSingle(
             string id,
             string? language = "en",
+            string? source = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await Get(null, null, language ?? "en", null, true, id, cancellationToken);
+                return await Get(null, null, language ?? "en", null, true, id, source ?? "opendata", cancellationToken);
             }
             catch (Exception ex)
             {
@@ -177,12 +179,13 @@ namespace OdhApiCore.Controllers
             uint? pagenumber = null,
             PageSize pagesize = null!,
             string? locfilter = null,
-            string? language = "en",             
+            string? language = "en",   
+            string? source = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetBezirksWetter(pagenumber, pagesize, language ?? "en", locfilter, cancellationToken);
+                return await GetBezirksWetter(pagenumber, pagesize, language ?? "en", locfilter, source ?? "opendata", cancellationToken);
             }
             catch (Exception ex)
             {
@@ -203,11 +206,12 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetDistrictWeatherSingle(
             string id,
             string? language = "en",
+            string? source = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetBezirksWetter(null, null, language ?? "en", id, cancellationToken);
+                return await GetBezirksWetter(null, null, language ?? "en", id, source ?? "opendata", cancellationToken);
             }
             catch (Exception ex)
             {
@@ -464,7 +468,7 @@ namespace OdhApiCore.Controllers
 
         #endregion
 
-        #region SiagWeather
+        #region Weather
 
         /// GET Current Suedtirol Weather LIVE Request
         private async Task<IActionResult> Get(
@@ -473,6 +477,7 @@ namespace OdhApiCore.Controllers
             string language, 
             string? locfilter, 
             bool extended, 
+            string source,
             string? id,
             CancellationToken cancellationToken)
         {
@@ -481,8 +486,8 @@ namespace OdhApiCore.Controllers
             if(String.IsNullOrEmpty(locfilter))
             {
                 //Get Weather General from Siag and Parse it to ODH Format
-                var weatherresponsetask = await SIAG.GetWeatherData.GetSiagWeatherData(language, settings.SiagConfig.Username, settings.SiagConfig.Password, extended, id);
-                weatherresult = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather(language, settings.XmlConfig.XmldirWeather, weatherresponsetask, extended);                
+                var weatherresponsetask = await SIAG.GetWeatherData.GetSiagWeatherData(language, settings.SiagConfig.Username, settings.SiagConfig.Password, extended, source, id);
+                weatherresult = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather(language, settings.XmlConfig.XmldirWeather, weatherresponsetask, extended, source);                
             }
             else
             {
@@ -515,7 +520,7 @@ namespace OdhApiCore.Controllers
                     }
                 }
 
-                weatherresult = await SIAG.GetWeatherData.GetCurrentStationWeatherAsync(language, locfilter, stationidtype, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);                
+                weatherresult = await SIAG.GetWeatherData.GetCurrentStationWeatherAsync(language, locfilter, stationidtype, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);                
             }
 
             if (weatherresult != null)
@@ -547,6 +552,7 @@ namespace OdhApiCore.Controllers
             int? pagesize, 
             string language, 
             string? locfilter, 
+            string source,
             CancellationToken cancellationToken)
         {
             string bezirksid = "";
@@ -593,7 +599,7 @@ namespace OdhApiCore.Controllers
                 }
             }            
 
-            var weatherresult = await GetWeatherData.GetCurrentBezirkWeatherAsync(language, bezirksid, tvrid, regid, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password);
+            var weatherresult = await GetWeatherData.GetCurrentBezirkWeatherAsync(language, bezirksid, tvrid, regid, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
 
             if(pagenumber != null)
             {
@@ -653,6 +659,10 @@ namespace OdhApiCore.Controllers
                 }
             }           
         }
+
+        #endregion
+
+        #region WeatherHistory
 
         /// GET Suedtirol Weather from History Table
         private Task<IActionResult> GetWeatherHistoryList(

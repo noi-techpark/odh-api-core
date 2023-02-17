@@ -15,12 +15,12 @@ namespace SIAG
     public class GetWeatherData
     {
         //public const string source = "siag";
-        public const string source = "opendata";
+        //public const string source = "opendata";
 
         #region Weather general
  
         //Gets SIAG Weather Data (RAW DATA)
-        public static async Task<string> GetSiagWeatherData(string lang, string siaguser, string siagpswd, bool json, string? id = null)
+        public static async Task<string> GetSiagWeatherData(string lang, string siaguser, string siagpswd, bool json, string source, string? id = null)
         {
             //Request on Siag Service
             HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source, json, id);
@@ -29,13 +29,13 @@ namespace SIAG
         }
 
         //Parses to ODH Format
-        public static Task<WeatherLinked> ParseSiagWeatherDataToODHWeather(string lang, string xmldir, string weatherresponsetask, bool json)
+        public static Task<WeatherLinked> ParseSiagWeatherDataToODHWeather(string lang, string xmldir, string weatherresponsetask, bool json, string source)
         {
             var weatherinfo = XDocument.Load(xmldir + "Weather.xml");
 
             if (json)
             {
-                return Task.FromResult(ParseWeather.ParsemyWeatherJsonResponse(lang, weatherinfo, weatherresponsetask));
+                return Task.FromResult(ParseWeather.ParsemyWeatherJsonResponse(lang, weatherinfo, weatherresponsetask, source));
             }
 
             XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
@@ -44,7 +44,7 @@ namespace SIAG
 
         #endregion
 
-        public static async Task<WeatherLinked?> GetCurrentStationWeatherAsync(string lang, string stationid, string stationidtype, string xmldir, string siaguser, string siagpswd)
+        public static async Task<WeatherLinked?> GetCurrentStationWeatherAsync(string lang, string stationid, string stationidtype, string xmldir, string siaguser, string siagpswd, bool json, string source)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace SIAG
             }
         }
 
-        public static async Task<IEnumerable<BezirksWeather?>> GetCurrentBezirkWeatherAsync(string lang, string bezirksid, string tvrid, string regid, string xmldir, string siaguser, string siagpswd)
+        public static async Task<IEnumerable<WeatherDistrictLinked?>> GetCurrentBezirkWeatherAsync(string lang, string bezirksid, string tvrid, string regid, string xmldir, string siaguser, string siagpswd, bool json, string source)
         {
             var currentbezirksidlist = new List<string>();
 
@@ -126,20 +126,28 @@ namespace SIAG
             }
 
 
-            var bezirksweatherlist = new List<BezirksWeather>();
+            var bezirksweatherlist = new List<WeatherDistrictLinked>();
             if (currentbezirksidlist.Count > 0)
             {
                 foreach (var currentbezirksid in currentbezirksidlist)
                 {
-                    HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestBezirksWeatherAsync(lang, currentbezirksid, siaguser, siagpswd, source);
+                    HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestBezirksWeatherAsync(lang, currentbezirksid, siaguser, siagpswd, source, json);
 
                     //Content auslesen und XDocument Parsen
                     var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
-                    XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
+                   
+                    WeatherDistrictLinked myweatherdistrictlinked = default(WeatherDistrictLinked);
 
-                    var myweather = ParseWeather.ParsemyBezirksWeatherResponse(lang, myweatherresponse, source);
+                    if(json)
+                        myweatherdistrictlinked = ParseWeather.ParsemyBezirksWeatherJsonResponse(lang, weatherresponsetask, source);
+                    else
+                    {
+                        XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
+                        myweatherdistrictlinked = ParseWeather.ParsemyBezirksWeatherResponse(lang, myweatherresponse, source);
+                    }
+                    
 
-                    bezirksweatherlist.Add(myweather);
+                    bezirksweatherlist.Add(myweatherdistrictlinked);
                 }                
             }
 

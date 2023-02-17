@@ -346,11 +346,14 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforWeather()
+        public static LicenseInfo GetLicenseforWeather(string source)
         {
             var isopendata = true;
-            var licensetype = "";
+            var licensetype = "CC0";
             var licenseholder = "https://provinz.bz.it/wetter";
+
+            if (source == "siag")
+                licenseholder = "https://weather.services.siag.it/";
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
