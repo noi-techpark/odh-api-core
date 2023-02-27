@@ -92,7 +92,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("MetaData/{id}", Name = "SingleMetaData")]
-        public async Task<IActionResult> GetArticleSingle(
+        public async Task<IActionResult> GetMetaDataSingle(
             string id,
             string? language,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
@@ -163,7 +163,7 @@ namespace OdhApiCore.Controllers
 
                 var fieldsTohide = FieldsToHide;
 
-                return data?.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: fieldsTohide);
             });
         }
 
