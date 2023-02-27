@@ -12,7 +12,7 @@ namespace SIAG
     {
         //string urlfrom indicates 'siag' old parsing, 'opendata' new url
 
-        public static WeatherLinked ParsemyWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string urlfrom)
+        public static WeatherLinked ParsemyWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string source)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace SIAG
                 myweather.evolutiontitle = weatherresponse.Root.Element("evolutionTitle") != null ? weatherresponse.Root.Element("evolutionTitle").Value : null;
                 myweather.language = lang;
 
-                myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
+                myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
 
                 var mydayforecasts = weatherresponse.Root.Elements("dayForecast");
                 var mountaintoday = weatherresponse.Root.Element("mountainToday");
@@ -173,7 +173,7 @@ namespace SIAG
                             mystationdatatoday.WeatherDesc = stationtoday.Element("symbol").Element("description").Value;
                             mystationdatatoday.WeatherImgUrl = stationtoday.Element("symbol").Element("imageURL").Value;
 
-                            if (urlfrom == "siag")
+                            if (source == "siag")
                             {
                                 mystationdatatoday.Maxtemp = Convert.ToInt32(stationtoday.Element("temperature").Element("max").Value);
                                 mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.Element("temperature").Element("min").Value);
@@ -238,7 +238,7 @@ namespace SIAG
                                 mystationdatatomorrow.WeatherDesc = stationtomorrow.Element("symbol").Element("description").Value;
                                 mystationdatatomorrow.WeatherImgUrl = stationtomorrow.Element("symbol").Element("imageURL").Value;
 
-                                if (urlfrom == "siag")
+                                if (source == "siag")
                                 {
                                     mystationdatatomorrow.Maxtemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("max").Value);
                                     mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("min").Value);
@@ -263,13 +263,13 @@ namespace SIAG
             }
         }
 
-        public static WeatherLinked ParsemyStationWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string stationid, string urlfrom)
+        public static WeatherLinked ParsemyStationWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string stationid, string source)
         {
             WeatherLinked myweather = new WeatherLinked();
 
             myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("Id").Value);
             myweather.date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
-            myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
+            myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
 
             var today = weatherresponse.Root.Element("today");
             var tomorrow = weatherresponse.Root.Element("tomorrow");
@@ -305,7 +305,7 @@ namespace SIAG
                         mystationdatatoday.WeatherDesc = stationtoday.Element("symbol").Element("description").Value;
                         mystationdatatoday.WeatherImgUrl = stationtoday.Element("symbol").Element("imageURL").Value;
 
-                        if (urlfrom == "siag")
+                        if (source == "siag")
                         {
                             mystationdatatoday.Maxtemp = Convert.ToInt32(stationtoday.Element("temperature").Element("max").Value);
                             mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.Element("temperature").Element("min").Value);
@@ -350,10 +350,10 @@ namespace SIAG
                         mystationdatatomorrow.WeatherDesc = stationtomorrow.Element("symbol").Element("description").Value;
                         mystationdatatomorrow.WeatherImgUrl = stationtomorrow.Element("symbol").Element("imageURL").Value;
 
-                        if (urlfrom == "siag")
+                        if (source == "siag")
                         {
-                            //mystationdatatomorrow.Maxtemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("max").Value);
-                            //mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("min").Value);
+                            mystationdatatomorrow.Maxtemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("max").Value);
+                            mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("min").Value);
                         }
                         else
                         {
@@ -369,13 +369,13 @@ namespace SIAG
             return myweather;
         }
 
-        public static BezirksWeather ParsemyBezirksWeatherResponse(string lang, XDocument weatherresponse, string urlfrom)
+        public static WeatherDistrictLinked ParsemyBezirksWeatherResponse(string lang, XDocument weatherresponse, string source)
         {
-            BezirksWeather myweather = new BezirksWeather();
+            WeatherDistrictLinked myweather = new WeatherDistrictLinked();
 
             myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("district").Element("Id").Value);
             myweather.DistrictName = weatherresponse.Root.Element("district").Element("name").Value;
-            myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
+            myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
 
             myweather.date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
 
@@ -399,7 +399,7 @@ namespace SIAG
                 bezirksforecast.RainFrom = Convert.ToInt16(mybezirkforecast.Element("rainFrom").Value);
                 bezirksforecast.RainTo = Convert.ToInt16(mybezirkforecast.Element("rainTo").Value);
 
-                if (urlfrom == "siag")
+                if (source == "siag")
                 {
                     bezirksforecast.MaxTemp = Convert.ToInt16(mybezirkforecast.Element("temperature").Element("max").Value);
                     bezirksforecast.MinTemp = Convert.ToInt16(mybezirkforecast.Element("temperature").Element("min").Value);
@@ -454,7 +454,7 @@ namespace SIAG
 
         //JSON Response Parser
 
-        public static WeatherLinked ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson)
+        public static WeatherLinked ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson, string source)
         {
             var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(weatherresponsejson);
             
@@ -467,12 +467,12 @@ namespace SIAG
                 myweather.evolution = siagweather.evolution;
                 myweather.evolutiontitle = siagweather.evolutionTitle;
                 myweather.language = lang;
-                myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
+                myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
 
                 //Forecast info
                 foreach (var forecast in siagweather.dayForecasts)
                 {
-                    Forecast myforecast = new Forecast();
+                    DataModel.Forecast myforecast = new DataModel.Forecast();
 
                     myforecast.date = forecast.date;
                     myforecast.Reliability = forecast.reliability.ToString();
@@ -595,7 +595,7 @@ namespace SIAG
 
                         foreach (var stationtoday in stationstoday)
                         {
-                            Stationdata mystationdatatoday = new Stationdata();
+                            DataModel.Stationdata mystationdatatoday = new DataModel.Stationdata();
 
                             mystationdatatoday.date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
 
@@ -658,7 +658,7 @@ namespace SIAG
 
                         foreach (var stationtomorrow in stationstomorrow)
                         {
-                            Stationdata mystationdatatomorrow = new Stationdata();
+                            DataModel.Stationdata mystationdatatomorrow = new DataModel.Stationdata();
 
                             mystationdatatomorrow.date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour);
 
@@ -697,5 +697,176 @@ namespace SIAG
             }
         }
 
+        public static WeatherLinked ParsemyStationWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson, string source, string stationid)
+        {
+            var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(weatherresponsejson);
+
+            try
+            {
+                WeatherLinked myweather = new WeatherLinked();
+
+                myweather.Id = Convert.ToInt32(siagweather.id);
+                myweather.date = Convert.ToDateTime(siagweather.date.ToShortDateString() + " " + siagweather.hour);
+                myweather.language = lang;
+                myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
+
+                var stationindex = Convert.ToInt32(stationid);
+
+
+                //Stationdata today
+                if (siagweather.today != null)
+                {
+                    var stationstoday = siagweather.today.stationData;
+
+                    if (stationstoday != null)
+                    {
+                      
+                        var stationtoday = stationstoday[stationindex - 1];
+
+                        DataModel.Stationdata mystationdatatoday = new DataModel.Stationdata();
+
+                        mystationdatatoday.date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
+
+                        mystationdatatoday.Id = stationindex;
+                        var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(stationindex)).FirstOrDefault();
+                        mystationdatatoday.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+
+                        if (lang == "en")
+                        {
+                            if (mystationdatatoday.CityName.Contains("/"))
+                            {
+                                mystationdatatoday.CityName = mystationdatatoday.CityName.Replace("/", " / ");
+                            }
+                        }
+                        //mystationdatatoday.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
+
+                        mystationdatatoday.WeatherCode = stationtoday.symbol.code;
+                        mystationdatatoday.WeatherDesc = stationtoday.symbol.description;
+                        mystationdatatoday.WeatherImgUrl = stationtoday.symbol.imageUrl;
+                        mystationdatatoday.Maxtemp = Convert.ToInt32(stationtoday.max);
+                        mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.min);
+
+                        myweather.Stationdata.Add(mystationdatatoday);
+
+
+                    }
+                }
+                //Stationdata today
+                if (siagweather.tomorrow != null)
+                {
+                    var stationstomorrow = siagweather.tomorrow.stationData;
+
+                    if (stationstomorrow != null)
+                    {
+
+                        var stationtomorrow = stationstomorrow[stationindex - 1];
+
+                        DataModel.Stationdata mystationdatatomorrow = new DataModel.Stationdata();
+
+                        mystationdatatomorrow.date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour);
+
+                        mystationdatatomorrow.Id = stationindex;
+                        var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(stationindex.ToString())).FirstOrDefault();
+                        mystationdatatomorrow.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                        //mystationdatatomorrow.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
+
+                        if (lang == "en")
+                        {
+                            if (mystationdatatomorrow.CityName.Contains("/"))
+                            {
+                                mystationdatatomorrow.CityName = mystationdatatomorrow.CityName.Replace("/", " / ");
+                            }
+                        }
+
+                        mystationdatatomorrow.WeatherCode = stationtomorrow.symbol.code;
+                        mystationdatatomorrow.WeatherDesc = stationtomorrow.symbol.description;
+                        mystationdatatomorrow.WeatherImgUrl = stationtomorrow.symbol.imageUrl;
+
+                        mystationdatatomorrow.Maxtemp = Convert.ToInt32(stationtomorrow.max);
+                        mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.min);
+
+                        myweather.Stationdata.Add(mystationdatatomorrow);
+
+                    }
+                }
+
+                return myweather;
+            }
+            catch (Exception)
+            {
+                return null;
+            }         
+
+        }
+
+
+        public static WeatherDistrictLinked ParsemyBezirksWeatherJsonResponse(string lang, string weatherresponsejson, string source)
+        {
+            var siagdistrictweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeatherDistrict>(weatherresponsejson);
+
+            try
+            {
+                WeatherDistrictLinked myweather = new WeatherDistrictLinked();
+
+                myweather.Id = siagdistrictweather.district.id;
+                myweather.DistrictName = siagdistrictweather.district.name;
+                myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
+                myweather.date = Convert.ToDateTime(siagdistrictweather.date.ToShortDateString() + " " + siagdistrictweather.hour);
+
+                List<BezirksForecast> mybezirksforecastlist = new List<BezirksForecast>();
+
+                //Tomorrow info
+                foreach (var mybezirkforecast in siagdistrictweather.forecasts)
+                {
+
+                    BezirksForecast bezirksforecast = new BezirksForecast();
+
+                    bezirksforecast.date = mybezirkforecast.date;
+
+                    bezirksforecast.WeatherCode = mybezirkforecast.symbol.code;
+                    bezirksforecast.WeatherDesc = mybezirkforecast.symbol.description;
+                    bezirksforecast.WeatherImgUrl = mybezirkforecast.symbol.imageUrl;
+
+                    bezirksforecast.Freeze = mybezirkforecast.freeze;
+                    bezirksforecast.RainFrom = Convert.ToInt32(mybezirkforecast.rainFrom);
+                    bezirksforecast.RainTo = Convert.ToInt32(mybezirkforecast.rainTo);
+
+                    bezirksforecast.MaxTemp = Convert.ToInt32(mybezirkforecast.temperatureMax);
+                    bezirksforecast.MinTemp = Convert.ToInt32(mybezirkforecast.temperatureMin);
+
+                    bezirksforecast.Part1 = Convert.ToInt32(mybezirkforecast.rainTimespan1);
+                    bezirksforecast.Part2 = Convert.ToInt32(mybezirkforecast.rainTimespan2);
+                    bezirksforecast.Part3 = Convert.ToInt32(mybezirkforecast.rainTimespan3);
+                    bezirksforecast.Part4 = Convert.ToInt32(mybezirkforecast.rainTimespan4);
+
+                    //TO CHECK WHAT THIS IS FOR
+                    //HACK
+                    if (mybezirkforecast.rainTimespan3 == null && mybezirkforecast.rainTimespan4 == null)
+                    {
+                        bezirksforecast.Part1 = mybezirkforecast.rainTimespan1 != null ? Convert.ToInt32(mybezirkforecast.rainTimespan1) : 0;
+                        bezirksforecast.Part2 = mybezirkforecast.rainTimespan1 != null ? Convert.ToInt32(mybezirkforecast.rainTimespan1) : 0;
+                        bezirksforecast.Part3 = mybezirkforecast.rainTimespan2 != null ? Convert.ToInt32(mybezirkforecast.rainTimespan2) : 0;
+                        bezirksforecast.Part4 = mybezirkforecast.rainTimespan2 != null ? Convert.ToInt32(mybezirkforecast.rainTimespan2) : 0;
+                    }
+
+                    bezirksforecast.Thunderstorm = Convert.ToInt32(mybezirkforecast.freeze);
+
+                    bezirksforecast.Reliability = mybezirkforecast.reliability;
+                    bezirksforecast.SymbolId = mybezirkforecast.symbolId;
+
+                    mybezirksforecastlist.Add(bezirksforecast);
+                }
+
+                myweather.BezirksForecast = mybezirksforecastlist.ToList();
+
+                return myweather;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+          
+        }
     }
 }

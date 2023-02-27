@@ -45,18 +45,19 @@ namespace OdhApiImporter.Helpers
             string? weatherresponsetaskde = "";
             string? weatherresponsetaskit = "";
             string? weatherresponsetasken = "";
+            string source = "opendata";
 
             if (!String.IsNullOrEmpty(id))
             {
-                weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true, id);
-                weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("it", settings.SiagConfig.Username, settings.SiagConfig.Password, true, id);
-                weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("en", settings.SiagConfig.Username, settings.SiagConfig.Password, true, id);
+                weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source, id);
+                weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("it", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source, id);
+                weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("en", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source, id);
             }
             else
             {
-                weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true);
-                weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("it", settings.SiagConfig.Username, settings.SiagConfig.Password, true);
-                weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("en", settings.SiagConfig.Username, settings.SiagConfig.Password, true);
+                weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+                weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("it", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+                weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("en", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
             }
 
             if (!String.IsNullOrEmpty(weatherresponsetaskde) && !String.IsNullOrEmpty(weatherresponsetaskit) && !String.IsNullOrEmpty(weatherresponsetasken))
@@ -82,9 +83,9 @@ namespace OdhApiImporter.Helpers
                       .InsertGetIdAsync<int>(rawData);
 
                 //Save parsed Response to measurement history table
-                var odhweatherresultde = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("de", settings.XmlConfig.XmldirWeather, weatherresponsetaskde, true);
-                var odhweatherresultit = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("it", settings.XmlConfig.XmldirWeather, weatherresponsetaskit, true);
-                var odhweatherresulten = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("en", settings.XmlConfig.XmldirWeather, weatherresponsetasken, true);
+                var odhweatherresultde = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("de", settings.XmlConfig.XmldirWeather, weatherresponsetaskde, true, source);
+                var odhweatherresultit = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("it", settings.XmlConfig.XmldirWeather, weatherresponsetaskit, true, source);
+                var odhweatherresulten = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("en", settings.XmlConfig.XmldirWeather, weatherresponsetasken, true, source);
 
                 //Insert into Measuringhistorytable
                 //var insertresultde = await QueryFactory.Query("weatherdatahistory")
@@ -100,7 +101,7 @@ namespace OdhApiImporter.Helpers
                 myweatherhistory.Weather.Add("de", odhweatherresultde);
                 myweatherhistory.Weather.Add("it", odhweatherresultit);
                 myweatherhistory.Weather.Add("en", odhweatherresulten);
-                myweatherhistory.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather();
+                myweatherhistory.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
                 myweatherhistory.FirstImport = DateTime.Now;
                 myweatherhistory.HasLanguage = new List<string>() { "de", "it", "en" };
                 myweatherhistory.LastChange = odhweatherresultde.date;

@@ -49,6 +49,7 @@ namespace Helper
                 SmgTags or ODHTagLinked => "odhtag",
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
                 Weather or WeatherLinked => "weather",
+                BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
                 TourismMetaData => "odhmetadata",
                 //BezirksWeather or DistrictWeatherLinked => "weatherdistrict",
                 _ => throw new Exception("not known odh type")

@@ -42,9 +42,9 @@ namespace PushServer
 
 		private static async Task<Weather> GetWeatherForPushServer(string language, string locfilter, string stationidtype, string xmldir, string siaguser, string siagpswd)
 		{
-			var result = await GetWeatherData.GetSiagWeatherData(language, siaguser, siagpswd, true);
+			var result = await GetWeatherData.GetSiagWeatherData(language, siaguser, siagpswd, true, "siag");
 
-			return await GetWeatherData.ParseSiagWeatherDataToODHWeather(language, xmldir, result, true);
+			return await GetWeatherData.ParseSiagWeatherDataToODHWeather(language, xmldir, result, true, "siag");
 		}
 
 		private static PushServerMessage ParseWeatherData(Conditions weather, string language, string group)
