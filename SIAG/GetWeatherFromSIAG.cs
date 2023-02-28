@@ -74,6 +74,9 @@ namespace SIAG
                 if (source == "siag")
                     requesturl = serviceurlbezirksiag + distid + "/bulletin?lang=" + lang + "&format=" + format;
 
+                //Hack adding nocache parameter because of server side caching problem with 2 domains from siag   
+                requesturl = requesturl + "&nocache=" + source;
+
                 using (var client = new HttpClient())
                 {
                     var myresponse = await client.GetAsync(requesturl);
