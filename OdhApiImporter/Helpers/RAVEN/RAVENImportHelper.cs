@@ -401,7 +401,7 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    //TODO Add the PublishedOn Logic
+                    //PublishedOn Logicadded on TransformToPGObject because ODHTag not implementing ISource
 
                     myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags", true);
 

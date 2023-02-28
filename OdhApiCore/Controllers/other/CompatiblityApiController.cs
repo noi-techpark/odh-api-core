@@ -488,6 +488,7 @@ namespace OdhApiCore.Controllers.api
                             languagelist: new List<string>(),
                             mainentitylist: new List<string>(),
                             validforentitylist: validforentitytypeslist,
+                            publishedonlist: new List<string>(),
                             sourcelist: new List<string>(),
                             displayascategory: null,
                             searchfilter: searchfilter,

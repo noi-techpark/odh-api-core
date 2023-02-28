@@ -19,9 +19,6 @@ namespace Helper.Extensions
 
         public static void TryAddOrUpdateOnList(this ICollection<string> smgtags, ICollection<string> tagsToAdd)
         {
-            if (smgtags == null)
-                smgtags = new List<string>();
-
             foreach (var tag in tagsToAdd)
             {
                 smgtags.TryAddOrUpdateOnList(tag);
@@ -30,10 +27,6 @@ namespace Helper.Extensions
 
         public static void TryAddOrUpdateOnList(this ICollection<string> smgtags, string tagToAdd)
         {
-            if (smgtags == null)
-                smgtags = new List<string>();
-
-
             if (!smgtags.Contains(tagToAdd))
                 smgtags.Add(tagToAdd);
         }

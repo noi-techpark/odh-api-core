@@ -40,6 +40,7 @@ namespace OdhApiCore.Controllers
         /// <param name="displayascategory">true = returns only Tags which are marked as DisplayAsCategory true</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="localizationlanguage">here for Compatibility Reasons, replaced by language parameter</param>
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="source">Source Filter (possible Values: 'lts','idm), (default:'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
@@ -63,6 +64,7 @@ namespace OdhApiCore.Controllers
             string? validforentity = null,
             string? mainentity = null,
             bool? displayascategory = null,
+            string? publishedon = null,
             string? source = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -78,7 +80,7 @@ namespace OdhApiCore.Controllers
                 language = localizationlanguage;
 
 
-            return await Get(pagenumber, pagesize, language, mainentity, validforentity, displayascategory, source, fields: fields ?? Array.Empty<string>(), 
+            return await Get(pagenumber, pagesize, language, mainentity, validforentity, displayascategory, source, publishedon, fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
         }
@@ -120,8 +122,9 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> Get(
             uint? pagenumber, int? pagesize, 
-            string? language, string? maintype, string? validforentity, bool? displayascategory, string? source, string[] fields,
-            string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
+            string? language, string? maintype, string? validforentity, 
+            bool? displayascategory, string? source, string? publishedonfilter,
+            string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -129,6 +132,7 @@ namespace OdhApiCore.Controllers
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var sourcelist = Helper.CommonListCreator.CreateIdList(source);
+                var publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
                 var query = 
                     QueryFactory.Query()
@@ -139,6 +143,7 @@ namespace OdhApiCore.Controllers
                         mainentitylist: maintypeslist,
                         validforentitylist: validforentitytypeslist,
                         sourcelist: sourcelist,
+                        publishedonlist: publishedonlist,
                         displayascategory: displayascategory,
                         searchfilter: searchfilter,
                         language: language,
