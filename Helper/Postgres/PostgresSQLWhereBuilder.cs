@@ -730,7 +730,8 @@ namespace Helper
 
         //Return Where and Parameters for OdhTag and Tag
         public static Query ODHTagWhereExpression(
-            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> mainentitylist, IReadOnlyCollection<string> validforentitylist, IReadOnlyCollection<string> sourcelist, bool? displayascategory,
+            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> mainentitylist, IReadOnlyCollection<string> validforentitylist, 
+            IReadOnlyCollection<string> sourcelist, bool? displayascategory, IReadOnlyCollection<string> publishedonlist,
             string? searchfilter, string? language, bool filterClosedData)
         {
             LogMethodInfo(
@@ -748,6 +749,7 @@ namespace Helper
                 .ODHTagValidForEntityFilter(validforentitylist)
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
                 .SourceFilter_GeneratedColumn(sourcelist)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 
