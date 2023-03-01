@@ -1,4 +1,6 @@
 ﻿using DataModel;
+using JsonDiffPatchDotNet;
+using JsonDiffPatchDotNet.Formatters.JsonPatch;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -14,34 +16,34 @@ namespace Helper.Generic
 {
     public class EqualityHelper
     {
-        public static bool CompareClasses<T>(object class1, object class2, List<string> propertiestonotcheck) where T : new()
-        {
-            T compareclass1 = new T();
-            T compareclass2 = new T();
+        //public static bool CompareClasses<T>(object class1, object class2, List<string> propertiestonotcheck) where T : new()
+        //{
+        //    T compareclass1 = new T();
+        //    T compareclass2 = new T();
 
-            CopyClassHelper.CopyPropertyValues(class1, compareclass1);
-            CopyClassHelper.CopyPropertyValues(class2, compareclass2);
+        //    CopyClassHelper.CopyPropertyValues(class1, compareclass1);
+        //    CopyClassHelper.CopyPropertyValues(class2, compareclass2);
 
-            if (propertiestonotcheck != null)
-            {
-                foreach (string s in propertiestonotcheck)
-                {
-                    //Set the fields null (DateTime sets DateTime min
-                    var property1 = compareclass1.GetType().GetProperty(s);
-                    if (property1 != null && property1.GetSetMethod() != null)
-                        property1.SetValue(compareclass1, null, null);
+        //    if (propertiestonotcheck != null)
+        //    {
+        //        foreach (string s in propertiestonotcheck)
+        //        {
+        //            //Set the fields null (DateTime sets DateTime min
+        //            var property1 = compareclass1.GetType().GetProperty(s);
+        //            if (property1 != null && property1.GetSetMethod() != null)
+        //                property1.SetValue(compareclass1, null, null);
 
-                    //Set the fields null 
-                    var property2 = compareclass2.GetType().GetProperty(s);
-                    if (property2 != null && property2.GetSetMethod() != null)
-                        property2.SetValue(compareclass2, null, null);
-                }
-            }
+        //            //Set the fields null 
+        //            var property2 = compareclass2.GetType().GetProperty(s);
+        //            if (property2 != null && property2.GetSetMethod() != null)
+        //                property2.SetValue(compareclass2, null, null);
+        //        }
+        //    }
 
-            return (JsonConvert.SerializeObject(compareclass1) == JsonConvert.SerializeObject(compareclass2));
-        }
+        //    return (JsonConvert.SerializeObject(compareclass1) == JsonConvert.SerializeObject(compareclass2));
+        //}
 
-        public static bool CompareClassesTest<T>(object class1, object class2, List<string> propertiestonotcheck) where T : IIdentifiable, new()
+        public static EqualityResult CompareClassesTest<T>(object class1, object class2, List<string> propertiestonotcheck, bool returndiff) where T : IIdentifiable, new()
         {            
             T compareclass1 = new T();
             T compareclass2 = new T();
@@ -76,7 +78,27 @@ namespace Helper.Generic
             //var result2 = JsonConvert.SerializeObject(compareclass2, jsonSerializerSettings);
             //return (result1 == result2);
 
-            return JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));            
+            
+
+            var equalityresult = new EqualityResult();
+
+            equalityresult.isequal = JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));            
+
+            if(returndiff)
+            {
+                //TO TEST JSON DIFF
+                var jdp = new JsonDiffPatch();
+                JToken patch = jdp.Diff(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));
+                if (patch != null)
+                {
+                    var formatter = new JsonDeltaFormatter();
+                    var operations = formatter.Format(patch);
+                }
+
+                equalityresult.patch = patch;
+            }
+
+            return equalityresult;
         }
 
         public static bool CompareImageGallery(ICollection<ImageGallery> compareclass1, ICollection<ImageGallery> compareclass2, List<string> propertiestonotcheck)
@@ -190,5 +212,5 @@ namespace Helper.Generic
         }
     }
 
-
+    
 }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 
@@ -143,7 +144,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = false, objectchanged = null, objectimageschanged = null, pushchannels = null };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = false, objectchanged = null, objectimageschanged = null, pushchannels = null, changes = null };
         }
 
         public static async Task<PGCRUDResult> UpsertDataDestinationData<T,V>(this QueryFactory QueryFactory, T data, V destinationdata, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false, bool compareimagedata = false) 
@@ -166,7 +167,9 @@ namespace Helper
             int createresult = 0;
             int updateresult = 0;
             int errorresult = 0;
-            bool compareresult = false;
+            //bool compareresult = false;
+            EqualityResult equalityresult = new EqualityResult() { isequal = false, patch = null };
+
             bool imagecompareresult = false;
             List<string> channelstopublish = new List<string>();
 
@@ -176,7 +179,6 @@ namespace Helper
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
             destinationdata._Meta = MetadataHelper.GetMetadataobject<V>(destinationdata);
-
 
             if (data.FirstImport == null)
             {
@@ -197,7 +199,7 @@ namespace Helper
             {
                 //Compare the data
                 if (comparedata && queryresult != null)
-                    compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" });
+                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" }, true);
 
                 //Compare Image Gallery
                 if (compareimagedata && queryresult != null && data.ImageGallery != null && queryresult.ImageGallery != null)
@@ -223,7 +225,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = compareresult ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
         public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
@@ -256,7 +258,6 @@ namespace Helper
             return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
         }
 
-
         public static async Task<PGCRUDResult> UpsertDataAndCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
         {
             //TODO: What if no id is passed? Generate ID
@@ -278,7 +279,9 @@ namespace Helper
             int createresult = 0;
             int updateresult = 0;
             int errorresult = 0;
-            bool compareresult = false;            
+            //bool compareresult = false;            
+            EqualityResult equalityresult = new EqualityResult() { isequal = false, patch = null };
+
             List<string> channelstopublish = new List<string>();
 
             data.LastChange = DateTime.Now;
@@ -304,7 +307,7 @@ namespace Helper
             {
                 //Compare the data
                 if(comparedata)
-                    compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" });
+                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
 
                 //Check if Publishedon List changed and populate channels to publish information
                 if (queryresult != null && queryresult.PublishedOn != null && data.PublishedOn != null)
@@ -326,7 +329,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = compareresult ? 1 : 0, objectimageschanged = null, pushchannels = channelstopublish };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 1 : 0, objectimageschanged = null, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
         public static async Task<PGCRUDResult> UpsertDataAndFullCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false, bool compareimagedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IImageGalleryAware, IPublishedOn, new()
@@ -351,8 +354,9 @@ namespace Helper
             int createresult = 0;
             int updateresult = 0;
             int errorresult = 0;
-            bool compareresult = false;
+            //bool compareresult = false;
             bool imagecompareresult = false;
+            EqualityResult equalityresult = new EqualityResult() { isequal = false, patch = null };
             List<string> channelstopublish = new List<string>();
 
             data.LastChange = DateTime.Now;
@@ -378,7 +382,9 @@ namespace Helper
             {
                 //Compare the data
                 if (comparedata && queryresult != null)
-                    compareresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" });
+                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
+
+              
 
                 //Compare Image Gallery
                 if (compareimagedata && queryresult != null)
@@ -386,8 +392,7 @@ namespace Helper
 
                 //Check if Publishedon List changed and populate channels to publish information
                 if(queryresult != null && queryresult.PublishedOn != null && data.PublishedOn != null)
-                {
-                    //var publishedoncomparision = EqualityHelper.ComparePublishedOn(queryresult.PublishedOn, data.PublishedOn);
+                {                    
                     var allchannels = data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn);
 
                     channelstopublish.AddRange(allchannels);                    
@@ -405,9 +410,8 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = compareresult ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
-
 
         #endregion
 

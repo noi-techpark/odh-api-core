@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace DataModel
 {
@@ -25,6 +26,8 @@ namespace DataModel
         public int? objectcompared { get; init; }
         public int? objectchanged { get; init; }
         public int? objectimagechanged { get; init; }
+
+        public string? objectchanges { get; init; }
 
         //Push Infos
         public ICollection<string>? pushchannels { get; init; }
@@ -57,6 +60,8 @@ namespace DataModel
         public int? objectchanged { get; init; }
         public int? objectimagechanged { get; init; }
 
+        public JToken? changes { get; init; }
+
         //Push Infos
         public ICollection<string>? pushchannels { get; init; }
 
@@ -78,6 +83,8 @@ namespace DataModel
         public int? objectimageschanged { get; init; }
 
         public ICollection<string>? pushchannels { get; init; }
+
+        public JToken? changes { get; init; } 
     }
 
     public struct JsonGenerationResult
@@ -102,6 +109,8 @@ namespace DataModel
             int? objectimagechanged = 0;
             List<string>? channelstopush = new List<string>();
 
+            JToken? changes = null;
+
             IDictionary<string, NotifierResponse> pushed = new Dictionary<string, NotifierResponse>();
          
             foreach (var updatedetail in updatedetails)
@@ -114,6 +123,15 @@ namespace DataModel
                 error = updatedetail.error + error;
                 objectchanged = updatedetail.objectchanged + objectchanged;
                 objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
+
+                if(updatedetail.changes != null)
+                {
+                    if (changes == null)
+                        changes = updatedetail.changes;
+                    else
+                        changes.AddAfterSelf(updatedetail.changes);
+                }
+
 
                 if(updatedetail.pushchannels != null)
                 {
@@ -131,7 +149,7 @@ namespace DataModel
                 }
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, comparedobjects = objectscompared, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushchannels = channelstopush, pushed = pushed };
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, comparedobjects = objectscompared, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushchannels = channelstopush, pushed = pushed, changes = changes };
         }
 
         public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
@@ -151,6 +169,7 @@ namespace DataModel
                 objectcompared = detail.comparedobjects,
                 objectchanged = detail.objectchanged ,                
                 objectimagechanged = detail.objectimagechanged,
+                objectchanges = detail.changes.ToString(Formatting.None),
                 pushchannels = detail.pushchannels,               
                 pushed = detail.pushed,
                 error = detail.error,
@@ -273,6 +292,13 @@ namespace DataModel
     public class IdmMarketPlacePushResponse
     {
         public string notificationId { get; set; }
+    }
+
+    public class EqualityResult
+    {
+        public bool isequal { get; set; }
+        //public IList<Operation>? operations {get;set;}
+        public JToken? patch { get; set; }
     }
 
     #endregion
