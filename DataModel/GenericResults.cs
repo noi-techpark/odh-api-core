@@ -169,7 +169,7 @@ namespace DataModel
                 objectcompared = detail.comparedobjects,
                 objectchanged = detail.objectchanged ,                
                 objectimagechanged = detail.objectimagechanged,
-                objectchanges = detail.changes.ToString(Formatting.None),
+                objectchanges = detail.changes != null ? detail.changes.ToString(Formatting.None) : null,
                 pushchannels = detail.pushchannels,               
                 pushed = detail.pushed,
                 error = detail.error,
