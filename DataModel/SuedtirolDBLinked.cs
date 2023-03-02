@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
@@ -1410,15 +1411,29 @@ namespace DataModel
 
     public class TourismMetaData : IMetaData, IImportDateassigneable, IIdentifiable, IPublishedOn
     {
+        //openapi
+        //Procudes non nullable string not required
+        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.DisallowNull)]
+        //Produces string non nullable minlength = 1
+        //[Required]
+        //Produces non nullable string required
+        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+
         public TourismMetaData()
         {
             _Meta = new Metadata();
         }
-        public string ApiIdentifier { get; set; }
 
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        public string ApiIdentifier { get; set; }
+        
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string>? ApiFilter { get; set; }
 
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public string Id { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public string OdhType { get; set; }
         
         private string swaggerUrl = default!;
@@ -1468,8 +1483,10 @@ namespace DataModel
 
         public IDictionary<string, string> ApiDescription { get; set; }
 
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public string ApiVersion { get; set; }
 
+        [Required]
         public ICollection<string> PathParam { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
