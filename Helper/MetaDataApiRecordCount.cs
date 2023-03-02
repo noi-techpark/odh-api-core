@@ -40,7 +40,7 @@ namespace Helper
             return recordcount;
         }
 
-        public static async Task<IDictionary<string,int>> GetRecordCountfromDB(List<string> filters, string odhtype, QueryFactory QueryFactory)
+        public static async Task<IDictionary<string,int>> GetRecordCountfromDB(ICollection<string>? filters, string odhtype, QueryFactory QueryFactory)
         {
             var result = new Dictionary<string, int> { };
 
