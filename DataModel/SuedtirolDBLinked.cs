@@ -1414,14 +1414,13 @@ namespace DataModel
         {
             _Meta = new Metadata();
         }
-        public string ApiIdentifier { get; set; } = default!;
+        public string ApiIdentifier { get; set; }
 
-        public string ApiFilter { get; set; }
+        public ICollection<string>? ApiFilter { get; set; }
 
-        public string Id { get; set; } = default!;
-        public string OdhType { get; set; } = default!;
-        //public string Description { get; set; } = default!;
-
+        public string Id { get; set; }
+        public string OdhType { get; set; }
+        
         private string swaggerUrl = default!;
         public string SwaggerUrl
         {
@@ -1441,7 +1440,7 @@ namespace DataModel
         {
             get
             {
-                return String.Format("{0}/{1}{2}", this.ApiVersion, this.ApiIdentifier, !String.IsNullOrEmpty(this.ApiFilter) ? "?" + this.ApiFilter : "");
+                return String.Format("{0}/{1}{2}", this.ApiVersion, this.ApiIdentifier, this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : "");
             }
         }
 
@@ -1459,22 +1458,19 @@ namespace DataModel
         public Metadata _Meta { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
-        public string? Shortname { get; set; }
+        public string Shortname { get; set; }
 
         public ICollection<string> Sources { get; set; }
-
-        //public IDictionary<string, string> SourceDescription { get; set; }
-
-
+        
         public IDictionary<string, int> RecordCount { get; set; }
 
         public IDictionary<string, string> Output { get; set; }
 
         public IDictionary<string, string> ApiDescription { get; set; }
 
-        public string? ApiVersion { get; set; }
+        public string ApiVersion { get; set; }
 
-        public ICollection<string>? PathParam { get; set; }
+        public ICollection<string> PathParam { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
 
