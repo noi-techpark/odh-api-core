@@ -40,7 +40,7 @@ namespace Helper
             return recordcount;
         }
 
-        public static async Task<IDictionary<string,int>> GetRecordCountfromDB(string filter, string odhtype, QueryFactory QueryFactory)
+        public static async Task<IDictionary<string,int>> GetRecordCountfromDB(List<string> filters, string odhtype, QueryFactory QueryFactory)
         {
             var result = new Dictionary<string, int> { };
 
@@ -51,17 +51,22 @@ namespace Helper
                 string source = "";
                 string tag = "";
 
-                if (filter != null)
+                
+                if (filters != null)
                 {
-                    if (filter.StartsWith("?source="))
+                    foreach (var filter in filters)
                     {
-                        source = filter.Replace("?source=", "");
-                    }
+                        if (filter.StartsWith("source="))
+                        {
+                            source = filter.Replace("source=", "");
+                        }
 
-                    if (filter.StartsWith("?tagfilter="))
-                    {
-                        tag = filter.Replace("?tagfilter=", "");
+                        if (filter.StartsWith("tagfilter="))
+                        {
+                            tag = filter.Replace("tagfilter=", "");
+                        }
                     }
+                        
                 }
 
                 //Get Reduced
