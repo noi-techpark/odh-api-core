@@ -602,6 +602,11 @@ namespace CDB.Parser
                     myacco.Mapping.TryAddOrUpdate("hgv", hgviddict);
                 }
 
+                //Special (Mapping Features to Marketinggroup) (B79228E62B5A4D14B2BF35E7B79B8580 ) + 2 (B5757D0688674594955606382A5E126C)  + 3 (31F741E8D6D8444A9BB571A2DF193F69
+                MapFeaturetoMarketingGroup(myacco, "B79228E62B5A4D14B2BF35E7B79B8580");
+                MapFeaturetoMarketingGroup(myacco, "B5757D0688674594955606382A5E126C");
+                MapFeaturetoMarketingGroup(myacco, "31F741E8D6D8444A9BB571A2DF193F69");
+
                 UpdateAusstattung(myacco);
                 UpdateThemes(myacco, mywinelist, mycitylist, myskiarealist, mymediterranenlist, dolomiteslist, alpinelist);
                 UpdateBadges(myacco, myvinumlist);
@@ -707,6 +712,19 @@ namespace CDB.Parser
             
             return myacco;
         }
+
+        //Special Mapping etc...
+        private static void MapFeaturetoMarketingGroup(Accommodation myacco, string featureid)
+        {
+            if (myacco.Features != null && myacco.Features.Count > 0 && myacco.Features.Select(x => x.Id).ToList().Contains(featureid))
+            {
+                if (myacco.MarketingGroupIds == null)
+                    myacco.MarketingGroupIds = new List<string>();
+
+                myacco.MarketingGroupIds.Add(featureid);
+            }
+        }
+
 
         //Update Badge Information
         private static void UpdateBadges(Accommodation myacco, XDocument myvinumlist)
