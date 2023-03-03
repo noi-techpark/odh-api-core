@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -169,7 +170,7 @@ namespace DataModel
                 objectcompared = detail.comparedobjects,
                 objectchanged = detail.objectchanged ,                
                 objectimagechanged = detail.objectimagechanged,
-                objectchanges = detail.changes != null ? detail.changes.ToString(Formatting.None) : null,
+                objectchanges = detail.changes != null ? Regex.Unescape(detail.changes.ToString(Formatting.None)) : null,
                 pushchannels = detail.pushchannels,               
                 pushed = detail.pushed,
                 error = detail.error,
