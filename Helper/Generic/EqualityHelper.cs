@@ -84,7 +84,7 @@ namespace Helper.Generic
 
             equalityresult.isequal = JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));            
 
-            if(returndiff)
+            if(returndiff && !equalityresult.isequal)
             {
                 //TO TEST JSON DIFF
                 var jdp = new JsonDiffPatch();
