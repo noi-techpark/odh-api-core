@@ -62,7 +62,7 @@ namespace OdhApiImporter.Helpers
                         var reducedobject = ReduceDataTransformer.GetReducedObject((AccommodationLinked)mypgdata, ReduceDataTransformer.CopyLTSAccommodationToReducedObject);
 
                         updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations");
-                    }
+                    }               
 
                     //UPDATE ACCOMMODATIONROOMS
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
@@ -494,7 +494,12 @@ namespace OdhApiImporter.Helpers
                     throw new Exception("no match found");
             }
 
-            return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, updateresultreduced }));
+            var mergelist = new List<UpdateDetail>() { myupdateresult };
+            
+            if (updateresultreduced.updated != null || updateresultreduced.created != null || updateresultreduced.deleted != null)
+                mergelist.Add(updateresultreduced);
+            
+            return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(mergelist));
         }
 
         /// <summary>
