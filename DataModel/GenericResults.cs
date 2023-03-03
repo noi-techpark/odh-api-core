@@ -28,7 +28,7 @@ namespace DataModel
         public int? objectchanged { get; init; }
         public int? objectimagechanged { get; init; }
 
-        public string? objectchanges { get; init; }
+        public dynamic? objectchanges { get; init; }
 
         //Push Infos
         public ICollection<string>? pushchannels { get; init; }
@@ -170,7 +170,7 @@ namespace DataModel
                 objectcompared = detail.comparedobjects,
                 objectchanged = detail.objectchanged ,                
                 objectimagechanged = detail.objectimagechanged,
-                objectchanges = detail.changes != null ? Regex.Unescape(detail.changes.ToString(Formatting.None)) : null,
+                objectchanges = detail.changes != null ? JsonConvert.DeserializeObject<dynamic>(detail.changes.ToString(Formatting.None)) : null,
                 pushchannels = detail.pushchannels,               
                 pushed = detail.pushed,
                 error = detail.error,
