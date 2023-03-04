@@ -130,7 +130,7 @@ namespace DataModel
                     if (changes == null)
                         changes = updatedetail.changes;
                     else
-                        changes.AddAfterSelf(updatedetail.changes);
+                        changes.Append(updatedetail.changes);
                 }
 
 
