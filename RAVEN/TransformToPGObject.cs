@@ -634,6 +634,16 @@ namespace RAVEN
                 data.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
             }
 
+
+            //If Redactional Tag activate it
+            if (data.Source != null && data.Source.Contains("IDMRedactionalCategory"))
+            {
+                //IF list is null instantiate it otherwise it will be empty
+                data.PublishedOn = data.PublishedOn ?? new List<string>();
+
+                data.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
+            }
+
             return data;
         }        
     }
