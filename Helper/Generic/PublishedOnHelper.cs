@@ -10,12 +10,12 @@ namespace Helper
 {
     public static class PublishedOnHelper
     {           
-        public static void CreatePublishenOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null, Tuple<string,bool>? activatesourceonly = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
+        public static void CreatePublishedOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null, Tuple<string,bool>? activatesourceonly = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
         {
             //alowedsources  Dictionary<odhtype, sourcelist> TODO Export in Config
             Dictionary<string, List<string>> allowedsourcesMP = new Dictionary<string, List<string>>()
             {
-                { "event", new List<string>(){ "lts" } },
+                { "event", new List<string>(){ "lts","drin","trevilab" } },
                 { "accommodation", new List<string>(){ "lts" } },
                 { "odhactivitypoi", new List<string>(){ "lts","suedtirolwein", "archapp" } }
             };
@@ -71,26 +71,28 @@ namespace Helper
                     //EVENTS LTS
                     if ((mydata as EventLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                     {
-                        if ((mydata as EventLinked).SmgActive)
+                        if ((mydata as EventLinked).SmgActive && mydata._Meta.Source == "lts")
                             publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
 
                         //Add only for Events for the future
-                        if ((mydata as EventLinked).NextBeginDate >= new DateTime(2023, 1, 1))
+                        if ((mydata as EventLinked).NextBeginDate >= new DateTime(2023, 1, 1) && mydata._Meta.Source == "lts")
                             publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+
+                        //Events DRIN CENTROTREVI
+                        if ((mydata as EventLinked).Active && (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin"))
+                        {
+                            if ((mydata as EventLinked).SmgActive)
+                            {
+                                if (mydata._Meta.Source == "drin")
+                                    publishedonlist.TryAddOrUpdateOnList("drin");
+                                if (mydata._Meta.Source == "trevilab")
+                                    publishedonlist.TryAddOrUpdateOnList("centro-trevi");
+                            }
+
+                        }
                     }
 
-                    //Events DRIN CENTROTREVI
-                    if ((mydata as EventLinked).Active && (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin"))
-                    {
-                        if ((mydata as EventLinked).SmgActive)
-                        {
-                            if(mydata._Meta.Source == "drin")
-                                publishedonlist.TryAddOrUpdateOnList("drin");
-                            if (mydata._Meta.Source == "trevilab")
-                                publishedonlist.TryAddOrUpdateOnList("centro-trevi");
-                        }
-                            
-                    }
+                    
                     break;
 
                 //ODHActivityPoi 

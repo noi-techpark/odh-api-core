@@ -119,10 +119,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 //ADD MAPPING
                 var suedtirolweinid = new Dictionary<string, string>() { { "id", dataid } };
                 weinaward.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
-
-                //Set Publishedon List
-                weinaward.CreatePublishenOnList<WineLinked>();
-
+            
                 var result = await InsertDataToDB(weinaward, new KeyValuePair<string, XElement>(dataid, winedata));
                 newcounter = newcounter + result.created ?? 0;
                 updatecounter = updatecounter + result.updated ?? 0;
@@ -181,6 +178,9 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
             //Set LicenseInfo
             wineaward.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WineLinked>(wineaward, Helper.LicenseHelper.GetLicenseforWineAward);
+
+            //Set Publishedon List
+            wineaward.CreatePublishedOnList<WineLinked>();
 
             var rawdataid = await InsertInRawDataDB(suedtirolweindata);
 

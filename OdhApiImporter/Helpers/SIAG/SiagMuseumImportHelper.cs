@@ -396,10 +396,7 @@ namespace OdhApiImporter.Helpers
 
                 //Set Tags based on OdhTags
                 await GenericTaggingHelper.AddMappingToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
-
-                //Set Publishedon
-                mymuseum.CreatePublishenOnList<ODHActivityPoiLinked>();
-
+             
                 if (mymuseumdata?.Root is { })
                 {
                     var result = await InsertDataToDB(mymuseum, new KeyValuePair<string, XElement>(museumid, mymuseumdata.Root));
@@ -462,6 +459,10 @@ namespace OdhApiImporter.Helpers
 
             //Set LicenseInfo
             odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+
+            //Set Publishedon
+            odhactivitypoi.CreatePublishedOnList();
+
 
             var rawdataid = await InsertInRawDataDB(siagmuseumdata);
 
