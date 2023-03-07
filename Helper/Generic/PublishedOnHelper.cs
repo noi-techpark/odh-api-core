@@ -9,34 +9,11 @@ using System.Threading.Tasks;
 namespace Helper
 {
     public static class PublishedOnHelper
-    {
-        //Deprecated
-        //public static List<string> GetPublishenOnList(string type, bool smgactive)
-        //{
-        //    List<string> publishedonlist = new List<string>();
-
-        //    if (type == "eventshort")
-        //    {
-        //        if (smgactive)
-        //            publishedonlist.Add("https://noi.bz.it");
-        //    }
-        //    else if (type != "package")
-        //    {
-        //        if (smgactive)
-        //            publishedonlist.Add("https://www.suedtirol.info");
-        //    }
-
-        //    //TODO ADD some ifs Create better logic
-
-        //    //TODO ADD PublishedOn Marketplace Logic
-
-        //    return publishedonlist;
-        //}
-    
+    {           
         public static void CreatePublishenOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null, Tuple<string,bool>? activatesourceonly = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
         {
             //alowedsources  Dictionary<odhtype, sourcelist> TODO Export in Config
-            Dictionary<string, List<string>> allowedsources = new Dictionary<string, List<string>>()
+            Dictionary<string, List<string>> allowedsourcesMP = new Dictionary<string, List<string>>()
             {
                 { "event", new List<string>(){ "lts" } },
                 { "accommodation", new List<string>(){ "lts" } },
@@ -44,16 +21,17 @@ namespace Helper
             };
 
             //Blacklist for exceptions Dictionary<string, Tuple<string,string> TODO Export in Config
-            Dictionary<string, Tuple<string, string>> blacklistsourcesandtags = new Dictionary<string, Tuple<string, string>>()
+            Dictionary<string, Tuple<string, string>> blacklistsourcesandtagsMP = new Dictionary<string, Tuple<string, string>>()
             {
                { "odhactivitypoi", Tuple.Create("lts", "weinkellereien") }
             };
 
             //Whitelist on Types Deprecated? TODO Export in Config
-            Dictionary<string, List<string>> allowedtypes = new Dictionary<string, List<string>>()
+            Dictionary<string, List<string>> allowedtypesMP = new Dictionary<string, List<string>>()
             {
                 { "article", new List<string>(){ "rezeptartikel" } }
             };
+
 
             List<string> publishedonlist = new List<string>();
 
@@ -61,7 +39,7 @@ namespace Helper
             {
                 //Accommodations smgactive (Source LTS IDMActive)
                 case "accommodation":
-                    if ((mydata as AccommodationLinked).SmgActive && allowedsources[mydata._Meta.Type].Contains(mydata._Meta.Source))
+                    if ((mydata as AccommodationLinked).SmgActive && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                     {
                         publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
@@ -90,7 +68,8 @@ namespace Helper
                     break;
                 //Event Add all Active Events from now
                 case "event":
-                    if ((mydata as EventLinked).Active && allowedsources[mydata._Meta.Type].Contains(mydata._Meta.Source))
+                    //EVENTS LTS
+                    if ((mydata as EventLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                     {
                         if ((mydata as EventLinked).SmgActive)
                             publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
@@ -100,12 +79,24 @@ namespace Helper
                             publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
 
+                    //Events DRIN CENTROTREVI
+                    if ((mydata as EventLinked).Active && (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin"))
+                    {
+                        if ((mydata as EventLinked).SmgActive)
+                        {
+                            if(mydata._Meta.Source == "drin")
+                                publishedonlist.TryAddOrUpdateOnList("drin");
+                            if (mydata._Meta.Source == "trevilab")
+                                publishedonlist.TryAddOrUpdateOnList("centro-trevi");
+                        }
+                            
+                    }
                     break;
 
                 //ODHActivityPoi 
                 case "odhactivitypoi":
 
-                    if ((mydata as ODHActivityPoiLinked).Active && allowedsources[mydata._Meta.Type].Contains(mydata._Meta.Source))
+                    if ((mydata as ODHActivityPoiLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                     {
                         if ((mydata as ODHActivityPoiLinked).SmgActive)
                             publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
@@ -115,7 +106,7 @@ namespace Helper
                         {
                             var isonblacklist = false;
 
-                            if (blacklistsourcesandtags[mydata._Meta.Type] != null && blacklistsourcesandtags[mydata._Meta.Type].Item1 == mydata._Meta.Source && (mydata as ODHActivityPoiLinked).SmgTags.Contains(blacklistsourcesandtags[mydata._Meta.Type].Item2))
+                            if (blacklistsourcesandtagsMP[mydata._Meta.Type] != null && blacklistsourcesandtagsMP[mydata._Meta.Type].Item1 == mydata._Meta.Source && (mydata as ODHActivityPoiLinked).SmgTags.Contains(blacklistsourcesandtagsMP[mydata._Meta.Type].Item2))
                                 isonblacklist = true;
 
                             if (!isonblacklist)
@@ -251,7 +242,7 @@ namespace Helper
                 case "article":
                     var article = (mydata as ArticlesLinked);
 
-                    if (article.SmgActive && allowedtypes[mydata._Meta.Type].Contains(article.Type.ToLower()))
+                    if (article.SmgActive && allowedtypesMP[mydata._Meta.Type].Contains(article.Type.ToLower()))
                     {
                         publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
                         //publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
