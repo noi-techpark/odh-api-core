@@ -41,7 +41,7 @@ namespace Helper
                 case "accommodation":
                     if ((mydata as AccommodationLinked).SmgActive && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -63,7 +63,7 @@ namespace Helper
                          publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
 
-                    publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                    publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
 
                     break;
                 //Event Add all Active Events from now
@@ -72,7 +72,7 @@ namespace Helper
                     if ((mydata as EventLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                     {
                         if ((mydata as EventLinked).SmgActive && mydata._Meta.Source == "lts")
-                            publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                            publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
 
                         //Add only for Events for the future
                         if ((mydata as EventLinked).NextBeginDate >= new DateTime(2023, 1, 1) && mydata._Meta.Source == "lts")
@@ -84,9 +84,9 @@ namespace Helper
                             if ((mydata as EventLinked).SmgActive)
                             {
                                 if (mydata._Meta.Source == "drin")
-                                    publishedonlist.TryAddOrUpdateOnList("drin");
+                                    publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
                                 if (mydata._Meta.Source == "trevilab")
-                                    publishedonlist.TryAddOrUpdateOnList("centro-trevi");
+                                    publishedonlist.TryAddOrUpdateOnList("centro-trevi.trevilab");
                             }
 
                         }
@@ -101,7 +101,7 @@ namespace Helper
                     if ((mydata as ODHActivityPoiLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                     {
                         if ((mydata as ODHActivityPoiLinked).SmgActive)
-                            publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                            publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
 
                         //IF category is whitelisted
                         if (allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags).Count() > 0)
@@ -123,11 +123,11 @@ namespace Helper
 
                     if ((mydata as EventShortLinked).ActiveWeb == true)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://noi.bz.it");
+                        publishedonlist.TryAddOrUpdateOnList("noi.bz.it");
                     }
                     if ((mydata as EventShortLinked).ActiveToday == true)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://today.noi.bz");
+                        publishedonlist.TryAddOrUpdateOnList("today.noi.bz.it");
                     }
                     if ((mydata as EventShortLinked).ActiveCommunityApp == true)
                     {
@@ -139,7 +139,7 @@ namespace Helper
                 case "measuringpoint":
                     if ((mydata as MeasuringpointLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -147,7 +147,7 @@ namespace Helper
                 case "venue":
                     if ((mydata as VenueLinked).Active == true)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -156,7 +156,7 @@ namespace Helper
                 case "webcam":
                     if ((mydata as WebcamInfoLinked).SmgActive == true)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -164,7 +164,7 @@ namespace Helper
                 case "wineaward":
                     if ((mydata as WineLinked).Active == true)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -172,7 +172,7 @@ namespace Helper
                 case "region":
                     if ((mydata as RegionLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -180,7 +180,7 @@ namespace Helper
                 case "tourismassociation":
                     if ((mydata as TourismvereinLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -188,7 +188,7 @@ namespace Helper
                 case "district":
                     if ((mydata as DistrictLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -196,7 +196,7 @@ namespace Helper
                 case "municipality":
                     if ((mydata as MunicipalityLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -204,7 +204,7 @@ namespace Helper
                 case "metaregion":
                     if ((mydata as MetaRegionLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -212,7 +212,7 @@ namespace Helper
                 case "area":
                     if ((mydata as AreaLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -220,7 +220,7 @@ namespace Helper
                 case "skiarea":
                     if ((mydata as SkiAreaLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -228,7 +228,7 @@ namespace Helper
                 case "skiregion":
                     if ((mydata as SkiRegionLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -236,7 +236,7 @@ namespace Helper
                 case "experiencearea":
                     if ((mydata as ExperienceAreaLinked).Active)
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
@@ -246,7 +246,7 @@ namespace Helper
 
                     if (article.SmgActive && allowedtypesMP[mydata._Meta.Type].Contains(article.Type.ToLower()))
                     {
-                        publishedonlist.TryAddOrUpdateOnList("https://www.suedtirol.info");
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                         //publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                     }
                     break;
