@@ -1059,7 +1059,7 @@ namespace DataModel
 
     #region Venues
 
-    public class Venue : IIdentifiable, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware
+    public class Venue : IIdentifiable, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive
     {
         public Venue()
         {
@@ -1077,7 +1077,7 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
-        public bool ODHActive { get; set; }
+        public bool SmgActive { get; set; }
         
         public ICollection<string> SmgTags { get; set; }
 

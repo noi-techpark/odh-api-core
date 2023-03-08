@@ -513,6 +513,13 @@ namespace DataModel
 
         public Metadata? _Meta { get; set; }
 
+        public bool OdhActive
+        {
+            get
+            {
+                return this.SmgActive;
+            }
+        }
         public ICollection<ODHTags> ODHTags
         {
             get
