@@ -499,7 +499,8 @@ namespace Helper
 
             //ODH Fields TODO
             reduced.Active = venue.Active;
-            reduced.ODHActive = venue.ODHActive;
+            reduced.SmgActive = venue.SmgActive;
+            //reduced.ODHActive = venue.ODHActive;
             reduced.Shortname = venue.Shortname;
             reduced.SmgTags = venue.SmgTags;
             reduced.HasLanguage = venue.HasLanguage;
