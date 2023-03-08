@@ -423,7 +423,8 @@ namespace RAVEN
             venueLinked.LicenseInfo = destinationdata.LicenseInfo;
             venueLinked.LocationInfo = destinationdata.odhdata.LocationInfo;
             venueLinked.Mapping = destinationdata.Mapping;
-            venueLinked.ODHActive = destinationdata.odhdata.ODHActive;
+            venueLinked.SmgActive = destinationdata.odhdata.ODHActive;
+            //venueLinked.ODHActive = destinationdata.odhdata.ODHActive;
             //venueLinked.ODHTags = destinationdata.odhdata.ODHTags;
             venueLinked.RoomCount = destinationdata.odhdata.RoomCount;
             venueLinked.RoomDetails = destinationdata.odhdata.RoomDetails;
