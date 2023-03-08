@@ -146,6 +146,9 @@ namespace OdhApiImporter.Helpers
                 //Set LicenseInfo
                 eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(eventtosave, Helper.LicenseHelper.GetLicenseforEvent);
 
+                //Set PublishedOn
+                eventtosave.CreatePublishedOnList();
+
                 var rawdataid = await InsertInRawDataDB(ninjaevent);
 
                 return await QueryFactory.UpsertData<EventLinked>(eventtosave, "events", rawdataid, "mobility.event.import", importerURL);                

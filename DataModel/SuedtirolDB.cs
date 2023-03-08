@@ -468,7 +468,7 @@ namespace DataModel
         public ICollection<string>? PublishedOn { get; set; }
     }
 
-    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource
+    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource, ISmgActive, IPublishedOn
     {
         public Area()
         {
@@ -494,6 +494,7 @@ namespace DataModel
         public string Source { get; set; }
         public IDictionary<string, Detail> Detail { get; set; }
 
+        public ICollection<string>? PublishedOn { get; set; }
     }
 
     public class GeneralGroup : BaseInfos
@@ -2036,7 +2037,7 @@ namespace DataModel
 
     #region Wine
 
-    public class Wine : IIdentifiable, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
+    public class Wine : IIdentifiable, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive
     {
         public LicenseInfo LicenseInfo { get; set; }
 
@@ -2846,7 +2847,7 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware
+    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
     {
         public WebcamInfo()
         {
@@ -2862,8 +2863,8 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
         public string? Shortname { get; set; }
-        public bool? Active { get; set; }
-        public bool? SmgActive { get; set; }
+        public bool Active { get; set; }
+        public bool SmgActive { get; set; }
         public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 

@@ -104,7 +104,7 @@ namespace OdhApiCore
 
             var bearertoken = "";
             var loggeduser = "";
-            var userrole = "";
+            List<string> userrole = new List<string>();
 
             // Check Referer
             if (context.Request.Headers.ContainsKey("Authorization"))
@@ -125,15 +125,27 @@ namespace OdhApiCore
                         .Where(x => x.Type == ClaimTypes.Name || x.Type == "name")
                         .FirstOrDefault();
 
+                    //HACK if no username (Serviceaccount) lets get the preferred_username
+                    if(usernameClaim == null)
+                    {
+                        usernameClaim = jwttoken.Claims
+                        .Where(x => x.Type == ClaimTypes.Name || x.Type == "preferred_username")
+                        .FirstOrDefault();
+                    }
+
                     if (usernameClaim != null)
                         loggeduser = usernameClaim.Value;
 
                     var roleClaim = jwttoken.Claims
-                        .Where(x => x.Type == ClaimTypes.Name || x.Type == "role")
-                        .FirstOrDefault();
-
-                    if (roleClaim != null)
-                        userrole = roleClaim.Value;
+                        .Where(x => x.Type == ClaimTypes.Name || x.Type == "role");
+                    
+                    if(roleClaim != null)
+                    {
+                        foreach(var role in roleClaim)
+                        {
+                            userrole.Add(role.Value);
+                        }
+                    }
                 }
             }
 
@@ -161,13 +173,13 @@ namespace OdhApiCore
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
 
                 // If user is in Role 
-                if(!string.IsNullOrEmpty(userrole))
+                if(userrole.Count > 0)
                 {
-                    if(userrole == "ODH_ROLE_ADVANCED")
+                    if(userrole.Contains("ODH_ROLE_ADVANCED"))
                         ratelimitconfig = rlsettings.Where(x => x.Type == "Advanced").FirstOrDefault();
-                    if (userrole == "ODH_ROLE_PREMIUM")
+                    if (userrole.Contains("ODH_ROLE_PREMIUM"))
                         ratelimitconfig = rlsettings.Where(x => x.Type == "Premium").FirstOrDefault();
-                    if (userrole == "ODH_ROLE_ADMIN")
+                    if (userrole.Contains("ODH_ROLE_ADMIN"))
                         ratelimitconfig = rlsettings.Where(x => x.Type == "Admin").FirstOrDefault();
                 }
 
