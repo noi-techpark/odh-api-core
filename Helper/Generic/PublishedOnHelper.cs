@@ -44,7 +44,7 @@ namespace Helper
 
             var typeswitcher = ODHTypeHelper.TranslateType2TypeString<T>(mydata);            
 
-            switch (mydata._Meta.Type)
+            switch (typeswitcher)
             {
                 //Accommodations smgactive (Source LTS IDMActive)
                 case "accommodation":
