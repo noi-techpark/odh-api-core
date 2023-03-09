@@ -73,34 +73,34 @@ namespace OdhApiImporter.Controllers
             }
             catch (Exception ex)
             {
-                //var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Update Raven failed", otherinfo, updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Update Raven failed", otherinfo, updatedetail, ex, true);
 
-                var errorResult = new UpdateResult()
-                {
-                    id = id,
-                    source = source,
-                    operation = operation,
-                    updatetype = updatetype,
-                    otherinfo = otherinfo,
-                    message = "",
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    objectcompared = 0,
-                    objectchanged = 0,
-                    objectimagechanged = 0,
-                    objectchanges = null,
-                    objectchangestring = null,
-                    pushchannels = null,
-                    pushed = null,
-                    error = 1,
-                    success = false,
-                    exception = ex.Message,
-                    stacktrace = ex.StackTrace
-                };
+                //var errorResult = new UpdateResult()
+                //{
+                //    id = id,
+                //    source = source,
+                //    operation = operation,
+                //    updatetype = updatetype,
+                //    otherinfo = otherinfo,
+                //    message = "",
+                //    recordsmodified = 0,
+                //    created = 0,
+                //    updated = 0,
+                //    deleted = 0,
+                //    objectcompared = 0,
+                //    objectchanged = 0,
+                //    objectimagechanged = 0,
+                //    objectchanges = null,
+                //    objectchangestring = null,
+                //    pushchannels = null,
+                //    pushed = null,
+                //    error = 1,
+                //    success = false,
+                //    exception = ex.Message,
+                //    stacktrace = ex.StackTrace
+                //};
 
-                Console.WriteLine(JsonConvert.SerializeObject(errorResult));
+                //Console.WriteLine(JsonConvert.SerializeObject(errorResult));
 
 
                 return BadRequest(errorResult);
