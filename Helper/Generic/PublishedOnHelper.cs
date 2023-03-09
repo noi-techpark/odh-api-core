@@ -10,6 +10,13 @@ namespace Helper
 {
     public static class PublishedOnHelper
     {           
+        /// <summary>
+        /// Create the publishedon List
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="mydata"></param>
+        /// <param name="allowedtags"></param>
+        /// <param name="activatesourceonly"></param>
         public static void CreatePublishedOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null, Tuple<string,bool>? activatesourceonly = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
         {
             //alowedsources  Dictionary<odhtype, sourcelist> TODO Export in Config
@@ -34,6 +41,8 @@ namespace Helper
 
 
             List<string> publishedonlist = new List<string>();
+
+            var typeswitcher = ODHTypeHelper.TranslateType2TypeString<T>(mydata);            
 
             switch (mydata._Meta.Type)
             {
