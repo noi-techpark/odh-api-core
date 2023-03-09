@@ -439,7 +439,7 @@ namespace Helper
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
 
-            if(data.FirstImport == null)
+            if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
 
             //Setting Editinfo
