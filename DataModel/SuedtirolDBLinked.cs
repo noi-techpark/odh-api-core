@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -534,6 +535,11 @@ namespace DataModel
 
     public class PackageLinked : Package, IMetaData
     {
+        public PackageLinked()
+        {
+            GpsPoints = new Dictionary<string, GpsInfo>();
+        }
+
         public Metadata _Meta { get; set; }
 
         public string Self
@@ -561,8 +567,8 @@ namespace DataModel
             }
         }
 
-        //Overwrites The LocationInfo
-        public new LocationInfoLinked? LocationInfo { get; set; }
+        //derzuageton
+        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
     }
 
     public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData
