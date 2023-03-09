@@ -114,10 +114,10 @@ namespace DataModel
             JToken? changes = null;
 
             IDictionary<string, NotifierResponse> pushed = new Dictionary<string, NotifierResponse>();
-         
+
             foreach (var updatedetail in updatedetails)
             {
-               objectscompared = updatedetail.comparedobjects + objectscompared;
+                objectscompared = updatedetail.comparedobjects + objectscompared;
 
                 created = updatedetail.created + created;
                 updated = updatedetail.updated + updated;
@@ -126,7 +126,7 @@ namespace DataModel
                 objectchanged = updatedetail.objectchanged + objectchanged;
                 objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
 
-                if(updatedetail.changes != null)
+                if (updatedetail.changes != null)
                 {
                     if (changes == null)
                         changes = updatedetail.changes;
@@ -135,11 +135,11 @@ namespace DataModel
                 }
 
 
-                if(updatedetail.pushchannels != null)
+                if (updatedetail.pushchannels != null)
                 {
-                    foreach(var pushchannel in updatedetail.pushchannels)
+                    foreach (var pushchannel in updatedetail.pushchannels)
                     {
-                        if(!channelstopush.Contains(pushchannel))
+                        if (!channelstopush.Contains(pushchannel))
                             channelstopush.Add(pushchannel);
                     }
                 }
@@ -151,77 +151,44 @@ namespace DataModel
                 }
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error= error, comparedobjects = objectscompared, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushchannels = channelstopush, pushed = pushed, changes = changes };
+            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error = error, comparedobjects = objectscompared, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushchannels = channelstopush, pushed = pushed, changes = changes };
         }
 
         public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
         {
-            try
+            var result = new UpdateResult()
             {
-                var result = new UpdateResult()
-                {
-                    id = id,
-                    source = source,
-                    operation = operation,
-                    updatetype = updatetype,
-                    otherinfo = otherinfo,
-                    message = message,
-                    recordsmodified = (detail.created + detail.updated + detail.deleted),
-                    created = detail.created,
-                    updated = detail.updated,
-                    deleted = detail.deleted,
-                    objectcompared = detail.comparedobjects,
-                    objectchanged = detail.objectchanged,
-                    objectimagechanged = detail.objectimagechanged,
-                    objectchanges = detail.changes != null ? JsonConvert.DeserializeObject<dynamic>(detail.changes.ToString(Formatting.None)) : null,
-                    objectchangestring = detail.changes != null ? detail.changes.ToString(Formatting.None) : null,
-                    pushchannels = detail.pushchannels,
-                    pushed = detail.pushed,
-                    error = detail.error,
-                    success = true,
-                    exception = null,
-                    stacktrace = null
-                };
+                id = id,
+                source = source,
+                operation = operation,
+                updatetype = updatetype,
+                otherinfo = otherinfo,
+                message = message,
+                recordsmodified = (detail.created + detail.updated + detail.deleted),
+                created = detail.created,
+                updated = detail.updated,
+                deleted = detail.deleted,
+                objectcompared = detail.comparedobjects,
+                objectchanged = detail.objectchanged,
+                objectimagechanged = detail.objectimagechanged,
+                objectchanges = detail.changes != null ? JsonConvert.DeserializeObject<dynamic>(detail.changes.ToString(Formatting.None)) : null,
+                objectchangestring = detail.changes != null ? detail.changes.ToString(Formatting.None) : null,
+                pushchannels = detail.pushchannels,
+                pushed = detail.pushed,
+                error = detail.error,
+                success = true,
+                exception = null,
+                stacktrace = null
+            };
 
-                if (createlog)
-                    Console.WriteLine(JsonConvert.SerializeObject(result));
+            if (createlog)
+                Console.WriteLine(JsonConvert.SerializeObject(result));
 
-                return result;
-            }
-            catch(Exception ex)
-            {
-                var result = new UpdateResult()
-                {
-                    id = id,
-                    source = source,
-                    operation = operation,
-                    updatetype = updatetype,
-                    otherinfo = otherinfo,
-                    message = message,
-                    recordsmodified = 0,
-                    created = 0,
-                    updated = 0,
-                    deleted = 0,
-                    objectcompared = 0,
-                    objectchanged = 0,
-                    objectimagechanged = 0,
-                    pushchannels = null,
-                    pushed = null,
-                    error = 0,
-                    success = false,
-                    exception = ex.Message,
-                    stacktrace = ex.StackTrace
-                };
-
-                if (createlog)
-                    Console.WriteLine(JsonConvert.SerializeObject(result));
-
-                return result;
-            }
+            return result;
         }
 
         public static UpdateResult GetErrorUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, Exception ex, bool createlog)
-        {    
+        {
             var result = new UpdateResult()
             {
                 id = id,
