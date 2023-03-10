@@ -47,6 +47,7 @@ namespace Helper
                 Area or AreaLinked => "area",
                 Wine or WineLinked => "wineaward",
                 SmgTags or ODHTagLinked => "odhtag",
+                Publisher or PublisherLinked => "publisher",
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
                 Weather or WeatherLinked => "weather",
                 BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
@@ -91,6 +92,7 @@ namespace Helper
                 Area or AreaLinked => "areas",
                 Wine or WineLinked => "wines",
                 ODHTags or ODHTagLinked => "smgtags",
+                Publisher or PublisherLinked => "publishers",
                 WeatherHistory or WeatherHistoryLinked => "weatherdatahistory",
                 TourismMetaData => "metadata",
                 _ => throw new Exception("not known odh type")
@@ -134,6 +136,7 @@ namespace Helper
                 "area" => "areas",
                 "wineaward" => "wines",
                 "odhtag" => "smgtags",
+                "publisher" => "publishers",
                 "weatherhistory" => "weatherdatahistory",
                 "odhmetadata" => "metadata",
                 _ => throw new Exception("not known odh type")
@@ -173,6 +176,7 @@ namespace Helper
                 "area" => typeof(AreaLinked),
                 "wineaward" => typeof(WineLinked),
                 "odhtag" => typeof(ODHTagLinked),
+                "publisher" => typeof(PublisherLinked),
                 "weatherhistory" => typeof(WeatherHistoryLinked),
                 "odhmetadata" => typeof(TourismMetaData),
                 _ => throw new Exception("not known odh type")
@@ -216,6 +220,7 @@ namespace Helper
                 "areas" => "area",
                 "wines" => "wineaward",
                 "smgtags" => "odhtag",
+                "publishers" => "publisher",
                 "weatherdatahistory" => "weatherhistory",
                 "metadata" => "odhmetadata",
                 _ => throw new Exception("not known odh type")
@@ -255,6 +260,7 @@ namespace Helper
                 "areas" => typeof(AreaLinked),
                 "wines" => typeof(WineLinked),
                 "smgtags" => typeof(ODHTagLinked),
+                "publishers" => typeof(PublisherLinked),
                 "weatherdatahistory" => typeof(WeatherHistoryLinked),
                 "metadata" => typeof(TourismMetaData),
                 _ => throw new Exception("not known table name")
@@ -271,6 +277,7 @@ namespace Helper
 
         #region TypeIdConverter
 
+        //TODO insert in IdGenerator
         public static string ConvertIdbyTypeString(string odhtype, string id)
         {
             return odhtype switch
@@ -337,6 +344,7 @@ namespace Helper
                 "area" => JsonConvert.DeserializeObject<AreaLinked>(raw.Value)!,
                 "wineaward" => JsonConvert.DeserializeObject<WineLinked>(raw.Value)!,
                 "odhtag" => JsonConvert.DeserializeObject<ODHTagLinked>(raw.Value)!,
+                "publisher" => JsonConvert.DeserializeObject<PublisherLinked>(raw.Value)!,
                 "weatherhistory" => JsonConvert.DeserializeObject<WeatherHistoryLinked>(raw.Value)!,
                 "odhmetadata" => JsonConvert.DeserializeObject<TourismMetaData>(raw.Value)!,
                 _ => throw new Exception("not known odh type")

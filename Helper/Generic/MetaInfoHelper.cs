@@ -64,6 +64,7 @@ namespace Helper
                 AreaLinked al => GetMetadataforArea(al),
                 WineLinked wl => GetMetadataforWineAward(wl),
                 ODHTagLinked odhtl => GetMetadataforOdhTag(odhtl),
+                PublisherLinked pbl => GetMetadataforPublisher(pbl),
                 WeatherHistoryLinked wh => GetMetaDataForWeatherHistory(wh),
                 WeatherLinked we => GetMetaDataForWeather(we),
                 WeatherDistrictLinked wd => GetMetaDataForWeatherDistrict(wd),
@@ -163,6 +164,13 @@ namespace Helper
             if (data.Source != null && data.Source.Contains("LTSCategory"))
                 sourcemeta = "lts";
 
+            return GetMetadata(data, sourcemeta, data.LastChange);
+        }
+
+        public static Metadata GetMetadataforPublisher(PublisherLinked data)
+        {
+            string sourcemeta = "noi";
+            
             return GetMetadata(data, sourcemeta, data.LastChange);
         }
 
