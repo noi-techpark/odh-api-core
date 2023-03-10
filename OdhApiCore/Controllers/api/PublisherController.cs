@@ -53,7 +53,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Publisher")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetPublishersAsync(
-            uint? pagenumber = null,
+            uint? pagenumber = 1,
             PageSize pagesize = null!, 
             string? language = null,
             string? source = null,
@@ -107,23 +107,23 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(
-            uint? pagenumber,  int? pagesize, string? language, string? source, string[] fields,
+            uint? pagenumber, int? pagesize, string? language, string? source, string[] fields,
             string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
-            {                
+            {
                 var sourcelist = Helper.CommonListCreator.CreateIdList(source);
-                
-                var query = 
+
+                var query =
                     QueryFactory.Query()
                     .SelectRaw("data")
                     .From("publishers")
                     .PublishersWhereExpression(
-                        languagelist: new List<string>(), 
+                        languagelist: new List<string>(),
                         sourcelist: sourcelist,
                         searchfilter: searchfilter,
-                        language: language,                        
+                        language: language,
                         filterClosedData: FilterClosedData
                         )
                     .ApplyRawFilter(rawfilter)
@@ -131,38 +131,29 @@ namespace OdhApiCore.Controllers
 
                 var fieldsTohide = FieldsToHide;
 
-                if (pagenumber != null)
-                {
 
-                    // Get paginated data
-                    var data =
-                        await query
-                            .PaginateAsync<JsonRaw>(
-                                page: (int)pagenumber,
-                                perPage: pagesize ?? 25);
+                // Get paginated data
+                var data =
+                    await query
+                        .PaginateAsync<JsonRaw>(
+                            page: (int)pagenumber,
+                            perPage: pagesize ?? 25);
 
-                    var dataTransformed =
-                        data.List.Select(
-                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                        );
+                var dataTransformed =
+                    data.List.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                    );
 
-                    uint totalpages = (uint)data.TotalPages;
-                    uint totalcount = (uint)data.Count;
+                uint totalpages = (uint)data.TotalPages;
+                uint totalcount = (uint)data.Count;
 
-                    return ResponseHelpers.GetResult(
-                        (uint)pagenumber,
-                        totalpages,
-                        totalcount,
-                        null,
-                        dataTransformed,
-                        Url);
-                }
-                else
-                {
-                    var data = await query.GetAsync<JsonRaw>();
-
-                    return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
-                }                
+                return ResponseHelpers.GetResult(
+                    (uint)pagenumber,
+                    totalpages,
+                    totalcount,
+                    null,
+                    dataTransformed,
+                    Url);
             });
         }      
 
