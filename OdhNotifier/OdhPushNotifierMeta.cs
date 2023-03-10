@@ -268,6 +268,9 @@ namespace OdhNotifier
             myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
             myfailure.RetryCount = 1;
+            myfailure.IsDeleteOperation = notify.IsDelete;
+            myfailure.HasImageChanged = notify.HasImagechanged;
+
 
             await QueryFactory.Query("notificationfailures")
                    .InsertAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });

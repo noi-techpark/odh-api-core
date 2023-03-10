@@ -278,6 +278,8 @@ namespace DataModel
     public class NotifierFailureQueue
     {
         public string Id { get; set; }
+        public bool? HasImageChanged { get; set; }
+        public bool? IsDeleteOperation { get; set; }
         public string ItemId { get; set; }
         public string Type { get; set; }
         public string Exception { get; set; }
