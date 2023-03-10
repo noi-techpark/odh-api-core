@@ -1407,6 +1407,19 @@ namespace DataModel
         public List<string> ODHTagIds { get; set; }
     }
 
+    public class PublisherLinked : Publisher, IMetaData
+    {
+        public Metadata _Meta { get; set; }
+
+        public string Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Publisher/" + this.Id;
+            }
+        }
+    }
+
     //TODO ADD Linked + Meta 
     //EventTopics
     //ActivityTypes
