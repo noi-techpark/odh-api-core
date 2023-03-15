@@ -49,9 +49,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(IEnumerable<PublisherLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Publisher")]
-        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetPublishersAsync(
             uint? pagenumber = 1,
             PageSize pagesize = null!, 
@@ -86,7 +84,6 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Publisher/{id}", Name = "SinglePublisher")]
-        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetPublisherSingle(string id,
             string? language = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
@@ -182,8 +179,6 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="publisher">PublisherLinked Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[InvalidateCacheOutput(nameof(GetPublishersAsync))]
         [Authorize(Roles = "DataWriter,DataCreate,PublisherManager,PublisherCreate")]
         [HttpPost, Route("Publisher")]
         public Task<IActionResult> Post([FromBody] PublisherLinked publisher)
@@ -202,8 +197,6 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Publisher Id</param>
         /// <param name="publisher">Publisher Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[InvalidateCacheOutput(nameof(GetPublishersAsync))]
         [Authorize(Roles = "DataWriter,DataModify,PublisherManager,PublisherModify")]
         [HttpPut, Route("Publisher/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] PublisherLinked publisher)
@@ -221,8 +214,6 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Publisher Id</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(nameof(GetPublishersAsync))]
         [Authorize(Roles = "DataWriter,DataDelete,PublisherManager,PublisherDelete")]
         [HttpDelete, Route("Publisher/{id}")]
         public Task<IActionResult> Delete(string id)
