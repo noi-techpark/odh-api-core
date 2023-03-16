@@ -180,6 +180,17 @@ namespace OdhNotifier
 
                         if (response != null && (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created))
                         {
+                            //TODO if all ok set the status to ok and update
+
+                            if(failurequeuedata != null)
+                            {
+                                failurequeuedata.Status = "elaborated";
+                                failurequeuedata.LastChange = DateTime.Now;
+
+                                await QueryFactory.Query("notificationfailures")
+                                    .UpdateAsync(new JsonBData() { id = failurequeuedata.Id, data = new JsonRaw(failurequeuedata) });
+                            }
+
                             return await ReturnHttpResponse(response, notify, imageupdate, "");
                         }
                         else if (response != null)
@@ -320,6 +331,7 @@ namespace OdhNotifier
         private async Task<IEnumerable<NotifierFailureQueue>> GetFromFailureQueue(string service, string status)
         {
             var query = QueryFactory.Query("notificationfailures")
+                .SelectRaw("data")
                 .Where("gen_service", service)
                 .Where("gen_status", status);
 
@@ -350,7 +362,11 @@ namespace OdhNotifier
                         notifierresponse.Response = response.Item2;
                         notifierresponse.Service = notifyconfig.ServiceName;
 
-                        notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);                        
+                        notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);  
+                        
+
+                        
+
                     }
                     
                     
