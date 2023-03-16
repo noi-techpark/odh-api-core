@@ -362,11 +362,8 @@ namespace OdhNotifier
                         notifierresponse.Response = response.Item2;
                         notifierresponse.Service = notifyconfig.ServiceName;
 
-                        notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);  
-                        
-
-                        
-
+                        //TO CHECK if more Elements are pushed it is overwritten
+                        notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);                          
                     }
                     
                     
