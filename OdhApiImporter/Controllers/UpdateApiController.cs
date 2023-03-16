@@ -73,35 +73,7 @@ namespace OdhApiImporter.Controllers
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Update Raven failed", otherinfo, updatedetail, ex, true);
-
-                //var errorResult = new UpdateResult()
-                //{
-                //    id = id,
-                //    source = source,
-                //    operation = operation,
-                //    updatetype = updatetype,
-                //    otherinfo = otherinfo,
-                //    message = "",
-                //    recordsmodified = 0,
-                //    created = 0,
-                //    updated = 0,
-                //    deleted = 0,
-                //    objectcompared = 0,
-                //    objectchanged = 0,
-                //    objectimagechanged = 0,
-                //    objectchanges = null,
-                //    objectchangestring = null,
-                //    pushchannels = null,
-                //    pushed = null,
-                //    error = 1,
-                //    success = false,
-                //    exception = ex.Message,
-                //    stacktrace = ex.StackTrace
-                //};
-
-                //Console.WriteLine(JsonConvert.SerializeObject(errorResult));
-
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Update Raven failed", otherinfo, updatedetail, ex, true);               
 
                 return BadRequest(errorResult);
             }
@@ -111,10 +83,45 @@ namespace OdhApiImporter.Controllers
 
         #region REPROCESS PUSH FAILURE QUEUE
 
-        [HttpGet, Route("PushFailureQueue/Elaborate")]
-        public async Task<IActionResult> ElaborateFailureQueue(CancellationToken cancellationToken = default)
+        [HttpGet, Route("PushFailureQueue/Retry/{publishedon}")]
+        public async Task<IActionResult> ElaborateFailureQueue(string publishedon, CancellationToken cancellationToken = default)
         {
-            return null;
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update Failurequeue";
+            string updatetype = "multiple";
+            string source = "api";
+            string otherinfo = "";
+
+            try
+            {
+                var resulttuple = await OdhPushnotifier.PushFailureQueueToPublishedonService(new List<string>() { publishedon });
+
+                updatedetail = new UpdateDetail()
+                {
+                    changes = null,
+                    comparedobjects = 0,
+                    created = 0,
+                    deleted = 0,
+                    error = 0,
+                    objectchanged = 0,
+                    objectimagechanged = 0,
+                    pushchannels = resulttuple.Keys,
+                    pushed = resulttuple,
+                    updated = 0
+                };
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                //TODO updatedetail
+
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue failed", otherinfo, updatedetail, ex, true);
+     
+                return BadRequest(errorResult);
+            }
         }
 
         #endregion

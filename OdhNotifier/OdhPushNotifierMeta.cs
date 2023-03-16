@@ -14,7 +14,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using static FParsec.CharParsers.ParserResult<Result, UserState>;
 
 namespace OdhNotifier
 {
@@ -22,6 +21,7 @@ namespace OdhNotifier
     {
         Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null);
         Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, List<string> publishedonlist, string? referer = null);
+        Task<IDictionary<string, NotifierResponse>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null)
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -273,10 +273,25 @@ namespace OdhNotifier
             myfailure.IsDeleteOperation = notify.IsDelete;
             myfailure.HasImageChanged = notify.HasImagechanged;
 
+            await QueryFactory.Query("notificationfailures")
+                       .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
+        }
+
+        private async Task UpdateFailureQueue(NotifyMeta notify, string exmessage, NotifierFailureQueue myfailure)
+        {            
+            myfailure.ItemId = notify.Id;
+            myfailure.Type = notify.Type;
+            myfailure.Exception = exmessage;
+            myfailure.LastChange = DateTime.Now;
+            myfailure.Service = notify.Destination;
+            myfailure.PushUrl = notify.Url;
+            myfailure.Status = "open";
+            myfailure.RetryCount = myfailure.RetryCount++;
+            myfailure.IsDeleteOperation = notify.IsDelete;
+            myfailure.HasImageChanged = notify.HasImagechanged;
 
             await QueryFactory.Query("notificationfailures")
-                   .InsertAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
-
+                       .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
         }
 
         //Valid Types for Push
@@ -306,6 +321,39 @@ namespace OdhNotifier
 
             return data;
         }
+
+        public async Task<IDictionary<string, NotifierResponse>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null)
+        {
+            IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
+
+            foreach (var notifyconfig in notifierconfiglist)
+            {
+                //GET All failed pushes            
+                if (publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
+                {
+                    var failedpushes = await GetFromFailureQueue(notifyconfig.ServiceName.ToLower(), "open");
+
+                    foreach(var failedpush in failedpushes)
+                    {
+                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.Id, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer);
+
+                        NotifierResponse notifierresponse = new NotifierResponse();
+
+                        var response = await SendNotify(meta);
+                        notifierresponse.HttpStatusCode = response.Item1;
+                        notifierresponse.Response = response.Item2;
+                        notifierresponse.Service = notifyconfig.ServiceName;
+
+                        notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
+                    }
+                    
+                    
+                }
+            }
+
+            return notifierresponselist;
+        }
+
     }
 
     public class NotifyMetaGenerated : NotifyMeta
