@@ -109,6 +109,16 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region REPROCESS PUSH FAILURE QUEUE
+
+        [HttpGet, Route("PushFailureQueue/Elaborate")]
+        public async Task<IActionResult> ElaborateFailureQueue(CancellationToken cancellationToken = default)
+        {
+            return null;
+        }
+
+        #endregion
+
         #region EBMS DATA SYNC (EventShort)
 
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]

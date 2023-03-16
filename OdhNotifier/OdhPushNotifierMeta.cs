@@ -3,6 +3,7 @@ using Helper;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using Newtonsoft.Json.Linq;
 using OdhNotifier;
+using SqlKata;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using static FParsec.CharParsers.ParserResult<Result, UserState>;
 
 namespace OdhNotifier
 {
@@ -292,6 +294,17 @@ namespace OdhNotifier
             //TODO            
             // Suppress finalization.
             GC.SuppressFinalize(this);
+        }
+
+        private async Task<IEnumerable<NotifierFailureQueue>> GetFromFailureQueue(string service, string status)
+        {
+            var query = QueryFactory.Query("notificationfailures")
+                .Where("gen_service", service)
+                .Where("gen_status", status);
+
+            var data = await query.GetObjectListAsync<NotifierFailureQueue>();
+
+            return data;
         }
     }
 
