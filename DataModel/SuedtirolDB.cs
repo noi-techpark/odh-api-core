@@ -629,6 +629,8 @@ namespace DataModel
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
         
+        public string PublisherUrl { get; set; }
+
         //Generic Mapping Object
         //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
