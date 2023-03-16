@@ -21,7 +21,7 @@ namespace OdhNotifier
     {
         Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null);
         Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, List<string> publishedonlist, string? referer = null);
-        Task<IDictionary<string, NotifierResponse>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null)
+        Task<IDictionary<string, NotifierResponse>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null);
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -109,7 +109,7 @@ namespace OdhNotifier
             return notifierresponselist;
         }
 
-        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify)
+        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify, NotifierFailureQueue failurequeuedata = null)
         {
             var requesturl = notify.Url;
             bool imageupdate = true;
@@ -197,14 +197,20 @@ namespace OdhNotifier
             }
             catch (TaskCanceledException ex)
             {
-                await WriteToFailureQueue(notify, ex.Message);
+                if (failurequeuedata == null)
+                    await WriteToFailureQueue(notify, ex.Message);
+                else
+                    await UpdateFailureQueue(notify, ex.Message, failurequeuedata);
 
                 var response = new HttpResponseMessage(HttpStatusCode.RequestTimeout);
                 return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
             }
             catch (Exception ex)
             {
-                await WriteToFailureQueue(notify, ex.Message);
+                if (failurequeuedata == null)
+                    await WriteToFailureQueue(notify, ex.Message);
+                else
+                    await UpdateFailureQueue(notify, ex.Message, failurequeuedata);
 
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                 return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
@@ -339,12 +345,12 @@ namespace OdhNotifier
 
                         NotifierResponse notifierresponse = new NotifierResponse();
 
-                        var response = await SendNotify(meta);
+                        var response = await SendNotify(meta, failedpush);
                         notifierresponse.HttpStatusCode = response.Item1;
                         notifierresponse.Response = response.Item2;
                         notifierresponse.Service = notifyconfig.ServiceName;
 
-                        notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
+                        notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);                        
                     }
                     
                     
