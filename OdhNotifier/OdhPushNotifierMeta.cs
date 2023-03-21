@@ -1,6 +1,7 @@
 ﻿using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Server.IIS.Core;
+using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 using OdhNotifier;
 using SqlKata;
@@ -21,7 +22,7 @@ namespace OdhNotifier
     {
         Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null);
         Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, List<string> publishedonlist, string? referer = null);
-        Task<IDictionary<string, NotifierResponse>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null);
+        Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null);
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -187,7 +188,7 @@ namespace OdhNotifier
                                 failurequeuedata.Status = "elaborated";
                                 failurequeuedata.LastChange = DateTime.Now;
 
-                                await QueryFactory.Query("notificationfailures")
+                                await QueryFactory.Query("notificationfailures").Where("id", failurequeuedata.Id)
                                     .UpdateAsync(new JsonBData() { id = failurequeuedata.Id, data = new JsonRaw(failurequeuedata) });
                             }
 
@@ -307,7 +308,7 @@ namespace OdhNotifier
             myfailure.IsDeleteOperation = notify.IsDelete;
             myfailure.HasImageChanged = notify.HasImagechanged;
 
-            await QueryFactory.Query("notificationfailures")
+            await QueryFactory.Query("notificationfailures").Where("id", myfailure.Id)
                        .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
         }
 
@@ -340,9 +341,9 @@ namespace OdhNotifier
             return data;
         }
 
-        public async Task<IDictionary<string, NotifierResponse>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null)
+        public async Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null)
         {
-            IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
+            IDictionary<string, ICollection<NotifierResponse>> notifierresponsedict = new Dictionary<string, ICollection<NotifierResponse>>();
 
             foreach (var notifyconfig in notifierconfiglist)
             {
@@ -350,27 +351,28 @@ namespace OdhNotifier
                 if (publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
                 {
                     var failedpushes = await GetFromFailureQueue(notifyconfig.ServiceName.ToLower(), "open");
+                    
+                    List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
 
-                    foreach(var failedpush in failedpushes)
+                    foreach (var failedpush in failedpushes)
                     {
                         NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.Id, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer);
 
                         NotifierResponse notifierresponse = new NotifierResponse();
-
                         var response = await SendNotify(meta, failedpush);
                         notifierresponse.HttpStatusCode = response.Item1;
-                        notifierresponse.Response = response.Item2;
                         notifierresponse.Service = notifyconfig.ServiceName;
+                        notifierresponse.Response = response.Item2;
 
                         //TO CHECK if more Elements are pushed it is overwritten
-                        notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);                          
+                        notifierresponselist.Add(notifierresponse);
                     }
-                    
-                    
+
+                    notifierresponsedict.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponselist);
                 }
             }
 
-            return notifierresponselist;
+            return notifierresponsedict;
         }
 
     }

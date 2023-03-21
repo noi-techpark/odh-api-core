@@ -70,6 +70,47 @@ namespace DataModel
         public IDictionary<string, NotifierResponse>? pushed { get; set; }
     }
 
+
+    //TO CHECK if this could be unified
+
+    public struct UpdateResultFailureQueue
+    {
+        public string operation { get; init; }
+        public string updatetype { get; init; }
+        public string otherinfo { get; init; }
+        public string message { get; init; }
+        public bool success { get; init; }
+        public int? recordsmodified { get; init; }
+        
+        //Push Infos
+        public ICollection<string>? pushchannels { get; init; }
+
+        public IDictionary<string, ICollection<NotifierResponse>>? pushed { get; init; }
+
+        public int? error { get; init; }
+
+        public string id { get; init; }
+
+        public string exception { get; init; }
+
+        public string stacktrace { get; init; }
+
+        public string source { get; init; }
+    }
+
+
+    public struct UpdateDetailFailureQueue
+    {
+        //Error
+        public int? error { get; init; }
+
+        //Push Infos
+        public ICollection<string>? pushchannels { get; init; }
+
+        public IDictionary<string, ICollection<NotifierResponse>>? pushed { get; set; }
+    }
+
+
     public struct PGCRUDResult
     {
         public string id { get; init; }
@@ -186,7 +227,7 @@ namespace DataModel
                 Console.WriteLine(JsonConvert.SerializeObject(result));
 
             return result;
-        }
+        }     
 
         public static UpdateResult GetErrorUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, Exception ex, bool createlog)
         {
@@ -220,6 +261,58 @@ namespace DataModel
 
             return result;
         }
+
+
+        public static UpdateResultFailureQueue GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetailFailureQueue detail, bool createlog)
+        {
+            var result = new UpdateResultFailureQueue()
+            {
+                id = id,
+                source = source,
+                operation = operation,
+                updatetype = updatetype,
+                otherinfo = otherinfo,
+                message = message,
+                recordsmodified = 0,
+                pushchannels = detail.pushchannels,
+                pushed = detail.pushed,
+                error = detail.error,
+                success = true,
+                exception = null,
+                stacktrace = null
+            };
+
+            if (createlog)
+                Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            return result;
+        }
+
+        public static UpdateResultFailureQueue GetErrorUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetailFailureQueue detail, Exception ex, bool createlog)
+        {
+            var result = new UpdateResultFailureQueue()
+            {
+                id = id,
+                source = source,
+                operation = operation,
+                updatetype = updatetype,
+                otherinfo = otherinfo,
+                message = message,
+                recordsmodified = 0,
+                pushchannels = detail.pushchannels,
+                pushed = detail.pushed,
+                error = detail.error,
+                success = false,
+                exception = ex.Message,
+                stacktrace = ex.StackTrace
+            };
+
+            if (createlog)
+                Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            return result;
+        }
+
 
         public static JsonGenerationResult GetSuccessJsonGenerateResult(string operation, string type, string message, bool createlog)
         {

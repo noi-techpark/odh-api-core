@@ -86,7 +86,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("PushFailureQueue/Retry/{publishedon}")]
         public async Task<IActionResult> ElaborateFailureQueue(string publishedon, CancellationToken cancellationToken = default)
         {
-            UpdateDetail updatedetail = default(UpdateDetail);
+            UpdateDetailFailureQueue updatedetail = default(UpdateDetailFailureQueue);
             string operation = "Update Failurequeue";
             string updatetype = "multiple";
             string source = "api";
@@ -96,18 +96,10 @@ namespace OdhApiImporter.Controllers
             {
                 var resulttuple = await OdhPushnotifier.PushFailureQueueToPublishedonService(new List<string>() { publishedon });
 
-                updatedetail = new UpdateDetail()
-                {
-                    changes = null,
-                    comparedobjects = 0,
-                    created = 0,
-                    deleted = 0,
-                    error = 0,
-                    objectchanged = 0,
-                    objectimagechanged = 0,
+                updatedetail = new UpdateDetailFailureQueue()
+                {                   
                     pushchannels = resulttuple.Keys,
-                    pushed = resulttuple,
-                    updated = 0
+                    pushed = resulttuple,                 
                 };
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue succeeded", otherinfo, updatedetail, true);
