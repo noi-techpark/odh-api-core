@@ -450,7 +450,8 @@ namespace OdhNotifier
                             "skiarea",
                             "gastronomy",
                             "odhactivitypoi",
-                            "smgtags"
+                            "smgtags",
+                            "odhtag"
                         };
                     break;
                 default:
@@ -467,8 +468,8 @@ namespace OdhNotifier
                 return type.ToLower() switch
                 {
                     "accommodation" => "ACCOMMODATION",
-                    "activity" => "NOT SUPPORTED", //ok deprecated
-                    "article" => "NOT SUPPORTED", //Recipes?
+                    "activity" => "NOT SUPPORTED", //deprecated
+                    "article" => "NOT SUPPORTED", //Recipes (only 1 time import in AEM)
                     "event" => "EVENT",
                     "metaregion" => "NOT SUPPORTED", //to check
                     "region" => "REGION",
@@ -477,10 +478,11 @@ namespace OdhNotifier
                     "tvs" => "TOURISM_ASSOCIATION",
                     "district" => "DISTRICT",
                     "skiregion" => "NOT SUPPORTED",  //to check
-                    "skiarea" => "NOT SUPPORTED", //to check
-                    "gastronomy" => "NOT SUPPORTED", //ok deprecated
+                    "skiarea" => "SKI_AREA",
+                    "gastronomy" => "NOT SUPPORTED", //deprecated
+                    "poi" => "NOT SUPPORTED", //deprecated
                     "odhactivitypoi" => "ODH_ACTIVITY_POI",
-                    "smgtags" => "ODH_TAG",
+                    "odhtag" => "ODH_TAG",
                     _ => "NOT SUPPORTED"
                 };
             }
