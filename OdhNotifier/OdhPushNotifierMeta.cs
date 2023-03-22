@@ -110,14 +110,15 @@ namespace OdhNotifier
             return notifierresponselist;
         }
 
-        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify, NotifierFailureQueue failurequeuedata = null)
+        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify, NotifierFailureQueue? failurequeuedata = null)
         {
             var requesturl = notify.Url;
             bool imageupdate = true;
 
             try
             {
-                if (CheckValidTypes(notify))
+                //If data is from failurequeue proceed directly
+                if (failurequeuedata != null || CheckValidTypes(notify))
                 {
                     using (var client = new HttpClient())
                     {
@@ -483,6 +484,8 @@ namespace OdhNotifier
                     "poi" => "NOT SUPPORTED", //deprecated
                     "odhactivitypoi" => "ODH_ACTIVITY_POI",
                     "odhtag" => "ODH_TAG",
+                    "ski_area" => "SKI_AREA",
+                    "odh_activity_poi" => "ODH_ACTIVITY_POI",
                     _ => "NOT SUPPORTED"
                 };
             }
