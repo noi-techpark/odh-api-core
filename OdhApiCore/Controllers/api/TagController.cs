@@ -20,8 +20,7 @@ using System.Threading.Tasks;
 namespace OdhApiCore.Controllers
 {    
     [EnableCors("CorsPolicy")]
-    //Do not show in Swagger for now
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     [NullStringParameterActionFilter]
     public class TagController : OdhController
     {
