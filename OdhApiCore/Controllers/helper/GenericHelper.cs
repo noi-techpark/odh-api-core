@@ -62,7 +62,7 @@ namespace OdhApiCore.Controllers
                 //tagfilter = or(lts.Winter,Sommer,idm.Wellness)
 
                 //TODO
-                //tagfilter = or(lts.Winter,idm.Sommer)and(lts.Winter,idm.Sommer) not wokring at the moment 
+                //tagfilter = or(lts.Winter,idm.Sommer)and(lts.Winter,idm.Sommer) not working at the moment 
                 //tagfilter = or(winter) searches trough lts and 
 
                 //Get Tagoperator
