@@ -357,7 +357,7 @@ namespace OdhNotifier
 
                     foreach (var failedpush in failedpushes)
                     {
-                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.Id, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer);
+                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.Id, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer, true);
 
                         NotifierResponse notifierresponse = new NotifierResponse();
                         var response = await SendNotify(meta, failedpush);
@@ -380,7 +380,7 @@ namespace OdhNotifier
 
     public class NotifyMetaGenerated : NotifyMeta
     {
-        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, bool hasimagechanged, bool isdelete, string updatemode, string origin, string? referer = null)
+        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, bool hasimagechanged, bool isdelete, string updatemode, string origin, string? referer = null, bool fromfailurequeue = false)
         {
             //Set by parameters
             this.Id = id;
@@ -420,7 +420,10 @@ namespace OdhNotifier
                         };
 
                     //Translate Type
-                    this.Type = TransformType(type, "marketplace");
+                    if (!fromfailurequeue)
+                        this.Type = TransformType(type, "marketplace");
+                    else
+                        this.Type = type;
 
                     break;
                 case "sinfo":
