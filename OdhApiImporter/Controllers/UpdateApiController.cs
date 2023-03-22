@@ -107,9 +107,7 @@ namespace OdhApiImporter.Controllers
                 return Ok(updateResult);
             }
             catch (Exception ex)
-            {
-                //TODO updatedetail
-
+            {                
                 var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue failed", otherinfo, updatedetail, ex, true);
      
                 return BadRequest(errorResult);
