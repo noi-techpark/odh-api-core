@@ -1,8 +1,10 @@
 ﻿using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Server.IIS.Core;
+using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 using OdhNotifier;
+using SqlKata;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.ComponentModel;
@@ -20,6 +22,7 @@ namespace OdhNotifier
     {
         Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null);
         Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, List<string> publishedonlist, string? referer = null);
+        Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null);
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -107,7 +110,7 @@ namespace OdhNotifier
             return notifierresponselist;
         }
 
-        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify)
+        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify, NotifierFailureQueue failurequeuedata = null)
         {
             var requesturl = notify.Url;
             bool imageupdate = true;
@@ -178,6 +181,17 @@ namespace OdhNotifier
 
                         if (response != null && (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created))
                         {
+                            //TODO if all ok set the status to ok and update
+
+                            if(failurequeuedata != null)
+                            {
+                                failurequeuedata.Status = "elaborated";
+                                failurequeuedata.LastChange = DateTime.Now;
+
+                                await QueryFactory.Query("notificationfailures").Where("id", failurequeuedata.Id)
+                                    .UpdateAsync(new JsonBData() { id = failurequeuedata.Id, data = new JsonRaw(failurequeuedata) });
+                            }
+
                             return await ReturnHttpResponse(response, notify, imageupdate, "");
                         }
                         else if (response != null)
@@ -195,14 +209,20 @@ namespace OdhNotifier
             }
             catch (TaskCanceledException ex)
             {
-                await WriteToFailureQueue(notify, ex.Message);
+                if (failurequeuedata == null)
+                    await WriteToFailureQueue(notify, ex.Message);
+                else
+                    await UpdateFailureQueue(notify, ex.Message, failurequeuedata);
 
                 var response = new HttpResponseMessage(HttpStatusCode.RequestTimeout);
                 return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
             }
             catch (Exception ex)
             {
-                await WriteToFailureQueue(notify, ex.Message);
+                if (failurequeuedata == null)
+                    await WriteToFailureQueue(notify, ex.Message);
+                else
+                    await UpdateFailureQueue(notify, ex.Message, failurequeuedata);
 
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                 return await ReturnHttpResponse(response, notify, imageupdate, ex.Message);
@@ -268,10 +288,28 @@ namespace OdhNotifier
             myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
             myfailure.RetryCount = 1;
+            myfailure.IsDeleteOperation = notify.IsDelete;
+            myfailure.HasImageChanged = notify.HasImagechanged;
 
             await QueryFactory.Query("notificationfailures")
-                   .InsertAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
+                       .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
+        }
 
+        private async Task UpdateFailureQueue(NotifyMeta notify, string exmessage, NotifierFailureQueue myfailure)
+        {            
+            myfailure.ItemId = notify.Id;
+            myfailure.Type = notify.Type;
+            myfailure.Exception = exmessage;
+            myfailure.LastChange = DateTime.Now;
+            myfailure.Service = notify.Destination;
+            myfailure.PushUrl = notify.Url;
+            myfailure.Status = "open";
+            myfailure.RetryCount = myfailure.RetryCount++;
+            myfailure.IsDeleteOperation = notify.IsDelete;
+            myfailure.HasImageChanged = notify.HasImagechanged;
+
+            await QueryFactory.Query("notificationfailures").Where("id", myfailure.Id)
+                       .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
         }
 
         //Valid Types for Push
@@ -290,6 +328,53 @@ namespace OdhNotifier
             // Suppress finalization.
             GC.SuppressFinalize(this);
         }
+
+        private async Task<IEnumerable<NotifierFailureQueue>> GetFromFailureQueue(string service, string status)
+        {
+            var query = QueryFactory.Query("notificationfailures")
+                .SelectRaw("data")
+                .Where("gen_service", service)
+                .Where("gen_status", status);
+
+            var data = await query.GetObjectListAsync<NotifierFailureQueue>();
+
+            return data;
+        }
+
+        public async Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null)
+        {
+            IDictionary<string, ICollection<NotifierResponse>> notifierresponsedict = new Dictionary<string, ICollection<NotifierResponse>>();
+
+            foreach (var notifyconfig in notifierconfiglist)
+            {
+                //GET All failed pushes            
+                if (publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
+                {
+                    var failedpushes = await GetFromFailureQueue(notifyconfig.ServiceName.ToLower(), "open");
+                    
+                    List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
+
+                    foreach (var failedpush in failedpushes)
+                    {
+                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.Id, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer);
+
+                        NotifierResponse notifierresponse = new NotifierResponse();
+                        var response = await SendNotify(meta, failedpush);
+                        notifierresponse.HttpStatusCode = response.Item1;
+                        notifierresponse.Service = notifyconfig.ServiceName;
+                        notifierresponse.Response = response.Item2;
+
+                        //TO CHECK if more Elements are pushed it is overwritten
+                        notifierresponselist.Add(notifierresponse);
+                    }
+
+                    notifierresponsedict.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponselist);
+                }
+            }
+
+            return notifierresponsedict;
+        }
+
     }
 
     public class NotifyMetaGenerated : NotifyMeta
@@ -365,7 +450,8 @@ namespace OdhNotifier
                             "skiarea",
                             "gastronomy",
                             "odhactivitypoi",
-                            "smgtags"
+                            "smgtags",
+                            "odhtag"
                         };
                     break;
                 default:
@@ -382,8 +468,8 @@ namespace OdhNotifier
                 return type.ToLower() switch
                 {
                     "accommodation" => "ACCOMMODATION",
-                    "activity" => "NOT SUPPORTED", //ok deprecated
-                    "article" => "NOT SUPPORTED", //Recipes?
+                    "activity" => "NOT SUPPORTED", //deprecated
+                    "article" => "NOT SUPPORTED", //Recipes (only 1 time import in AEM)
                     "event" => "EVENT",
                     "metaregion" => "NOT SUPPORTED", //to check
                     "region" => "REGION",
@@ -392,10 +478,11 @@ namespace OdhNotifier
                     "tvs" => "TOURISM_ASSOCIATION",
                     "district" => "DISTRICT",
                     "skiregion" => "NOT SUPPORTED",  //to check
-                    "skiarea" => "NOT SUPPORTED", //to check
-                    "gastronomy" => "NOT SUPPORTED", //ok deprecated
+                    "skiarea" => "SKI_AREA",
+                    "gastronomy" => "NOT SUPPORTED", //deprecated
+                    "poi" => "NOT SUPPORTED", //deprecated
                     "odhactivitypoi" => "ODH_ACTIVITY_POI",
-                    "smgtags" => "ODH_TAG",
+                    "odhtag" => "ODH_TAG",
                     _ => "NOT SUPPORTED"
                 };
             }

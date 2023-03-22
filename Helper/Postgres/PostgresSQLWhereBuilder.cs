@@ -91,6 +91,13 @@ namespace Helper
                 $"TagName.{lang}"
             ).ToArray();
 
+        public static string[] NameFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"Name.{lang}"
+            ).ToArray();
+
         public static string[] WebcamnameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
@@ -743,13 +750,29 @@ namespace Helper
 
             return query
                 .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
-                .SourceFilter_GeneratedColumn(sourcelist)
-                //.ODHTagMainEntityFilter(mainentitylist)
                 .ODHTagValidForEntityFilter(mainentitylist)
                 .ODHTagValidForEntityFilter(validforentitylist)
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
                 .SourceFilter_GeneratedColumn(sourcelist)
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)   //
+                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+        }
+
+        //Return Where and Parameters for OdhTag and Tag
+        public static Query PublishersWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist, 
+            IReadOnlyCollection<string> sourcelist,
+            string? searchfilter, string? language, bool filterClosedData)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                searchfilter, language, sourcelist
+            );
+
+            return query
+                .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
         }
 

@@ -73,36 +73,45 @@ namespace OdhApiImporter.Controllers
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Update Raven failed", otherinfo, updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Update Raven failed", otherinfo, updatedetail, ex, true);               
 
-                //var errorResult = new UpdateResult()
-                //{
-                //    id = id,
-                //    source = source,
-                //    operation = operation,
-                //    updatetype = updatetype,
-                //    otherinfo = otherinfo,
-                //    message = "",
-                //    recordsmodified = 0,
-                //    created = 0,
-                //    updated = 0,
-                //    deleted = 0,
-                //    objectcompared = 0,
-                //    objectchanged = 0,
-                //    objectimagechanged = 0,
-                //    objectchanges = null,
-                //    objectchangestring = null,
-                //    pushchannels = null,
-                //    pushed = null,
-                //    error = 1,
-                //    success = false,
-                //    exception = ex.Message,
-                //    stacktrace = ex.StackTrace
-                //};
+                return BadRequest(errorResult);
+            }
+        }
 
-                //Console.WriteLine(JsonConvert.SerializeObject(errorResult));
+        #endregion
 
+        #region REPROCESS PUSH FAILURE QUEUE
 
+        [HttpGet, Route("PushFailureQueue/Retry/{publishedon}")]
+        public async Task<IActionResult> ElaborateFailureQueue(string publishedon, CancellationToken cancellationToken = default)
+        {
+            UpdateDetailFailureQueue updatedetail = default(UpdateDetailFailureQueue);
+            string operation = "Update Failurequeue";
+            string updatetype = "multiple";
+            string source = "api";
+            string otherinfo = "";
+
+            try
+            {
+                var resulttuple = await OdhPushnotifier.PushFailureQueueToPublishedonService(new List<string>() { publishedon });
+
+                updatedetail = new UpdateDetailFailureQueue()
+                {                   
+                    pushchannels = resulttuple.Keys,
+                    pushed = resulttuple,                 
+                };
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                //TODO updatedetail
+
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue failed", otherinfo, updatedetail, ex, true);
+     
                 return BadRequest(errorResult);
             }
         }
