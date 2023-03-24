@@ -357,7 +357,7 @@ namespace OdhNotifier
 
                     foreach (var failedpush in failedpushes)
                     {
-                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.Id, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer, true);
+                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.ItemId, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer, true);
 
                         NotifierResponse notifierresponse = new NotifierResponse();
                         var response = await SendNotify(meta, failedpush);
