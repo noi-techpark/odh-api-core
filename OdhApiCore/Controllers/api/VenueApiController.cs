@@ -61,11 +61,11 @@ namespace OdhApiCore.Controllers
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <param name="destinationdataformat">If set to true, data will be returned in AlpineBits Destinationdata Format</param>        
-        /// <returns>Collection of DDVenue Objects</returns>    
+        /// <returns>Collection of VenueLinked Objects</returns>    
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<DDVenue>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<VenueLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
@@ -124,12 +124,12 @@ namespace OdhApiCore.Controllers
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
         /// <param name="destinationdataformat">If set to true, data will be returned in AlpineBits Destinationdata Format</param>        
-        /// <returns>DDVenue Object</returns>
+        /// <returns>VenueLinked Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
         /// //[Authorize(Roles = "DataReader,VenueReader")]
-        [ProducesResponseType(typeof(DDVenue), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(VenueLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Venue/{id}", Name = "SingleVenue")]
