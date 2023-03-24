@@ -1,6 +1,7 @@
 ﻿using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -347,6 +348,68 @@ namespace OdhApiCore.Controllers
         #endregion
 
         #region POST PUT DELETE
+
+        /// <summary>
+        /// POST Insert new Venue
+        /// </summary>
+        /// <param name="poi">Venue Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        //[InvalidateCacheOutput(nameof(GetVenueList))]
+        [Authorize(Roles = "DataWriter,DataCreate,VenueManager,VenueCreate")]
+        [HttpPost, Route("Venue")]
+        public Task<IActionResult> Post([FromBody] VenueLinked venue)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                venue.Id = Helper.IdGenerator.GenerateIDFromType(venue);
+                //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //TODO UPDATE/INSERT ALSO in Destinationdata Column
+                return await UpsertData<VenueLinked>(venue, "venues_v2", true);
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Venue
+        /// </summary>
+        /// <param name="id">Venue Id</param>
+        /// <param name="venue">Venue Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        //[InvalidateCacheOutput(nameof(GetVenueList))]
+        [Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify")]
+        [HttpPut, Route("Venue/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] VenueLinked venue)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                venue.Id = Helper.IdGenerator.CheckIdFromType<VenueLinked>(id);
+                //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //TODO UPDATE/INSERT ALSO in Destinationdata Column
+                return await UpsertData<VenueLinked>(venue, "venues_v2", false, true);
+            });
+        }
+
+        /// <summary>
+        /// DELETE Venue by Id
+        /// </summary>
+        /// <param name="id">Venue Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        //[InvalidateCacheOutput(nameof(GetVenueList))]
+        [Authorize(Roles = "DataWriter,DataDelete,VenueManager,VenueDelete")]
+        [HttpDelete, Route("Venue/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                id = Helper.IdGenerator.CheckIdFromType<VenueLinked>(id);
+
+                return await DeleteData(id, "venues_v2");
+            });
+        }
 
         #endregion
     }
