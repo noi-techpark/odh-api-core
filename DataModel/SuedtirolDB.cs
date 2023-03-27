@@ -1083,6 +1083,30 @@ namespace DataModel
 
     }
 
+    //TODO Migrate to new EventPricing class
+    
+    public class EventPricing
+    {
+        public EventPricing()
+        {
+            EventPricingDesc = new Dictionary<string, EventPricingDescription>();
+        }
+
+        public double Price { get; set; }
+        public string? Type { get; set; }               
+        public string PriceID { get; set; }
+        
+        public IDictionary<string, EventPricingDescription> EventPricingDesc { get; set; }
+    }
+
+    public class EventPricingDescription : ILanguage
+    {
+        public string? ShortDesc { get; set; }
+        public string? LongDesc { get; set; }
+        public string? Description { get; set; }
+        public string? Language { get; set; }
+    }
+
     #endregion
 
     #region Venues
