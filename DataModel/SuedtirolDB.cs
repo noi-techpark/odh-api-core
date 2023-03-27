@@ -2780,12 +2780,6 @@ namespace DataModel
         public DistanceInfo? DistanceInfo { get; set; }
     }
 
-    public class Topic
-    {
-        public string? TopicRID { get; set; }
-        public string? TopicInfo { get; set; }
-    }
-
     public class Detail : IDetailInfos, ILanguage
     {
         public string? Header { get; set; }
@@ -3013,27 +3007,6 @@ namespace DataModel
         public string? Language { get; set; }
     }
 
-
-    public class ImageGalleryLocalized
-    {
-        public string? ImageName { get; set; }
-        public string? ImageUrl { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string? ImageSource { get; set; }
-
-        public string? ImageTitle { get; set; }
-        public string? ImageDesc { get; set; }
-        //public string Language { get; set; }
-        public Nullable<bool> IsInGallery { get; set; }
-        public Nullable<int> ListPosition { get; set; }
-        public Nullable<DateTime> ValidFrom { get; set; }
-        public Nullable<DateTime> ValidTo { get; set; }
-
-        public string? CopyRight { get; set; }
-        public string? License { get; set; }
-    }
-
     public class ContactInfos : IContactInfos, ILanguage
     {
         public string? Address { get; set; }
@@ -3207,6 +3180,14 @@ namespace DataModel
         public int Timecode { get; set; }
     }
 
+    //Event Data
+
+    public class Topic
+    {
+        public string? TopicRID { get; set; }
+        public string? TopicInfo { get; set; }
+    }
+
     public class EventAdditionalInfos : IEventAdditionalInfos, ILanguage
     {
         public string? Mplace { get; set; }
@@ -3215,6 +3196,7 @@ namespace DataModel
         public string? Language { get; set; }
     }
 
+    //TODO Mark as deprecated
     public class EventPrice : IEventPrice, ILanguage
     {
         public double Price { get; set; }
@@ -3362,6 +3344,8 @@ namespace DataModel
         public string RSPlain { get; set; }
         public string RSHtml { get; set; }
     }
+
+    //end Event classes
 
     public class LocationInfo : ILocationInfoAware
     {
