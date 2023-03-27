@@ -1519,16 +1519,7 @@ namespace DataModel
 
         public IDictionary<string, PackageDetail> PackageDetail { get; set; }
         public ICollection<ImageGallery>? ImageGallery { get; set; }
-    }
-
-    public class InclusiveLocalized
-    {
-        public int PriceId { get; set; }
-        public int PriceTyp { get; set; }
-
-        public PackageDetail? PackageDetail { get; set; }
-        public ICollection<ImageGalleryLocalized>? ImageGallery { get; set; }
-    }
+    }    
 
     public class PackageTheme
     {
@@ -1539,13 +1530,7 @@ namespace DataModel
 
         public int ThemeId { get; set; }
         public IDictionary<string, ThemeDetail> ThemeDetail { get; set; }
-    }
-
-    public class PackageThemeLocalized
-    {
-        public int ThemeId { get; set; }
-        public ThemeDetail? ThemeDetail { get; set; }
-    }
+    }    
 
     public class ThemeDetail : ILanguage
     {
