@@ -293,7 +293,7 @@ namespace OdhNotifier
             myfailure.HasImageChanged = notify.HasImagechanged;
 
             await QueryFactory.Query("notificationfailures")
-                       .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
+                       .InsertAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
         }
 
         private async Task UpdateFailureQueue(NotifyMeta notify, string exmessage, NotifierFailureQueue myfailure)

@@ -763,6 +763,8 @@ namespace DataModel
     public class RelatedContent
     {
         public string? Id { get; set; }
+
+        [SwaggerDeprecated("Use the name of the referenced data")]
         public string? Name { get; set; }
         public string? Type { get; set; }
 
@@ -790,7 +792,28 @@ namespace DataModel
             }
         }
 
-        public string Self { get { return this.Link; } }
+        public string Self {
+            get
+            {
+                if (!String.IsNullOrEmpty(this.Type))
+                {
+                    switch (this.Type.ToLower())
+                    {
+                        case "event":
+                            return "Event/" + this.Id;
+                        case "wineaward":
+                            return "Common/WineAward/" + this.Id;
+                        case "accommodation":
+                            return "Accommodation/" + this.Id;
+                        case "acco":
+                            return "Accommodation/" + this.Id;
+                        default:
+                            return "ODHActivityPoi/" + this.Id;
+                    }
+                }
+                else return "ODHActivityPoi/" + this.Id;
+            }
+        }
     }
 
     public class RatingSources
