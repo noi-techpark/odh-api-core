@@ -429,7 +429,7 @@ namespace OdhNotifier
                 case "sinfo":
 
                     //From Config
-                    this.Url = notifyconfig.Url + "accommodation/2657B7CBCB85380B253D2FBE28AF100E";
+                    this.Url = notifyconfig.Url;
                     this.Parameters = new Dictionary<string, string>() {
                         { "skipimage", "true" }
                     };
