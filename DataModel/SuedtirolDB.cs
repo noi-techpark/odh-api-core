@@ -763,6 +763,8 @@ namespace DataModel
     public class RelatedContent
     {
         public string? Id { get; set; }
+
+        [SwaggerDeprecated("Use the name of the referenced data")]
         public string? Name { get; set; }
         public string? Type { get; set; }
 
@@ -790,7 +792,28 @@ namespace DataModel
             }
         }
 
-        public string Self { get { return this.Link; } }
+        public string Self {
+            get
+            {
+                if (!String.IsNullOrEmpty(this.Type))
+                {
+                    switch (this.Type.ToLower())
+                    {
+                        case "event":
+                            return "Event/" + this.Id;
+                        case "wineaward":
+                            return "Common/WineAward/" + this.Id;
+                        case "accommodation":
+                            return "Accommodation/" + this.Id;
+                        case "acco":
+                            return "Accommodation/" + this.Id;
+                        default:
+                            return "ODHActivityPoi/" + this.Id;
+                    }
+                }
+                else return "ODHActivityPoi/" + this.Id;
+            }
+        }
     }
 
     public class RatingSources
@@ -1081,6 +1104,30 @@ namespace DataModel
     public class Event : EventBaseInfos
     {
 
+    }
+
+    //TODO Migrate to new EventPricing class
+    
+    public class EventPricing
+    {
+        public EventPricing()
+        {
+            EventPricingDesc = new Dictionary<string, EventPricingDescription>();
+        }
+
+        public double Price { get; set; }
+        public string? Type { get; set; }               
+        public string PriceID { get; set; }
+        
+        public IDictionary<string, EventPricingDescription> EventPricingDesc { get; set; }
+    }
+
+    public class EventPricingDescription : ILanguage
+    {
+        public string? ShortDesc { get; set; }
+        public string? LongDesc { get; set; }
+        public string? Description { get; set; }
+        public string? Language { get; set; }
     }
 
     #endregion
@@ -1495,16 +1542,7 @@ namespace DataModel
 
         public IDictionary<string, PackageDetail> PackageDetail { get; set; }
         public ICollection<ImageGallery>? ImageGallery { get; set; }
-    }
-
-    public class InclusiveLocalized
-    {
-        public int PriceId { get; set; }
-        public int PriceTyp { get; set; }
-
-        public PackageDetail? PackageDetail { get; set; }
-        public ICollection<ImageGalleryLocalized>? ImageGallery { get; set; }
-    }
+    }    
 
     public class PackageTheme
     {
@@ -1515,13 +1553,7 @@ namespace DataModel
 
         public int ThemeId { get; set; }
         public IDictionary<string, ThemeDetail> ThemeDetail { get; set; }
-    }
-
-    public class PackageThemeLocalized
-    {
-        public int ThemeId { get; set; }
-        public ThemeDetail? ThemeDetail { get; set; }
-    }
+    }    
 
     public class ThemeDetail : ILanguage
     {
@@ -2756,12 +2788,6 @@ namespace DataModel
         public DistanceInfo? DistanceInfo { get; set; }
     }
 
-    public class Topic
-    {
-        public string? TopicRID { get; set; }
-        public string? TopicInfo { get; set; }
-    }
-
     public class Detail : IDetailInfos, ILanguage
     {
         public string? Header { get; set; }
@@ -2989,27 +3015,6 @@ namespace DataModel
         public string? Language { get; set; }
     }
 
-
-    public class ImageGalleryLocalized
-    {
-        public string? ImageName { get; set; }
-        public string? ImageUrl { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string? ImageSource { get; set; }
-
-        public string? ImageTitle { get; set; }
-        public string? ImageDesc { get; set; }
-        //public string Language { get; set; }
-        public Nullable<bool> IsInGallery { get; set; }
-        public Nullable<int> ListPosition { get; set; }
-        public Nullable<DateTime> ValidFrom { get; set; }
-        public Nullable<DateTime> ValidTo { get; set; }
-
-        public string? CopyRight { get; set; }
-        public string? License { get; set; }
-    }
-
     public class ContactInfos : IContactInfos, ILanguage
     {
         public string? Address { get; set; }
@@ -3183,6 +3188,14 @@ namespace DataModel
         public int Timecode { get; set; }
     }
 
+    //Event Data
+
+    public class Topic
+    {
+        public string? TopicRID { get; set; }
+        public string? TopicInfo { get; set; }
+    }
+
     public class EventAdditionalInfos : IEventAdditionalInfos, ILanguage
     {
         public string? Mplace { get; set; }
@@ -3191,6 +3204,7 @@ namespace DataModel
         public string? Language { get; set; }
     }
 
+    //TODO Mark as deprecated
     public class EventPrice : IEventPrice, ILanguage
     {
         public double Price { get; set; }
@@ -3338,6 +3352,8 @@ namespace DataModel
         public string RSPlain { get; set; }
         public string RSHtml { get; set; }
     }
+
+    //end Event classes
 
     public class LocationInfo : ILocationInfoAware
     {

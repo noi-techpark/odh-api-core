@@ -293,7 +293,7 @@ namespace OdhNotifier
             myfailure.HasImageChanged = notify.HasImagechanged;
 
             await QueryFactory.Query("notificationfailures")
-                       .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
+                       .InsertAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
         }
 
         private async Task UpdateFailureQueue(NotifyMeta notify, string exmessage, NotifierFailureQueue myfailure)
@@ -429,7 +429,7 @@ namespace OdhNotifier
                 case "sinfo":
 
                     //From Config
-                    this.Url = notifyconfig.Url + "accommodation/2657B7CBCB85380B253D2FBE28AF100E";
+                    this.Url = notifyconfig.Url;
                     this.Parameters = new Dictionary<string, string>() {
                         { "skipimage", "true" }
                     };
