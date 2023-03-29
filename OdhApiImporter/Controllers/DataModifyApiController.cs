@@ -45,7 +45,8 @@ namespace OdhApiImporter.Controllers
         public async Task<IActionResult> ModifyEventShort(CancellationToken cancellationToken)
         {
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
+            //var objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
+            var objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
 
             return Ok(new UpdateResult
             {
@@ -53,7 +54,7 @@ namespace OdhApiImporter.Controllers
                 updatetype = "custom",
                 otherinfo = "",
                 message = "Done",
-                recordsmodified = 0,
+                recordsmodified = objectscount,
                 created = 0,
                 deleted = 0,
                 id = "",
@@ -135,7 +136,7 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
-        #region ODHActivitzPoi
+        #region ODHActivityPoi
 
         [HttpGet, Route("ModifyOldODHActivityPoi")]
         public async Task<IActionResult> ModifyODHActivityPoiTags(CancellationToken cancellationToken)
@@ -167,8 +168,8 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("UpdateMetaDataRecordCount")]
         public async Task<IActionResult> UpdateMetaDataRecordCount(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.UpdateMetaDataApiRecordCount();            
+            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //var objectscount = await customdataoperation.UpdateMetaDataApiRecordCount();            
 
             return Ok(new UpdateResult
             {
@@ -176,11 +177,11 @@ namespace OdhApiImporter.Controllers
                 updatetype = "custom",
                 otherinfo = "",
                 message = "Done",
-                recordsmodified = objectscount,
+                recordsmodified = 0,
                 created = 0,
                 deleted = 0,
                 id = "",
-                updated = objectscount,
+                updated = 0,
                 success = true
             });
         }
