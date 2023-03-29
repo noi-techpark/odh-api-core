@@ -44,9 +44,11 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("ModifyEventShort")]
         public async Task<IActionResult> ModifyEventShort(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
-            var objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
+            //var objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
+
+            var objectscount = 0;
 
             return Ok(new UpdateResult
             {
