@@ -152,8 +152,6 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-
-
         public async Task<int> UpdateAllSTAVendingpoints()
         {
             //Load all data from PG and resave
@@ -309,6 +307,69 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> UpdateAllEventShortBrokenLinks()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                bool resave = false;
+
+                if(eventshort.ImageGallery != null && eventshort.ImageGallery.Count > 0)
+                {
+                    //ImageGallery link
+                    foreach(var image in eventshort.ImageGallery)
+                    {
+                        //https://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/
+                        
+                        if (image.ImageUrl.Contains("imageresizer/ImageHandler.ashx?src=images/eventshort/"))
+                        {
+                            if(image.ImageUrl.StartsWith("https"))
+                                image.ImageUrl = image.ImageUrl.Replace("https://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl=");
+                            else
+                                image.ImageUrl = image.ImageUrl.Replace("http://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl=");
+                            
+                            resave = true;
+                        }                        
+                    }
+
+                }
+
+                if (eventshort.EventDocument != null && eventshort.EventDocument.Count > 0)
+                {
+                    //EventDocument link
+                    foreach (var doc in eventshort.EventDocument)
+                    {
+                        if (doc.DocumentURL.Contains("imageresizer/images/eventshort/pdf/"))
+                        {
+                            if (doc.DocumentURL.StartsWith("https"))
+                                doc.DocumentURL = doc.DocumentURL.Replace("https://tourism.opendatahub.bz.it/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.bz.it/api/File/GetFile/");
+                            else
+                                doc.DocumentURL = doc.DocumentURL.Replace("http://tourism.opendatahub.bz.it/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.bz.it/api/File/GetFile/");
+                            
+                            resave = true;
+                        }
+                    }
+                }
+
+                if (resave)
+                {
+                    //Save tp DB
+                    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)                        
+                        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                    i++;
+                }
+            }
+
+            return i;
+        }
 
     }
 
