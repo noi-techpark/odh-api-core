@@ -610,7 +610,7 @@ namespace DataModel
 
     public class Publisher : IIdentifiable, IImportDateassigneable, ILicenseInfo
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public Publisher()
         {
