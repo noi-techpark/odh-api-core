@@ -1409,7 +1409,7 @@ namespace DataModel
 
     public class PublisherLinked : Publisher, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {

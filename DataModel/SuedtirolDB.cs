@@ -629,7 +629,7 @@ namespace DataModel
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
         
-        public string PublisherUrl { get; set; }
+        public string? PublisherUrl { get; set; }
 
         //Generic Mapping Object
         //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -3172,8 +3172,8 @@ namespace DataModel
         public bool Wednesday { get; set; }
         // Here for compatibility reasons
         [SwaggerDeprecated("Will be removed within 2023-12-31")]
-        public bool Thuresday { get; set; }
-        public bool Thursday { get { return Thuresday; } }
+        public bool Thuresday { get { return Thuresday; }  }
+        public bool Thursday { get; set; }
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
