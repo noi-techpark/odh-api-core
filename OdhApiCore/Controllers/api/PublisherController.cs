@@ -187,6 +187,9 @@ namespace OdhApiCore.Controllers
             {
                 publisher.Id = Helper.IdGenerator.GenerateIDFromType(publisher);
 
+                if (publisher.LicenseInfo == null)
+                    publisher.LicenseInfo = new LicenseInfo() { ClosedData = false };
+
                 return await UpsertData<PublisherLinked>(publisher, "publishers", true);
             });
         }
