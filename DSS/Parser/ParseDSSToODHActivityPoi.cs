@@ -465,7 +465,7 @@ namespace DSS.Parser
                     operationScheduleTime.Monday = true;
                     operationScheduleTime.Tuesday = true;
                     operationScheduleTime.Wednesday = true;
-                    operationScheduleTime.Thuresday = true;
+                    operationScheduleTime.Thursday = true;
                     operationScheduleTime.Friday = true;
                     operationScheduleTime.Saturday = true;
                     operationScheduleTime.Sunday = true;
@@ -485,7 +485,7 @@ namespace DSS.Parser
                     operationScheduleTimeafternoon.Monday = true;
                     operationScheduleTimeafternoon.Tuesday = true;
                     operationScheduleTimeafternoon.Wednesday = true;
-                    operationScheduleTimeafternoon.Thuresday = true;
+                    operationScheduleTimeafternoon.Thursday = true;
                     operationScheduleTimeafternoon.Friday = true;
                     operationScheduleTimeafternoon.Saturday = true;
                     operationScheduleTimeafternoon.Sunday = true;

@@ -926,7 +926,7 @@ namespace LCS.Parser
                                 mytime.Monday = operationscheduletime.Mon;
                                 mytime.Tuesday = operationscheduletime.Tue;
                                 mytime.Wednesday = operationscheduletime.Weds;
-                                mytime.Thuresday = operationscheduletime.Thur;
+                                mytime.Thursday = operationscheduletime.Thur;
                                 mytime.Friday = operationscheduletime.Fri;
                                 mytime.Saturday = operationscheduletime.Sat;
                                 mytime.Sunday = operationscheduletime.Sun;
