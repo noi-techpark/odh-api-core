@@ -383,12 +383,10 @@ namespace DataModel
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public MetaRegion()
         {
@@ -403,23 +401,19 @@ namespace DataModel
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon, IPublishedOn
+    public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<string>? TourismvereinIds { get; set; }
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
     }
 
-    public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public string? RegionId { get; set; }
 
@@ -428,12 +422,10 @@ namespace DataModel
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public string? Plz { get; set; }
 
@@ -449,11 +441,9 @@ namespace DataModel
         public string? IstatNumber { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
     }
 
-    public class District : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class District : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public Nullable<bool> IsComune { get; set; }
         public string? RegionId { get; set; }
@@ -463,9 +453,7 @@ namespace DataModel
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
     public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource, ISmgActive, IPublishedOn
@@ -502,7 +490,7 @@ namespace DataModel
 
     }
 
-    public class SkiArea : BaseInfos, IImageGalleryAware, IWebcamAware, IContactInfosAware, IPublishedOn
+    public class SkiArea : BaseInfos, IImageGalleryAware, IWebcamAware, IContactInfosAware
     {
         public SkiArea()
         {
@@ -546,20 +534,16 @@ namespace DataModel
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IWebcamAware, IPublishedOn
+    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IWebcamAware
     {
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
         public ICollection<Webcam>? Webcam { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
     public class SmgTags : IIdentifiable, IImportDateassigneable, ILicenseInfo, IPublishedOn
@@ -2290,7 +2274,7 @@ namespace DataModel
     }
 
     //BaseInfos for Districts / Regions / Municipalities ...
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2356,7 +2340,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string>? PublishedOn { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
