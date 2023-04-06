@@ -252,7 +252,7 @@ namespace DataModel
         bool Monday { get; set; }
         bool Tuesday { get; set; }
         bool Wednesday { get; set; }
-        bool Thuresday { get; set; }
+        bool Thursday { get; set; }
         bool Friday { get; set; }
         bool Saturday { get; set; }
         bool Sunday { get; set; }
@@ -383,12 +383,10 @@ namespace DataModel
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public MetaRegion()
         {
@@ -403,23 +401,19 @@ namespace DataModel
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon, IPublishedOn
+    public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<string>? TourismvereinIds { get; set; }
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
     }
 
-    public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public string? RegionId { get; set; }
 
@@ -428,12 +422,10 @@ namespace DataModel
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public string? Plz { get; set; }
 
@@ -449,11 +441,9 @@ namespace DataModel
         public string? IstatNumber { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
     }
 
-    public class District : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class District : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
     {
         public Nullable<bool> IsComune { get; set; }
         public string? RegionId { get; set; }
@@ -463,9 +453,7 @@ namespace DataModel
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
         public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
     public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource, ISmgActive, IPublishedOn
@@ -475,7 +463,7 @@ namespace DataModel
             Mapping = new Dictionary<string, IDictionary<string, string>>();
             Detail = new Dictionary<string, Detail>();
         }
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
         public string? Id { get; set; }
         public bool Active { get; set; }
         public bool SmgActive { get; set; }
@@ -502,7 +490,7 @@ namespace DataModel
 
     }
 
-    public class SkiArea : BaseInfos, IImageGalleryAware, IWebcamAware, IContactInfosAware, IPublishedOn
+    public class SkiArea : BaseInfos, IImageGalleryAware, IWebcamAware, IContactInfosAware
     {
         public SkiArea()
         {
@@ -546,25 +534,21 @@ namespace DataModel
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IWebcamAware, IPublishedOn
+    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IWebcamAware
     {
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
         public ICollection<Webcam>? Webcam { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
+        public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
     public class SmgTags : IIdentifiable, IImportDateassigneable, ILicenseInfo, IPublishedOn
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public SmgTags()
         {
@@ -603,14 +587,18 @@ namespace DataModel
 
         public ICollection<string> MappedTagIds { get; set; }
 
-        public ICollection<string>? AutoPublishOn { get; set; }
+        //obsolete replaced by PublishDataWithTagOn to be more generic
+        //public ICollection<string>? AutoPublishOn { get; set; }
+
+        //If this Tag is set whitelist for publisher true/false (Whitelist / Blacklist logic)
+        public IDictionary<string, bool>? PublishDataWithTagOn { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
     }
 
     public class Publisher : IIdentifiable, IImportDateassigneable, ILicenseInfo
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public Publisher()
         {
@@ -629,7 +617,7 @@ namespace DataModel
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
         
-        public string PublisherUrl { get; set; }
+        public string? PublisherUrl { get; set; }
 
         //Generic Mapping Object
         //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -673,7 +661,7 @@ namespace DataModel
 
     public class Marketinggroup : IIdentifiable
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
         public string? Shortname { get; set; }
@@ -828,7 +816,7 @@ namespace DataModel
 
     public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public Accommodation()
         {
@@ -997,7 +985,7 @@ namespace DataModel
 
     public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public AccoRoom()
         {
@@ -1229,7 +1217,7 @@ namespace DataModel
         public ICollection<Mountain> Mountain { get; set; }
         public ICollection<Stationdata> Stationdata { get; set; }
 
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
     }
 
     public class Conditions
@@ -1329,7 +1317,7 @@ namespace DataModel
 
         public ICollection<BezirksForecast> BezirksForecast { get; set; }
 
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
     }
 
     public class BezirksForecast
@@ -1419,7 +1407,7 @@ namespace DataModel
             Weather = new Dictionary<string, Weather>();
         }
         public IDictionary<string, Weather> Weather { get; set; }
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public List<string> HasLanguage { get; set; }
         public DateTime? FirstImport { get; set; }
@@ -1435,7 +1423,7 @@ namespace DataModel
 
     public class Package : IIdentifiable, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public Package()
         {
@@ -1572,7 +1560,7 @@ namespace DataModel
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
 
@@ -1860,7 +1848,6 @@ namespace DataModel
         public string? WebAddress { get; set; }
         //Spezialfelder
 
-
         [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
         [SwaggerEnum(new[] { "Y", "N" })]
         [SwaggerSchema("Active")]
@@ -2099,7 +2086,7 @@ namespace DataModel
 
     public class Wine : IIdentifiable, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public Wine()
         {
@@ -2291,9 +2278,9 @@ namespace DataModel
     }
 
     //BaseInfos for Districts / Regions / Municipalities ...
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware, IPublishedOn
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public BaseInfos()
         {
@@ -2357,7 +2344,7 @@ namespace DataModel
         }
 
         //New published on List
-        public List<string>? PublishedOn { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
@@ -2371,7 +2358,7 @@ namespace DataModel
     //BaseInfos for ODHActivityPois
     public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IVideoItemsAware
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public PoiBaseInfos()
         {
@@ -2585,7 +2572,7 @@ namespace DataModel
     //BaseInfo Gastronomy
     public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public GastronomyBaseInfos()
         {
@@ -2669,7 +2656,7 @@ namespace DataModel
     //BaseInfo Events
     public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
     {
-        public LicenseInfo LicenseInfo { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
 
         public EventBaseInfos()
         {
@@ -3172,8 +3159,8 @@ namespace DataModel
         public bool Wednesday { get; set; }
         // Here for compatibility reasons
         [SwaggerDeprecated("Will be removed within 2023-12-31")]
-        public bool Thuresday { get; set; }
-        public bool Thursday { get { return Thuresday; } }
+        public bool Thuresday { get { return Thuresday; }  }
+        public bool Thursday { get; set; }
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }

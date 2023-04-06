@@ -101,7 +101,7 @@ namespace Helper.Generic
             return equalityresult;
         }
 
-        public static bool CompareImageGallery(ICollection<ImageGallery> compareclass1, ICollection<ImageGallery> compareclass2, List<string> propertiestonotcheck)
+        public static bool CompareImageGallery(ICollection<ImageGallery>? compareclass1, ICollection<ImageGallery>? compareclass2, List<string> propertiestonotcheck)
         {
             //If both ImageGalleries are null return equal
             if (compareclass1 == null && compareclass2 == null)

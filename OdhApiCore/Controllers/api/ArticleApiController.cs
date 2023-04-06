@@ -12,6 +12,7 @@ using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -343,6 +344,9 @@ namespace OdhApiCore.Controllers.api
 
                 if(article.ArticleDateTo == null)
                     article.ArticleDateTo = DateTime.MaxValue;
+
+                if (article.LicenseInfo == null)
+                    article.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
                 return await UpsertData<ArticlesLinked>(article, "articles", true);
             });

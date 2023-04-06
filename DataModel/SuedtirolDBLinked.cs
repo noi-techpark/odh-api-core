@@ -283,7 +283,7 @@ namespace DataModel
 
     public class GastronomyLinked : Gastronomy, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -322,7 +322,7 @@ namespace DataModel
 
     public class AccommodationLinked : Accommodation, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -409,7 +409,7 @@ namespace DataModel
 
     public class AccommodationRoomLinked : AccoRoom, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -433,7 +433,7 @@ namespace DataModel
 
     public class EventLinked : Event, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public List<DateTime> EventDatesBegin
         {
@@ -540,7 +540,7 @@ namespace DataModel
             GpsPoints = new Dictionary<string, GpsInfo>();
         }
 
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -637,7 +637,7 @@ namespace DataModel
 
     public class LTSPoiLinked : LTSPoi, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -695,7 +695,7 @@ namespace DataModel
 
     public class LTSActivityLinked : LTSActivity, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -808,7 +808,7 @@ namespace DataModel
 
     public class DistrictLinked : District, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -861,7 +861,7 @@ namespace DataModel
 
     public class MunicipalityLinked : Municipality, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -906,7 +906,7 @@ namespace DataModel
 
     public class TourismvereinLinked : Tourismverein, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -951,7 +951,7 @@ namespace DataModel
 
     public class RegionLinked : Region, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -988,7 +988,7 @@ namespace DataModel
 
     public class MetaRegionLinked : MetaRegion, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1041,7 +1041,7 @@ namespace DataModel
 
     public class ExperienceAreaLinked : ExperienceArea, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1086,7 +1086,7 @@ namespace DataModel
 
     public class AreaLinked : Area, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1139,7 +1139,7 @@ namespace DataModel
 
     public class SkiAreaLinked : SkiArea, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1203,7 +1203,7 @@ namespace DataModel
 
     public class SkiRegionLinked : SkiRegion, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1269,7 +1269,7 @@ namespace DataModel
 
     public class MeasuringpointLinked : Measuringpoint, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1301,7 +1301,7 @@ namespace DataModel
 
     public class WineLinked : Wine, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1382,7 +1382,7 @@ namespace DataModel
 
     public class ODHTagLinked : SmgTags, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1395,7 +1395,7 @@ namespace DataModel
 
     public class TagLinked : SmgTags, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1409,7 +1409,7 @@ namespace DataModel
 
     public class PublisherLinked : Publisher, IMetaData
     {
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
 
         public string Self
         {
@@ -1496,7 +1496,7 @@ namespace DataModel
         public bool Deprecated { get; set; }
 
         public bool SingleDataset { get; set; }
-        public Metadata _Meta { get; set; }
+        public Metadata? _Meta { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
         public string Shortname { get; set; }

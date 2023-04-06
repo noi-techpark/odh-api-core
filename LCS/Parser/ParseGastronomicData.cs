@@ -464,7 +464,7 @@ namespace LCS
                             myopscheduletime.Monday = timeschedule.Mon;
                             myopscheduletime.Tuesday = timeschedule.Tue;
                             myopscheduletime.Wednesday = timeschedule.Weds;
-                            myopscheduletime.Thuresday = timeschedule.Thur;
+                            myopscheduletime.Thursday = timeschedule.Thur;
                             myopscheduletime.Friday = timeschedule.Fri;
                             myopscheduletime.Saturday = timeschedule.Sat;
                             myopscheduletime.Sunday = timeschedule.Sun;

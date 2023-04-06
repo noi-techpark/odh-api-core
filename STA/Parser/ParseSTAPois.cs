@@ -306,7 +306,7 @@ namespace STA
                         myoptime.Monday = true;
                         myoptime.Tuesday = true;
                         myoptime.Wednesday = true;
-                        myoptime.Thuresday = true;
+                        myoptime.Thursday = true;
                         //myoptime.Thursday = true;
                         myoptime.Friday = true;
                         myoptime.Saturday = false;
@@ -326,7 +326,7 @@ namespace STA
                         myoptime1.Monday = true;
                         myoptime1.Tuesday = true;
                         myoptime1.Wednesday = true;
-                        myoptime1.Thuresday = true;
+                        myoptime1.Thursday = true;
                         //myoptime1.Thursday = true;
                         myoptime1.Friday = true;
                         myoptime1.Saturday = false;
@@ -344,7 +344,7 @@ namespace STA
                         myoptime2.Monday = true;
                         myoptime2.Tuesday = true;
                         myoptime2.Wednesday = true;
-                        myoptime2.Thuresday = true;
+                        myoptime2.Thursday = true;
                         //myoptime2.Thursday = true;
                         myoptime2.Friday = true;
                         myoptime2.Saturday = false;
@@ -369,7 +369,7 @@ namespace STA
                         myoptime.Monday = false;
                         myoptime.Tuesday = false;
                         myoptime.Wednesday = false;
-                        myoptime.Thuresday = false;
+                        myoptime.Thursday = false;
                         //myoptime.Thursday = false;
                         myoptime.Friday = false;
                         myoptime.Saturday = true;
@@ -389,7 +389,7 @@ namespace STA
                         myoptime1.Monday = false;
                         myoptime1.Tuesday = false;
                         myoptime1.Wednesday = false;
-                        myoptime1.Thuresday = false;
+                        myoptime1.Thursday = false;
                         //myoptime1.Thursday = false;
                         myoptime1.Friday = false;
                         myoptime1.Saturday = true;
@@ -407,7 +407,7 @@ namespace STA
                         myoptime2.Monday = false;
                         myoptime2.Tuesday = false;
                         myoptime2.Wednesday = false;
-                        myoptime2.Thuresday = false;
+                        myoptime2.Thursday = false;
                         //myoptime2.Thursday = false;
                         myoptime2.Friday = false;
                         myoptime2.Saturday = true;
@@ -432,7 +432,7 @@ namespace STA
                         myoptime.Monday = false;
                         myoptime.Tuesday = false;
                         myoptime.Wednesday = false;
-                        myoptime.Thuresday = false;
+                        myoptime.Thursday = false;
                         //myoptime.Thursday = false;
                         myoptime.Friday = false;
                         myoptime.Saturday = true;
@@ -452,7 +452,7 @@ namespace STA
                         myoptime1.Monday = false;
                         myoptime1.Tuesday = false;
                         myoptime1.Wednesday = false;
-                        myoptime1.Thuresday = false;
+                        myoptime1.Thursday = false;
                         //myoptime1.Thursday = false;
                         myoptime1.Friday = false;
                         myoptime1.Saturday = false;
@@ -470,7 +470,7 @@ namespace STA
                         myoptime2.Monday = false;
                         myoptime2.Tuesday = false;
                         myoptime2.Wednesday = false;
-                        myoptime2.Thuresday = false;
+                        myoptime2.Thursday = false;
                         //myoptime2.Thursday = false;
                         myoptime2.Friday = false;
                         myoptime2.Saturday = false;
@@ -504,7 +504,7 @@ namespace STA
                             myoptimeclosed.Monday = myday == "Monday" ? true : false;
                             myoptimeclosed.Tuesday = myday == "Tuesday" ? true : false; 
                             myoptimeclosed.Wednesday = myday == "Wednesday" ? true : false;
-                            myoptimeclosed.Thuresday = myday == "Thursday" ? true : false;
+                            myoptimeclosed.Thursday = myday == "Thursday" ? true : false;
                             //myoptimeclosed.Thursday = myday == "Thursday" ? true : false;
                             myoptimeclosed.Friday = myday == "Friday" ? true : false;
                             myoptimeclosed.Saturday = myday == "Saturday" ? true : false;

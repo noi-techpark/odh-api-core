@@ -30,7 +30,7 @@ namespace Helper.Factories
 
         private MongoClient mongoDBClient;        
 
-        public new void Dispose()
+        public void Dispose()
         {            
             if (mongoDBClient != null)
             {
