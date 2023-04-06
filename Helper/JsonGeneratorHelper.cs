@@ -84,11 +84,11 @@ namespace Helper
                 queryFactory.Query()
                   .SelectRaw("data")
                   .From("smgtags")
-                  .WhereRaw("data->>'AutoPublishOn' is not null and data->'AutoPublishOn' != '[]'");
+                  .WhereRaw("data->>'PublishDataWithTagOn' is not null and data->'PublishDataWithTagOn' != '{}'");
 
             var datafirst = await query.GetObjectListAsync<ODHTagLinked>();
 
-            var data = datafirst.Select(x => new AllowedTags() { Id = x.Id, AutoPublishOn = x.AutoPublishOn }).ToList();
+            var data = datafirst.Select(x => new AllowedTags() { Id = x.Id,  PublishDataWithTagOn = x.PublishDataWithTagOn }).ToList();
 
             //Save json
             string fileName = Path.Combine(jsondir, $"{jsonName}.json");
@@ -107,6 +107,6 @@ namespace Helper
     public class AllowedTags
     {
         public string Id { get; set; }
-        public ICollection<string> AutoPublishOn { get; set; }
+        public IDictionary<string, bool> PublishDataWithTagOn { get; set; }
     }
 }

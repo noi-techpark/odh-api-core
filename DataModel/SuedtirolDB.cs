@@ -587,7 +587,11 @@ namespace DataModel
 
         public ICollection<string> MappedTagIds { get; set; }
 
-        public ICollection<string>? AutoPublishOn { get; set; }
+        //obsolete replaced by PublishDataWithTagOn to be more generic
+        //public ICollection<string>? AutoPublishOn { get; set; }
+
+        //If this Tag is set whitelist for publisher true/false (Whitelist / Blacklist logic)
+        public IDictionary<string, bool>? PublishDataWithTagOn { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
     }

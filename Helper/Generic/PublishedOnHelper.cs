@@ -115,16 +115,43 @@ namespace Helper
                             if ((mydata as ODHActivityPoiLinked).SmgActive)
                                 publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
 
-                            //IF category is whitelisted
-                            if (allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags).Count() > 0)
+                            //IF category is white or blacklisted find an intersection
+                            var tagintersection = allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags);
+
+                            if (tagintersection.Count() > 0)
                             {
-                                var isonblacklist = false;
+                                var blacklistedpublisher = new List<string>();
 
-                                if (blacklistsourcesandtagsMP[mydata._Meta.Type] != null && blacklistsourcesandtagsMP[mydata._Meta.Type].Item1 == mydata._Meta.Source && (mydata as ODHActivityPoiLinked).SmgTags.Contains(blacklistsourcesandtagsMP[mydata._Meta.Type].Item2))
-                                    isonblacklist = true;
+                                List<string> publisherstoadd = new List<string>();
 
-                                if (!isonblacklist)
-                                    publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                                foreach (var intersectedtag in tagintersection)
+                                {
+                                    var myallowedtag = allowedtags.Where(x => x.Id == intersectedtag).FirstOrDefault();
+
+                                    foreach (var publishon in myallowedtag.PublishDataWithTagOn)
+                                    {
+                                        //Marked as blacklist overwrites whitelist
+                                        if (publishon.Value == false)
+                                            blacklistedpublisher.Add(publishon.Key);
+
+                                        if (blacklistsourcesandtagsMP[mydata._Meta.Type] != null && blacklistsourcesandtagsMP[mydata._Meta.Type].Item1 == mydata._Meta.Source && (mydata as ODHActivityPoiLinked).SmgTags.Contains(blacklistsourcesandtagsMP[mydata._Meta.Type].Item2))
+                                            blacklistedpublisher.Add("idm-marketplace");
+
+                                        if (!blacklistedpublisher.Contains(publishon.Key))
+                                        {
+                                            if (!publisherstoadd.Contains(publishon.Key))
+                                            {
+                                                publisherstoadd.Add(publishon.Key);
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                                foreach (var publishertoadd in publisherstoadd)
+                                {
+                                    publishedonlist.TryAddOrUpdateOnList(publishertoadd);
+                                }
                             }
                         }
 

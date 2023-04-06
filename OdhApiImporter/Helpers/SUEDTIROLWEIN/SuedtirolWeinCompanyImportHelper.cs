@@ -1,4 +1,5 @@
-﻿using DataModel;
+﻿using Amazon.Runtime.Internal.Transform;
+using DataModel;
 using Helper;
 using SqlKata.Execution;
 using SuedtirolWein;
@@ -381,7 +382,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
             //Set PublishedOn to marketplace and suedtirolwein
-            odhactivitypoi.CreatePublishedOnList(new List<AllowedTags>() { new AllowedTags() { Id = "weinkellereien", AutoPublishOn = new List<string>() { "idm-marketplace", "suedtirolwein.com" } } });    
+            odhactivitypoi.CreatePublishedOnList(new List<AllowedTags>() { new AllowedTags() { Id = "weinkellereien", PublishDataWithTagOn = new Dictionary<string, bool>() { { "idm-marketplace", true }, { "suedtirolwein.com", true } } } });    
 
             var rawdataid = await InsertInRawDataDB(suedtirolweindata);
 
