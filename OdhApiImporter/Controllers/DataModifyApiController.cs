@@ -44,11 +44,13 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("ModifyEventShort")]
         public async Task<IActionResult> ModifyEventShort(CancellationToken cancellationToken)
         {
-            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            //var objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
-            //var objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
-
             var objectscount = 0;
+
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
+            //objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
+
+            objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
 
             return Ok(new UpdateResult
             {
@@ -64,28 +66,7 @@ namespace OdhApiImporter.Controllers
                 success = true
             });
         }
-
-        [HttpGet, Route("ModifySTAVendingpoint")]
-        public async Task<IActionResult> ModifySTAVendingpoint(CancellationToken cancellationToken)
-        {
-            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            //var objectscount = await customdataoperation.UpdateAllSTAVendingpoints();
-
-            return Ok(new UpdateResult
-            {
-                operation = "Modify STA Vendingpoint",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = 0,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
-        }
-
+     
         #endregion
 
         #region Articles
@@ -151,6 +132,27 @@ namespace OdhApiImporter.Controllers
             return Ok(new UpdateResult
             {
                 operation = "Modify ODHActivityPoi",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = 0,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        [HttpGet, Route("ModifySTAVendingpoint")]
+        public async Task<IActionResult> ModifySTAVendingpoint(CancellationToken cancellationToken)
+        {
+            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //var objectscount = await customdataoperation.UpdateAllSTAVendingpoints();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify STA Vendingpoint",
                 updatetype = "custom",
                 otherinfo = "",
                 message = "Done",
