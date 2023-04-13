@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Helper;
 using Microsoft.FSharp.Control;
+using System.Diagnostics;
 
 namespace OdhApiImporter.Helpers
 {
@@ -151,6 +152,43 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        public async Task<int> UpdateAllEventShortstEventDocumentField()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                if (eventshort.EventDocument != null)
+                {
+                    var eventshortdocsde = eventshort.EventDocument.Where(x => x.Language == "de").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
+                    eventshort.Documents.TryAddOrUpdate("de", eventshortdocsde);
+
+                    var eventshortdocsit = eventshort.EventDocument.Where(x => x.Language == "it").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
+                    eventshort.Documents.TryAddOrUpdate("it", eventshortdocsit);
+
+                    var eventshortdocsen = eventshort.EventDocument.Where(x => x.Language == "en").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
+                    eventshort.Documents.TryAddOrUpdate("en", eventshortdocsen);
+                }
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
 
         public async Task<int> UpdateAllSTAVendingpoints()
         {
