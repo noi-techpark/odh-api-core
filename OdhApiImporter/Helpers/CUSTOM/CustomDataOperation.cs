@@ -133,21 +133,21 @@ namespace OdhApiImporter.Helpers
             var data = await query.GetObjectListAsync<EventShortLinked>();
             int i = 0;
 
-            foreach (var eventshort in data)
-            {
-                if (eventshort.Display1 == "Y")
-                    eventshort.ActiveToday = true;
-                if (eventshort.Display1 == "N")
-                    eventshort.ActiveToday = false;
+            //foreach (var eventshort in data)
+            //{
+            //    if (eventshort.Display1 == "Y")
+            //        eventshort.ActiveToday = true;
+            //    if (eventshort.Display1 == "N")
+            //        eventshort.ActiveToday = false;
 
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+            //    //Save tp DB
+            //    //TODO CHECK IF THIS WORKS     
+            //    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+            //        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+            //        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
 
-                i++;
-            }
+            //    i++;
+            //}
 
             return i;
         }
