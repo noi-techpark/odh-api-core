@@ -15,7 +15,7 @@ namespace Helper
             }
         }
     }
-    //Pakete Weekday 
+    //Packages Weekday 
     [Flags]
     public enum WeekdayFlag
     {
@@ -30,7 +30,7 @@ namespace Helper
 
     #region Accommodations & Packages
 
-    //Boarding für Accommodations und Pakete
+    //Boarding for Accommodations and Packages
     [Flags]
     public enum AccoBoardFlag
     {
@@ -48,7 +48,7 @@ namespace Helper
         AllInclusive = 16
     }
 
-    //Boarding für Accommodations und Pakete
+    //Boarding for Accommodations und Packages
     [Flags]
     public enum PackageBoardFlag
     {
@@ -66,7 +66,7 @@ namespace Helper
         allinclusive = 32
     }
 
-    //Boarding für Accommodations und Pakete
+    //Boarding for Accommodations and Packages
     [Flags]
     public enum HgvBoardFlag
     {
@@ -82,7 +82,7 @@ namespace Helper
         price_ai = 16
     }
 
-    //Accommodationtyp für Accommodations
+    //Accommodationtype for Accommodations
     [Flags]
     public enum AccommodationTypeFlag
     {
@@ -104,7 +104,7 @@ namespace Helper
         Notdefined = 128
     }
 
-    //Kategorie für Accommodations
+    //Category for Accommodations
     [Flags]
     public enum AccommodationCategoryFlag
     {
@@ -146,7 +146,7 @@ namespace Helper
         FiveSuns = 131072
     }
 
-    //Theme für Accommodations
+    //Theme for Accommodations
     [Flags]
     public enum AccoThemeFlag
     {
@@ -188,7 +188,7 @@ namespace Helper
         Sustainability = 1 << 17
     }
 
-    //Theme für Accommodations
+    //Badges for Accommodations
     [Flags]
     public enum AccoBadgeFlag
     {
@@ -216,7 +216,7 @@ namespace Helper
         SustainabilityLevel3 = 1 << 10
     }
 
-    //Themes für Packages
+    //Themes for Packages
     [Flags]
     public enum PackageThemeFlag
     {
@@ -276,7 +276,7 @@ namespace Helper
         SuedtirolBalance = 1 << 26, //134217728
     }
 
-    //Features für Accommodations
+    //Features for Accommodations
     [Flags]
     public enum AccoFeatureFlag
     {
@@ -1482,36 +1482,57 @@ namespace Helper
 
     #region Events
 
-    //für Event Topics passt wird benutzt.
+    //Event Topics
     [Flags]
-    public enum EventTopicFlag
+    public enum EventTopicFlag : long
     {
         [Description("0D25868CC23242D6AC97AEB2973CB3D6")]
-        TagungenVortraege = 1,  //1,
+        TagungenVortraege = 1L,  //1,
         [Description("162C0067811B477DA725D2F5F2D98398")]
-        Sport = 1 << 1, // 2,
+        Sport = 1L << 1, // 2,
         [Description("252200A028C8449D9A6205369A6D0D36")]
-        GastronomieTypischeProdukte = 1 << 2, //4,
+        GastronomieTypischeProdukte = 1L << 2, //4,
         [Description("33BDC54BD39946F4852B3394B00610AE")]
-        HandwerkBrauchtum = 1 << 3, //8,
+        HandwerkBrauchtum = 1L << 3, //8,
         [Description("4C4961D9FC5B48EEB73067BEB9D4402A")]
-        MessenMaerkte = 1 << 4, //16,
+        MessenMaerkte = 1L << 4, //16,
         [Description("6884FE362C88434B9F49725E3328112B")]
-        TheaterVorfuehrungen = 1 << 5, //32,
+        TheaterVorfuehrungen = 1L << 5, //32,
         [Description("767F6F43FC394CE9A3C8A9725C6FF134")]
-        KurseBildung = 1 << 6, //64,
+        KurseBildung = 1L << 6, //64,
         [Description("7E048074BA004EC58E29E330A9AA476B")]
-        MusikTanz = 1 << 7, //128,
+        MusikTanz = 1L << 7, //128,
         [Description("9C3449EE278C4D94AA5A7C286729DEA0")]
-        VolksfesteFestivals = 1 << 8, //256,
+        VolksfesteFestivals = 1L << 8, //256,
         [Description("ACE8B613F2074A7BB59C0B1DD40A43CD")]
-        WanderungenAusfluege = 1 << 9, //512,
+        WanderungenAusfluege = 1L << 9, //512,
         [Description("B5467FEFE5C74FA5AD32B83793A76165")]
-        FuehrungenBesichtigungen = 1 << 10, //1024,
+        FuehrungenBesichtigungen = 1L << 10, //1024,
         [Description("C72CE969B98947FABC99CBC7B033F28E")]
-        AusstellungenKunst = 1 << 11, //2048,
+        AusstellungenKunst = 1L << 11, //2048,
         [Description("D98B49DF24C342D09A8161836435CF86")]
-        Familie = 1 << 12, //4096,       
+        Familie = 1L << 12, //4096,       
+
+        [Description("08A37CD6550244179510BED319C7B972")]
+        PilzeSammeln = 1L << 13, //8192,  
+        [Description("1281B6BE26C14CE8AC00D99DD77273D5")]
+        Verleih = 1L << 14, //16384,  
+        [Description("18791378F74745049C51D82E82143461")]
+        GuestCard = 1L << 15, //32768,  
+        [Description("1CA441D2561944E5BB6BB0A477D88E79")]
+        Langlauf = 1L << 16, //65536,  
+        [Description("2D54FAB93F3741C7A81107B298D8FA2D")]
+        Verkostung = 1L << 17, //131072,  
+        [Description("8CE148DBE21A4F36B44B99A1498FDB5F")]
+        Bustransferreise = 1L << 18, //262144,  
+        [Description("B12E42FB1AE940539425B1A78A0818B0")]
+        Parkplatz = 1L << 19, //524288,  
+        [Description("BDF62AD595F54F0E8148894A6A1CC3CF")]
+        Durchfahrt = 1L << 20, //1048576,  
+        [Description("CA7B7B8B21C24D75B3B641DE30254AE6")]
+        Shop = 1L << 21, //2097152,  
+        [Description("F6FABAA6C6C3475FBF2157287DAA8A28")]
+        Bergbahn = 1L << 22, //4194304,  
     }
 
     #endregion

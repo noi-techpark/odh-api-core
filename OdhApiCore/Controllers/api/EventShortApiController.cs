@@ -767,6 +767,11 @@ namespace OdhApiCore.Controllers.api
                     if (eventshort.ActiveToday == false)
                         eventshort.Display1 = "N";
 
+                    //Create PublishedonList
+                    //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
+                    //TODO, Sync publishedon with current values, remove SETTER from ActiveToday, ActiveWeb, ActiveCommunity and generate it from publishedon, remove 
+                    //checkboxes from 
+
                     return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true);
                 }
                 else
@@ -847,6 +852,10 @@ namespace OdhApiCore.Controllers.api
 
                     //Check ID uppercase lowercase
                     eventshort.Id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
+
+                    //Create PublishedonList
+                    //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
+
                     return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", false, true);
                 }
                 else

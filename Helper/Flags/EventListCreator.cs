@@ -78,7 +78,7 @@ namespace Helper
             {
                 if (topicfilter != "null")
                 {
-                    var topicfilterint = Convert.ToInt32(topicfilter);
+                    var topicfilterint = Convert.ToInt64(topicfilter);
 
                     EventTopicFlag mytopicflag = (EventTopicFlag)topicfilterint;
 

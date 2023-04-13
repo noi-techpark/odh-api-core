@@ -1848,34 +1848,43 @@ namespace DataModel
         public string? WebAddress { get; set; }
         //Spezialfelder
 
+        [SwaggerDeprecated("Deprecated")]
         [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
         [SwaggerEnum(new[] { "Y", "N" })]
         [SwaggerSchema("Active")]
         public string? Display1 { get; set; }
 
+        [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
         [SwaggerSchema("Intranet Eurac")]
         public string? Display2 { get; set; }
 
+        [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
         [SwaggerSchema("Website Eurac")]
         public string? Display3 { get; set; }
 
+        [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
         public string? Display4 { get; set; }
 
+        [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
         public string? Display5 { get; set; }
 
+        [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
         public string? Display6 { get; set; }
 
+        [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
         public string? Display7 { get; set; }
 
+        [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
         public string? Display8 { get; set; }
 
+        [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
         public string? Display9 { get; set; }
 
@@ -1950,12 +1959,15 @@ namespace DataModel
 
         public bool? SoldOut { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use PublishedOn: today.noi.bz.it")]
         [SwaggerSchema(" ActiveToday Indicates if Event is shown on the today NOI Website")]
         public bool? ActiveToday { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use PublishedOn: noi.bz.it")]
         [SwaggerSchema(" ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI")]
         public bool? ActiveWeb { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use PublishedOn: noi-communityapp")]
         [SwaggerSchema("ActiveCommunityApp Indicates if Event is shown on the Noi Community App")]
         public bool? ActiveCommunityApp { get; set; }
 
