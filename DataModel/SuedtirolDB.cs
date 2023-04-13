@@ -1961,15 +1961,51 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use PublishedOn: today.noi.bz.it")]
         [SwaggerSchema(" ActiveToday Indicates if Event is shown on the today NOI Website")]
-        public bool? ActiveToday { get; set; }
+        public bool? ActiveToday {
+            get
+            {
+                if (this.PublishedOn != null && this.PublishedOn.Count > 0)
+                {
+                    return this.PublishedOn.Contains("today.noi.bz.it");
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         [SwaggerDeprecated("Deprecated, use PublishedOn: noi.bz.it")]
         [SwaggerSchema(" ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI")]
-        public bool? ActiveWeb { get; set; }
+        public bool? ActiveWeb {
+            get
+            {
+                if (this.PublishedOn != null && this.PublishedOn.Count > 0)
+                {
+                    return this.PublishedOn.Contains("noi.bz.it");
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         [SwaggerDeprecated("Deprecated, use PublishedOn: noi-communityapp")]
         [SwaggerSchema("ActiveCommunityApp Indicates if Event is shown on the Noi Community App")]
-        public bool? ActiveCommunityApp { get; set; }
+        public bool? ActiveCommunityApp {
+            get
+            {
+                if (this.PublishedOn != null && this.PublishedOn.Count > 0)
+                {
+                    return this.PublishedOn.Contains("noi-communityapp");
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         public ICollection<string>? HasLanguage { get; set; }
 
