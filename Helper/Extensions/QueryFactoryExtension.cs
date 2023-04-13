@@ -302,6 +302,10 @@ namespace Helper
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
+
+                //If data is null let equalityresult.isequal = false, add all the publish channels                
+                if (data.PublishedOn != null)
+                    channelstopublish.AddRange(data.PublishedOn);
             }
             else
             {
@@ -329,7 +333,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 1 : 0, objectimageschanged = null, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = null, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
         public static async Task<PGCRUDResult> UpsertDataAndFullCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false, bool compareimagedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IImageGalleryAware, IPublishedOn, new()
@@ -377,15 +381,17 @@ namespace Helper
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
+
+                //If data is null let equalityresult.isequal = false and imagecompareresult = false, and the publish channels
+                if (data.PublishedOn != null)
+                    channelstopublish.AddRange(data.PublishedOn);
             }
             else
             {
                 //Compare the data
                 if (comparedata && queryresult != null)
                     equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
-
               
-
                 //Compare Image Gallery
                 if (compareimagedata && queryresult != null)
                     imagecompareresult = EqualityHelper.CompareImageGallery(data.ImageGallery, queryresult.ImageGallery, new List<string>() { });
