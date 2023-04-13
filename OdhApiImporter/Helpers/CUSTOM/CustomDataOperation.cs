@@ -165,7 +165,7 @@ namespace OdhApiImporter.Helpers
 
             foreach (var eventshort in data)
             {
-                if (eventshort.EventDocument != null)
+                if (eventshort.EventDocument != null && eventshort.EventDocument.Count > 0)
                 {
                     var eventshortdocsde = eventshort.EventDocument.Where(x => x.Language == "de").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
                     eventshort.Documents.TryAddOrUpdate("de", eventshortdocsde);
