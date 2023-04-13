@@ -425,6 +425,7 @@ namespace OdhApiCore.Controllers.api
                             myeventshortbyroom.EventDescriptionEN = eventshort.EventDescriptionEN;
                             myeventshortbyroom.EventDescriptionIT = eventshort.EventDescriptionIT;
 
+                      
                             myeventshortbyroom.EventDescription.TryAddOrUpdate("de", eventshort.EventDescriptionDE != null ? eventshort.EventDescriptionDE.Trim() : "");
                             myeventshortbyroom.EventDescription.TryAddOrUpdate("it", eventshort.EventDescriptionIT != null ? eventshort.EventDescriptionIT.Trim() : "");
                             myeventshortbyroom.EventDescription.TryAddOrUpdate("en", eventshort.EventDescriptionEN != null ? eventshort.EventDescriptionEN.Trim() : "");
@@ -433,6 +434,10 @@ namespace OdhApiCore.Controllers.api
                                 myeventshortbyroom.EventDescription?.TryAddOrUpdate("it", eventshort.EventDescriptionDE);
                             if (String.IsNullOrEmpty(myeventshortbyroom?.EventDescription?["en"]) && eventshort.EventDescriptionDE != null)
                                 myeventshortbyroom!.EventDescription?.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
+
+                            myeventshortbyroom.EventTitle = myeventshortbyroom.EventDescription;
+
+                         
 
                             myeventshortbyroom!.EventEndDate = eventshort.EndDate;
                             myeventshortbyroom.EventEndDateUTC = eventshort.EndDateUTC;
@@ -481,6 +486,10 @@ namespace OdhApiCore.Controllers.api
                                 myeventshortbyroom.EventTextIT = textde;
                             if (string.IsNullOrEmpty(myeventshortbyroom.EventTextEN))
                                 myeventshortbyroom.EventTextEN = textde;
+
+                            myeventshortbyroom.EventText.TryAddOrUpdate("de", eventshort.EventTextDE != null ? eventshort.EventTextDE.Trim() : "");
+                            myeventshortbyroom.EventText.TryAddOrUpdate("it", eventshort.EventTextIT != null ? eventshort.EventTextIT.Trim() : "");
+                            myeventshortbyroom.EventText.TryAddOrUpdate("en", eventshort.EventTextEN != null ? eventshort.EventTextEN.Trim() : "");
 
                             myeventshortbyroom.TechnologyFields = eventshort.TechnologyFields != null ? eventshort.TechnologyFields : new List<string>();
                             myeventshortbyroom.CustomTagging = eventshort.CustomTagging != null ? eventshort.CustomTagging : new List<string>();

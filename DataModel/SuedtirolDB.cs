@@ -1761,6 +1761,7 @@ namespace DataModel
             Mapping = new Dictionary<string, IDictionary<string, string>>();
             EventText = new Dictionary<string, string>();
             EventTitle = new Dictionary<string, string>();
+            Documents = new Dictionary<string, List<Document>?>();
         }
 
         public LicenseInfo? LicenseInfo { get; set; }
@@ -1926,12 +1927,6 @@ namespace DataModel
         //Zeiten (diese sind relevant, diese anzeigen)
         public List<RoomBooked>? RoomBooked { get; set; }
 
-        //all das interessiert nicht
-        //public string AbstractsEN { get; set; }
-        //public string AbstractsGER { get; set; }
-        //public string AbstractsIT { get; set; }
-        ////gehört zu Abstract
-        //public string Documents { get; set; }
         public List<ImageGallery>? ImageGallery { get; set; }
         public string? VideoUrl { get; set; }
         public List<string>? TechnologyFields { get; set; }
@@ -1939,6 +1934,9 @@ namespace DataModel
         public List<string>? CustomTagging { get; set; }
 
         public List<DocumentPDF>? EventDocument { get; set; }
+
+        public IDictionary<string, List<Document>?> Documents { get; set; }
+
 
         public bool? ExternalOrganizer { get; set; }
 
@@ -2062,6 +2060,8 @@ namespace DataModel
             SpaceDescList = new List<string>();
             TechnologyFields = new List<string>();
             CustomTagging = new List<string>();
+            EventTitle = new Dictionary<string, string>();
+            EventText = new Dictionary<string, string>();
             EventDescription = new Dictionary<string, string>();
             EventDocument = new Dictionary<string, string>();
         }
@@ -2083,6 +2083,10 @@ namespace DataModel
         //Event Infos
 
         public int EventId { get; set; }
+
+        public Dictionary<string, string> EventTitle { get; set; }
+
+        public Dictionary<string, string> EventText { get; set; }
 
         public Dictionary<string, string> EventDescription { get; set; }
 
@@ -2119,11 +2123,19 @@ namespace DataModel
         public Dictionary<string, string> EventDocument { get; set; }
 
         public bool? ExternalOrganizer { get; set; }
-        //public string MapsNoiUrl { get; set; }
+
+        public ICollection<string>? PublishedOn { get; set; }
     }
 
     public class DocumentPDF
     {
+        public string? DocumentURL { get; set; }
+        public string? Language { get; set; }
+    }
+
+    public class Document
+    {
+        public string? DocumentName { get; set; }
         public string? DocumentURL { get; set; }
         public string? Language { get; set; }
     }

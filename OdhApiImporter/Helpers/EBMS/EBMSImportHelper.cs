@@ -188,8 +188,8 @@ namespace OdhApiImporter.Helpers
                 eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
                 //Check Languages
                 eventshort.CheckMyInsertedLanguages();
-                //Set PublishedOn
-                eventshort.CreatePublishedOnList();
+                //Remove Set PublishedOn not set automatically
+                //eventshort.CreatePublishedOnList();
 
                 var rawdataid = await InsertInRawDataDB(ebmsevent);
 
