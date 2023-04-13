@@ -25,6 +25,20 @@ namespace Helper.Extensions
             }
         }
 
+        public static void TryRemoveOnList(this ICollection<string> smgtags, string tagToRemove)
+        {
+            if (smgtags.Contains(tagToRemove))
+                smgtags.Remove(tagToRemove);
+        }
+
+        public static void TryRemoveOnList(this ICollection<string> smgtags, ICollection<string> tagsToRemove)
+        {
+            foreach (var tag in tagsToRemove)
+            {
+                smgtags.TryRemoveOnList(tag);
+            }
+        }
+
         public static void TryAddOrUpdateOnList(this ICollection<string> smgtags, string tagToAdd)
         {
             if (!smgtags.Contains(tagToAdd))

@@ -1,6 +1,7 @@
 ﻿using DataModel;
 using EBMS;
 using Helper;
+using Helper.Extensions;
 using Newtonsoft.Json;
 using SqlKata.Execution;
 using System;
@@ -89,6 +90,7 @@ namespace OdhApiImporter.Helpers
                 bool? soldout = false;
                 bool? externalorganizer = false;
                 IDictionary<string, string> eventText = new Dictionary<string,string>();
+                ICollection<string>? publishedon = new List<string>();
 
                 if (eventindb == null)
                 {                    
@@ -107,6 +109,7 @@ namespace OdhApiImporter.Helpers
 
                     activeweb = eventindb.ActiveWeb;
                     activecommunity = eventindb.ActiveCommunityApp;
+
                     videourl = eventindb.VideoUrl;
                     technologyfields = eventindb.TechnologyFields;
                     customtagging = eventindb.CustomTagging;
@@ -115,8 +118,9 @@ namespace OdhApiImporter.Helpers
 
                     eventdocument = eventindb.EventDocument;
                     soldout = eventindb.SoldOut;
-                }
 
+                    publishedon = eventindb.PublishedOn;
+                }
 
                 if (changedonDB != eventshort.ChangedOn)
                 {
@@ -127,8 +131,11 @@ namespace OdhApiImporter.Helpers
 
                     eventshort.EventText = eventText;
 
-                    eventshort.ActiveWeb = activeweb;
-                    eventshort.ActiveCommunityApp = activecommunity;
+                    //eventshort.ActiveWeb = activeweb;
+                    //eventshort.ActiveCommunityApp = activecommunity;
+
+                    eventshort.PublishedOn = publishedon;
+
                     eventshort.VideoUrl = videourl;
                     eventshort.TechnologyFields = technologyfields;
                     eventshort.CustomTagging = customtagging;
@@ -148,11 +155,11 @@ namespace OdhApiImporter.Helpers
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 
-                    //Set ActiveToday in base of Display1
+                    //Set ActiveToday / PublishedOn in base of Display1
                     if (eventshort.Display1 == "Y")
-                        eventshort.ActiveToday = true;
+                        publishedon.TryAddOrUpdateOnList("today.noi.bz.it");
                     if (eventshort.Display1 == "N")
-                        eventshort.ActiveToday = false;
+                        publishedon.TryRemoveOnList("today.noi.bz.it");
 
                     var queryresult = await InsertDataToDB(eventshort, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
 
