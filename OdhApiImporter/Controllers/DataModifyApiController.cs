@@ -52,7 +52,7 @@ namespace OdhApiImporter.Controllers
 
             //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
 
-            objectscount = await customdataoperation.CleanEventShortstEventDocumentField();
+            objectscount = await customdataoperation.UpdateAllEventShortstEventDocumentField();
 
             return Ok(new UpdateResult
             {
@@ -68,7 +68,35 @@ namespace OdhApiImporter.Controllers
                 success = true
             });
         }
-     
+
+        [HttpGet, Route("CleanEventShort")]
+        public async Task<IActionResult> CleanEventShort(CancellationToken cancellationToken)
+        {
+            var objectscount = 0;
+
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
+            //objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
+
+            //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
+
+            objectscount = await customdataoperation.CleanEventShortstEventDocumentField();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Clean EventShort",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
         #endregion
 
         #region Articles
