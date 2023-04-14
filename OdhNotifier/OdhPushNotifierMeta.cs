@@ -305,7 +305,7 @@ namespace OdhNotifier
             myfailure.Service = notify.Destination;
             myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
-            myfailure.RetryCount = myfailure.RetryCount++;
+            myfailure.RetryCount = myfailure.RetryCount++; //CHECK if this works
             myfailure.IsDeleteOperation = notify.IsDelete;
             myfailure.HasImageChanged = notify.HasImagechanged;
 
