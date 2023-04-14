@@ -86,7 +86,9 @@ namespace OdhApiImporter.Helpers
                 List<string>? technologyfields = null;
                 List<string>? customtagging = null;
                 var webadress = "";
-                IDictionary<string, List<Document>>? eventdocument = new Dictionary<string, List<Document>>();
+                List<DocumentPDF>? eventdocument = new List<DocumentPDF>();
+                IDictionary<string, List<Document>>? document = new Dictionary<string, List<Document>>();
+
                 bool? soldout = false;
                 bool? externalorganizer = false;
                 IDictionary<string, string> eventText = new Dictionary<string,string>();
@@ -116,7 +118,9 @@ namespace OdhApiImporter.Helpers
                     webadress = eventindb.WebAddress;
                     externalorganizer = eventindb.ExternalOrganizer;
 
-                    eventdocument = eventindb.Documents;
+                    eventdocument = eventindb.EventDocument;
+                    document = eventindb.Documents;
+
                     soldout = eventindb.SoldOut;
 
                     publishedon = eventindb.PublishedOn;
@@ -143,7 +147,10 @@ namespace OdhApiImporter.Helpers
                         eventshort.WebAddress = webadress;
 
                     eventshort.SoldOut = soldout;
-                    eventshort.Documents = eventdocument;
+
+                    eventshort.EventDocument = eventdocument;
+                    eventshort.Documents = document;
+
                     eventshort.ExternalOrganizer = externalorganizer;
 
                     //New If CompanyName is Noi - blablabla assign TechnologyField automatically and Write to Display5 if not empty "NOI"

@@ -1934,15 +1934,16 @@ namespace DataModel
         public List<string>? CustomTagging { get; set; }
 
         public List<DocumentPDF>? EventDocument { 
-            get
-            {
-                if (this.Documents != null && this.Documents.Count > 0)
-                {
-                    return this.Documents.SelectMany(x => x.Value).Select(y => new DocumentPDF() { DocumentURL = y.DocumentURL, Language = y.Language }).ToList();
-                }
-                else
-                    return null;
-            }
+            //get
+            //{
+            //    if (this.Documents != null && this.Documents.Count > 0)
+            //    {
+            //        return this.Documents.SelectMany(x => x.Value).Select(y => new DocumentPDF() { DocumentURL = y.DocumentURL, Language = y.Language }).ToList();
+            //    }
+            //    else
+            //        return null;
+            //}
+            get; set; 
         }
 
         public IDictionary<string, List<Document>?> Documents { get; set; }

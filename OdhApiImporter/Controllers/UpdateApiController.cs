@@ -79,6 +79,35 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+        [HttpGet, Route("Raven/{datatype}/Delete/{id}")]
+        //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
+        public async Task<IActionResult> DeleteDataFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Delete Raven";
+            string updatetype = "single";
+            string source = "api";
+            string otherinfo = datatype;
+
+            try
+            {
+                RavenImportHelper ravenimporthelper = new RavenImportHelper(settings, QueryFactory, UrlGeneratorStatic("Raven/" + datatype), OdhPushnotifier);
+                var resulttuple = await ravenimporthelper.DeletePGObject(id, datatype, cancellationToken);
+                updatedetail = resulttuple.Item2;
+
+                var deleteResult = GenericResultsHelper.GetSuccessUpdateResult(resulttuple.Item1, source, operation, updatetype, "Delete Raven succeeded", otherinfo, updatedetail, true);
+
+                return Ok(deleteResult);
+            }
+            catch (Exception ex)
+            {
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(id, source, operation, updatetype, "Delete Raven failed", otherinfo, updatedetail, ex, true);
+
+                return BadRequest(errorResult);
+            }
+        }
+
+
         #endregion
 
         #region REPROCESS PUSH FAILURE QUEUE
