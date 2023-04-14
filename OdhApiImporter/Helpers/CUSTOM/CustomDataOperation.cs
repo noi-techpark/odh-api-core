@@ -165,6 +165,8 @@ namespace OdhApiImporter.Helpers
 
             foreach (var eventshort in data)
             {
+                var save = false;
+
                 if (eventshort.EventDocument != null && eventshort.EventDocument.Count > 0)
                 {
                     var eventshortdocsde = eventshort.EventDocument.Where(x => x.Language == "de").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
@@ -177,13 +179,17 @@ namespace OdhApiImporter.Helpers
                     eventshort.Documents.TryAddOrUpdate("en", eventshortdocsen);
                 }
 
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+                if(save)
+                {
+                    //Save tp DB
+                    //TODO CHECK IF THIS WORKS     
+                    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
 
-                i++;
+                    i++;
+                }
+                
             }
 
             return i;
