@@ -170,13 +170,28 @@ namespace OdhApiImporter.Helpers
                 if (eventshort.EventDocument != null && eventshort.EventDocument.Count > 0)
                 {
                     var eventshortdocsde = eventshort.EventDocument.Where(x => x.Language == "de").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
-                    eventshort.Documents.TryAddOrUpdate("de", eventshortdocsde);
+                    if(eventshortdocsde != null && eventshortdocsde.Count > 0)
+                    {
+                        save = true;
+                        eventshort.Documents.TryAddOrUpdate("de", eventshortdocsde);
+                    }
+                        
 
                     var eventshortdocsit = eventshort.EventDocument.Where(x => x.Language == "it").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
-                    eventshort.Documents.TryAddOrUpdate("it", eventshortdocsit);
+                    if (eventshortdocsit != null && eventshortdocsit.Count > 0)
+                    {
+                        save = true;
+                        eventshort.Documents.TryAddOrUpdate("it", eventshortdocsit);
+                    }
+                    
 
                     var eventshortdocsen = eventshort.EventDocument.Where(x => x.Language == "en").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
-                    eventshort.Documents.TryAddOrUpdate("en", eventshortdocsen);
+                    if (eventshortdocsen != null && eventshortdocsen.Count > 0)
+                    {
+                        save = true;
+                        eventshort.Documents.TryAddOrUpdate("en", eventshortdocsen);
+                    }
+                    
                 }
 
                 if(save)
