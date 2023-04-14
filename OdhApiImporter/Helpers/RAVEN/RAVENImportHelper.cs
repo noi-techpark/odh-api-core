@@ -229,7 +229,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams", true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<WebcamInfoLinked>((WebcamInfoLinked)mypgdata) == true)
@@ -254,7 +254,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions", true, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -271,7 +271,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions", true, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -288,7 +288,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs", true, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -305,7 +305,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities", true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -322,7 +322,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts", true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -339,7 +339,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas", true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -356,7 +356,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas", true, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -373,7 +373,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions", true, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -390,7 +390,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles", true, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -406,7 +406,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags", true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
                     break;
 
@@ -485,7 +485,7 @@ namespace OdhApiImporter.Helpers
                     myupdateresult = await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines", true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
 
 
                     break;
@@ -499,6 +499,116 @@ namespace OdhApiImporter.Helpers
             if (updateresultreduced.updated != null || updateresultreduced.created != null || updateresultreduced.deleted != null)
                 mergelist.Add(updateresultreduced);
             
+            return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(mergelist));
+        }
+
+        public async Task<Tuple<string, UpdateDetail>> DeletePGObject(string id, string datatype, CancellationToken cancellationToken)
+        {
+            var mypgdata = default(IIdentifiable);
+
+            var myupdateresult = default(UpdateDetail);
+            var updateresultreduced = default(UpdateDetail);
+
+            //TODO
+            //load data from PG, see if reduced data exist
+            //delete from PG send a push to each channel
+
+            switch (datatype.ToLower())
+            {
+                case "accommodation":
+                    
+
+                    break;
+
+                case "gastronomy":
+                   
+
+                    break;
+
+                case "activity":
+                    
+
+                    break;
+
+                case "poi":
+                    
+
+                    break;
+
+                case "odhactivitypoi":
+                    
+
+                    break;
+
+                case "event":
+                   
+
+                    break;
+
+                case "webcam":
+                    break;
+
+                case "metaregion":
+                    
+                    break;
+
+                case "region":
+                    
+                    break;
+
+                case "tv":
+                    
+                    break;
+
+                case "municipality":
+                    
+                    break;
+
+                case "district":
+                    
+                    break;
+
+                case "experiencearea":
+                   
+                    break;
+
+                case "skiarea":
+                    
+                    break;
+
+                case "skiregion":
+                    
+                    break;
+
+                case "article":
+                   
+                    break;
+
+                case "odhtag":
+                    
+                    break;
+
+                case "measuringpoint":
+                    
+                    break;
+
+                case "venue":
+                    
+                    break;
+
+                case "wine":
+                 
+                    break;
+
+                default:
+                    throw new Exception("no match found");
+            }
+
+            var mergelist = new List<UpdateDetail>() { myupdateresult };
+
+            if (updateresultreduced.updated != null || updateresultreduced.created != null || updateresultreduced.deleted != null)
+                mergelist.Add(updateresultreduced);
+
             return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(mergelist));
         }
 
@@ -565,7 +675,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, pushchannels = result.pushchannels, changes = result.changes };
         }
 
-        private async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype)
+        private async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype, string pushorigin = "lts.push")
         {
             IDictionary<string,NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
 
@@ -577,11 +687,25 @@ namespace OdhApiImporter.Helpers
                 if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
                     hasimagechanged = true;
 
-                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), "lts.push", hasimagechanged, false, "api", myupdateresult.pushchannels.ToList());
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, hasimagechanged, false, "api", myupdateresult.pushchannels.ToList());
             }
 
             return pushresults;
         }
+
+        private async Task<IDictionary<string, NotifierResponse>?> PushDeletedObject(UpdateDetail myupdateresult, string id, string datatype, string pushorigin = "lts.push")
+        {
+            IDictionary<string, NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
+
+            //Check if data has changed and Push To all channels
+            if (myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0 && myupdateresult.pushchannels != null && myupdateresult.pushchannels.Count > 0)
+            {
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, false, true, "api", myupdateresult.pushchannels.ToList());
+            }
+
+            return pushresults;
+        }
+
 
         #endregion
     }
