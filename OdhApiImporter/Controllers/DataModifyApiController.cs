@@ -52,7 +52,7 @@ namespace OdhApiImporter.Controllers
 
             //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
 
-            objectscount = await customdataoperation.CleanEventShortstEventDocumentField();
+            objectscount = await customdataoperation.UpdateAllEventShortstEventDocumentField();
 
             return Ok(new UpdateResult
             {
