@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Converters;
 using DataModel.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics;
 
 namespace DataModel
 {
@@ -1933,17 +1934,17 @@ namespace DataModel
 
         public List<string>? CustomTagging { get; set; }
 
-        public List<DocumentPDF>? EventDocument { 
-            //get
-            //{
-            //    if (this.Documents != null && this.Documents.Count > 0)
-            //    {
-            //        return this.Documents.SelectMany(x => x.Value).Select(y => new DocumentPDF() { DocumentURL = y.DocumentURL, Language = y.Language }).ToList();
-            //    }
-            //    else
-            //        return null;
-            //}
-            get; set; 
+        public List<DocumentPDF>? EventDocument {
+            get
+            {
+                if (this.Documents != null && this.Documents.Count > 0)
+                {
+                    return this.Documents.SelectMany(x => x.Value).Select(y => new DocumentPDF() { DocumentURL = y.DocumentURL, Language = y.Language }).ToList();
+                }
+                else
+                    return null;
+            }
+            //get; set; 
         }
 
         public IDictionary<string, List<Document>?> Documents { get; set; }
@@ -2039,6 +2040,8 @@ namespace DataModel
                 }
             }
         }
+
+        public AgeRange? TypicalAgeRange { get; set; }
     }
 
     public class RoomBooked
@@ -2149,6 +2152,12 @@ namespace DataModel
         public string? DocumentName { get; set; }
         public string? DocumentURL { get; set; }
         public string? Language { get; set; }
+    }
+
+    public class AgeRange
+    {
+        public int AgeFrom { get; set; }
+        public int AgeTo { get; set; }
     }
 
     #endregion
