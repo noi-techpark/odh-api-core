@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Converters;
 using DataModel.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics;
 
 namespace DataModel
 {
@@ -2039,6 +2040,8 @@ namespace DataModel
                 }
             }
         }
+
+        public AgeRange? TypicalAgeRange { get; set; }
     }
 
     public class RoomBooked
@@ -2149,6 +2152,12 @@ namespace DataModel
         public string? DocumentName { get; set; }
         public string? DocumentURL { get; set; }
         public string? Language { get; set; }
+    }
+
+    public class AgeRange
+    {
+        public int AgeFrom { get; set; }
+        public int AgeTo { get; set; }
     }
 
     #endregion
