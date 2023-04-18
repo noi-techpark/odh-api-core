@@ -206,7 +206,7 @@ namespace OdhNotifier
                     }
                 }
                 else
-                    throw new Exception("type not valid!");
+                    throw new Exception("invalid_type");
             }
             catch (TaskCanceledException ex)
             {
@@ -288,6 +288,10 @@ namespace OdhNotifier
             myfailure.Service = notify.Destination;
             myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
+
+            if (exmessage == "invalid_type")
+                myfailure.Status = "not_supported";
+
             myfailure.RetryCount = 1;
             myfailure.IsDeleteOperation = notify.IsDelete;
             myfailure.HasImageChanged = notify.HasImagechanged;
