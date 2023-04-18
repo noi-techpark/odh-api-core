@@ -86,8 +86,8 @@ namespace OdhApiImporter.Helpers
                 List<string>? technologyfields = null;
                 List<string>? customtagging = null;
                 var webadress = "";
-                List<DocumentPDF>? eventdocument = new List<DocumentPDF>();
-                IDictionary<string, List<Document>>? document = new Dictionary<string, List<Document>>();
+                //List<DocumentPDF>? eventdocument = new List<DocumentPDF>();
+                IDictionary<string, List<Document>?> document = new Dictionary<string, List<Document>?>();
 
                 bool? soldout = false;
                 bool? externalorganizer = false;
@@ -118,7 +118,7 @@ namespace OdhApiImporter.Helpers
                     webadress = eventindb.WebAddress;
                     externalorganizer = eventindb.ExternalOrganizer;
 
-                    eventdocument = eventindb.EventDocument;
+                    //eventdocument = eventindb.EventDocument;
                     document = eventindb.Documents;
 
                     soldout = eventindb.SoldOut;
@@ -148,7 +148,7 @@ namespace OdhApiImporter.Helpers
 
                     eventshort.SoldOut = soldout;
 
-                    eventshort.EventDocument = eventdocument;
+                    //eventshort.EventDocument = eventdocument;
                     eventshort.Documents = document;
 
                     eventshort.ExternalOrganizer = externalorganizer;
