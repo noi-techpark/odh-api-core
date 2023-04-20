@@ -2041,7 +2041,7 @@ namespace DataModel
             }
         }
 
-        public AgeRange? TypicalAgeRange { get; set; }
+        public ICollection<AgeRange>? TypicalAgeRange { get; set; }
     }
 
     public class RoomBooked
