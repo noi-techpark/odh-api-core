@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using OdhNotifier;
 using RAVEN;
 using ServiceReferenceLCS;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -506,14 +507,14 @@ namespace OdhApiImporter.Helpers
         {
             var mypgdata = default(IIdentifiable);
 
-            var myupdateresult = default(UpdateDetail);
-            var updateresultreduced = default(UpdateDetail);
+            var deleteresult = default(UpdateDetail);
+            var deleteresultreduced = default(UpdateDetail);
 
             //TODO
             //load data from PG, see if reduced data exist
             //delete from PG send a push to each channel
             //Transform id uppercase lowercase
-
+           
             switch (datatype.ToLower())
             {
                 case "accommodation":
@@ -584,8 +585,24 @@ namespace OdhApiImporter.Helpers
 
                 case "odhtag":
 
+                    var idtodelete = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
+                 
+                    mypgdata = await QueryFactory.Query("odhtag")
+                      .Select("data")
+                      .Where("id", idtodelete)
+                      .GetObjectSingleAsync<ODHTagLinked>();
 
-                    
+                    if (mypgdata != null)
+                    {
+                        //Check for reduced
+
+                        //Delete
+                        deleteresult = await DeleteRavenObjectFromPG((ODHTagLinked)mypgdata, "odhtag");
+
+                        if(deleteresult.deleted > 0)
+                            deleteresult.pushed = await PushDeletedObject(deleteresult, mypgdata.Id, datatype);
+                    }
+
                     break;
 
                 case "measuringpoint":
@@ -609,10 +626,10 @@ namespace OdhApiImporter.Helpers
                     throw new Exception("no match found");
             }
 
-            var mergelist = new List<UpdateDetail>() { myupdateresult };
+            var mergelist = new List<UpdateDetail>() { deleteresult };
 
-            if (updateresultreduced.updated != null || updateresultreduced.created != null || updateresultreduced.deleted != null)
-                mergelist.Add(updateresultreduced);
+            if (deleteresultreduced.updated != null || deleteresultreduced.created != null || deleteresultreduced.deleted != null)
+                mergelist.Add(deleteresultreduced);
 
             return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(mergelist));
         }
@@ -696,6 +713,15 @@ namespace OdhApiImporter.Helpers
             }
 
             return pushresults;
+        }
+
+
+        private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
+        {
+            var idtodelete = Helper.IdGenerator.CheckIdFromType<T>(datatosave.Id);
+            var result = await QueryFactory.DeleteData(idtodelete, "odhtag");
+
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
         }
 
         private async Task<IDictionary<string, NotifierResponse>?> PushDeletedObject(UpdateDetail myupdateresult, string id, string datatype, string pushorigin = "lts.push")
