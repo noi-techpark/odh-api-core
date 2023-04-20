@@ -586,8 +586,9 @@ namespace OdhApiImporter.Helpers
                 case "odhtag":
 
                     var idtodelete = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
-                 
-                    mypgdata = await QueryFactory.Query("odhtag")
+                    var table = ODHTypeHelper.TranslateTypeString2Table(datatype.ToLower());
+
+                    mypgdata = await QueryFactory.Query(table)
                       .Select("data")
                       .Where("id", idtodelete)
                       .GetObjectSingleAsync<ODHTagLinked>();
@@ -599,8 +600,7 @@ namespace OdhApiImporter.Helpers
                         //Delete
                         deleteresult = await DeleteRavenObjectFromPG((ODHTagLinked)mypgdata, "odhtag");
 
-                        if(deleteresult.deleted > 0)
-                            deleteresult.pushed = await PushDeletedObject(deleteresult, mypgdata.Id, datatype);
+                        deleteresult.pushed = await PushDeletedObject(deleteresult, mypgdata.Id, datatype);
                     }
 
                     break;
@@ -719,7 +719,7 @@ namespace OdhApiImporter.Helpers
         private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
         {
             var idtodelete = Helper.IdGenerator.CheckIdFromType<T>(datatosave.Id);
-            var result = await QueryFactory.DeleteData(idtodelete, "odhtag");
+            var result = await QueryFactory.DeleteData(idtodelete, table);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
         }
@@ -729,7 +729,7 @@ namespace OdhApiImporter.Helpers
             IDictionary<string, NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
 
             //Check if data has changed and Push To all channels
-            if (myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0 && myupdateresult.pushchannels != null && myupdateresult.pushchannels.Count > 0)
+            if (myupdateresult.deleted > 0 && myupdateresult.pushchannels.Count > 0)
             {
                 pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, false, true, "api", myupdateresult.pushchannels.ToList());
             }
