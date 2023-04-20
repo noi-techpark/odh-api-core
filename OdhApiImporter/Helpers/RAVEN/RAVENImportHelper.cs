@@ -512,6 +512,7 @@ namespace OdhApiImporter.Helpers
             //TODO
             //load data from PG, see if reduced data exist
             //delete from PG send a push to each channel
+            //Transform id uppercase lowercase
 
             switch (datatype.ToLower())
             {
@@ -543,9 +544,6 @@ namespace OdhApiImporter.Helpers
                 case "event":
                    
 
-                    break;
-
-                case "webcam":
                     break;
 
                 case "metaregion":
@@ -585,6 +583,8 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "odhtag":
+
+
                     
                     break;
 
@@ -598,6 +598,11 @@ namespace OdhApiImporter.Helpers
 
                 case "wine":
                  
+                    break;
+
+                case "webcam":
+                    //TODO DELETE ALL ASSIGNMENTS OF THIS Webcam
+
                     break;
 
                 default:

@@ -53,7 +53,7 @@ namespace OdhApiImporter.Controllers
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
         //[Authorize(Roles = "DataWriter,DataCreate,DataUpdate")]
-        public async Task<IActionResult> UpdateFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateDataFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update Raven";
