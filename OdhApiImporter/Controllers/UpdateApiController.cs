@@ -91,6 +91,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
+               
                 RavenImportHelper ravenimporthelper = new RavenImportHelper(settings, QueryFactory, UrlGeneratorStatic("Raven/" + datatype), OdhPushnotifier);
                 var resulttuple = await ravenimporthelper.DeletePGObject(id, datatype, cancellationToken);
                 updatedetail = resulttuple.Item2;

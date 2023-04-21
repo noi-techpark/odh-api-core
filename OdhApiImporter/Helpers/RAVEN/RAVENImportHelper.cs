@@ -507,8 +507,7 @@ namespace OdhApiImporter.Helpers
         {
             //var mypgdata = default(IIdentifiable);
             var table = ODHTypeHelper.TranslateTypeString2Table(datatype.ToLower());
-            var idtodelete = "";
-
+          
             var deleteresult = default(UpdateDetail);
             var deleteresultreduced = default(UpdateDetail);
 
@@ -540,7 +539,10 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "odhactivitypoi":
-                    
+
+                    //Delete
+                    deleteresult = await DeleteRavenObjectFromPG<ODHActivityPoiLinked>(id, table, false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
 
                     break;
 
@@ -574,11 +576,19 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "skiarea":
-                    
+
+                    //Delete
+                    deleteresult = await DeleteRavenObjectFromPG<SkiAreaLinked>(id, table, false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+
                     break;
 
                 case "skiregion":
-                    
+
+                    //Delete
+                    deleteresult = await DeleteRavenObjectFromPG<SkiRegionLinked>(id, table, false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+
                     break;
 
                 case "article":
@@ -587,11 +597,9 @@ namespace OdhApiImporter.Helpers
 
                 case "odhtag":
 
-                    idtodelete = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
-
                     //Delete
-                    deleteresult = await DeleteRavenObjectFromPG<ODHTagLinked>(idtodelete, table, false);
-                    deleteresult.pushed = await PushDeletedObject(deleteresult, idtodelete, datatype);
+                    deleteresult = await DeleteRavenObjectFromPG<ODHTagLinked>(id, table, false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
                    
                     break;
 

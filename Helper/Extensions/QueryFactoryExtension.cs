@@ -228,6 +228,15 @@ namespace Helper
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
+        /// <summary>
+        /// Deletes the data if it exists, by passing id and table
+        /// </summary>
+        /// <param name="QueryFactory"></param>
+        /// <param name="id"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
         {
             if (string.IsNullOrEmpty(id))
@@ -258,6 +267,15 @@ namespace Helper
             return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
         }
 
+        /// <summary>
+        /// Deletes the data if it exists by passing the Type the IdStyle (lowercase, uppercase) is derterminated and a check if the data can be converted to this entity
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="QueryFactory"></param>
+        /// <param name="id"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static async Task<PGCRUDResult> DeleteData<T>(this QueryFactory QueryFactory, string id, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
         {
             if (string.IsNullOrEmpty(id))
@@ -277,7 +295,6 @@ namespace Helper
             var errorresult = 0;
             List<string> channelstopublish = new List<string>();
 
-
             if (queryresult == null)
             {
                 //throw new ArgumentNullException(nameof(query), "No data");
@@ -295,10 +312,23 @@ namespace Helper
             if (deleteresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE", changes = 0, compareobject = 0, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+            return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
         }
 
-
+        /// <summary>
+        /// Upsert Data and check if Object has changed
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="QueryFactory"></param>
+        /// <param name="data"></param>
+        /// <param name="table"></param>
+        /// <param name="editor"></param>
+        /// <param name="editsource"></param>
+        /// <param name="errorwhendataexists"></param>
+        /// <param name="errorwhendataisnew"></param>
+        /// <param name="comparedata"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static async Task<PGCRUDResult> UpsertDataAndCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
         {
             //TODO: What if no id is passed? Generate ID
@@ -377,6 +407,21 @@ namespace Helper
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = null, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
+        /// <summary>
+        /// Upsert Data and check if Object and ImageGallerz has changed
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="QueryFactory"></param>
+        /// <param name="data"></param>
+        /// <param name="table"></param>
+        /// <param name="editor"></param>
+        /// <param name="editsource"></param>
+        /// <param name="errorwhendataexists"></param>
+        /// <param name="errorwhendataisnew"></param>
+        /// <param name="comparedata"></param>
+        /// <param name="compareimagedata"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static async Task<PGCRUDResult> UpsertDataAndFullCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false, bool compareimagedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IImageGalleryAware, IPublishedOn, new()
         {
             //TODO: What if no id is passed? Generate ID
