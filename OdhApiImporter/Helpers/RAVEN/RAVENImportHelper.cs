@@ -708,11 +708,9 @@ namespace OdhApiImporter.Helpers
 
         private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(string id, string table, bool deletereduced) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
         {
-
-
             var result = await QueryFactory.DeleteData<T>(id, table);
 
-            var reducedresult = new PGCRUDResult() { changes = null, compareobject = 0, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimageschanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
+            var reducedresult = new PGCRUDResult() { changes = null, compareobject = false, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimageschanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
 
             //Check if redured object has to be deleted
             if (deletereduced)

@@ -281,7 +281,7 @@ namespace Helper
             if (queryresult == null)
             {
                 //throw new ArgumentNullException(nameof(query), "No data");
-                return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, operation = "DELETE", changes = 0, compareobject = 0, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
             }
             else
             {
