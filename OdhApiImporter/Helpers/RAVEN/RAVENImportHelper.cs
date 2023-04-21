@@ -511,11 +511,8 @@ namespace OdhApiImporter.Helpers
             var deleteresult = default(UpdateDetail);
             var deleteresultreduced = default(UpdateDetail);
 
-            //TODO
-            //load data from PG, see if reduced data exist
-            //delete from PG send a push to each channel
-            //Transform id uppercase lowercase
-           
+            //Check passed id style here?
+          
             switch (datatype.ToLower())
             {
                 case "accommodation":
@@ -629,7 +626,7 @@ namespace OdhApiImporter.Helpers
             if (deleteresultreduced.updated != null || deleteresultreduced.created != null || deleteresultreduced.deleted != null)
                 mergelist.Add(deleteresultreduced);
 
-            return Tuple.Create<string, UpdateDetail>(idtodelete, GenericResultsHelper.MergeUpdateDetail(mergelist));
+            return Tuple.Create<string, UpdateDetail>(id, GenericResultsHelper.MergeUpdateDetail(mergelist));
         }
 
         /// <summary>
