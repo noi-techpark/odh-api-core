@@ -258,6 +258,47 @@ namespace Helper
             return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
         }
 
+        public static async Task<PGCRUDResult> DeleteData<T>(this QueryFactory QueryFactory, string id, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentException(nameof(id), "No data");
+
+            var idtodelete = Helper.IdGenerator.CheckIdFromType<T>(id);
+
+            //Check if data exists
+            var query =
+                  QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", idtodelete);
+
+            var queryresult = await query.GetObjectSingleAsync<T>();
+
+            var deleteresult = 0;
+            var errorresult = 0;
+            List<string> channelstopublish = new List<string>();
+
+
+            if (queryresult == null)
+            {
+                //throw new ArgumentNullException(nameof(query), "No data");
+                return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, operation = "DELETE", changes = 0, compareobject = 0, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+            }
+            else
+            {
+                if (queryresult.PublishedOn != null)
+                    channelstopublish.AddRange(queryresult.PublishedOn);
+
+                deleteresult = await QueryFactory.Query(table).Where("id", idtodelete)
+                        .DeleteAsync();
+            }
+
+            if (deleteresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE", changes = 0, compareobject = 0, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+        }
+
+
         public static async Task<PGCRUDResult> UpsertDataAndCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
         {
             //TODO: What if no id is passed? Generate ID

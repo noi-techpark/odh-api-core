@@ -505,7 +505,9 @@ namespace OdhApiImporter.Helpers
 
         public async Task<Tuple<string, UpdateDetail>> DeletePGObject(string id, string datatype, CancellationToken cancellationToken)
         {
-            var mypgdata = default(IIdentifiable);
+            //var mypgdata = default(IIdentifiable);
+            var table = ODHTypeHelper.TranslateTypeString2Table(datatype.ToLower());
+            var idtodelete = "";
 
             var deleteresult = default(UpdateDetail);
             var deleteresultreduced = default(UpdateDetail);
@@ -585,24 +587,12 @@ namespace OdhApiImporter.Helpers
 
                 case "odhtag":
 
-                    var idtodelete = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
-                    var table = ODHTypeHelper.TranslateTypeString2Table(datatype.ToLower());
+                    idtodelete = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
 
-                    mypgdata = await QueryFactory.Query(table)
-                      .Select("data")
-                      .Where("id", idtodelete)
-                      .GetObjectSingleAsync<ODHTagLinked>();
-
-                    if (mypgdata != null)
-                    {
-                        //Check for reduced
-
-                        //Delete
-                        deleteresult = await DeleteRavenObjectFromPG((ODHTagLinked)mypgdata, "odhtag");
-
-                        deleteresult.pushed = await PushDeletedObject(deleteresult, mypgdata.Id, datatype);
-                    }
-
+                    //Delete
+                    deleteresult = await DeleteRavenObjectFromPG<ODHTagLinked>(idtodelete, table, false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, idtodelete, datatype);
+                   
                     break;
 
                 case "measuringpoint":
@@ -631,7 +621,7 @@ namespace OdhApiImporter.Helpers
             if (deleteresultreduced.updated != null || deleteresultreduced.created != null || deleteresultreduced.deleted != null)
                 mergelist.Add(deleteresultreduced);
 
-            return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(mergelist));
+            return Tuple.Create<string, UpdateDetail>(idtodelete, GenericResultsHelper.MergeUpdateDetail(mergelist));
         }
 
         /// <summary>
@@ -716,12 +706,33 @@ namespace OdhApiImporter.Helpers
         }
 
 
-        private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
+        private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(string id, string table, bool deletereduced) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
         {
-            var idtodelete = Helper.IdGenerator.CheckIdFromType<T>(datatosave.Id);
-            var result = await QueryFactory.DeleteData(idtodelete, table);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
+
+            var result = await QueryFactory.DeleteData<T>(id, table);
+
+            var reducedresult = new PGCRUDResult() { changes = null, compareobject = 0, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimageschanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
+
+            //Check if redured object has to be deleted
+            if (deletereduced)
+            {
+                reducedresult = await QueryFactory.DeleteData<T>(id + "_reduced", table);
+            }
+
+            return new UpdateDetail()
+            {
+                created = result.created,
+                updated = result.updated,
+                deleted = result.deleted + reducedresult.deleted,
+                error = result.error + reducedresult.error,
+                objectchanged = result.objectchanged,
+                objectimagechanged = result.objectimageschanged,
+                comparedobjects = 0,
+                pushchannels = result.pushchannels,
+                changes = result.changes
+            };
+
         }
 
         private async Task<IDictionary<string, NotifierResponse>?> PushDeletedObject(UpdateDetail myupdateresult, string id, string datatype, string pushorigin = "lts.push")
