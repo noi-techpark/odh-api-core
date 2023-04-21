@@ -538,7 +538,7 @@ namespace OdhApiImporter.Helpers
                 case "odhactivitypoi":
 
                     //Delete
-                    deleteresult = await DeleteRavenObjectFromPG<ODHActivityPoiLinked>(id, table, false);
+                    deleteresult = await DeleteRavenObjectFromPG<ODHActivityPoiLinked>(id, table, true);
                     deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
 
                     break;
