@@ -309,6 +309,11 @@ namespace OdhNotifier
             myfailure.Service = notify.Destination;
             myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
+
+            //Hack if Type = not Supported set 
+            if (notify.Type == "NOT SUPPORTED")
+                myfailure.Status = "not_supported";
+
             myfailure.RetryCount = myfailure.RetryCount + 1; //CHECK if this works
             myfailure.IsDeleteOperation = notify.IsDelete;
             myfailure.HasImageChanged = notify.HasImagechanged;
