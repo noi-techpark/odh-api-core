@@ -132,7 +132,10 @@ namespace OdhApiImporter
             //CONFIGURATION for Using Authentication and Authorization
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
-            app.UseAuthorization();                       
+            app.UseAuthorization();
+
+            ////LOG EVERY REQUEST WITH HEADERs
+            app.UseODHCustomHttpRequestConfig(Configuration);
 
             app.UseEndpoints(endpoints =>
             {
