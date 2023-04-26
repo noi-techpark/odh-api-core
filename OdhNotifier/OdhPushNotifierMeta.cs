@@ -289,7 +289,7 @@ namespace OdhNotifier
             myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
 
-            if (exmessage == "invalid_type")
+            if (exmessage == "invalid_type" || notify.Type == "NOT SUPPORTED")
                 myfailure.Status = "not_supported";
 
             myfailure.RetryCount = 1;
