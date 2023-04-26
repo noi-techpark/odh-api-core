@@ -375,6 +375,7 @@ namespace DataModel
         public bool? IsDeleteOperation { get; set; }
         public string ItemId { get; set; }
         public string Type { get; set; }
+        public string NotifyType { get; set; }
         public string Exception { get; set; }
         public string Status { get; set; }
         public string PushUrl { get; set; }

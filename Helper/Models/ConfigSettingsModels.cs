@@ -275,6 +275,7 @@ namespace Helper
         public string Id { get; set; }
         public string Url { get; set; }
         public string Type { get; set; }
+        public string NotifyType { get; set; }
         public string Mode { get; set; }
         public bool HasImagechanged { get; set; }
         public bool IsDelete { get; set; }

@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Reflection;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -167,7 +168,7 @@ namespace OdhNotifier
                             var data = new StringContent(JsonSerializer.Serialize(new
                             {
                                 id = notify.Id,
-                                entity = notify.Type,
+                                entity = notify.NotifyType,
                                 skipImage = notify.HasImagechanged ? false : true,
                                 isHardDelete = notify.IsDelete
                             }));
@@ -289,7 +290,7 @@ namespace OdhNotifier
             myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
 
-            if (exmessage == "invalid_type" || notify.Type == "NOT SUPPORTED")
+            if (exmessage == "invalid_type" || notify.NotifyType == "NOT SUPPORTED")
                 myfailure.Status = "not_supported";
 
             myfailure.RetryCount = 1;
@@ -304,14 +305,14 @@ namespace OdhNotifier
         {            
             myfailure.ItemId = notify.Id;
             myfailure.Type = notify.Type;
+            myfailure.NotifyType = notify.NotifyType;
             myfailure.Exception = exmessage;
             myfailure.LastChange = DateTime.Now;
             myfailure.Service = notify.Destination;
             myfailure.PushUrl = notify.Url;
             myfailure.Status = "open";
 
-            //Hack if Type = not Supported set 
-            if (notify.Type == "NOT SUPPORTED")
+            if (exmessage == "invalid_type" || notify.NotifyType == "NOT SUPPORTED")
                 myfailure.Status = "not_supported";
 
             myfailure.RetryCount = myfailure.RetryCount + 1; //CHECK if this works
@@ -325,7 +326,7 @@ namespace OdhNotifier
         //Valid Types for Push
         private static bool CheckValidTypes(NotifyMeta notify)
         {
-            if (notify.ValidTypes.Select(x => x.ToLower()).Contains(notify.Type.ToLower()))
+            if (notify.ValidTypes.Select(x => x.ToLower()).Contains(notify.NotifyType.ToLower()))
                 return true;
             else
                 return false;
@@ -366,7 +367,7 @@ namespace OdhNotifier
 
                     foreach (var failedpush in failedpushes)
                     {
-                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.ItemId, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer, true);
+                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.ItemId, failedpush.Type, failedpush.HasImageChanged != null ? failedpush.HasImageChanged.Value : false, false, "failurequeue.push", "api", referer);
 
                         NotifierResponse notifierresponse = new NotifierResponse();
                         var response = await SendNotify(meta, failedpush);
@@ -389,7 +390,7 @@ namespace OdhNotifier
 
     public class NotifyMetaGenerated : NotifyMeta
     {
-        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, bool hasimagechanged, bool isdelete, string updatemode, string origin, string? referer = null, bool fromfailurequeue = false)
+        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, bool hasimagechanged, bool isdelete, string updatemode, string origin, string? referer = null)
         {
             //Set by parameters
             this.Id = id;
@@ -426,13 +427,9 @@ namespace OdhNotifier
                             "EVENT",
                             "ODH_TAG",
                             "SKI_AREA"
-                        };
+                    };
 
-                    //Translate Type
-                    if (!fromfailurequeue)
-                        this.Type = TransformType(type, "marketplace");
-                    else
-                        this.Type = type;
+                    this.NotifyType = TransformType(this.Type, "idm-marketplace");
 
                     break;
                 case "sinfo":
@@ -466,6 +463,9 @@ namespace OdhNotifier
                             "smgtags",
                             "odhtag"
                         };
+
+                    this.NotifyType = TransformType(this.Type, "sinfo");
+
                     break;
                 default:
                     this.Mode = "get";
@@ -476,7 +476,7 @@ namespace OdhNotifier
 
         public string TransformType(string type, string servicename)
         {
-            if (servicename == "marketplace")
+            if (servicename == "idm-marketplace")
             {
                 return type.ToLower() switch
                 {
