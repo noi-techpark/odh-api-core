@@ -71,7 +71,7 @@ namespace OdhApiImporter.Helpers
                     if (myroomdatalist != null)
                     {
                         Tuple<string, bool>? roomsourcecheck = null;
-                        if (((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
+                        if (((AccommodationLinked)mypgdata).AccoRoomInfo != null && ((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
                             roomsourcecheck = Tuple.Create("hgv", true);
 
                         foreach (var myroomdata in myroomdatalist)
