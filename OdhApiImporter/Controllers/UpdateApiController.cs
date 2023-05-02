@@ -111,7 +111,7 @@ namespace OdhApiImporter.Controllers
         #endregion
 
         #region REPROCESS PUSH FAILURE QUEUE
-
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("PushFailureQueue/Retry/{publishedon}")]
         public async Task<IActionResult> ElaborateFailureQueue(string publishedon, CancellationToken cancellationToken = default)
         {
@@ -147,7 +147,7 @@ namespace OdhApiImporter.Controllers
 
         #region CUSTOM PUSH SEND
 
-
+        [Authorize(Roles = "DataPush")]
         [HttpPost, Route("CustomDataPush/{odhtype}/{publishedon}")]
         public async Task<IActionResult> CustomDataPush([FromBody] List<string> idlist, string odhtype, string publishedon, CancellationToken cancellationToken = default)
         {
