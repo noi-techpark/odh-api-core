@@ -148,6 +148,37 @@ namespace OdhApiImporter.Controllers
         #region CUSTOM PUSH SEND
 
 
+        [HttpPost, Route("CustomDataPush/{odhtype}/{publishedon}")]
+        public async Task<IActionResult> CustomDataPush([FromBody] List<string> idlist, string odhtype, string publishedon, CancellationToken cancellationToken = default)
+        {
+            UpdateDetailFailureQueue updatedetail = default(UpdateDetailFailureQueue);
+            string operation = "Update Custom";
+            string updatetype = "multiple";
+            string source = "api";
+            string otherinfo = odhtype;
+
+            try
+            {
+                var resulttuple = await OdhPushnotifier.PushCustomObjectsToPublishedonService(new List<string>() { publishedon }, idlist, odhtype);
+
+                updatedetail = new UpdateDetailFailureQueue()
+                {
+                    pushchannels = resulttuple.Keys,
+                    pushed = resulttuple,
+                };
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue failed", otherinfo, updatedetail, ex, true);
+
+                return BadRequest(errorResult);
+            }
+        }
+
 
         #endregion
 
