@@ -187,6 +187,7 @@ namespace OdhNotifier
 
                             if(failurequeuedata != null)
                             {
+                                failurequeuedata.RetryCount = failurequeuedata.RetryCount + 1;
                                 failurequeuedata.Status = "elaborated";
                                 failurequeuedata.LastChange = DateTime.Now;
 
