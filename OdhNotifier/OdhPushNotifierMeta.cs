@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Helper;
+using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
@@ -24,6 +25,7 @@ namespace OdhNotifier
         Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null);
         Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, List<string> publishedonlist, string? referer = null);
         Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null);
+        Task<IDictionary<string, ICollection<NotifierResponse>>> PushCustomObjectsToPublishedonService(List<string> publishedonlist, List<string> idlist, string odhtype, string? referer = null);
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -387,6 +389,37 @@ namespace OdhNotifier
             return notifierresponsedict;
         }
 
+        public async Task<IDictionary<string, ICollection<NotifierResponse>>> PushCustomObjectsToPublishedonService(List<string> publishedonlist, List<string> idlist, string odhtype, string? referer = null)
+        {
+            IDictionary<string, ICollection<NotifierResponse>> notifierresponsedict = new Dictionary<string, ICollection<NotifierResponse>>();
+
+            foreach (var notifyconfig in notifierconfiglist)
+            {
+                //GET All failed pushes            
+                if (publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
+                {                   
+                    List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
+
+                    foreach (var id in idlist)
+                    {
+                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, odhtype, false, false, "custom.push", "api", referer);
+
+                        NotifierResponse notifierresponse = new NotifierResponse();
+                        var response = await SendNotify(meta, null);
+                        notifierresponse.HttpStatusCode = response.Item1;
+                        notifierresponse.Service = notifyconfig.ServiceName;
+                        notifierresponse.Response = response.Item2;
+
+                        //TO CHECK if more Elements are pushed it is overwritten
+                        notifierresponselist.Add(notifierresponse);
+                    }
+
+                    notifierresponsedict.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponselist);
+                }
+            }
+
+            return notifierresponsedict;
+        }
     }
 
     public class NotifyMetaGenerated : NotifyMeta
