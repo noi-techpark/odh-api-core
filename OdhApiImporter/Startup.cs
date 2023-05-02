@@ -107,9 +107,9 @@ namespace OdhApiImporter
                                 c.Response.ContentType = "text/plain";
 
                                 //Generate Log
-                                //HttpRequestExtensions.GenerateLogResponse(c.HttpContext);
+                                HttpRequestExtensions.GenerateLogResponse(c.HttpContext);
 
-                                return c.Response.WriteAsync("");                                
+                                return c.Response.WriteAsync("");
                             },                            
                         };
                     });

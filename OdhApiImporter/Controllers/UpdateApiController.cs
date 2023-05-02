@@ -149,7 +149,7 @@ namespace OdhApiImporter.Controllers
 
         [Authorize(Roles = "DataPush")]
         [HttpPost, Route("CustomDataPush/{odhtype}/{publishedon}")]
-        public async Task<IActionResult> CustomDataPush([FromBody] List<string> idlist, string odhtype, string publishedon, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> CustomDataPush(string odhtype, string publishedon, [FromBody] List<string> idlist)
         {
             UpdateDetailFailureQueue updatedetail = default(UpdateDetailFailureQueue);
             string operation = "Update Custom";
