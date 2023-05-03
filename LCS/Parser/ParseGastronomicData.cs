@@ -10,13 +10,11 @@ using System.Xml.Linq;
 namespace LCS
 {
     public class ParseGastronomicData
-    {
-        //public static string xmldir = "C:\\VSProjects\\SuedtirolDB\\GastronomicData\\xml\\";
-        //public static string xmldir = "..\\..\\xml\\";
+    {        
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Gets Gastronomy Detail
-        public static Gastronomy GetGastronomyDetailLTS(string gastroRID, Gastronomy gastro, bool newgastro, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static ODHActivityPoiLinked GetGastronomyDetailLTS(string gastroRID, ODHActivityPoiLinked gastro, bool newgastro, string ltsuser, string ltspswd, string ltsmsgpswd)
         {
             var mygastrodetailrequestde = GetLCSRequests.GetGastronomicDataDetailRequestAsync(gastroRID, "de", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
             var mygastrodetailrequestit = GetLCSRequests.GetGastronomicDataDetailRequestAsync(gastroRID, "it", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
@@ -92,12 +90,15 @@ namespace LCS
             //LastChange: Wann wurde das Objekt das letzte Mal geändert.
             //Mode: Das Objekt soll nur dann publiziert werden wenn Mode > 0.
             gastro.Active = Convert.ToBoolean(thegastrononomyde.News.Status.IsEnabled);
-            gastro.RepresentationRestriction = thegastrononomyde.News != null ? Convert.ToInt32(thegastrononomyde.News.RepresentationRestriction.Mode) : 0;
+            var representationrestriction = thegastrononomyde.News != null ? Convert.ToInt32(thegastrononomyde.News.RepresentationRestriction.Mode) : 0;
 
-            //if (gastro.RepresentationRestriction > 0 && gastro.Active)
-            //    gastro.SmgActive = true;
-            //else
-            //    gastro.SmgActive = false;
+            if (representationrestriction > 0 && gastro.Active)
+                gastro.SmgActive = true;
+            else
+                gastro.SmgActive = false;
+
+            //TODO what is with Active? if Representationrestriction is set to 
+
 
             //FIXES
             if (String.IsNullOrEmpty(gastro.Shortname) || gastro.Shortname == "no name")
@@ -421,22 +422,32 @@ namespace LCS
 
             var position = thegastrononomyde.Position;
 
+            var gpsinfo = new GpsInfo();
+
             if (position != null)
             {
-                gastro.Gpstype = "GPSCenter";
-                gastro.AltitudeUnitofMeasure = "m";
-                gastro.Altitude = position.Altitude;
-                gastro.Longitude = Convert.ToDouble(position.Longitude, myculture);
-                gastro.Latitude = Convert.ToDouble(position.Latitude, myculture);
+                gpsinfo.Gpstype = "GPSCenter";
+                gpsinfo.AltitudeUnitofMeasure = "m";
+                gpsinfo.Altitude = position.Altitude;
+                gpsinfo.Longitude = Convert.ToDouble(position.Longitude, myculture);
+                gpsinfo.Latitude = Convert.ToDouble(position.Latitude, myculture);
             }
+
+            gastro.GpsInfo = new List<GpsInfo>() {  gpsinfo };
 
             //Ende Position
 
 
             //District Element
             //District fehlt in Objektmodell
-            gastro.DistrictId = thegastrononomyde.District.RID;
+            //gastro.DistrictId = thegastrononomyde.District.RID;
+            //TODO instantiate LocationInfo / DistrictInfo
+            gastro.LocationInfo.DistrictInfo.Id = thegastrononomyde.District.RID;
+
+
             //Ende District Element
+
+
             //OperationSchedule Element
 
 
@@ -485,7 +496,7 @@ namespace LCS
 
             //Facilities Element
 
-            List<Facilities> facilitieslist = new List<Facilities>();
+            List<FacilitiesLinked> facilitieslist = new List<FacilitiesLinked>();
 
             var facilitiesde = thegastrononomyde.Facilities;
 
@@ -493,7 +504,7 @@ namespace LCS
             {
                 foreach (var facility in facilitiesde.Facility)
                 {
-                    Facilities myfac = new Facilities();
+                    FacilitiesLinked myfac = new FacilitiesLinked();
                     myfac.Id = facility.RID;
                     myfac.Shortname = facility.FacilityName.FirstOrDefault().InnerText;
                     //myfac.Language = "de";
@@ -526,7 +537,7 @@ namespace LCS
 
             //CategoryCodes Element
 
-            List<CategoryCodes> categorycodeslist = new List<CategoryCodes>();
+            List<CategoryCodesLinked> categorycodeslist = new List<CategoryCodesLinked>();
 
             var categorycodesde = thegastrononomyde.CategoryCodes;
 
@@ -534,7 +545,7 @@ namespace LCS
             {
                 foreach (var catcode in categorycodesde.GastronomicCategory)
                 {
-                    CategoryCodes mycatcode = new CategoryCodes();
+                    CategoryCodesLinked mycatcode = new CategoryCodesLinked();
                     mycatcode.Id = catcode.RID;
                     mycatcode.Shortname = catcode.CategoryName.FirstOrDefault().InnerText;
                     //mycatcode.Language = "de";
@@ -570,7 +581,7 @@ namespace LCS
 
             //Dishrates Element
 
-            List<DishRates> dishrateslist = new List<DishRates>();
+            List<DishRatesLinked> dishrateslist = new List<DishRatesLinked>();
 
             var dishratesde = thegastrononomyde.DishRates;
 
@@ -578,7 +589,7 @@ namespace LCS
             {
                 foreach (var dishrate in dishratesde.DishRate)
                 {
-                    DishRates mydishrate = new DishRates();
+                    DishRatesLinked mydishrate = new DishRatesLinked();
                     mydishrate.Id = dishrate.DishCodeRID;
                     mydishrate.Shortname = dishrate.DishName != null ? dishrate.DishName.FirstOrDefault().InnerText : "";
                     mydishrate.CurrencyCode = dishrate.CurrencyCode;
@@ -622,7 +633,7 @@ namespace LCS
 
             //CapacityCeremony Element
 
-            List<CapacityCeremony> capacitycerlist = new List<CapacityCeremony>();
+            List<CapacityCeremonyLinked> capacitycerlist = new List<CapacityCeremonyLinked>();
 
             var capacityceremonyde = thegastrononomyde.CapacityCeremonies;
 
@@ -630,7 +641,7 @@ namespace LCS
             {
                 foreach (var capceremony in capacityceremonyde.CapacityCeremony)
                 {
-                    CapacityCeremony mycapcer = new CapacityCeremony();
+                    CapacityCeremonyLinked mycapcer = new CapacityCeremonyLinked();
                     mycapcer.Id = capceremony.CeremonyCodeRID;
                     mycapcer.Shortname = capceremony.CeremonyName != null ? capceremony.CeremonyName.FirstOrDefault().InnerText : "";
                     mycapcer.MaxSeatingCapacity = capceremony.MaxSeatingCapacity;
