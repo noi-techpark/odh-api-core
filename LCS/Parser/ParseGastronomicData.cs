@@ -18,9 +18,9 @@ namespace LCS
         //Gets Gastronomy Detail
         public static Gastronomy GetGastronomyDetailLTS(string gastroRID, Gastronomy gastro, bool newgastro, string ltsuser, string ltspswd, string ltsmsgpswd)
         {
-            var mygastrodetailrequestde = GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(gastroRID, "de", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
-            var mygastrodetailrequestit = GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(gastroRID, "it", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
-            var mygastrodetailrequesten = GetGastronomicDataLCS.GetGastronomicDataDetailRequestAsync(gastroRID, "en", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
+            var mygastrodetailrequestde = GetLCSRequests.GetGastronomicDataDetailRequestAsync(gastroRID, "de", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
+            var mygastrodetailrequestit = GetLCSRequests.GetGastronomicDataDetailRequestAsync(gastroRID, "it", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
+            var mygastrodetailrequesten = GetLCSRequests.GetGastronomicDataDetailRequestAsync(gastroRID, "en", "1", "1", "1", "1", "1", "1", "1", "1", "SMG", ltsmsgpswd);
 
             GetGastronomicDataLCS mygastrosearch = new GetGastronomicDataLCS(ltsuser, ltspswd);
             var mygastroresponsede = mygastrosearch.GetGastronomicDataDetail(mygastrodetailrequestde);
@@ -699,7 +699,7 @@ namespace LCS
             XDocument mygastrolist = new XDocument();
             XElement mygastro = new XElement("Gastronomies");
 
-            var mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync("", "1", "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
+            var mygastrorequest = GetLCSRequests.GetGastronomicDataSearchRequestAsync("", "1", "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
 
             GetGastronomicDataLCS mygastrosearch = new GetGastronomicDataLCS(ltsuser, ltspswd);
 
@@ -711,7 +711,7 @@ namespace LCS
 
             for (int i = 2; i <= pages; i++)
             {
-                mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync(resultrid, i.ToString(), "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
+                mygastrorequest = GetLCSRequests.GetGastronomicDataSearchRequestAsync(resultrid, i.ToString(), "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
 
                 mygastroresponse = mygastrosearch.GetGastronomicDataSearch(mygastrorequest);
                 mygastro.Add(GetGastroRid(mygastroresponse).ToList());
@@ -736,7 +736,7 @@ namespace LCS
             XDocument mygastrolist = new XDocument();
             XElement mygastro = new XElement("Gastronomies");
 
-            var mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync("", "1", "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), tourismorganizations, new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
+            var mygastrorequest = GetLCSRequests.GetGastronomicDataSearchRequestAsync("", "1", "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), tourismorganizations, new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
 
             GetGastronomicDataLCS mygastrosearch = new GetGastronomicDataLCS(ltsuser, ltspswd);
 
@@ -748,7 +748,7 @@ namespace LCS
 
             for (int i = 2; i <= pages; i++)
             {
-                mygastrorequest = GetGastronomicDataLCS.GetGastronomicDataSearchRequestAsync(resultrid, i.ToString(), "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
+                mygastrorequest = GetLCSRequests.GetGastronomicDataSearchRequestAsync(resultrid, i.ToString(), "25", "de", "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "SMG", ltsmsgpswd);
 
                 mygastroresponse = mygastrosearch.GetGastronomicDataSearch(mygastrorequest);
                 mygastro.Add(GetGastroRid(mygastroresponse).ToList());

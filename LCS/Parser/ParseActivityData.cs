@@ -19,9 +19,9 @@ namespace LCS
             myactivitylist.Add(rid);
 
             //Get LTS Data
-            var myactivityrequestde = GetActivityDataLCS.GetActivityDetailRequest("de", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
-            var myactivityrequestit = GetActivityDataLCS.GetActivityDetailRequest("it", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
-            var myactivityrequesten = GetActivityDataLCS.GetActivityDetailRequest("en", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
+            var myactivityrequestde = GetLCSRequests.GetActivityDetailRequest("de", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
+            var myactivityrequestit = GetLCSRequests.GetActivityDetailRequest("it", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
+            var myactivityrequesten = GetLCSRequests.GetActivityDetailRequest("en", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
 
             GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
             var myactivityresponsede = myactivitysearch.GetActivityDetail(myactivityrequestde);

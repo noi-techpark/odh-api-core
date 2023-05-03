@@ -18,9 +18,9 @@ namespace LCS
             List<string> mywebcamlist = new List<string>();
             mywebcamlist.Add(rid);
 
-            var mywebcamrequestde = GetActivityDataLCS.GetWebcamDetailRequest("de", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
-            var mywebcamrequestit = GetActivityDataLCS.GetWebcamDetailRequest("it", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
-            var mywebcamrequesten = GetActivityDataLCS.GetWebcamDetailRequest("en", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
+            var mywebcamrequestde = GetLCSRequests.GetWebcamDetailRequest("de", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
+            var mywebcamrequestit = GetLCSRequests.GetWebcamDetailRequest("it", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
+            var mywebcamrequesten = GetLCSRequests.GetWebcamDetailRequest("en", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
 
             GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
             var myactivityresponsede = myactivitysearch.GetWebcamDetail(mywebcamrequestde);

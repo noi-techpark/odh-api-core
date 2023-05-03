@@ -28,11 +28,11 @@ namespace LCS
             activitytype.Add("SLIDE");
 
             //INFOS für LIFT SLOPE SKITRACK SLIDE
-            var myactivityrequest = LCS.GetActivityDataLCS.GetActivitySearchRequestAsync(
+            var myactivityrequest = LCS.GetLCSRequests.GetActivitySearchRequestAsync(
                 "", "1", "25", lang, "1", "1", "", "0", "1", "0", "0", "1", "0", "0", "0", "0", "0", "0", "0", "1", "", "", "", "", new List<string>(), activitytype, new List<string>(), myareas, new List<string>(), prefilter2, requestor, ltsmsgpswd);
 
             //INFOS für MEASURINGPOINTS ???
-            var mysnowsearchrequest = GetActivityDataLCS.GetWeatherSnowSearchRequest
+            var mysnowsearchrequest = GetLCSRequests.GetWeatherSnowSearchRequest
                 ("", "1", "25", lang, "0", "0", "1", "1", "0", "0", "1", "", "1", "1", "0", "1", new List<string>(), myareas, new List<string>(), requestor, ltsmsgpswd);
 
             //Detailinfos für Measuringpoints
