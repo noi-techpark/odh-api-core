@@ -77,10 +77,15 @@ namespace Helper
                         .Select("data")
                         .Where("id", district?.RegionId?.ToUpper());
                 var region = await regquery.GetObjectSingleAsync<Region>();
+                var regionnames = new Dictionary<string, string?>();
                 
-                var regionnames = (from x in region?.Detail
-                                   select x).ToDictionary(x => x.Key, x => x.Value.Title);
-                
+                if(region != null)
+                {
+                    regionnames = (from x in region?.Detail
+                                       select x).ToDictionary(x => x.Key, x => x.Value.Title);
+
+                }
+
                 mylocinfo.DistrictInfo = new DistrictInfoLinked() { Id = district?.Id, Name = districtnames };
                 mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality?.Id, Name = municipalitynames };
                 mylocinfo.TvInfo = new TvInfoLinked() { Id = tourismverein?.Id, Name = tourismvereinnames };
@@ -129,9 +134,13 @@ namespace Helper
                         .Select("data")
                         .Where("id", district?.RegionId?.ToUpper());
                 var region = await regquery.GetObjectSingleAsync<Region>();
+                var regionnames = new Dictionary<string, string?>();
 
-                var regionnames = (from x in region?.Detail
+                if(region != null)
+                {
+                    regionnames = (from x in region?.Detail
                                    select x).ToDictionary(x => x.Key, x => x.Value.Title);
+                }                
                 
                 mylocinfo.DistrictInfo = new DistrictInfoLinked() { Id = district?.Id, Name = districtnames };
                 mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality?.Id, Name = municipalitynames };
@@ -173,8 +182,13 @@ namespace Helper
                         .Where("id", municipality?.RegionId?.ToUpper());
                 var region = await regquery.GetObjectSingleAsync<Region>();
 
-                var regionnames = (from x in region?.Detail
+                var regionnames = new Dictionary<string, string?>();
+
+                if (region != null)
+                {
+                    regionnames = (from x in region?.Detail
                                    select x).ToDictionary(x => x.Key, x => x.Value.Title);
+                }
 
                 //mylocinfo.DistrictInfo = new DistrictInfoLinked() { Id = district?.Id, Name = districtnames };
                 mylocinfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality?.Id, Name = municipalitynames };
