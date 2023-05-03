@@ -12,7 +12,7 @@ namespace LCS
         {
             List<string> areas = new List<string>();
 
-            var myweathersnowrequest = GetActivityDataLCS.GetWeatherSnowDetailRequest("", "1", "25", lang, "0", "0", "1", "1", "0", "1", "1", "1", "1", "1", "", "", "", measuringpointList, "SMG", ltsmsgpswd);
+            var myweathersnowrequest = GetLCSRequests.GetWeatherSnowDetailRequest("", "1", "25", lang, "0", "0", "1", "1", "0", "1", "1", "1", "1", "1", "", "", "", measuringpointList, "SMG", ltsmsgpswd);
 
             GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
 
@@ -26,7 +26,7 @@ namespace LCS
         {
             List<string> areas = new List<string>();
 
-            var myweathersnowrequest = GetActivityDataLCS.GetWeatherSnowDetailRequest("", "1", "25", lang, "0", "0", "0", "1", "0", "0", "1", "1", "0", "1", "", "", "", measuringpointList, "SMG", ltsmsgpswd);
+            var myweathersnowrequest = GetLCSRequests.GetWeatherSnowDetailRequest("", "1", "25", lang, "0", "0", "0", "1", "0", "0", "1", "1", "0", "1", "", "", "", measuringpointList, "SMG", ltsmsgpswd);
 
             GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
 

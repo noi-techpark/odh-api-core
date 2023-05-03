@@ -20,9 +20,9 @@ namespace LCS.Parser
             List<string> myactivitylist = new List<string>();
             myactivitylist.Add(rid);
 
-            var mypoirequestde = GetPoiDataLCS.GetPoiDetailRequest("de", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
-            var mypoirequestit = GetPoiDataLCS.GetPoiDetailRequest("it", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
-            var mypoirequesten = GetPoiDataLCS.GetPoiDetailRequest("en", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
+            var mypoirequestde = GetLCSRequests.GetPoiDetailRequest("de", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
+            var mypoirequestit = GetLCSRequests.GetPoiDetailRequest("it", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
+            var mypoirequesten = GetLCSRequests.GetPoiDetailRequest("en", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
 
             GetPoiDataLCS mypoisearch = new GetPoiDataLCS(ltsuser, ltspswd);
             var myactivityresponsede = mypoisearch.GetPoiDetail(mypoirequestde);

@@ -48,8 +48,7 @@ namespace OdhApiImporter.Helpers.DSS
 
         //Imports DSS Data
         private async Task<List<dynamic>> GetData(CancellationToken cancellationToken)
-        {
-            
+        {            
             List<dynamic> dssdata = new List<dynamic>();
 
             var requesttype = DSSImportUtil.GetRequestTypeList(entitytype);
@@ -59,9 +58,7 @@ namespace OdhApiImporter.Helpers.DSS
             dssdata.Add(await GetDSSData.GetDSSDataAsync(requesttype.Item1, settings.DSSConfig.User, settings.DSSConfig.Password, settings.DSSConfig.ServiceUrl));
 
             return dssdata;
-        }
-
-      
+        }      
 
         public async Task<UpdateDetail> ImportData(List<dynamic> dssinput, CancellationToken cancellationToken)
         {
@@ -294,7 +291,7 @@ namespace OdhApiImporter.Helpers.DSS
             }
             catch(Exception ex)
             {
-                WriteLog.LogToConsole(returnid, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = returnid, sourceinterface = "dss." + entitytype, success = false, error = entitytype + " could not be parsed: " + ex.Message });
+                WriteLog.LogToConsole(returnid, "dataimport", "single.dss." + entitytype, new ImportLog() { sourceid = returnid, sourceinterface = "dss." + entitytype, success = false, error = entitytype + " could not be parsed: " + ex.Message });
 
                 errorcounter = errorcounter + 1;
             }

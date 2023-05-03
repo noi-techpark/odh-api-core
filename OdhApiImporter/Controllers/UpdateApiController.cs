@@ -290,18 +290,19 @@ namespace OdhApiImporter.Controllers
             string operation = "Import Weather data";
             string updatetype = "all";
             string source = "siag";
+            string otherinfo = "actual";
 
             try
             {
                 SiagWeatherImportHelper siagimporthelper = new SiagWeatherImportHelper(settings, QueryFactory, "weatherdatahistory", UrlGeneratorStatic("Siag/Weather"));
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken);
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Weather data succeeded", "actual", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Weather data succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed", "actual", updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(errorResult);
             }
         }
@@ -313,18 +314,19 @@ namespace OdhApiImporter.Controllers
             string operation = "Import Weather data";
             string updatetype = "single";
             string source = "siag";
+            string otherinfo = "byid";
 
             try
             {
                 SiagWeatherImportHelper siagimporthelper = new SiagWeatherImportHelper(settings, QueryFactory, "weatherdatahistory", UrlGeneratorStatic("Siag/Weather"));
                 updatedetail = await siagimporthelper.SaveWeatherToHistoryTable(cancellationToken, id);
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(id, source, operation, updatetype, "Import Weather data succeeded id:" + id.ToString(), "byid", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(id, source, operation, updatetype, "Import Weather data succeeded id:" + id.ToString(), otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed id:" + id.ToString(), "byid", updatedetail, ex, true);
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Weather data failed id:" + id.ToString(), otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }
@@ -340,19 +342,20 @@ namespace OdhApiImporter.Controllers
             string operation = "Import SIAG Museum data";
             string updatetype = "all";
             string source = "siag";
+            string otherinfo = "actual";
 
             try
             {
                 SiagMuseumImportHelper siagimporthelper = new SiagMuseumImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("Siag/Museum"));
                 updatedetail = await siagimporthelper.SaveDataToODH(null, null, cancellationToken);
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data succeeded", "actual", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data failed", "actual", updatedetail, ex, true);
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SIAG Museum data failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }
@@ -368,19 +371,20 @@ namespace OdhApiImporter.Controllers
             string operation = "Import SuedtirolWein Company data";
             string updatetype = "all";
             string source = "suedtirolwein";
+            string otherinfo = "actual";
 
             try
             {
                 SuedtirolWeinCompanyImportHelper sweinimporthelper = new SuedtirolWeinCompanyImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("SuedtirolWein/Company"));
                 updatedetail = await sweinimporthelper.SaveDataToODH(null, null, cancellationToken);
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein Company data succeeded", "actual", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein Company data succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein Company data failed", "actual", updatedetail, ex, true);
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein Company data failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }
@@ -392,19 +396,20 @@ namespace OdhApiImporter.Controllers
             string operation = "Import SuedtirolWein WineAward data";
             string updatetype = "all";
             string source = "suedtirolwein";
+            string otherinfo = "actual";
 
             try
             {
                 SuedtirolWeinAwardImportHelper sweinimporthelper = new SuedtirolWeinAwardImportHelper(settings, QueryFactory, "wines", UrlGeneratorStatic("SuedtirolWein/WineAward"));
                 updatedetail = await sweinimporthelper.SaveDataToODH(null, null, cancellationToken);
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein WineAward data succeeded", "actual", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein WineAward data succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein WineAward data failed", "actual", updatedetail, ex, true);
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import SuedtirolWein WineAward data failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }
@@ -424,6 +429,30 @@ namespace OdhApiImporter.Controllers
         #endregion
 
         #region LTS GASTRONOMIC DATA SYNC
+
+        [HttpGet, Route("LTS/GastronomicData/UpdateAll")]
+        public async Task<IActionResult> ImportLTSGastronomies(bool onlychanged, CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS GastronomicData data";
+            string updatetype = "all";
+            string source = "lts";
+            string otherinfo = "gastronomy";
+
+            try
+            {
+                
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS GastronomicData data succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS GastronomicData data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
 
         #endregion
 
@@ -484,6 +513,7 @@ namespace OdhApiImporter.Controllers
             string operation = "Update DSS " + dssentity;
             string updatetype = "all";
             string source = "dss";
+            string otherinfo = "actual";
 
             try
             {
@@ -504,7 +534,7 @@ namespace OdhApiImporter.Controllers
                         break;
                 }
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update succeeded", "", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS " + dssentity + " update succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
 
@@ -566,19 +596,20 @@ namespace OdhApiImporter.Controllers
             string operation = "Import Looptec Ejobs";
             string updatetype = "all";
             string source = "looptec";
+            string otherinfo = "rawonly";
 
             try
             {
                 LooptecEjobsImportHelper looptecejobsimporthelper = new LooptecEjobsImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("LOOPTEC/Ejobs"));
 
                 updatedetail = await looptecejobsimporthelper.SaveDataToODH(null, null, cancellationToken);
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs succeeded", "rawonly", updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs failed", "rawonly", updatedetail, ex, true);
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import Looptec Ejobs failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }
