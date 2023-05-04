@@ -465,7 +465,7 @@ namespace OdhApiImporter.Helpers
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<DDVenue>((DDVenue)mypgdata) == true)
                     {
-                        var reducedobject = ReduceDataTransformer.GetReducedObject((VenueLinked)mypgdata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((VenueLinked)mydata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
                         var reducedobjectdd = ReduceDataTransformer.GetReducedObject((DDVenue)mypgdata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
 
                         updateresultreduced = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueReduced)reducedobject, (DDVenueReduced)reducedobjectdd, "venues_v2");
