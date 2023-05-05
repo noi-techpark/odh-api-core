@@ -28,6 +28,7 @@ using OdhApiImporter.Helpers.SuedtirolWein;
 using OdhNotifier;
 using ServiceReferenceLCS;
 using OdhApiImporter.Helpers.LTSLCS;
+using System.Collections;
 
 namespace OdhApiImporter.Controllers
 {
@@ -180,17 +181,16 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-
         #endregion
 
         #region EBMS DATA SYNC (EventShort)
 
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]
-        public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllEBMS(List<string> idlist = null, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update EBMS";
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "ebms";
 
             try
@@ -209,54 +209,16 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-        [HttpGet, Route("EBMS/EventShort/UpdateSingle/{id}")]
-        public IActionResult UpdateSingleEBMS(string id, CancellationToken cancellationToken = default)
-        {
-            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
-
-            //try
-            //{               
-            //    return Ok(new UpdateResult
-            //    {
-            //        operation = "Update EBMS",
-            //        id = id,
-            //        updatetype = "single",
-            //        otherinfo = "",
-            //        message = "EBMS Eventshorts update succeeded",
-            //        recordsmodified = 1,
-            //        created = 0,
-            //        updated = 0,
-            //        deleted = 0,
-            //        success = true
-            //    });
-            //}
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(new UpdateResult
-            //    {
-            //        operation = "Update EBMS",
-            //        updatetype = "all",
-            //        otherinfo = "",
-            //        message = "EBMS Eventshorts update failed: " + ex.Message,
-            //        recordsmodified = 0,
-            //        created = 0,
-            //        updated = 0,
-            //        deleted = 0,
-            //        success = false
-            //    });
-            //}
-        }
-
         #endregion
 
         #region NINJA DATA SYNC (Events Centro Trevi and DRIN)
 
         [HttpGet, Route("NINJA/Events/UpdateAll")]
-        public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllNinjaEvents(List<string> idlist = null, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update Ninja Events";
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "mobilityapi";
 
             try
@@ -272,12 +234,6 @@ namespace OdhApiImporter.Controllers
                 var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja Events update failed", "", updatedetail, ex, true);
                 return BadRequest(errorResult);
             }
-        }
-
-        [HttpGet, Route("NINJA/Events/UpdateSingle/{id}")]
-        public IActionResult UpdateSingleNinjaEvents(string id, CancellationToken cancellationToken = default)
-        {
-            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
         }
 
         #endregion        
@@ -337,11 +293,11 @@ namespace OdhApiImporter.Controllers
         #region SIAG DATA SYNC MUSEUMS
 
         [HttpGet, Route("Siag/Museum/UpdateAll")]
-        public async Task<IActionResult> ImportSiagMuseum(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportSiagMuseum(List<string> idlist = null, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import SIAG Museum data";
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "siag";
             string otherinfo = "actual";
 
@@ -366,11 +322,11 @@ namespace OdhApiImporter.Controllers
         #region SUEDTIROLWEIN DATA SYNC
 
         [HttpGet, Route("SuedtirolWein/Company/UpdateAll")]
-        public async Task<IActionResult> ImportSuedtirolWineCompany(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportSuedtirolWineCompany(List<string> idlist = null, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import SuedtirolWein Company data";
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "suedtirolwein";
             string otherinfo = "actual";
 
@@ -391,11 +347,11 @@ namespace OdhApiImporter.Controllers
         }
 
         [HttpGet, Route("SuedtirolWein/WineAward/UpdateAll")]
-        public async Task<IActionResult> ImportSuedtirolWineAward(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportSuedtirolWineAward(List<string> idlist = null, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import SuedtirolWein WineAward data";
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "suedtirolwein";
             string otherinfo = "actual";
 
@@ -518,7 +474,6 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-
         #endregion
 
         #region LTS ACCOMMODATION DATA SYNC
@@ -541,11 +496,11 @@ namespace OdhApiImporter.Controllers
 
         //[Authorize(Roles = "DataWriter,STAPoiImport")]
         [HttpPost, Route("STA/VendingPoints/UpdateAll")]
-        public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
+        public async Task<IActionResult> SendVendingPointsFromSTA(List<string> idlist, CancellationToken cancellationToken)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import Vendingpoints";
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "xls";
             string otherinfo = "STA";
 
@@ -572,11 +527,11 @@ namespace OdhApiImporter.Controllers
         #region DSS DATA SYNC
 
         [HttpGet, Route("DSS/{dssentity}/UpdateAll")]
-        public async Task<IActionResult> UpdateAllDSSData(string dssentity, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllDSSData(string dssentity, List<string> idlist = null, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update DSS " + dssentity;
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "dss";
             string otherinfo = "actual";
 
@@ -612,54 +567,16 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-        [HttpGet, Route("DSS/{dssentity}/UpdateSingle/{id}")]
-        public IActionResult UpdateSingleDSS(string dssentity, string id, CancellationToken cancellationToken = default)
-        {
-            return StatusCode(StatusCodes.Status501NotImplemented, new { error = "Not Implemented" });
-
-            //try
-            //{               
-            //    return Ok(new UpdateResult
-            //    {
-            //        operation = "Update EBMS",
-            //        id = id,
-            //        updatetype = "single",
-            //        otherinfo = "",
-            //        message = "EBMS Eventshorts update succeeded",
-            //        recordsmodified = 1,
-            //        created = 0,
-            //        updated = 0,
-            //        deleted = 0,
-            //        success = true
-            //    });
-            //}
-            //catch (Exception ex)
-            //{
-            //    return BadRequest(new UpdateResult
-            //    {
-            //        operation = "Update EBMS",
-            //        updatetype = "all",
-            //        otherinfo = "",
-            //        message = "EBMS Eventshorts update failed: " + ex.Message,
-            //        recordsmodified = 0,
-            //        created = 0,
-            //        updated = 0,
-            //        deleted = 0,
-            //        success = false
-            //    });
-            //}
-        }
-
         #endregion
 
         #region EJOBS DATA SYNC
 
         [HttpGet, Route("LOOPTEC/Ejobs/UpdateAll")]
-        public async Task<IActionResult> UpdateAllLooptecEjobs(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllLooptecEjobs(List<string> idlist = null, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import Looptec Ejobs";
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "looptec";
             string otherinfo = "rawonly";
 
@@ -699,6 +616,8 @@ namespace OdhApiImporter.Controllers
         {
             if (idlist == null)
                 return "all";
+            else if (idlist.Count == 1)
+                return "single";
             else
                 return "passed_ids";
         }
