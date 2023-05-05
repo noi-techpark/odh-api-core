@@ -199,7 +199,7 @@ namespace Helper
             {
                 //Compare the data
                 if (comparedata && queryresult != null)
-                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta" }, true);
+                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
 
                 //Compare Image Gallery
                 if (compareimagedata && queryresult != null && data.ImageGallery != null && queryresult.ImageGallery != null)

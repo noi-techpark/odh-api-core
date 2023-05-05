@@ -56,6 +56,11 @@ Custom Functions on DB
 * json_array_to_pg_array
 * extract_keys_from_jsonb_object_array
 * text2ts
+* json_array_to_pg_array
+* extract_keys_from_jsonb_object_array
+* extract_tags
+* extract_tagkeys
+* is_valid_jsonb
 
 These custom functions are used for the generated Columns
 
